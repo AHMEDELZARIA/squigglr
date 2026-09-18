@@ -1,10 +1,10 @@
 # Project Name
 
-Developer Names:
+Developer Names: Ahmed Elzaria, Rayan Nasrallah, Moustafa Moustafa, Muhammad Huzaifah, Shamil Canbolat
 
-Date of project start:
+Date of project start: Friday September 18, 2026
 
-This project is ...
+This project is squigglr
 
 The folders and files for this project are as follows:
 

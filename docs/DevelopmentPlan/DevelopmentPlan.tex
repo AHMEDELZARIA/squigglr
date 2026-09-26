@@ -286,37 +286,203 @@ you will be able to overcome this risk?
 
 \section{Expected Technology}
 
-\wss{What programming language or languages do you expect to use?  What external
-libraries?  What frameworks?  What technologies.  Are there major components of
-the implementation that you expect you will implement, despite the existence of
-libraries that provide the required functionality.  For projects with machine
-learning, will you use pre-trained models, or be training your own model?  }
+\label{sec:expected-technology}
 
-\wss{The implementation decisions can, and likely will, change over the course
-of the project.  The initial documentation should be written in an abstract way;
-it should be agnostic of the implementation choices, unless the implementation
-choices are project constraints.  However, recording our initial thoughts on
-implementation helps understand the challenge level and feasibility of a
-project.  It may also help with early identification of areas where project
-members will need to augment their training.}
+Following Dr.~Anand's recommendation, Squigglr is planned as a web
+application supporting touchscreen and stylus drawing. The expected
+technologies favour a small, consistent stack that the team can develop
+within the capstone timeline. These initial choices may change following
+technical investigation and proof-of-concept results; they do not define
+the project's functional requirements.
 
-Topics to discuss include the following:
+\subsection{Application Technologies}
 
-\begin{itemize}
-\item Specific programming language
-\item Specific libraries
-\item Pre-trained models
-\item Specific linter tool (if appropriate)
-\item Specific unit testing framework
-\item Investigation of code coverage measuring tools
-\item Specific plans for Continuous Integration (CI), or an explanation that CI
-  is not being done
-\item Specific performance measuring tools (like Valgrind), if
-  appropriate
-\item Tools you will likely be using?
-\end{itemize}
+Table~\ref{tab:application-technologies} summarizes the expected
+application technologies, their purposes, and their main trade-offs.
 
-\wss{git, GitHub and GitHub projects should be part of your technology.}
+\begin{table}[htbp]
+    \centering
+    \caption{Expected application technologies}
+    \label{tab:application-technologies}
+    \small
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\textwidth}{
+        @{}>{\raggedright\arraybackslash}p{0.23\textwidth}
+        >{\raggedright\arraybackslash}X
+        >{\raggedright\arraybackslash}X@{}
+    }
+        \toprule
+        \textbf{Technology} &
+        \textbf{Planned use} &
+        \textbf{Benefits and limitations} \\
+        \midrule
+
+        TypeScript &
+        Implement client-side and server-side application logic. &
+        Shared types help maintain consistent data structures.
+        Type checking does not replace runtime validation or testing. \\
+        \addlinespace
+
+        React and Next.js &
+        Build activity screens, progress views, and backend endpoints
+        within one application. &
+        Reusable components and a single project simplify development.
+        Members must learn the client/server boundary. \\
+        \addlinespace
+
+        Paper.js and Pointer Events &
+        Represent and render editable drawing paths, and capture
+        touchscreen or stylus input through browser events. &
+        Path manipulation supports geometric enhancement.
+        Integration and input behaviour require device testing. \\
+        \addlinespace
+
+        Tailwind CSS &
+        Use Cascading Style Sheets (CSS) utilities to style responsive
+        screens and shared interface components. &
+        Shared conventions support visual consistency.
+        Members must learn the utility-class syntax. \\
+        \addlinespace
+
+        Supabase &
+        Use PostgreSQL for drawing and progress records, and
+        Supabase Auth for adult account authentication. &
+        Managed services reduce infrastructure work.
+        Access policies require configuration and testing. \\
+        \addlinespace
+
+        Vercel &
+        Host the application and provide preview deployments
+        for reviewing changes. &
+        Next.js integration simplifies deployment.
+        Service limits and potential costs must be monitored. \\
+
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Drawing Assessment and Enhancement}
+
+The application is expected to retain drawings as editable paths and
+coordinates, with the canvas displaying those paths. Enhancement will
+update this drawing data and redraw the same canvas, allowing the user
+to continue working on the result. The original strokes will be
+preserved separately for assessment and to support undoing an
+enhancement.
+
+Paper.js provides path smoothing and simplification that the team
+expects to reuse. The team will implement the application-specific
+logic for recording strokes, assessing drawings, adjusting activity
+difficulty, and managing enhancement actions. Initial assessment will
+consider explicit measures such as deviation from a target path and
+shape coverage. Initial difficulty adjustment will use rules based
+on activity performance.
+
+Basic geometric enhancement will be investigated first because it can
+operate directly on the existing paths without model training.
+Smoothing and simplification will be described as geometric processing,
+rather than artificial intelligence.
+
+For creative enhancement, the team will investigate an existing
+pretrained multimodal model capable of accepting a drawing preview
+and returning structured drawing instructions. Candidate instructions
+include modifying a curve or adding a supported shape. The application
+would validate these instructions before applying them to the editable
+drawing. A service that returns only a bitmap image would not directly
+satisfy this requirement.
+
+No specific model has been selected, and custom model training is not
+currently planned. Model selection will depend on a focused evaluation
+of drawing preservation, output validity, response time, and cost.
+Creative vector enhancement remains an implementation uncertainty
+to investigate through the proof-of-concept work.
+
+\subsection{Development and Verification Tools}
+
+Table~\ref{tab:development-tools} lists the expected tools for
+collaboration, code quality, and verification. Shared configurations
+and a dependency lockfile will help keep development environments
+consistent.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Expected development and verification tools}
+    \label{tab:development-tools}
+    \small
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\textwidth}{
+        @{}>{\raggedright\arraybackslash}p{0.25\textwidth}
+        >{\raggedright\arraybackslash}X
+        >{\raggedright\arraybackslash}X@{}
+    }
+        \toprule
+        \textbf{Tool} &
+        \textbf{Planned use} &
+        \textbf{Benefits and limitations} \\
+        \midrule
+
+        Git, GitHub, and GitHub Projects &
+        Version control, pull-request reviews, issue tracking,
+        and milestone planning. &
+        Connects tasks to reviewed changes.
+        Requires consistent updates from all members. \\
+        \addlinespace
+
+        ESLint and Prettier &
+        Check code rules and maintain consistent formatting. &
+        Automates routine checks.
+        Does not establish functional correctness. \\
+        \addlinespace
+
+        Vitest and React Testing Library &
+        Test application logic and interface components.
+        Use \texttt{@vitest/coverage-v8} to measure code coverage. &
+        Supports focused automated tests.
+        High coverage alone does not establish test quality. \\
+        \addlinespace
+
+        Playwright &
+        Test complete user flows across browser engines. &
+        Checks interactions between components.
+        Emulation cannot replace physical stylus testing. \\
+        \addlinespace
+
+        GitHub Actions &
+        Run automated checks on proposed changes. &
+        Provides repeatable feedback before merging.
+        Workflows require setup and maintenance. \\
+        \addlinespace
+
+        Chrome DevTools &
+        Investigate drawing responsiveness, rendering work,
+        and slow interactions. &
+        Helps locate performance bottlenecks.
+        Results must also be checked on target hardware. \\
+        \addlinespace
+
+        \LaTeX{} &
+        Produce course documentation from version-controlled source. &
+        Supports consistent formatting and cross-references.
+        Compiled documents still require visual review. \\
+
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The Continuous Integration (CI) workflow is expected to run TypeScript
+checks, linting, formatting checks, unit tests, and a production build
+on pull requests. Automated browser tests will be added as complete
+user flows become available. Documentation changes will also undergo
+a \LaTeX{} build check. Human review will complement these checks.
+
+\subsection{Early Learning and Feasibility Checks}
+
+Early technical work will focus on Paper.js path manipulation,
+touchscreen and stylus handling, Next.js client/server behaviour,
+Supabase access policies, and automated testing. A small experiment
+on a target tablet will check input accuracy, drawing responsiveness,
+and whether enhanced paths remain editable. Findings will inform
+the proof-of-concept plan and any changes to the expected technology.
 
 \section{Use of AI and LLMs}
 

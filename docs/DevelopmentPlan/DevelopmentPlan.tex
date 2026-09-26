@@ -84,10 +84,179 @@ There should be an agenda for all meetings.}
 
 \section{Team Member Roles}
 
-\wss{You should identify the types of roles you anticipate, like notetaker,
-leader, meeting chair, reviewer.  Assigning specific people to those roles is
-not necessary at this stage.  In a student team the role of the individuals will
-likely change throughout the year.}
+\label{sec:team-member-roles}
+
+All five team members are software developers and will contribute
+substantively to the product's code. Each member will also lead an area
+of the project, as shown in Table~\ref{tab:team-member-roles}. Leads
+coordinate their areas, track outstanding work, and raise concerns with
+the team. Implementation tasks within each area will be shared according
+to workload, experience, and learning interests.
+
+User Interface (UI) and User Experience (UX) responsibilities cover
+interaction design and usability. Development and Operations (DevOps)
+responsibilities cover development environments, build automation, and
+deployment.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Team lead roles and responsibilities}
+    \label{tab:team-member-roles}
+    \small
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\textwidth}{
+        @{}>{\raggedright\arraybackslash}p{0.17\textwidth}
+        >{\raggedright\arraybackslash}p{0.25\textwidth}
+        >{\raggedright\arraybackslash}X@{}
+    }
+        \toprule
+        \textbf{Member} &
+        \textbf{Lead roles} &
+        \textbf{Responsibilities} \\
+        \midrule
+
+        Ahmed Elzaria &
+        Project Manager and UI/UX Lead &
+        Coordinate scope, task allocation, workload, and deadlines.
+        Chair team meetings and follow up on blockers. Lead user flows,
+        interaction design, and usability evaluation in collaboration
+        with the Frontend Lead. \\
+        \addlinespace
+
+        Rayan &
+        Backend Lead &
+        Coordinate backend design and implementation, including
+        application logic, data storage, and interfaces with other
+        components. Identify backend dependencies and support
+        teammates working in this area. \\
+        \addlinespace
+
+        Shamil &
+        Team Liaison and DevOps Lead &
+        Coordinate communication with the teaching team and external
+        stakeholders, and relay feedback and follow-up actions.
+        Coordinate development setup, automated build and test
+        workflows, and deployment. \\
+        \addlinespace
+
+        Huzaifah &
+        Testing Lead &
+        Coordinate the software testing strategy, integration testing,
+        and defect follow-up. Identify gaps in test coverage and
+        support teammates in designing and maintaining tests. \\
+        \addlinespace
+
+        Moustafa &
+        Frontend Lead &
+        Coordinate implementation of the user interface and its
+        integration with backend functionality. Work with the UI/UX
+        Lead to translate interaction designs into usable, consistent
+        interfaces. \\
+
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Shared Responsibilities}
+\label{sec:shared-responsibilities}
+
+The following responsibilities apply to every member, regardless of
+their lead roles:
+
+\begin{itemize}
+    \item \textbf{Software development:}
+    Implement and maintain product features, resolve defects, and
+    contribute to integration. Every member will receive substantive
+    product-code tasks. Members may work across frontend, backend,
+    and other technical areas with support from the relevant leads.
+
+    \item \textbf{Testing:}
+    Develop and run appropriate tests for their changes, investigate
+    failures, and address defects. The Testing Lead coordinates the
+    overall approach; each developer remains responsible for testing
+    their own contributions.
+
+    \item \textbf{Research and requirements:}
+    Investigate stakeholder needs, domain knowledge, and technical
+    approaches. Record supporting sources and assumptions, and
+    contribute to defining and reviewing requirements.
+
+    \item \textbf{Documentation:}
+    Write and update the documentation associated with assigned work,
+    including relevant requirements, design decisions, setup
+    instructions, and test evidence.
+
+    \item \textbf{Peer review:}
+    Review teammates' code and documentation for correctness, clarity,
+    and consistency with requirements and agreed standards. Each
+    substantial change will be reviewed by someone other than its
+    author before acceptance.
+
+    \item \textbf{Task tracking and communication:}
+    Keep assigned GitHub issues and project-board entries current,
+    communicate progress and blockers, and notify the team when an
+    agreed deadline is at risk.
+\end{itemize}
+
+Each substantive task will have a named owner, an agreed deadline, and
+completion criteria recorded in a GitHub issue. Tasks involving multiple
+components will also identify who is responsible for coordinating their
+integration. These assignments establish individual accountability
+within the team's shared responsibilities.
+
+\subsection{Meeting and Milestone Responsibilities}
+\label{sec:meeting-milestone-responsibilities}
+
+Ahmed will chair team meetings as Project Manager, with a substitute
+identified when he is unavailable. The chair will prepare the agenda,
+guide discussion, and confirm action owners and deadlines. The notetaker
+will rotate each meeting among all five members and will record
+attendance, decisions, action items, and unresolved questions. The chair
+and notetaker will be different members, with both assignments recorded
+in the meeting issue.
+
+A milestone Quality Assurance (QA) coordinator will rotate each
+milestone among all five members. The coordinator will be named in the
+milestone's tracking issue and will ensure that its deliverables are
+reviewed against the applicable course checklists and Avenue rubric.
+The coordinator will assign review actions, track corrections, and
+verify that outstanding findings are resolved before submission.
+Another member will review the coordinator's own contributions.
+
+Milestone QA covers the completeness and consistency of the entire
+deliverable, including documentation and submission requirements.
+Huzaifah's ongoing Testing Lead role covers the software testing
+strategy and coordination of test activities. All members remain
+responsible for the quality of their own work under both arrangements.
+
+\subsection{Workload Balance and Role Changes}
+\label{sec:workload-role-changes}
+
+At the start of each milestone, the team will allocate tasks using
+estimated effort, member availability, and project priorities.
+Coordination, research, review, and liaison duties will be included
+when assessing workload. Members will support areas with heavier
+implementation demands, and the Project Manager will coordinate
+redistribution when tasks become blocked or workloads become uneven.
+Shamil and Huzaifah will receive product-feature implementation tasks
+alongside their DevOps, liaison, and testing responsibilities.
+
+Lead assignments will be reviewed at each milestone and whenever
+availability, interests, or project needs change. Any member may
+request a reassignment during a team meeting or through a GitHub issue.
+The team will agree on changes using the decision-making process in
+the Team Charter and record the outcome in the meeting notes.
+
+The outgoing lead will hand over current progress, outstanding actions,
+known issues, and relevant resources to the incoming lead.
+Table~\ref{tab:team-member-roles} and affected issue assignments will
+then be updated. If a lead becomes unexpectedly unavailable, the team
+will designate a temporary substitute and redistribute urgent work.
+
+Members will share technical knowledge through repository documentation,
+peer review, and brief walkthroughs. This overlap will help members
+support one another and assume new responsibilities throughout the
+project.
 
 \section{Workflow Plan}
 

@@ -389,6 +389,10 @@ Contributors compile PDFs locally for review but do not commit them; the
 workflow updates \texttt{pdfs/} after merging to \texttt{main}. Until then,
 review the local build or the PR's GitHub Actions artifact, rather than
 expecting the committed PDF to contain the proposed source changes.
+Before accepting a documentation check, confirm that its log lists the
+changed document as compiled and that its PDF artifact matches the reviewed
+source. A successful status alone is insufficient if the run reused a
+cached PDF without rebuilding the changed document.
 
 \subsubsection*{Planned Application Checks}
 When the application scaffold exists, the DevOps Lead will introduce the
@@ -437,7 +441,9 @@ PR, even when no relevant files changed. GitHub's
 path filters can leave required checks pending. The DevOps Lead will also
 extend documentation validation to PRs targeting \texttt{development},
 reconcile direct PDF pushes with mandatory PR protection, and restrict
-documentation publishing to the intended branch. These are follow-up CI
+documentation publishing to the intended branch. Change detection must
+also fail visibly if its comparison commit is unavailable after a force-push,
+instead of treating the failure as an empty change list. These are follow-up CI
 changes, not capabilities claimed for the current workflow.
 
 \subsubsection*{Preview and Production Release Procedure}

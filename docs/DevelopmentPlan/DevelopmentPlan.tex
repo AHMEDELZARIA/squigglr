@@ -3,8 +3,6 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{longtable}
-\usepackage{float}
-\usepackage{needspace}
 \usepackage{microtype}
 \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
@@ -70,9 +68,6 @@ of the work. The work is supplied without warranty. Contributors must preserve
 applicable third-party notices when reusing material; the team's license does
 not replace the terms of dependencies or other third-party content.
 
-% Integration (#13): confirm this license is consistent with the final
-% confidentiality and IP statements; those sections remain with their owner.
-
 \section{Team Meeting Plan}
 
 \label{sec:meeting-plan}
@@ -86,7 +81,7 @@ the current deliverables. Physical locations are not published in this plan.
 Agreed changes or cancellations are recorded in the meeting issue and the
 invitation, with prompt notification through WhatsApp.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \caption{Recurring meetings}
 \label{tab:meeting-schedule}
 \small
@@ -97,7 +92,7 @@ invitation, with prompt notification through WhatsApp.
 Team planning & Tuesday, 5:00 p.m. & Plan upcoming work, allocate tasks,
 and review dependencies.\\
 \addlinespace
-Team status & Saturday, noon & Review each member's progress and blockers.\\
+Team status & Saturday, 12:00 p.m. & Review each member's progress and blockers.\\
 \addlinespace
 Team review & Sunday, 10:00 a.m. & Finalize and review the week's work.\\
 \addlinespace
@@ -107,7 +102,7 @@ questions, concerns, and feedback.\\
 \end{tabularx}
 \end{table}
 
-The \textbf{Product Manager} chairs meetings and posts an agenda in the
+The \textbf{Project Manager} chairs meetings and posts an agenda in the
 relevant GitHub meeting issue at least 24 hours beforehand. Members review
 the agenda and update their assigned issues before attending. The meeting
 begins with progress and blockers, proceeds through the agenda and decisions,
@@ -127,11 +122,6 @@ possible. An absent member reviews the notes and confirms assigned actions
 within 24 hours of the notes becoming available, unless an emergency prevents
 this; the team then agrees on a recovery time.
 
-% Integration (#15/#16): latest instructions require Product Manager and an
-% unnamed designated notetaker. Ahmed's draft uses Project Manager and names
-% Moustafa; his existing reflection also names Moustafa. Reconcile with the
-% affected authors during integration without overwriting their sections.
-
 \section{Team Communication Plan}
 
 Table~\ref{tab:communication-tools} assigns each communication tool a clear
@@ -140,7 +130,7 @@ conversation records its decision, rationale, and resulting tasks in the
 relevant issue within 24 hours. Repository deliverables remain version
 controlled; files shared in Teams supplement that record.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \caption{Communication tools and responsibilities}
 \label{tab:communication-tools}
 \small
@@ -190,14 +180,18 @@ The workflow below applies to code, documentation, and repository maintenance.
 Authors own their changes through review and closure; reviewers check both
 the completion criteria and the evidence supplied.
 
-\Needspace{14\baselineskip}
 \subsection{Git Branches, Commits, and Review}
 
-Use \texttt{main} as the integration branch and short-lived issue branches:
+The planned workflow uses short-lived issue branches, \texttt{development}
+for integration, and \texttt{main} for stable versions. The
+\texttt{development} branch has not yet been created; current documentation
+PRs, including this contribution, target \texttt{main}. Creating the branch,
+aligning the README instructions, and configuring its checks and protection
+are follow-up repository work. Once it is available, use this workflow:
 
 \begin{enumerate}
   \item Select an assigned GitHub issue with clear completion criteria.
-  Update local \texttt{main} from the remote, then create a branch using
+  Update local \texttt{development} from the remote, then create a branch using
   this pattern:
   \begin{quote}
     \texttt{<type>/<issue-number>-<short-description>}
@@ -208,14 +202,26 @@ Use \texttt{main} as the integration branch and short-lived issue branches:
   commit format below and include the issue reference. Keep unrelated changes
   in separate issues and branches.
   \item Run checks relevant to the change and inspect the results. Push the
-  branch and open a pull request (PR) against \texttt{main}. Include the
+  branch and open a pull request (PR) against \texttt{development}. Include the
   evidence needed to review it and move the issue to \emph{In review}.
   \item Address feedback, obtain at least one teammate's approval, and
   resolve review conversations. All applicable checks must pass. Substantive
   changes after approval require renewed review before merging.
-  \item Merge using \textbf{Create a merge commit}. Confirm that the merged
-  result satisfies the issue, close completed issues with a link to the PR or
-  commit, update the board, and delete the merged branch.
+  \item Merge into \texttt{development} using \textbf{Create a merge commit}.
+  Confirm the issue's completion criteria, update the board, and delete the
+  merged issue branch. Close work completed at this stage manually with a
+  link to its PR; work requiring stable integration remains open.
+  \item The affected contributors verify their combined changes on
+  \texttt{development}, including applicable integration checks and manual
+  user-flow or document review. Fix integration failures through reviewed
+  issue branches before promoting the result.
+  \item When integration is verified, open a PR from \texttt{development}
+  to \texttt{main} with the included issues and validation evidence. Obtain
+  at least one approving teammate other than the author, pass all applicable
+  checks, and resolve review conversations. Substantive changes require
+  renewed review. Merge using \textbf{Create a merge commit}, verify the
+  stable result, and close the remaining completed issues. Keep the
+  \texttt{development} branch for the next integration cycle.
 \end{enumerate}
 
 Allowed commit types are \texttt{feat}, \texttt{fix}, \texttt{docs},
@@ -223,11 +229,9 @@ Allowed commit types are \texttt{feat}, \texttt{fix}, \texttt{docs},
 \texttt{ci}, and \texttt{chore}. Use this format:
 
 \begin{verbatim}
-<type>: <short action describing the change>
+<type>: <short action describing the change> (#<issue-number>)
 
 <optional explanation of why the change was needed>
-
-Refs #<issue-number>
 \end{verbatim}
 
 The PR title summarizes the ticket and includes its issue number. Its
@@ -235,7 +239,10 @@ description explains what changed and why, supplies validation evidence
 (checks run, document review, screenshots, or preview links as applicable),
 links the relevant issues, and identifies outstanding work. Use
 \texttt{Closes \#<issue-number>} only when the entire issue is satisfied; otherwise use
-\texttt{Refs \#<issue-number>}. The approving teammate must be someone other than the
+\texttt{Refs \#<issue-number>}. GitHub's automatic issue closure applies when
+the closing PR merges into the default branch, \texttt{main}; close an issue
+manually if its completion criteria are fully satisfied on \texttt{development}.
+The approving teammate must be someone other than the
 author. Documentation reviewers use the
 \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/DevPlan-Checklist.tex}
 {Development Plan Checklist} and
@@ -245,9 +252,10 @@ author. Documentation reviewers use the
 Merge commits preserve individual commits and attribution. Squash merging
 and history rewriting on shared branches are prohibited by team policy.
 To resolve integration conflicts, coordinate with affected contributors,
-merge the current \texttt{main} into the issue branch, resolve conflicts,
-and rerun relevant checks. Correct mistakes already merged through a reviewed
-revert or corrective PR.
+merge the current target branch into the source branch, resolve conflicts,
+and rerun relevant checks. This means merging \texttt{development} into an
+issue branch, or \texttt{main} into \texttt{development} for a promotion PR.
+Correct mistakes already merged through a reviewed revert or corrective PR.
 
 For each submitted version, the milestone Quality Assurance (QA) coordinator
 checks the generated PDF and identifies the exact submitted commit with an
@@ -265,7 +273,7 @@ context, completion criteria, an accountable assignee, labels, dependencies
 applicable milestone. Bug reports also include reproduction steps and
 expected versus actual behaviour.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \caption{Existing issue templates}
 \label{tab:issue-templates}
 \small
@@ -289,11 +297,16 @@ Peer Review & Feedback from another team about a specific artifact.\\
 \end{table}
 
 Apply labels from Table~\ref{tab:issue-labels} to make work easy to find.
+When creating an issue, select exactly one priority label alongside the
+other applicable labels: \texttt{High Priority} for urgent tasks,
+\texttt{Medium Priority} for current deliverable tasks, or
+\texttt{Low Priority} for future deliverable tasks. Update that label when
+the task's urgency or planned deliverable changes.
 The \texttt{meeting} and \texttt{review} labels match the existing templates.
 Disposition labels accompany an explanation when closing an issue, including
 a link to the original issue when marking a duplicate.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \caption{Issue-label categories}
 \label{tab:issue-labels}
 \small
@@ -309,6 +322,9 @@ Coordination and feedback & \texttt{meeting}, \texttt{review},
 \addlinespace
 Assistance & \texttt{help wanted}, \texttt{good first issue}\\
 \addlinespace
+Priority (choose one) & \texttt{High Priority}, \texttt{Medium Priority},
+\texttt{Low Priority}\\
+\addlinespace
 Disposition & \texttt{duplicate}, \texttt{invalid}, \texttt{wontfix}\\
 \bottomrule
 \end{tabularx}
@@ -319,7 +335,7 @@ A meeting issue reaches \emph{Done} after the meeting occurs and its notes
 and actions are recorded. Unfinished substantive actions remain in linked
 task issues, so closing a meeting record does not discard its follow-up work.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \caption{Project-board state rules}
 \label{tab:board-states}
 \small
@@ -343,11 +359,13 @@ or submission is complete.\\
 \end{tabularx}
 \end{table}
 
-Use the existing Priority field: \textbf{P0} identifies blockers threatening
-an imminent deliverable, \textbf{P1} covers current-milestone work, and
-\textbf{P2} covers later work. Size and Estimate are optional initially.
+Priority labels are the issue's authoritative priority record. The project's
+existing Priority field is optional board metadata, separate from issue
+creation. When used, manually keep P0 aligned with \texttt{High Priority},
+P1 with \texttt{Medium Priority}, and P2 with \texttt{Low Priority}; no
+automatic synchronization is configured. Size and Estimate are also optional.
 Record blockers and their dependencies in the issue and raise them promptly
-with the Product Manager; an issue remains in its current state with the
+with the Project Manager; an issue remains in its current state with the
 blocker explained until it can proceed.
 
 \subsection{Continuous Integration and Delivery}
@@ -367,18 +385,23 @@ On pushes to \texttt{main}, it updates committed PDFs and the dependency
 manifest. It also publishes the PDFs through GitHub Pages on non-PR runs,
 including manual dispatch. Compilation checks syntax; authors and reviewers
 must still inspect content, links, and layout.
+Contributors compile PDFs locally for review but do not commit them; the
+workflow updates \texttt{pdfs/} after merging to \texttt{main}. Until then,
+review the local build or the PR's GitHub Actions artifact, rather than
+expecting the committed PDF to contain the proposed source changes.
 
 \subsubsection*{Planned Application Checks}
 When the application scaffold exists, the DevOps Lead will introduce the
 small pipeline in Table~\ref{tab:application-checks}, with the Testing Lead
 coordinating test selection. These checks are planned; the application
 tooling is not yet installed. Authors run applicable checks before review;
-GitHub Actions will run them on PRs to \texttt{main} and after merges.
+GitHub Actions will run them on PRs to \texttt{development} and
+\texttt{main}, and after merges to either branch.
 Committed package scripts and the dependency lockfile will make commands
 reproducible. Validation jobs use read-only permissions; deployment
 permissions are granted only to jobs that need them.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \caption{Planned application validation pipeline}
 \label{tab:application-checks}
 \small
@@ -412,23 +435,24 @@ PR, even when no relevant files changed. GitHub's
 \href{https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax}
 {workflow syntax reference} explains that skipping an entire workflow through
 path filters can leave required checks pending. The DevOps Lead will also
-reconcile direct PDF pushes with mandatory PR protection and restrict
+extend documentation validation to PRs targeting \texttt{development},
+reconcile direct PDF pushes with mandatory PR protection, and restrict
 documentation publishing to the intended branch. These are follow-up CI
 changes, not capabilities claimed for the current workflow.
 
 \subsubsection*{Preview and Production Release Procedure}
 The planned Vercel setup provides automatic previews and manual production
 promotion. Reviewers inspect the preview; a release candidate must build
-successfully from reviewed \texttt{main}. The milestone QA coordinator
+successfully from reviewed \texttt{main} after the integration PR from
+\texttt{development} is approved and merged. The milestone QA coordinator
 verifies applicable automated checks, unresolved defects, and manual checks
 on target touchscreen and stylus hardware before relevant releases. The
-Product Manager authorizes promotion, and the DevOps Lead records the deployed
+Project Manager authorizes promotion, and the DevOps Lead records the deployed
 commit, verification evidence, and release decision in GitHub. After promotion,
 the QA coordinator checks the deployed user flow. If verification fails,
 the DevOps Lead restores the previous working deployment and opens a
 corrective issue linked to the failed release.
 
-\Needspace{8\baselineskip}
 \section{Project Decomposition and Scheduling}
 
 \label{sec:scheduling}
@@ -451,14 +475,15 @@ Members update their issues before meetings. Tuesday planning selects work
 using dependencies, availability, and the Team Charter's approximate
 ten-hour contribution per member per week, including scheduled course
 activities. Account for research, coordination, implementation, and review
-when allocating work. The Product Manager coordinates reallocation when
+when allocating work. The Project Manager coordinates reallocation when
 blockers or uneven workloads threaten the plan.
 
 Use the board's existing views for distinct purposes:
 \begin{itemize}
   \item \textbf{Backlog}: track movement through the work states in
   Table~\ref{tab:board-states}.
-  \item \textbf{Priority board}: triage and select work using P0, P1, and P2.
+  \item \textbf{Priority board}: triage work using the issue's priority label;
+  if the optional P0/P1/P2 field is populated, keep it aligned manually.
   \item \textbf{Team items / My items}: inspect ownership and individual
   workload, including review responsibilities.
   \item \textbf{Roadmap}: inspect start and target dates once those fields
@@ -467,7 +492,7 @@ Use the board's existing views for distinct purposes:
 
 Retain the existing milestone,
 \href{https://github.com/AHMEDELZARIA/squigglr/milestone/1}
-{Problem Statement, POC Plan, Development Plan}. The Product Manager will
+{Problem Statement, POC Plan, Development Plan}. The Project Manager will
 create a milestone for each subsequent major deliverable, including separate
 milestones for distinct deliverables sharing a date, such as the Software
 Requirements Specification (SRS) and Hazard Analysis. Future milestones have
@@ -487,7 +512,7 @@ Table~\ref{tab:course-timeline} follows the
 {course Google Calendar}, checked September 26, 2026, using its teaching-week
 labels and recurrence exceptions. Reading breaks are excluded from week
 numbering. Dates use America/Toronto; all-day entries do not establish a
-submission time. The Product Manager checks calendar changes during weekly
+submission time. The Project Manager checks calendar changes during weekly
 planning and updates affected issues, milestone plans, and this document.
 Confirm submission times from course instructions and record them in issues
 before calculating internal review deadlines.
@@ -495,8 +520,7 @@ before calculating internal review deadlines.
 Proof of Concept (POC) and Verification and Validation (V\&V) activities
 appear alongside document submissions and peer reviews. The proposed custom
 documents are the \emph{Literature Review Report} for fall and the
-\emph{Usability Report} for winter, consistent with
-\href{https://github.com/AHMEDELZARIA/squigglr/pull/36}{PR \#36}. These choices
+\emph{Usability Report} for winter. These choices
 remain proposed until finalized. Demonstration windows are not individual
 appointments; the team's assigned slot will be recorded when available.
 Tentative calendar entries below remain subject to confirmation.
@@ -646,7 +670,6 @@ in your project as important enough to warrant their own section.
 How will your team be using LLMs for code and documentation development?  
 What tools will you be using?  How will you verify the output of your LLMs?}
 
-\clearpage
 \section{Coding Standard}
 
 Squigglr's Next.js/TypeScript standard uses the official Next.js Core Web
@@ -696,12 +719,6 @@ review. The current documentation workflow automates compilation only.
 ESLint and Prettier do not enforce the project's Python, SQL, or \LaTeX{}
 standards; those conventions require review unless dedicated checks are
 introduced later.
-
-% AI disclosure handoff (#13): OpenAI Codex (GPT-6) drafted and revised the six
-% issue #14 sections and LICENSE from the supplied plan. Verification covers
-% repository state, official tool documentation, the expanded course calendar,
-% the course rubric/checklists, compilation, and visual PDF review. Teammate
-% review and cross-contributor integration remain separate acceptance steps.
 
 \newpage{}
 

@@ -2,6 +2,7 @@
 
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{hyperref}
 
 \title{Development Plan\\\progname}
 
@@ -34,6 +35,13 @@ Date2 & Name(s) & Description of changes\\
 \wss{Put your introductory blurb here.  Often the blurb is a brief roadmap of
 what is contained in the report.}
 
+This project development plan contains information relating to confidentiality 
+(IP, copyright), team plans (meeting, communication, roles), contribution 
+(workflow, schedule), proof of concept demonstration, technology and coding
+standards. Generative AI use for this document is disclosed and the appendix 
+contains reflections from each team member and a team charter outlining rules 
+and expectations.
+
 \wss{Additional information on the development plan can be found in the
 \href{https://gitlab.cas.mcmaster.ca/courses/capstone/-/blob/main/Lectures/L02b_POCAndDevPlan/POCAndDevPlan.pdf?ref_type=heads}
 {lecture slides}.}
@@ -46,16 +54,24 @@ place.}
 
 \wss{For most teams this section will just state that there is no confidential
 information to protect.}
+
+There is no confidential information to protect.
+
 \section{IP to Protect}
 
 \wss{State whether there is IP to protect.  If there is, point to the agreement.
 All students who are working on a project that requires an IP agreement are also
 required to sign the ``Intellectual Property Guide Acknowledgement.''}
 
+Intellectual property for this project consists of the code and documentation,
+covered under the copyright agreement below.
+
 \section{Copyright License}
 
 \wss{What copyright license is your team adopting.  Point to the license in your
 repo.}
+
+This project is licensed under the \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/LICENSE}{MIT License}.
 
 \section{Team Meeting Plan}
 
@@ -111,9 +127,72 @@ for deadlines.}
 
 \section{Proof of Concept Demonstration Plan}
 
-What is the main risk, or risks, for the success of your project?  What will you
-demonstrate during your proof of concept demonstration to convince yourself that
-you will be able to overcome this risk?
+\subsection{Main Risks to Project Success}
+
+The following features may be difficult to implement or significantly delay
+project progression:
+
+\begin{itemize}
+\item \textbf{Automatic refinement:} Refining freehand drawings into supported 
+shapes or objects while preserving the child's original drawing. This feature
+becomes subjective for more complex shapes. The program must determine what 
+will be refined and what will remain as it is. 
+\item \textbf{Adaptive difficulty and guidance:} Changing the level of assistance 
+based on performance or repeated difficulty will require significant user testing
+along with trial and error.
+\item \textbf{Browser and device compatibility:} Drawing input and interaction must
+adapt to different screens (tablet, laptop) and input devices (finger, pen).
+\end{itemize}
+
+The most difficult part to implemenet will be automatic refinement of drawings.
+Existing software has line straightening and simple shape correction, but our
+program will need more unique shapes (e.g. stars, arrows, hearts), both 2D and
+isometric projections, all while preserving the child's distinct style. The most 
+difficult part to test will be adaptive difficulty and guidance as it requires 
+multiple rounds of user and acceptance testing to tune.
+
+There won't be libraries that are difficult to configure as the POC will use 
+established drawing libraries like Paper.js. Shape evaluation will most likely 
+be implemented from scratch using standard JavaScript functionality. The solution
+is fairly portable since it is a website that can be opened on any device without
+installation. This is especially suitable for schools where getting downloaded
+software approved is tricky. Implementation and testing will focus on tablets 
+and computers.
+
+\subsection{POC Demonstration and Risks Addressed}
+
+The POC will be a small web-based demonstration containing one structured drawing
+lesson set and a limited creative drawing feature. 
+
+\begin{enumerate}
+\item Open the website in a browser on a laptop.
+\item Select the drawing lesson set (e.g. "Quadrilaterals").
+\item Display guidance level (default starting level) and metrics for demonstration.
+\item \textit{Demonstrate drawing with finger and pen}
+\item \textit{Demonstrate that the website can be opened in a browser on a tablet as well}
+\item Complete the first tracing task (back to laptop).
+\item Display simple feedback for child.
+\item \textit{Show that guidance metrics are updated and calculation behind it}
+\item Continue completing tasks in the lesson set.
+\item \textit{Demonstrate how guidance metrics affect lesson involvement and assistance}
+\item Repeatedly underperform and make mistakes on tasks.
+\item \textit{Demonstrate that repeated difficulty increases assistance.}
+\item Open the creative drawing area and draw a supported simple shape.
+\item Apply automatic refinement and continue editing the refined result.
+\item Restore the original unmodified drawing.
+\item Save the attempt and display the stored attempt information in a basic history view.
+\item \textit{Indicate how history will be used for performance metrics for teachers and parents}
+\end{enumerate}
+
+Opening the website on multiple devices and drawing with a finger and a pen addresses 
+\textbf{browser/device compatibility}.\textbf{Adaptive difficulty and guidance} and 
+\textbf{automatic refinement} are addressed through demonstration of the features.
+
+If the POC fails, our team will meet to discuss further steps. we may turn some goals 
+into stretch goals and drop some features to focus on others. We may also limit the 
+scope of some features, like defining less shapes, replacing automatic refinement with 
+a simpler supported correction (or borrowing from a library), and reducing adaptive 
+behaviour to performance ratings, repeat levels, and a practice mode.
 
 \section{Expected Technology}
 
@@ -156,6 +235,16 @@ in your project as important enough to warrant their own section.
 How will your team be using LLMs for code and documentation development?  
 What tools will you be using?  How will you verify the output of your LLMs?}
 
+Our team will occasionally use LLMs like ChatGPT or Claude for this project.
+For documentation, we may ask the LLM to write an initial draft given context 
+text and then use that to guide our own writing, borrow ideas, or paste portions
+of the text and edit them as necessary. The prompter will verify the text 
+themselves. For coding, we may describe the function we want to the LLM and copy 
+the given code snippet, editing it as necessary. Larger features may be generated
+with AI agents/IDEs like Copilot or Kiro. Visual input can also serve as context,
+either through manual digital drawings or sites like Figma. All issues, 
+documentation and coding, are reviewed by another team member before being merged.
+
 \section{Coding Standard}
 
 \wss{What coding standard will you adopt?}
@@ -169,6 +258,12 @@ What tools will you be using?  How will you verify the output of your LLMs?}
 \wss{This section is about the use of AI to write this document, not your
 planned use of AI for your project.  You discuss that topic in one of the
 sections in the body of this report.}
+
+Team members used LLMs like ChatGPT or Claude for formatting, citation, grammar,
+and improving sentence structure and clarity. Previous sections of our writing
+were given as context to inform the LLM when needed. In some cases, LLMs were 
+used for brainstorming ideas or creating outlines to work off of. All suggested
+text was reviewed and edited.
 
 \subsection{AI Tools Used}
 

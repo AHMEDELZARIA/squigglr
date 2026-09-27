@@ -22,9 +22,7 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+26 September 2026 & Moustafa Moustafa & Added my reflection responses to the appendix.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -257,6 +255,25 @@ the project.
     guides early investigation, while remaining open to revision
     as we learn.
 
+    \textbf{Moustafa Moustafa:}
+
+    A development plan makes it clear who is responsible for what
+    before the work starts. Without one, tasks are unclear and it
+    is easy for someone to say ``I don't want to do this'' with
+    nothing to point back to. When we define roles, who works on
+    what, how we split tasks, and which tools each person uses,
+    it saves a lot of friction later.
+
+    I have learned this from experience. On a previous project, we
+    did not have a well-defined plan, and it came back to haunt us
+    near the end. All three of us got busy with university just as
+    some milestones were due. Nobody wanted to take them on, but
+    someone had to, and the work ended up being split unevenly accross 2 people.
+    With a clear plan, clearly separated tasks, and agreed
+    roles, we could have avoided that situation entirely. That is
+    why I think having the plan in place from the start matters so
+    much for a five-person capstone team.
+
     \item \textbf{In your opinion, what are the advantages and
     disadvantages of using CI/CD?}
 
@@ -298,6 +315,28 @@ the project.
     disproportionate effort on automation before the core
     functionality exists. Human review and device testing would
     remain part of our process.
+
+    \textbf{Moustafa Moustafa:}
+
+    I first saw the real value of CI/CD during my previous co-op. It was
+    my first experience on a large project, and I realized that a
+    codebase of that size could not function without it once more
+    than a few people were contributing. The same applies on a
+    smaller scale to capstone. With five people working in the same
+    repository, we would constantly run into conflicts and broken
+    builds without CI/CD, and it would be hard to tell which change
+    caused a problem. Automated checks on every pull request catch
+    issues early, make it clear which change introduced them, and
+    make it much easier to roll back when something goes wrong.
+
+    The main disadvantage is that it can become a bit of a rabbit hole. Some
+    people keep improving their pipeline, adding more optimizations
+    and tools, until maintaining the CI/CD takes more time than the
+    actual work. There is a balance to find: the pipeline should
+    be good enough to let the team work together safely and recover
+    from mistakes, without being over-engineered. For us, that means
+    keeping CI/CD simple and only adding to it when we actually need
+    to.
 
     \item \textbf{What disagreements did your group have in this
     deliverable, if any, and how did you resolve them?}

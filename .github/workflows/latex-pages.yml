@@ -103,8 +103,17 @@ jobs:
           # pdflatex finds lmodern.sty but not the fonts it maps to, failing
           # with "Font rm-lmr7 at 600 not found".
           sudo updmap-sys >/dev/null
+          # ...and the `bibtex` command itself is only a link to
+          # bibtex.original that postinst creates; the package does not ship
+          # it. Without it the Makefile's bibtex step fails silently and every
+          # citation renders as [?] with no References section.
+          if ! command -v bibtex >/dev/null; then
+            sudo ln -s /usr/bin/bibtex.original /usr/bin/bibtex
+          fi
 
           pdflatex --version | head -1
+          bibtex --version | head -1
+          kpsewhich unsrt.bst
           pandoc --version | head -1
           kpsewhich article.cls
           kpsewhich amsmath.sty

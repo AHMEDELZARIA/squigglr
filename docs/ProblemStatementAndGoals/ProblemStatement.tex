@@ -22,48 +22,156 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+26 September 2026 & Rayan Nasrallah & Added the Problem Statement section,
+covering the problem, inputs and outputs, stakeholders, and environment, with
+supporting references.\\
+26 September 2026 & Rayan Nasrallah & Added the reflection responses to the
+appendix and the generative AI use disclosure.\\
+26 September 2026 & Moustafa Moustafa & Added the Goals and Stretch Goals section.\\
+26 September 2026 & Moustafa Moustafa & Added my reflection responses to appendix.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \section{Problem Statement}
 
-\wss{You should check your problem statement with the
-\href{https://smiths.github.io/capTemplate/Checklists/ProbState-Checklist.pdf}
-{problem statement checklist}}. 
-
-\wss{You can change the section headings, as long as you include the required
-information.}
-
 \subsection{Problem}
 
-\wss{What problem are you trying to solve?  Why is it important? Do not talk
-about how you will solve the problem, only what the problem is.  AI is rarely
-part of the problem.  The problem is ``what'' you want to do, not ``how'' you
-want to do it.  The problem statement should be written in a way that is
-understandable to a non-technical audience.}
+Visual-motor integration is the ability to coordinate visual information with
+movement. Children rely on it when drawing, copying shapes, and learning to
+write. Research links these skills to handwriting legibility and identifies
+motor or handwriting difficulties in some children with
+attention-deficit/hyperactivity disorder (ADHD) or autism [1--3]. The need
+extends from kindergarten and primary school learners to older children who
+require continued support.
+
+Children need opportunities to practise at an appropriate level, understand
+their difficulties, and develop greater independence. Parents and educators
+need to distinguish what a child can do independently from what they accomplish
+with assistance. A finished drawing alone does not provide that distinction.
+Research on structured foundational activities supports the value of practice
+for visual-motor development [4].
+
+There is an opportunity to build a system that supports drawing practice suited
+to individual abilities, provides understandable feedback, and helps children
+and supporting adults track independent progress. The intended outcome is
+improved drawing skills and greater independence, with opportunities for
+creative expression. Supporting adults need access to both individual attempt
+records and understandable summaries of change over time. Clinical diagnosis
+and treatment are outside the project scope.
 
 \subsection{Inputs and Outputs}
 
-\wss{Characterize the problem in terms of ``high level'' inputs and outputs.  
-Use abstraction so that you can avoid details.}
+\subsubsection{Inputs}
+
+\begin{itemize}
+\item Selected drawing activities and support preferences.
+\item Children's drawing attempts during lessons and creative activities.
+\item Editing actions, such as moving, resizing, recolouring, or erasing
+  drawing elements.
+\end{itemize}
+
+\subsubsection{Outputs}
+
+\begin{itemize}
+\item Drawing targets, demonstrations, and guidance appropriate to the activity
+  and support level.
+\item Simple activity feedback and completion results based on predefined
+  observations.
+\item Editable creative artwork, including supported automatic refinements and
+  recoverable original drawings.
+\item Attempt records showing encountered difficulties, changes within an
+  attempt, guidance used, and the final outcome.
+\item Progress summaries showing changes across attempts and recurring
+  difficulties, with access to the supporting records.
+\end{itemize}
 
 \subsection{Stakeholders}
 
+\begin{itemize}
+\item Kindergarten and primary school children.
+\item Children of different ages who need additional support, including
+  children with autism, ADHD, or other developmental or learning differences.
+\item Parents, guardians, and caregivers.
+\item Educators and learning-support staff.
+\item School administrators.
+\item Domain advisers in inclusive education and accessible educational
+  software.
+\item Dr.\ Christopher Anand, project supervisor.
+\end{itemize}
+
 \subsection{Environment}
 
-\wss{Hardware and Software Environment for the users.  The developer environment
-is summarized as part of the developer plan.}
+Users will need access to a supported web browser on a compatible device with a
+display and a supported drawing input. Using the application will not require
+installing a separate application.
 
 \section{Goals}
 
+\subsection{G1. Provide structured practice in lines, shapes, and simple drawings}
+Provide structured opportunities to practice lines, shapes, and simple drawings that 
+involve visual-motor coordination. This goal is achieved when users can complete 
+practice activities covering the agreed foundational skills, receive feedback, and 
+repeat an activity. The team will verify this by completing 
+each activity in the lesson catalogue.
+
+
+\subsection{G2. Enable progression from tracing to drawing without guides}
+Enable learners to progress from tracing to drawing with reduced guidance and eventually
+without guides. This goal is achieved when the application supports this progression
+and restores assistance following repeated difficulty. The team will verify both
+directions using prepared sequences of successful and unsuccessful drawing attempts.
+
+\subsection{G3. Adapt drawing activities to individual guidance and difficulty needs}
+Allow learners with different starting abilities and support needs, including
+children with autism or ADHD, to access suitable practice. This goal is achieved when 
+the same activity can be completed with different guidance and difficulty settings.
+The team will verify that changing these settings produces the intended differences
+in the activity.
+
+
+\subsection{G4. Support free drawing with automatic refinement}
+Allow children to draw freely beyond structured lessons, with automatic assistance
+for supported shapes and simple objects. This goal is achieved when users can create 
+drawings of their choosing, receive automatic refinement, and continue editing the result
+while retaining the ability to restore their unmodified drawing. The team will verify
+this by creating and refining supported drawings in the creative space, then modifying
+and undoing the corrections.
+
+
+\subsection{G5. Record activity attempts and encountered difficulties}
+Help parents and educators understand a child’s progress by recording
+each activity attempt, the guidance provided, difficulties encountered,
+and the final outcome. Difficulties will be captured through predefined observations
+appropriate to the activity, such as missed tracing points or incomplete lines.
+This goal is achieved when attempts can be reviewed and compared without
+losing earlier difficulties or overlooking improvements made within an attempt.
+The team will verify this using prepared attempts with known difficulties and
+outcomes, confirming that the stored records and progress summaries accurately reflect them.
+
+
+\subsection{G6. Help parents and guardians understand their child's progress and practice needs}
+Allow parents and guardians to review their child’s activity history,
+recognise improvements, and identify recurring difficulties that may warrant
+further practice or discussion with an educator. This goal is achieved when
+an authorised adult can access a summary of completed activities, changes
+in performance, and assistance used, and inspect the attempts supporting that
+summary. The team will verify this using prepared histories showing
+improvement, repeated difficulties, and changing support levels, checking 
+that each summary accurately represents the underlying records.
+
 \section{Stretch Goals}
 
-\wss{Goals you hope to get to, but not necessary.  They are also helpful if the
-scope of the original project needs to be expanded.}
+\textbf{Camera-based finger tracing.} Display shapes, tracing guides, and
+start and end points over a live camera view. Children would see themselves
+in the background and trace the guides by moving their finger, offering
+another fun way to practise visually guided movement.
+
+\medskip
+
+\noindent\textbf{Letter tracing and drawing.} Extend the activities to letters,
+allowing children to progress from tracing letter outlines to forming
+letters without guides.
 
 \section{Custom Documents (CDs)}
 
@@ -79,21 +187,202 @@ term).  Approval of the CDs will be part of the discussion with the instructor
 for approving the project. The CDs, with the approval (or request) of the
 instructor, can be modified over the course of the term.}
 
+\textbf{Fall --- Literature Review Report}
+
+We will review contemporary research on drawing practice and its relation to 
+visual-motor development. We will also look the learning and support needs of 
+children, including those with autism or ADHD. The literature review report 
+will compare findings to identify limitations and explain how the evidence 
+informs the application's activities, guidance, and progress tracking.
+
+\textbf{Winter --- Usability Report}
+
+We will evaluate the usability of our drawing activities and parent-facing 
+progress summaries. The report will document evaluation methods and criteria 
+as well as observed difficulties and recommended improvements. Such methods 
+will include team walkthroughs with adult reviewers, not depending on child 
+participation.
+
 \newpage{}
 
 \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
-
 \input{../Reflection.text}
 
 \begin{enumerate}
-    \item What went well while writing this deliverable? 
-    \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-    \item How did you and your team adjust the scope of your goals to ensure
-    they are suitable for a Capstone project (not overly ambitious but also of
-    appropriate complexity for a senior design project)?
-\end{enumerate}  
+
+\item What went well while writing this deliverable?
+
+\textbf{Rayan:} Through my parents, I connected with a specialist who holds a
+doctorate and develops software for children with autism, as well as the head
+of a nonprofit organisation serving people with additional support needs,
+including autism and ADHD. These connections gave us a clearer direction for
+identifying stakeholders who could inform our requirements. They also helped me
+recognise the value of seeking both software-design expertise and experience
+supporting our intended users. We now have potential contacts who can help us
+question our assumptions and understand needs that we might otherwise overlook.
+
+\par\medskip
+\noindent\textbf{Ahmed Elzaria:} What went well was developing a clearer
+connection between our users' needs and the goals of the application.
+I found the distinction between completing a drawing and completing it
+independently particularly useful. A finished drawing can look successful
+without showing how much guidance the child needed. Recording assistance
+and encountered difficulties therefore gives the progress summaries a
+clearer purpose than simply displaying completed artwork.
+
+Working on the Development Plan alongside this document also helped me
+consider whether our proposed approach supported the stated goals. For
+example, automatic refinement should leave children with artwork they
+can continue editing, which affects what we need to investigate in the
+proof of concept. I learned that dividing the documents between team
+members does not remove the need to check their consistency. For future
+milestones, I would make this comparison an explicit review step so that
+our technical plans continue to address the agreed user needs.
+
+\par\medskip
+\textbf{Moustafa:} After the first tutorial in the second week,
+Rayan and I discussed two project ideas with our TA, Chris Schankula.
+Chris provided valuable insights into what we should consider and how
+we could approach the drawing application. He also recommended
+Dr.~Anand as a potential supervisor. This discussion helped us evaluate
+the idea more clearly and gave us the confidence to pursue it. Having
+an early opportunity to discuss the project with someone knowledgeable
+helped establish a direction before we committed further effort to the
+proposal.
+
+\textbf{Muhammad Huzaifah:} Our team connected easily around the high-level
+idea and the problem we wanted to solve. This shared understanding helped us
+align on the problem statement and goals, because we had a common purpose to
+refer back to when discussing what belonged in the document. I found that
+agreeing on the problem first made it easier to discuss goals without getting
+drawn too early into implementation details. My main takeaway is that time
+spent establishing a shared direction makes later decisions more focused and
+helps individual contributions fit together.
+
+\item What pain points did you experience during this deliverable, and how did
+you resolve them?
+
+\textbf{Rayan:} When I first presented our idea to Dr.\ Smith, he explained that
+we needed to justify the need for the application. I realised that describing
+useful features was not enough; we needed evidence supporting the problem we
+wanted to address. I reviewed research on visual-motor development, drawing
+practice, and difficulties experienced by some children with autism or ADHD.
+Comparing these findings helped me connect our proposal to existing work and
+explain the rationale for structured drawing practice. It also clarified the
+distinction between evidence supporting our approach and evidence that our
+particular application will be effective. In future deliverables, I would
+establish the evidence and its limitations earlier so that they guide our scope
+from the beginning.
+
+\par\medskip
+\noindent\textbf{Ahmed Elzaria:} A challenge for me was separating an
+interesting technical feature from a convincing reason to build it.
+Our earlier idea included drawing in the air using a camera, but the
+professor's feedback challenged whether that interaction addressed a
+meaningful need. This made me reconsider how easily enthusiasm for an
+implementation can influence the way we describe the problem.
+
+We responded by focusing the core experience on touchscreen or stylus
+drawing and keeping camera-based interaction as a stretch goal. Our
+supervisor's recommendation to develop a web application also gave us a
+more focused implementation direction. However, choosing a practical
+platform does not establish that the application will benefit its users.
+I see the research supporting the problem and future stakeholder feedback
+as necessary complements to technical feasibility.
+
+Another point that needed clarification was what automatic refinement
+would provide. Returning a separate enhanced image would not meet our
+intention for children to continue editing their drawings. Clarifying
+this distinction helped connect the goal to an observable result.
+In future, I would describe what a user must be able to do after each
+proposed feature before discussing the technology used to build it.
+
+\par\medskip
+\textbf{Moustafa:} We initially struggled to write goals at the
+right level. After discussing them with Chris, we concluded that they
+were too broad, and he emphasised that they needed to be measurable.
+Our first response was to add numerical targets to the existing goals,
+but this felt forced and introduced evaluation expectations that depended
+on testing with children. We then reconsidered what users should actually
+be able to accomplish and wrote new goals with observable completion criteria
+that our team could verify. This helped me understand that a measurable
+goal does not necessarily require a number to be quantifiable; it needs a clear way to
+establish whether the intended outcome has been delivered. I would apply
+that distinction earlier when defining goals for future work.
+
+\textbf{Muhammad Huzaifah:} We had minor disagreements about commit and pull
+request structures and meeting times. Although we agreed on the project idea,
+these discussions showed me that we still had different expectations about
+how to work together. We resolved them by giving everyone an opportunity to
+explain their preferences and constraints, then choosing an approach that the
+majority agreed on. Hearing the reasons behind each view helped us reach a
+practical decision. I learned that agreeing on working conventions early is
+worth the discussion, because small differences can otherwise create repeated
+friction during shared work.
+
+\item How did you and your team adjust the scope of your goals to ensure they
+are suitable for a Capstone project (not overly ambitious but also of
+appropriate complexity for a senior design project)?
+
+\textbf{Team response:} We narrowed the core scope to structured drawing
+practice, progression towards independent drawing, adjustable support, free
+drawing with refinement, attempt recording, and parent-facing progress
+summaries. We moved camera-based tracing and letter activities to stretch goals
+so that they would not distract from completing the core experience. We also
+limited activity feedback to predefined observations, such as missed tracing
+points, rather than personalised generated advice.
+
+We distinguished user goals from supporting requirements such as account
+creation and browser compatibility. We also separated recording individual
+attempts from summarising progress, giving each goal a distinct purpose. Our
+completion checks now use prepared drawing attempts and activity histories that
+the team can evaluate without depending on child participants. These decisions
+keep the project manageable while retaining substantial design work in drawing
+assessment, adaptive guidance, editable artwork, and accurate progress
+reporting.
+
+\end{enumerate}
+
+\section*{Generative AI Use Disclosure}
+
+Our team used OpenAI GPT-6 Astra to improve the presentation of this document.
+We independently developed the project ideas and wrote the initial content
+before using AI. Its role was limited to \LaTeX{} formatting, citation
+formatting, grammar correction, and improvements to sentence structure,
+clarity, and flow. No additional tools or skills were used.
+
+All project ideas and substantive decisions originated with the team. We
+reviewed the suggested edits against our original draft to ensure that they
+preserved our intended meaning and checked the formatted citations against the
+source materials.
+
+\newpage{}
+
+\section*{References}
+\addcontentsline{toc}{section}{References}
+
+\begin{enumerate}
+\item Daly, C. J., Kelley, G. T., and Krauss, A. (2003). Relationship between
+  visual-motor integration and handwriting skills of children in kindergarten:
+  A modified replication study. \emph{American Journal of Occupational
+  Therapy}, 57(4), 459--462. \url{https://doi.org/10.5014/ajot.57.4.459}
+
+\item Kaiser, M.-L., Schoemaker, M. M., Albaret, J.-M., and Geuze, R. H.
+  (2015). What is the evidence of impaired motor skills and motor control among
+  children with attention deficit hyperactivity disorder (ADHD)? Systematic
+  review of the literature. \emph{Research in Developmental Disabilities}, 36,
+  338--357. \url{https://doi.org/10.1016/j.ridd.2014.09.023}
+
+\item Fuentes, C. T., Mostofsky, S. H., and Bastian, A. J. (2009). Children
+  with autism show specific handwriting impairments. \emph{Neurology}, 73(19),
+  1532--1537. \url{https://doi.org/10.1212/WNL.0b013e3181c0d48c}
+
+\item Taverna, L., Tremolada, M., Dozza, L., Zanin Scaratti, R., Domahs, U.,
+  Lallo, C., and Tosetto, B. (2020). Who benefits from an intervention program
+  on foundational skills for handwriting addressed to kindergarten children and
+  first graders? \emph{International Journal of Environmental Research and
+  Public Health}, 17(6), 2166. \url{https://doi.org/10.3390/ijerph17062166}
+\end{enumerate}
 
 \end{document}

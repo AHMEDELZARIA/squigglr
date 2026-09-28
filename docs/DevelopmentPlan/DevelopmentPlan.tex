@@ -2,6 +2,11 @@
 
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{microtype}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
 \title{Development Plan\\\progname}
 
@@ -18,69 +23,142 @@
 
 \begin{table}[hp]
 \caption{Revision History} \label{TblRevisionHistory}
-\begin{tabularx}{\textwidth}{llX}
+\begin{tabularx}{\textwidth}{lP{0.25\textwidth}Y}
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+2026-09-26 & Muhammad \mbox{Huzaifah} (AI-assisted) &
+Issue \#14: specified workflow, coding conventions, scheduling, meetings,
+communication, and MIT licensing.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \newpage{}
 
-\wss{Put your introductory blurb here.  Often the blurb is a brief roadmap of
-what is contained in the report.}
-
-\wss{Additional information on the development plan can be found in the
-\href{https://gitlab.cas.mcmaster.ca/courses/capstone/-/blob/main/Lectures/L02b_POCAndDevPlan/POCAndDevPlan.pdf?ref_type=heads}
-{lecture slides}.}
+This project development plan contains information relating to confidentiality 
+(IP, copyright), team plans (meeting, communication, roles), contribution 
+(workflow, schedule), proof of concept demonstration, technology and coding
+standards. Generative AI use for this document is disclosed and the appendix 
+contains reflections from each team member and a team charter outlining rules 
+and expectations.
 
 \section{Confidential Information?}
 
-\wss{State whether your project has confidential information from industry, or
-not.  If there is confidential information, point to the agreement you have in
-place.}
+There is no confidential information to protect.
 
-\wss{For most teams this section will just state that there is no confidential
-information to protect.}
 \section{IP to Protect}
 
-\wss{State whether there is IP to protect.  If there is, point to the agreement.
-All students who are working on a project that requires an IP agreement are also
-required to sign the ``Intellectual Property Guide Acknowledgement.''}
+Intellectual property for this project consists of the code and documentation,
+covered under the copyright agreement below.
 
 \section{Copyright License}
 
-\wss{What copyright license is your team adopting.  Point to the license in your
-repo.}
+Squigglr adopts the \href{https://opensource.org/license/mit}{MIT License}
+for the team's own work. The complete terms and the copyright notice,
+``Copyright (c) 2026 Squigglr contributors,'' are in the repository's
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/LICENSE}{LICENSE file}.
+MIT permits reuse, modification, distribution, and commercial use, provided
+the copyright and permission notices accompany copies or substantial portions
+of the work. The work is supplied without warranty. Contributors must preserve
+applicable third-party notices when reusing material; the team's license does
+not replace the terms of dependencies or other third-party content.
 
 \section{Team Meeting Plan}
 
-\wss{This section is for meetings between the team members, and meetings between 
-the team and their supervisor/advisor (as appropriate).}
+\label{sec:meeting-plan}
 
-\wss{How often will the team meet? where? when?}
+The weekly meetings in Table~\ref{tab:meeting-schedule} provide planning,
+progress checks, and review time. All times use \textbf{America/Toronto}, so
+the local meeting time remains fixed through daylight-saving changes.
+Virtual meetings use Google Meet; Microsoft Teams holds invitations and
+reservations. The invitation specifies the format and duration, adjusted to
+the current deliverables. Physical locations are not published in this plan.
+Agreed changes or cancellations are recorded in the meeting issue and the
+invitation, with prompt notification through WhatsApp.
 
-\wss{If the meeting is a physical location (not virtual), out of an abundance of
-caution for safety reasons you shouldn't put the location online}
+\begin{table}[!htbp]
+\caption{Recurring meetings}
+\label{tab:meeting-schedule}
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.20\textwidth}P{0.27\textwidth}Y@{}}
+\toprule
+\textbf{Meeting} & \textbf{Recurrence} & \textbf{Primary purpose}\\
+\midrule
+Team planning & Tuesday, 5:00 p.m. & Plan upcoming work, allocate tasks,
+and review dependencies.\\
+\addlinespace
+Team status & Saturday, 12:00 p.m. & Review each member's progress and blockers.\\
+\addlinespace
+Team review & Sunday, 10:00 a.m. & Finalize and review the week's work.\\
+\addlinespace
+Supervisor & Wednesday, 12:30 p.m. & Discuss project updates, deliverable
+questions, concerns, and feedback.\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-\wss{To help schedule meetings, you can use the lecture/tutorial time when we do 
-not have anything else scheduled.}
+The \textbf{Project Manager} chairs meetings and posts an agenda in the
+relevant GitHub meeting issue at least 24 hours beforehand. Members review
+the agenda and update their assigned issues before attending. The meeting
+begins with progress and blockers, proceeds through the agenda and decisions,
+and ends with the chair confirming action owners and deadlines.
 
-\wss{How often will you meet with your supervisor/advisor?  when?  where?}
+The designated notetaker records attendance, decisions, notes, and action items in the
+meeting issue's description within 24 hours after the meeting. Each action
+has an owner and deadline; substantive work receives a linked task issue.
+The chair checks that these records capture the agreed actions before the
+meeting issue is closed.
 
-\wss{Will meetings be virtual?  At least some meetings should likely be
-in-person.}
-
-\wss{How will the meetings be structured?  There should be a chair for all meetings.  
-There should be an agenda for all meetings.}
+If the chair or notetaker is unavailable, the team identifies a substitute
+in the meeting issue before the meeting. Members follow the Team Charter's
+absence and emergency policy: notify the team of predictable absences at
+least 24 hours ahead where possible, and of emergencies as soon as reasonably
+possible. An absent member reviews the notes and confirms assigned actions
+within 24 hours of the notes becoming available, unless an emergency prevents
+this; the team then agrees on a recovery time.
 
 \section{Team Communication Plan}
 
-\wss{Issues on GitHub should be part of your communication plan.}
+Table~\ref{tab:communication-tools} assigns each communication tool a clear
+purpose. GitHub is the canonical record: whoever coordinates a consequential
+conversation records its decision, rationale, and resulting tasks in the
+relevant issue within 24 hours. Repository deliverables remain version
+controlled; files shared in Teams supplement that record.
+
+\begin{table}[!htbp]
+\caption{Communication tools and responsibilities}
+\label{tab:communication-tools}
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.25\textwidth}Y@{}}
+\toprule
+\textbf{Tool} & \textbf{Purpose}\\
+\midrule
+GitHub & Canonical task records, technical decisions, meeting notes,
+code and document history, and reviews.\\
+\addlinespace
+WhatsApp & General conversation, quick coordination, and urgent
+notifications linking to the relevant GitHub issue.\\
+\addlinespace
+Microsoft Teams & File sharing and meeting invitations or reservations.\\
+\addlinespace
+Google Meet & Live virtual meetings.\\
+\addlinespace
+University email & Formal external correspondence through the Team Liaison.
+For the instructor and teaching assistants, put the course code in the subject
+and include the team number and name; contact the instructor by email.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Members acknowledge routine actionable requests within 24 hours. Urgent
+blockers require acknowledgement within four hours counted during
+9:00 a.m.--9:00 p.m.\ EST. For example, an urgent request at
+8:00 p.m.\ is due for acknowledgement by noon the next day. An acknowledgement
+provides an answer or an expected response or action time; it does not promise
+resolution within that window. The sender raises an overdue urgent request
+directly with the chair for coordination or reassignment. Communicated
+unavailability and emergencies follow the Team Charter.
 
 \section{Team Member Roles}
 
@@ -261,29 +339,529 @@ project.
 
 \section{Workflow Plan}
 
-\begin{itemize}
-	\item How will you be using git, including branches, pull request, etc.?
-	\item How will you be managing issues, including template issues, issue
-	classification, etc.?
-  \item Use of CI/CD
-\end{itemize}
+\label{sec:workflow-plan}
+
+GitHub connects each task to its implementation, validation, and review.
+The workflow below applies to code, documentation, and repository maintenance.
+Authors own their changes through review and closure; reviewers check both
+the completion criteria and the evidence supplied.
+
+\subsection{Git Branches, Commits, and Review}
+
+The planned workflow uses short-lived issue branches, \texttt{development}
+for integration, and \texttt{main} for stable versions. The
+\texttt{development} branch has not yet been created; current documentation
+PRs, including this contribution, target \texttt{main}. Creating the branch,
+aligning the README instructions, and configuring its checks and protection
+are follow-up repository work. Once it is available, use this workflow:
+
+\begin{enumerate}
+  \item Select an assigned GitHub issue with clear completion criteria.
+  Update local \texttt{development} from the remote, then create a branch using
+  this pattern:
+  \begin{quote}
+    \texttt{<type>/<issue-number>-<short-description>}
+  \end{quote}
+  For example, use \texttt{docs/14-workflow-process}. Move the issue to
+  \emph{In progress}.
+  \item Make focused commits that preserve each contributor's work. Use the
+  commit format below and include the issue reference. Keep unrelated changes
+  in separate issues and branches.
+  \item Run checks relevant to the change and inspect the results. Push the
+  branch and open a pull request (PR) against \texttt{development}. Include the
+  evidence needed to review it and move the issue to \emph{In review}.
+  \item Address feedback, obtain at least one teammate's approval, and
+  resolve review conversations. All applicable checks must pass. Substantive
+  changes after approval require renewed review before merging.
+  \item Merge into \texttt{development} using \textbf{Create a merge commit}.
+  Confirm the issue's completion criteria, update the board, and delete the
+  merged issue branch. Close work completed at this stage manually with a
+  link to its PR; work requiring stable integration remains open.
+  \item The affected contributors verify their combined changes on
+  \texttt{development}, including applicable integration checks and manual
+  user-flow or document review. Fix integration failures through reviewed
+  issue branches before promoting the result.
+  \item When integration is verified, open a PR from \texttt{development}
+  to \texttt{main} with the included issues and validation evidence. Obtain
+  at least one approving teammate other than the author, pass all applicable
+  checks, and resolve review conversations. Substantive changes require
+  renewed review. Merge using \textbf{Create a merge commit}, verify the
+  stable result, and close the remaining completed issues. Keep the
+  \texttt{development} branch for the next integration cycle.
+\end{enumerate}
+
+Allowed commit types are \texttt{feat}, \texttt{fix}, \texttt{docs},
+\texttt{style}, \texttt{refactor}, \texttt{test}, \texttt{build},
+\texttt{ci}, and \texttt{chore}. Use this format:
+
+\begin{verbatim}
+<type>: <short action describing the change> (#<issue-number>)
+
+<optional explanation of why the change was needed>
+\end{verbatim}
+
+The PR title summarizes the ticket and includes its issue number. Its
+description explains what changed and why, supplies validation evidence
+(checks run, document review, screenshots, or preview links as applicable),
+links the relevant issues, and identifies outstanding work. Use
+\texttt{Closes \#<issue-number>} only when the entire issue is satisfied; otherwise use
+\texttt{Refs \#<issue-number>}. GitHub's automatic issue closure applies when
+the closing PR merges into the default branch, \texttt{main}; close an issue
+manually if its completion criteria are fully satisfied on \texttt{development}.
+The approving teammate must be someone other than the
+author. Documentation reviewers use the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/DevPlan-Checklist.tex}
+{Development Plan Checklist} and
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/Writing-Checklist.tex}
+{Writing Checklist}, as applicable, and inspect the generated PDF.
+
+Merge commits preserve individual commits and attribution. Squash merging
+and history rewriting on shared branches are prohibited by team policy.
+To resolve integration conflicts, coordinate with affected contributors,
+merge the current target branch into the source branch, resolve conflicts,
+and rerun relevant checks. This means merging \texttt{development} into an
+issue branch, or \texttt{main} into \texttt{development} for a promotion PR.
+Correct mistakes already merged through a reviewed revert or corrective PR.
+
+For each submitted version, the milestone Quality Assurance (QA) coordinator
+checks the generated PDF and identifies the exact submitted commit with an
+annotated tag, for example \texttt{submission/dev-plan-2026-09-28}. Record the
+tag and commit in the deliverable's tracking issue. Preserve existing tags;
+use a new revision suffix, such as \texttt{-r2}, for a corrected submission.
+
+\subsection{Issues and Project-Board States}
+
+Use the five existing templates as described in Table~\ref{tab:issue-templates}.
+When none fits, create a blank issue for development, documentation,
+maintenance, or a bug. Every substantive task records its purpose, relevant
+context, completion criteria, an accountable assignee, labels, dependencies
+(or explicitly none), and a target date. Add it to the project board and the
+applicable milestone. Bug reports also include reproduction steps and
+expected versus actual behaviour.
+
+\begin{table}[!htbp]
+\caption{Existing issue templates}
+\label{tab:issue-templates}
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.27\textwidth}Y@{}}
+\toprule
+\textbf{Template} & \textbf{Use}\\
+\midrule
+Lecture & Attendance, lecture topics, questions, and relevant notes.\\
+\addlinespace
+Team Meeting & Team agenda, attendance, decisions, and action items.\\
+\addlinespace
+Supervisor Meeting & Supervisor or stakeholder agenda, questions,
+feedback, and actions.\\
+\addlinespace
+TA Meeting & Teaching Assistant (TA) deliverable feedback, questions,
+attendance, and follow-up work.\\
+\addlinespace
+Peer Review & Feedback from another team about a specific artifact.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Apply labels from Table~\ref{tab:issue-labels} to make work easy to find.
+When creating an issue, select exactly one priority label alongside the
+other applicable labels: \texttt{High Priority} for urgent tasks,
+\texttt{Medium Priority} for current deliverable tasks, or
+\texttt{Low Priority} for future deliverable tasks. Update that label when
+the task's urgency or planned deliverable changes.
+The \texttt{meeting} and \texttt{review} labels match the existing templates.
+Disposition labels accompany an explanation when closing an issue, including
+a link to the original issue when marking a duplicate.
+
+\begin{table}[!htbp]
+\caption{Issue-label categories}
+\label{tab:issue-labels}
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.28\textwidth}Y@{}}
+\toprule
+\textbf{Category} & \textbf{Labels}\\
+\midrule
+Work classification & \texttt{bug}, \texttt{fix}, \texttt{enhancement},
+\texttt{documentation}, \texttt{repo-maintenance}, \texttt{accessibility}\\
+\addlinespace
+Coordination and feedback & \texttt{meeting}, \texttt{review},
+\texttt{question}\\
+\addlinespace
+Assistance & \texttt{help wanted}, \texttt{good first issue}\\
+\addlinespace
+Priority (choose one) & \texttt{High Priority}, \texttt{Medium Priority},
+\texttt{Low Priority}\\
+\addlinespace
+Disposition & \texttt{duplicate}, \texttt{invalid}, \texttt{wontfix}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The assignee maintains the board state using Table~\ref{tab:board-states}.
+A meeting issue reaches \emph{Done} after the meeting occurs and its notes
+and actions are recorded. Unfinished substantive actions remain in linked
+task issues, so closing a meeting record does not discard its follow-up work.
+
+\begin{table}[!htbp]
+\caption{Project-board state rules}
+\label{tab:board-states}
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.22\textwidth}Y@{}}
+\toprule
+\textbf{Column} & \textbf{Entry or completion rule}\\
+\midrule
+Backlog & Identified work still needs clarification, prioritization,
+or scheduling.\\
+\addlinespace
+Ready & Completion criteria are clear, dependencies are understood,
+and work is ready to be assigned or started.\\
+\addlinespace
+In progress & An assignee is actively doing the work.\\
+\addlinespace
+In review & Reviewable work and validation evidence are available.\\
+\addlinespace
+Done & Completion criteria are satisfied and required review, merge,
+or submission is complete.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Priority labels are the issue's authoritative priority record. The project's
+existing Priority field is optional board metadata, separate from issue
+creation. When used, manually keep P0 aligned with \texttt{High Priority},
+P1 with \texttt{Medium Priority}, and P2 with \texttt{Low Priority}; no
+automatic synchronization is configured. Size and Estimate are also optional.
+Record blockers and their dependencies in the issue and raise them promptly
+with the Project Manager; an issue remains in its current state with the
+blocker explained until it can proceed.
+
+\subsection{Continuous Integration and Delivery}
+\label{sec:ci-plan}
+
+Continuous Integration (CI) checks proposed changes; Continuous Delivery
+(CD) prepares a reviewed candidate for an authorized release. Existing
+automation and planned application checks are distinguished below.
+
+\subsubsection*{Existing Documentation Automation}
+The repository's
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/.github/workflows/latex-pages.yml}
+{\texttt{latex-pages.yml}} builds affected documentation on relevant PRs
+targeting \texttt{main} and pushes to \texttt{main}. Its path filters cover
+documentation, references, the Makefile, and documentation automation.
+On pushes to \texttt{main}, it updates committed PDFs and the dependency
+manifest. It also publishes the PDFs through GitHub Pages on non-PR runs,
+including manual dispatch. Compilation checks syntax; authors and reviewers
+must still inspect content, links, and layout.
+Contributors compile PDFs locally for review but do not commit them; the
+workflow updates \texttt{pdfs/} after merging to \texttt{main}. Until then,
+review the local build or the PR's GitHub Actions artifact, rather than
+expecting the committed PDF to contain the proposed source changes.
+Before accepting a documentation check, confirm that its log lists the
+changed document as compiled and that its PDF artifact matches the reviewed
+source. A successful status alone is insufficient if the run reused a
+cached PDF without rebuilding the changed document.
+
+\subsubsection*{Planned Application Checks}
+When the application scaffold exists, the DevOps Lead will introduce the
+small pipeline in Table~\ref{tab:application-checks}, with the Testing Lead
+coordinating test selection. These checks are planned; the application
+tooling is not yet installed. Authors run applicable checks before review;
+GitHub Actions will run them on PRs to \texttt{development} and
+\texttt{main}, and after merges to either branch.
+Committed package scripts and the dependency lockfile will make commands
+reproducible. Validation jobs use read-only permissions; deployment
+permissions are granted only to jobs that need them.
+
+\begin{table}[!htbp]
+\caption{Planned application validation pipeline}
+\label{tab:application-checks}
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.27\textwidth}Y@{}}
+\toprule
+\textbf{Check} & \textbf{Tool and purpose}\\
+\midrule
+Formatting & Prettier check mode detects formatting differences.\\
+\addlinespace
+Lint & ESLint checks Next.js and TypeScript rules.\\
+\addlinespace
+Type checking & TypeScript strict checking detects type errors.\\
+\addlinespace
+Unit/component tests & Vitest and React Testing Library check logic
+and component behaviour.\\
+\addlinespace
+Coverage report & \texttt{@vitest/coverage-v8} highlights untested code;
+reviewers interpret coverage alongside test quality.\\
+\addlinespace
+Build & A Next.js production build checks application integration.\\
+\addlinespace
+Browser smoke tests & Playwright checks a complete user flow once one
+exists; expand checks as flows become available.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Keep documentation compilation separate from application checks. The
+follow-up implementation must ensure that required checks complete on every
+PR, even when no relevant files changed. GitHub's
+\href{https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax}
+{workflow syntax reference} explains that skipping an entire workflow through
+path filters can leave required checks pending. The DevOps Lead will also
+extend documentation validation to PRs targeting \texttt{development},
+reconcile direct PDF pushes with mandatory PR protection, and restrict
+documentation publishing to the intended branch. Change detection must
+also fail visibly if its comparison commit is unavailable after a force-push,
+instead of treating the failure as an empty change list. These are follow-up CI
+changes, not capabilities claimed for the current workflow.
+
+\subsubsection*{Preview and Production Release Procedure}
+The planned Vercel setup provides automatic previews and manual production
+promotion. Reviewers inspect the preview; a release candidate must build
+successfully from reviewed \texttt{main} after the integration PR from
+\texttt{development} is approved and merged. The milestone QA coordinator
+verifies applicable automated checks, unresolved defects, and manual checks
+on target touchscreen and stylus hardware before relevant releases. The
+Project Manager authorizes promotion, and the DevOps Lead records the deployed
+commit, verification evidence, and release decision in GitHub. After promotion,
+the QA coordinator checks the deployed user flow. If verification fails,
+the DevOps Lead restores the previous working deployment and opens a
+corrective issue linked to the failed release.
 
 \section{Project Decomposition and Scheduling}
 
+\label{sec:scheduling}
+
+The \href{https://github.com/AHMEDELZARIA/squigglr}{Squigglr repository}
+holds project artifacts and their history. The
+\href{https://github.com/users/AHMEDELZARIA/projects/4}
+{Squigglr Project Kanban Board} connects issues, ownership, priorities,
+milestones, and dates to the workflow in Section~\ref{sec:workflow-plan}.
+
+\subsection{Decomposition and Weekly Planning}
+
+Break each deliverable into manageable issues with an owner, completion
+criteria, dependencies, and a target date. Use parent and sub-issues where
+they clarify a larger deliverable; identify an integration owner when work
+spans contributors. Supporting tasks retain their own deadlines rather than
+inheriting only the final submission date.
+
+Members update their issues before meetings. Tuesday planning selects work
+using dependencies, availability, and the Team Charter's approximate
+ten-hour contribution per member per week, including scheduled course
+activities. Account for research, coordination, implementation, and review
+when allocating work. The Project Manager coordinates reallocation when
+blockers or uneven workloads threaten the plan.
+
+Use the board's existing views for distinct purposes:
 \begin{itemize}
-  \item How will you be using GitHub projects?
-  \item Include a link to your GitHub project
+  \item \textbf{Backlog}: track movement through the work states in
+  Table~\ref{tab:board-states}.
+  \item \textbf{Priority board}: triage work using the issue's priority label;
+  if the optional P0/P1/P2 field is populated, keep it aligned manually.
+  \item \textbf{Team items / My items}: inspect ownership and individual
+  workload, including review responsibilities.
+  \item \textbf{Roadmap}: inspect start and target dates once those fields
+  are populated.
 \end{itemize}
 
-\wss{How will the project be scheduled?  This is the big picture schedule, not
-details. You will need to reproduce information that is in the course outline
-for deadlines.}
+Retain the existing milestone,
+\href{https://github.com/AHMEDELZARIA/squigglr/milestone/1}
+{Problem Statement, POC Plan, Development Plan}. The Project Manager will
+create a milestone for each subsequent major deliverable, including separate
+milestones for distinct deliverables sharing a date, such as the Software
+Requirements Specification (SRS) and Hazard Analysis. Future milestones have
+yet to be created. Link supporting tasks, reviews, and integration work to
+their applicable milestone.
+
+Aim for review-ready contributions at least \textbf{48 hours before each
+course deadline}, leaving time for integration and corrections. The team
+must record agreed exceptions before the existing internal deadline passes.
+The milestone QA coordinator tracks checklist review and unresolved findings;
+another teammate reviews the coordinator's own work before submission.
+
+\subsection{Course Timeline and Schedule Maintenance}
+
+Table~\ref{tab:course-timeline} follows the
+\href{https://calendar.google.com/calendar/u/0/embed?src=rnboqiaki1k2la7rpu3bn0um58@group.calendar.google.com&ctz=America/Toronto}
+{course Google Calendar}, checked September 26, 2026, using its teaching-week
+labels and recurrence exceptions. Reading breaks are excluded from week
+numbering. Dates use America/Toronto; all-day entries do not establish a
+submission time. The Project Manager checks calendar changes during weekly
+planning and updates affected issues, milestone plans, and this document.
+Confirm submission times from course instructions and record them in issues
+before calculating internal review deadlines.
+
+Proof of Concept (POC) and Verification and Validation (V\&V) activities
+appear alongside document submissions and peer reviews. The proposed custom
+documents are the \emph{Literature Review Report} for fall and the
+\emph{Usability Report} for winter. These choices
+remain proposed until finalized. Demonstration windows are not individual
+appointments; the team's assigned slot will be recorded when available.
+Tentative calendar entries below remain subject to confirmation.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.12}
+\begin{longtable}{@{}P{0.10\textwidth}P{0.25\textwidth}
+  P{\dimexpr0.65\textwidth-4\tabcolsep\relax}@{}}
+\caption{Course deliverables and required activities, 2026--2027}
+\label{tab:course-timeline}\\
+\toprule
+\textbf{Week} & \textbf{Date} & \textbf{Deliverable or required activity}\\
+\midrule
+\endfirsthead
+\multicolumn{3}{l}{\tablename\ \thetable{}: Course timeline (continued)}\\
+\toprule
+\textbf{Week} & \textbf{Date} & \textbf{Deliverable or required activity}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+2 & Sept.\ 18, 2026 & Team formation, project selection, and approved
+onboarding.\\
+\addlinespace
+3 & Sept.\ 22 & Biosheets.\\
+\addlinespace
+3 & Sept.\ 23 & Informal Problem Statement/Development Plan review.\\
+\addlinespace
+3 & Sept.\ 25 & Peer-review assignment requests.\\
+\addlinespace
+4 & Sept.\ 28 & Problem Statement and Goals, POC Plan, Development Plan,
+and Team Charter.\\
+\addlinespace
+4 & Oct.\ 1 & Peer review of initial planning documents.\\
+\addlinespace
+5 & Oct.\ 7 & Informal SRS and Hazard Analysis presentation.\\
+\addlinespace
+6 & Oct.\ 19 & SRS and Hazard Analysis.\\
+\addlinespace
+6 & Oct.\ 22 & SRS peer-review issues.\\
+\addlinespace
+7 & Oct.\ 28 & Informal V\&V and POC planning presentation.\\
+\addlinespace
+8 & Nov.\ 2 & V\&V Plan.\\
+\addlinespace
+8 & Nov.\ 5 & V\&V peer review and POC scheduling requests.\\
+\addlinespace
+9 & Nov.\ 11 & Informal Design Revision $-1$ / POC discussion.\\
+\addlinespace
+10 & Nov.\ 16 & Design Revision $-1$ and fall custom document
+(proposed Literature Review Report).\\
+\addlinespace
+10 & Nov.\ 19 & Design peer review; POC contribution survey and
+productivity report.\\
+\addlinespace
+11--12 & Nov.\ 23--Dec.\ 4 & POC demonstration window; individual slot
+assigned later.\\
+\addlinespace
+13 & Dec.\ 9 & Code-review interviews.\\
+\addlinespace
+15 & Jan.\ 12, 2027 & Informal design-document review.\\
+\addlinespace
+16 & Jan.\ 18 & Design documentation; Rev 0 scheduling requests.\\
+\addlinespace
+16 & Jan.\ 21 & Peer module implementation.\\
+\addlinespace
+17 & Jan.\ 25 & Peer module reflection.\\
+\addlinespace
+17 & Jan.\ 27 & EXPO registration (tentative).\\
+\addlinespace
+17 & Jan.\ 29 & Rev 0 contribution survey and productivity report.\\
+\addlinespace
+18--19 & Feb.\ 1--11 & Scheduled Rev 0 presentation sessions.\\
+\addlinespace
+20 & Feb.\ 23 & Code-review interviews.\\
+\addlinespace
+21 & Mar.\ 1 & Final-demo scheduling requests.\\
+\addlinespace
+21 & Mar.\ 2 & Informal V\&V Report and winter custom-document review.\\
+\addlinespace
+22 & Mar.\ 8 & V\&V Report and winter custom document
+(proposed Usability Report).\\
+\addlinespace
+22 & Mar.\ 11 & V\&V/winter custom-document peer review.\\
+\addlinespace
+23 & Mar.\ 15--21 & Final demonstration sessions.\\
+\addlinespace
+23 & Mar.\ 18 & Rev 1 contribution survey and productivity report.\\
+\addlinespace
+25 & Mar.\ 31 & Final documentation; poster and video deadlines
+remain tentative.\\
+\addlinespace
+26 & Apr.\ 6 & EXPO (tentative date/time).\\
+\addlinespace
+26 & Apr.\ 7 & Course evaluation (tentative).\\
+\end{longtable}
+\endgroup
 
 \section{Proof of Concept Demonstration Plan}
 
-What is the main risk, or risks, for the success of your project?  What will you
-demonstrate during your proof of concept demonstration to convince yourself that
-you will be able to overcome this risk?
+\subsection{Main Risks to Project Success}
+
+The following features may be difficult to implement or significantly delay
+project progression:
+
+\begin{itemize}
+\item \textbf{Automatic refinement:} Refining freehand drawings into supported 
+shapes or objects while preserving the child's original drawing. This feature
+becomes subjective for more complex shapes. The program must determine what 
+will be refined and what will remain as it is. 
+\item \textbf{Adaptive difficulty and guidance:} Changing the level of assistance 
+based on performance or repeated difficulty will require significant user testing
+along with trial and error.
+\item \textbf{Browser and device compatibility:} Drawing input and interaction must
+adapt to different screens (tablet, laptop) and input devices (finger, pen).
+\end{itemize}
+
+The most difficult part to implement will be automatic refinement of drawings.
+Existing software has line straightening and simple shape correction, but our
+program will need more unique shapes (e.g. stars, arrows, hearts), both 2D and
+isometric projections, all while preserving the child's distinct style. The most 
+difficult part to test will be adaptive difficulty and guidance as it requires 
+multiple rounds of user and acceptance testing to tune.
+
+There most likely won't be any libraries that are overly difficult to configure 
+since the POC will use established drawing libraries like Paper.js. Shape evaluation 
+will most likely be implemented from scratch using standard JavaScript functionality. 
+The solution is fairly portable since it is a website that can be opened on any device 
+without installation. This is especially suitable for schools where getting downloaded
+software approved is tricky. Implementation and testing will focus on tablets and computers.
+
+\subsection{POC Demonstration and Risks Addressed}
+
+The POC will be a small web-based demonstration containing one structured drawing
+lesson set and a limited creative drawing feature. 
+
+\begin{enumerate}
+\item Open the website in a browser on a laptop.
+\item Select the drawing lesson set (e.g. "Quadrilaterals").
+\item Display guidance level (default starting level) and metrics for demonstration.
+\item \textit{Demonstrate drawing with finger and pen}
+\item \textit{Demonstrate that the website can be opened in a browser on a tablet as well}
+\item Complete the first tracing task (back to laptop).
+\item Display simple feedback for child.
+\item \textit{Show that guidance metrics are updated and calculation behind it}
+\item Continue completing tasks in the lesson set.
+\item \textit{Demonstrate how guidance metrics affect lesson involvement and assistance}
+\item Repeatedly underperform and make mistakes on tasks.
+\item \textit{Demonstrate that repeated difficulty increases assistance.}
+\item Open the creative drawing area and draw a supported simple shape.
+\item Apply automatic refinement and continue editing the refined result.
+\item Restore the original unmodified drawing.
+\item Save the attempt and display the stored attempt information in a basic history view.
+\item \textit{Indicate how history will be used for performance metrics for teachers and parents}
+\end{enumerate}
+
+Opening the website on multiple devices and drawing with a finger and a pen addresses 
+\textbf{browser/device compatibility}.\textbf{Adaptive difficulty and guidance} and 
+\textbf{automatic refinement} are addressed through demonstration of the features.
+
+If the POC fails, our team will meet to discuss further steps. we may turn some goals 
+into stretch goals and drop some features to focus on others. We may also limit the 
+scope of some features, like defining less shapes, replacing automatic refinement with 
+a simpler supported correction (or borrowing from a library), and reducing adaptive 
+behaviour to performance ratings, repeat levels, and a practice mode.
 
 \section{Expected Technology}
 
@@ -487,69 +1065,428 @@ the proof-of-concept plan and any changes to the expected technology.
 
 \section{Use of AI and LLMs}
 
-\wss{This section is a continuation of the previous section.  The role of LLMs
-in your project as important enough to warrant their own section.  
-How will your team be using LLMs for code and documentation development?  
-What tools will you be using?  How will you verify the output of your LLMs?}
+Our team will occasionally use LLMs like ChatGPT or Claude for this project.
+For documentation, we may ask the LLM to write an initial draft given context 
+text and then use that to guide our own writing, borrow ideas, or paste portions
+of the text and edit them as necessary. The prompter will verify the text 
+themselves. For coding, we may describe the function we want to the LLM and copy 
+the given code snippet, editing it as necessary. Larger features may be generated
+with AI agents/IDEs like Copilot or Kiro. Visual input can also serve as context,
+either through manual digital drawings or sites like Figma. All issues, 
+documentation and coding, are reviewed by another team member before being merged.
 
 \section{Coding Standard}
 
-\wss{What coding standard will you adopt?}
+Squigglr's Next.js/TypeScript standard uses the official Next.js Core Web
+Vitals and TypeScript ESLint configurations, with Prettier controlling
+formatting. This follows the
+\href{https://nextjs.org/docs/app/api-reference/config/eslint}
+{Next.js ESLint configuration guidance} and matches the planned application
+tools. Application enforcement is planned in Section~\ref{sec:ci-plan};
+these tools are not yet installed.
+
+\subsection{Application Code and Formatting}
+
+Use TypeScript for application logic and TSX files for components containing
+markup, with strict type checking enabled. Use \texttt{camelCase}
+for variables and functions and \texttt{PascalCase} for components and types.
+Choose descriptive names and small, focused functions. Comments explain
+non-obvious decisions, assumptions, or constraints rather than restating
+the code. Exceptional use of \texttt{any} or a lint suppression requires
+a documented justification next to the exception and explicit review.
+
+The planned ESLint configuration combines these rule sets:
+\begin{itemize}
+  \item \texttt{eslint-config-next/core-web-vitals}
+  \item \texttt{eslint-config-next/typescript}
+\end{itemize}
+Use Prettier defaults for supported application and configuration files,
+and \texttt{eslint-config-prettier}
+to avoid conflicting formatting rules. Committed scripts will run ESLint,
+Prettier check mode, and TypeScript strict checking locally and in CI.
+Reviewers check naming, function scope, comments, and justified exceptions;
+automated checks cover only the rules enabled in the committed configuration.
+
+\subsection{SQL, Python, and Documentation}
+
+For authored Structured Query Language (SQL) migrations, use
+\texttt{snake\_case} identifiers and uppercase SQL keywords. The Backend
+Lead and a teammate review schema and access-policy changes for their effect
+on stored data and permitted access. The existing Python automation helpers
+follow \href{https://peps.python.org/pep-0008/}{PEP 8}; reviewers check these
+conventions until dedicated Python linting is introduced.
+
+For \LaTeX{}, follow the course writing conventions and checklists, including
+readable source wrapping, descriptive headings, labelled tables, and
+cross-references. Authors compile changed documents and visually inspect
+their PDFs for layout, links, and unresolved references before requesting
+review. The current documentation workflow automates compilation only.
+ESLint and Prettier do not enforce the project's Python, SQL, or \LaTeX{}
+standards; those conventions require review unless dedicated checks are
+introduced later.
 
 \newpage{}
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
-
-\wss{This section is about the use of AI to write this document, not your
-planned use of AI for your project.  You discuss that topic in one of the
-sections in the body of this report.}
-
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+Anthropic's Claude Opus 5.5 and OpenAI's GPT-6 Astra and GPT-5.6 Luna
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+Team members used LLMs like ChatGPT for formatting, citation, grammar,
+and improving sentence structure and clarity. Previous sections of our writing
+were given as context to inform the LLM when needed. In some cases, LLMs were 
+used for brainstorming ideas or creating outlines to work off of.
 
-\wss{For each of the uses, identify which parts of the document were affected.}
-
-\wss{You do not need to report every interaction, but you should disclose the 
-uses that materially contributed to your work}
+For the Proof of Concept Demonstration Plan section, the AI was asked to generate
+answers to subquestions based on the rubric, and the resulting skeleton was heavily
+edited, paraphrased, deleted from, and added to to make an original text.
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
+All suggested text was reviewed and edited by the prompter and further reviewed
+by a peer as all merge requests must be reviewed by at least one other person.
 
 \newpage{}
 
 \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
-
 \input{../Reflection.text}
 
+
 \begin{enumerate}
-    \item Why is it important to create a development plan prior to starting the
-    project?
-    \item In your opinion, what are the advantages and disadvantages of using
-    CI/CD?
-    \item What disagreements did your group have in this deliverable, if any,
-    and how did you resolve them?
+
+    \item \textbf{Why is it important to create a development plan
+    prior to starting the project?}
+
+    \textbf{Ahmed Elzaria:}
+
+    Creating the development plan helped me recognize that agreeing
+    on a project idea does not automatically mean we agree on how
+    to complete it. A team can share the same goals while having
+    different expectations about responsibilities, deadlines, and
+    acceptable contributions. Discussing these expectations early
+    gives us a common basis for coordinating work and addressing
+    problems before they affect a major deliverable.
+
+    While developing the team roles, I initially considered
+    assigning each person a narrow area of implementation.
+    However, I realized that this could restrict members'
+    learning and create dependence on individuals. Making every
+    responsibility shared introduced the opposite problem:
+    accountability became unclear. The approach I settled on
+    combines named leads with shared development duties and
+    explicit task ownership. This showed me that planning
+    involves balancing competing needs, rather than simply
+    dividing a list of tasks.
+
+    The technology discussion also demonstrated the value of
+    planning. Clarifying that enhanced drawings should remain
+    editable changed what we needed from the implementation:
+    returning a generated image would not satisfy that
+    expectation. Identifying this distinction early helped
+    expose a feasibility question before investing in an
+    unsuitable approach. I therefore see the development plan
+    as a starting point that makes assumptions visible and
+    guides early investigation, while remaining open to revision
+    as we learn.
+
+    \textbf{Moustafa Moustafa:}
+
+    A development plan makes it clear who is responsible for what
+    before the work starts. Without one, tasks are unclear and it
+    is easy for someone to say ``I don't want to do this'' with
+    nothing to point back to. When we define roles, who works on
+    what, how we split tasks, and which tools each person uses,
+    it saves a lot of friction later.
+
+    I have learned this from experience. On a previous project, we
+    did not have a well-defined plan, and it came back to haunt us
+    near the end. All three of us got busy with university just as
+    some milestones were due. Nobody wanted to take them on, but
+    someone had to, and the work ended up being split unevenly accross 2 people.
+    With a clear plan, clearly separated tasks, and agreed
+    roles, we could have avoided that situation entirely. That is
+    why I think having the plan in place from the start matters so
+    much for a five-person capstone team.
+
+    \textbf{Rayan Nasrallah:}
+
+    The benefit I found clearest was being made to sketch the
+    technical implementation at a high level, because doing so
+    exposed what we did not yet know how to build. Committing to a
+    rough shape for the system forced questions that a feature list
+    never raises on its own.
+    Our discussion about keeping refined drawings editable is a good
+    example: the requirement sounds straightforward until you
+    consider the implementation, at which point returning a
+    generated image clearly fails to satisfy it. Identifying that
+    early gives us time to investigate, rather than discovering the
+    problem once work depends on the wrong approach.
+
+    These feasibility questions feed directly into scope, which
+    matters more here than it would on an open-ended project. We
+    have two semesters, five members, and a fixed set of deliverables
+    alongside the implementation, so the amount of work a feature
+    requires is as important as how valuable it is. Thinking this
+    through in advance is what let us treat structured practice,
+    adaptive guidance, and progress reporting as core work while
+    moving camera-based tracing and letter activities to stretch
+    goals. Without estimating the effort first, that judgement would
+    have been guesswork.
+
+    I also think there is a real difference between discussing these
+    decisions and writing them down. Discussion can produce the
+    feeling of agreement while members leave with different
+    understandings of what was decided, and writing forces the
+    vagueness to surface. The written plan also gives us a concrete
+    reference to revise. I do expect parts of it to prove wrong once
+    implementation begins, since we are planning around technology
+    we have not used yet, so I see its value less in being accurate
+    and more in making our assumptions explicit enough to correct.
+
+    \textbf{Muhammad Huzaifah:}
+
+    I see the development plan as a way to establish a shared high-level
+    vision before moving into detailed implementation. Agreeing early on
+    responsibilities, workflows, testing, and scheduling helps us understand
+    how our individual contributions fit together and avoids conflicting
+    assumptions. Recording these decisions and their reasons also gives us
+    traceability: when we revise an approach, we can explain what changed
+    and why. For me, the value is in making informed decisions early while
+    keeping them open to revision as we learn. This gives the team a common
+    starting point without treating the initial plan as fixed.
+
+    Our discussions about commit and pull request conventions made this
+    practical for me. We shared the same project goals but had different
+    expectations about how contributions should be recorded and reviewed.
+    Agreeing on these conventions showed me why working expectations need
+    to be explicit early, so that differences do not repeatedly interrupt
+    implementation later.
+
+    \textbf{Shamil Canbolat:}
+
+    Every team members goes into a project with different underlying 
+    assumptions. If these are not expressed, discussed, compromised, and 
+    agreed upon by the whole group before the project starts, problems
+    in development will occur down the line. For example, meeting schedules 
+    ensures that team members can frequently check in for accountability 
+    and clearing up confusion while defining roles makes it clear what 
+    exactly each person is accountable for.
+
+    It was very beneficial for our project that we outlined communication
+    rules, workflow, and expected technology. Github has many features 
+    and we needed a standard of using them for consistency and to minimize
+    confusion. Our workflow for creating issues, generating PDFs, and 
+    reviewing merge requests makes things run very smoothly. In addition,
+    defining technology is important because in a group setting, people 
+    have diverse backgrounds and may not all be familiar with the same 
+    tools, framworks, or libraries.
+
+    Overall, deciding on the structure of a project beforehand makes sure 
+    that incorrect development methods are addressed early on. Such problems 
+    like bad coding standards or suboptimal documentation could affect
+    traceability efficiency.
+
+    \item \textbf{In your opinion, what are the advantages and
+    disadvantages of using CI/CD?}
+
+    \textbf{Ahmed Elzaria:}
+
+    I see the main advantage of Continuous Integration (CI) as
+    giving the team consistent feedback whenever changes are
+    proposed. With five members contributing, relying on each
+    person to remember and reproduce every check would make
+    mistakes easier to miss. Automated builds, linting, and tests
+    can identify problems while the relevant change is still
+    small and easier to investigate. For our documentation, an
+    automated \LaTeX{} build can also reveal compilation errors
+    before submission.
+
+    Continuous Delivery or Deployment (CD) extends this process.
+    Continuous delivery keeps changes ready for release, while
+    continuous deployment automatically releases changes that
+    pass the required checks. For Squigglr, preview deployments
+    would make it easier for teammates to review an interface
+    change and try it on a tablet. However, passing automated
+    checks should not be treated as proof that a change is ready
+    for users. Drawing responsiveness and stylus behaviour still
+    need evaluation on actual devices, and a successful document
+    build does not establish that its content satisfies the
+    rubric.
+
+    The main disadvantages are the effort required to configure
+    and maintain the workflows, the time spent investigating
+    failed runs, and the risk of trusting incomplete tests too
+    much. A pipeline can pass while important behaviour remains
+    untested. For example, a scoring function could produce
+    consistently incorrect results if its tests use the same
+    mistaken assumptions as its implementation.
+
+    Given our timeline, I favour introducing a small set of useful
+    checks first and expanding them as the application develops.
+    This would allow us to gain early feedback without spending
+    disproportionate effort on automation before the core
+    functionality exists. Human review and device testing would
+    remain part of our process.
+
+    \textbf{Moustafa Moustafa:}
+
+    I first saw the real value of CI/CD during my previous co-op. It was
+    my first experience on a large project, and I realized that a
+    codebase of that size could not function without it once more
+    than a few people were contributing. The same applies on a
+    smaller scale to capstone. With five people working in the same
+    repository, we would constantly run into conflicts and broken
+    builds without CI/CD, and it would be hard to tell which change
+    caused a problem. Automated checks on every pull request catch
+    issues early, make it clear which change introduced them, and
+    make it much easier to roll back when something goes wrong.
+
+    The main disadvantage is that it can become a bit of a rabbit hole. Some
+    people keep improving their pipeline, adding more optimizations
+    and tools, until maintaining the CI/CD takes more time than the
+    actual work. There is a balance to find: the pipeline should
+    be good enough to let the team work together safely and recover
+    from mistakes, without being over-engineered. For us, that means
+    keeping CI/CD simple and only adding to it when we actually need
+    to.
+
+    \textbf{Rayan Nasrallah:}
+
+    Continuous Integration means merging our work into the shared
+    branch frequently, with automated checks running on it each
+    time, instead of integrating large amounts of work at once.
+    Continuous Delivery keeps every change that passes those checks
+    ready to release, while continuous deployment releases it
+    without waiting for a person. Our repository already does all
+    of this for documentation: a GitHub Actions workflow determines
+    which documents a change affects, compiles them, commits the
+    resulting PDFs, and publishes them to our project page. Once
+    implementation begins, the same pipeline would run tests and
+    linting rather than only document builds.
+
+    The advantage I value most is the effect this has on how we
+    work, rather than what it automates. Because every change
+    arrives as a pull request that has to build before it can
+    merge, work cannot sit unintegrated on a branch for weeks and
+    then arrive all at once near a deadline. Changes stay small
+    enough for somebody other than the author to read properly, and
+    the project advances in increments we can each follow.
+
+    The published output stays current for the same reason. Our
+    PDFs always correspond to what is on the main branch, so nobody
+    has to compile everything before a submission and discover a
+    problem then. For the application, preview deployments would
+    let the rest of the team try an interface change on a tablet
+    instead of taking the author's description of it on trust.
+
+    I initially thought there were no real disadvantages, and
+    looking more carefully at our own workflow changed that view.
+    The clearest cost is that a passing pipeline is easy to mistake
+    for a correct result. Our problem statement compiled without
+    error while citing references the document did not yet contain,
+    because \LaTeX{} has no reason to object to that. The same
+    failure will be available to us in code, where tests can pass
+    while drawing responsiveness on a real tablet remains wrong.
+    Automated checks only cover what we thought to check, so I read
+    a passing run as evidence that nothing obvious broke rather
+    than that the work is right.
+
+    \textbf{Muhammad Huzaifah:}
+
+    I view CI/CD as a technical investment. Setting up reliable builds,
+    tests, and deployment workflows takes valuable time upfront, and those
+    workflows need ongoing maintenance. However, that effort can accelerate
+    later development by catching bugs early, reducing repetitive manual
+    work, and making releases more consistent. Automated rollback, when
+    configured and tested, can also reduce the impact of a failed deployment.
+    The trade-off is that poor configuration or incomplete tests can give
+    false confidence. I would therefore start with checks that address our
+    most immediate risks and expand them as the project grows, while
+    retaining human review.
+
+    Our documentation pipeline made this risk concrete: it reported success
+    while uploading an outdated PDF because change detection failed and
+    compilation was skipped. This showed me that a successful status is
+    only useful if the intended checks actually ran. For future workflows,
+    I would verify both failure handling and the generated output, rather
+    than relying on the status alone.
+
+    \textbf{Shamil Canbolat:}
+
+    CI/CD did not seem worth it to me at the beginning because the
+    disadvantages are more apparent at first than the disadvantages. CI/CD
+    can seem like a waste of time, requiring effort to configure and time
+    to get used to using. It can be bloated and slow, requiring builds
+    and automated testing for simple commits. As the development continues,
+    time must be allocated to update and maintain checks and deployment tests.
+    
+    But the advantages outweigh the disadvantages. Bugs are caught early, 
+    prevented more time being wasted on debugging later on. In addition to 
+    saving time by eliminating manual builds and limiting human validation, 
+    deployment tests force you to begin thinking of edge cases, risks, and
+    output domain early on, making later system testing easier. Builds, in 
+    our case PDF generation, has been very beneficial for catching formatting
+    errors, seeing blame with highlighted colors, and comparing revisions to
+    older commits. False positives and negatives are bound to occur, but this 
+    will allow us to improve the deployment and improve the robustness of the 
+    checking each time we catch a mistake with the pipeline.
+
+
+    \item \textbf{What disagreements did your group have in this
+    deliverable, if any, and how did you resolve them?}
+
+    \textbf{Team Response:}
+
+    Our main differences concerned the consequences of missing meetings
+    and the roles and expectations of each team member. These discussions
+    required more communication than simply dividing the deliverable
+    because they established how we would hold one another accountable
+    throughout the project.
+
+    For attendance and missed commitments, I wanted expectations that
+    were clear enough to act on while recognizing that illness,
+    emergencies, and unavoidable conflicts can occur. I saw a risk in
+    both extremes: vague consequences could allow repeated problems
+    to continue, while an overly rigid response could treat a genuine
+    difficulty as a lack of effort. Through discussion, we developed
+    an approach with measurable triggers and a staged response.
+    The charter begins with a private conversation and a recovery
+    plan, followed by escalation to the teaching team if commitments
+    remain unmet without an acceptable explanation. This gives the
+    team a basis for taking action while allowing us to understand
+    the circumstances first.
+
+    We also differed over how specifically to define individual roles.
+    While working on this section, I found that narrow assignments
+    could make members feel restricted to one component, whereas
+    making everything a shared responsibility left no clear person
+    to coordinate the work. The resulting structure assigns broad
+    lead roles while making software development, testing,
+    documentation, and peer review responsibilities of every member.
+    Assigning Moustafa as the notetaker provides a consistent owner
+    for meeting records, while rotating the quality assurance
+    coordinator each milestone distributes deliverable review duties.
+
+    These discussions changed how I understood fairness within the
+    team. Giving everyone the same number of titles does not
+    necessarily create an equal workload, because implementation,
+    coordination, and review require different amounts of effort
+    at different stages. I now see the role assignments as a
+    starting point that must be supported by clear task ownership
+    and regular workload reviews.
+
+    My main lesson was that expectations need to be discussed
+    explicitly rather than assumed. Writing down the consequences,
+    role boundaries, and shared duties helped turn our differing
+    views into a practical agreement. However, agreement on the
+    document does not guarantee that the process will work well.
+    We will need to revisit it as the workload increases and check
+    whether the responsibilities and responses remain fair and useful.
+
 \end{enumerate}
 
 \newpage{}

@@ -54,6 +54,10 @@ Revised the proof-of-concept plan, AI-use guidance and disclosure,
 and team reflection. Clarified workflow, roles, licensing, and
 terminology; corrected cross-references and improved table placement
 and page layout following the checklist review. \\
+
+2026-09-28 & Moustafa Moustafa &
+Disclosed the use of AI to diagnose and fix missing references in
+the automatically built PDFs. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1326,6 +1330,16 @@ assistance included identifying inconsistencies, clarifying
 implementation risks and demonstration evidence, and suggesting
 corrections. The team retained responsibility for evaluating
 these suggestions and deciding which changes to adopt.
+
+The team also used Claude Opus 5.5, through Claude Code, to diagnose
+a failure in the documentation workflow described in
+Section~\ref{sec:ci-plan}. Citations in the automatically built PDFs
+appeared as ``[?]'' and their reference lists were missing. AI traced
+the cause to the \texttt{bibtex} command being unavailable when the
+workflow restored \LaTeX{} from its cache, and proposed a change to the
+workflow file (\texttt{latex-pages.yml}) that restores the command and
+stops the build if it is missing. The team reviewed the change and
+confirmed in a pull-request build that the references were restored.
 
 \subsection{Verification of AI-Generated Content}
 

@@ -5,6 +5,7 @@
 \usepackage{hyperref}
 \usepackage{longtable}
 \usepackage{microtype}
+\usepackage{placeins}
 \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
@@ -27,32 +28,58 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-2026-09-26 & Muhammad \mbox{Huzaifah} (AI-assisted) &
-Issue \#14: specified workflow, coding conventions, scheduling, meetings,
-communication, and MIT licensing.\\
+2026-09-26 & Ahmed Elzaria &
+Added team member roles, shared responsibilities, expected technology,
+and the team charter. \\
+
+2026-09-26 & Ahmed Elzaria &
+Added individual reflection responses and removed a duplicate
+reflection heading. \\
+
+2026-09-27 & Ahmed Elzaria &
+Integrated the merged team sections and revised the response to
+reflection question three into a team response. \\
+
+2026-09-27 & Ahmed Elzaria &
+Revised the proof-of-concept plan, AI-use guidance and disclosure,
+and team reflection. Clarified workflow, roles, licensing, and
+terminology; corrected cross-references and improved table placement
+and page layout following the checklist review. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \newpage{}
 
-This project development plan contains information relating to confidentiality 
-(IP, copyright), team plans (meeting, communication, roles), contribution 
-(workflow, schedule), proof of concept demonstration, technology and coding
-standards. Generative AI use for this document is disclosed and the appendix 
-contains reflections from each team member and a team charter outlining rules 
-and expectations.
+This Development Plan describes the team's approach to intellectual
+property, collaboration, task management, scheduling, and quality
+assurance. It outlines the proof-of-concept investigation, expected
+technologies, coding standards, and planned use of Artificial
+Intelligence (AI). The appendices disclose AI assistance used in
+preparing this document, present team reflections, and establish
+the Team Charter. Table~\ref{TblRevisionHistory} records the
+document's revisions.
 
 \section{Confidential Information?}
 
-There is no confidential information to protect.
+The project does not currently involve confidential information
+supplied by an industry partner. Credentials and any private user
+data collected during development or evaluation will be kept out
+of the public repository and published documentation.
 
 \section{IP to Protect}
 
-Intellectual property for this project consists of the code and documentation,
-covered under the copyright agreement below.
+The team's original code and documentation constitute Intellectual
+Property (IP). The project has no separate IP ownership or
+assignment agreement. The team's original work is licensed under
+the MIT License, as described in
+Section~\ref{sec:copyright-license}.
+
+Third-party code, assets, and other materials remain subject to
+their respective licences and attribution requirements.
 
 \section{Copyright License}
+\label{sec:copyright-license}
 
 Squigglr adopts the \href{https://opensource.org/license/mit}{MIT License}
 for the team's own work. The complete terms and the copyright notice,
@@ -65,7 +92,6 @@ applicable third-party notices when reusing material; the team's license does
 not replace the terms of dependencies or other third-party content.
 
 \section{Team Meeting Plan}
-
 \label{sec:meeting-plan}
 
 The weekly meetings in Table~\ref{tab:meeting-schedule} provide planning,
@@ -111,8 +137,8 @@ The chair checks that these records capture the agreed actions before the
 meeting issue is closed.
 
 If the chair or notetaker is unavailable, the team identifies a substitute
-in the meeting issue before the meeting. Members follow the Team Charter's
-absence and emergency policy: notify the team of predictable absences at
+in the meeting issue before the meeting. Members follow the absence and emergency policy in the
+\hyperlink{app:team-charter}{Team Charter}: notify the team of predictable absences at
 least 24 hours ahead where possible, and of emergencies as soon as reasonably
 possible. An absent member reviews the notes and confirms assigned actions
 within 24 hours of the notes becoming available, unless an emergency prevents
@@ -151,14 +177,16 @@ and include the team number and name; contact the instructor by email.\\
 \end{tabularx}
 \end{table}
 
-Members acknowledge routine actionable requests within 24 hours. Urgent
-blockers require acknowledgement within four hours counted during
-9:00 a.m.--9:00 p.m.\ EST. For example, an urgent request at
-8:00 p.m.\ is due for acknowledgement by noon the next day. An acknowledgement
-provides an answer or an expected response or action time; it does not promise
-resolution within that window. The sender raises an overdue urgent request
-directly with the chair for coordination or reassignment. Communicated
-unavailability and emergencies follow the Team Charter.
+Members acknowledge routine actionable requests within 24 hours.
+Urgent blockers require acknowledgement within four hours counted
+during 9:00 a.m.--9:00 p.m.\ Toronto local time. For example, an
+urgent request at 8:00 p.m.\ is due for acknowledgement by noon
+the next day. An acknowledgement provides an answer or an expected
+response or action time; it does not promise resolution within
+that window. The sender raises an overdue urgent request directly
+with the Project Manager for coordination or reassignment.
+Communicated unavailability and emergencies follow the
+\hyperlink{app:team-charter}{Team Charter}.
 
 \section{Team Member Roles}
 
@@ -201,7 +229,7 @@ deployment.
         with the Frontend Lead. \\
         \addlinespace
 
-        Rayan &
+        Rayan Nasrallah &
         Backend Lead &
         Coordinate backend design and implementation, including
         application logic, data storage, and interfaces with other
@@ -209,7 +237,7 @@ deployment.
         teammates working in this area. \\
         \addlinespace
 
-        Shamil &
+        Shamil Canbolat &
         Team Liaison and DevOps Lead &
         Coordinate communication with the teaching team and external
         stakeholders, and relay feedback and follow-up actions.
@@ -217,14 +245,14 @@ deployment.
         workflows, and deployment. \\
         \addlinespace
 
-        Huzaifah &
+        Muhammad Huzaifah &
         Testing Lead &
         Coordinate the software testing strategy, integration testing,
         and defect follow-up. Identify gaps in test coverage and
         support teammates in designing and maintaining tests. \\
         \addlinespace
 
-        Moustafa &
+        Moustafa Moustafa &
         Frontend Lead and Notetaker &
         Coordinate implementation of the user interface and its
         integration with backend functionality. Work with the UI/UX
@@ -236,6 +264,7 @@ deployment.
     \end{tabularx}
 \end{table}
 
+\FloatBarrier
 \subsection{Shared Responsibilities}
 \label{sec:shared-responsibilities}
 
@@ -323,8 +352,9 @@ alongside their DevOps, liaison, and testing responsibilities.
 Lead assignments will be reviewed at each milestone and whenever
 availability, interests, or project needs change. Any member may
 request a reassignment during a team meeting or through a GitHub issue.
-The team will agree on changes using the decision-making process in
-the Team Charter and record the outcome in the meeting notes.
+The team will agree on changes using the decision-making process
+in the \hyperlink{app:team-charter}{Team Charter} and record the
+outcome in the meeting notes.
 
 The outgoing lead will hand over current progress, outstanding actions,
 known issues, and relevant resources to the incoming lead.
@@ -348,12 +378,22 @@ the completion criteria and the evidence supplied.
 
 \subsection{Git Branches, Commits, and Review}
 
-The planned workflow uses short-lived issue branches, \texttt{development}
-for integration, and \texttt{main} for stable versions. The
-\texttt{development} branch has not yet been created; current documentation
-PRs, including this contribution, target \texttt{main}. Creating the branch,
-aligning the README instructions, and configuring its checks and protection
-are follow-up repository work. Once it is available, use this workflow:
+The planned workflow uses short-lived issue branches,
+\texttt{development} for integration, and \texttt{main} for stable
+versions. Until the integration branch and its checks are configured,
+contributions use issue branches based on \texttt{main} and pull
+requests targeting \texttt{main}.
+
+The DevOps Lead will coordinate creation of \texttt{development},
+extend the relevant checks to that branch, and update the repository
+instructions before the team adopts the integration workflow.
+The same review requirements apply during both stages: at least
+one teammate other than the author must approve the contribution,
+and applicable checks must pass. These are team requirements
+regardless of whether repository settings enforce them.
+
+Once the integration branch and its checks are ready, the team
+will use the following workflow:
 
 \begin{enumerate}
   \item Select an assigned GitHub issue with clear completion criteria.
@@ -413,7 +453,8 @@ author. Documentation reviewers use the
 \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/DevPlan-Checklist.tex}
 {Development Plan Checklist} and
 \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/Writing-Checklist.tex}
-{Writing Checklist}, as applicable, and inspect the generated PDF.
+{Writing Checklist}, as applicable, and inspect the generated
+Portable Document Format (PDF) file.
 
 Merge commits preserve individual commits and attribution. Squash merging
 and history rewriting on shared branches are prohibited by team policy.
@@ -560,6 +601,13 @@ changed document as compiled and that its PDF artifact matches the reviewed
 source. A successful status alone is insufficient if the run reused a
 cached PDF without rebuilding the changed document.
 
+Automatically generated PDF and dependency-manifest updates are
+an exception to the contributor pull-request process. The
+documentation workflow publishes these outputs after the source
+changes have been reviewed and merged. This exception applies
+only to generated outputs; changes to document source or workflow
+configuration still require a reviewed pull request.
+
 \subsubsection*{Planned Application Checks}
 When the application scaffold exists, the DevOps Lead will introduce the
 small pipeline in Table~\ref{tab:application-checks}, with the Testing Lead
@@ -599,18 +647,24 @@ exists; expand checks as flows become available.\\
 \end{tabularx}
 \end{table}
 
-Keep documentation compilation separate from application checks. The
-follow-up implementation must ensure that required checks complete on every
-PR, even when no relevant files changed. GitHub's
+Documentation compilation will remain separate from application
+checks. The DevOps Lead will ensure that required checks report
+an appropriate result on every applicable pull request, including
+when no relevant files have changed. GitHub's
 \href{https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax}
-{workflow syntax reference} explains that skipping an entire workflow through
-path filters can leave required checks pending. The DevOps Lead will also
-extend documentation validation to PRs targeting \texttt{development},
-reconcile direct PDF pushes with mandatory PR protection, and restrict
-documentation publishing to the intended branch. Change detection must
-also fail visibly if its comparison commit is unavailable after a force-push,
-instead of treating the failure as an empty change list. These are follow-up CI
-changes, not capabilities claimed for the current workflow.
+{workflow syntax reference} explains that skipping an entire
+workflow through path filters can leave required checks pending.
+
+Before the team begins targeting \texttt{development}, documentation
+validation will be extended to that branch. Generated PDFs will
+continue to be committed and published from \texttt{main}.
+Any enforced pull-request protection must accommodate this
+publication process before it is enabled.
+
+Change detection must report an error when its comparison commit
+is unavailable rather than treating the failure as an empty
+change list. These workflow improvements remain planned until
+implemented and verified.
 
 \subsubsection*{Preview and Production Release Procedure}
 The planned Vercel setup provides automatic previews and manual production
@@ -796,72 +850,138 @@ remain tentative.\\
 \endgroup
 
 \section{Proof of Concept Demonstration Plan}
+\label{sec:poc-plan}
 
-\subsection{Main Risks to Project Success}
+The Proof of Concept (POC) will investigate the implementation risks
+that could prevent Squigglr from meeting its core goals. It will use
+small, focused experiments in drawing input, editable refinement, and
+adaptive guidance. A complete application, polished interface, and full
+lesson catalogue are not required for these experiments.
 
-The following features may be difficult to implement or significantly delay
-project progression:
+\subsection{Main Implementation Risks}
 
 \begin{itemize}
-\item \textbf{Automatic refinement:} Refining freehand drawings into supported 
-shapes or objects while preserving the child's original drawing. This feature
-becomes subjective for more complex shapes. The program must determine what 
-will be refined and what will remain as it is. 
-\item \textbf{Adaptive difficulty and guidance:} Changing the level of assistance 
-based on performance or repeated difficulty will require significant user testing
-along with trial and error.
-\item \textbf{Browser and device compatibility:} Drawing input and interaction must
-adapt to different screens (tablet, laptop) and input devices (finger, pen).
+    \item \textbf{Editable drawing refinement:}
+    Automatic refinement must produce drawing elements that children
+    can continue editing. Generating a separate image would not meet
+    this goal. The main uncertainty is whether supported drawings can
+    be refined into valid paths while retaining the original strokes
+    and allowing the refinement to be undone.
+
+    \item \textbf{Model-based creative enhancement:}
+    A pretrained model may return invalid drawing instructions,
+    misinterpret the input, or substantially alter the intended
+    drawing. Geometric shape correction alone would not establish
+    that this model-based approach is feasible.
+
+    \item \textbf{Adaptive guidance:}
+    Drawing observations must support consistent changes in
+    assistance. The implementation must distinguish successful
+    attempts from repeated difficulty and apply the intended rules
+    without losing the attempt history or the support level used.
+
+    \item \textbf{Touchscreen and stylus interaction:}
+    Input coordinates, stroke continuity, and drawing responsiveness
+    may vary across devices and browsers. Using an established
+    drawing library reduces some implementation work but does not
+    establish that its integration will behave correctly on the
+    target hardware.
 \end{itemize}
 
-The most difficult part to implement will be automatic refinement of drawings.
-Existing software has line straightening and simple shape correction, but our
-program will need more unique shapes (e.g. stars, arrows, hearts), both 2D and
-isometric projections, all while preserving the child's distinct style. The most 
-difficult part to test will be adaptive difficulty and guidance as it requires 
-multiple rounds of user and acceptance testing to tune.
+Editable refinement is the main technical uncertainty. The initial
+investigation will use a small, agreed set of two-dimensional shapes
+and simple objects. Isometric drawing and unrestricted enhancement of
+arbitrary drawings are outside the POC scope.
 
-There most likely won't be any libraries that are overly difficult to configure 
-since the POC will use established drawing libraries like Paper.js. Shape evaluation 
-will most likely be implemented from scratch using standard JavaScript functionality. 
-The solution is fairly portable since it is a website that can be opened on any device 
-without installation. This is especially suitable for schools where getting downloaded
-software approved is tricky. Implementation and testing will focus on tablets and computers.
+\subsection{Demonstration and Evidence}
 
-\subsection{POC Demonstration and Risks Addressed}
-
-The POC will be a small web-based demonstration containing one structured drawing
-lesson set and a limited creative drawing feature. 
+The demonstration will present the following experiments and their
+results. The team will record the sample inputs, expected behaviour,
+observed results, and remaining limitations.
 
 \begin{enumerate}
-\item Open the website in a browser on a laptop.
-\item Select the drawing lesson set (e.g. "Quadrilaterals").
-\item Display guidance level (default starting level) and metrics for demonstration.
-\item \textit{Demonstrate drawing with finger and pen}
-\item \textit{Demonstrate that the website can be opened in a browser on a tablet as well}
-\item Complete the first tracing task (back to laptop).
-\item Display simple feedback for child.
-\item \textit{Show that guidance metrics are updated and calculation behind it}
-\item Continue completing tasks in the lesson set.
-\item \textit{Demonstrate how guidance metrics affect lesson involvement and assistance}
-\item Repeatedly underperform and make mistakes on tasks.
-\item \textit{Demonstrate that repeated difficulty increases assistance.}
-\item Open the creative drawing area and draw a supported simple shape.
-\item Apply automatic refinement and continue editing the refined result.
-\item Restore the original unmodified drawing.
-\item Save the attempt and display the stored attempt information in a basic history view.
-\item \textit{Indicate how history will be used for performance metrics for teachers and parents}
+    \item \textbf{Capture and edit drawing input.}
+    Draw using touch and a compatible stylus on the target tablet.
+    Repeat the relevant interactions on an additional supported
+    device and browser combination. Record the hardware and browser
+    versions used. Check that strokes follow the input position,
+    remain continuous, and can be edited after capture. Observe
+    responsiveness and record any delays or input failures.
+    Opening the page without testing drawing interactions will not
+    count as evidence of input compatibility.
+
+    \item \textbf{Apply reversible geometric refinement.}
+    Draw examples from the agreed supported set and apply a
+    geometric correction. Show that the result consists of editable
+    paths on the same canvas. Modify the refined result, then undo
+    the refinement and compare the restored drawing with the saved
+    original. This experiment will assess path manipulation and
+    recovery independently of a model.
+
+    \item \textbf{Investigate model-based enhancement.}
+    Evaluate a candidate pretrained model using team-created drawing
+    examples and a limited set of structured drawing instructions.
+    Check whether its responses contain valid operations and
+    coordinates that the application can apply to editable paths.
+    Demonstrate validation of an invalid instruction and confirm
+    that rejection leaves the drawing unchanged. Record successful
+    and unsuccessful examples, response times, and estimated
+    request costs. Report this evidence separately from the
+    geometric refinement results.
+
+    \item \textbf{Exercise adaptive guidance.}
+    Use one tracing activity and prepared sequences of successful
+    and unsuccessful attempts. Display the observations used by
+    the guidance rules and show the expected assistance level after
+    each attempt. Demonstrate both reduced assistance following
+    success and increased assistance following repeated difficulty.
+    Inspect the attempt records to confirm that the observations
+    and assistance used remain available.
 \end{enumerate}
 
-Opening the website on multiple devices and drawing with a finger and a pen addresses 
-\textbf{browser/device compatibility}.\textbf{Adaptive difficulty and guidance} and 
-\textbf{automatic refinement} are addressed through demonstration of the features.
+Before running the experiments, the team will record the supported
+examples, guidance rules, and provisional evaluation criteria.
+A risk will remain unresolved if the observed behaviour does not
+satisfy those criteria. The demonstration will include limitations
+and unsuccessful cases rather than relying only on selected successes.
 
-If the POC fails, our team will meet to discuss further steps. we may turn some goals 
-into stretch goals and drop some features to focus on others. We may also limit the 
-scope of some features, like defining less shapes, replacing automatic refinement with 
-a simpler supported correction (or borrowing from a library), and reducing adaptive 
-behaviour to performance ratings, repeat levels, and a practice mode.
+Prepared attempts will test the correctness of the adaptive rules.
+They will not establish that those rules improve children's
+visual-motor skills or that the chosen assistance levels suit all
+learners. Those questions require later stakeholder evaluation and
+are not prerequisites for this technical demonstration.
+
+\subsection{Preparation and Follow-Up}
+
+The team will aim to complete the focused experiments by early
+November, leaving time to investigate failures and rehearse before
+the assigned POC demonstration. Preparation will proceed through
+the following checkpoints:
+
+\begin{itemize}
+    \item Confirm the target hardware, supported drawing examples,
+    guidance rules, and evaluation criteria.
+    \item Implement and evaluate the input, refinement, and guidance
+    experiments independently.
+    \item Review the evidence, identify unresolved risks, and agree
+    on the demonstration content.
+    \item Rehearse on the target hardware and retain the results
+    and known limitations for discussion with the supervisor.
+\end{itemize}
+
+The Project Manager will coordinate task ownership and checkpoints.
+The relevant technical leads will coordinate implementation, the
+Testing Lead will coordinate evaluation, and all members will
+contribute through assigned development and review tasks.
+
+If an experiment exposes a risk that the team cannot reasonably
+resolve, the team will review the evidence with the project
+supervisor. Possible adjustments include narrowing the supported
+drawing set, simplifying the guidance rules, or using geometric
+refinement while further model investigation is deferred.
+Changes affecting core goals will be agreed with the supervisor
+and reflected consistently in the Problem Statement and Goals
+document and this plan.
 
 \section{Expected Technology}
 
@@ -940,6 +1060,7 @@ application technologies, their purposes, and their main trade-offs.
     \end{tabularx}
 \end{table}
 
+\FloatBarrier
 \subsection{Drawing Assessment and Enhancement}
 
 The application is expected to retain drawings as editable paths and
@@ -1064,16 +1185,52 @@ and whether enhanced paths remain editable. Findings will inform
 the proof-of-concept plan and any changes to the expected technology.
 
 \section{Use of AI and LLMs}
+\label{sec:ai-use}
 
-Our team will occasionally use LLMs like ChatGPT or Claude for this project.
-For documentation, we may ask the LLM to write an initial draft given context 
-text and then use that to guide our own writing, borrow ideas, or paste portions
-of the text and edit them as necessary. The prompter will verify the text 
-themselves. For coding, we may describe the function we want to the LLM and copy 
-the given code snippet, editing it as necessary. Larger features may be generated
-with AI agents/IDEs like Copilot or Kiro. Visual input can also serve as context,
-either through manual digital drawings or sites like Figma. All issues, 
-documentation and coding, are reviewed by another team member before being merged.
+The team may use Artificial Intelligence (AI) tools, including Large
+Language Models (LLMs), to support research, documentation, and software
+development. Expected tools include ChatGPT and Claude for discussion
+and drafting, and GitHub Copilot or Kiro for coding assistance.
+Team members remain responsible for understanding, verifying, and
+maintaining any material they include in the project.
+
+For documentation, the team will establish the project ideas,
+goals, and substantive decisions through its own discussion and
+analysis. AI tools may help articulate these ideas by turning
+team-provided notes and explanations into draft text, improving
+organization and clarity, and refining grammar and \LaTeX{}
+formatting. Any additional suggestions from these tools will be
+treated as proposals for team evaluation rather than established
+project decisions.
+
+Authors will verify that the resulting text accurately expresses
+the team's intended meaning and does not introduce unsupported
+claims or commitments. They will check it against course
+instructions, agreed decisions, and relevant source material.
+Suggested references must be located and checked for support.
+Personal reflections must represent each member's own experiences
+and conclusions, even when AI assists with their expression.
+
+For software development, AI tools may suggest implementations,
+refactoring, tests, or explanations of unfamiliar code. The assigned
+developer will inspect and understand generated changes, check their
+compatibility with the existing design, and run the applicable checks
+described in Section~\ref{sec:ci-plan}. Tests will be checked against
+requirements and expected behaviour rather than assuming generated
+code and generated tests validate one another. Another team member
+will review the contribution before it is merged.
+
+Team members will not include credentials, private user data, or
+confidential third-party material in prompts. Relevant usage terms
+and licensing conditions will be checked before incorporating
+external material or generated contributions.
+
+Material AI assistance will be disclosed in the relevant deliverable
+according to course requirements. The disclosure will identify the
+tools used, the affected sections or artifacts, and how the resulting
+material was verified. The proposed use of a model within Squigglr's
+drawing enhancement feature is discussed separately in
+Section~\ref{sec:expected-technology}.
 
 \section{Coding Standard}
 
@@ -1087,8 +1244,9 @@ these tools are not yet installed.
 
 \subsection{Application Code and Formatting}
 
-Use TypeScript for application logic and TSX files for components containing
-markup, with strict type checking enabled. Use \texttt{camelCase}
+Use TypeScript for application logic, with strict type checking
+enabled. Use the \texttt{.tsx} file extension for React components
+containing markup. Use \texttt{camelCase}
 for variables and functions and \texttt{PascalCase} for components and types.
 Choose descriptive names and small, focused functions. Comments explain
 non-obvious decisions, assumptions, or constraints rather than restating
@@ -1113,41 +1271,72 @@ For authored Structured Query Language (SQL) migrations, use
 \texttt{snake\_case} identifiers and uppercase SQL keywords. The Backend
 Lead and a teammate review schema and access-policy changes for their effect
 on stored data and permitted access. The existing Python automation helpers
-follow \href{https://peps.python.org/pep-0008/}{PEP 8}; reviewers check these
+follow \href{https://peps.python.org/pep-0008/}
+{Python Enhancement Proposal (PEP) 8}; reviewers check these
 conventions until dedicated Python linting is introduced.
 
-For \LaTeX{}, follow the course writing conventions and checklists, including
-readable source wrapping, descriptive headings, labelled tables, and
-cross-references. Authors compile changed documents and visually inspect
-their PDFs for layout, links, and unresolved references before requesting
-review. The current documentation workflow automates compilation only.
-ESLint and Prettier do not enforce the project's Python, SQL, or \LaTeX{}
-standards; those conventions require review unless dedicated checks are
-introduced later.
+For \LaTeX, follow the course writing conventions and checklists.
+Before requesting review, authors compile changed documents and
+inspect their PDFs for layout, working links, and unresolved references.
+The documentation workflow checks compilation; Python, SQL, and
+\LaTeX{} conventions require manual review until dedicated automated
+checks are introduced.
 
 \newpage{}
 
 \section{Appendix --- Generative AI Use Disclosure}
 
+This appendix describes how AI tools assisted in preparing and
+reviewing this document. The team remains responsible for its
+content and the decisions recorded in it.
+
 \subsection{AI Tools Used}
 
-Anthropic's Claude Opus 5.5 and OpenAI's GPT-6 Astra and GPT-5.6 Luna
+Anthropic's Claude Opus 5.5 and OpenAI's GPT-6 Astra and GPT-5.6 Luna.
 
 \subsection{How and Where Used}
 
-Team members used LLMs like ChatGPT for formatting, citation, grammar,
-and improving sentence structure and clarity. Previous sections of our writing
-were given as context to inform the LLM when needed. In some cases, LLMs were 
-used for brainstorming ideas or creating outlines to work off of.
+Most team members first developed the ideas and concepts they
+wanted to express in their assigned sections, then used AI tools
+to help communicate them coherently. Members provided project
+context, notes, and explanations, and used the resulting drafts
+to improve organization, clarity, and flow. AI also assisted with
+grammar and \LaTeX{} formatting.
 
-For the Proof of Concept Demonstration Plan section, the AI was asked to generate
-answers to subquestions based on the rubric, and the resulting skeleton was heavily
-edited, paraphrased, deleted from, and added to to make an original text.
+The team used AI to research and compare potential technologies
+for Squigglr, considering the project goals, editable drawing
+requirements, available development time, and relevant industry
+practices. Suggested tools, trade-offs, and implementation
+approaches informed several planning and technology decisions.
+The team evaluated these suggestions when selecting the
+approaches documented in this plan.
+
+AI also helped structure the proof-of-concept plan and review
+the combined document against the course checklists. This
+assistance included identifying inconsistencies, clarifying
+implementation risks and demonstration evidence, and suggesting
+corrections. The team retained responsibility for evaluating
+these suggestions and deciding which changes to adopt.
 
 \subsection{Verification of AI-Generated Content}
 
-All suggested text was reviewed and edited by the prompter and further reviewed
-by a peer as all merge requests must be reviewed by at least one other person.
+Authors review AI-assisted wording against their intended meaning,
+the team's agreed decisions, and the course instructions.
+Suggestions that introduce new commitments require team agreement;
+generated wording alone does not establish a project decision.
+Members check their own reflection responses to ensure that they
+accurately describe their experiences and conclusions.
+
+Technical claims and suggested references are checked against
+relevant source material. Reviewers compare related sections for
+consistency and inspect the compiled PDF for layout problems and
+unresolved references. Successful compilation alone does not
+establish that the content is correct or complete.
+
+Before submission, the team will resolve outstanding review
+findings and confirm that this disclosure accurately represents
+the assistance used. The team accepts responsibility for the
+accuracy, completeness, and appropriateness of the final document.
 
 \newpage{}
 
@@ -1439,59 +1628,50 @@ by a peer as all merge requests must be reviewed by at least one other person.
     \item \textbf{What disagreements did your group have in this
     deliverable, if any, and how did you resolve them?}
 
-    \textbf{Team Response:}
+    \textbf{Team response:}
 
-    Our main differences concerned the consequences of missing meetings
-    and the roles and expectations of each team member. These discussions
-    required more communication than simply dividing the deliverable
-    because they established how we would hold one another accountable
-    throughout the project.
+    Our main disagreements concerned team member roles, expectations, and
+    the consequences of missing meetings or commitments. We wanted clear
+    accountability, but we also recognised that overly rigid rules could
+    treat unavoidable circumstances as a lack of commitment. Through
+    discussion, we distinguished between situations communicated in advance,
+    emergencies, and repeated unexplained absences or missed deadlines.
 
-    For attendance and missed commitments, I wanted expectations that
-    were clear enough to act on while recognizing that illness,
-    emergencies, and unavoidable conflicts can occur. I saw a risk in
-    both extremes: vague consequences could allow repeated problems
-    to continue, while an overly rigid response could treat a genuine
-    difficulty as a lack of effort. Through discussion, we developed
-    an approach with measurable triggers and a staged response.
-    The charter begins with a private conversation and a recovery
-    plan, followed by escalation to the teaching team if commitments
-    remain unmet without an acceptable explanation. This gives the
-    team a basis for taking action while allowing us to understand
-    the circumstances first.
+    We resolved this by establishing clear expectations for attendance,
+    communication, and task completion, alongside a staged response to
+    recurring problems. When an accountability trigger is reached,
+    the first step is a private discussion to understand the cause,
+    followed by a recorded recovery plan with specific tasks, support,
+    and deadlines. We review the plan within one week and seek guidance
+    from the teaching team if commitments remain unmet without an
+    acceptable explanation or the problem recurs during the following
+    milestone. This approach makes accountability more predictable
+    while allowing us to consider individual circumstances.
 
-    We also differed over how specifically to define individual roles.
-    While working on this section, I found that narrow assignments
-    could make members feel restricted to one component, whereas
-    making everything a shared responsibility left no clear person
-    to coordinate the work. The resulting structure assigns broad
-    lead roles while making software development, testing,
-    documentation, and peer review responsibilities of every member.
-    Assigning Moustafa as the notetaker provides a consistent owner
-    for meeting records, while rotating the quality assurance
-    coordinator each milestone distributes deliverable review duties.
+    We also differed on how specific our roles should be. Narrow assignments
+    risked limiting members to particular tasks, while broad shared roles
+    made it unclear who should coordinate decisions or follow up on gaps.
+    We settled on named leads for key areas while retaining software
+    development, testing, documentation, and peer review as shared
+    responsibilities. Leads coordinate their areas without becoming solely
+    responsible for all related work. Assigning Moustafa as the notetaker
+    provides a consistent owner for meeting records, while rotating the
+    milestone quality assurance coordinator distributes final review duties.
 
-    These discussions changed how I understood fairness within the
-    team. Giving everyone the same number of titles does not
-    necessarily create an equal workload, because implementation,
-    coordination, and review require different amounts of effort
-    at different stages. I now see the role assignments as a
-    starting point that must be supported by clear task ownership
-    and regular workload reviews.
-
-    My main lesson was that expectations need to be discussed
-    explicitly rather than assumed. Writing down the consequences,
-    role boundaries, and shared duties helped turn our differing
-    views into a practical agreement. However, agreement on the
-    document does not guarantee that the process will work well.
-    We will need to revisit it as the workload increases and check
-    whether the responsibilities and responses remain fair and useful.
+    These discussions showed us that fairness depends on the effort and
+    responsibility involved, rather than simply giving everyone the same
+    number of titles. They also revealed that shared intentions do not
+    necessarily imply shared expectations. In future milestones, we will
+    review the workload and clarify ownership earlier, using our experience
+    to adjust responsibilities before uncertainty becomes a source of
+    conflict.
 
 \end{enumerate}
 
 \newpage{}
 
 \section*{Appendix --- Team Charter}
+\hypertarget{app:team-charter}{}
 
 This charter sets out how the Squigglr team will work together,
 distribute responsibilities, and address problems. All five members
@@ -1502,9 +1682,11 @@ Changes will be discussed by the team and recorded in meeting notes.
 
 Our primary goal is to complete a project that we are proud of and
 can confidently present as a team. We want our work to meaningfully
-address the problem and goals identified in the Problem Statement
-and Goals document, with each member taking ownership of the
-decisions and contributions that shape the final result.
+address the problem and goals identified in the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/pdfs/ProblemStatementAndGoals/ProblemStatement.pdf}
+{Problem Statement and Goals document}, with each member taking
+ownership of the decisions and contributions that shape the final
+result.
 
 We also aim to extend our learning by taking a software project
 from initial planning and requirements through design,
@@ -1676,7 +1858,7 @@ If consensus cannot be reached in time, a decision will require
 support from at least three of the five members. Absent members
 will be given an opportunity to provide input asynchronously.
 Unresolved decisions that threaten a milestone will be raised with
-the advisor or teaching team.
+the project supervisor or teaching team.
 
 Routine implementation choices may be made by the assigned developer
 in consultation with the relevant lead, provided they remain within

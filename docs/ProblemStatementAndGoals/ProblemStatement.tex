@@ -32,167 +32,319 @@ appendix and the generative AI use disclosure.\\
 26 September 2026 & Shamil Canbolat & Added the Custom Documents section \\
 26 September 2026 & Shamil Canbolat & Added my reflection responses to appendix \\
 26 September 2026 & Ahmed Elzaria & Added my reflection responses to appendix.\\
+28 September 2026 & Ahmed Elzaria &
+Reviewed the document against the course checklists and Development
+Plan. Clarified the problem, inputs and outputs, stakeholders, and
+environment; refined goals and completion checks; updated custom
+document descriptions and AI disclosure; converted references to
+BibTeX; and improved heading numbering and formatting. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
+\clearpage
+
 \section{Problem Statement}
+
+This section describes the need Squigglr addresses, its inputs and
+outputs, the stakeholders involved, and the intended usage environment.
 
 \subsection{Problem}
 
-Visual-motor integration is the ability to coordinate visual information with
-movement. Children rely on it when drawing, copying shapes, and learning to
-write. Research links these skills to handwriting legibility and identifies
-motor or handwriting difficulties in some children with
-attention-deficit/hyperactivity disorder (ADHD) or autism [1--3]. The need
-extends from kindergarten and primary school learners to older children who
-require continued support.
+Visual-motor integration is the ability to coordinate visual information
+with movement. Children rely on it when drawing, copying shapes, and
+learning to write. Research links these skills to handwriting legibility
+and identifies motor or handwriting difficulties in some children with
+attention-deficit/hyperactivity disorder (ADHD) or
+autism~\cite{daly2003,kaiser2015,fuentes2009}.
+The need for appropriate practice extends from kindergarten and primary
+school learners to older children who require continued support.
+Research on structured foundational activities supports the value of
+practice for visual-motor development~\cite{taverna2020}.
 
-Children need opportunities to practise at an appropriate level, understand
-their difficulties, and develop greater independence. Parents and educators
-need to distinguish what a child can do independently from what they accomplish
-with assistance. A finished drawing alone does not provide that distinction.
-Research on structured foundational activities supports the value of practice
-for visual-motor development [4].
+Children need opportunities to practise at a suitable level and gradually
+perform activities with less assistance. Parents, caregivers, and
+educators need to understand both the difficulties encountered and the
+support needed to complete an activity. A finished drawing alone does
+not reveal whether a child completed it independently, relied on tracing
+guides, or corrected difficulties during the attempt. Comparing final
+drawings without this context can obscure changes in independent
+performance and make it harder to identify appropriate next steps for
+practice.
 
-There is an opportunity to build a system that supports drawing practice suited
-to individual abilities, provides understandable feedback, and helps children
-and supporting adults track independent progress. The intended outcome is
-improved drawing skills and greater independence, with opportunities for
-creative expression. Supporting adults need access to both individual attempt
-records and understandable summaries of change over time. Clinical diagnosis
-and treatment are outside the project scope.
+Squigglr aims to support visual-motor practice through drawing activities
+with adjustable guidance and difficulty, while making the practice
+process understandable to supporting adults. Individual attempt records
+and progress summaries will distinguish independent performance from
+assisted completion and show recurring difficulties and changes over
+time. Creative drawing will provide opportunities for self-expression
+alongside structured practice. The intended benefit is to help children
+practise with increasing independence and help supporting adults make
+informed decisions about further practice. Clinical diagnosis and
+treatment are outside the project scope.
 
 \subsection{Inputs and Outputs}
+
+Squigglr accepts activity selections, drawing attempts, and editing
+actions. It produces drawing guidance, activity feedback, editable
+artwork, and records that help supporting adults interpret progress.
 
 \subsubsection{Inputs}
 
 \begin{itemize}
-\item Selected drawing activities and support preferences.
-\item Children's drawing attempts during lessons and creative activities.
-\item Editing actions, such as moving, resizing, recolouring, or erasing
-  drawing elements.
+    \item Selected drawing activities and guidance or difficulty
+    preferences.
+    \item Drawing strokes entered through touchscreen or stylus
+    interaction during practice and creative activities.
+    \item Requests to refine creative artwork and editing actions,
+    such as moving, resizing, recolouring, erasing, or undoing changes
+    to drawing elements.
+    \item Requests from authorised adults to view a child's activity
+    history, individual attempts, and progress summaries.
 \end{itemize}
 
 \subsubsection{Outputs}
 
 \begin{itemize}
-\item Drawing targets, demonstrations, and guidance appropriate to the activity
-  and support level.
-\item Simple activity feedback and completion results based on predefined
-  observations.
-\item Editable creative artwork, including supported automatic refinements and
-  recoverable original drawings.
-\item Attempt records showing encountered difficulties, changes within an
-  attempt, guidance used, and the final outcome.
-\item Progress summaries showing changes across attempts and recurring
-  difficulties, with access to the supporting records.
+    \item Drawing targets, demonstrations, and guidance appropriate
+    to the selected activity and current support level.
+    \item Activity feedback and completion results based on predefined
+    observations, such as missed tracing points or incomplete lines.
+    \item Adjusted guidance or activity difficulty in response to
+    performance and selected support preferences.
+    \item Editable creative artwork with supported automatic
+    refinements and the ability to restore the original drawing.
+    \item Attempt records showing the activity, guidance used,
+    encountered difficulties, changes during the attempt, and
+    final outcome.
+    \item Progress summaries showing changes across attempts and
+    recurring difficulties, with access to the supporting records.
 \end{itemize}
 
 \subsection{Stakeholders}
 
+Squigglr's stakeholders include the children using its drawing
+activities, the adults supporting their practice, and those advising
+the project.
+
 \begin{itemize}
-\item Kindergarten and primary school children.
-\item Children of different ages who need additional support, including
-  children with autism, ADHD, or other developmental or learning differences.
-\item Parents, guardians, and caregivers.
-\item Educators and learning-support staff.
-\item School administrators.
-\item Domain advisers in inclusive education and accessible educational
-  software.
-\item Dr.\ Christopher Anand, project supervisor.
+    \item \textbf{Children:}
+    Kindergarten and primary school learners are the main intended
+    users of the drawing activities. Older children requiring
+    continued support may also benefit from appropriately selected
+    activities. Their interests include understandable guidance,
+    suitable difficulty, and opportunities for independent practice
+    and creative expression.
+
+    \item \textbf{Children with additional support needs:}
+    Children with autism, ADHD, or other developmental or learning
+    differences are included within the intended users. Their
+    individual needs inform the flexibility of guidance, difficulty,
+    and interaction design; a diagnosis alone does not determine
+    the support a child requires.
+
+    \item \textbf{Parents, guardians, and caregivers:}
+    These adults support practice outside school and review activity
+    histories and progress summaries. They need understandable
+    information about assistance used, recurring difficulties, and
+    changes in independent performance.
+
+    \item \textbf{Educators and learning-support staff:}
+    These stakeholders can inform activity selection and interpret
+    practice records alongside their observations of a learner.
+    Their interests include suitable learning activities and useful
+    information for planning further support.
+
+    \item \textbf{School administrators:}
+    If the application is considered for school use, administrators
+    may influence its adoption. Their interests include suitability
+    for the school setting, device availability, and the resources
+    needed to support its use.
+
+    \item \textbf{Domain advisers:}
+    Advisers in inclusive education and accessible educational
+    software can help the team assess assumptions, identify barriers,
+    and evaluate whether proposed activities and feedback are
+    appropriate for the intended users.
+
+    \item \textbf{Project supervisor:}
+    Dr.~Christopher Anand provides guidance on project scope,
+    feasibility, and technical direction.
 \end{itemize}
 
 \subsection{Environment}
 
-Users will need access to a supported web browser on a compatible device with a
-display and a supported drawing input. Using the application will not require
-installing a separate application.
+Squigglr is intended for use at home and in educational settings, with
+adult support available as appropriate to the learner's needs. Children
+will complete drawing activities through a supported web browser on a
+compatible touchscreen device, using a finger or a compatible stylus.
+Parents, caregivers, and educators will review activity records and
+progress summaries through a supported browser on a tablet or computer.
+
+The application will be accessed through the web without requiring a
+separate application installation. Internet access is expected for
+normal use, including retrieving activities and saving or reviewing
+progress. Offline operation is outside the initial scope. Specific
+supported browsers and devices will be established through requirements
+development and compatibility testing.
 
 \section{Goals}
+\renewcommand{\thesubsection}{G.\arabic{subsection}}
 
-\subsection{G1. Provide structured practice in lines, shapes, and simple drawings}
-Provide structured opportunities to practice lines, shapes, and simple drawings that 
-involve visual-motor coordination. This goal is achieved when users can complete 
-practice activities covering the agreed foundational skills, receive feedback, and 
-repeat an activity. The team will verify this by completing 
-each activity in the lesson catalogue.
+The following goals describe the outcomes Squigglr aims to support for
+children and supporting adults. Each goal includes an observable
+completion check; detailed requirements and test criteria will be
+developed in later milestones.
 
+\subsection{Support structured drawing practice}
 
-\subsection{G2. Enable progression from tracing to drawing without guides}
-Enable learners to progress from tracing to drawing with reduced guidance and eventually
-without guides. This goal is achieved when the application supports this progression
-and restores assistance following repeated difficulty. The team will verify both
-directions using prepared sequences of successful and unsuccessful drawing attempts.
+Provide opportunities to practise visual-motor coordination through
+activities involving lines, shapes, and simple drawings. Learners
+should be able to follow an activity, receive understandable feedback,
+and repeat it for further practice.
 
-\subsection{G3. Adapt drawing activities to individual guidance and difficulty needs}
-Allow learners with different starting abilities and support needs, including
-children with autism or ADHD, to access suitable practice. This goal is achieved when 
-the same activity can be completed with different guidance and difficulty settings.
-The team will verify that changing these settings produces the intended differences
-in the activity.
+This goal is achieved when the agreed lesson catalogue covers these
+foundational activities and supports the complete practice cycle.
+The team will verify this by completing and repeating each activity,
+checking that its instructions, drawing task, and feedback are
+consistent with its intended purpose.
 
 
-\subsection{G4. Support free drawing with automatic refinement}
-Allow children to draw freely beyond structured lessons, with automatic assistance
-for supported shapes and simple objects. This goal is achieved when users can create 
-drawings of their choosing, receive automatic refinement, and continue editing the result
-while retaining the ability to restore their unmodified drawing. The team will verify
-this by creating and refining supported drawings in the creative space, then modifying
-and undoing the corrections.
+\subsection{Support progression towards independent drawing}
+
+Enable learners to practise an activity with progressively less visual
+guidance, moving from tracing towards drawing without guides. Learners
+should have opportunities to demonstrate what they can complete
+independently.
+
+This goal is achieved when the agreed foundational activities support
+tracing, reduced guidance, and drawing without guides. The team will
+verify this by completing an activity at each support level and
+confirming that its records distinguish guided attempts from
+independent attempts.
+
+\subsection{Adapt support and difficulty to learner needs}
+
+Adjust guidance and activity difficulty in response to a learner's
+performance and selected support preferences. Learners experiencing
+repeated difficulty should receive additional support or a simpler
+task, while consistent success should allow progression towards less
+support or greater difficulty.
+
+This goal is achieved when the application responds appropriately to
+different performance histories while respecting the available support
+settings. The team will verify this using prepared sequences of
+successful, unsuccessful, and mixed attempts, checking that the
+resulting adjustments follow the agreed progression criteria.
+Specific thresholds will be defined in the requirements.
 
 
-\subsection{G5. Record activity attempts and encountered difficulties}
-Help parents and educators understand a child’s progress by recording
-each activity attempt, the guidance provided, difficulties encountered,
-and the final outcome. Difficulties will be captured through predefined observations
-appropriate to the activity, such as missed tracing points or incomplete lines.
-This goal is achieved when attempts can be reviewed and compared without
-losing earlier difficulties or overlooking improvements made within an attempt.
-The team will verify this using prepared attempts with known difficulties and
-outcomes, confirming that the stored records and progress summaries accurately reflect them.
+\subsection{Support editable creative drawing and refinement}
+
+Provide a creative space where children can draw freely and request
+automatic refinement of supported shapes and simple objects. The
+refined artwork should remain editable within the drawing space so
+that children can continue developing their work and restore their
+original drawing if desired.
+
+This goal is achieved when users can create a drawing, request a
+supported refinement, continue editing the result, and recover the
+unmodified drawing. The team will verify this using representative
+drawings from the agreed supported set, checking that refinement
+preserves editability and that unsuccessful refinement requests leave
+the existing drawing unchanged.
 
 
-\subsection{G6. Help parents and guardians understand their child's progress and practice needs}
-Allow parents and guardians to review their child’s activity history,
-recognise improvements, and identify recurring difficulties that may warrant
-further practice or discussion with an educator. This goal is achieved when
-an authorised adult can access a summary of completed activities, changes
-in performance, and assistance used, and inspect the attempts supporting that
-summary. The team will verify this using prepared histories showing
-improvement, repeated difficulties, and changing support levels, checking 
-that each summary accurately represents the underlying records.
+\subsection{Preserve meaningful activity records}
+
+Help supporting adults understand how a child completed an activity
+by retaining the attempt's guidance level, encountered difficulties,
+changes during the attempt, and final outcome. Difficulties will be
+described through predefined activity observations, such as missed
+tracing points or incomplete lines.
+
+This goal is achieved when an attempt can be reviewed without losing
+earlier difficulties or overlooking subsequent corrections. The team
+will verify this using prepared attempts with known actions, guidance
+levels, and outcomes, checking that the records accurately represent
+both the process and the final result.
+
+\subsection{Make progress understandable to supporting adults}
+
+Help parents, guardians, caregivers, and educators recognise changes
+in a child's performance and identify recurring difficulties that may
+inform further practice. Summaries should distinguish changes in
+independent performance from results achieved with additional support.
+
+This goal is achieved when an authorised adult can review activity
+history, understand changes in performance and assistance used, and
+inspect the attempts supporting each summary. The team will verify
+accuracy using prepared histories showing improvement, recurring
+difficulties, and changing support levels. Adult reviewers will also
+be asked to interpret example summaries and locate supporting attempts
+to assess whether the information is understandable.
 
 \section{Stretch Goals}
 
-\textbf{Camera-based finger tracing.} Display shapes, tracing guides, and
-start and end points over a live camera view. Children would see themselves
-in the background and trace the guides by moving their finger, offering
-another fun way to practise visually guided movement.
+The following extensions will be considered after the core goals are
+met, subject to remaining time and technical feasibility.
 
 \medskip
 
-\noindent\textbf{Letter tracing and drawing.} Extend the activities to letters,
-allowing children to progress from tracing letter outlines to forming
-letters without guides.
+\noindent\textbf{Camera-based finger tracing.}
+
+Provide an alternative interaction in which children trace displayed
+guides by moving a finger within a live camera view. This extension
+would be achieved when the application can track the finger's movement
+relative to a guide and provide activity feedback. The team would
+verify this using representative tracing attempts under defined camera
+and lighting conditions.
+
+\medskip
+
+\noindent\textbf{Letter tracing and drawing.}
+
+Extend structured practice to an agreed set of letters, supporting
+progression from tracing letter outlines to forming letters without
+guides. This extension would be achieved when the selected letter
+activities support guided and independent attempts, activity feedback,
+and attempt recording. The team would verify each activity at the
+supported guidance levels.
 
 \section{Custom Documents (CDs)}
 
-\textbf{Fall --- Literature Review Report}
+The team proposes a Literature Review Report for the fall term and a
+Usability Report for the winter term, consistent with the Development
+Plan. These choices remain subject to instructor approval.
 
-We will review contemporary research on drawing practice and its relation to 
-visual-motor development. We will also look the learning and support needs of 
-children, including those with autism or ADHD. The literature review report 
-will compare findings to identify limitations and explain how the evidence 
-informs the application's activities, guidance, and progress tracking.
+\medskip
 
-\textbf{Winter --- Usability Report}
+\noindent\textbf{Fall --- Literature Review Report}
 
-We will evaluate the usability of our drawing activities and parent-facing 
-progress summaries. The report will document evaluation methods and criteria 
-as well as observed difficulties and recommended improvements. Such methods 
-will include team walkthroughs with adult reviewers, not depending on child 
-participation.
+The report will examine research on visual-motor development,
+foundational drawing practice, and the learning and support needs of
+children, including those with autism or ADHD. It will compare
+findings, identify limitations in the evidence, and explain how the
+research informs Squigglr's activities, guidance, and progress
+tracking. It will distinguish evidence supporting the proposed
+approach from evidence of effectiveness that would require evaluation
+of Squigglr itself.
+
+\medskip
+
+\noindent\textbf{Winter --- Usability Report}
+
+The report will evaluate the usability of the drawing activities and
+adult-facing progress summaries. It will document evaluation tasks,
+methods, findings, limitations, and recommended improvements.
+Evaluation will include team walkthroughs and task-based sessions
+with adult reviewers, including checks of whether reviewers can
+interpret summaries and locate supporting attempt records.
+
+The evaluation will not depend on child participation. Findings from
+adult reviewers will inform design improvements, but will not be
+presented as direct evidence of usability for children or of
+developmental benefits.
 
 \newpage{}
 
@@ -368,32 +520,8 @@ reviewed the suggested edits against our original draft to ensure that they
 preserved our intended meaning and checked the formatted citations against the
 source materials.
 
-\newpage{}
-
-\section*{References}
-\addcontentsline{toc}{section}{References}
-
-\begin{enumerate}
-\item Daly, C. J., Kelley, G. T., and Krauss, A. (2003). Relationship between
-  visual-motor integration and handwriting skills of children in kindergarten:
-  A modified replication study. \emph{American Journal of Occupational
-  Therapy}, 57(4), 459--462. \url{https://doi.org/10.5014/ajot.57.4.459}
-
-\item Kaiser, M.-L., Schoemaker, M. M., Albaret, J.-M., and Geuze, R. H.
-  (2015). What is the evidence of impaired motor skills and motor control among
-  children with attention deficit hyperactivity disorder (ADHD)? Systematic
-  review of the literature. \emph{Research in Developmental Disabilities}, 36,
-  338--357. \url{https://doi.org/10.1016/j.ridd.2014.09.023}
-
-\item Fuentes, C. T., Mostofsky, S. H., and Bastian, A. J. (2009). Children
-  with autism show specific handwriting impairments. \emph{Neurology}, 73(19),
-  1532--1537. \url{https://doi.org/10.1212/WNL.0b013e3181c0d48c}
-
-\item Taverna, L., Tremolada, M., Dozza, L., Zanin Scaratti, R., Domahs, U.,
-  Lallo, C., and Tosetto, B. (2020). Who benefits from an intervention program
-  on foundational skills for handwriting addressed to kindergarten children and
-  first graders? \emph{International Journal of Environmental Research and
-  Public Health}, 17(6), 2166. \url{https://doi.org/10.3390/ijerph17062166}
-\end{enumerate}
+\clearpage
+\bibliographystyle{unsrt}
+\bibliography{ProblemStatementRefs}
 
 \end{document}

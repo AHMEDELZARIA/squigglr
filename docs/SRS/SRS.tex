@@ -5,10 +5,12 @@
 %
 % Risks are removed because they are covered by the Hazard Analysis
 \documentclass[12pt]{article}
+\usepackage{longtable}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{enumitem}
+\usepackage{float}
 \usepackage{hyperref}
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
@@ -59,22 +61,351 @@ Date 2 & 1.1 & Notes\\
 \subsection{Goals of the Project}
 \lips
 \section{Stakeholders}
+
+This section identifies who has an interest in Squigglr, who uses it, and
+how each group informed the requirements. Sources are cited by their
+Requirement Source (SRC) identifiers from Appendix~A. The development team
+is not listed as a stakeholder.
+
+Each stakeholder is classed by how directly they use Squigglr.
+\emph{Primary} stakeholders use it directly: children, parents, guardians
+and caregivers, and educators and learning-support staff.
+\emph{Secondary} stakeholders shape it or are affected by it without using
+it: the client, school administrators, and the domain specialists.
+\emph{Tertiary} stakeholders have an indirect interest: occupational
+therapists and educational specialists, and the TA and course
+instructors.
+
 \subsection{Client}
-\lips
+
+The client, a secondary stakeholder, is Dr.~Christopher Anand, the project
+supervisor, who acts in a
+client-like role (SRC-003). He provides guidance on scope, feasibility, and
+technical direction (SRC-001). His binding decisions are recorded in the
+Mandated Constraints section (SRC-004).
+
 \subsection{Customer}
-\lips
+
+Squigglr has no paying customer; it is a capstone project and no sale or
+purchase is planned. The adults who would choose to adopt it act as
+customers in practice: parents, guardians, and caregivers for home use,
+and educators and school administrators for school use (SRC-001).
+
 \subsection{Other Stakeholders}
-\lips
+
+Table~\ref{tab:otherStakeholders} lists the stakeholders other than the
+client and the hands-on users, with the knowledge each provides and how
+much they are involved and can influence the project. Conflicts between
+stakeholders are handled in the Priorities Assigned to Users section.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.47\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\caption{Other stakeholders: knowledge needed, involvement and influence}
+\label{tab:otherStakeholders}\\
+\toprule
+\textbf{Stakeholder} & \textbf{Interest and knowledge needed} &
+\textbf{Involvement and influence} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Stakeholder} & \textbf{Interest and knowledge needed} &
+\textbf{Involvement and influence} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+School administrators (secondary) & Suitability for the school setting,
+device availability, and the resources needed (SRC-001). & Not yet
+involved. May influence adoption if Squigglr is considered for school use. \\
+Domain specialists P1, P2 and P3 (secondary) & Three specialists with
+doctorates in human-computer interaction and related engineering fields
+who build software for children with autism, attention-deficit/%
+hyperactivity disorder (ADHD) and other learning needs. They provide
+expert knowledge of the intended users (SRC-005). They preferred not to be
+named and are de-identified (SRC-006). & Interviewed on October 1, 2026
+(SRC-005). They offered to help guide a future pilot (SRC-005, P1, 24:03),
+which supports involving them in verification and validation (SRC-006).
+They advise; they do not decide. \\
+Occupational therapists and educational specialists (tertiary) & Progress
+milestones, benchmarks and feedback wording, as the specialists
+recommended (SRC-005, P2, 31:42). & Not yet consulted. \\
+TA and course instructors (tertiary) & Assess the project deliverables. &
+Review each deliverable; they influence documentation, not product
+behaviour. \\
+\end{longtable}
+}
+
 \subsection{Hands-On Users of the Project}
-\lips
+
+Squigglr has two groups of hands-on users, both primary stakeholders:
+children, who complete drawing activities, and supporting adults, who choose activities and review
+records.
+
+\paragraph{Children.} Kindergarten and primary school learners, and older
+children who need continued support, including children with autism, ADHD,
+or other developmental or learning differences (SRC-001). The intended age
+range is not yet defined; it is recorded as an open item, \texttt{AGE\_RANGE}
+(TBD). Their characteristics vary widely, and a diagnosis alone does not
+determine the support a child needs (SRC-001; SRC-005, Rayan, 2:04).
+The characteristics below matter most for the requirements, because they
+shape how children read, draw and move through the application without
+help:
+\begin{itemize}
+  \item \textbf{Reading ability:} some children cannot read yet, or may
+  not understand written instructions. Squigglr has to communicate in ways
+  that do not depend on reading, such as images and icons (SRC-005, P1,
+  34:13) and spoken audio that can be muted (SRC-005, P2, 37:39).
+  \item \textbf{Motor skills:} fine-motor ability varies; some children find holding
+  a stylus difficult, and grip can affect how they draw (SRC-005, P3,
+  25:36). Fine-motor control is part of visual-motor practice, so children
+  need to practise holding a tool, moving from larger tools to smaller
+  ones closer to what schools use (SRC-005, P1, 26:46). Squigglr
+  therefore uses a stylus as its main input. Drawing with a finger is the
+  easiest starting point (SRC-005, P1, 26:46), and finger input is a
+  stretch goal. Some children may also have gross-motor or vision
+  challenges (SRC-005, P2, 19:05).
+  \item \textbf{Support needs:} children should be able to enter a lesson,
+  practise, restart, and move back and forth without constant adult help
+  (SRC-005, P1, 34:13). Adults decide when a child moves to a new lesson
+  or skips a stage (SRC-005, P1, 28:37).
+  \item \textbf{Device experience:} many young children already know how
+  to navigate touchscreen applications on tablets (SRC-005, P1, 34:13).
+\end{itemize}
+
+\paragraph{Supporting adults.} Parents, guardians, caregivers, educators,
+and learning-support staff. They set up accounts, choose lessons and
+starting stages, and review attempt records and progress summaries on a
+tablet or computer (SRC-001; SRC-005, P1, 34:13). Their technical
+experience is assumed to be that of an everyday web user (assumption). They
+need understandable information without scores, diagnostic labels, or
+comparisons with other children (SRC-005, Moustafa, 6:03).
+
+\paragraph{Experience levels.} Table~\ref{tab:userExperience} rates each
+user group's subject-matter and technological experience on the Volere
+scale of novice, journeyman and master.
+
+\begin{table}[H]
+\centering
+\caption{Experience of each hands-on user group}
+\label{tab:userExperience}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.2\textwidth}
+>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{User group} & \textbf{Subject matter (drawing and visual-motor
+practice)} & \textbf{Technology} \\
+\midrule
+Children & Novice: they are still learning to draw lines and shapes
+(SRC-001). & Novice to journeyman: many can already navigate tablet
+applications (SRC-005, P1, 34:13), but some need adult help. \\
+Parents, guardians, caregivers & Novice: not assumed to have training in
+visual-motor development (assumption). & Journeyman: everyday web users
+(assumption). \\
+Educators, learning-support staff & Journeyman: they support learners'
+skill development as part of their work (assumption). & Journeyman: they
+use school-provided web tools (assumption). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Needs, concerns and their effect on requirements.}
+Table~\ref{tab:userNeeds} records what each user group needs or worries
+about, and how this section expects the requirements to respond. The
+concerns come from the sources cited; none were gathered from children
+(SRC-004).
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.38\textwidth}>{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
+\caption{User needs and concerns, with the requirement response}
+\label{tab:userNeeds}\\
+\toprule
+\textbf{User} & \textbf{Need or concern (source)} &
+\textbf{Expected requirement response} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{User} & \textbf{Need or concern (source)} &
+\textbf{Expected requirement response} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Children & May not read; need to find and restart a lesson alone
+(SRC-005, P1, 34:13). & Icon-based navigation that needs little text. \\
+Children & Grip and fine-motor ability vary (SRC-005, P3, 25:36). &
+Stylus is the main input; finger input is a stretch goal. \\
+Children (guided lessons) & Attempts must show what the child actually
+drew (SRC-005, Moustafa, 6:03). & Records keep the child's actual
+strokes; no corrected shape is counted as their work. \\
+Children (creative space) & Get a cleaner version of their own drawing
+that is still theirs (SRC-005, Moustafa, 6:03). & Refinement adjusts the
+child's strokes rather than replacing them; the result stays editable and
+the original can be restored. \\
+Children & Two children with the same diagnosis may need different
+support (SRC-005, Rayan, 2:04). & Adults choose the lesson and starting
+stage for each child; nothing is set by diagnosis. \\
+Caregivers & Become annoyed if they must intervene constantly
+(SRC-005, P1, 34:13). & Children can practise without constant adult
+help. \\
+Caregivers, educators & Want to decide when a child moves on
+(SRC-005, P1, 28:37; P2, 29:18). & Adults choose the lesson and starting
+stage. Squigglr may only suggest going back a stage, and an adult must
+accept. \\
+Caregivers, educators & Need to see how far the child got in each
+lesson, how many attempts succeeded at each stage, and which difficulties
+recur (SRC-001). & Records save the furthest stage reached and the
+successful attempts at each stage. To avoid endless repetition, a lesson
+ends after \texttt{ATTEMPT\_LIMIT} (TBD) unsuccessful attempts at one
+stage, and the progress is saved. No scores or labels. \\
+Administrators & Installing applications on school devices is difficult
+(SRC-003, SRC-004). & Browser-based; no installation. \\
+\end{longtable}
+}
+
 \subsection{Personas}
-\lips
+
+The three personas below are \textbf{fictional}. They do not describe any
+real child or adult. Personas are used because
+requirements cannot be gathered from children directly, and the supervisor
+recommended them for this case (SRC-004). Following the Volere template,
+there are at most three, and each is a short life story of a person. Details
+that come from a source cite it; all other details were invented by the
+team to make the persona concrete. No information was collected from children (SRC-004). Each
+persona describes one individual; none represents all children or adults
+in its group.
+
+The personas describe people, not the product. They leave out design
+choices such as screen layout or feedback wording, so they stay valid if
+those choices change. Each persona has a fixed identifier (PER-1 to PER-3)
+so that scenarios, use cases, usability tests and later documents can
+refer to it. The three personas are linked: Adam is Sarah's son and one of
+Janice's learners, so one scenario can follow him between home and school. Invented details should be checked with caregivers and educators when
+the opportunity arises; if one changes, the scenarios that depend on it
+must be reviewed.
+
+\paragraph{PER-1 (learner): Adam.}
+Adam is 15 years old; older children who need continued support are
+in scope (SRC-001). He lives with his parents and no
+siblings. Adam is autistic and has ADHD. He
+loves Spider-Man, colours Spider-Man pictures at home, and tends to fixate
+on things he enjoys.
+\begin{itemize}
+  \item \textbf{Communication:} he is verbal but speaks in short, simple
+  sentences, and most of his responses are memorized. He can say how he
+  feels or what he wants, such as being hungry or wanting to play, but
+  cannot hold the conversations typical for his age. He understands
+  spoken words and instructions well.
+  \item \textbf{Reading and writing:} he reads and writes only with a
+  parent's support. He can read a few short words he recognizes, such as
+  ``yes'' and ``no'', but not longer words or sentences.
+  \item \textbf{Learning:} he learns best by watching someone do a task
+  first and then copying it, rather than being told what to do without an
+  example.
+  \item \textbf{Attention:} he loses focus easily. For skill-building
+  tasks such as reading or drawing, a caregiver needs to watch over him
+  throughout. When he colours, which he enjoys, he can work alone for a
+  while, but needs encouragement every now and then to stay focused and
+  finish.
+  \item \textbf{Frustrations:} he becomes agitated when a task is repeated
+  over and over.
+  \item \textbf{Attitude to technology and tools:} he knows how to use an
+  iPad. He has no experience with a stylus, but uses crayons, pens,
+  pencils, coloured pencils and markers.
+  \item \textbf{Goals:} finish a picture of something he likes and show
+  it to his family.
+  \item \textbf{Context of use:} at home with his mother nearby, and at
+  school in sessions with Janice.
+\end{itemize}
+
+\paragraph{PER-2 (caregiver): Sarah.}
+Sarah is Adam's mother and works full time. She wants Adam
+to keep building the drawing and fine-motor skills that support writing. She is not a specialist and learns about Adam's needs from
+his teachers and therapists.
+\begin{itemize}
+  \item \textbf{Attitude to technology:} an everyday web user who wants
+  things to work without setup.
+  \item \textbf{Goals:} let Adam practise without being called over
+  constantly (SRC-005, P1, 34:13); choose what Adam practises and decide
+  when he moves on (SRC-005, P1, 28:37).
+  \item \textbf{Review habits:} looks through Adam's practice history on a
+  laptop once a week to see which stages he reached and what keeps going
+  wrong (SRC-001). Shares what she sees
+  with Janice at parent meetings.
+  \item \textbf{Concerns:} does not want Adam scored, labelled or compared
+  with other children (SRC-005, Moustafa, 6:03); wants Adam's data kept
+  private.
+\end{itemize}
+
+\paragraph{PER-3 (educator): Janice.}
+Janice is a teacher at a school for students with special needs who
+works with several learners each day, including Adam. She
+has a short slot with each learner and little time to set things up
+between them.
+\begin{itemize}
+  \item \textbf{Environment:} the school's devices are managed centrally,
+  so she cannot install applications (SRC-003, SRC-004).
+  \item \textbf{Attitude to technology:} comfortable with the school's web
+  tools, but has no administrator rights.
+  \item \textbf{Goals:} set a different activity for each learner
+  (SRC-005, P2, 29:18); compare a learner's records with what she
+  observes in class (SRC-001).
+  \item \textbf{Concerns:} switching between learners quickly, and making
+  sure one learner's records are never shown to another.
+\end{itemize}
+
 \subsection{Priorities Assigned to Users}
-\lips
+
+Table~\ref{tab:userPriorities} assigns priorities. Teachers and students
+are the main priority (SRC-003).
+Rationale: children are the users the activities serve; educators and
+caregivers choose activities and act on the records, so their needs come
+next. Administrators affect adoption but not daily use, and the specialists
+advise rather than use Squigglr (SRC-006). When needs conflict, a child's
+ability to practise independently is weighed against an adult's control of
+progression; the adult decides (SRC-005, P1, 28:37).
+
+\begin{table}[H]
+\centering
+\caption{User priorities}
+\label{tab:userPriorities}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Priority} & \textbf{Users} \\
+\midrule
+Key & Children (learners); educators and learning-support staff (SRC-003). \\
+Key & Parents, guardians, and caregivers (SRC-001); ranked key because
+they choose activities and review records at home. \\
+Secondary & School administrators; domain specialists (SRC-006). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \subsection{User Participation}
-\lips
+
+Children do not take part in requirements gathering; their needs are
+inferred from adults and from personas (SRC-004). The
+requirements were informed by:
+\begin{itemize}
+  \item the supervisor meeting (SRC-004) and TA meetings (SRC-003,
+  SRC-006);
+  \item a recorded interview with domain specialists P1--P3 (SRC-005),
+  held because children could not be asked directly (SRC-004) and the
+  specialists build software for the intended users (SRC-006);
+  \item peer review of the Problem Statement and Development Plan
+  (SRC-007).
+\end{itemize}
+Parents, caregivers, and educators have not yet been consulted
+(SRC-005, Rayan, 12:31); this is an open item. Planned later participation
+includes adult reviewers in usability sessions (SRC-001), possible feedback
+from adults with autism or ADHD (SRC-005, P2, 37:39), and the specialists'
+offered support for a pilot (SRC-005, P1, 24:03). Any study involving
+children requires ethics approval first (SRC-004).
+
 \subsection{Maintenance Users and Service Technicians}
-\lips
+
+During the project, the development team maintains Squigglr, including
+activity content and the hosted website. No maintenance users or service
+technicians outside the team have been identified. Who maintains Squigglr
+after the project ends is an open item (TBD).
 
 \section{Mandated Constraints}
 \subsection{Solution Constraints}

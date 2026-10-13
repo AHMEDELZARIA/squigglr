@@ -9,6 +9,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{enumitem}
+\usepackage{float}
 \usepackage{hyperref}
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
@@ -260,6 +261,186 @@ Inhibit the New Product}
 
 \section{Ideas for Solution}
 \lips
+
+\newpage{}
+\section{Appendix --- Requirement Sources}
+\label{app:sources}
+
+This appendix is the requirement sources register. Each source has a fixed
+identifier (SRC-001 to SRC-007) that is never renumbered. A requirement names
+the sources it comes from in its rationale or source field. A statement from
+the specialist interview is cited by its source identifier, participant code
+and transcript timestamp, for example ``SRC-005 (P1, 28:37)''; the statement
+identifiers in Section~\ref{sec:src-interview} (for example SRC-005.01) can
+be cited instead. The interview is expert-reported evidence only. The three
+participants are de-identified domain specialists (P1, P2 and P3). No child
+took part in the interview or in any other source listed here.
+
+Table~\ref{tab:src-docs} lists the project documents and meeting sources, and
+Table~\ref{tab:src-other} lists the interview and peer-review sources. The
+supported requirement identifiers are not listed in these tables yet. They
+are added as back-links as each requirement is written, so that every
+dependency appears at both ends: the requirement names its source, and the
+source lists the requirement. Each source and statement has a \LaTeX{} label
+(for example \texttt{src:005.01}), so a requirement can link to it and the
+link works in the PDF.
+
+The sources represent users in different ways. Children are the main
+beneficiaries, but by the supervisor's direction (SRC-004) no requirement is
+gathered from children and no information about them is collected. Their
+needs enter the requirements only through adults who know them. The domain
+specialists (SRC-005) are the only outside voice so far. Their advice changed
+the project: progression is chosen by an adult instead of adjusted
+automatically, finger input is the starting point, and camera tracing became
+a stretch goal. Parents, educators and occupational therapists have not been
+consulted yet. The specialists advised doing so (SRC-005.03, SRC-005.06), and
+until then the requirements that depend on their views rest on the expert
+statements below and are open to change.
+
+\begin{table}[H]
+\centering
+\caption{Requirement sources: project documents and meetings}
+\label{tab:src-docs}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}
+  >{\raggedright\arraybackslash}p{1.3cm}
+  >{\raggedright\arraybackslash}p{1.9cm}
+  >{\raggedright\arraybackslash}p{1.4cm}
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Date} & \textbf{Reference} &
+\textbf{Summary} & \textbf{Limitations} \\
+\midrule
+\phantomsection\label{src:001}SRC-001 & Project document & -- &
+\texttt{docs/\allowbreak Problem\allowbreak Statement\allowbreak And\allowbreak
+  Goals/\allowbreak Problem\allowbreak Statement.tex} &
+Problem, stakeholders, goals and stretch goals. &
+Written by the team; some assumptions changed after SRC-005. \\
+\phantomsection\label{src:002}SRC-002 & Project document & -- &
+\texttt{docs/\allowbreak Development\allowbreak Plan/\allowbreak
+  Development\allowbreak Plan.tex} &
+Team process, tools and schedule. &
+Written by the team; plans, not user needs. \\
+\phantomsection\label{src:003}SRC-003 & TA meeting & Sep 23, 2026
+  & Issue \href{https://github.com/AHMEDELZARIA/squigglr/issues/10}{\#10} &
+Website instead of an installed app; teachers and students as primary
+stakeholders; specific, measurable metrics. &
+Short minutes; not a user source. \\
+\phantomsection\label{src:004}SRC-004 & Supervisor meeting & Sep 23, 2026
+  & Issue \href{https://github.com/AHMEDELZARIA/squigglr/issues/21}{\#21} &
+Collect no information about children; do not gather requirements by asking
+children; ethics approval for studies; start with a web app; traceability. &
+Advice from the client, not observed user data. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Requirement sources: interview and reviews}
+\label{tab:src-other}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}
+  >{\raggedright\arraybackslash}p{1.3cm}
+  >{\raggedright\arraybackslash}p{1.9cm}
+  >{\raggedright\arraybackslash}p{1.4cm}
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Date} & \textbf{Reference} &
+\textbf{Summary} & \textbf{Limitations} \\
+\midrule
+\phantomsection\label{src:005}SRC-005 & Specialist interview & Oct 1, 2026 &
+Appendix~\ref{app:interview} &
+Three de-identified specialists on progression, input method, child-friendly
+design, feedback, accessibility and ethics. &
+Three experts, one session; expert opinion, not child observation; the
+experts advised confirming details with occupational therapists and
+educators. \\
+\phantomsection\label{src:006}SRC-006 & TA meeting & Oct 7, 2026
+  & Issue \href{https://github.com/AHMEDELZARIA/squigglr/issues/78}{\#78} &
+State machine for the formal specification; define jargon; named TBD
+constants; specialists as de-identified secondary stakeholders. &
+Course guidance, not user needs. \\
+\phantomsection\label{src:007}SRC-007 & Peer review & --
+  & Issues \href{https://github.com/AHMEDELZARIA/squigglr/issues/69}{\#69}--%
+  \href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75} &
+Team 13 review of SRC-001 and SRC-002. &
+Reviewers' opinions; not all suggestions are adopted. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Key Interview Statements}
+\label{sec:src-interview}
+
+This subsection lists the interview statements most relevant to the
+requirements. Each is a short paraphrase, not a quote; the exact words are in
+Appendix~\ref{app:interview} at the given timestamp.
+
+\begin{description}[leftmargin=1.5em, style=nextline]
+\item[\phantomsection%
+  \label{src:005.01}SRC-005.01 (P1, 28:37; P2, 29:18; 30:20--31:02)]
+Deciding automatically when a child is ready for the next level would need
+assessment and is too complex for the time frame. An adult who knows the
+child (a parent or educator) should choose the level. The team agreed to
+leave progression to the supervising adult.
+\item[\phantomsection%
+  \label{src:005.02}SRC-005.02 (P2, 29:18)]
+In a past project, a teacher personalized each child's activities through a
+separate adult interface that also showed progress.
+\item[\phantomsection%
+  \label{src:005.03}SRC-005.03 (P2, 31:42)]
+Which progress measures help an adult should be decided with occupational
+therapists or educational specialists, using milestones from the literature
+if they exist.
+\item[\phantomsection%
+  \label{src:005.04}SRC-005.04 (P3, 24:34; P3, 25:36; P1, 26:46)]
+Holding a pen affects how children draw and the usability of the app.
+Finger input is the easiest start; a larger stylus and then a smaller one
+could be later difficulty levels if fine motor practice is a goal.
+\item[\phantomsection%
+  \label{src:005.05}SRC-005.05 (P1, 34:13)]
+The app should be child-friendly: a child who cannot read yet should be able
+to enter a lesson, practise, restart and move back and forth using images
+and icons rather than text, without constant adult help. Adults handle setup.
+\item[\phantomsection%
+  \label{src:005.06}SRC-005.06 (P1, 36:26)]
+Positive feedback wording and colours should be designed with feedback from
+educators and occupational therapists, built up bit by bit.
+\item[\phantomsection%
+  \label{src:005.07}SRC-005.07 (P2, 37:39)]
+Audio feedback is a good idea; offering more than one modality is
+encouraged in inclusive design, with the user able to turn the audio off.
+Design it carefully with therapists' feedback, and consider adults with ADHD
+or autism as reviewers when children cannot take part.
+\item[\phantomsection%
+  \label{src:005.08}SRC-005.08 (P2, 39:26)]
+Start with the Web Content Accessibility Guidelines (WCAG), then apply more
+specialized design heuristics for autism from the literature.
+\item[\phantomsection%
+  \label{src:005.09}SRC-005.09 (P2, 19:05; P1, 20:27; P2, 20:47)]
+From a universal design view, the skills apply to all children, including
+those with motor or sight challenges; designing for disability serves many
+groups.
+\item[\phantomsection%
+  \label{src:005.10}SRC-005.10 (P1, 13:42; P1, 15:12; P1, 16:13; P2, 16:45)]
+Camera finger tracing in the air practises gross rather than fine motor
+skills. It is useful but should come after the core touchscreen tracing
+when time is limited.
+\item[\phantomsection%
+  \label{src:005.11}SRC-005.11 (P2, 22:56; P1, 24:03; P1, 33:00)]
+Testing with children needs ethics approval (about three to four months
+where P2 works). Meeting experts for feedback without involving children
+does not.
+\item[\phantomsection%
+  \label{src:005.12}SRC-005.12 (41:51--42:48)]
+All three participants agreed to the use of the transcript for eliciting
+requirements.
+\end{description}
 
 \newpage{}
 \input{InterviewTranscript.text}

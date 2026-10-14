@@ -1529,8 +1529,104 @@ still ends the lesson. Relevant to safety.
 \subsection{Product Boundary}
 \lips
 \subsection{Product Use Case Table}
-\lips
+\label{sec:puc-table}
+
+Table~\ref{tab:puc} lists the nine product use cases, UC-001 to UC-009.
+Each row names the actor who starts or carries out the use case, the
+trigger that starts it, what the actor wants when it ends (the user goal)
+and the project goals it serves (Table~\ref{tab:goals}). Squigglr is
+named as the actor where the product starts the use case itself. The
+identifiers are fixed and never renumbered; requirements trace to them,
+and Section~\ref{sec:puc} gives each use case's full flows. Constants in
+\texttt{typewriter} type are defined in Table~\ref{tab:goalconst}.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.09\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.25\textwidth}
+  >{\raggedright\arraybackslash}p{0.29\textwidth}
+  >{\raggedright\arraybackslash}p{0.08\textwidth}@{}}
+\caption{Product use cases}\label{tab:puc}\\
+\toprule
+\textbf{ID} & \textbf{Use case and actor} & \textbf{Trigger} &
+\textbf{User goal} & \textbf{Goals} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Use case and actor} & \textbf{Trigger} &
+\textbf{User goal} & \textbf{Goals} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+UC-001 & Set up a child and a lesson\newline
+\emph{Supporting adult} &
+The adult creates a profile for a child, or chooses a lesson for the
+child. &
+The lesson and its starting stage are chosen, and every adult-set value
+is within its range, or at the middle of the range if the adult did not
+choose one. & G.3 \\
+\addlinespace
+UC-002 & Practise a guided lesson\newline
+\emph{Child} &
+The child opens a lesson that an adult chose. &
+The child moves to the next stage after an attempt meets
+\texttt{STAGE\_PASS}, or retries; the lesson ends when the child finishes
+it or reaches the attempt limit, and the furthest stage reached is saved.
+& G.1, G.2, G.3 \\
+\addlinespace
+UC-003 & Start the child at a later stage\newline
+\emph{Supporting adult} &
+The adult judges that the child needs less help in a lesson. &
+The lesson starts at the stage the adult chose; no stage changes without
+the adult's action. & G.3 \\
+\addlinespace
+UC-004 & Respond to a suggestion to go back a stage\newline
+\emph{Supporting adult} &
+Squigglr suggests an earlier stage after \texttt{DIFFICULTY\_STREAK}
+failed attempts in a row. &
+The stage changes only if the adult accepts; a declined or ignored
+suggestion changes nothing. & G.3 \\
+\addlinespace
+UC-005 & Create and edit artwork\newline
+\emph{Child} &
+The child opens the creative space. &
+The child's drawing is saved and stays editable. & G.4 \\
+\addlinespace
+UC-006 & Refine artwork and restore the original\newline
+\emph{Squigglr; supporting
+adult} &
+The child finishes a drawing in the creative space. &
+The drawing is refined within \texttt{REFINE\_TOLERANCE} and stays
+editable; the adult can restore the original strokes; a failed
+refinement leaves the drawing unchanged. & G.4 \\
+\addlinespace
+UC-007 & Record an attempt\newline
+\emph{Squigglr} &
+The child ends an attempt at a lesson stage. &
+The record keeps the stage, every predefined difficulty observed, later
+corrections and the outcome. & G.5 \\
+\addlinespace
+UC-008 & Review progress\newline
+\emph{Supporting adult} &
+The adult opens a child's progress summary. &
+The adult sees the child's progress over time, with attempts made
+without a guide separated from attempts made with one, and can open the
+attempts behind it. & G.6 \\
+\addlinespace
+UC-009 & Review history and change settings\newline
+\emph{Supporting adult} &
+The adult opens a child's history or settings. &
+Only an authorised adult sees the history; the accessibility, audio and
+adult-set values are changed, and each adult-set value stays within its
+range. & G.3, G.6 \\
+\end{longtable}
+}
+
 \subsection{Individual Product Use Cases (PUC's)}
+\label{sec:puc}
 \lips
 
 \section{Functional Requirements}

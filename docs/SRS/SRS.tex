@@ -105,6 +105,9 @@ direction that no requirements are gathered from children (SRC-004), every
 check is done by the team or by adult reviewers using prepared or
 adult-made attempts, never with child participants. Where a check needs a
 number that has not yet been agreed, it uses a named constant marked TBD.
+On the supervisor's advice (SRC-008), the values that depend on the child
+are chosen by the supporting adult within a range the team sets, so the
+checks test that Squigglr keeps to that range, not that one value is right.
 Each lesson (for example, drawing a square) moves through fixed stages
 that give gradually less help: a demonstration, tracing a full outline,
 drawing between endpoints only, and drawing with no guide. This sequence
@@ -144,7 +147,8 @@ each drawing stage accepts a drawing, gives feedback and allows a retry. \\
 \addlinespace
 G.2 Support progression towards independent drawing &
 \emph{Purpose:} within a lesson, the child moves to the next stage when an
-attempt meets that stage's pass criteria (\texttt{STAGE\_PASS}, TBD); an
+attempt meets that stage's pass criteria (\texttt{STAGE\_PASS}, chosen by
+the adult within a team-set range); an
 attempt that does not meet them is not passed, and the child can retry.
 This checks the drawing against fixed criteria and does not assess the
 child (SRC-001).
@@ -156,25 +160,28 @@ points (SRC-005, \intref{P1}{20:27}). Serves children and supporting adults.
 to the next stage; (b) every prepared incorrect attempt, such as one with a
 missing side or a wrong endpoint, is not passed and its predefined
 difficulty is reported; and (c) every saved attempt records the stage it
-was made at, with no mislabelled record. \\
+was made at, with no mislabelled record; and (d) for prepared attempts
+scored just above and just below the chosen \texttt{STAGE\_PASS}, at its
+minimum, default and maximum, each attempt passes or fails as expected. \\
 \addlinespace
 G.3 Let supporting adults control support and difficulty &
 \emph{Purpose:} adults choose which lesson a child practises and may let
 the child start at a later stage. Squigglr may suggest returning to an
-earlier stage after \texttt{DIFFICULTY\_STREAK} (TBD) failed attempts in a
+earlier stage after \texttt{DIFFICULTY\_STREAK} failed attempts in a
 row; the change applies only when an adult accepts it, and a declined or
 ignored suggestion changes nothing. To avoid endless repetition, the lesson
-ends after \texttt{ATTEMPT\_LIMIT} (TBD, larger than
+ends after \texttt{ATTEMPT\_LIMIT} (larger than
 \texttt{DIFFICULTY\_STREAK}) unsuccessful attempts at one stage, and the
-furthest stage reached is saved.
+furthest stage reached is saved. The adult chooses both values for each
+child within a team-set range (SRC-008).
 \emph{Advantage:} judging readiness automatically would need assessment
 that is out of scope; the specialists advised adult control (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}; SRC-006). Serves children and supporting
 adults.
 \emph{Measurement:} met when, for prepared sequences of successful,
 unsuccessful and mixed attempts, every suggestion shown matches the agreed
 criteria, each lesson ends exactly at \texttt{ATTEMPT\_LIMIT} with its
-progress saved, and no lesson or starting stage changes without an adult's
-action. \\
+progress saved, no lesson or starting stage changes without an adult's
+action, and these hold at the minimum, default and maximum of each value. \\
 \addlinespace
 G.4 Support editable creative drawing and refinement &
 \emph{Purpose:} in the creative space, Squigglr refines a child's drawing
@@ -220,8 +227,15 @@ summaries and locate the supporting attempts, with at least
 \end{longtable}
 }
 
-Table~\ref{tab:goalconst} lists the constants used in the goals. Their values are not yet agreed; they will be set with the
-supervisor and domain specialists and recorded here, and no value will be
+Table~\ref{tab:goalconst} lists the constants used in the goals. On the
+supervisor's advice (SRC-008), a constant marked \emph{Adult} is set for each
+child by the supporting adult. The team defines only its minimum and
+maximum. When an adult creates a child profile, Squigglr asks them to choose
+a value, shows example drawings of what the minimum and maximum look like,
+and lets them change it later. If the adult does not choose, the default is
+the middle of the range. A constant marked \emph{Team} has one fixed value.
+The team finds the ranges and fixed values with the supervisor and domain
+specialists, using adult-made drawings, and records them here; no value is
 chosen from child testing (SRC-004).
 
 \begin{table}[htbp]
@@ -229,23 +243,24 @@ chosen from child testing (SRC-004).
 \caption{Constants used in the goals}
 \label{tab:goalconst}
 \small
-\begin{tabularx}{\textwidth}{@{}lXl@{}}
+\begin{tabularx}{\textwidth}{@{}lXlll@{}}
 \toprule
-\textbf{Constant} & \textbf{Meaning} & \textbf{Value} \\
+\textbf{Constant} & \textbf{Meaning} & \textbf{Set by} & \textbf{Range} &
+\textbf{Value} \\
 \midrule
 \texttt{STAGE\_PASS} & Criteria an attempt must meet to pass each stage
-of a lesson (G.2) & TBD \\
+of a lesson (G.2) & Adult & TBD & Midpoint \\
 \texttt{DIFFICULTY\_STREAK} & Failed attempts in a row before Squigglr may
-suggest returning to an earlier stage (G.3) & TBD \\
+suggest returning to an earlier stage (G.3) & Adult & TBD & Midpoint \\
 \texttt{ATTEMPT\_LIMIT} & Unsuccessful attempts at one stage before the
 lesson ends and its progress is saved; larger than
-\texttt{DIFFICULTY\_STREAK} (G.3) & TBD \\
+\texttt{DIFFICULTY\_STREAK} (G.3) & Adult & TBD & Midpoint \\
 \texttt{REFINE\_TOLERANCE} & Maximum distance between a refined
-drawing and the original strokes (G.4) & TBD \\
+drawing and the original strokes (G.4) & Team & -- & TBD \\
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers in the G.6
-check & TBD \\
+check & Team & -- & TBD \\
 \texttt{REVIEW\_PASS\_RATE} & Minimum share of G.6 reviewer tasks that
-must succeed & TBD \\
+must succeed & Team & -- & TBD \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -441,7 +456,7 @@ Caregivers, educators & Need to see how far the child got in each
 lesson, how many attempts succeeded at each stage, and which difficulties
 recur (SRC-001). & Records save the furthest stage reached and the
 successful attempts at each stage. To avoid endless repetition, a lesson
-ends after \texttt{ATTEMPT\_LIMIT} (TBD) unsuccessful attempts at one
+ends after \texttt{ATTEMPT\_LIMIT} unsuccessful attempts at one
 stage, and the progress is saved. No scores or labels. \\
 Administrators & Installing applications on school devices is difficult
 (SRC-003, SRC-004). & Browser-based; no installation. \\
@@ -959,7 +974,7 @@ Inhibit the New Product}
 \label{app:sources}
 
 This appendix is the requirement sources register. Each source has a fixed
-identifier (SRC-001 to SRC-007) that is never renumbered. A requirement names
+identifier (SRC-001 to SRC-008) that is never renumbered. A requirement names
 the sources it comes from in its rationale or source field. A statement from
 the specialist interview is cited by its source identifier, participant code
 and transcript timestamp, for example ``(SRC-005, \intref{P1}{28:37})''; the statement
@@ -1024,6 +1039,12 @@ Short minutes; not a user source. \\
   & Issue \href{https://github.com/AHMEDELZARIA/squigglr/issues/21}{\#21} &
 Collect no information about children; do not gather requirements by asking
 children; ethics approval for studies; start with a web app; traceability. &
+Advice from the client, not observed user data. \\
+\phantomsection\label{src:008}SRC-008 & Supervisor meeting & Oct 14, 2026
+  & Team meeting notes &
+Let the supporting adult choose child-dependent thresholds within a
+team-set minimum and maximum, with example drawings of each end; default
+to the middle of the range. &
 Advice from the client, not observed user data. \\
 \bottomrule
 \end{tabularx}

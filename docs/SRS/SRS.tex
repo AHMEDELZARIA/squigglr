@@ -845,7 +845,74 @@ Requirements.
 \subsection{Speed and Latency Requirements}
 \lips
 \subsection{Safety-Critical Requirements}
-\lips
+This subsection holds safety requirements that come from the Hazard Analysis
+and do not fit another section. Each lists the hazards it mitigates.
+
+\begin{description}
+\item[SAF-RAY-001] Squigglr shall allow lesson choice, starting-stage
+choice, learner switching and acceptance of a go-back suggestion only after
+an adult check that a child cannot complete by tapping icons, and shall keep
+a pending suggestion, without blocking practice, until an adult accepts or
+declines it.\\
+\emph{Rationale:} children should be able to practise without constant
+adult help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults
+(CON-007; SRC-005, \intref{P1}{28:37}). The form of the check is
+\texttt{ADULT\_CHECK}, TBD.\\
+\emph{Fit criterion:} in prepared walkthroughs, no adult-only action
+completes without passing the adult check, and a pending suggestion changes
+nothing until an adult acts.\\
+\emph{Hazards:} H-RAY-001, H-RAY-006.
+\item[SAF-RAY-002] Before a lesson starts, Squigglr shall check the device
+and browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not
+match, show an adult-readable notice that results may be unreliable.\\
+\emph{Rationale:} the team does not control the device (CON-001--CON-003).\\
+\emph{Fit criterion:} on each prepared unsupported combination the notice
+appears before the first attempt; on supported ones it does not.\\
+\emph{Hazards:} H-RAY-002.
+\item[SAF-RAY-003] Squigglr shall keep each completed attempt on the device
+until the server confirms it is saved, and shall tell the adult which
+attempts could not be saved.\\
+\emph{Rationale:} offline access is not promised (SRC-005,
+\intref{Moustafa}{6:03}), and G.5 needs complete records.\\
+\emph{Fit criterion:} with the connection cut during or after prepared
+attempts, no confirmed attempt is lost and every unsaved attempt is reported
+to the adult.\\
+\emph{Hazards:} H-RAY-002.
+\item[SAF-RAY-004] No record, summary or export shall show a score,
+diagnostic label or comparison with other children, and every summary and
+export shall state that it describes practice only and is not an assessment
+or diagnosis.\\
+\emph{Rationale:} Squigglr makes no diagnosis (SRC-001; SRC-005,
+\intref{Moustafa}{6:03}), and adults reading records may have no training.\\
+\emph{Fit criterion:} inspection of every summary and export template finds
+none of the excluded content and finds the statement present.\\
+\emph{Hazards:} H-RAY-003.
+\item[SAF-RAY-005] The child shall be able to leave a lesson at any point
+with one icon action, and progress saved up to that point shall be kept.\\
+\emph{Rationale:} repeated failure can upset a child, and no adult may be
+watching (SRC-005, \intref{P1}{34:13}).\\
+\emph{Fit criterion:} on every lesson screen an exit works without reading,
+and the saved record matches what was saved before the exit.\\
+\emph{Hazards:} H-RAY-004.
+\item[SAF-RAY-006] Squigglr shall record each lesson that ends at
+\texttt{ATTEMPT\_LIMIT}, show the adult how many times this happened for
+each lesson, and keep earlier attempts when a lesson is restarted.\\
+\emph{Rationale:} a restart could otherwise hide repeated failure; blocking
+restarts would stop children from restarting on their own (SRC-005,
+\intref{P1}{34:13}).\\
+\emph{Fit criterion:} in prepared sequences that reach the limit and then
+restart, the count and all earlier attempts appear in the adult view.\\
+\emph{Hazards:} H-RAY-005.
+\item[SAF-RAY-007] Squigglr shall identify the active learner on every
+practice screen in a form a child who cannot read can recognize, and shall
+save every attempt and suggestion to that learner only.\\
+\emph{Rationale:} school devices may be shared by several children
+(SRC-004).\\
+\emph{Fit criterion:} in prepared multi-learner sessions on one device,
+every attempt and suggestion is saved under the learner shown when it was
+made.\\
+\emph{Hazards:} H-RAY-006.
+\end{description}
 \subsection{Precision or Accuracy Requirements}
 \lips
 \subsection{Robustness or Fault-Tolerance Requirements}

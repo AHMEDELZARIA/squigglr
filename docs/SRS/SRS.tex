@@ -992,11 +992,14 @@ that the updated PSG be merged after he marks the submitted version
 written. &
 G.3, CON-007 & Ahmed Elzaria & Oct.\ 17, 2026 \\
 \addlinespace
-OI-07 & \emph{Values of \texttt{DIFFICULTY\_STREAK} and
-\texttt{ATTEMPT\_LIMIT}.} Both are TBD (Table~\ref{tab:goalconst}), and no
-value may be chosen from child testing (SRC-004). Still needed: values
-agreed with the supervisor and specialists. &
-G.3; requirement IDs to be linked when written &
+OI-07 & \emph{Ranges of the adult-set values.} The adult chooses
+\texttt{STAGE\_PASS}, \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT} for each child within a range the team sets
+(SRC-008). No range may be chosen from child testing (SRC-004). Still
+needed: the minimum and maximum of each, agreed with the supervisor and
+specialists, and example drawings of each end of the
+\texttt{STAGE\_PASS} range, made by adults. &
+G.2, G.3; requirement IDs to be linked when written &
 Ahmed Elzaria & Nov.\ 2, 2026 (V\&V Plan) \\
 \addlinespace
 OI-08 & \emph{Interview consent.} All three specialists agreed in the
@@ -1132,10 +1135,11 @@ consulted (OI-04). & G.1, G.2 & Lessons and their stages can be stored as
 data that the lesson logic reads, so adding or reordering a lesson changes
 no code. \\
 \addlinespace
-LC-002 & The values of \texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT}
-and \texttt{STAGE\_PASS} are TBD (OI-07). & G.2, G.3, CON-007 & Each is a
-named constant defined in one place; the activity logic refers only to
-the name. \\
+LC-002 & The ranges of \texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT}
+and \texttt{STAGE\_PASS} are TBD (OI-07), and adults may change their
+chosen values at any time. & G.2, G.3, CON-007 & Each range is defined in
+one place, each child's value is stored in their profile, and the activity
+logic reads only the profile value. \\
 \addlinespace
 LC-003 & The supported device and browser combinations are TBD and will
 change as browsers and tablets change (OI-12). & CON-001, CON-003 &

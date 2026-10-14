@@ -128,14 +128,16 @@ what a child needs (SRC-005, Moustafa, 6:03). Squigglr makes no diagnosis
 or treatment claims (SRC-001).\\
 \emph{Hazards affected:} H-RAY-003.
 
-\item[CA-006] The values of \texttt{DIFFICULTY\_STREAK} and
-\texttt{ATTEMPT\_LIMIT} are set with the supervisor and domain specialists,
-not from child testing, and may not suit every child.\\
+\item[CA-006] The supporting adult chooses \texttt{STAGE\_PASS},
+\texttt{DIFFICULTY\_STREAK} and \texttt{ATTEMPT\_LIMIT} for each child
+within a range the team sets with the supervisor and domain specialists
+(SRC-008). The ranges are not found from child testing, and the value an
+adult picks, or the default, may not suit their child.\\
 \emph{Rationale:} no information is gathered from children and no study
-with children is run (CON-005, CON-006), so the values cannot be tuned on
+with children is run (CON-005, CON-006), so the ranges cannot be tuned on
 children (SRS, Goals of the Project). Children reach these skills at
 different points (SRC-005, P1, 20:27).\\
-\emph{Hazards affected:} H-RAY-004, H-RAY-005.
+\emph{Hazards affected:} H-RAY-004, H-RAY-005, H-RAY-007.
 \end{description}
 
 \section{Failure Mode and Effect Analysis}
@@ -270,6 +272,23 @@ a child who cannot read can recognize; require an adult action to switch
 learners; show the attempts behind a suggestion when the adult reviews it.
 &
 G.5, SAF-RAY-001, SAF-RAY-007 \\
+\addlinespace
+H-RAY-007 & Child profile settings; lesson flow & A stage check or lesson
+limit uses a value that does not suit the child: \texttt{STAGE\_PASS} too
+strict or too lenient, or \texttt{ATTEMPT\_LIMIT} not larger than
+\texttt{DIFFICULTY\_STREAK}. & The adult misjudges the example drawings or
+leaves a default that does not suit the child (CA-006); a value is saved
+outside its range; a child changes a setting. & A child cannot pass a stage
+they can draw, or passes one they cannot, and the records mislead the
+adult. Loss: well-being; misleading records. &
+Psychological/ well-being &
+Mitigate: accept only values within the team-set range, and only an
+\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK}; show
+example drawings of each end of the \texttt{STAGE\_PASS} range; place
+settings behind the adult check; show the values in use next to the
+child's records. Document/Test: test that out-of-range and invalid values
+are refused and that the default is the midpoint. &
+G.2, G.3, SAF-RAY-008 \\
 \end{longtable}
 }
 \end{landscape}

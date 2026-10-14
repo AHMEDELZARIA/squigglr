@@ -1551,73 +1551,64 @@ Table~\ref{tab:goalconst}, Constants used in the goals.
   >{\raggedright\arraybackslash}p{0.08\textwidth}@{}}
 \caption{Product use cases}\label{tab:puc}\\
 \toprule
-\textbf{ID} & \textbf{Use case and actor} & \textbf{Trigger} &
+\textbf{ID} & \textbf{Actor: use case} & \textbf{Trigger} &
 \textbf{User goal} & \textbf{Goals} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{Use case and actor} & \textbf{Trigger} &
+\textbf{ID} & \textbf{Actor: use case} & \textbf{Trigger} &
 \textbf{User goal} & \textbf{Goals} \\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-UC-001 & Set up a child and a lesson\newline
-\emph{Supporting adult} &
+UC-001 & \emph{Supporting adult:} set up a child and a lesson &
 The adult creates a profile for a child, or chooses a lesson for the
 child. &
 The lesson and its starting stage are chosen, and every adult-set value
 is within its range, or at the middle of the range if the adult did not
 choose one. & G.3 \\
 \addlinespace
-UC-002 & Practise a guided lesson\newline
-\emph{Child} &
+UC-002 & \emph{Child:} practise a guided lesson &
 The child opens a lesson that an adult chose. &
 The child moves to the next stage after an attempt meets
 \texttt{STAGE\_PASS}, or retries; the lesson ends when the child finishes
 it or reaches the attempt limit, and the furthest stage reached is saved.
 & G.1, G.2, G.3 \\
 \addlinespace
-UC-003 & Start the child at a later stage\newline
-\emph{Supporting adult} &
+UC-003 & \emph{Supporting adult:} start the child at a later stage &
 The adult judges that the child needs less help in a lesson. &
 The lesson starts at the stage the adult chose; no stage changes without
 the adult's action. & G.3 \\
 \addlinespace
-UC-004 & Respond to a suggestion to go back a stage\newline
-\emph{Supporting adult} &
+UC-004 & \emph{Supporting adult:} respond to a suggestion to go back a stage &
 Squigglr suggests an earlier stage after \texttt{DIFFICULTY\_STREAK}
 failed attempts in a row. &
 The stage changes only if the adult accepts; a declined or ignored
 suggestion changes nothing. & G.3 \\
 \addlinespace
-UC-005 & Create and edit artwork\newline
-\emph{Child} &
+UC-005 & \emph{Child:} create and edit artwork &
 The child opens the creative space. &
 The child's drawing is saved and stays editable. & G.4 \\
 \addlinespace
-UC-006 & Refine artwork and restore the original\newline
-\emph{Squigglr} &
+UC-006 & \emph{Squigglr:} refine artwork and restore the original &
 The child finishes a drawing in the creative space. &
 The drawing is refined within \texttt{REFINE\_TOLERANCE} and stays
 editable; the original strokes can be restored; a failed refinement
 leaves the drawing unchanged. & G.4 \\
 \addlinespace
-UC-007 & Record an attempt\newline
-\emph{Squigglr} &
+UC-007 & \emph{Squigglr:} record an attempt &
 The child ends an attempt at a lesson stage. &
 The record keeps the stage, every predefined difficulty observed, later
 corrections and the outcome. & G.5 \\
 \addlinespace
-UC-008 & Review progress\newline
-\emph{Supporting adult} &
+UC-008 & \emph{Supporting adult:} review progress &
 The adult opens a child's progress summary. &
 The adult sees the child's progress over time, with attempts made
 without a guide separated from attempts made with one, and can open the
 attempts behind it. & G.6 \\
 \addlinespace
-UC-009 & Review history and change settings\newline
-\emph{Supporting adult} &
+UC-009 & \emph{Supporting adult:} review history and change settings &
 The adult opens a child's history or settings. &
 Only an authorised adult sees the history; the accessibility, audio and
 adult-set values are changed, and each adult-set value stays within its

@@ -172,15 +172,23 @@ row; the change applies only when an adult accepts it, and a declined or
 ignored suggestion changes nothing. To avoid endless repetition, the lesson
 ends after \texttt{ATTEMPT\_LIMIT} (larger than
 \texttt{DIFFICULTY\_STREAK}) unsuccessful attempts at one stage, and the
-furthest stage reached is saved. The adult chooses both values for each
-child within a team-set range (SRC-008).
+furthest stage reached is saved. If the child's attempts at a stage are
+improving, Squigglr holds back the suggestion and allows
+\texttt{ATTEMPT\_EXTENSION} more attempts, up to \texttt{ATTEMPT\_LIMIT\_MAX}
+in total, so that the limit does not cut off a child who is getting closer
+to passing. Improvement compares the child's own recent attempts with each
+other against the stage's fixed criteria; it is not shown as a score and
+does not assess the child. The adult chooses these values for each child
+within a team-set range (SRC-008).
 \emph{Advantage:} judging readiness automatically would need assessment
 that is out of scope; the specialists advised adult control (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}; SRC-006). Serves children and supporting
 adults.
 \emph{Measurement:} met when, for prepared sequences of successful,
 unsuccessful and mixed attempts, every suggestion shown matches the agreed
-criteria, each lesson ends exactly at \texttt{ATTEMPT\_LIMIT} with its
-progress saved, no lesson or starting stage changes without an adult's
+criteria, each lesson without improvement ends exactly at
+\texttt{ATTEMPT\_LIMIT} and each improving one is extended by
+\texttt{ATTEMPT\_EXTENSION} and never passes \texttt{ATTEMPT\_LIMIT\_MAX},
+with its progress saved, no lesson or starting stage changes without an adult's
 action, and these hold at the minimum, default and maximum of each value. \\
 \addlinespace
 G.4 Support editable creative drawing and refinement &
@@ -255,6 +263,17 @@ suggest returning to an earlier stage (G.3) & Adult & TBD & Midpoint \\
 \texttt{ATTEMPT\_LIMIT} & Unsuccessful attempts at one stage before the
 lesson ends and its progress is saved; larger than
 \texttt{DIFFICULTY\_STREAK} (G.3) & Adult & TBD & Midpoint \\
+\texttt{IMPROVE\_WINDOW} & Number of recent attempts compared to decide
+whether a child is improving at a stage (G.3) & Adult & TBD & Midpoint \\
+\texttt{IMPROVE\_MARGIN} & Minimum rise in the average attempt result,
+against the stage's criteria, that counts as improving (G.3) & Team & -- &
+TBD \\
+\texttt{ATTEMPT\_EXTENSION} & Extra attempts allowed each time a child is
+improving when \texttt{ATTEMPT\_LIMIT} is reached (G.3) & Adult & TBD &
+Midpoint \\
+\texttt{ATTEMPT\_LIMIT\_MAX} & Most attempts at one stage, including
+extensions; at least \texttt{ATTEMPT\_LIMIT} (G.3) & Adult & TBD &
+Midpoint \\
 \texttt{REFINE\_TOLERANCE} & Maximum distance between a refined
 drawing and the original strokes (G.4) & Team & -- & TBD \\
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers in the G.6

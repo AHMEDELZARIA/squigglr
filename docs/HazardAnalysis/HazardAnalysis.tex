@@ -233,17 +233,18 @@ G.5, G.6, SAF-RAY-004 \\
 H-RAY-004 & Lesson flow; feedback & Repeated failed attempts at one stage
 continue until the child becomes frustrated or agitated. & Failure
 feedback repeats; \texttt{ATTEMPT\_LIMIT} may be too high for a given
-child (CA-006); no adult may be watching (CA-001). A child like PER-1
+child (CA-006); an improvement extension lengthens the lesson; no adult may be watching (CA-001). A child like PER-1
 becomes agitated by repetition (SRS, Personas). & The child becomes
 distressed, stops practising or refuses the activity later. Loss:
 well-being; the practice benefit. &
 Psychological/ well-being &
-Mitigate: end the lesson at \texttt{ATTEMPT\_LIMIT} and save progress
-(G.3); let the child leave a lesson at any point without losing saved
+Mitigate: end the lesson at \texttt{ATTEMPT\_LIMIT}, or at
+\texttt{ATTEMPT\_LIMIT\_MAX} when extended, and save progress (G.3); let the child leave a lesson at any point without losing saved
 progress; design feedback wording, colours and audio with occupational
 therapists and educators (SRC-005, P1, 36:26), with audio that can be
 muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
-\texttt{ATTEMPT\_LIMIT}. &
+\texttt{ATTEMPT\_LIMIT} and that no extended lesson passes
+\texttt{ATTEMPT\_LIMIT\_MAX}. &
 G.3, SAF-RAY-005 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
@@ -276,7 +277,8 @@ G.5, SAF-RAY-001, SAF-RAY-007 \\
 H-RAY-007 & Child profile settings; lesson flow & A stage check or lesson
 limit uses a value that does not suit the child: \texttt{STAGE\_PASS} too
 strict or too lenient, or \texttt{ATTEMPT\_LIMIT} not larger than
-\texttt{DIFFICULTY\_STREAK}. & The adult misjudges the example drawings or
+\texttt{DIFFICULTY\_STREAK}, or \texttt{ATTEMPT\_LIMIT\_MAX} below
+\texttt{ATTEMPT\_LIMIT}. & The adult misjudges the example drawings or
 leaves a default that does not suit the child (CA-006); a value is saved
 outside its range; a child changes a setting. & A child cannot pass a stage
 they can draw, or passes one they cannot, and the records mislead the

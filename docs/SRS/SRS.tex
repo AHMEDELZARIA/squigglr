@@ -895,7 +895,8 @@ watching (SRC-005, \intref{P1}{34:13}).\\
 and the saved record matches what was saved before the exit.\\
 \emph{Hazards:} H-RAY-004.
 \item[SAF-RAY-006] Squigglr shall record each lesson that ends at
-\texttt{ATTEMPT\_LIMIT}, show the adult how many times this happened for
+\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each
+improvement extension, show the adult how many times these happened for
 each lesson, and keep earlier attempts when a lesson is restarted.\\
 \emph{Rationale:} a restart could otherwise hide repeated failure; blocking
 restarts would stop children from restarting on their own (SRC-005,
@@ -912,17 +913,18 @@ save every attempt and suggestion to that learner only.\\
 every attempt and suggestion is saved under the learner shown when it was
 made.\\
 \emph{Hazards:} H-RAY-006.
-\item[SAF-RAY-008] Squigglr shall save a child's \texttt{STAGE\_PASS},
-\texttt{DIFFICULTY\_STREAK} and \texttt{ATTEMPT\_LIMIT} only within their
-team-set ranges, with \texttt{ATTEMPT\_LIMIT} larger than
-\texttt{DIFFICULTY\_STREAK}; shall use the middle of each range when the
+\item[SAF-RAY-008] Squigglr shall save a child's adult-set values
+(Table~\ref{tab:goalconst}) only within their team-set ranges, with
+\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the middle of each range when the
 adult does not choose; shall allow changes only after the adult check; and
 shall show the values in use alongside the child's records.\\
 \emph{Rationale:} the supervisor advised that the adult chooses these
 values (SRC-008); a wrong value can stop a child passing a stage they can
 draw, and a child must not change it.\\
 \emph{Fit criterion:} in prepared walkthroughs, every out-of-range value and
-every \texttt{ATTEMPT\_LIMIT} not larger than \texttt{DIFFICULTY\_STREAK} is
+every \texttt{ATTEMPT\_LIMIT} not larger than \texttt{DIFFICULTY\_STREAK}
+and every \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} is
 refused, an unset value equals the midpoint, and no change completes
 without the adult check.\\
 \emph{Hazards:} H-RAY-007.

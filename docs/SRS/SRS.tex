@@ -51,7 +51,17 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{3cm}X}
 \toprule {\textbf{Date}} & {\textbf{Developer(s)}} & {\textbf{Change}}\\
 \midrule
+<<<<<<< HEAD
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
+=======
+13 October 2026 & Rayan Nasrallah & Added the de-identified specialist interview transcript as an appendix (\#84).\\
+14 October 2026 & Rayan Nasrallah & Wrote Section 1, Purpose of the Project, with the six goals and their constants (\#85).\\
+14 October 2026 & Rayan Nasrallah & Wrote Section 2, Stakeholders, including personas (\#86).\\
+14 October 2026 & Rayan Nasrallah & Wrote Section 3, Mandated Constraints (\#87).\\
+14 October 2026 & Rayan Nasrallah & Wrote Appendix A, Requirement Sources (\#89).\\
+14 October 2026 & Rayan Nasrallah & Linked interview citations to transcript turns (\#95).\\
+14 October 2026 & Rayan Nasrallah & Wrote Section 5, Relevant Facts and Assumptions, with business rules (\#88).\\
+>>>>>>> origin/main
 \bottomrule
 \end{tabularx}
 
@@ -810,12 +820,354 @@ involved in the Project}
 \lips
 
 \section{Relevant Facts And Assumptions}
+\label{sec:facts-assumptions}
+This section records what is known to be true now, the rules that govern
+how Squigglr may be used, and what the team believes but has not verified.
+Facts and assumptions are kept apart so that a reader can see which
+requirements rest on unconfirmed beliefs. The Hazard Analysis uses the
+assumptions as possible causes of hazards: if an assumption turns out to
+be false, the requirements that depend on it must be reviewed. Most
+requirement identifiers are not written yet, so the entries below cite the
+goals (G.1--G.6) and constraints (CON-001 to CON-007) they affect;
+requirement IDs will be linked when written.
+
 \subsection{Relevant Facts}
-\lips
+\label{sec:facts}
+Each fact below is true at the time of writing and is supported by a
+source in Appendix~\ref{app:sources}. Facts from the interview are expert
+statements, not observations of children.
+
+\begin{description}[style=nextline]
+\item[FACT-001] Visual-motor integration is linked to handwriting
+legibility in kindergarten children, but the link is a correlation; it
+does not show that practising one improves the other (SRC-001;
+\intref{Rayan}{2:04}).\\
+\emph{Relevance:} Squigglr makes no claim that its practice improves
+handwriting or visual-motor skills (BR-006).
+\item[FACT-002] The study of structured, graded practice cited in the
+Problem Statement had no control group. It supports the idea of graded
+practice but does not show that Squigglr will produce the same results
+(SRC-001; \intref{Rayan}{2:04}).\\
+\emph{Relevance:} effectiveness is not a goal or a fit criterion of this
+project.
+\item[FACT-003] Motor and handwriting difficulties occur in some autistic
+children and some children with ADHD, with severity ranging from mild to
+severe; not every child in these groups has them (SRC-001;
+\intref{Rayan}{2:04}).\\
+\emph{Relevance:} guidance and difficulty are set per child by an adult,
+not per diagnosis (G.3).
+\item[FACT-004] The specialists stated that deciding automatically when a
+child is ready for the next level requires assessment, which is too
+complex for the project's time frame, and that an adult who knows the
+child should decide (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}).\\
+\emph{Relevance:} basis for CON-007, G.3 and BR-003.
+\item[FACT-005] The specialists stated that how a child holds a tool
+affects how they draw, that finger input is the easiest start, and that
+fine-motor practice needs a held tool, moving from large to small
+(SRC-005, \intref{P3}{25:36}; \intref{P1}{26:46}).\\
+\emph{Relevance:} basis for stylus input (CON-003) with finger input as a
+stretch goal.
+\item[FACT-006] The specialists stated that tracing in the air in front
+of a camera practises gross rather than fine motor skills, and that it
+should come after the touchscreen activities when time is limited
+(SRC-005, \intref{P1}{13:42}; \intref{P1}{16:13}; \intref{P2}{16:45}).\\
+\emph{Relevance:} camera finger tracing stays a stretch goal.
+\item[FACT-007] The specialists stated that young children may not read
+yet but navigate games through images and icons, and that a child should
+be able to enter a lesson, practise, restart and move back and forth
+without constant adult help, while adults handle setup (SRC-005,
+\intref{P1}{34:13}).\\
+\emph{Relevance:} G.1 and the usability requirements; requirement IDs to
+be linked when written.
+\item[FACT-008] A study that involves children requires ethics approval;
+meeting adult experts for feedback, without involving children, does not
+(SRC-004; SRC-005, \intref{P2}{22:56}; \intref{P1}{33:00}).\\
+\emph{Relevance:} basis for CON-005 and CON-006.
+\item[FACT-009] Installing applications on school-managed devices is
+difficult, and a website is easier for Canadian schools to adopt (SRC-003,
+SRC-004).\\
+\emph{Relevance:} basis for CON-001 and CON-002.
+\item[FACT-010] The specialists recommended starting from the Web Content
+Accessibility Guidelines (WCAG), which one participant stated are adopted
+in law in many countries, and then applying design heuristics for autism
+from the literature (SRC-005, \intref{P2}{39:26}).\\
+\emph{Relevance:} accessibility and standards requirements; requirement
+IDs to be linked when written.
+\item[FACT-011] The course fixes the project's deadlines (CON-004,
+SRC-002).\\
+\emph{Relevance:} scope decisions, such as keeping assessment and camera
+tracing out of the core product, follow from the time available.
+\item[FACT-012] The only outside evidence so far is one 43-minute
+interview with three domain specialists. No parent, educator, school
+administrator or occupational therapist has been consulted, and no child
+has taken part in any source (SRC-005, \intref{Rayan}{12:31}; SRC-004).\\
+\emph{Relevance:} requirements based on what parents and educators need
+rest on assumptions (ASM-006) until those groups are consulted.
+\item[FACT-013] The interview did not cover several topics that affect
+the requirements: how Squigglr compares with existing drawing apps (one
+participant noted only that many exist (SRC-005, \intref{P2}{35:36})),
+differences between home and school use, whether children or adults value
+automatic refinement in the creative space, letter activities, the
+relative priority of the features, and how practice records should be
+kept, shared or deleted (SRC-005).\\
+\emph{Relevance:} the requirements on these topics rest on assumptions
+(ASM-010 to ASM-012) and are open to change.
+\end{description}
+
 \subsection{Business Rules}
-\lips
+\label{sec:business-rules}
+The rules below govern who may do what with Squigglr and what Squigglr
+must never do. They hold no matter how Squigglr is designed. Each rule has
+an identifier of the form BR-\#\#\#, a rationale and its sources.
+
+\begin{description}[style=nextline]
+\item[BR-001] Only the adult who holds an account, a parent or an
+educator, may create, view and manage the learner profiles under it and
+their records. One account can hold several learner profiles. A learner
+profile holds only the child's first name and a username that does not
+identify the child; no other information about the child is collected.\\
+\emph{Rationale:} practice records describe a child's difficulties and
+are personal information. Keeping each profile to a first name and a
+non-identifying username lets an adult tell children apart, for example on
+a shared device, while collecting as little about them as possible. How
+records are protected is a privacy requirement.\\
+\emph{Source:} SRC-001, SRC-004; G.5, G.6.
+\item[BR-002] Within a lesson, Squigglr moves the child to the next stage
+when an attempt meets that stage's pass criteria (\texttt{STAGE\_PASS}).
+After \texttt{ATTEMPT\_LIMIT} (larger than
+\texttt{DIFFICULTY\_STREAK}) unsuccessful attempts at one stage, the lesson
+ends, and the furthest stage reached and the number of successful attempts
+at each stage are saved. If, when \texttt{ATTEMPT\_LIMIT} is reached, the
+average result of the last \texttt{IMPROVE\_WINDOW} attempts is better
+than that of the \texttt{IMPROVE\_WINDOW} attempts before them by at least
+\texttt{IMPROVE\_MARGIN}, the child is improving and Squigglr allows
+\texttt{ATTEMPT\_EXTENSION} more attempts. Total attempts at a stage never
+exceed \texttt{ATTEMPT\_LIMIT\_MAX}.\\
+\emph{Rationale:} moving forward on a pass checks the drawing against fixed
+criteria and does not assess the child (G.2). Ending the lesson stops a
+child from repeating a stage they cannot pass without limit, and saving the
+progress lets the adult decide what comes next. Extending the limit while
+the child improves avoids cutting off practice that is working, and
+\texttt{ATTEMPT\_LIMIT\_MAX} keeps the stop. The comparison uses only the
+child's own attempts against the stage's fixed criteria, so it does not
+assess the child.\\
+\emph{Source:} G.2, G.3, G.5.
+\item[BR-003] A supporting adult chooses which lesson the child practises
+and the starting stage. Squigglr never moves a child
+back a stage or changes the lesson on its own. After
+\texttt{DIFFICULTY\_STREAK} failed attempts in a row, Squigglr may
+suggest going back a stage, unless the child is improving (BR-002); the change happens only if an adult accepts.\\
+\emph{Rationale:} deciding readiness needs assessment that is out of
+scope (FACT-004), and the adult knows the child's level.\\
+\emph{Source:} CON-007; G.3; SRC-005, \intref{P1}{28:37};
+\intref{P2}{29:18}.
+\item[BR-004] A guided lesson record keeps the child's actual strokes.
+Squigglr never replaces them with a corrected or ideal shape.\\
+\emph{Rationale:} adults judge progress from the records; a record that
+shows a corrected shape would mislead them.\\
+\emph{Source:} G.5; SRC-005, \intref{Moustafa}{6:03}.
+\item[BR-005] Refinement of strokes happens only in the creative space.
+It is automatic and minimal, the refined drawing stays editable, and the
+child's original drawing can be restored, by the child or, if the child
+cannot, by the adult.\\
+\emph{Rationale:} the work must remain the child's own, and refinement
+must never reach the records adults rely on (BR-004). Refinement needs no
+action from the child, and an adult can restore the original for a child
+who cannot use the control.\\
+\emph{Source:} G.4; SRC-001.
+\item[BR-006] Squigglr gives no diagnosis, no judgement of a child's
+abilities, no comparison with other children, and no claim that its
+practice improves any skill.\\
+\emph{Rationale:} the team are not occupational therapists and cannot
+judge a child's abilities (SRC-008), and the evidence does not support
+effectiveness claims (FACT-001, FACT-002).\\
+\emph{Source:} SRC-001, SRC-008; SRC-005, \intref{Moustafa}{6:03}.
+\item[BR-007] Feedback during a guided activity comes from observations
+the team defines in advance, such as a missed part of an outline. It is
+not personalized advice generated by an AI model.\\
+\emph{Rationale:} predefined observations can be reviewed and checked
+before release; generated advice to a child cannot.\\
+\emph{Source:} SRC-001; SRC-005, \intref{Moustafa}{6:03}.
+\item[BR-008] The supporting adult sets \texttt{STAGE\_PASS},
+\texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT},
+\texttt{IMPROVE\_WINDOW}, \texttt{ATTEMPT\_EXTENSION} and
+\texttt{ATTEMPT\_LIMIT\_MAX} for each child.
+When an adult creates a child profile, Squigglr asks them to choose each
+value, and for \texttt{STAGE\_PASS} shows example drawings of what its
+minimum and maximum look like. The adult can change the values later. A value the adult does not
+choose is set to the middle of its range. Squigglr accepts only values
+within the range, only an \texttt{ATTEMPT\_LIMIT} larger than
+\texttt{DIFFICULTY\_STREAK}, and only an \texttt{ATTEMPT\_LIMIT\_MAX} at
+least \texttt{ATTEMPT\_LIMIT}.\\
+\emph{Rationale:} the adult knows the child, and a value that suits one
+child may not suit another (FACT-003). The team sets only the minimum and
+maximum, so no single value has to be shown right for every child.\\
+\emph{Source:} SRC-008; CON-007; Table~\ref{tab:goalconst}.
+\item[BR-009] The team sets the minimum and maximum of each adult-set
+value, and the fixed values in Table~\ref{tab:goalconst}, using
+adult-made drawings, never from testing with children.\\
+\emph{Rationale:} no study with children takes place (CON-005, CON-006).\\
+\emph{Source:} SRC-004, SRC-008; Table~\ref{tab:goalconst}.
+\end{description}
+
 \subsection{Assumptions}
-\lips
+\label{sec:assumptions}
+The assumptions below are beliefs the team holds but has not verified.
+Each has an identifier of the form ASM-\#\#\#, a rationale, what depends
+on it, and the effect if it is false. Assumptions marked as relevant to
+safety are inputs to the Hazard Analysis.
+
+\begin{description}[style=nextline]
+\item[ASM-001] An adult is present when a child starts a guided lesson, to
+choose the lesson and the starting stage.\\
+\emph{Rationale:} the specialists described adults handling setup and
+deciding progression (SRC-005, \intref{P1}{28:37}; \intref{P1}{34:13}).
+How often this happens at home or in class is unknown.\\
+\emph{Depends on it:} G.3, BR-003, CON-007.\\
+\emph{If false:} a child may start at a level an adult did not choose.
+Relevant to safety.
+\item[ASM-002] A child may continue practising without an adult watching,
+but an adult nearby remains responsible for the child's physical safety,
+wellbeing and time on the device. Squigglr cannot observe or prevent
+physical harm, distress or overuse.\\
+\emph{Rationale:} the specialists advised that children should practise
+without constant adult help (SRC-005, \intref{P1}{34:13}), and the
+Problem Statement expects adult support as each learner needs (SRC-001).\\
+\emph{Depends on it:} G.1, the safety requirements (requirement IDs to be
+linked when written).\\
+\emph{If false:} the safety requirements must cover unsupervised use,
+for example limits on session length or sound. Relevant to safety.
+\item[ASM-003] Homes and schools that use Squigglr have a touchscreen
+device with a stylus that works in a supported browser.\\
+\emph{Rationale:} the stylus is the main input (CON-003), and the
+interview example used a tablet with a stylus (SRC-005,
+\intref{Rayan}{24:56}). Which devices families and schools own is not
+known. The supported device and browser combinations are TBD.\\
+\emph{Depends on it:} CON-003, G.1, G.2.\\
+\emph{If false:} children without a stylus can still use Squigglr with a
+finger, but not as intended: the stage checks and value ranges are set for
+stylus input, and tuning them for finger input is a stretch goal.
+\item[ASM-004] Supported browsers report stylus strokes in enough detail
+(position and order of points) for Squigglr to check an attempt against
+\texttt{STAGE\_PASS} and to store the actual strokes.\\
+\emph{Rationale:} the stage checks and the records both depend on the
+strokes; this has not been tested on any device yet.\\
+\emph{Depends on it:} G.2, G.5, BR-004.\\
+\emph{If false:} an attempt may be judged wrongly or stored inaccurately,
+which would mislead the adult. The team may then need to deliver Squigglr
+as an installed app, if input there is more reliable, which would change
+CON-001. Relevant to safety.
+\item[ASM-005] A network connection is available during normal use, for
+loading activities and for saving and viewing records. Offline use is out
+of the initial scope.\\
+\emph{Rationale:} stated in the Problem Statement (SRC-001); school and
+home networks have not been checked.\\
+\emph{Depends on it:} G.5, G.6, CON-001.\\
+\emph{If false:} attempts may be lost when the connection drops, and an
+adult may decide from incomplete records. Relevant to safety.
+\item[ASM-006] The supporting adult can judge from the records when a
+child should move on, stay or go back.\\
+\emph{Rationale:} the specialists placed this decision with a parent or
+educator who knows the child (SRC-005, \intref{P1}{28:37}). Squigglr
+shows the adult every value it records, such as each attempt's result and
+the \texttt{STAGE\_PASS} and \texttt{ATTEMPT\_LIMIT} in use for that
+attempt, and the adult chooses which of them their view shows, so the team
+does not have to pick which measures matter.\\
+\emph{Depends on it:} G.3, G.6, CON-007, BR-003.\\
+\emph{If false:} a child may be kept at a level that is too hard or too
+easy; the adult views would need more guidance. Relevant to
+safety.
+\item[ASM-007] The adult who uses the adult views can read the language of
+the interface. The interface language is TBD. Children do not need to
+read to use the child views.\\
+\emph{Rationale:} adult tasks such as reviewing records need text, while
+child navigation uses images and icons (FACT-007).\\
+\emph{Depends on it:} G.6 and the usability requirements (requirement IDs
+to be linked when written).\\
+\emph{If false:} adults may misread records or settings.
+\item[ASM-008] On a shared device, an adult makes sure the right child
+is selected before a session and that another child cannot open the
+previous child's records.\\
+\emph{Rationale:} school devices may be shared by several children
+(SRC-004). One adult account can hold several learner profiles (BR-001).\\
+\emph{Depends on it:} BR-001, G.5.\\
+\emph{If false:} attempts may be saved to the wrong child, or a child's
+records may be seen by others. Relevant to safety and privacy.
+\item[ASM-009] The adults who use Squigglr for a child have the right to
+see that child's records, and any consent this needs is obtained outside
+Squigglr.\\
+\emph{Rationale:} Squigglr cannot verify a parent's or school's authority
+over a child; it only knows the adult who holds the account (BR-001).\\
+\emph{Depends on it:} BR-001, the privacy requirements (requirement IDs to
+be linked when written).\\
+\emph{If false:} an unauthorised adult could see a child's records.
+Relevant to privacy.
+\item[ASM-010] Lines, basic shapes and simple drawings are suitable
+practice content for the intended children, without letters.\\
+\emph{Rationale:} the specialists did not object to this content, and
+nurseries focus on these skills (SRC-005, \intref{P1}{20:27}). Letters
+were not discussed (FACT-013) and remain a stretch goal (SRC-001).\\
+\emph{Depends on it:} G.1, G.2.\\
+\emph{If false:} the activity set changes.
+\item[ASM-011] Children and adults value automatic refinement in the
+creative space, and children understand that the refined drawing is still
+theirs.\\
+\emph{Rationale:} the specialists did not comment on refinement
+(FACT-013); the team has not checked this with any adult.\\
+\emph{Depends on it:} G.4, BR-005.\\
+\emph{If false:} refinement may discourage a child, and G.4 would need
+to change.
+\item[ASM-012] Squigglr serves the same needs at home and in school, so
+one set of requirements covers both.\\
+\emph{Rationale:} the specialists named homes, kindergartens, schools and
+rehabilitation centres as possible settings (SRC-005,
+\intref{P2}{21:25}) but did not discuss differences between them
+(FACT-013).\\
+\emph{Depends on it:} G.3, G.6, BR-001.\\
+\emph{If false:} separate requirements may be needed, for example for an
+educator managing several children.
+\item[ASM-013] Schools allow access to the Squigglr website on their
+managed devices and networks.\\
+\emph{Rationale:} a website is easier to adopt than an installed app
+(FACT-009), but no school has confirmed that it would not block the site.\\
+\emph{Depends on it:} CON-001, CON-002.\\
+\emph{If false:} school use needs approval from administrators.
+\item[ASM-014] Strokes drawn by adults, or prepared examples, are close
+enough to children's drawing to verify stage checks and refinement.\\
+\emph{Rationale:} evaluation uses adults only (CON-005, CON-006).\\
+\emph{Depends on it:} G.2, G.4, BR-009, and the verification plan.\\
+\emph{If false:} the range of \texttt{STAGE\_PASS} and the value of
+\texttt{REFINE\_TOLERANCE} may be wrong for children, so attempts may be
+judged wrongly. Relevant to safety.
+\item[ASM-015] An adult can turn off audio feedback, or stop a session,
+if sound or on-screen feedback upsets a child.\\
+\emph{Rationale:} the specialists recommended that users can turn audio
+off (SRC-005, \intref{P2}{37:39}). Children react to sensory feedback in
+different ways, and the team has no information on which feedback upsets
+which children.\\
+\emph{Depends on it:} the accessibility and safety requirements
+(requirement IDs to be linked when written).\\
+\emph{If false:} feedback must be safe by default rather than relying on
+an adult. Relevant to safety.
+\item[ASM-016] A supporting adult can choose adult-set values
+(Table~\ref{tab:goalconst}) that suit their child, helped by the example
+drawings for \texttt{STAGE\_PASS}, or leave the defaults.\\
+\emph{Rationale:} the supervisor advised leaving these values to the adult
+(SRC-008); no adult has tried the choice yet.\\
+\emph{Depends on it:} G.2, G.3, BR-008.\\
+\emph{If false:} a child may be held at a stage too long or moved on too
+soon, which can frustrate them. Relevant to safety.
+\item[ASM-017] A rise in the average result of a child's recent attempts
+by at least \texttt{IMPROVE\_MARGIN} reflects real improvement, not chance
+variation between drawings.\\
+\emph{Rationale:} drawing results vary from one attempt to the next; the
+team will check the margin with prepared adult-made sequences, not with
+children (CON-005, CON-006).\\
+\emph{Depends on it:} G.3, BR-002.\\
+\emph{If false:} a lesson may be extended for a child who is not
+improving, or not extended for one who is. \texttt{ATTEMPT\_LIMIT\_MAX}
+still ends the lesson. Relevant to safety.
+\end{description}
 
 \section{The Scope of the Work}
 \subsection{The Current Situation}

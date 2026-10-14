@@ -5,6 +5,7 @@
 %
 % Risks are removed because they are covered by the Hazard Analysis
 \documentclass[12pt]{article}
+\usepackage{longtable}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -55,10 +56,197 @@ Date 2 & 1.1 & Notes\\
 
 ~\newpage
 \section{Purpose of the Project}
+
+This section states the problem Squigglr addresses, who has it, and the
+goals the project commits to. The problem and goals come from the Problem
+Statement and Goals (PSG) document (SRC-001).
+
 \subsection{User Business}
-\lips
+
+Visual-motor integration is the ability to coordinate what a person sees
+with how they move. Children rely on it when drawing, copying shapes and
+learning to write (SRC-001). Kindergarten and primary school learners need
+chances to practise these skills at a suitable level and to complete
+activities with less help over time. Older children who need continued
+support, including some children with autism, attention-deficit/%
+hyperactivity disorder (ADHD) or other developmental or learning
+differences, share this need. A diagnosis alone does not determine the
+support a child requires (SRC-001).
+
+The adults around these children have a related problem. Parents,
+guardians, caregivers and educators need to understand which difficulties a
+child met and how much guidance the child needed. A finished drawing alone
+does not show whether the child completed it independently, relied on
+tracing guides, or corrected mistakes during the attempt (SRC-001).
+Squigglr is a website, used on a touchscreen device with a stylus, that
+offers guided drawing practice, creative drawing, and records
+that help adults understand that practice. It makes no diagnosis or
+treatment claims (SRC-001).
+
+The gap left by current alternatives, as the PSG frames it, is that a
+drawing's final result is kept without the process behind it: the guidance
+used, the difficulties met and the corrections made. Squigglr's value is
+in keeping that process visible to supporting adults while children
+practise with gradually less support. The comparison with existing products
+appears in the Off-the-Shelf Solutions section of this document.
+
 \subsection{Goals of the Project}
-\lips
+
+Table~\ref{tab:goals} lists the six project goals, G.1 to G.6, using the
+PSG's goal titles (SRC-001). Each goal is
+stated as Purpose, Advantage and Measurement: what the goal is, the benefit
+it brings and to whom, and how the team will check that it is met. Following
+the teaching assistant's (TA's) request for measurable goals (SRC-003) and the supervisor's
+direction that no requirements are gathered from children (SRC-004), every
+check is done by the team or by adult reviewers using prepared or
+adult-made attempts, never with child participants. Where a check needs a
+number that has not yet been agreed, it uses a named constant marked TBD.
+Each lesson (for example, drawing a square) moves through fixed stages
+that give gradually less help: a demonstration, tracing a full outline,
+drawing between endpoints only, and drawing with no guide. This sequence
+follows the activity the team presented to the domain specialists
+(SRC-005, Moustafa, 6:03).
+
+G.3 was revised after the PSG was submitted. The submitted PSG said
+Squigglr adjusts guidance and difficulty automatically. Following the
+domain-specialist interview (SRC-005 (P1, 28:37); SRC-005 (P2, 29:18)),
+and as agreed at the TA meeting of Oct 7 (SRC-006), the team changed it
+to adult-controlled progression and updated the PSG to match (SRC-001).
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}p{0.74\textwidth}@{}}
+\caption{Project goals}\label{tab:goals}\\
+\toprule
+\textbf{Goal} & \textbf{Purpose, advantage and measurement} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Goal} & \textbf{Purpose, advantage and measurement} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+G.1 Support structured drawing practice &
+\emph{Purpose:} every lesson in the agreed catalogue covers lines, shapes
+or simple drawings, starts with a demonstration, and gives feedback and a
+retry at each drawing stage (SRC-001).
+\emph{Advantage:} structured practice at a suitable level supports
+visual-motor development (SRC-001), and children can enter a lesson,
+practise, restart and go back and forth on their own (SRC-005 (P1, 34:13)).
+Serves children.
+\emph{Measurement:} met when the team completes every stage of every
+catalogue lesson with prepared correct attempts, each attempt passes, and
+each drawing stage accepts a drawing, gives feedback and allows a retry. \\
+\addlinespace
+G.2 Support progression towards independent drawing &
+\emph{Purpose:} within a lesson, the child moves to the next stage when an
+attempt meets that stage's pass criteria (\texttt{STAGE\_PASS}, TBD); an
+attempt that does not meet them is not passed, and the child can retry.
+This checks the drawing against fixed criteria and does not assess the
+child (SRC-001).
+\emph{Advantage:} children need to perform activities with gradually less
+help (SRC-001); a child practises one level until proficient before moving
+on (SRC-005 (P1, 28:37)), and children reach these skills at different
+points (SRC-005 (P1, 20:27)). Serves children and supporting adults.
+\emph{Measurement:} met when (a) every prepared correct attempt advances
+to the next stage; (b) every prepared incorrect attempt, such as one with a
+missing side or a wrong endpoint, is not passed and its predefined
+difficulty is reported; and (c) every saved attempt records the stage it
+was made at, with no mislabelled record. \\
+\addlinespace
+G.3 Let supporting adults control support and difficulty &
+\emph{Purpose:} adults choose which lesson a child practises and may let
+the child start at a later stage. Squigglr may suggest returning to an
+earlier stage after \texttt{DIFFICULTY\_STREAK} (TBD) failed attempts in a
+row; the change applies only when an adult accepts it, and a declined or
+ignored suggestion changes nothing. To avoid endless repetition, the lesson
+ends after \texttt{ATTEMPT\_LIMIT} (TBD, larger than
+\texttt{DIFFICULTY\_STREAK}) unsuccessful attempts at one stage, and the
+furthest stage reached is saved.
+\emph{Advantage:} judging readiness automatically would need assessment
+that is out of scope; the specialists advised adult control (SRC-005 (P1,
+28:37); SRC-005 (P2, 29:18); SRC-006). Serves children and supporting
+adults.
+\emph{Measurement:} met when, for prepared sequences of successful,
+unsuccessful and mixed attempts, every suggestion shown matches the agreed
+criteria, each lesson ends exactly at \texttt{ATTEMPT\_LIMIT} with its
+progress saved, and no lesson or starting stage changes without an adult's
+action. \\
+\addlinespace
+G.4 Support editable creative drawing and refinement &
+\emph{Purpose:} in the creative space, Squigglr refines a child's drawing
+of a shape or object in the agreed supported set by adjusting the child's
+own strokes; the result stays editable and the original can be restored
+(SRC-001; SRC-005, Moustafa, 6:03).
+\emph{Advantage:} creative drawing gives room for self-expression, and
+editability keeps the child in control of the work (SRC-001). Serves
+children.
+\emph{Measurement:} using prepared drawings of each item in the supported
+set, met when for every drawing (a) every point of the refined drawing lies
+within \texttt{REFINE\_TOLERANCE} (TBD) of the original strokes; (b) the
+refined parts can be moved, resized, recoloured, erased and undone; (c)
+restoring returns the original strokes exactly; and (d) a failed refinement
+request leaves the drawing unchanged. \\
+\addlinespace
+G.5 Preserve meaningful activity records &
+\emph{Purpose:} each attempt's record keeps the stage, every predefined
+difficulty observed, later corrections and the final outcome; each
+lesson's record keeps the furthest stage reached and the successful
+attempts at each stage (SRC-001).
+\emph{Advantage:} a finished drawing alone hides how much guidance was
+used and the corrections made (SRC-001). Serves supporting adults.
+\emph{Measurement:} met when, for prepared attempts and lessons with known
+actions, stages and outcomes, every saved record matches its known
+contents, with no difficulty lost after a correction. \\
+\addlinespace
+G.6 Make progress understandable to supporting adults &
+\emph{Purpose:} summaries show a child's progress over time, separate
+attempts made without a guide from attempts made with one, and link to the
+attempts behind them (SRC-001).
+\emph{Advantage:} adults need to see changes in independent drawing to
+decide on further practice (SRC-001); the specialists suggested giving the
+adult a view of the child's progress alongside control of activities
+(SRC-005 (P2, 29:18)). Serves parents, guardians, caregivers and
+educators.
+\emph{Measurement:} met when, for prepared histories showing improvement,
+recurring difficulties and changing stages, every summary separates the
+two kinds of attempt correctly and links to the right attempts; and at
+least \texttt{ADULT\_REVIEWERS} (TBD) adult reviewers interpret example
+summaries and locate the supporting attempts, with at least
+\texttt{REVIEW\_PASS\_RATE} (TBD) of their tasks succeeding. \\
+\end{longtable}
+}
+
+Table~\ref{tab:goalconst} lists the constants used in the goals. Their values are not yet agreed; they will be set with the
+supervisor and domain specialists and recorded here, and no value will be
+chosen from child testing (SRC-004).
+
+\begin{table}[htbp]
+\centering
+\caption{Constants used in the goals}
+\label{tab:goalconst}
+\small
+\begin{tabularx}{\textwidth}{@{}lXl@{}}
+\toprule
+\textbf{Constant} & \textbf{Meaning} & \textbf{Value} \\
+\midrule
+\texttt{STAGE\_PASS} & Criteria an attempt must meet to pass each stage
+of a lesson (G.2) & TBD \\
+\texttt{DIFFICULTY\_STREAK} & Failed attempts in a row before Squigglr may
+suggest returning to an earlier stage (G.3) & TBD \\
+\texttt{ATTEMPT\_LIMIT} & Unsuccessful attempts at one stage before the
+lesson ends and its progress is saved; larger than
+\texttt{DIFFICULTY\_STREAK} (G.3) & TBD \\
+\texttt{REFINE\_TOLERANCE} & Maximum distance between a refined
+drawing and the original strokes (G.4) & TBD \\
+\texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers in the G.6
+check & TBD \\
+\texttt{REVIEW\_PASS\_RATE} & Minimum share of G.6 reviewer tasks that
+must succeed & TBD \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \section{Stakeholders}
 \subsection{Client}
 \lips

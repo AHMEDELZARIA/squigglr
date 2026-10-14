@@ -1039,7 +1039,7 @@ to be linked when written).\\
 is selected before a session and that another child cannot open the
 previous child's records.\\
 \emph{Rationale:} school devices may be shared by several children
-(SRC-004). How accounts and child profiles work is not yet decided.\\
+(SRC-004). One adult account can hold several learner profiles (BR-001).\\
 \emph{Depends on it:} BR-001, G.5.\\
 \emph{If false:} attempts may be saved to the wrong child, or a child's
 records may be seen by others. Relevant to safety and privacy.
@@ -1047,7 +1047,7 @@ records may be seen by others. Relevant to safety and privacy.
 see that child's records, and any consent this needs is obtained outside
 Squigglr.\\
 \emph{Rationale:} Squigglr cannot verify a parent's or school's authority
-over a child. The account design is not yet decided.\\
+over a child; it only knows the adult who holds the account (BR-001).\\
 \emph{Depends on it:} BR-001, the privacy requirements (requirement IDs to
 be linked when written).\\
 \emph{If false:} an unauthorised adult could see a child's records.
@@ -1074,8 +1074,8 @@ theirs.\\
 \emph{Rationale:} the specialists did not comment on refinement
 (FACT-013); the team has not checked this with any adult.\\
 \emph{Depends on it:} G.4, BR-005.\\
-\emph{If false:} refinement may discourage a child; G.4 would need to
-change, for example by making refinement off by default.
+\emph{If false:} refinement may discourage a child, and G.4 would need
+to change.
 \item[ASM-013] Squigglr serves the same needs at home and in school, so
 one set of requirements covers both.\\
 \emph{Rationale:} the specialists named homes, kindergartens, schools and

@@ -946,9 +946,9 @@ Rayan Nasrallah & Oct.\ 17, 2026 \\
 \addlinespace
 OI-02 & \emph{School and shared devices.} School devices may be shared by
 several children (SRC-004) and are often managed centrally (CON-002).
-Still needed: a decision on how a child is selected on a shared device,
-how one child's records are kept from the next child, and whether an adult
-signs in on each device. &
+One adult account holds several learner profiles, and an adult switches
+between them (BR-001). Still needed: whether an adult signs in on each
+shared device, and how a device is left when a session ends. &
 G.5, G.6, CON-001, CON-002; requirement IDs to be linked when written &
 Rayan Nasrallah & Oct.\ 17, 2026 \\
 \addlinespace
@@ -965,11 +965,11 @@ G.5, G.6, CON-005; privacy requirement IDs to be linked when written &
 Muhammad Huzaifah & Oct.\ 17, 2026 \\
 \addlinespace
 OI-04 & \emph{Evidence comes only from experts.} The only outside voice so
-far is the specialist interview (SRC-005). Parents, educators and
-occupational therapists have not been consulted (SRC-005,
-\intref{Rayan}{12:31}), and the specialists advised doing so (SRC-005,
-\intref{P2}{31:42}; \intref{P1}{36:26}). Still needed: at least one
-consultation with adults from these groups, without involving children
+far is the specialist interview (SRC-005). Parents and educators have not
+been consulted (SRC-005, \intref{Rayan}{12:31}). The supervisor said an
+occupational therapist is not needed to set the threshold values, because
+adults set them per child (SRC-008). Still needed: at least one
+consultation with parents or educators, without involving children
 (CON-005, CON-006). Requirements that rest only on expert statements stay
 open to change until then. &
 G.2, G.6; requirement IDs to be linked when written &
@@ -999,8 +999,7 @@ OI-07 & \emph{Ranges of the adult-set values.} The adult chooses
 child within a range the team sets
 (SRC-008). No range may be chosen from child testing (SRC-004). Still
 needed: the minimum and maximum of each, the fixed
-\texttt{IMPROVE\_MARGIN}, agreed with the supervisor and
-specialists, and example drawings of each end of the
+\texttt{IMPROVE\_MARGIN}, set by the team, and example drawings of each end of the
 \texttt{STAGE\_PASS} range, made by adults. &
 G.2, G.3; requirement IDs to be linked when written &
 Ahmed Elzaria & Nov.\ 2, 2026 (V\&V Plan) \\
@@ -1133,13 +1132,12 @@ one.
 \bottomrule
 \endlastfoot
 LC-001 & The lesson catalogue (which lines, shapes and drawings, in what
-order) will change once educators and occupational therapists are
-consulted (OI-04). & G.1, G.2 & Lessons and their stages can be stored as
+order) may change after parents or educators are consulted (OI-04). & G.1, G.2 & Lessons and their stages can be stored as
 data that the lesson logic reads, so adding or reordering a lesson changes
 no code. \\
 \addlinespace
-LC-002 & The ranges of \texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT}
-and \texttt{STAGE\_PASS} are TBD (OI-07), and adults may change their
+LC-002 & The ranges of the adult-set values
+(Table~\ref{tab:goalconst}) are TBD (OI-07), and adults may change their
 chosen values at any time. & G.2, G.3, CON-007 & Each range is defined in
 one place, each child's value is stored in their profile, and the activity
 logic reads only the profile value. \\
@@ -1216,15 +1214,17 @@ readiness automatically would need assessment, which is out of scope
 (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}); the TA agreed to the
 change (SRC-006). \\
 \addlinespace
-ULC-004 & Squigglr gives no diagnosis, scores, comparisons with other
-children or effectiveness claims. & G.2, G.6 & Excluded from the start
+ULC-004 & Squigglr gives no diagnosis, no judgement of a child's
+abilities, no comparison with other children and no effectiveness
+claims. & G.2, G.6 & Excluded from the start
 (SRC-001) and presented to the specialists as deliberately left out
-(SRC-005, \intref{Moustafa}{6:03}); making such claims would need
-assessment and studies the project cannot run (CON-006). \\
+(SRC-005, \intref{Moustafa}{6:03}); the team cannot judge a child's
+abilities (SRC-008), and effectiveness claims would need studies the
+project cannot run (CON-006). \\
 \addlinespace
 ULC-005 & In guided lessons, the record keeps the child's actual strokes;
-refinement happens only in the creative space, and the original can
-always be restored. & G.4, G.5 & A record of practice is meaningful only
+refinement happens only in the creative space, and only the adult can
+restore the original. & G.4, G.5 & A record of practice is meaningful only
 if it shows what the child drew (SRC-001; SRC-005,
 \intref{Moustafa}{6:03}). \\
 \addlinespace

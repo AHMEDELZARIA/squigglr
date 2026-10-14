@@ -593,22 +593,184 @@ technicians outside the team have been identified. Who maintains Squigglr
 after the project ends is an open item (TBD).
 
 \section{Mandated Constraints}
+This section lists constraints imposed on Squigglr from outside the team:
+by the supervisor, the teaching assistant (TA), the domain specialists
+interviewed (SRC-005), the course and the university. They are not design
+choices. Each constraint has an identifier of the form CON-\#\#\#, a
+description, a rationale, the party that imposed it, a fit criterion that
+shows whether it is met, and its sources from the Requirement Sources
+register (SRC-\#\#\#). The constraints limit what the team may build; they
+do not choose a technology, library or design. For example, CON-001 requires
+a website but does not name a framework. Table~\ref{tab:constraints}
+summarizes them.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Summary of mandated constraints}
+\label{tab:constraints}
+\begin{tabular}{@{}lp{0.62\textwidth}l@{}}
+\toprule
+\textbf{ID} & \textbf{Constraint} & \textbf{Source}\\
+\midrule
+CON-001 & Squigglr shall be a website used in a web browser. &
+SRC-003, SRC-004\\
+CON-002 & Squigglr shall require no installation on the user's device. &
+SRC-003, SRC-004\\
+CON-003 & Squigglr shall work on touchscreen devices with stylus input. &
+SRC-001, SRC-003--SRC-005\\
+CON-004 & Deliverables shall meet the course deadlines in
+Table~\ref{tab:con-schedule}. & SRC-002\\
+CON-005 & The project shall gather no information from or about children
+for requirements or evaluation. &
+SRC-004\\
+CON-006 & The project shall run no study involving children. &
+SRC-004, SRC-005\\
+CON-007 & Squigglr shall not decide when a child moves to another stage
+or level; an adult chooses. & SRC-005\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Solution Constraints}
-\lips
+The supervisor, the TA and the domain specialists set the form of the
+solution.
+
+\begin{description}
+\item[CON-001] Squigglr shall be a website used in a web browser.\\
+\emph{Rationale:} Installing apps on school devices is difficult, and for
+Canadian schools a website is much easier to adopt than an app-store app.\\
+\emph{Imposed by:} supervisor and TA.\\
+\emph{Fit criterion:} Squigglr opens and runs from a web address in a
+browser.\\
+\emph{Source:} SRC-003, SRC-004.
+\item[CON-002] Squigglr shall require no installation on the user's
+device.\\
+\emph{Rationale:} Shared school devices are often managed by the school,
+so adults may not be able to install software. Opening a web address is
+enough to start.\\
+\emph{Imposed by:} supervisor and TA.\\
+\emph{Fit criterion:} a first-time user starts an activity without
+installing any app, plug-in or browser extension.\\
+\emph{Source:} SRC-003, SRC-004.
+\item[CON-003] Squigglr shall work on touchscreen devices with stylus
+input.\\
+\emph{Rationale:} Squigglr targets visual-motor skills, which include fine
+motor control. Children build that control by practising with a held tool,
+moving from large tools to smaller ones like pencils (SRC-005, P1, 26:46).
+Grip varies between children and affects how they draw (SRC-005, P3,
+25:36), so finger input is kept as a stretch goal (SRC-001).\\
+\emph{Imposed by:} domain specialists, within the scope agreed with the
+supervisor and TA.\\
+\emph{Fit criterion:} each activity can be completed with a stylus on a
+touchscreen device; the device and browser combinations are TBD.\\
+\emph{Source:} SRC-001, SRC-003, SRC-004, SRC-005.
+\item[CON-007] Squigglr shall not decide when a child moves to another
+stage or level; an adult chooses.\\
+\emph{Rationale:} Deciding when a child is ready needs an assessment, which
+is too complex for the project's time frame. The parent or educator, who
+knows the child's level, should make that choice (SRC-005, P1, 28:37).
+Squigglr may suggest going back a stage, but an adult must accept (G.3).\\
+\emph{Imposed by:} domain specialists.\\
+\emph{Fit criterion:} no change of stage or level happens without an
+adult choosing or accepting it.\\
+\emph{Source:} SRC-005.
+\end{description}
+
 \subsection{Implementation Environment of the Current System}
-\lips
+Not applicable. There is no current system that Squigglr replaces or must
+run alongside; it is a new product.
+
 \subsection{Partner or Collaborative Applications}
-\lips
+Not applicable. No stakeholder requires Squigglr to work with a specific
+partner application. Candidate integrations, if any, belong in the
+Off-the-Shelf Solutions section.
+
 \subsection{Off-the-Shelf Software}
-\lips
+Not applicable. No stakeholder mandates any specific off-the-shelf
+software. Candidate libraries and services are discussed in the
+Off-the-Shelf Solutions section, not here.
+
 \subsection{Anticipated Workplace Environment}
-\lips
+Squigglr will be used at home, in classrooms and in other places where
+children practise drawing, such as rehabilitation centres (SRC-005, P2,
+21:25), usually with an adult nearby. School devices may be shared by
+several children (SRC-004). These places give context for later
+requirements; they are not a constraint, since the team will not test
+Squigglr in each of them.
+
+
 \subsection{Schedule Constraints}
-\lips
+The course sets the project's deadlines. Table~\ref{tab:con-schedule}
+lists the course deadlines relevant to this document, taken from the
+Development Plan (SRC-002) course timeline. Dates use the America/Toronto
+time zone. The Development Plan holds the full timeline.
+
+\begin{description}
+\item[CON-004] Deliverables shall meet the course deadlines in
+Table~\ref{tab:con-schedule}.\\
+\emph{Rationale:} The capstone course fixes these dates; the team cannot
+change them.\\
+\emph{Imposed by:} the capstone course.\\
+\emph{Fit criterion:} each deliverable is submitted by its date.\\
+\emph{Source:} SRC-002.
+\end{description}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Course deadlines (from the Development Plan)}
+\label{tab:con-schedule}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Date} & \textbf{Deliverable}\\
+\midrule
+Oct.\ 19, 2026 & SRS and Hazard Analysis\\
+Oct.\ 22, 2026 & SRS peer-review issues\\
+Nov.\ 2, 2026 & Verification and Validation (V\&V) Plan\\
+Nov.\ 16, 2026 & Design Revision $-1$ and fall custom document\\
+Nov.\ 23--Dec.\ 4, 2026 & Proof of Concept (POC) demonstration window\\
+Jan.\ 18, 2027 & Design documentation\\
+Feb.\ 1--11, 2027 & Rev 0 presentation sessions\\
+Mar.\ 8, 2027 & V\&V Report and winter custom document\\
+Mar.\ 15--21, 2027 & Final demonstration sessions\\
+Mar.\ 31, 2027 & Final documentation\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Budget Constraints}
-\lips
+TBD. The Development Plan states no budget for the project, and no
+stakeholder has set one. It notes only that service limits and possible
+costs of external services must be monitored. The budget remains an open
+issue to confirm with the TA.
+
 \subsection{Enterprise Constraints}
-\lips
+The supervisor and the university set rules that protect children.
+
+\begin{description}
+\item[CON-005] The project shall gather no information from or about
+children for requirements or evaluation.\\
+\emph{Rationale:} The users are children, and the supervisor directed that
+no information about them be collected. Requirements come from adults and
+personas, and every check uses prepared or adult-made attempts. This
+constraint covers the project's work; how Squigglr itself protects the
+practice records it keeps is a privacy requirement, not this constraint.\\
+\emph{Imposed by:} supervisor.\\
+\emph{Fit criterion:} no requirement source, test or evaluation record
+contains data from or about a child.\\
+\emph{Source:} SRC-004.
+\item[CON-006] The project shall run no study involving children.\\
+\emph{Rationale:} Any study run through the university that involves
+children requires ethics board approval, which the project does not seek
+(SRC-005, P2, 22:56; P1, 33:00). Evaluation is done with adults only
+(CON-005).\\
+\emph{Imposed by:} supervisor and the university, as the domain
+specialists also advised.\\
+\emph{Fit criterion:} no study with child participants takes place during
+the project.\\
+\emph{Source:} SRC-004, SRC-005.
+\end{description}
 
 \section{Naming Conventions and Terminology}
 \subsection{Glossary of All Terms, Including Acronyms, Used by Stakeholders
@@ -669,6 +831,17 @@ involved in the Project}
 \subsection{Accessibility Requirements}
 \lips
 
+\emph{Note for the section owner (from \#87):} add a requirement that
+Squigglr shall meet selected Web Content Accessibility Guidelines (WCAG)
+2.2 success criteria; the exact set is TBD and should be criteria the team
+can check without children, such as colour contrast, text alternatives for
+icons and audio that can be paused or muted. Full WCAG conformance is a
+stretch goal. Source: SRC-005, P2, 39:26. Related advice: icon-based
+navigation that children can use without reading (SRC-005, P1, 34:13) and
+audio feedback with a mute option (SRC-005, P2, 37:39). Add a WCAG 2.2 citation to
+refs/References.bib. The standard itself goes in Standards Compliance
+Requirements.
+
 \section{Performance Requirements}
 \subsection{Speed and Latency Requirements}
 \lips
@@ -726,6 +899,12 @@ involved in the Project}
 \lips
 \subsection{Standards Compliance Requirements}
 \lips
+
+\emph{Note for the section owner (from \#87):} list WCAG 2.2 as the
+accessibility standard Squigglr follows for selected success criteria (see
+Accessibility Requirements). It is not legally required for this project;
+the domain specialists recommended it as a starting point (SRC-005, P2,
+39:26). Full conformance is a stretch goal.
 
 \section{Open Issues}
 \lips

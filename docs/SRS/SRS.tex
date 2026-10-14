@@ -22,6 +22,10 @@
 }
 
 \newcommand{\lips}{\textit{Insert your content here.}}
+% Link to a speaker turn in the interview transcript (Appendix).
+% \intref{P1}{28:37} prints "\intref{P1}{28:37}"; \intlink{P1}{28:37}{text} prints text.
+\newcommand{\intlink}[3]{\hyperref[int:#1-#2]{#3}}
+\newcommand{\intref}[2]{\intlink{#1}{#2}{#1, #2}}
 
 \input{../Comments.text}
 \input{../Common.text}
@@ -105,11 +109,11 @@ Each lesson (for example, drawing a square) moves through fixed stages
 that give gradually less help: a demonstration, tracing a full outline,
 drawing between endpoints only, and drawing with no guide. This sequence
 follows the activity the team presented to the domain specialists
-(SRC-005, Moustafa, 6:03).
+(SRC-005, \intref{Moustafa}{6:03}).
 
 G.3 was revised after the PSG was submitted. The submitted PSG said
 Squigglr adjusts guidance and difficulty automatically. Following the
-domain-specialist interview (SRC-005 (P1, 28:37); SRC-005 (P2, 29:18)),
+domain-specialist interview (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}),
 and as agreed at the TA meeting of Oct 7 (SRC-006), the team changed it
 to adult-controlled progression and updated the PSG to match (SRC-001).
 
@@ -132,7 +136,7 @@ or simple drawings, starts with a demonstration, and gives feedback and a
 retry at each drawing stage (SRC-001).
 \emph{Advantage:} structured practice at a suitable level supports
 visual-motor development (SRC-001), and children can enter a lesson,
-practise, restart and go back and forth on their own (SRC-005 (P1, 34:13)).
+practise, restart and go back and forth on their own (SRC-005, \intref{P1}{34:13}).
 Serves children.
 \emph{Measurement:} met when the team completes every stage of every
 catalogue lesson with prepared correct attempts, each attempt passes, and
@@ -146,8 +150,8 @@ This checks the drawing against fixed criteria and does not assess the
 child (SRC-001).
 \emph{Advantage:} children need to perform activities with gradually less
 help (SRC-001); a child practises one level until proficient before moving
-on (SRC-005 (P1, 28:37)), and children reach these skills at different
-points (SRC-005 (P1, 20:27)). Serves children and supporting adults.
+on (SRC-005, \intref{P1}{28:37}), and children reach these skills at different
+points (SRC-005, \intref{P1}{20:27}). Serves children and supporting adults.
 \emph{Measurement:} met when (a) every prepared correct attempt advances
 to the next stage; (b) every prepared incorrect attempt, such as one with a
 missing side or a wrong endpoint, is not passed and its predefined
@@ -164,8 +168,7 @@ ends after \texttt{ATTEMPT\_LIMIT} (TBD, larger than
 \texttt{DIFFICULTY\_STREAK}) unsuccessful attempts at one stage, and the
 furthest stage reached is saved.
 \emph{Advantage:} judging readiness automatically would need assessment
-that is out of scope; the specialists advised adult control (SRC-005 (P1,
-28:37); SRC-005 (P2, 29:18); SRC-006). Serves children and supporting
+that is out of scope; the specialists advised adult control (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}; SRC-006). Serves children and supporting
 adults.
 \emph{Measurement:} met when, for prepared sequences of successful,
 unsuccessful and mixed attempts, every suggestion shown matches the agreed
@@ -177,7 +180,7 @@ G.4 Support editable creative drawing and refinement &
 \emph{Purpose:} in the creative space, Squigglr refines a child's drawing
 of a shape or object in the agreed supported set by adjusting the child's
 own strokes; the result stays editable and the original can be restored
-(SRC-001; SRC-005, Moustafa, 6:03).
+(SRC-001; \intref{Moustafa}{6:03}).
 \emph{Advantage:} creative drawing gives room for self-expression, and
 editability keeps the child in control of the work (SRC-001). Serves
 children.
@@ -206,7 +209,7 @@ attempts behind them (SRC-001).
 \emph{Advantage:} adults need to see changes in independent drawing to
 decide on further practice (SRC-001); the specialists suggested giving the
 adult a view of the child's progress alongside control of activities
-(SRC-005 (P2, 29:18)). Serves parents, guardians, caregivers and
+(SRC-005, \intref{P2}{29:18}). Serves parents, guardians, caregivers and
 educators.
 \emph{Measurement:} met when, for prepared histories showing improvement,
 recurring difficulties and changing stages, every summary separates the
@@ -310,12 +313,12 @@ who build software for children with autism, attention-deficit/%
 hyperactivity disorder (ADHD) and other learning needs. They provide
 expert knowledge of the intended users (SRC-005). They preferred not to be
 named and are de-identified (SRC-006). & Interviewed on October 1, 2026
-(SRC-005). They offered to help guide a future pilot (SRC-005, P1, 24:03),
+(SRC-005). They offered to help guide a future pilot (SRC-005, \intref{P1}{24:03}),
 which supports involving them in verification and validation (SRC-006).
 They advise; they do not decide. \\
 Occupational therapists and educational specialists (tertiary) & Progress
 milestones, benchmarks and feedback wording, as the specialists
-recommended (SRC-005, P2, 31:42). & Not yet consulted. \\
+recommended (SRC-005, \intref{P2}{31:42}). & Not yet consulted. \\
 TA and course instructors (tertiary) & Assess the project deliverables. &
 Review each deliverable; they influence documentation, not product
 behaviour. \\
@@ -333,39 +336,37 @@ children who need continued support, including children with autism, ADHD,
 or other developmental or learning differences (SRC-001). The intended age
 range is not yet defined; it is recorded as an open item, \texttt{AGE\_RANGE}
 (TBD). Their characteristics vary widely, and a diagnosis alone does not
-determine the support a child needs (SRC-001; SRC-005, Rayan, 2:04).
+determine the support a child needs (SRC-001; \intref{Rayan}{2:04}).
 The characteristics below matter most for the requirements, because they
 shape how children read, draw and move through the application without
 help:
 \begin{itemize}
   \item \textbf{Reading ability:} some children cannot read yet, or may
   not understand written instructions. Squigglr has to communicate in ways
-  that do not depend on reading, such as images and icons (SRC-005, P1,
-  34:13) and spoken audio that can be muted (SRC-005, P2, 37:39).
+  that do not depend on reading, such as images and icons (SRC-005, \intref{P1}{34:13}) and spoken audio that can be muted (SRC-005, \intref{P2}{37:39}).
   \item \textbf{Motor skills:} fine-motor ability varies; some children find holding
-  a stylus difficult, and grip can affect how they draw (SRC-005, P3,
-  25:36). Fine-motor control is part of visual-motor practice, so children
+  a stylus difficult, and grip can affect how they draw (SRC-005, \intref{P3}{25:36}). Fine-motor control is part of visual-motor practice, so children
   need to practise holding a tool, moving from larger tools to smaller
-  ones closer to what schools use (SRC-005, P1, 26:46). Squigglr
+  ones closer to what schools use (SRC-005, \intref{P1}{26:46}). Squigglr
   therefore uses a stylus as its main input. Drawing with a finger is the
-  easiest starting point (SRC-005, P1, 26:46), and finger input is a
+  easiest starting point (SRC-005, \intref{P1}{26:46}), and finger input is a
   stretch goal. Some children may also have gross-motor or vision
-  challenges (SRC-005, P2, 19:05).
+  challenges (SRC-005, \intref{P2}{19:05}).
   \item \textbf{Support needs:} children should be able to enter a lesson,
   practise, restart, and move back and forth without constant adult help
-  (SRC-005, P1, 34:13). Adults decide when a child moves to a new lesson
-  or skips a stage (SRC-005, P1, 28:37).
+  (SRC-005, \intref{P1}{34:13}). Adults decide when a child moves to a new lesson
+  or skips a stage (SRC-005, \intref{P1}{28:37}).
   \item \textbf{Device experience:} many young children already know how
-  to navigate touchscreen applications on tablets (SRC-005, P1, 34:13).
+  to navigate touchscreen applications on tablets (SRC-005, \intref{P1}{34:13}).
 \end{itemize}
 
 \paragraph{Supporting adults.} Parents, guardians, caregivers, educators,
 and learning-support staff. They set up accounts, choose lessons and
 starting stages, and review attempt records and progress summaries on a
-tablet or computer (SRC-001; SRC-005, P1, 34:13). Their technical
+tablet or computer (SRC-001; \intref{P1}{34:13}). Their technical
 experience is assumed to be that of an everyday web user (assumption). They
 need understandable information without scores, diagnostic labels, or
-comparisons with other children (SRC-005, Moustafa, 6:03).
+comparisons with other children (SRC-005, \intref{Moustafa}{6:03}).
 
 \paragraph{Experience levels.} Table~\ref{tab:userExperience} rates each
 user group's subject-matter and technological experience on a scale of novice, journeyman and master.
@@ -382,7 +383,7 @@ practice)} & \textbf{Technology} \\
 \midrule
 Children & Novice: they are still learning to draw lines and shapes
 (SRC-001). & Novice to journeyman: many can already navigate tablet
-applications (SRC-005, P1, 34:13), but some need adult help. \\
+applications (SRC-005, \intref{P1}{34:13}), but some need adult help. \\
 Parents, guardians, caregivers & Novice: not assumed to have training in
 visual-motor development (assumption). & Journeyman: everyday web users
 (assumption). \\
@@ -416,24 +417,24 @@ concerns come from the sources cited; none were gathered from children
 \bottomrule
 \endlastfoot
 Children & May not read; need to find and restart a lesson alone
-(SRC-005, P1, 34:13). & Icon-based navigation that needs little text. \\
-Children & Grip and fine-motor ability vary (SRC-005, P3, 25:36). &
+(SRC-005, \intref{P1}{34:13}). & Icon-based navigation that needs little text. \\
+Children & Grip and fine-motor ability vary (SRC-005, \intref{P3}{25:36}). &
 Stylus is the main input; finger input is a stretch goal. \\
 Children (guided lessons) & Attempts must show what the child actually
-drew (SRC-005, Moustafa, 6:03). & Records keep the child's actual
+drew (SRC-005, \intref{Moustafa}{6:03}). & Records keep the child's actual
 strokes; no corrected shape is counted as their work. \\
 Children (creative space) & Get a cleaner version of their own drawing
-that is still theirs (SRC-005, Moustafa, 6:03). & Refinement adjusts the
+that is still theirs (SRC-005, \intref{Moustafa}{6:03}). & Refinement adjusts the
 child's strokes rather than replacing them; the result stays editable and
 the original can be restored. \\
 Children & Two children with the same diagnosis may need different
-support (SRC-005, Rayan, 2:04). & Adults choose the lesson and starting
+support (SRC-005, \intref{Rayan}{2:04}). & Adults choose the lesson and starting
 stage for each child; nothing is set by diagnosis. \\
 Caregivers & Become annoyed if they must intervene constantly
-(SRC-005, P1, 34:13). & Children can practise without constant adult
+(SRC-005, \intref{P1}{34:13}). & Children can practise without constant adult
 help. \\
 Caregivers, educators & Want to decide when a child moves on
-(SRC-005, P1, 28:37; P2, 29:18). & Adults choose the lesson and starting
+(SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}). & Adults choose the lesson and starting
 stage. Squigglr may only suggest going back a stage, and an adult must
 accept. \\
 Caregivers, educators & Need to see how far the child got in each
@@ -509,14 +510,14 @@ his teachers and therapists.
   \item \textbf{Attitude to technology:} an everyday web user who wants
   things to work without setup.
   \item \textbf{Goals:} let Adam practise without being called over
-  constantly (SRC-005, P1, 34:13); choose what Adam practises and decide
-  when he moves on (SRC-005, P1, 28:37).
+  constantly (SRC-005, \intref{P1}{34:13}); choose what Adam practises and decide
+  when he moves on (SRC-005, \intref{P1}{28:37}).
   \item \textbf{Review habits:} looks through Adam's practice history on a
   laptop once a week to see which stages he reached and what keeps going
   wrong (SRC-001). Shares what she sees
   with Janice at parent meetings.
   \item \textbf{Concerns:} does not want Adam scored, labelled or compared
-  with other children (SRC-005, Moustafa, 6:03); wants Adam's data kept
+  with other children (SRC-005, \intref{Moustafa}{6:03}); wants Adam's data kept
   private.
 \end{itemize}
 
@@ -531,7 +532,7 @@ between them.
   \item \textbf{Attitude to technology:} comfortable with the school's web
   tools, but has no administrator rights.
   \item \textbf{Goals:} set a different activity for each learner
-  (SRC-005, P2, 29:18); compare a learner's records with what she
+  (SRC-005, \intref{P2}{29:18}); compare a learner's records with what she
   observes in class (SRC-001).
   \item \textbf{Concerns:} switching between learners quickly, and making
   sure one learner's records are never shown to another.
@@ -546,7 +547,7 @@ caregivers choose activities and act on the records, so their needs come
 next. Administrators affect adoption but not daily use, and the specialists
 advise rather than use Squigglr (SRC-006). When needs conflict, a child's
 ability to practise independently is weighed against an adult's control of
-progression; the adult decides (SRC-005, P1, 28:37).
+progression; the adult decides (SRC-005, \intref{P1}{28:37}).
 
 \begin{table}[H]
 \centering
@@ -579,10 +580,10 @@ requirements were informed by:
   (SRC-007).
 \end{itemize}
 Parents, caregivers, and educators have not yet been consulted
-(SRC-005, Rayan, 12:31); this is an open item. Planned later participation
+(SRC-005, \intref{Rayan}{12:31}); this is an open item. Planned later participation
 includes adult reviewers in usability sessions (SRC-001), possible feedback
-from adults with autism or ADHD (SRC-005, P2, 37:39), and the specialists'
-offered support for a pilot (SRC-005, P1, 24:03). Any study involving
+from adults with autism or ADHD (SRC-005, \intref{P2}{37:39}), and the specialists'
+offered support for a pilot (SRC-005, \intref{P1}{24:03}). Any study involving
 children requires ethics approval first (SRC-004).
 
 \subsection{Maintenance Users and Service Technicians}
@@ -657,9 +658,8 @@ installing any app, plug-in or browser extension.\\
 input.\\
 \emph{Rationale:} Squigglr targets visual-motor skills, which include fine
 motor control. Children build that control by practising with a held tool,
-moving from large tools to smaller ones like pencils (SRC-005, P1, 26:46).
-Grip varies between children and affects how they draw (SRC-005, P3,
-25:36), so finger input is kept as a stretch goal (SRC-001).\\
+moving from large tools to smaller ones like pencils (SRC-005, \intref{P1}{26:46}).
+Grip varies between children and affects how they draw (SRC-005, \intref{P3}{25:36}), so finger input is kept as a stretch goal (SRC-001).\\
 \emph{Imposed by:} domain specialists, within the scope agreed with the
 supervisor and TA.\\
 \emph{Fit criterion:} each activity can be completed with a stylus on a
@@ -669,7 +669,7 @@ touchscreen device; the device and browser combinations are TBD.\\
 stage or level; an adult chooses.\\
 \emph{Rationale:} Deciding when a child is ready needs an assessment, which
 is too complex for the project's time frame. The parent or educator, who
-knows the child's level, should make that choice (SRC-005, P1, 28:37).
+knows the child's level, should make that choice (SRC-005, \intref{P1}{28:37}).
 Squigglr may suggest going back a stage, but an adult must accept (G.3).\\
 \emph{Imposed by:} domain specialists.\\
 \emph{Fit criterion:} no change of stage or level happens without an
@@ -693,8 +693,7 @@ Off-the-Shelf Solutions section, not here.
 
 \subsection{Anticipated Workplace Environment}
 Squigglr will be used at home, in classrooms and in other places where
-children practise drawing, such as rehabilitation centres (SRC-005, P2,
-21:25), usually with an adult nearby. School devices may be shared by
+children practise drawing, such as rehabilitation centres (SRC-005, \intref{P2}{21:25}), usually with an adult nearby. School devices may be shared by
 several children (SRC-004). These places give context for later
 requirements; they are not a constraint, since the team will not test
 Squigglr in each of them.
@@ -763,7 +762,7 @@ contains data from or about a child.\\
 \item[CON-006] The project shall run no study involving children.\\
 \emph{Rationale:} Any study run through the university that involves
 children requires ethics board approval, which the project does not seek
-(SRC-005, P2, 22:56; P1, 33:00). Evaluation is done with adults only
+(SRC-005, \intref{P2}{22:56}; \intref{P1}{33:00}). Evaluation is done with adults only
 (CON-005).\\
 \emph{Imposed by:} supervisor and the university, as the domain
 specialists also advised.\\
@@ -836,9 +835,9 @@ Squigglr shall meet selected Web Content Accessibility Guidelines (WCAG)
 2.2 success criteria; the exact set is TBD and should be criteria the team
 can check without children, such as colour contrast, text alternatives for
 icons and audio that can be paused or muted. Full WCAG conformance is a
-stretch goal. Source: SRC-005, P2, 39:26. Related advice: icon-based
-navigation that children can use without reading (SRC-005, P1, 34:13) and
-audio feedback with a mute option (SRC-005, P2, 37:39). Add a WCAG 2.2 citation to
+stretch goal. Source: SRC-005, \intref{P2}{39:26}. Related advice: icon-based
+navigation that children can use without reading (SRC-005, \intref{P1}{34:13}) and
+audio feedback with a mute option (SRC-005, \intref{P2}{37:39}). Add a WCAG 2.2 citation to
 refs/References.bib. The standard itself goes in Standards Compliance
 Requirements.
 
@@ -903,8 +902,7 @@ Requirements.
 \emph{Note for the section owner (from \#87):} list WCAG 2.2 as the
 accessibility standard Squigglr follows for selected success criteria (see
 Accessibility Requirements). It is not legally required for this project;
-the domain specialists recommended it as a starting point (SRC-005, P2,
-39:26). Full conformance is a stretch goal.
+the domain specialists recommended it as a starting point (SRC-005, \intref{P2}{39:26}). Full conformance is a stretch goal.
 
 \section{Open Issues}
 \lips
@@ -964,7 +962,7 @@ This appendix is the requirement sources register. Each source has a fixed
 identifier (SRC-001 to SRC-007) that is never renumbered. A requirement names
 the sources it comes from in its rationale or source field. A statement from
 the specialist interview is cited by its source identifier, participant code
-and transcript timestamp, for example ``(SRC-005, P1, 28:37)''; the statement
+and transcript timestamp, for example ``(SRC-005, \intref{P1}{28:37})''; the statement
 identifiers in Section~\ref{sec:src-interview} (for example SRC-005.01) can
 be cited instead. The interview is expert-reported evidence only. The three
 participants are de-identified domain specialists (P1, P2 and P3). No child
@@ -1076,62 +1074,62 @@ requirements. Each is a short paraphrase, not a quote; the exact words are in
 Appendix~\ref{app:interview} at the given timestamp.
 
 \begin{description}[leftmargin=1.5em, style=nextline]
-\item[\phantomsection%
-  \label{src:005.01}SRC-005.01 (P1, 28:37; P2, 29:18; 30:20--31:02)]
+\item[{\phantomsection%
+  \label{src:005.01}SRC-005.01 (\intref{P1}{28:37}; \intref{P2}{29:18}; \intlink{Rayan}{30:20}{30:20--31:02})}]
 Deciding automatically when a child is ready for the next level would need
 assessment and is too complex for the time frame. An adult who knows the
 child (a parent or educator) should choose the level. The team agreed to
 leave progression to the supervising adult.
-\item[\phantomsection%
-  \label{src:005.02}SRC-005.02 (P2, 29:18)]
+\item[{\phantomsection%
+  \label{src:005.02}SRC-005.02 (\intref{P2}{29:18})}]
 In a past project, a teacher personalized each child's activities through a
 separate adult interface that also showed progress.
-\item[\phantomsection%
-  \label{src:005.03}SRC-005.03 (P2, 31:42)]
+\item[{\phantomsection%
+  \label{src:005.03}SRC-005.03 (\intref{P2}{31:42})}]
 Which progress measures help an adult should be decided with occupational
 therapists or educational specialists, using milestones from the literature
 if they exist.
-\item[\phantomsection%
-  \label{src:005.04}SRC-005.04 (P3, 24:34; P3, 25:36; P1, 26:46)]
+\item[{\phantomsection%
+  \label{src:005.04}SRC-005.04 (\intref{P3}{24:34}; \intref{P3}{25:36}; \intref{P1}{26:46})}]
 Holding a pen affects how children draw and the usability of the app.
 Finger input is the easiest start; a larger stylus and then a smaller one
 could be later difficulty levels if fine motor practice is a goal.
-\item[\phantomsection%
-  \label{src:005.05}SRC-005.05 (P1, 34:13)]
+\item[{\phantomsection%
+  \label{src:005.05}SRC-005.05 (\intref{P1}{34:13})}]
 The app should be child-friendly: a child who cannot read yet should be able
 to enter a lesson, practise, restart and move back and forth using images
 and icons rather than text, without constant adult help. Adults handle setup.
-\item[\phantomsection%
-  \label{src:005.06}SRC-005.06 (P1, 36:26)]
+\item[{\phantomsection%
+  \label{src:005.06}SRC-005.06 (\intref{P1}{36:26})}]
 Positive feedback wording and colours should be designed with feedback from
 educators and occupational therapists, built up bit by bit.
-\item[\phantomsection%
-  \label{src:005.07}SRC-005.07 (P2, 37:39)]
+\item[{\phantomsection%
+  \label{src:005.07}SRC-005.07 (\intref{P2}{37:39})}]
 Audio feedback is a good idea; offering more than one modality is
 encouraged in inclusive design, with the user able to turn the audio off.
 Design it carefully with therapists' feedback, and consider adults with ADHD
 or autism as reviewers when children cannot take part.
-\item[\phantomsection%
-  \label{src:005.08}SRC-005.08 (P2, 39:26)]
+\item[{\phantomsection%
+  \label{src:005.08}SRC-005.08 (\intref{P2}{39:26})}]
 Start with the Web Content Accessibility Guidelines (WCAG), then apply more
 specialized design heuristics for autism from the literature.
-\item[\phantomsection%
-  \label{src:005.09}SRC-005.09 (P2, 19:05; P1, 20:27; P2, 20:47)]
+\item[{\phantomsection%
+  \label{src:005.09}SRC-005.09 (\intref{P2}{19:05}; \intref{P1}{20:27}; \intref{P2}{20:47})}]
 From a universal design view, the skills apply to all children, including
 those with motor or sight challenges; designing for disability serves many
 groups.
-\item[\phantomsection%
-  \label{src:005.10}SRC-005.10 (P1, 13:42; P1, 15:12; P1, 16:13; P2, 16:45)]
+\item[{\phantomsection%
+  \label{src:005.10}SRC-005.10 (\intref{P1}{13:42}; \intref{P1}{15:12}; \intref{P1}{16:13}; \intref{P2}{16:45})}]
 Camera finger tracing in the air practises gross rather than fine motor
 skills. It is useful but should come after the core touchscreen tracing
 when time is limited.
-\item[\phantomsection%
-  \label{src:005.11}SRC-005.11 (P2, 22:56; P1, 24:03; P1, 33:00)]
+\item[{\phantomsection%
+  \label{src:005.11}SRC-005.11 (\intref{P2}{22:56}; \intref{P1}{24:03}; \intref{P1}{33:00})}]
 Testing with children needs ethics approval (about three to four months
 where P2 works). Meeting experts for feedback without involving children
 does not.
-\item[\phantomsection%
-  \label{src:005.12}SRC-005.12 (41:51--42:48)]
+\item[{\phantomsection%
+  \label{src:005.12}SRC-005.12 (\intlink{Rayan}{41:51}{41:51--42:48})}]
 All three participants agreed to the use of the transcript for eliciting
 requirements.
 \end{description}

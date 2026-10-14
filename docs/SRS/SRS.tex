@@ -859,7 +859,7 @@ interview with three domain specialists. No parent, educator, school
 administrator or occupational therapist has been consulted, and no child
 has taken part in any source (SRC-005, \intref{Rayan}{12:31}; SRC-004).\\
 \emph{Relevance:} requirements based on what parents and educators need
-rest on assumptions (ASM-006, ASM-010) until those groups are consulted.
+rest on assumptions (ASM-006) until those groups are consulted.
 \item[FACT-013] The interview did not cover several topics that affect
 the requirements: how Squigglr compares with existing drawing apps (one
 participant noted only that many exist (SRC-005, \intref{P2}{35:36})),
@@ -868,7 +868,7 @@ automatic refinement in the creative space, letter activities, the
 relative priority of the features, and how practice records should be
 kept, shared or deleted (SRC-005).\\
 \emph{Relevance:} the requirements on these topics rest on assumptions
-(ASM-011 to ASM-013) and are open to change.
+(ASM-010 to ASM-012) and are open to change.
 \end{description}
 
 \subsection{Business Rules}
@@ -999,8 +999,9 @@ interview example used a tablet with a stylus (SRC-005,
 \intref{Rayan}{24:56}). Which devices families and schools own is not
 known. The supported device and browser combinations are TBD.\\
 \emph{Depends on it:} CON-003, G.1, G.2.\\
-\emph{If false:} children without a stylus cannot use Squigglr until
-finger input, a stretch goal, is built.
+\emph{If false:} children without a stylus can still use Squigglr with a
+finger, but not as intended: the stage checks and value ranges are set for
+stylus input, and tuning them for finger input is a stretch goal.
 \item[ASM-004] Supported browsers report stylus strokes in enough detail
 (position and order of points) for Squigglr to check an attempt against
 \texttt{STAGE\_PASS} and to store the actual strokes.\\
@@ -1008,7 +1009,9 @@ finger input, a stretch goal, is built.
 strokes; this has not been tested on any device yet.\\
 \emph{Depends on it:} G.2, G.5, BR-004.\\
 \emph{If false:} an attempt may be judged wrongly or stored inaccurately,
-which would mislead the adult. Relevant to safety.
+which would mislead the adult. The team may then need to deliver Squigglr
+as an installed app, if input there is more reliable, which would change
+CON-001. Relevant to safety.
 \item[ASM-005] A network connection is available during normal use, for
 loading activities and for saving and viewing records. Offline use is out
 of the initial scope.\\
@@ -1020,12 +1023,14 @@ adult may decide from incomplete records. Relevant to safety.
 \item[ASM-006] The supporting adult can judge from the records when a
 child should move on, stay or go back.\\
 \emph{Rationale:} the specialists placed this decision with a parent or
-educator who knows the child (SRC-005, \intref{P1}{28:37}). Which
-progress measures help adults is not yet known and should be decided with
-occupational therapists or educators (SRC-005, \intref{P2}{31:42}).\\
+educator who knows the child (SRC-005, \intref{P1}{28:37}). Squigglr
+shows the adult every value it records, such as each attempt's result and
+the \texttt{STAGE\_PASS} and \texttt{ATTEMPT\_LIMIT} in use for that
+attempt, and the adult chooses which of them their view shows, so the team
+does not have to pick which measures matter.\\
 \emph{Depends on it:} G.3, G.6, CON-007, BR-003.\\
 \emph{If false:} a child may be kept at a level that is too hard or too
-easy; G.6 summaries would need more guidance for adults. Relevant to
+easy; the adult views would need more guidance. Relevant to
 safety.
 \item[ASM-007] The adult who uses the adult views can read the language of
 the interface. The interface language is TBD. Children do not need to
@@ -1052,23 +1057,14 @@ over a child; it only knows the adult who holds the account (BR-001).\\
 be linked when written).\\
 \emph{If false:} an unauthorised adult could see a child's records.
 Relevant to privacy.
-\item[ASM-010] The advice of the three specialists matches what
-occupational therapists, educators and parents need.\\
-\emph{Rationale:} the specialists are the only outside source so far
-(FACT-012), and they advised confirming details with occupational
-therapists and educators (SRC-005, \intref{P2}{31:42};
-\intref{P1}{36:26}).\\
-\emph{Depends on it:} G.1--G.6, CON-003, CON-007.\\
-\emph{If false:} the affected requirements change after those groups are
-consulted.
-\item[ASM-011] Lines, basic shapes and simple drawings are suitable
+\item[ASM-010] Lines, basic shapes and simple drawings are suitable
 practice content for the intended children, without letters.\\
 \emph{Rationale:} the specialists did not object to this content, and
 nurseries focus on these skills (SRC-005, \intref{P1}{20:27}). Letters
 were not discussed (FACT-013) and remain a stretch goal (SRC-001).\\
 \emph{Depends on it:} G.1, G.2.\\
 \emph{If false:} the activity set changes.
-\item[ASM-012] Children and adults value automatic refinement in the
+\item[ASM-011] Children and adults value automatic refinement in the
 creative space, and children understand that the refined drawing is still
 theirs.\\
 \emph{Rationale:} the specialists did not comment on refinement
@@ -1076,7 +1072,7 @@ theirs.\\
 \emph{Depends on it:} G.4, BR-005.\\
 \emph{If false:} refinement may discourage a child, and G.4 would need
 to change.
-\item[ASM-013] Squigglr serves the same needs at home and in school, so
+\item[ASM-012] Squigglr serves the same needs at home and in school, so
 one set of requirements covers both.\\
 \emph{Rationale:} the specialists named homes, kindergartens, schools and
 rehabilitation centres as possible settings (SRC-005,
@@ -1085,20 +1081,20 @@ rehabilitation centres as possible settings (SRC-005,
 \emph{Depends on it:} G.3, G.6, BR-001.\\
 \emph{If false:} separate requirements may be needed, for example for an
 educator managing several children.
-\item[ASM-014] Schools allow access to the Squigglr website on their
+\item[ASM-013] Schools allow access to the Squigglr website on their
 managed devices and networks.\\
 \emph{Rationale:} a website is easier to adopt than an installed app
 (FACT-009), but no school has confirmed that it would not block the site.\\
 \emph{Depends on it:} CON-001, CON-002.\\
 \emph{If false:} school use needs approval from administrators.
-\item[ASM-015] Strokes drawn by adults, or prepared examples, are close
+\item[ASM-014] Strokes drawn by adults, or prepared examples, are close
 enough to children's drawing to verify stage checks and refinement.\\
 \emph{Rationale:} evaluation uses adults only (CON-005, CON-006).\\
 \emph{Depends on it:} G.2, G.4, BR-009, and the verification plan.\\
 \emph{If false:} the range of \texttt{STAGE\_PASS} and the value of
 \texttt{REFINE\_TOLERANCE} may be wrong for children, so attempts may be
 judged wrongly. Relevant to safety.
-\item[ASM-016] An adult can turn off audio feedback, or stop a session,
+\item[ASM-015] An adult can turn off audio feedback, or stop a session,
 if sound or on-screen feedback upsets a child.\\
 \emph{Rationale:} the specialists recommended that users can turn audio
 off (SRC-005, \intref{P2}{37:39}). Children react to sensory feedback in
@@ -1108,7 +1104,7 @@ which children.\\
 (requirement IDs to be linked when written).\\
 \emph{If false:} feedback must be safe by default rather than relying on
 an adult. Relevant to safety.
-\item[ASM-017] A supporting adult can choose adult-set values
+\item[ASM-016] A supporting adult can choose adult-set values
 (Table~\ref{tab:goalconst}) that suit their child, helped by the example
 drawings for \texttt{STAGE\_PASS}, or leave the defaults.\\
 \emph{Rationale:} the supervisor advised leaving these values to the adult
@@ -1116,7 +1112,7 @@ drawings for \texttt{STAGE\_PASS}, or leave the defaults.\\
 \emph{Depends on it:} G.2, G.3, BR-008.\\
 \emph{If false:} a child may be held at a stage too long or moved on too
 soon, which can frustrate them. Relevant to safety.
-\item[ASM-018] A rise in the average result of a child's recent attempts
+\item[ASM-017] A rise in the average result of a child's recent attempts
 by at least \texttt{IMPROVE\_MARGIN} reflects real improvement, not chance
 variation between drawings.\\
 \emph{Rationale:} drawing results vary from one attempt to the next; the

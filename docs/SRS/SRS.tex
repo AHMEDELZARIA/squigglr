@@ -79,8 +79,8 @@ Date 2 & 1.1 & Notes\\
 
 \section{Mandated Constraints}
 This section lists constraints imposed on Squigglr from outside the team:
-by the supervisor, the teaching assistant (TA), the course and the
-university. They are not design choices. Each constraint has an identifier
+by the supervisor, the teaching assistant (TA), the domain specialists
+interviewed (SRC-005), the course and the university. They are not design choices. Each constraint has an identifier
 of the form CON-\#\#\#, a description, a rationale, the party that
 imposed it, a fit criterion that shows whether it is met, and its sources from the Requirement Sources
 register (SRC-\#\#\#). The constraints limit what the team may build; they
@@ -108,13 +108,17 @@ Table~\ref{tab:con-schedule}. & SRC-002\\
 CON-005 & The project shall gather no information from or about children
 for requirements or evaluation. &
 SRC-004\\
-CON-006 & The project shall run no study involving children. & SRC-004\\
+CON-006 & The project shall run no study involving children. &
+SRC-004, SRC-005\\
+CON-007 & Squigglr shall not decide when a child moves to another stage
+or level; an adult chooses. & SRC-005\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Solution Constraints}
-The supervisor and the TA set the form of the solution.
+The supervisor, the TA and the domain specialists set the form of the
+solution.
 
 \begin{description}
 \item[CON-001] Squigglr shall be a website used in a web browser.\\
@@ -132,6 +136,28 @@ enough to start.\\
 \emph{Fit criterion:} a first-time user starts an activity without installing any
 app, plug-in or browser extension.\\
 \emph{Source:} SRC-003, SRC-004.
+\item[CON-003] Squigglr shall work on touchscreen devices with stylus
+input.\\
+\emph{Rationale:} Squigglr targets visual-motor skills, which include fine
+motor control. Children build that control by practising with a held tool,
+moving from large tools to smaller ones like pencils (SRC-005, P1, 26:46),
+and how a child grips the tool affects how they draw (SRC-005, P3, 25:36).
+Finger input is a stretch goal (SRC-001).\\
+\emph{Imposed by:} domain specialists, within the scope agreed with the
+supervisor and TA.\\
+\emph{Fit criterion:} each activity can be completed with a stylus on a
+touchscreen device; the device and browser combinations are TBD.\\
+\emph{Source:} SRC-001, SRC-003, SRC-004, SRC-005.
+\item[CON-007] Squigglr shall not decide when a child moves to another
+stage or level; an adult chooses.\\
+\emph{Rationale:} Deciding when a child is ready needs an assessment, which
+is too complex for the project's time frame. The parent or educator, who
+knows the child's level, should make that choice (SRC-005, P1, 28:37).
+Squigglr may suggest going back a stage, but an adult must accept (G.3).\\
+\emph{Imposed by:} domain specialists.\\
+\emph{Fit criterion:} no change of stage or level happens without an
+adult choosing or accepting it.\\
+\emph{Source:} SRC-005.
 \end{description}
 
 \subsection{Implementation Environment of the Current System}
@@ -149,20 +175,13 @@ software. Candidate libraries and services are discussed in the
 Off-the-Shelf Solutions section, not here.
 
 \subsection{Anticipated Workplace Environment}
-Squigglr will be used where children practise drawing with an adult
-nearby.
+Squigglr will be used at home, in classrooms and in other places where
+children practise drawing, such as rehabilitation centres (SRC-005, P2,
+21:25), usually with an adult nearby. School devices may be shared by
+several children (SRC-004). These places give context for later
+requirements; they are not a constraint, since the team will not test
+Squigglr in each of them.
 
-\begin{description}
-\item[CON-003] Squigglr shall work on touchscreen devices with stylus
-input.\\
-\emph{Rationale:} Children draw on the screen with a stylus, which builds
-the fine-motor control needed for holding a pencil (SRC-005, P1, 26:46);
-finger input is a stretch goal (SRC-001).\\
-\emph{Imposed by:} project scope agreed with the supervisor and TA.\\
-\emph{Fit criterion:} each activity can be completed with a stylus on a
-touchscreen device; the device and browser combinations are TBD.\\
-\emph{Source:} SRC-001, SRC-003, SRC-004, SRC-005.
-\end{description}
 
 \subsection{Schedule Constraints}
 The course sets the project's deadlines. Table~\ref{tab:con-schedule}
@@ -226,12 +245,14 @@ contains data from or about a child.\\
 \emph{Source:} SRC-004.
 \item[CON-006] The project shall run no study involving children.\\
 \emph{Rationale:} Any study run through the university that involves
-children requires ethics board approval, which the project does not seek.
-Evaluation is done with adults only (CON-005).\\
-\emph{Imposed by:} supervisor and the university.\\
+children requires ethics board approval, which the project does not seek
+(SRC-005, P2, 22:56; P1, 33:00). Evaluation is done with adults only
+(CON-005).\\
+\emph{Imposed by:} supervisor and the university, as the domain
+specialists also advised.\\
 \emph{Fit criterion:} no study with child participants takes place during
 the project.\\
-\emph{Source:} SRC-004.
+\emph{Source:} SRC-004, SRC-005.
 \end{description}
 
 \section{Naming Conventions and Terminology}
@@ -293,6 +314,17 @@ involved in the Project}
 \subsection{Accessibility Requirements}
 \lips
 
+\emph{Note for the section owner (from \#87):} add a requirement that
+Squigglr shall meet selected Web Content Accessibility Guidelines (WCAG)
+2.2 success criteria; the exact set is TBD and should be criteria the team
+can check without children, such as colour contrast, text alternatives for
+icons and audio that can be paused or muted. Full WCAG conformance is a
+stretch goal. Source: SRC-005, P2, 39:26. Related advice: icon-based
+navigation that children can use without reading (SRC-005, P1, 34:13) and
+audio feedback with a mute option (SRC-005, P2, 37:39). Add a WCAG 2.2 citation to
+refs/References.bib. The standard itself goes in Standards Compliance
+Requirements.
+
 \section{Performance Requirements}
 \subsection{Speed and Latency Requirements}
 \lips
@@ -350,6 +382,12 @@ involved in the Project}
 \lips
 \subsection{Standards Compliance Requirements}
 \lips
+
+\emph{Note for the section owner (from \#87):} list WCAG 2.2 as the
+accessibility standard Squigglr follows for selected success criteria (see
+Accessibility Requirements). It is not legally required for this project;
+the domain specialists recommended it as a starting point (SRC-005, P2,
+39:26). Full conformance is a stretch goal.
 
 \section{Open Issues}
 \lips

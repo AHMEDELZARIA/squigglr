@@ -90,6 +90,7 @@
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 18, Open Issues, and Section 27, Likely and Unlikely Changes (\#90).\\
 15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions, introduced the glossary and central constants register, and prepared the shared requirement structure (\#81).\\
+16 October 2026 & Rayan Nasrallah & Added the specialist questionnaire responses as SRC-009, with an appendix.\\
 \bottomrule
 \end{tabularx}
 
@@ -689,7 +690,9 @@ requirements were informed by:
   held because children could not be asked directly (SRC-004) and the
   specialists build software for the intended users (SRC-006);
   \item peer review of the Problem Statement and Development Plan
-  (SRC-007).
+  (SRC-007);
+  \item written answers from two of the three specialists to a follow-up
+  questionnaire (SRC-009).
 \end{itemize}
 Parents, caregivers, and educators have not yet been consulted
 (SRC-005, \intref{Rayan}{12:31}); this is an open item. Planned later participation
@@ -1174,10 +1177,11 @@ rest on assumptions (ASM-006) until those groups are consulted.
 \item[FACT-013] The interview did not cover several topics that affect
 the requirements: how Squigglr compares with existing drawing apps (one
 participant noted only that many exist (SRC-005, \intref{P2}{35:36})),
-differences between home and school use, whether children or adults value
-automatic refinement in the creative space, letter activities, the
+differences between home and school use, the
 relative priority of the features, and how practice records should be
 kept, shared or deleted (SRC-005).\\
+The follow-up questionnaire later covered refinement in the creative space
+and letter activities (SRC-009).\\
 \emph{Relevance:} the requirements on these topics rest on assumptions
 (ASM-010 to ASM-012) and are open to change.
 \end{description}
@@ -1373,8 +1377,9 @@ Relevant to privacy.
 \item[ASM-010] Lines, basic shapes and simple drawings are suitable
 practice content for the intended children, without letters.\\
 \emph{Rationale:} the specialists did not object to this content, and
-nurseries focus on these skills (SRC-005, \intref{P1}{20:27}). Letters
-were not discussed (FACT-013) and remain a stretch goal (SRC-001).\\
+nurseries focus on these skills (SRC-005, \intref{P1}{20:27}). Two
+specialists saw letters as a later stage after shapes (SRC-009.04), so
+they remain a stretch goal (SRC-001).\\
 \emph{Depends on it:} G.1, G.2.\\
 \emph{If false:} the activity set changes.
 \item[ASM-011] Children and adults value automatic refinement in the
@@ -1690,16 +1695,6 @@ OI-09 & \emph{Supported devices and browsers.} CON-003 leaves the device
 and browser combinations TBD. Still needed: the list of combinations the
 team will support and test with a stylus. &
 CON-001, CON-003 & Shamil Canbolat & Nov.\ 2, 2026 (V\&V Plan) \\
-\addlinespace
-OI-10 & \emph{Follow-up questionnaire.} The specialists agreed to answer
-written follow-up questions (SRC-005, \intref{Rayan}{41:26};
-\intref{P1}{41:51}); the questionnaire has not been sent. The interview did
-not cover existing apps, home versus school use, the value of refining
-creative drawings, letter tracing, or the specialists' priorities among
-features. Still needed: send the questionnaire and record the answers as a
-new source. &
-G.1, G.4, G.6 & Rayan Nasrallah & Oct.\ 17, 2026 (send); Nov.\ 2, 2026
-(answers recorded) \\
 \end{longtable}
 }
 
@@ -1782,8 +1777,7 @@ one.
 \bottomrule
 \endlastfoot
 LC-001 & The lesson catalogue (which lines, shapes and drawings, in what
-order) may change after the specialists answer the follow-up questionnaire
-(OI-10). & G.1, G.2 & Lessons and their stages can be stored as
+order) may change, for example to add letters after shapes (SRC-009.04). & G.1, G.2 & Lessons and their stages can be stored as
 data that the lesson logic reads, so adding or reordering a lesson changes
 no code. \\
 \addlinespace
@@ -2009,6 +2003,12 @@ Course guidance, not user needs. \\
   \href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75} &
 Team 13 review of SRC-001 and SRC-002. &
 Reviewers' opinions; not all suggestions are adopted. \\
+\phantomsection\label{src:009}SRC-009 & Specialist questionnaire & Oct 2--4,
+2026 & Appendix~\ref{app:questionnaire} &
+Written answers on the creative space and refinement, motivation and
+frustration, letters, and concerns. &
+Two of three specialists; anonymous, so answers cannot be matched to
+P1--P3; expert opinion, not child observation. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2081,8 +2081,59 @@ All three participants agreed to the use of the transcript for eliciting
 requirements.
 \end{description}
 
+\subsection{Key Questionnaire Statements}
+\label{sec:src-questionnaire}
+
+This subsection lists the questionnaire statements most relevant to the
+requirements. Each is a short paraphrase; the full answers are in
+Appendix~\ref{app:questionnaire}, labelled by respondent (R1, R2) and
+question (Q1--Q4).
+
+\begin{description}[leftmargin=1.5em, style=nextline]
+\item[{\phantomsection%
+  \label{src:009.01}SRC-009.01 (\hyperref[q:R1-Q1]{R1, Q1}; \hyperref[q:R2-Q1]{R2, Q1})}]
+The free drawing space is valuable. Refinement should stay subtle and
+support the child's own drawing rather than replace or correct it, so the
+child keeps ownership. Both respondents suggested that refinement be
+optional or adjustable.
+\item[{\phantomsection%
+  \label{src:009.02}SRC-009.02 (\hyperref[q:R1-Q2]{R1, Q2})}]
+Activities motivate when they are achievable, predictable and visually
+engaging, with immediate positive feedback and some choice. They frustrate
+when they are too demanding, repeatedly highlight mistakes, need very
+precise movements or change the child's work unexpectedly. Squigglr should
+recognize effort and progress, not only accuracy.
+\item[{\phantomsection%
+  \label{src:009.03}SRC-009.03 (\hyperref[q:R2-Q2]{R2, Q2})}]
+Requiring a pen or stylus rather than a finger may make drawing harder;
+finger drawing may be simpler.
+\item[{\phantomsection%
+  \label{src:009.04}SRC-009.04 (\hyperref[q:R1-Q3]{R1, Q3}; \hyperref[q:R2-Q3]{R2, Q3})}]
+Letters are a useful later stage, introduced gradually after shapes, with
+some flexibility in how precisely a letter must be traced. R1 suggested
+Arabic as well as English letters; R2 suggested letters and numbers, then
+tracing letters to form a word.
+\item[{\phantomsection%
+  \label{src:009.05}SRC-009.05 (\hyperref[q:R2-Q4]{R2, Q4})}]
+The interface should be appealing and child-friendly while avoiding
+excessive visual or auditory stimuli.
+\item[{\phantomsection%
+  \label{src:009.06}SRC-009.06 (\hyperref[q:R1-Q4]{R1, Q4})}]
+Involve children, parents, educators and occupational therapists in design
+and evaluation, and look beyond accuracy at engagement, frustration,
+independence, confidence and transfer to drawing without the app.
+\item[{\phantomsection%
+  \label{src:009.07}SRC-009.07 (\hyperref[q:R1-Q4]{R1, Q4})}]
+Squigglr could serve a broader population, such as other
+neurodevelopmental conditions and rehabilitation; avoid restricting it to
+one condition too early.
+\end{description}
+
 \newpage{}
 \input{InterviewTranscript.text}
+
+\newpage{}
+\input{QuestionnaireResponses.text}
 
 \newpage{}
 \section{Appendix --- Generative AI Use Disclosure}

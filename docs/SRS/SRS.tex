@@ -59,6 +59,7 @@
 14 October 2026 & Rayan Nasrallah & Linked interview citations to transcript turns (\#95).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 5, Relevant Facts and Assumptions, with business rules (\#88).\\
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
+14 October 2026 & Rayan Nasrallah & Wrote Section 18, Open Issues, and Section 27, Likely and Unlikely Changes (\#90).\\
 \bottomrule
 \end{tabularx}
 
@@ -1288,7 +1289,123 @@ Accessibility Requirements). It is not legally required for this project;
 the domain specialists recommended it as a starting point (SRC-005, \intref{P2}{39:26}). Full conformance is a stretch goal.
 
 \section{Open Issues}
-\lips
+
+This section lists questions that are not yet settled and could change the
+requirements. Each issue has an identifier (OI-\#\#), an owner, the decision
+or evidence needed to close it, the goals, constraints or requirements it
+affects, and a target date. Requirement identifiers are linked here as the
+requirements are written. Target dates come from the SRS schedule (review
+copy Oct.\ 17, 2026; submission Oct.\ 19, 2026) or from the course deadlines
+in Table~\ref{tab:con-schedule} (CON-004) where an issue cannot be closed
+before submission.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.07\textwidth}%
+>{\raggedright\arraybackslash}p{0.47\textwidth}%
+>{\raggedright\arraybackslash}p{0.13\textwidth}%
+>{\raggedright\arraybackslash}p{0.12\textwidth}%
+>{\raggedright\arraybackslash}p{0.11\textwidth}@{}}
+\caption{Open issues}\label{tab:openIssues}\\
+\toprule
+\textbf{ID} & \textbf{Issue and decision or evidence needed} &
+\textbf{Affects} & \textbf{Owner} & \textbf{Target} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Issue and decision or evidence needed} &
+\textbf{Affects} & \textbf{Owner} & \textbf{Target} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+OI-01 & \emph{School and shared devices.} School devices may be shared by
+several children (SRC-004) and are often managed centrally (CON-002).
+One adult account holds several learner profiles, and an adult switches
+between them (BR-001). Still needed: whether an adult signs in on each
+shared device, and how a device is left when a session ends. &
+G.5, G.6, CON-001, CON-002; requirement IDs to be linked when written &
+Shamil Canbolat & Oct.\ 17, 2026 \\
+\addlinespace
+OI-02 & \emph{Privacy of practice records.} The supervisor's advice to
+collect no information about children
+(SRC-004, \href{https://github.com/AHMEDELZARIA/squigglr/issues/21}{\#21})
+concerns personal information; storing practice attempts is acceptable.
+Still needed: the privacy requirements for attempt records, including who
+can see them, whether and how they can be shared, and how they are
+deleted. &
+G.5, G.6, CON-005; privacy requirement IDs to be linked when written &
+Shamil Canbolat & Oct.\ 17, 2026 \\
+\addlinespace
+OI-03 & \emph{Scope of G.4.} A peer reviewer suggested moving creative
+drawing and refinement to the stretch goals
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/70}{\#70}). The
+team may adopt the change or reply on the issue explaining why G.4 stays a
+core goal (SRC-006). Still needed: the reply on the issue and, if G.4
+stays, a supported set of items small enough for the schedule. &
+G.4 & Muhammad Huzaifah & Oct.\ 17, 2026 \\
+\addlinespace
+OI-04 & \emph{Revised G.3 rule.} G.3 now gives progression to adults, with
+an optional suggestion to go back a stage after
+\texttt{DIFFICULTY\_STREAK} failed attempts and a lesson end after
+\texttt{ATTEMPT\_LIMIT}, held back while the child is improving
+(\texttt{IMPROVE\_WINDOW}, \texttt{ATTEMPT\_EXTENSION}). The TA agreed to the change in principle and asked
+that the updated PSG be merged after he marks the submitted version
+(SRC-006). Still needed: the TA's confirmation of the revised rule as
+written. &
+G.3, CON-007 & Shamil Canbolat & Oct.\ 17, 2026 \\
+\addlinespace
+OI-05 & \emph{Ranges of the adult-set values.} The adult chooses
+\texttt{STAGE\_PASS}, \texttt{DIFFICULTY\_STREAK},
+\texttt{ATTEMPT\_LIMIT}, \texttt{IMPROVE\_WINDOW},
+\texttt{ATTEMPT\_EXTENSION} and \texttt{ATTEMPT\_LIMIT\_MAX} for each
+child within a range the team sets
+(SRC-008). No range may be chosen from child testing (SRC-004). Still
+needed: the minimum and maximum of each, the fixed
+\texttt{IMPROVE\_MARGIN}, set by the team, and example drawings of each end of the
+\texttt{STAGE\_PASS} range, made by adults. &
+G.2, G.3; requirement IDs to be linked when written &
+Ahmed Elzaria & Nov.\ 2, 2026 (V\&V Plan) \\
+\addlinespace
+OI-06 & \emph{Data isolation between institutions.} A peer reviewer asked
+how records from different schools or centres are kept apart
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}). Still
+needed: a decision on whether Squigglr supports separate institutions in
+this project and, if so, the access and privacy requirements that keep
+their records apart. &
+G.5, G.6; access and privacy requirement IDs to be linked when written &
+Shamil Canbolat & Oct.\ 17, 2026 \\
+\addlinespace
+OI-07 & \emph{Budget.} No budget has been set (Budget Constraints), and
+external services may have costs. Still needed: the TA's confirmation of
+whether any budget is available. &
+G.4 (refinement service) & Shamil Canbolat & Oct.\ 17, 2026 \\
+\addlinespace
+OI-08 & \emph{Selected WCAG 2.2 success criteria.} The specialists
+recommended starting with WCAG (SRC-005, \intref{P2}{39:26}); the set of
+criteria Squigglr follows is TBD. The supervisor advised taking specific
+WCAG ideas as non-functional requirements rather than as a constraint
+(SRC-008). Still needed: a list of criteria the
+team can check without children. &
+G.1; accessibility and standards requirement IDs to be linked when written
+& Moustafa Moustafa (Usability); Shamil Canbolat (Compliance) &
+Oct.\ 17, 2026 \\
+\addlinespace
+OI-09 & \emph{Supported devices and browsers.} CON-003 leaves the device
+and browser combinations TBD. Still needed: the list of combinations the
+team will support and test with a stylus. &
+CON-001, CON-003 & Shamil Canbolat & Nov.\ 2, 2026 (V\&V Plan) \\
+\addlinespace
+OI-10 & \emph{Follow-up questionnaire.} The specialists agreed to answer
+written follow-up questions (SRC-005, \intref{Rayan}{41:26};
+\intref{P1}{41:51}); the questionnaire has not been sent. The interview did
+not cover existing apps, home versus school use, the value of refining
+creative drawings, letter tracing, or the specialists' priorities among
+features. Still needed: send the questionnaire and record the answers as a
+new source. &
+G.1, G.4, G.6 & Rayan Nasrallah & Oct.\ 17, 2026 (send); Nov.\ 2, 2026
+(answers recorded) \\
+\end{longtable}
+}
 
 \section{Off-the-Shelf Solutions}
 \subsection{Ready-Made Products}
@@ -1336,6 +1453,142 @@ Inhibit the New Product}
 
 \section{Ideas for Solution}
 \lips
+
+\section{Likely and Unlikely Changes}
+\label{sec:changes}
+
+This section is added to the Volere template because the course asks for
+it. It records which parts of the requirements are expected to change, so
+that the design can keep them easy to change, and which are not expected
+to change, so that the design can rely on them. Each change has an
+identifier: LC-\#\#\# for a likely change and ULC-\#\#\# for an unlikely
+one.
+
+\subsection{Likely Changes}
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}%
+>{\raggedright\arraybackslash}p{0.33\textwidth}%
+>{\raggedright\arraybackslash}p{0.13\textwidth}%
+>{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
+\caption{Likely changes}\label{tab:likelyChanges}\\
+\toprule
+\textbf{ID} & \textbf{Change and why it is likely} & \textbf{Affects} &
+\textbf{How the design can hide it} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Change and why it is likely} & \textbf{Affects} &
+\textbf{How the design can hide it} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+LC-001 & The lesson catalogue (which lines, shapes and drawings, in what
+order) may change after the specialists answer the follow-up questionnaire
+(OI-10). & G.1, G.2 & Lessons and their stages can be stored as
+data that the lesson logic reads, so adding or reordering a lesson changes
+no code. \\
+\addlinespace
+LC-002 & The ranges of the adult-set values
+(Table~\ref{tab:goalconst}) are TBD (OI-05), and adults may change their
+chosen values at any time. & G.2, G.3, CON-007 & Each range is defined in
+one place, each child's value is stored in their profile, and the activity
+logic reads only the profile value. \\
+\addlinespace
+LC-003 & The supported device and browser combinations are TBD and will
+change as browsers and tablets change (OI-09). & CON-001, CON-003 &
+Drawing input can be read through one input module that turns browser
+pointer events into strokes; the rest of the product sees only strokes. \\
+\addlinespace
+LC-004 & The service that refines creative drawings may change because of
+cost (OI-07), quality or availability. The refinement is planned to use a
+lightweight AI model (SRC-005, \intref{Moustafa}{6:03}). & G.4 & Refinement
+can sit behind one interface that takes stroke coordinates and returns
+adjusted coordinates at the same scale, so a different provider replaces
+one module. \\
+\addlinespace
+LC-005 & Feedback wording, colours and audio will change: the specialists
+advised designing them with educators and occupational therapists, bit by
+bit (SRC-005, \intref{P1}{36:26}; \intref{P2}{37:39}). & G.1 & Feedback
+text, colours and sounds can be kept as content separate from the rules
+that decide which feedback to give. \\
+\addlinespace
+LC-006 & Finger input may be added later; it is a stretch goal, and the
+specialists suggested finger, large stylus and small stylus as possible
+difficulty levels (SRC-005, \intref{P1}{26:46}). & CON-003, G.1 & The
+input module of LC-003 can accept a new input type without changing the
+lesson logic or the records. \\
+\addlinespace
+LC-007 & Which recorded values each adult wants to see will change from
+adult to adult and over time. & G.6 & Squigglr records every value and
+lets the adult choose what their view shows, so a new view needs no change
+to what is recorded. \\
+\addlinespace
+LC-008 & The way improvement is measured (average of recent attempts
+compared with earlier ones) may be replaced once it is tried. & G.3,
+BR-002 & The measure is one function that reads the stored attempt
+results; the lesson logic only asks whether the child is improving. \\
+\end{longtable}
+}
+
+\subsection{Unlikely Changes}
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}%
+>{\raggedright\arraybackslash}p{0.33\textwidth}%
+>{\raggedright\arraybackslash}p{0.13\textwidth}%
+>{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
+\caption{Unlikely changes}\label{tab:unlikelyChanges}\\
+\toprule
+\textbf{ID} & \textbf{Fact not expected to change} & \textbf{Affects} &
+\textbf{Justification and source} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Fact not expected to change} & \textbf{Affects} &
+\textbf{Justification and source} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+ULC-001 & Squigglr is delivered as a website, with no installation. &
+CON-001, CON-002 & Imposed by the supervisor and TA because installing
+apps on school-managed devices is difficult (SRC-003, SRC-004). This may
+change if browser input proves unreliable (ASM-004). \\
+\addlinespace
+ULC-002 & Only supporting adults view and manage practice records;
+children do not. & G.5, G.6 & The records exist to help adults understand
+practice (SRC-001), adults handle setup (SRC-005, \intref{P1}{34:13}),
+and the records concern children, whose privacy the product must protect
+(OI-02). \\
+\addlinespace
+ULC-003 & An adult chooses the lesson and stage; Squigglr may only suggest
+going back a stage, and an adult must accept. & G.3, CON-007 & Deciding
+readiness automatically would need assessment, which is out of scope
+(SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}); the TA agreed to the
+change (SRC-006). \\
+\addlinespace
+ULC-004 & Squigglr gives no diagnosis, no judgement of a child's
+abilities, no comparison with other children and no effectiveness
+claims. & G.2, G.6 & Excluded from the start
+(SRC-001) and presented to the specialists as deliberately left out
+(SRC-005, \intref{Moustafa}{6:03}); the team cannot judge a child's
+abilities (SRC-008), and effectiveness claims would need studies the
+project cannot run (CON-006). \\
+\addlinespace
+ULC-005 & In guided lessons, the record keeps the child's actual strokes;
+refinement happens only in the creative space, and the original can be
+restored. & G.4, G.5 & A record of practice is meaningful only
+if it shows what the child drew (SRC-001; SRC-005,
+\intref{Moustafa}{6:03}). \\
+\addlinespace
+ULC-006 & The project gathers no information from or about children and
+runs no study with children. & CON-005, CON-006 & Directed by the
+supervisor (SRC-004); a study with children would need ethics approval
+that takes months (SRC-005, \intref{P2}{22:56}). \\
+\end{longtable}
+}
 
 \newpage{}
 \section{Appendix --- Requirement Sources}

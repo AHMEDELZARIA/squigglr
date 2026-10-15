@@ -3,6 +3,7 @@
 % the original LaTeX skeleton was based on https://github.com/Dieblich/volere.
 % Template adaptations and conventions are documented in the Introduction.
 % Risk analysis is maintained in the separate Hazard Analysis document.
+% Squigglr software requirements specification (SRS).
 \documentclass[12pt]{article}
 \usepackage{longtable}
 
@@ -33,7 +34,7 @@
 %   \reqrationale{Why the behaviour is needed.}
 %   \reqfit{A repeatable, observable acceptance test.}
 %   \reqpriority{Must}
-%   \reqphase{P1}
+%   \reqphase{PH-1}
 %   \reqsources{G.1; \srcref{005}}
 %   \reqtraces{\ucref{003}; H-AHM-001}
 % \end{srsrequirement}
@@ -89,8 +90,9 @@
 14 October 2026 & Rayan Nasrallah & Wrote Section 5, Relevant Facts and Assumptions, with business rules (\#88).\\
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 18, Open Issues, and Section 27, Likely and Unlikely Changes (\#90).\\
-15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions, introduced the glossary and central constants register, and prepared the shared requirement structure (\#81).\\
-16 October 2026 & Rayan Nasrallah & Added the specialist questionnaire responses as SRC-009, with an appendix.\\
+15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions,
+introduced the glossary and constants register, and prepared the shared
+requirement structure (\#131).\\
 \bottomrule
 \end{tabularx}
 
@@ -138,28 +140,39 @@ supporting interview turns (\srcref{005}).
 
 \paragraph{Conventions and requirement format.}
 Project goals use \texttt{G.1}--\texttt{G.6}; constraints use
-\texttt{CON-\#\#\#}; business rules \texttt{BR-\#\#\#}; assumptions
-\texttt{ASM-\#\#\#}; requirement sources \texttt{SRC-\#\#\#}; product use
-cases \texttt{UC-\#\#\#}; and open questions \texttt{OI-\#\#}.
+\texttt{CON-\#\#\#}; facts \texttt{FACT-\#\#\#}; business rules
+\texttt{BR-\#\#\#}; assumptions \texttt{ASM-\#\#\#}; and fictional
+personas \texttt{PER-\#}. Requirement sources use
+\texttt{SRC-\#\#\#}; numbered statements within a source use
+\texttt{SRC-\#\#\#.\#\#}; and interview participants use anonymized
+codes \texttt{P1}, \texttt{P2} and \texttt{P3}. Product use cases use
+\texttt{UC-\#\#\#}; open questions use \texttt{OI-\#\#}; and likely
+and unlikely changes use \texttt{LC-\#\#\#} and
+\texttt{ULC-\#\#\#}, respectively.
 Functional requirements have the prefixes \texttt{FR-LRN},
 \texttt{FR-CRT}, \texttt{FR-REC} and \texttt{FR-PRG}, each followed by a
 three-digit suffix. Nonfunctional requirements use their section's
 assigned prefix. Hazard Analysis uses owner-prefixed identifiers such as
 \texttt{H-AHM}, likewise followed by a three-digit suffix.
-Three-digit identifiers, once assigned, are not renumbered. Each
+Identifiers, once assigned, are not renumbered. Each
 requirement contains a short title, one testable ``shall'' statement,
 rationale where needed, a fit criterion, a priority, a phase, evidence
 sources and links to related use cases, requirements or hazards.
-\emph{Must}, \emph{Should} and \emph{Could} identify delivery priority;
-\emph{P1}, \emph{P2}, \emph{P3} and \emph{Future} identify the delivery
-phase, which is defined with dates in Section~\ref{sec:tasks}.
+\emph{Must}, \emph{Should} and \emph{Could} identify delivery priority.
+Delivery phases are \emph{PH-1} (PoC demo: Nov.~23, 2026),
+\emph{PH-2} (Rev~0: Feb.~1, 2027), \emph{PH-3} (final demo:
+Mar.~15, 2027), and \emph{Future}. These phase identifiers are
+distinct from the interview participant codes; the requirement-by-phase
+plan belongs in Section~\ref{sec:tasks}.
 Symbolic constants are written in monospaced capitals (for example,
 \texttt{STAGE\_PASS}) and defined once in
 Section~\ref{sec:constants}. A value marked \emph{TBD} is not an
-approved threshold; its resolution is tracked with the corresponding
-open issue. Diagrams, if used, must include a legend identifying their
-symbols and arrow meanings. Section~9.2 shall define any state-machine
-notation when the formal specification is completed.
+approved threshold; unresolved values appear in the constants register,
+and are also linked to an open issue in Section~\ref{sec:open-issues}
+where such an issue exists. Diagrams, if used, must include a legend
+identifying their symbols and arrow meanings.
+Section~\ref{sec:fr-formal} will define any state-machine notation
+when the formal specification is completed.
 
 \paragraph{Document roadmap.}
 \hyperref[sec:purpose]{Sections~1--5} establish the problem,
@@ -174,6 +187,7 @@ deferred features. \hyperref[sec:changes]{Sections~27--28} cover
 change expectations and traceability. The appendices contain the
 \hyperref[app:sources]{requirement sources register},
 \hyperref[app:interview]{de-identified specialist interview transcript},
+the follow-up specialist questionnaire (SRC-009),
 \hyperref[app:ai-use]{generative AI-use disclosure} and
 \hyperref[app:reflection]{team reflection}.
 Each section range links to its first section; the table of contents
@@ -358,8 +372,10 @@ summaries and locate the supporting attempts, with at least
 
 The symbolic constants used to evaluate these goals, including values
 configurable by supporting adults, are recorded in the central register
-(Table~\ref{tab:goalconst}, Section~\ref{sec:constants}). Unknown bounds
-and fixed values remain explicitly unresolved (OI-05; \srcref{008}).
+(Table~\ref{tab:goalconst}, Section~\ref{sec:constants}). Unknown
+bounds and fixed values remain explicitly unresolved; OI-05 tracks
+adult-configurable ranges and the improvement margin, while other
+TBD values are recorded in Section~\ref{sec:constants} (\srcref{008}).
 
 \section{Stakeholders}
 \label{sec:stakeholders}
@@ -690,9 +706,7 @@ requirements were informed by:
   held because children could not be asked directly (SRC-004) and the
   specialists build software for the intended users (SRC-006);
   \item peer review of the Problem Statement and Development Plan
-  (SRC-007);
-  \item written answers from two of the three specialists to a follow-up
-  questionnaire (SRC-009).
+  (SRC-007).
 \end{itemize}
 Parents, caregivers, and educators have not yet been consulted
 (SRC-005, \intref{Rayan}{12:31}); this is an open item. Planned later participation
@@ -921,16 +935,17 @@ catalogue in which drawing guidance is provided in successive stages.
 specified amount of help, from demonstration through independent drawing.
 The progression policy is subject to OI-04.
 & \hyperref[sec:purpose]{G.2--G.3}\\
-\textbf{Attempt} & A submitted drawing effort within a lesson stage;
-its strokes, observed difficulties and outcome are represented in the
-practice record. & \hyperref[sec:business-rules]{BR-002, BR-004}\\
+\textbf{Attempt} & One try at the drawing task of a lesson
+stage; its strokes, observed difficulties and outcome are represented in
+the practice record. & \hyperref[sec:business-rules]{BR-002, BR-004}\\
 \textbf{Attempt record} & The record of the actual strokes, stage,
 predefined observations and outcome of an attempt; guided records are
 not replaced by refined shapes.
 & \hyperref[sec:business-rules]{BR-004}\\
-\textbf{Creative refinement} & Adjustment of an original drawing in the
-creative space while preserving editability and the ability to restore
-the original. & \hyperref[sec:business-rules]{BR-005}\\
+\textbf{Creative refinement} & Automatic, minimal adjustment of
+the child's strokes in the creative space only. The drawing remains
+editable, and the original can be restored by the child or, if needed,
+by a supporting adult. & \hyperref[sec:business-rules]{BR-005}\\
 \textbf{Supporting adult} & A parent, guardian, caregiver, educator or
 learning-support staff member who configures activities and reviews
 records, as permitted by the account rules.
@@ -946,12 +961,16 @@ used to verify whether a requirement or constraint is met.
 & \hyperref[sec:assumptions]{Section 5.3}\\
 \textbf{BR} & Business rule identifier; \texttt{BR-\#\#\#}.
 & \hyperref[sec:business-rules]{Section 5.2}\\
+\textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}.
+& \hyperref[sec:facts]{Section 5.1}\\
 \textbf{BUC} & Business use case.
 & \hyperref[sec:purpose]{Document roadmap}\\
 \textbf{CON} & Mandated constraint identifier; \texttt{CON-\#\#\#}.
 & \hyperref[sec:constraints]{Section 3}\\
 \textbf{FR} & Functional requirement.
 & \hyperref[sec:functional]{Section 9}\\
+\textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
+& \hyperref[sec:changes]{Section 27.1}\\
 \textbf{HA} & Hazard Analysis, a separate document identifying failures,
 losses, mitigation measures and related requirements.
 & \hyperref[sec:introduction]{Introduction}\\
@@ -962,6 +981,9 @@ on system performance or operation.
 & \hyperref[sec:open-issues]{Section 18}\\
 \textbf{PER} & Fictional persona identifier; \texttt{PER-\#}.
 & \hyperref[sec:stakeholders]{Section 2.5}\\
+\textbf{P1--P3} & Anonymized identifiers for the three domain specialists
+interviewed as part of requirements elicitation; not delivery phases.
+& \hyperref[sec:src-interview]{Appendix A: Interview statements}\\
 \textbf{POC / PoC} & Proof of concept; the planned capstone
 feasibility demonstration, not a production release.
 & \hyperref[sec:constraints]{Schedule}\\
@@ -972,6 +994,7 @@ feasibility demonstration, not a production release.
 \textbf{SRS} & Software Requirements Specification, this document.
 & \hyperref[sec:introduction]{Introduction}\\
 \textbf{SRC} & Requirement source identifier; \texttt{SRC-\#\#\#}.
+Numbered source statements use \texttt{SRC-\#\#\#.\#\#}.
 & \hyperref[app:sources]{Appendix A}\\
 \textbf{TA} & Teaching assistant.
 & \hyperref[sec:purpose]{Section 1}\\
@@ -979,6 +1002,8 @@ feasibility demonstration, not a production release.
 & \hyperref[sec:constants]{Section 4.2}\\
 \textbf{UC} & Product use case identifier; \texttt{UC-\#\#\#}.
 & \hyperref[sec:product-scope]{Section 8}\\
+\textbf{ULC} & Unlikely change identifier; \texttt{ULC-\#\#\#}.
+& \hyperref[sec:changes]{Section 27.2}\\
 \textbf{V\&V} & Verification and validation.
 & \hyperref[sec:constraints]{Schedule}\\
 \textbf{WCAG} & Web Content Accessibility Guidelines; selected criteria
@@ -1015,25 +1040,27 @@ silently assume one.
 \endlastfoot
 \texttt{STAGE\_PASS} & Criteria an attempt must meet to pass a
 stage without making a judgement about the learner. \emph{Unit:} scoring
-unit TBD. \emph{Value:} adult-set within team-set bounds; bounds and
-default TBD. \emph{Trace:} G.2, BR-002, BR-008, OI-05.\\
+unit TBD. \emph{Value:} adult-set within team-set bounds; bounds TBD;
+default: midpoint of the range (BR-008). \emph{Trace:} G.2,
+BR-002, BR-008, OI-05.\\
 \addlinespace
 \texttt{DIFFICULTY\_STREAK} & Consecutive unsuccessful attempts
 before Squigglr may suggest returning to an earlier stage.
 \emph{Unit:} count of failed attempts. \emph{Value:} adult-set within
-team-set bounds; bounds and default TBD.
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
 \emph{Trace:} G.3, BR-003, OI-05.\\
 \addlinespace
 \texttt{ATTEMPT\_LIMIT} & Number of unsuccessful attempts
 that triggers the lesson-end or extension decision; limits repetition.
 \emph{Unit:} count of failed attempts. \emph{Value:} adult-set within
-team-set bounds; bounds and default TBD; must exceed
+team-set bounds; bounds TBD; default: midpoint of the range
+(BR-008); must exceed
 \texttt{DIFFICULTY\_STREAK}. \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{IMPROVE\_WINDOW} & Number of attempts in each
 comparison window used by the improvement rule.
 \emph{Unit:} count of attempts. \emph{Value:} adult-set within
-team-set bounds; bounds and default TBD.
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
 \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{IMPROVE\_MARGIN} & Minimum increase in average
@@ -1044,19 +1071,20 @@ attempt results across comparison windows that qualifies as improvement.
 \texttt{ATTEMPT\_EXTENSION} & Additional attempts permitted
 when recent results satisfy the improvement criterion.
 \emph{Unit:} count of attempts. \emph{Value:} adult-set within
-team-set bounds; bounds and default TBD.
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
 \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{ATTEMPT\_LIMIT\_MAX} & Maximum permitted attempts
 at a stage, including extensions.
 \emph{Unit:} count of attempts. \emph{Value:} adult-set within
-team-set bounds; bounds and default TBD; at least
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008); at least
 \texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{REFINE\_TOLERANCE} & Maximum difference between
 refined and original strokes, to preserve the child's original work.
 \emph{Unit:} distance unit TBD. \emph{Value:} team-set; TBD.
-\emph{Trace:} G.4; refinement verification criterion TBD.\\
+\emph{Trace:} G.4; team-defined value pending, with the
+refinement verification criterion to be specified.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adults
 reviewing prepared progress summaries for understandability.
@@ -1078,13 +1106,16 @@ confirmed with adult stakeholders rather than inferred from personas.
 OI-05 tracks the bounds of adult-configurable constants and the
 team-set improvement margin; the target is the V\&V Plan on
 November~2, 2026. The team will define and check the supported ranges
-using synthetic or adult-made attempts rather than data from children
+using adult-made drawings rather than data from children
 (CON-005, CON-006; \srcref{004}, \srcref{008}). The exact scoring units
 for \texttt{STAGE\_PASS} and \texttt{IMPROVE\_MARGIN} depend on the
 formal classification model in Section~9.2; the coordinate scale for
 \texttt{REFINE\_TOLERANCE} requires agreement with the creative-drawing
 owner. \texttt{ADULT\_REVIEWERS} and
-\texttt{REVIEW\_PASS\_RATE} require a verification plan. Any constant
+\texttt{REVIEW\_PASS\_RATE} require a verification plan.
+The age bounds (\texttt{AGE\_RANGE}) and outstanding refinement and
+review constants are unresolved in this register; no open-issue
+identifiers are assigned here until the section owner creates them. Any constant
 introduced by another section owner must be added to this single
 register before merging that owner's requirements.
 
@@ -1177,11 +1208,10 @@ rest on assumptions (ASM-006) until those groups are consulted.
 \item[FACT-013] The interview did not cover several topics that affect
 the requirements: how Squigglr compares with existing drawing apps (one
 participant noted only that many exist (SRC-005, \intref{P2}{35:36})),
-differences between home and school use, the
+differences between home and school use, whether children or adults value
+automatic refinement in the creative space, letter activities, the
 relative priority of the features, and how practice records should be
 kept, shared or deleted (SRC-005).\\
-The follow-up questionnaire later covered refinement in the creative space
-and letter activities (SRC-009).\\
 \emph{Relevance:} the requirements on these topics rest on assumptions
 (ASM-010 to ASM-012) and are open to change.
 \end{description}
@@ -1377,9 +1407,8 @@ Relevant to privacy.
 \item[ASM-010] Lines, basic shapes and simple drawings are suitable
 practice content for the intended children, without letters.\\
 \emph{Rationale:} the specialists did not object to this content, and
-nurseries focus on these skills (SRC-005, \intref{P1}{20:27}). Two
-specialists saw letters as a later stage after shapes (SRC-009.04), so
-they remain a stretch goal (SRC-001).\\
+nurseries focus on these skills (SRC-005, \intref{P1}{20:27}). Letters
+were not discussed (FACT-013) and remain a stretch goal (SRC-001).\\
 \emph{Depends on it:} G.1, G.2.\\
 \emph{If false:} the activity set changes.
 \item[ASM-011] Children and adults value automatic refinement in the
@@ -1695,6 +1724,16 @@ OI-09 & \emph{Supported devices and browsers.} CON-003 leaves the device
 and browser combinations TBD. Still needed: the list of combinations the
 team will support and test with a stylus. &
 CON-001, CON-003 & Shamil Canbolat & Nov.\ 2, 2026 (V\&V Plan) \\
+\addlinespace
+OI-10 & \emph{Follow-up questionnaire.} The specialists agreed to answer
+written follow-up questions (SRC-005, \intref{Rayan}{41:26};
+\intref{P1}{41:51}); the questionnaire has not been sent. The interview did
+not cover existing apps, home versus school use, the value of refining
+creative drawings, letter tracing, or the specialists' priorities among
+features. Still needed: send the questionnaire and record the answers as a
+new source. &
+G.1, G.4, G.6 & Rayan Nasrallah & Oct.\ 17, 2026 (send); Nov.\ 2, 2026
+(answers recorded) \\
 \end{longtable}
 }
 
@@ -1777,7 +1816,8 @@ one.
 \bottomrule
 \endlastfoot
 LC-001 & The lesson catalogue (which lines, shapes and drawings, in what
-order) may change, for example to add letters after shapes (SRC-009.04). & G.1, G.2 & Lessons and their stages can be stored as
+order) may change after the specialists answer the follow-up questionnaire
+(OI-10). & G.1, G.2 & Lessons and their stages can be stored as
 data that the lesson logic reads, so adding or reordering a lesson changes
 no code. \\
 \addlinespace
@@ -2003,12 +2043,6 @@ Course guidance, not user needs. \\
   \href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75} &
 Team 13 review of SRC-001 and SRC-002. &
 Reviewers' opinions; not all suggestions are adopted. \\
-\phantomsection\label{src:009}SRC-009 & Specialist questionnaire & Oct 2--4,
-2026 & Appendix~\ref{app:questionnaire} &
-Written answers on the creative space and refinement, motivation and
-frustration, letters, and concerns. &
-Two of three specialists; anonymous, so answers cannot be matched to
-P1--P3; expert opinion, not child observation. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2081,59 +2115,8 @@ All three participants agreed to the use of the transcript for eliciting
 requirements.
 \end{description}
 
-\subsection{Key Questionnaire Statements}
-\label{sec:src-questionnaire}
-
-This subsection lists the questionnaire statements most relevant to the
-requirements. Each is a short paraphrase; the full answers are in
-Appendix~\ref{app:questionnaire}, labelled by respondent (R1, R2) and
-question (Q1--Q4).
-
-\begin{description}[leftmargin=1.5em, style=nextline]
-\item[{\phantomsection%
-  \label{src:009.01}SRC-009.01 (\hyperref[q:R1-Q1]{R1, Q1}; \hyperref[q:R2-Q1]{R2, Q1})}]
-The free drawing space is valuable. Refinement should stay subtle and
-support the child's own drawing rather than replace or correct it, so the
-child keeps ownership. Both respondents suggested that refinement be
-optional or adjustable.
-\item[{\phantomsection%
-  \label{src:009.02}SRC-009.02 (\hyperref[q:R1-Q2]{R1, Q2})}]
-Activities motivate when they are achievable, predictable and visually
-engaging, with immediate positive feedback and some choice. They frustrate
-when they are too demanding, repeatedly highlight mistakes, need very
-precise movements or change the child's work unexpectedly. Squigglr should
-recognize effort and progress, not only accuracy.
-\item[{\phantomsection%
-  \label{src:009.03}SRC-009.03 (\hyperref[q:R2-Q2]{R2, Q2})}]
-Requiring a pen or stylus rather than a finger may make drawing harder;
-finger drawing may be simpler.
-\item[{\phantomsection%
-  \label{src:009.04}SRC-009.04 (\hyperref[q:R1-Q3]{R1, Q3}; \hyperref[q:R2-Q3]{R2, Q3})}]
-Letters are a useful later stage, introduced gradually after shapes, with
-some flexibility in how precisely a letter must be traced. R1 suggested
-Arabic as well as English letters; R2 suggested letters and numbers, then
-tracing letters to form a word.
-\item[{\phantomsection%
-  \label{src:009.05}SRC-009.05 (\hyperref[q:R2-Q4]{R2, Q4})}]
-The interface should be appealing and child-friendly while avoiding
-excessive visual or auditory stimuli.
-\item[{\phantomsection%
-  \label{src:009.06}SRC-009.06 (\hyperref[q:R1-Q4]{R1, Q4})}]
-Involve children, parents, educators and occupational therapists in design
-and evaluation, and look beyond accuracy at engagement, frustration,
-independence, confidence and transfer to drawing without the app.
-\item[{\phantomsection%
-  \label{src:009.07}SRC-009.07 (\hyperref[q:R1-Q4]{R1, Q4})}]
-Squigglr could serve a broader population, such as other
-neurodevelopmental conditions and rehabilitation; avoid restricting it to
-one condition too early.
-\end{description}
-
 \newpage{}
 \input{InterviewTranscript.text}
-
-\newpage{}
-\input{QuestionnaireResponses.text}
 
 \newpage{}
 \section{Appendix --- Generative AI Use Disclosure}

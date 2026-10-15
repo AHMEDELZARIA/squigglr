@@ -95,7 +95,8 @@
     "docs/SRS/InterviewTranscript.text",
     "docs/SRS/QuestionnaireResponses.text",
     "docs/SRS/SRS.tex",
-    "docs/SRS_Reflection.text"
+    "docs/SRS_Reflection.text",
+    "refs/References.bib"
   ],
   "docs/UserGuide/UserGuide.tex": [
     "docs/Comments.text",

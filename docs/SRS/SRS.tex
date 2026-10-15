@@ -145,8 +145,9 @@ G.1 Support structured drawing practice &
 or simple drawings, starts with a demonstration, and gives feedback and a
 retry at each drawing stage (SRC-001).
 \emph{Advantage:} structured practice at a suitable level supports
-visual-motor development (SRC-001), and children can enter a lesson,
-practise, restart and go back and forth on their own (SRC-005, \intref{P1}{34:13}).
+visual-motor development (SRC-001), and once an adult starts a lesson the
+child practises without constant adult help (SRC-005, \intref{P1}{34:13}).
+Within a lesson the child does not navigate; Squigglr moves between stages.
 Serves children.
 \emph{Measurement:} met when the team completes every stage of every
 catalogue lesson with prepared correct attempts, each attempt passes, and
@@ -393,9 +394,9 @@ help:
   easiest starting point (SRC-005, \intref{P1}{26:46}), and finger input is a
   stretch goal. Some children may also have gross-motor or vision
   challenges (SRC-005, \intref{P2}{19:05}).
-  \item \textbf{Support needs:} children should be able to enter a lesson,
-  practise, restart, and move back and forth without constant adult help
-  (SRC-005, \intref{P1}{34:13}). Adults decide when a child moves to a new lesson
+  \item \textbf{Support needs:} once an adult starts a lesson, he should be
+  able to practise without constant adult help (SRC-005, \intref{P1}{34:13}).
+  He does not need to navigate, exit or restart a lesson. Adults decide when a child moves to a new lesson
   or skips a stage (SRC-005, \intref{P1}{28:37}).
   \item \textbf{Device experience:} many young children already know how
   to navigate touchscreen applications on tablets (SRC-005, \intref{P1}{34:13}).
@@ -458,8 +459,9 @@ concerns come from the sources cited; none were gathered from children
 \endhead
 \bottomrule
 \endlastfoot
-Children & May not read; need to find and restart a lesson alone
-(SRC-005, \intref{P1}{34:13}). & Icon-based navigation that needs little text. \\
+Children & May not read; need to practise without constant adult help
+(SRC-005, \intref{P1}{34:13}). & An adult starts the lesson; within it the
+child does not navigate, and Squigglr moves between stages. \\
 Children & Grip and fine-motor ability vary (SRC-005, \intref{P3}{25:36}). &
 Stylus is the main input; finger input is a stretch goal. \\
 Children (guided lessons) & Attempts must show what the child actually
@@ -1272,21 +1274,21 @@ or diagnosis.\\
 \emph{Fit criterion:} inspection of every summary and export template finds
 none of the excluded content and finds the statement present.\\
 \emph{Hazards:} H-RAY-003.
-\item[SAF-RAY-005] The child shall be able to leave a lesson at any point
-with one icon action, and progress saved up to that point shall be kept.\\
-\emph{Rationale:} children should be able to leave and restart lessons
-without adult help (SRC-005, \intref{P1}{34:13}), and no adult may be
-watching.\\
-\emph{Fit criterion:} on every lesson screen an exit works without reading,
-and the saved record matches what was saved before the exit.\\
+\item[SAF-RAY-005] Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT},
+or at \texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from
+the child, and shall keep the progress saved up to that point.\\
+\emph{Rationale:} the child is not expected to exit a lesson, and no adult
+may be watching (CA-001), so repeated failure must end on its own (G.3).\\
+\emph{Fit criterion:} in prepared sequences of failed attempts, each lesson
+ends at the limit in use with no child input, and the saved record matches
+the attempts made.\\
 \emph{Hazards:} H-RAY-004.
 \item[SAF-RAY-006] Squigglr shall record each lesson that ends at
 \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each
 improvement extension, show the adult how many times these happened for
 each lesson, and keep earlier attempts when a lesson is restarted.\\
-\emph{Rationale:} a restart could otherwise hide repeated failure; blocking
-restarts would stop children from restarting on their own (SRC-005,
-\intref{P1}{34:13}).\\
+\emph{Rationale:} a restart could otherwise hide repeated failure from the
+adult.\\
 \emph{Fit criterion:} in prepared sequences that reach the limit and then
 restart, the count and all earlier attempts appear in the adult view.\\
 \emph{Hazards:} H-RAY-005.

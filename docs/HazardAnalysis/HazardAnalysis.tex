@@ -84,13 +84,13 @@ Appendix A, and interview turns by speaker and timestamp, for example
 (SRC-005, P1, 34:13). Each assumption lists the H-RAY hazards it affects.
 
 \begin{description}
-\item[CA-001] An adult sets up Squigglr for a child, chooses the lesson
-and starting stage, and is the only person meant to accept a suggestion to
-go back a stage. An adult may not be present or watching while the child
-practises.\\
-\emph{Rationale:} children should be able to enter a lesson, practise,
-restart and move back and forth without constant adult help, while adults
-handle setup (SRC-005, P1, 34:13), and adults decide progression
+\item[CA-001] An adult sets up Squigglr for a child, chooses and starts
+the lesson and its starting stage, and is the only person meant to accept
+a suggestion to go back a stage. Within a lesson the child does not
+navigate, exit or restart; Squigglr moves between stages. An adult may not
+be present or watching while the child practises.\\
+\emph{Rationale:} children should practise without constant adult help,
+while adults handle setup (SRC-005, P1, 34:13), and adults decide progression
 (SRC-005, P1, 28:37; CON-007).\\
 \emph{Hazards affected:} H-RAY-001, H-RAY-004, H-RAY-005.
 
@@ -238,16 +238,15 @@ distressed, stops practising or refuses the activity later. Loss:
 well-being; the practice benefit. &
 Psychological/ well-being &
 Mitigate: end the lesson at \texttt{ATTEMPT\_LIMIT}, or at
-\texttt{ATTEMPT\_LIMIT\_MAX} when extended, and save progress (G.3); let the child leave a lesson at any point without losing saved
-progress; let audio feedback be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
+\texttt{ATTEMPT\_LIMIT\_MAX} when extended, and save progress (G.3); let audio feedback be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
 \texttt{ATTEMPT\_LIMIT} and that no extended lesson passes
 \texttt{ATTEMPT\_LIMIT\_MAX}. &
 G.3, SAF-RAY-005 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
-\texttt{ATTEMPT\_LIMIT}, the child restarts it at once and the repetition
-continues. & Children can restart lessons on their own (CA-001); a
-restart starts a new count of attempts. & The limit does not stop the
+\texttt{ATTEMPT\_LIMIT}, it is restarted at once and the repetition
+continues. & No adult may be watching (CA-001); a restart starts a new
+count of attempts. & The limit does not stop the
 repetition, and the adult cannot see how often it happened. Loss:
 well-being; misleading records. &
 Psychological/ well-being &

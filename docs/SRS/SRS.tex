@@ -12,6 +12,8 @@
 \usepackage{tabularx}
 \usepackage{enumitem}
 \usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
 \usepackage{hyperref}
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
@@ -31,7 +33,7 @@
 \newcommand{\goalref}[1]{\hyperref[goal:#1]{G.#1}}
 % Link to a product use case in Table~\ref{tab:puc}: \ucref{001} prints
 % "UC-001".
-\newcommand{\ucref}[1]{\hyperref[uc:#1]{UC-#1}}
+\newcommand{\ucref}[1]{\hyperref[uc:#1]{\mbox{UC-#1}}}
 
 % Uniform specification format for all functional and nonfunctional requirements.
 % Example:
@@ -1524,14 +1526,250 @@ still ends the lesson. Relevant to safety.
 
 \section{The Scope of the Work}
 \label{sec:work-scope}
+
+This section describes the work that Squigglr will become part of:
+children practising drawing, and the adults around them choosing that
+practice and following the child's progress. It covers how the work is done
+now, the boundary of the work and what crosses it, the business events the
+work responds to, and the business use case for each event. Squigglr's own
+part of the work is in Section~\ref{sec:product-scope}.
+
 \subsection{The Current Situation}
-\lips
+\label{sec:current-situation}
+
+Children practise drawing lines, shapes and simple drawings at home, in
+nurseries and kindergartens, in schools and in rehabilitation centres
+(SRC-005, \intref{P1}{20:27}; \intref{P2}{21:25}). They practise with tools
+they hold, starting with large ones that are easier for their hands and
+moving to smaller ones, such as pencils, that are closer to what they will
+use in school (SRC-005, \intref{P1}{26:46}). Some children also take part in
+therapy programmes run by occupational therapists (SRC-005,
+\intref{P1}{32:42}). Structured programmes exist that grade the same
+activity into easier and harder levels (SRC-001), and many drawing
+applications are available for children (SRC-005, \intref{P2}{35:36}). The
+comparison with existing products is in the Off-the-Shelf Solutions
+section.
+
+The adults who support a child follow progress mainly through what the
+child produces. A finished drawing does not show whether the child made it
+alone, relied on tracing guides, or corrected mistakes along the way
+(SRC-001). The adult who knows the child decides when the child is ready to
+move on (FACT-004). The work as it is done now therefore has three gaps
+that the project goals address:
+\begin{itemize}
+  \item practice is not always graded so that help fades as the child
+  improves (\goalref{1}, \goalref{2});
+  \item the adult's decision on the next step rests on finished drawings,
+  not on a record of how they were made (\goalref{3}, \goalref{5});
+  \item nothing summarizes the child's practice over time for the adult
+  (\goalref{6}).
+\end{itemize}
+
 \subsection{The Context of the Work}
-\lips
+\label{sec:work-context}
+
+Figure~\ref{fig:work-context} shows the boundary of the work and the
+adjacent actors that exchange information with it, and
+Table~\ref{tab:work-flows} lists every data flow that crosses the
+boundary. The work includes Squigglr and the decisions supporting adults
+make with it, such as which lesson a child practises. The child and the
+supporting adult are drawn outside the boundary because they start the
+work and receive its results. The Squigglr team is an adjacent actor
+because it maintains the lesson catalogue and sets the ranges of the
+adult-set values (BR-009). Children and adults reach the work through a
+touchscreen device with a stylus in a web browser (CON-001, CON-003). The
+device carries the flows; it is not an adjacent actor because it neither
+starts the work nor uses its results.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={draw, rectangle, minimum width=2.4cm,
+    minimum height=1.1cm, align=center, font=\small},
+  work/.style={draw, dashed, thick, rounded corners=8pt,
+    minimum width=4.3cm, minimum height=2.6cm, align=center,
+    font=\small},
+  flow/.style={-{Stealth[length=2.2mm]}, thick},
+  lbl/.style={font=\footnotesize, inner sep=1.5pt}]
+\node[work] (work) {\textbf{The work}\\guided practice,\\creative drawing,\\
+  records and progress};
+\node[actor, left=2.1cm of work] (child) {Child};
+\node[actor, right=2.1cm of work] (adult) {Supporting\\adult};
+\node[actor, above=1.3cm of work] (team) {Squigglr team\\(maintainers)};
+\draw[flow] ([yshift=4mm]child.east) --
+  node[lbl, above] {F1, F2} ([yshift=4mm]work.west);
+\draw[flow] ([yshift=-4mm]work.west) --
+  node[lbl, below] {F3--F5} ([yshift=-4mm]child.east);
+\draw[flow] ([yshift=4mm]adult.west) --
+  node[lbl, above] {F6--F9} ([yshift=4mm]work.east);
+\draw[flow] ([yshift=-4mm]work.east) --
+  node[lbl, below] {F10, F11} ([yshift=-4mm]adult.west);
+\draw[flow] (team.south) -- node[lbl, right] {F12} (work.north);
+% Legend
+\begin{scope}[yshift=-3.1cm, every node/.style={font=\footnotesize}]
+\node[draw, rectangle, minimum width=0.9cm, minimum height=0.5cm]
+  (lgactor) at (-5.2,0) {};
+\node[right=1mm of lgactor, align=left] {Adjacent actor,\\outside the work};
+\node[draw, dashed, thick, rounded corners=3pt, minimum width=0.9cm,
+  minimum height=0.5cm] (lgwork) at (-1.1,0) {};
+\node[right=1mm of lgwork, align=left] {Boundary of\\the work};
+\draw[flow] (2.0,0) -- (2.9,0);
+\node[align=left] at (4.5,0) {Data flow in the\\arrow's direction};
+\end{scope}
+\end{tikzpicture}
+\caption{Context of the work. Each arrow carries the data flows named on
+it, which Table~\ref{tab:work-flows} defines.}
+\label{fig:work-context}
+\end{figure}
+
+{\footnotesize
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.07\textwidth}
+  >{\raggedright\arraybackslash}p{0.16\textwidth}
+  >{\raggedright\arraybackslash}p{0.16\textwidth}
+  >{\raggedright\arraybackslash}p{0.5\textwidth}@{}}
+\caption{Data flows across the boundary of the work}
+\label{tab:work-flows}\\
+\toprule
+\textbf{Flow} & \textbf{From} & \textbf{To} & \textbf{Data} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Flow} & \textbf{From} & \textbf{To} & \textbf{Data} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+F1 & Child & The work & Strokes drawn for an attempt or in the
+creative space. \\
+F2 & Child & The work & Navigation: open a lesson, restart, move between
+stages, leave, or restore an original drawing. \\
+F3 & The work & Child & Demonstrations and tracing guides for each
+stage. \\
+F4 & The work & Child & Feedback on an attempt, shown on screen and,
+unless muted, as audio. \\
+F5 & The work & Child & The refined drawing in the creative space. \\
+F6 & Supporting adult & The work & A child's profile details (first name
+and a username) and adult-set values (BR-001, BR-008). \\
+F7 & Supporting adult & The work & The lesson and starting stage chosen
+for a child (BR-003). \\
+F8 & Supporting adult & The work & A decision on a suggestion to go back
+a stage: accept or decline. \\
+F9 & Supporting adult & The work & Changes to a child's settings
+(accessibility, audio, adult-set values), or a request to restore an
+original drawing. \\
+F10 & The work & Supporting adult & A suggestion to go back a stage after
+repeated difficulty (BR-003). \\
+F11 & The work & Supporting adult & Progress summaries and the attempt
+records behind them. \\
+F12 & Squigglr team & The work & The lesson catalogue, the ranges of the
+adult-set values, and the fixed values (BR-009). \\
+\end{longtable}
+}
+
 \subsection{Work Partitioning}
-\lips
+\label{sec:work-partitioning}
+
+Table~\ref{tab:business-events} partitions the work by business event: a
+happening outside the work, or a condition reached within it, that the
+work must respond to. Each event's inputs and outputs are data flows from
+Table~\ref{tab:work-flows}, and each event has one business use case
+(BUC) in Section~\ref{sec:buc}, with the same number.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.09\textwidth}
+  >{\raggedright\arraybackslash}p{0.38\textwidth}
+  >{\raggedright\arraybackslash}p{0.15\textwidth}
+  >{\raggedright\arraybackslash}p{0.15\textwidth}
+  >{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
+\caption{Business events}\label{tab:business-events}\\
+\toprule
+\textbf{ID} & \textbf{Business event} & \textbf{Input} &
+\textbf{Output} & \textbf{BUC} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Business event} & \textbf{Input} &
+\textbf{Output} & \textbf{BUC} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+BE-001 & An adult wants a child to start practising with Squigglr. &
+F6 & -- & BUC-001 \\
+\addlinespace
+BE-002 & An adult decides what the child should practise next. &
+F7 & -- & BUC-002 \\
+\addlinespace
+BE-003 & A child starts or continues a guided lesson. &
+F1, F2 & F3, F4 & BUC-003 \\
+\addlinespace
+BE-004 & A child fails \texttt{DIFFICULTY\_STREAK} attempts in a row at
+one stage without improving. &
+F8 & F10 & BUC-004 \\
+\addlinespace
+BE-005 & A child wants to draw freely. &
+F1, F2, F9 & F5 & BUC-005 \\
+\addlinespace
+BE-006 & An adult wants to know how the child's practice is going. &
+-- & F11 & BUC-006 \\
+\addlinespace
+BE-007 & A child's needs change, so an adult changes the child's
+settings. &
+F9 & -- & BUC-007 \\
+\addlinespace
+BE-008 & The team changes the lesson catalogue or the ranges of the
+adult-set values. &
+F12 & -- & BUC-008 \\
+\end{longtable}
+}
+
 \subsection{Specifying a Business Use Case (BUC)}
-\lips
+\label{sec:buc}
+
+Each business use case below is the work's response to the business event
+with the same number. It describes the whole response, including the parts
+done by people, and names the product use cases (Table~\ref{tab:puc}) that
+are Squigglr's part of it.
+
+\begin{description}[style=nextline]
+\item[BUC-001 Add a child (BE-001)] The adult creates a profile for the
+child and chooses each adult-set value, using the example drawings for
+\texttt{STAGE\_PASS}, or leaves the defaults (BR-008). The work records
+the profile and the values. Product use case: \ucref{001}.
+\item[BUC-002 Choose the next practice (BE-002)] The adult judges what
+the child is ready for, from knowing the child and, once there is
+practice, from the records (ASM-006). The adult then chooses a lesson and
+its starting stage. Product use cases: \ucref{002}, \ucref{004}.
+\item[BUC-003 Practise a guided lesson (BE-003)] The child watches the
+demonstration and draws an attempt at each stage. The work checks each
+attempt against the stage's criteria, gives feedback, and moves the child
+on or offers a retry. The lesson ends when the child finishes it or
+reaches the attempt limit, and every attempt is recorded (BR-002).
+Product use cases: \ucref{003}, \ucref{008}.
+\item[BUC-004 Respond to repeated difficulty (BE-004)] The work suggests
+going back a stage. The adult decides whether to accept; a declined or
+ignored suggestion changes nothing (BR-003). Product use case:
+\ucref{005}.
+\item[BUC-005 Draw freely (BE-005)] The child draws and edits in the
+creative space. The work refines the drawing a little, keeps it
+editable, and lets the child or the adult restore the original
+(BR-005). Product use cases: \ucref{006}, \ucref{007}.
+\item[BUC-006 Review progress (BE-006)] The adult reads a summary of the
+child's practice, opens the attempts behind it, and uses what they see
+to decide on further practice (BUC-002). The work gives no diagnosis or
+judgement of the child (BR-006). Product use case: \ucref{009}.
+\item[BUC-007 Change a child's settings (BE-007)] The adult opens the
+child's history or settings and changes accessibility, audio or
+adult-set values. The work accepts only values within their ranges
+(BR-008). Product use case: \ucref{010}.
+\item[BUC-008 Maintain lessons and ranges (BE-008)] The team adds or
+changes lessons, or changes the ranges of the adult-set values, using
+adult-made drawings (BR-009). Squigglr has no product use case for this
+event; the maintenance requirements cover it.
+\end{description}
 
 \section{Business Data Model and Data Dictionary}
 \subsection{Business Data Model}

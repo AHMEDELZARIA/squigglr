@@ -1,0 +1,139 @@
+% Appendix: responses to the follow-up questionnaire sent to the domain
+% specialists after the 1 October 2026 interview.
+
+\section{Appendix --- Specialist Questionnaire Responses}
+\label{app:questionnaire}
+
+This appendix contains the written responses to a follow-up questionnaire
+sent to the three domain specialists who took part in the interview
+(Appendix~\ref{app:interview}). Two of the three responded. The form was
+anonymous, so the responses are labelled R1 and R2 and cannot be matched
+to P1--P3. The responses are reproduced as submitted. The form export cuts
+off the end of the first and fourth questions, shown here as ``\ldots''.
+
+\subsection*{Q1}
+\emph{Regarding the free drawing space we showed, where a child can draw
+anything and AI gently tidies it up; do you think this is helpful for
+children, or unnecessary? Its meant to be a fun area where\ldots}
+
+\begin{description}
+  \item[R1\phantomsection\label{q:R1-Q1}] I think the free drawing space
+  could be very valuable, particularly because it gives children an
+  opportunity to explore and practice without the feeling that there is
+  one ``correct'' answer. However, I would be cautious about how much the
+  AI modifies the child's drawing. The aim should be to support the
+  child's own effort rather than replace or correct it. I would prefer the
+  AI to provide subtle assistance, suggestions, or optional touch-ups that
+  the child can accept or reject. Preserving the child's sense of
+  ownership and agency is very important. It may also be useful to allow
+  the level of AI assistance to be adjusted depending on the child.
+  \item[R2\phantomsection\label{q:R2-Q1}] I feel it is a very nice idea so
+  that the children could draw anything and the AI could let's say make it
+  better. However, sometimes the unclear lines are important for the
+  imagination of the child. For example, a family picture with unorganized
+  lines will look better (in the child's perspective) than a very clean
+  drawing. Hence, I feel this should be also optional feature and not
+  mendatory.
+\end{description}
+
+\subsection*{Q2}
+\emph{From your experience, what makes practice activities like this
+motivating for these children, and what makes them frustrating?}
+
+\begin{description}
+  \item[R1\phantomsection\label{q:R1-Q2}] Motivation often comes from
+  activities that are achievable, predictable, visually engaging, and
+  provide immediate positive feedback. Choice is also important---for
+  example, allowing the child to choose what to draw, the theme, or the
+  level of difficulty. Small signs of progress and encouragement can be
+  motivating without making the activity overly competitive.
+
+  Frustration can arise when the system is too demanding, repeatedly
+  highlights mistakes, requires very precise movements, or changes the
+  child's work in ways they do not expect. It is particularly important
+  that the AI does not unintentionally communicate that the child's drawing
+  is ``wrong.'' The system should accommodate different motor abilities and
+  drawing styles and should recognize effort and progress, not simply
+  accuracy.
+  \item[R2\phantomsection\label{q:R2-Q2}] The drawing activity itself is
+  likely to be a key source of motivation. However, the experience may
+  become frustrating if the activity includes too many demanding or
+  overwhelming elements. For example, requiring children to draw using a
+  pen or stylus rather than their fingers could make the interaction more
+  difficult, whereas finger-based drawing may provide a simpler and more
+  intuitive experience.
+\end{description}
+
+\subsection*{Q3}
+\emph{Would extending Squigglr from shapes, to tracing and forming letters
+be useful?}
+
+\begin{description}
+  \item[R1\phantomsection\label{q:R1-Q3}] Yes, definitely. I think this
+  could be a very useful extension, particularly if it is introduced
+  gradually from simple shapes and strokes to more complex letter forms.
+  There is a natural progression from basic pre-writing shapes to letter
+  formation. However, I would recommend maintaining flexibility rather than
+  expecting one very precise tracing pattern. It could also be interesting
+  to explore Arabic as well as English letters, particularly in our
+  context, as the motor patterns and directionality are different.
+  \item[R2\phantomsection\label{q:R2-Q3}] Yes, I believe this could
+  represent a natural second stage in the development of the application.
+  The initial phase could focus on establishing the effectiveness and
+  usability of free drawing and basic shape-tracing activities in
+  supporting children's engagement and learning. Once this concept has been
+  validated, the application could be extended to include letters and
+  numbers.
+
+  A more advanced mode could then introduce sequential tracing activities
+  in which children follow individual letters to form a complete word. For
+  example, the child could trace the letters ``B-O-Y,'' after which the
+  application displays an illustration of a boy. To further enhance
+  engagement and reinforce the connection between the written word and its
+  meaning, the illustration could also include a simple animation, such as
+  the boy waving.
+\end{description}
+
+\subsection*{Q4}
+\emph{Now that we've talked through everything, what stands out to you
+most about Squigglr: what worries you, and what seems most promising?
+Anything we didn't ask about that you think we should consider\ldots}
+
+\begin{description}
+  \item[R1\phantomsection\label{q:R1-Q4}] I would also strongly recommend
+  involving children, parents, educators, occupational therapists, and
+  other relevant professionals throughout the iterative design and
+  evaluation process. Beyond measuring whether drawings become more
+  accurate, it would be valuable to examine engagement, frustration,
+  independence, confidence, and whether the skills developed through
+  Squigglr transfer to drawing and writing without the system.
+
+  As I also mentioned during the meeting, I see potential for Squigglr to
+  serve a much broader population. Its underlying concept could be relevant
+  across a range of neurodevelopmental and neurodegenerative conditions, as
+  well as rehabilitation contexts such as stroke and acquired brain injury,
+  and for individuals with learning difficulties or motor challenges.
+
+  For this reason, I would suggest not restricting the development of the
+  app too early to one specific condition or case study. Instead, I would
+  focus on clearly defining the core capabilities and value that Squigglr
+  can offer---such as supporting fine motor skills, visuomotor
+  coordination, tracing, drawing, and handwriting---and then explore how
+  these capabilities can be personalized and evaluated across different
+  user groups. This could significantly broaden both the impact and future
+  potential of the application.
+  \item[R2\phantomsection\label{q:R2-Q4}] The application itself is very
+  promising. However, one concern I have is that the current design may not
+  be sufficiently appealing or engaging for children. I would therefore
+  recommend dedicating substantial attention to the user interface and
+  overall visual design of the application.
+
+  The aim should be to create an interface that is engaging, enjoyable,
+  and child-friendly, while at the same time maintaining a simple and
+  comfortable interaction experience. In particular, it would be important
+  to avoid excessive visual or auditory stimuli that could make the
+  application overwhelming. Finding the right balance between an attractive
+  and playful design and a calm, minimally stimulating environment could
+  significantly improve the children's overall experience and willingness
+  to engage with the application.
+\end{description}

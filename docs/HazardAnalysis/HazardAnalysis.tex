@@ -208,25 +208,38 @@ deliverable, and which did you think of while doing this deliverable? For
 the latter ones (ones you thought of while doing the Hazard Analysis), how
 did they come about?
 
-\textbf{Rayan:} Some risks were clear before I started. Because the app
-depends on the browser and device it runs on, we already expected that
-attempts could be lost or not saved on an unreliable browser or device
-(H-RAY-002). We also knew that adults might read a child's records as a
-diagnosis (H-RAY-003), which is why the problem statement already avoids any
-diagnostic claims. Most of the other risks came up while I was working out the
-requirements for the application, which did not happen in detail until I
-started writing the SRS and this hazard analysis. As I wrote each critical
-assumption, I asked what would happen if it failed. Assuming an adult sets up
-and supervises each session led to the risk of a child reaching adult-only
-actions when no adult is watching (H-RAY-001). Thinking about repeated failed
-attempts led to the risks of a child becoming distressed (H-RAY-004) and of a
-lesson being restarted straight after it hits its limit (H-RAY-005). Assuming
-one device may be shared led to the risk of a child's records being saved
-under the wrong profile (H-RAY-006). In our meeting on October 14, 2026,
-Dr.~Anand advised that adults should set the thresholds for each child, which
+\textbf{Rayan:} Before this deliverable, the team had already thought of two
+of my risks. Because Squigglr runs in a browser, we expected that attempts
+could be lost or not saved on an unreliable browser or device (H-RAY-002). We
+also knew that adults might read a child's records as a diagnosis (H-RAY-003),
+which is why the problem statement already avoids any diagnostic claims.
+
+The other five risks I only thought of while doing the hazard analysis. They
+came about because this was the first time I had to work out the requirements
+for the application in detail, while writing the SRS alongside this document.
+Most of them came from the critical assumptions, and several of those
+assumptions came from our interview with the specialists on October 1, 2026.
+The specialists said children can use the app through images and icons while
+adults handle setup, which led to the assumption that an adult sets up each
+session. Asking what happens if no adult is actually watching led to the risk
+of a child reaching adult-only actions (H-RAY-001), and, together with defining
+what happens after repeated failed attempts, to the risks of a child becoming
+distressed (H-RAY-004) and of a lesson being restarted straight after it ends
+(H-RAY-005). The specialists also said Squigglr may be used at home, at school
+or in other settings, which led to the assumption that a device may be shared
+and to the risk of a child's records being saved under the wrong profile
+(H-RAY-006). The last risk came from our meeting on October 14, 2026, where
+Dr.~Anand advised that adults should set the thresholds for each child; this
 raised the risk of a threshold being set to a value that does not suit the
-child (H-RAY-007). Our interview with the specialists on October 1, 2026 also
-shaped several of the mitigations, such as letting adults mute audio feedback.
+child (H-RAY-007).
+
+Looking back, most of my risks only became visible once the requirements were
+concrete enough to question. The risks we knew about beforehand were general
+ones that apply to almost any browser app, while the ones I found during this
+deliverable were specific to how children and adults will actually use
+Squigglr. This showed me that the hazard analysis cannot be done well in
+isolation; it depends on knowing the requirements and on hearing from people
+who understand the users.
 
 \item Other than the risk of physical harm (some projects may not have any
 appreciable risks of this form), list at least 2 other types of risk in

@@ -5,6 +5,7 @@
 % Risk analysis is maintained in the separate Hazard Analysis document.
 \documentclass[12pt]{article}
 \usepackage{longtable}
+\usepackage{amsmath}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -93,6 +94,7 @@
 15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions,
 introduced the glossary and constants register, and prepared the shared
 requirement structure (\#131).\\
+15 October 2026 & Ahmed Elzaria & Specified guided learning activities and formal lesson behaviour; clarified pass-based advancement within adult-selected lessons (\#132).\\
 \bottomrule
 \end{tabularx}
 
@@ -172,8 +174,8 @@ approved threshold; unresolved values appear in the constants register,
 and are also linked to an open issue in Section~\ref{sec:open-issues}
 where such an issue exists. Diagrams, if used, must include a legend
 identifying their symbols and arrow meanings.
-Section~\ref{sec:fr-formal} will define any state-machine notation
-when the formal specification is completed.
+Section~\ref{sec:fr-formal} defines the state-machine notation used to
+specify guided-lesson behaviour.
 
 \paragraph{Document roadmap.}
 \hyperref[sec:purpose]{Sections~1--5} establish the problem,
@@ -239,11 +241,11 @@ it brings and to whom, and how the team will check that it is met. Following
 the teaching assistant's (TA's) request for measurable goals (SRC-003) and the supervisor's
 direction that no requirements are gathered from children (SRC-004), every
 check is done by the team or by adult reviewers using prepared or
-adult-made attempts, never with child participants. Where a check needs a
-number that has not yet been agreed, it uses a named constant marked TBD.
-On the supervisor's advice (SRC-008), the values that depend on the child
-are chosen by the supporting adult within a range the team sets, so the
-checks test that Squigglr keeps to that range, not that one value is right.
+adult-made attempts, never with child participants. The acceptance
+parameters are named in Section~\ref{sec:constants}. On the supervisor's
+advice (SRC-008), parameters that depend on the child are selected by a
+supporting adult within specified ranges; tests check that the selected
+settings and defaults are respected.
 Each lesson (for example, drawing a square) moves through fixed stages
 that give gradually less help: a demonstration, tracing a full outline,
 drawing between endpoints only, and drawing with no guide. This sequence
@@ -252,9 +254,13 @@ follows the activity the team presented to the domain specialists
 
 G.3 was revised after the PSG was submitted. The submitted PSG said
 Squigglr adjusts guidance and difficulty automatically. Following the
-domain-specialist interview (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}),
-and as agreed at the TA meeting of Oct 7 (SRC-006), the team changed it
-to adult-controlled progression and updated the PSG to match (SRC-001).
+domain-specialist interview (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18})
+and the Oct.~7 TA discussion (SRC-006), the team assigned \emph{lesson
+selection, starting-stage selection and discretionary stage changes} to a
+supporting adult (G.3). A passing drawing attempt still advances
+automatically to the next stage \emph{within the lesson the adult selected}
+(G.2, BR-002); completing a lesson never automatically selects another
+lesson.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}p{0.74\textwidth}@{}}
@@ -282,18 +288,22 @@ catalogue lesson with prepared correct attempts, each attempt passes, and
 each drawing stage accepts a drawing, gives feedback and allows a retry. \\
 \addlinespace
 G.2 Support progression towards independent drawing &
-\emph{Purpose:} within a lesson, the child moves to the next stage when an
-attempt meets that stage's pass criteria (\texttt{STAGE\_PASS}, chosen by
-the adult within a team-set range); an
-attempt that does not meet them is not passed, and the child can retry.
+\emph{Purpose:} within an adult-selected lesson, Squigglr automatically
+advances to the next drawing stage when an attempt meets that stage's
+pass criteria (\texttt{STAGE\_PASS}, chosen by the adult within a team-set
+range). Passing the final independent stage completes the current lesson;
+it never starts a different lesson. An attempt that does not meet the
+criteria is not passed, and the child can retry.
 This checks the drawing against fixed criteria and does not assess the
 child (SRC-001).
 \emph{Advantage:} children need to perform activities with gradually less
 help (SRC-001); a child practises one level until proficient before moving
 on (SRC-005, \intref{P1}{28:37}), and children reach these skills at different
 points (SRC-005, \intref{P1}{20:27}). Serves children and supporting adults.
-\emph{Measurement:} met when (a) every prepared correct attempt advances
-to the next stage; (b) every prepared incorrect attempt, such as one with a
+\emph{Measurement:} met when (a) prepared correct attempts advance from
+outline tracing to endpoint guidance and from endpoint guidance to
+independent drawing, and a correct independent attempt completes only the
+current lesson; (b) every prepared incorrect attempt, such as one with a
 missing side or a wrong endpoint, is not passed and its predefined
 difficulty is reported; and (c) every saved attempt records the stage it
 was made at, with no mislabelled record; and (d) for prepared attempts
@@ -302,7 +312,10 @@ minimum, default and maximum, each attempt passes or fails as expected. \\
 \addlinespace
 G.3 Let supporting adults control support and difficulty &
 \emph{Purpose:} adults choose which lesson a child practises and may let
-the child start at a later stage. Squigglr may suggest returning to an
+the child start at a later stage. Changing to another lesson, skipping a
+stage or moving backward requires an adult's authorization; routine forward
+advancement on a passing attempt within the chosen lesson does not (G.2).
+Squigglr may suggest returning to an
 earlier stage after \texttt{DIFFICULTY\_STREAK} failed attempts in a
 row; the change applies only when an adult accepts it, and a declined or
 ignored suggestion changes nothing. To avoid endless repetition, the lesson
@@ -316,9 +329,11 @@ to passing. Improvement compares the child's own recent attempts with each
 other against the stage's fixed criteria; it is not shown as a score and
 does not assess the child. The adult chooses these values for each child
 within a team-set range (SRC-008).
-\emph{Advantage:} judging readiness automatically would need assessment
-that is out of scope; the specialists advised adult control (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}; SRC-006). Serves children and supporting
-adults.
+\emph{Advantage:} automatically choosing a new lesson or changing the
+learner's starting level without adult direction would require an
+out-of-scope readiness assessment; the specialists advised adult control
+of such decisions (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}; SRC-006).
+Serves children and supporting adults.
 \emph{Measurement:} met when, for prepared sequences of successful,
 unsuccessful and mixed attempts, every suggestion shown matches the agreed
 criteria, each lesson without improvement ends exactly at
@@ -374,9 +389,8 @@ summaries and locate the supporting attempts, with at least
 The symbolic constants used to evaluate these goals, including values
 configurable by supporting adults, are recorded in the central register
 (Table~\ref{tab:goalconst}, Section~\ref{sec:constants}). Unknown
-bounds and fixed values remain explicitly unresolved; OI-05 tracks
-adult-configurable ranges and the improvement margin, while other
-TBD values are recorded in Section~\ref{sec:constants} (\srcref{008}).
+adult-configurable ranges, midpoint defaults and the improvement margin
+are defined in Section~\ref{sec:constants} (\srcref{008}).
 
 \section{Stakeholders}
 \label{sec:stakeholders}
@@ -563,10 +577,11 @@ stage for each child; nothing is set by diagnosis. \\
 Caregivers & Become annoyed if they must intervene constantly
 (SRC-005, \intref{P1}{34:13}). & Children can practise without constant adult
 help. \\
-Caregivers, educators & Want to decide when a child moves on
-(SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}). & Adults choose the lesson and starting
-stage. Squigglr may only suggest going back a stage, and an adult must
-accept. \\
+Caregivers, educators & Want to decide when a child moves to a new
+lesson or needs a different starting level (SRC-005, \intref{P1}{28:37};
+\intref{P2}{29:18}). & Adults choose the lesson and starting stage and
+approve skipping or returning to an earlier stage. Passing an attempt
+advances only within that lesson. \\
 Caregivers, educators & Need to see how far the child got in each
 lesson, how many attempts succeeded at each stage, and which difficulties
 recur (SRC-001). & Records save the furthest stage reached and the
@@ -676,8 +691,9 @@ Rationale: children are the users the activities serve; educators and
 caregivers choose activities and act on the records, so their needs come
 next. Administrators affect adoption but not daily use, and the specialists
 advise rather than use Squigglr (SRC-006). When needs conflict, a child's
-ability to practise independently is weighed against an adult's control of
-progression; the adult decides (SRC-005, \intref{P1}{28:37}).
+ability to practise independently is balanced with adult control of lesson
+selection and discretionary stage changes; passing a stage advances within
+the selected lesson (G.2; SRC-005, \intref{P1}{28:37}).
 
 \begin{table}[H]
 \centering
@@ -743,7 +759,7 @@ summarizes them.
 \small
 \caption{Summary of mandated constraints}
 \label{tab:constraints}
-\begin{tabular}{@{}lp{0.62\textwidth}l@{}}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.20\textwidth}@{}}
 \toprule
 \textbf{ID} & \textbf{Constraint} & \textbf{Source}\\
 \midrule
@@ -760,10 +776,11 @@ for requirements or evaluation. &
 SRC-004\\
 CON-006 & The project shall run no study involving children. &
 SRC-004, SRC-005\\
-CON-007 & Squigglr shall not decide when a child moves to another stage
-or level; an adult chooses. & SRC-005\\
+CON-007 & Squigglr shall not change lessons, skip guidance stages or
+move backward without adult authorization; pass-based forward movement
+within the selected lesson is allowed. & SRC-005; G.2--G.3\\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Solution Constraints}
@@ -798,16 +815,26 @@ supervisor and TA.\\
 \emph{Fit criterion:} each activity can be completed with a stylus on a
 touchscreen device; the device and browser combinations are TBD.\\
 \emph{Source:} SRC-001, SRC-003, SRC-004, SRC-005.
-\item[CON-007] Squigglr shall not decide when a child moves to another
-stage or level; an adult chooses.\\
-\emph{Rationale:} Deciding when a child is ready needs an assessment, which
-is too complex for the project's time frame. The parent or educator, who
-knows the child's level, should make that choice (SRC-005, \intref{P1}{28:37}).
-Squigglr may suggest going back a stage, but an adult must accept (G.3).\\
-\emph{Imposed by:} domain specialists.\\
-\emph{Fit criterion:} no change of stage or level happens without an
-adult choosing or accepting it.\\
-\emph{Source:} SRC-005.
+\item[CON-007] Squigglr shall not select another lesson, skip a
+guidance stage or move backward to an earlier stage unless a supporting
+adult authorizes that change. Normal forward movement to the next stage
+following a passing attempt \emph{within the selected lesson} is not an
+unauthorized change (G.2, BR-002).\\
+\emph{Rationale:} Choosing what a child is ready to practise requires
+judgement by the adult who knows the child (SRC-005,
+\intref{P1}{28:37}; \intref{P2}{29:18}). This restriction applies to
+lesson selection and discretionary stage changes, not to the fixed
+pass-based steps already defined for an adult-selected lesson. Squigglr
+may suggest going back a stage, but an adult must accept (G.3).\\
+\emph{Imposed by:} domain specialists' advice on adult choice, clarified
+by the team's progression decision.\\
+\emph{Fit criterion:} test that passing a tracing or endpoint stage
+advances within the current lesson without an additional adult action;
+passing the final stage completes that lesson without starting another.
+Verify that switching lessons, skipping and returning to an earlier stage
+cannot occur without an adult choice or acceptance.\\
+\emph{Source:} SRC-005; G.2, G.3; BR-002, BR-003; team clarification
+recorded in revision history (\#132).
 \end{description}
 
 \subsection{Implementation Environment of the Current System}
@@ -908,12 +935,9 @@ the project.\\
 \label{sec:terminology}
 \subsection{Glossary and Acronyms}
 \label{sec:glossary}
-The entries in Table~\ref{tab:glossary} standardize terminology already
-used in the goals, business rules and stakeholder evidence. The final
-version must be reconciled with all requirements contributed by the other
-section owners; a new term must be defined before its first substantive
-use and entered here. Source identifiers link to the supporting evidence
-register in Appendix~\ref{app:sources}.
+Table~\ref{tab:glossary} defines the terms and abbreviations used in
+the goals, business rules, stakeholder evidence and requirements. Source
+identifiers link to Appendix~\ref{app:sources}.
 
 {\small\setlength{\tabcolsep}{4pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.58\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
@@ -936,7 +960,8 @@ catalogue in which drawing guidance is provided in successive stages.
 & \hyperref[sec:purpose]{G.1--G.3}\\
 \textbf{Stage (guidance level)} & A step within a lesson that provides a
 specified amount of help, from demonstration through independent drawing.
-The progression policy is subject to OI-04.
+A passing drawing attempt advances automatically to the next stage within
+the chosen lesson; adult authorization is needed to skip or return.
 & \hyperref[sec:purpose]{G.2--G.3}\\
 \textbf{Attempt} & One try at the drawing task of a lesson
 stage; its strokes, observed difficulties and outcome are represented in
@@ -1017,112 +1042,90 @@ complete conformance (\srcref{008}).
 
 \subsection{Symbolic Constants}
 \label{sec:constants}
-Values that affect learning-stage checks, progression suggestions,
-creative refinement and adult reviews are named here rather than
-repeated as literal numbers. The underlying meanings come from
-G.2--G.6, BR-002, BR-008 and supervisor guidance (\srcref{008}).
-For a constant set by an adult, the team must determine an admissible
-minimum and maximum. The adult chooses a value for the learner profile,
-may change it later, and otherwise receives the midpoint default
-(BR-008). A team-set constant is fixed only after its value has been
-approved. No TBD is an agreed numeric value, and the software must not
-silently assume one.
+Table~\ref{tab:goalconst} specifies the parameters used in guided lessons,
+creative refinement and progress-summary verification. The six
+adult-configurable parameters have an allowed range and a default value
+for each learner profile (BR-008, \srcref{008}). Their defaults are
+the midpoints of their respective ranges. Each configuration shall satisfy
+\texttt{ATTEMPT\_LIMIT} $>$ \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}.
+Drawing-stage results are expressed on a normalized scale from 0 to 100;
+higher results indicate closer agreement with the stage's fixed criteria.
+The result is not a measure of the child's ability (BR-006). Attempt-count
+settings shall be integers, and values violating the allowed ranges or
+the two cross-setting inequalities shall be rejected (BR-008).
 
 {\small\setlength{\tabcolsep}{5pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
 \caption{Central symbolic constants register}\label{tab:goalconst}\\
 \toprule
-\textbf{Constant} & \textbf{Definition, unit, value, rationale and trace}\\
+\textbf{Constant} & \textbf{Meaning, unit, value and traceability}\\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Constant} & \textbf{Definition, unit, value, rationale and trace}\\
+\textbf{Constant} & \textbf{Meaning, unit, value and traceability}\\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-\texttt{STAGE\_PASS} & Criteria an attempt must meet to pass a
-stage without making a judgement about the learner. \emph{Unit:} scoring
-unit TBD. \emph{Value:} adult-set within team-set bounds; bounds TBD;
-default: midpoint of the range (BR-008). \emph{Trace:} G.2,
-BR-002, BR-008, OI-05.\\
+\texttt{STAGE\_PASS} & Minimum stage-result threshold for a
+complete attempt to pass a drawing stage. \emph{Unit:} points out of 100.
+\emph{Range:} 70--90. \emph{Default:} 80.
+\emph{Trace:} G.2, BR-002, BR-008, OI-05.\\
 \addlinespace
 \texttt{DIFFICULTY\_STREAK} & Consecutive unsuccessful attempts
 before Squigglr may suggest returning to an earlier stage.
-\emph{Unit:} count of failed attempts. \emph{Value:} adult-set within
-team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
-\emph{Trace:} G.3, BR-003, OI-05.\\
+\emph{Unit:} failed attempts. \emph{Range:} 3--5.
+\emph{Default:} 4. \emph{Trace:} G.3, BR-003, OI-05.\\
 \addlinespace
 \texttt{ATTEMPT\_LIMIT} & Number of unsuccessful attempts
-that triggers the lesson-end or extension decision; limits repetition.
-\emph{Unit:} count of failed attempts. \emph{Value:} adult-set within
-team-set bounds; bounds TBD; default: midpoint of the range
-(BR-008); must exceed
-\texttt{DIFFICULTY\_STREAK}. \emph{Trace:} G.3, BR-002, OI-05.\\
-\addlinespace
-\texttt{IMPROVE\_WINDOW} & Number of attempts in each
-comparison window used by the improvement rule.
-\emph{Unit:} count of attempts. \emph{Value:} adult-set within
-team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
+that triggers the lesson-end or extension decision.
+\emph{Unit:} failed attempts. \emph{Range:} 6--10.
+\emph{Default:} 8; must exceed \texttt{DIFFICULTY\_STREAK}.
 \emph{Trace:} G.3, BR-002, OI-05.\\
+\addlinespace
+\texttt{IMPROVE\_WINDOW} & Number of evaluable attempts in each
+comparison window used by the improvement rule.
+\emph{Unit:} attempts. \emph{Range:} 1--3.
+\emph{Default:} 2. \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{IMPROVE\_MARGIN} & Minimum increase in average
-attempt results across comparison windows that qualifies as improvement.
-\emph{Unit:} scoring unit TBD. \emph{Value:} team-set; TBD.
+stage-result points across consecutive comparison windows that qualifies
+as improvement. \emph{Unit:} points out of 100.
+\emph{Value:} 5 points (fixed by the team).
 \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
-\texttt{ATTEMPT\_EXTENSION} & Additional attempts permitted
+\texttt{ATTEMPT\_EXTENSION} & Additional evaluable attempts permitted
 when recent results satisfy the improvement criterion.
-\emph{Unit:} count of attempts. \emph{Value:} adult-set within
-team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
+\emph{Unit:} attempts. \emph{Range:} 1--3.
+\emph{Default:} 2. \emph{Trace:} G.3, BR-002, OI-05.\\
+\addlinespace
+\texttt{ATTEMPT\_LIMIT\_MAX} & Maximum number of evaluable attempts
+at a stage, including extensions.
+\emph{Unit:} attempts. \emph{Range:} 8--12.
+\emph{Default:} 10; must be at least \texttt{ATTEMPT\_LIMIT}.
 \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
-\texttt{ATTEMPT\_LIMIT\_MAX} & Maximum permitted attempts
-at a stage, including extensions.
-\emph{Unit:} count of attempts. \emph{Value:} adult-set within
-team-set bounds; bounds TBD; default: midpoint of the range (BR-008); at least
-\texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3, BR-002, OI-05.\\
+\texttt{REFINE\_TOLERANCE} & Maximum permitted distance between
+refined strokes and the child's original strokes in the creative space.
+\emph{Unit:} distance scale (TBD). \emph{Value:} team-defined;
+TBD. \emph{Trace:} G.4, BR-005.\\
 \addlinespace
-\texttt{REFINE\_TOLERANCE} & Maximum difference between
-refined and original strokes, to preserve the child's original work.
-\emph{Unit:} distance unit TBD. \emph{Value:} team-set; TBD.
-\emph{Trace:} G.4; team-defined value pending, with the
-refinement verification criterion to be specified.\\
+\texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers
+for progress-summary understandability checks.
+\emph{Unit:} people (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} G.6.\\
 \addlinespace
-\texttt{ADULT\_REVIEWERS} & Minimum number of adults
-reviewing prepared progress summaries for understandability.
-\emph{Unit:} people (count). \emph{Value:} team-set; TBD.
-\emph{Trace:} G.6; validation procedure TBD.\\
+\texttt{REVIEW\_PASS\_RATE} & Minimum proportion of
+progress-summary review tasks completed successfully by adults.
+\emph{Unit:} proportion. \emph{Value:} team-defined; TBD.
+\emph{Trace:} G.6.\\
 \addlinespace
-\texttt{REVIEW\_PASS\_RATE} & Minimum fraction of adult
-summary-review tasks successfully completed.
-\emph{Unit:} proportion. \emph{Value:} team-set; TBD.
-\emph{Trace:} G.6; validation procedure TBD.\\
-\addlinespace
-\texttt{AGE\_RANGE} & Intended age range of learners, to be
-confirmed with adult stakeholders rather than inferred from personas.
+\texttt{AGE\_RANGE} & Intended lower and upper ages of
+learners served by Squigglr.
 \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
-\emph{Trace:} Section~2.4, target age-range decision open.\\
+\emph{Trace:} Section~\ref{sec:stakeholders}, G.1.\\
 \end{longtable}}
-
-\paragraph{Resolution and validation.}
-OI-05 tracks the bounds of adult-configurable constants and the
-team-set improvement margin; the target is the V\&V Plan on
-November~2, 2026. The team will define and check the supported ranges
-using adult-made drawings rather than data from children
-(CON-005, CON-006; \srcref{004}, \srcref{008}). The exact scoring units
-for \texttt{STAGE\_PASS} and \texttt{IMPROVE\_MARGIN} depend on the
-formal classification model in Section~\ref{sec:fr-formal}; the coordinate scale for
-\texttt{REFINE\_TOLERANCE} requires agreement with the creative-drawing
-owner. \texttt{ADULT\_REVIEWERS} and
-\texttt{REVIEW\_PASS\_RATE} require a verification plan.
-The age bounds (\texttt{AGE\_RANGE}) and outstanding refinement and
-review constants are unresolved in this register; no open-issue
-identifiers are assigned here until the section owner creates them. Any constant
-introduced by another section owner must be added to this single
-register before merging that owner's requirements.
-
-
 
 \section{Relevant Facts And Assumptions}
 \label{sec:facts-assumptions}
@@ -1131,10 +1134,9 @@ how Squigglr may be used, and what the team believes but has not verified.
 Facts and assumptions are kept apart so that a reader can see which
 requirements rest on unconfirmed beliefs. The Hazard Analysis uses the
 assumptions as possible causes of hazards: if an assumption turns out to
-be false, the requirements that depend on it must be reviewed. Most
-requirement identifiers are not written yet, so the entries below cite the
-goals (G.1--G.6) and constraints (CON-001 to CON-007) they affect;
-requirement IDs will be linked when written.
+be false, the requirements that depend on it must be reviewed. Each entry identifies the goals, constraints or product behaviours it
+supports; Section~\ref{sec:functional} specifies the corresponding
+functional requirements.
 
 \subsection{Relevant Facts}
 \label{sec:facts}
@@ -1165,7 +1167,9 @@ not per diagnosis (G.3).
 child is ready for the next level requires assessment, which is too
 complex for the project's time frame, and that an adult who knows the
 child should decide (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}).\\
-\emph{Relevance:} basis for CON-007, G.3 and BR-003.
+\emph{Relevance:} basis for adult-controlled lesson selection and
+nonroutine stage changes (CON-007, G.3, BR-003); the team retains fixed
+pass-based forward progression within the selected lesson (G.2).
 \item[FACT-005] The specialists stated that how a child holds a tool
 affects how they draw, that finger input is the easiest start, and that
 fine-motor practice needs a held tool, moving from large to small
@@ -1202,10 +1206,11 @@ IDs to be linked when written.
 SRC-002).\\
 \emph{Relevance:} scope decisions, such as keeping assessment and camera
 tracing out of the core product, follow from the time available.
-\item[FACT-012] The only outside evidence so far is one 43-minute
-interview with three domain specialists. No parent, educator, school
-administrator or occupational therapist has been consulted, and no child
-has taken part in any source (SRC-005, \intref{Rayan}{12:31}; SRC-004).\\
+\item[FACT-012] External requirements evidence includes a 43-minute
+interview with three domain specialists and a follow-up questionnaire
+answered by two of them. No parent, educator, school administrator or
+occupational therapist has been consulted, and no child has taken part
+in any source (SRC-005, SRC-009; \srcref{004}).\\
 \emph{Relevance:} requirements based on what parents and educators need
 rest on assumptions (ASM-006) until those groups are consulted.
 \item[FACT-013] The interview did not cover several topics that affect
@@ -1238,9 +1243,11 @@ non-identifying username lets an adult tell children apart, for example on
 a shared device, while collecting as little about them as possible. How
 records are protected is a privacy requirement.\\
 \emph{Source:} SRC-001, SRC-004; G.5, G.6.
-\item[BR-002] Within a lesson, Squigglr moves the child to the next stage
-when an attempt meets that stage's pass criteria (\texttt{STAGE\_PASS}).
-After \texttt{ATTEMPT\_LIMIT} (larger than
+\item[BR-002] Within an adult-selected lesson, Squigglr automatically
+moves the child to the next guidance stage when an attempt meets the
+current drawing stage's pass criteria (\texttt{STAGE\_PASS}). Passing
+the independent drawing stage completes the lesson; it does not select or
+start another lesson. After \texttt{ATTEMPT\_LIMIT} (larger than
 \texttt{DIFFICULTY\_STREAK}) unsuccessful attempts at one stage, the lesson
 ends, and the furthest stage reached and the number of successful attempts
 at each stage are saved. If, when \texttt{ATTEMPT\_LIMIT} is reached, the
@@ -1259,8 +1266,9 @@ child's own attempts against the stage's fixed criteria, so it does not
 assess the child.\\
 \emph{Source:} G.2, G.3, G.5.
 \item[BR-003] A supporting adult chooses which lesson the child practises
-and the starting stage. Squigglr never moves a child
-back a stage or changes the lesson on its own. After
+and its starting stage. Squigglr never changes lessons, skips a stage or
+moves back a stage on its own. Passing an attempt may advance the child
+to the next stage \emph{within that same lesson} as defined by BR-002. After
 \texttt{DIFFICULTY\_STREAK} failed attempts in a row, Squigglr may
 suggest going back a stage, unless the child is improving (BR-002); the change happens only if an adult accepts.\\
 \emph{Rationale:} deciding readiness needs assessment that is out of
@@ -1419,8 +1427,9 @@ they remain a stretch goal (SRC-001).\\
 \item[ASM-011] Children and adults value automatic refinement in the
 creative space, and children understand that the refined drawing is still
 theirs.\\
-\emph{Rationale:} the specialists did not comment on refinement
-(FACT-013); the team has not checked this with any adult.\\
+\emph{Rationale:} questionnaire respondents supported subtle, optional
+refinement that preserves the child's drawing (SRC-009.01), but their
+responses do not establish children's or caregivers' preferences.\\
 \emph{Depends on it:} G.4, BR-005.\\
 \emph{If false:} refinement may discourage a child, and G.4 would need
 to change.
@@ -1504,18 +1513,669 @@ still ends the lesson. Relevant to safety.
 
 \section{Functional Requirements}
 \label{sec:functional}
-The following requirements are grouped by externally visible product
-function. Requirements use the identifiers and common field format
-defined in the Introduction; the relevant owners will populate each
-group from documented sources and stakeholder evidence.
+Functional requirements are grouped by externally observable product
+behaviour. Each requirement uses the identifier, fit-criterion and
+traceability conventions defined in the Introduction.
 
 \subsection{Learning Activity Requirements}
 \label{sec:fr-learning}
-\lips
+
+This subsection specifies the externally observable behaviour of guided
+lessons. It builds on G.1--G.3, CON-003, CON-007 and BR-002--BR-009,
+with source statements in Appendix~\ref{app:sources}.
+The core catalogue covers lines, shapes and simple drawings; letter tracing
+is deferred (ASM-010, LC-001). Delivery-phase identifiers follow the
+conventions in the Introduction and the phase plan in
+Section~\ref{sec:tasks}.
+
+\paragraph{Within-lesson progression and adult control.}
+A supporting adult selects each lesson and its starting stage and authorizes
+skips or backward changes (G.3, CON-007). Within the selected lesson, a
+passing drawing attempt automatically advances to the next guidance stage
+(G.2, BR-002). Passing the independent stage completes the current lesson;
+Squigglr does not automatically select another lesson.
+
+\paragraph{Lesson content and guidance.}
+\begin{srsrequirement}{FR-LRN-001}{Approved lesson catalogue}
+  \reqshall{Squigglr shall offer guided lessons for the approved catalogue of lines,
+basic shapes and simple drawings, excluding letter-tracing activities from
+the core catalogue.}
+  \reqrationale{These are the agreed categories for structured practice; letters are deferred
+(G.1, ASM-010). The lesson catalogue is maintained separately from the stage rules
+(LC-001).}
+  \reqfit{Inspect the adult-visible lesson catalogue and verify that every approved
+catalogue entry is selectable, classified as a line, shape or simple drawing,
+and has the stages in FR-LRN-002; verify that no letter activity is required
+to complete the core catalogue.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.1; \srcref{001}; \hyperref[src:009.04]{SRC-009.04}}
+  \reqtraces{ASM-010; LC-001; UC-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
+  \reqshall{Squigglr shall make the following ordered guidance stages available for each
+guided lesson: demonstration, full-outline tracing, endpoint-only guidance
+and independent drawing.}
+  \reqrationale{The activity described to specialists removes guidance in this order
+(G.1--G.2).}
+  \reqfit{For every approved lesson, inspect all four stages in the specified order;
+confirm that the stage chosen by an adult is the stage presented when
+practice begins.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.1--G.2; \srcref{001}; \srcref{005}}
+  \reqtraces{BR-003; UC-003; UC-004}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-003}{Demonstration}
+  \reqshall{Squigglr shall show an example of the intended drawing during a lesson's
+demonstration stage without treating that demonstration as a learner attempt.}
+  \reqrationale{A demonstration provides an example before guided practice and must not
+inflate the learner's records.}
+  \reqfit{Start each approved lesson in its demonstration stage; verify that the
+intended drawing can be viewed and that watching it adds no learner attempt
+or passed-stage record.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.1; \srcref{001}; \srcref{005}}
+  \reqtraces{BR-004; UC-003; UC-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-004}{Full-outline guidance}
+  \reqshall{Squigglr shall display the lesson's complete reference outline during the
+full-outline tracing stage and accept stylus strokes drawn against it.}
+  \reqrationale{Outline tracing is the first guided drawing stage in the approved
+progression.}
+  \reqfit{For each lesson, enter the full-outline stage, verify that the complete
+reference shape is visible, and draw an attempt using stylus input.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.1; \srcref{001}; \srcref{005}}
+  \reqtraces{CON-003; UC-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-005}{Endpoint-only guidance}
+  \reqshall{Squigglr shall show the specified start and end points, without the full
+reference outline, during the endpoint-only stage and accept stylus strokes
+between those points.}
+  \reqrationale{The middle drawing stage reduces visual assistance while retaining the
+destination cues.}
+  \reqfit{For each lesson, enter endpoint-only guidance; verify that the relevant
+endpoints are shown, the full outline is absent, and stylus drawing is
+accepted.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.1--G.2; \srcref{001}; \srcref{005}}
+  \reqtraces{CON-003; UC-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-006}{Independent drawing}
+  \reqshall{Squigglr shall permit the drawing task to be attempted in the independent
+stage without displaying tracing outlines or endpoint guides.}
+  \reqrationale{The final stage needs to be distinguishable from assisted practice (G.2,
+G.6).}
+  \reqfit{Enter the independent stage for each lesson; verify that neither an outline
+nor endpoint guides appear and that an attempt can still be made using the
+stylus.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2; \srcref{001}}
+  \reqtraces{BR-004; UC-003; UC-008}
+\end{srsrequirement}
+
+\paragraph{Input, classification and feedback.}
+\begin{srsrequirement}{FR-LRN-007}{Stylus stroke acquisition}
+  \reqshall{Squigglr shall accept stylus-drawn strokes as ordered sequences of input
+points for the active lesson attempt and preserve their order and stroke
+boundaries for subsequent classification.}
+  \reqrationale{Stage checks and faithful attempt records require the original stroke
+structure (ASM-004, BR-004).}
+  \reqfit{Supply known one-stroke and multi-stroke stylus samples; verify that the
+captured point order, number of strokes and boundaries match the samples.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2, G.5; \srcref{001}; \srcref{004}}
+  \reqtraces{CON-003; ASM-004; BR-004; UC-003; UC-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-008}{Multi-stroke attempts}
+  \reqshall{Squigglr shall evaluate the collected strokes of a single attempt together
+rather than classify each stylus lift as a completed attempt.}
+  \reqrationale{Lines and shapes can be composed of multiple strokes, and lifting a stylus
+alone does not establish that the task is finished.}
+  \reqfit{For a prepared two-stroke figure, lift the stylus after the first stroke and
+draw the second; confirm that one attempt is evaluated against the complete
+figure, not two independently completed attempts.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.1--G.2; ASM-004; \srcref{001}}
+  \reqtraces{FR-LRN-007; UC-003; UC-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-009}{Interrupted attempt handling}
+  \reqshall{Squigglr shall distinguish an interrupted or unfinished drawing attempt from
+a completed drawing attempt, shall not record it as passed, and shall not
+consume an evaluable attempt from the stage limit.}
+  \reqrationale{An input interruption or unfinished drawing is not evidence of a correctly
+completed task.}
+  \reqfit{Interrupt known partial attempts between and during strokes; verify that none
+is reported as passed, that the active stage does not advance, and that
+unfinished attempts are distinguishable from finalized attempts and that
+stage attempt counters are unchanged.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.2, G.5; ASM-004; \srcref{001}}
+  \reqtraces{FR-LRN-008; BR-004; UC-003; UC-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-010}{Invalid and ambiguous input}
+  \reqshall{Squigglr shall withhold passing status from an attempt whose required stylus
+input is missing, invalid or too ambiguous to evaluate against the stage
+criteria, and shall not count such input toward the stage's evaluable-attempt
+or unsuccessful-attempt limits.}
+  \reqrationale{Unreliable acquisition must not silently turn a malformed drawing into a
+successful result (ASM-004).}
+  \reqfit{Submit empty input, input with missing coordinate data and data for which the
+intended stroke order cannot be established; confirm that none passes,
+that a non-success status is available, and that the stage's attempt
+counters are unchanged.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2; ASM-004; BR-004; \srcref{001}}
+  \reqtraces{FR-LRN-007; UC-003; H-AHM (input hazards)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-011}{Completeness classification}
+  \reqshall{Squigglr shall classify every evaluable drawing attempt as complete or
+incomplete relative to the selected lesson and guidance stage.}
+  \reqrationale{Stage success must distinguish an unfinished line or missing side from a
+completed drawing (G.2).}
+  \reqfit{Evaluate adult-made or prepared examples with every required component
+present and with a deliberately missing side, segment or required endpoint;
+verify complete and incomplete classifications match the known examples.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2; BR-002; \srcref{001}}
+  \reqtraces{FR-LRN-013; UC-003; UC-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-012}{Guidance classification}
+  \reqshall{Squigglr shall classify each evaluated attempt as assisted when performed
+with outline or endpoint guidance and independent when performed without
+those guides.}
+  \reqrationale{Adults need to distinguish guided practice from practice without a guide
+(G.6).}
+  \reqfit{Perform an evaluable attempt in each drawing stage; verify that outline and
+endpoint attempts are marked assisted and no-guide attempts are marked
+independent.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.2, G.6; \srcref{001}}
+  \reqtraces{FR-LRN-004--006; UC-008; UC-009}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-013}{Pass classification}
+  \reqshall{Squigglr shall report an evaluable attempt as passing its stage only when the
+drawing is classified as complete and its result meets the current learner's
+\texttt{STAGE\_\allowbreak PASS} criterion.}
+  \reqrationale{A pass evaluates the submitted drawing against defined criteria, not the
+child's ability (G.2, BR-006).}
+  \reqfit{For prepared complete and incomplete drawings whose results lie below, at and
+above the adult-selected threshold, verify that only complete drawings
+meeting the threshold pass.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2; BR-002; BR-006; \srcref{008}}
+  \reqtraces{FR-LRN-010--011; UC-003; H-AHM (wrong completion)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-014}{Predefined difficulty feedback}
+  \reqshall{Squigglr shall present only pre-approved, stage-relevant feedback
+observations for evaluated attempts, including applicable missed tracing
+portions, incomplete lines or shapes and incorrect endpoints.}
+  \reqrationale{Feedback must describe observable drawing difficulties and not generate
+personalized AI advice (BR-007).}
+  \reqfit{For each defined feedback category, evaluate a prepared matching drawing and
+verify that the corresponding approved observation appears; verify that no
+free-generated advice or diagnosis is shown.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.1--G.2; BR-007; \srcref{001}; \hyperref[src:009.02]{SRC-009.02}}
+  \reqtraces{FR-LRN-011; UC-003; H-AHM (misleading feedback)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-015}{Retry after non-passing attempts}
+  \reqshall{Squigglr shall allow the learner to retry a drawing stage following an
+attempt that does not pass, provided the lesson has not reached its
+applicable attempt limit.}
+  \reqrationale{G.1 requires opportunities to practise again without treating failure as a
+permanent stage result.}
+  \reqfit{Present a non-passing, evaluable sample before the limit and verify that
+another attempt can be started at the same drawing stage; repeat at the limit
+and verify that the lesson-end rule is followed instead.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.1--G.3; BR-002; \srcref{001}}
+  \reqtraces{FR-LRN-021; UC-003}
+\end{srsrequirement}
+
+\paragraph{Adult control, suggestions and stopping rules.}
+\begin{srsrequirement}{FR-LRN-016}{Adult lesson and starting-stage selection}
+  \reqshall{Squigglr shall use the lesson and starting guidance stage selected by the
+supporting adult for the learner's session, including an adult-selected later
+starting stage.}
+  \reqrationale{The adult controls initial level selection rather than the product assigning
+readiness (G.3, CON-007).}
+  \reqfit{Select each available starting stage as an adult, launch the lesson, and
+verify that the selected stage is used; check that a child-only practice
+action does not change the configured lesson or starting stage.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.3; CON-007; \hyperref[src:005.01]{SRC-005.01}; \srcref{006}}
+  \reqtraces{BR-003; UC-002; UC-004}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-017}{Adult-selected practice parameters}
+  \reqshall{Squigglr shall apply the learner's adult-selected values for
+\texttt{STAGE\_\allowbreak PASS}, \texttt{DIFFICULTY\_\allowbreak STREAK}, \texttt{ATTEMPT\_\allowbreak LIMIT},
+\texttt{IMPROVE\_\allowbreak WINDOW}, \texttt{ATTEMPT\_\allowbreak EXTENSION} and
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, using the documented midpoint default for any
+unset value and rejecting out-of-range or inconsistent selections.}
+  \reqrationale{BR-008 requires learner-specific settings and rejects contradictory limit
+relationships.}
+  \reqfit{Test every setting at the minimum, default and maximum values in
+Table~\ref{tab:goalconst}, plus one value outside each bound; verify that
+selected values are used, defaults are applied correctly, and invalid
+combinations are rejected.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.2--G.3; BR-008; \srcref{008}}
+  \reqtraces{OI-05; UC-001; UC-010; H-AHM (settings not applied)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-018}{Adult authorization for discretionary changes}
+  \reqshall{Squigglr shall require explicit authorization from the supporting
+adult before changing to another lesson, skipping a guidance stage or moving
+backward to an earlier stage; routine pass-based advancement to the next
+stage of the current lesson requires no additional adult action.}
+  \reqrationale{Adults retain control of lesson selection and nonroutine guidance
+changes (G.3, CON-007), without interrupting the agreed forward progression
+on passing attempts (G.2, BR-002).}
+  \reqfit{Try selecting a new lesson, skipping ahead and applying a return
+suggestion without adult authorization, then repeat with authorization;
+verify that only authorized discretionary changes take effect. Verify
+independently that a passing attempt advances within the selected lesson
+without an additional adult action (FR-LRN-023).}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.2--G.3; CON-007; BR-002--003; \hyperref[src:005.01]{SRC-005.01}}
+  \reqtraces{OI-04 (TA confirmation); FR-LRN-023; UC-004; UC-005;
+H-AHM (misleading suggestion)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-019}{Difficulty suggestion}
+  \reqshall{Squigglr shall offer, without applying, an optional suggestion to return to
+an earlier guidance stage when the learner reaches
+\texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing evaluable attempts at the
+active drawing stage and the improvement rule does not suppress suggestions.}
+  \reqrationale{A supporting adult should decide whether earlier guidance is appropriate
+(G.3, BR-003).}
+  \reqfit{Replay known failing sequences immediately below and at the selected streak
+threshold, both improving and non-improving; verify that a suggestion occurs
+only at the applicable threshold, is suppressed during qualifying improvement
+and never changes the stage by itself.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.3; BR-003; \hyperref[src:005.01]{SRC-005.01}; \srcref{008}}
+  \reqtraces{FR-LRN-018; FR-LRN-020; UC-005}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-020}{Improvement-based extension}
+  \reqshall{Squigglr shall suppress a difficulty suggestion and allow up to
+\texttt{ATTEMPT\_\allowbreak EXTENSION} additional stage attempts when the average result
+of the most recent \texttt{IMPROVE\_\allowbreak WINDOW} attempts exceeds the average of
+the preceding equally sized window by at least \texttt{IMPROVE\_\allowbreak MARGIN},
+subject to \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}.}
+  \reqrationale{The agreed improvement rule reduces premature interruption while retaining a
+hard cap (G.3, BR-002).}
+  \reqfit{Evaluate prepared improving and non-improving sequences exactly at the margin
+boundary and at the applicable limit; verify extension and suggestion
+suppression only for qualifying improvement, with no attempt beyond the
+maximum.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.3; BR-002--003; \srcref{001}; \srcref{008}}
+  \reqtraces{FR-LRN-019; FR-LRN-021; OI-05; UC-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-021}{Stage attempt limit and lesson end}
+  \reqshall{Squigglr shall end the active lesson when its unsuccessful-attempt count
+reaches \texttt{ATTEMPT\_\allowbreak LIMIT} without a qualifying extension, or the
+allowed total-attempt count reaches \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, and make
+the furthest stage reached available for the lesson record.}
+  \reqrationale{The limits prevent indefinite repetition and preserve usable progress (G.3,
+G.5, BR-002).}
+  \reqfit{Replay sequences at the base limit and at the maximum, with and without
+qualifying improvement; verify exact lesson-end conditions and verify that
+the highest stage reached is included in the saved lesson outcome.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.3, G.5; BR-002; \srcref{001}}
+  \reqtraces{FR-LRN-015; FR-LRN-020; UC-003; UC-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-022}{No learner evaluation or diagnosis}
+  \reqshall{Squigglr shall express lesson feedback and completion results as properties
+of the drawing attempt rather than as assessments, diagnoses or comparisons
+of children.}
+  \reqrationale{The product is a practice tool, not an assessment instrument (BR-006).}
+  \reqfit{Inspect all guided-lesson feedback and completion outcomes, using prepared
+attempts; verify that each refers to the task, stage or observed strokes and
+that none assigns a diagnosis, ability label or inter-child ranking.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2; BR-006; \srcref{001}; \srcref{008}}
+  \reqtraces{FR-LRN-013--014; UC-003; UC-009}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-023}{Automatic within-lesson advancement}
+  \reqshall{Squigglr shall automatically advance from full-outline tracing
+to endpoint-only guidance, and from endpoint-only guidance to independent
+drawing, upon a passing attempt at the active stage; a passing independent
+drawing attempt completes the current lesson without starting a different
+lesson.}
+  \reqrationale{G.2 and BR-002 require predictable reduction of guidance after
+success. Adult consent governs lesson selection, skips and backward moves,
+not normal pass-based progression within the selected lesson (CON-007).}
+  \reqfit{For a selected lesson, finalize passing attempts at its outline,
+endpoint and independent stages; verify the exact transitions T to E, E to I
+and I to completed, respectively, without an adult interaction. Verify that
+a non-passing attempt stays at its current stage, a different lesson is not
+started, and no stage is skipped automatically.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2--G.3; BR-002--003; CON-007; \srcref{001}}
+  \reqtraces{FR-LRN-013; FR-LRN-016; FR-LRN-018; UC-003; UC-004;
+OI-04 (TA confirmation)}
+\end{srsrequirement}
+
+\paragraph{Source-to-requirement traceability.}
+Table~\ref{tab:lrn-traces} provides source-side links for the most
+important learning-activity decisions; each requirement also links back to
+its evidence in its \emph{Sources} field. The full system-wide traceability
+matrix is maintained by the owner of Section~\ref{sec:traceability}.
+
+{\small
+\begin{longtable}{@{}p{0.23\textwidth}p{0.63\textwidth}@{}}
+\caption{Learning-activity evidence and derived requirements}
+\label{tab:lrn-traces}\\
+\toprule
+\textbf{Source or rule} & \textbf{Related learning requirements}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Source or rule} & \textbf{Related learning requirements}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+G.1, \srcref{001} & \reqref{FR-LRN-001}, \reqref{FR-LRN-002},
+\reqref{FR-LRN-003}, \reqref{FR-LRN-004}, \reqref{FR-LRN-014},
+\reqref{FR-LRN-015}\\
+G.2, BR-002 & \reqref{FR-LRN-005}, \reqref{FR-LRN-006},
+\reqref{FR-LRN-011}, \reqref{FR-LRN-013}, \reqref{FR-LRN-020},
+\reqref{FR-LRN-021}, \reqref{FR-LRN-023}\\
+G.3, BR-003, CON-007 & \reqref{FR-LRN-016}, \reqref{FR-LRN-018},
+\reqref{FR-LRN-019}, \reqref{FR-LRN-023}; OI-04\\
+BR-008, \srcref{008} & \reqref{FR-LRN-013}, \reqref{FR-LRN-017},
+\reqref{FR-LRN-019}, \reqref{FR-LRN-020}\\
+ASM-004, BR-004 & \reqref{FR-LRN-007}, \reqref{FR-LRN-008},
+\reqref{FR-LRN-009}, \reqref{FR-LRN-010}\\
+BR-006--007 & \reqref{FR-LRN-014}, \reqref{FR-LRN-022}\\
+\hyperref[src:005.01]{SRC-005.01},
+\hyperref[src:005.05]{SRC-005.05} & \reqref{FR-LRN-016},
+\reqref{FR-LRN-018}, \reqref{FR-LRN-019}\\
+\hyperref[src:009.02]{SRC-009.02},
+\hyperref[src:009.04]{SRC-009.04} & \reqref{FR-LRN-001},
+\reqref{FR-LRN-014}\\
+\end{longtable}
+}
 
 \subsection{Formal Specification}
 \label{sec:fr-formal}
-\lips
+
+The most safety-relevant learning behaviour is formalized here as a
+\emph{labelled transition system}: a set of states and named events with
+rules describing when an event changes the state. The model specifies
+externally observable outcomes rather than a particular user interface or
+scoring algorithm. It covers guidance levels, attempt classification,
+optional suggestions, automatic pass-based advancement within a lesson,
+and the unsuccessful-attempt stopping rule.
+Every variable used below has a type or domain; arrows indicate transitions
+\emph{caused by the event above the arrow}, not automatic passage of time.
+This notation applies only to guided learning activities.
+
+\paragraph{Domains and state.}
+For each selected lesson $\ell$ and learner profile $p$, let
+\[
+\begin{aligned}
+L &= \{D,T,E,I\}, & A &= \{T,E,I\},\\
+R &= \{\textsf{complete},\textsf{incomplete},\textsf{invalid}\},\\
+M &= \{\textsf{assisted},\textsf{independent}\},\\
+Q &= \{\textsf{active},\textsf{suggested},\textsf{ended}\}.
+\end{aligned}
+\]
+The levels $D,T,E,I$ mean \emph{demonstration}, full-outline
+\emph{tracing}, \emph{endpoint-only} and \emph{independent} drawing,
+respectively. Only levels in $A$ admit scored drawing attempts; $D$ is a
+non-scored demonstration. A state is
+\[
+\sigma=(\ell,p,l,q,n_f,n_a,k,H,s,f),
+\]
+where $l\in L$ is the current guidance level of the adult-selected lesson,
+$q\in Q$ is the session status, $n_f\in\mathrm{N}_0$ counts non-passing
+evaluable attempts at this stage, $n_a\in\mathrm{N}_0$ counts finalized, evaluable
+attempts at this stage, $k\in\mathrm{N}_0$ is the consecutive
+non-passing streak, $H=(r_1,\ldots,r_m)$ is the ordered list of
+stage-result values, $s\in\{0,1\}$ records whether a suggestion is pending,
+and $f\in L$ is the furthest stage reached in the lesson.
+On a stage change (either normal pass-based progression or an
+authorized adult adjustment), the stage-specific counts, streak and $H$
+start empty; $f$ retains the furthest stage reached so far. \emph{No child ability estimate} is part of this state (BR-006).
+
+\paragraph{Drawing input and attempt classification.}
+An attempt is a finite ordered list of stylus strokes
+$X=(x_1,\ldots,x_j)$, where every $x_i$ is an ordered list of
+reported points. Lifting the stylus closes one $x_i$, not the attempt.
+The terminal event $\operatorname{Finalize}(X)$ denotes the end of input
+collection for an attempt. This abstract event does not prescribe a
+particular user-interface control. A stylus lift alone does not finalize
+the attempt; interruption before finalization cannot produce a passed
+result (FR-LRN-008--010).
+
+Let $\operatorname{Valid}_{\ell,l}(X)$ mean that all input required to
+interpret the strokes is available, and let
+$\operatorname{Complete}_{\ell,l}(X)$ mean that every required part of
+the drawing is present according to the lesson's fixed stage criteria.
+These functions use the fixed completeness criteria of the selected lesson
+and stage. Stage-result values use the normalized 0--100 scale specified in
+Table~\ref{tab:goalconst}; the actual scoring function is defined for
+each lesson's drawing criteria rather than as an assessment of a learner.
+Define
+\[
+C_{\ell,l}(X)=
+\begin{cases}
+\textsf{invalid} & \neg\operatorname{Valid}_{\ell,l}(X),\\
+\textsf{complete} & \operatorname{Valid}_{\ell,l}(X)\land
+                      \operatorname{Complete}_{\ell,l}(X),\\
+\textsf{incomplete} & \text{otherwise}.
+\end{cases}
+\]
+The guidance classification uses the level of the actual attempt:
+\[
+G(l)=\begin{cases}
+\textsf{assisted} & l\in\{T,E\},\\
+\textsf{independent} & l=I.
+\end{cases}
+\]
+Let $v_{\ell,l}(X)\in[0,100]$ be the normalized stage result of an
+evaluable drawing. Its threshold is
+$\theta_p=\texttt{STAGE\_\allowbreak PASS}(p)$, taken from the adult's approved
+profile value (or midpoint default under BR-008). The pass predicate is
+\[
+\operatorname{Pass}(X,l,p)\iff
+C_{\ell,l}(X)=\textsf{complete}
+\land v_{\ell,l}(X)\ge\theta_p.
+\]
+A missing, malformed or interrupted attempt never satisfies this
+predicate. Non-passing but evaluable attempts contribute to the
+unsuccessful-attempt count. Invalid or interrupted input is never interpreted as success and does
+not contribute to a stage's evaluated-attempt or unsuccessful-attempt
+counters. The presented feedback is selected from the fixed set of
+observations in BR-007 rather than generated advice.
+
+\paragraph{Improvement and suggestion predicates.}
+Use the constants defined in Section~\ref{sec:constants}:
+\[
+\begin{aligned}
+d_p &= \texttt{DIFFICULTY\_\allowbreak STREAK}(p), &
+ b_p &= \texttt{ATTEMPT\_\allowbreak LIMIT}(p),\\
+w_p &= \texttt{IMPROVE\_\allowbreak WINDOW}(p), &
+ e_p &= \texttt{ATTEMPT\_\allowbreak EXTENSION}(p),\\
+ h_p &= \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}(p), &
+ \delta &= \texttt{IMPROVE\_\allowbreak MARGIN}.
+\end{aligned}
+\]
+For $|H|\ge 2w_p$, with $H=(r_1,\ldots,r_m)$, define
+\[
+\operatorname{Improving}(H,p)\iff
+\frac{1}{w_p}\sum_{i=m-w_p+1}^{m} r_i
+-\frac{1}{w_p}\sum_{i=m-2w_p+1}^{m-w_p}r_i\ge\delta.
+\]
+If $|H|<2w_p$, the improvement predicate is not evaluated and no
+improvement-dependent suggestion is issued. For the default
+$w_p=2$, the first comparison uses four evaluable attempts.
+
+For an eligible return to a preceding guidance level, the suggestion
+trigger is
+\[
+\operatorname{SuggestBack}(\sigma)\iff
+q=\textsf{active}\land l\in\{E,I\}\land k\ge d_p
+\land\neg\operatorname{Improving}(H,p).
+\]
+The suggestion guard is evaluated only when
+$\operatorname{Improving}(H,p)$ is defined. The rule applies to drawing
+levels $E$ and $I$; $T$ has no preceding drawing level. A suggestion changes
+$q$ to $\textsf{suggested}$ and
+$s$ to $1$, but \emph{does not change $l$}.
+
+\paragraph{State-transition rules.}
+Table~\ref{tab:lrn-transitions} gives the level-changing and
+stage-stopping rules. Here $\sigma'$ is the state after the event,
+``unchanged'' means the active lesson and level remain exactly as before,
+and $\operatorname{AdultAccept}$ is a verified adult action rather than any
+child drawing input. For pass-based forward transitions define
+$\operatorname{Next}(T)=E$ and $\operatorname{Next}(E)=I$; $I$ has no
+successor within its lesson. Passing the last stage ends \emph{that} lesson.
+
+{\small
+\begin{longtable}{@{}p{0.22\textwidth}p{0.29\textwidth}p{0.36\textwidth}@{}}
+\caption{Guided-lesson state transitions and authorization}\label{tab:lrn-transitions}\\
+\toprule
+\textbf{Event} & \textbf{Guard} & \textbf{Required state change or output}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Event} & \textbf{Guard} & \textbf{Required state change or output}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Adult selects lesson / starting level & Supporting adult is authorized
+& Set $(\ell,l)$ to adult selection; reset stage counters; keep any
+previously persisted lesson record.\\
+\addlinespace
+Begin practice after demonstration & $q=\textsf{active}$,
+$l=D$; child continues after viewing the example
+& Set $l=T$ within the same lesson; initialize drawing-stage counters.
+This does not start another lesson or require new adult authorization.\\
+\addlinespace
+Finalize evaluable attempt & $l\in A$, $q=\textsf{active}$
+& Classify $C_{\ell,l}(X)$ and $G(l)$; report pass/fail using the
+stage threshold; increment $n_a$ and, for non-pass, $n_f,k$. On pass,
+record the result and apply the prescribed forward-stage or lesson-end
+transition below.\\
+\addlinespace
+Interrupted or invalid input & Missing finalization or
+$C_{\ell,l}(X)=\textsf{invalid}$
+& Do not pass or change level. Neither $n_a$ nor $n_f$ is incremented, and no successful stage
+transition is permitted.\\
+\addlinespace
+Offer suggestion & $\operatorname{SuggestBack}(\sigma)$
+& Set $s=1$, $q=\textsf{suggested}$; leave $\ell,l$ unchanged.\\
+\addlinespace
+Ignore or decline suggestion & $s=1$
+& Clear $s$, return $q$ to $\textsf{active}$; leave $\ell,l$ unchanged.\\
+\addlinespace
+Adult accepts suggestion & $s=1$ and an authorized adult
+chooses a preceding level
+& Activate the chosen earlier level, clear $s$, reset stage counts;
+retain the lesson's furthest stage reached.\\
+\addlinespace
+End at limit & The attempt did not pass, and either
+$n_f\ge b_p$ without qualifying extension or $n_a\ge h_p$
+& Set $q=\textsf{ended}$; report the furthest stage reached for saving;
+no more attempts in the ended session. A pass is handled by its own
+transition before this stop condition.\\
+\addlinespace
+Extend at limit & $n_f\ge b_p$, $\operatorname{Improving}(H,p)$,
+and $n_a<h_p$
+& Permit up to $e_p$ additional attempts without exceeding $h_p$;
+suppress a conflicting return suggestion.\\
+\addlinespace
+Passing a nonfinal drawing stage & $\operatorname{Pass}(X,l,p)$ and
+$l\in\{T,E\}$
+& Save the passed attempt at its original stage; automatically set
+$l'=\operatorname{Next}(l)$ without adult action. Reset stage-specific
+counters and update $f$; leave $\ell$ unchanged.\\
+\addlinespace
+Passing the final drawing stage & $\operatorname{Pass}(X,I,p)$
+& Save the passed independent attempt, set $q'=\textsf{ended}$ and
+$f'=I$; complete the current lesson without choosing another lesson.\\
+\end{longtable}
+}
+
+\paragraph{Invariants and verification obligations.}
+For every reachable session state and every adult- or learner-generated
+event, the model requires:
+\[
+\begin{aligned}
+&\textbf{I1:}\quad \ell'\ne\ell
+  \Longrightarrow\operatorname{AdultSelect};\\
+&\textbf{I2:}\quad \text{suggestion ignored or declined}
+  \Longrightarrow (\ell',l')=(\ell,l);\\
+&\textbf{I3:}\quad C_{\ell,l}(X)\ne\textsf{complete}
+  \Longrightarrow \neg\operatorname{Pass}(X,l,p);\\
+&\textbf{I4:}\quad \text{pass/feedback never substitutes refined strokes
+   for actual guided strokes};\\
+&\textbf{I5:}\quad n_a\le h_p\ \text{while stage attempt limits apply};\\
+&\textbf{I6:}\quad \operatorname{Pass}(X,T,p)
+  \Longrightarrow (\ell',l')=(\ell,E);\\
+&\textbf{I7:}\quad \operatorname{Pass}(X,E,p)
+  \Longrightarrow (\ell',l')=(\ell,I);\\
+&\textbf{I8:}\quad \operatorname{Pass}(X,I,p)
+  \Longrightarrow q'=\textsf{ended}\land\ell'=\ell.
+\end{aligned}
+\]
+Outside ordinary pass-based progression and the demonstration-to-practice
+transition, a change to the active stage requires an authorized adult
+selection or acceptance (CON-007). Invariants I1 and I6--I8 ensure that
+a new lesson is never selected automatically and that passing an attempt
+advances only within the current lesson. I2--I5 cover suggestions, invalid
+input, faithful records and the stage attempt bound. These rules are verified using prepared adult-made attempt sequences
+(CON-005--006), including boundary tests for the values and ranges in
+Table~\ref{tab:goalconst}.
 
 \subsection{Creative Drawing Requirements}
 \label{sec:fr-creative}
@@ -1679,25 +2339,27 @@ core goal (SRC-006). Still needed: the reply on the issue and, if G.4
 stays, a supported set of items small enough for the schedule. &
 G.4 & Muhammad Huzaifah & Oct.\ 17, 2026 \\
 \addlinespace
-OI-04 & \emph{Revised G.3 rule.} G.3 now gives progression to adults, with
-an optional suggestion to go back a stage after
+OI-04 & \emph{TA confirmation of revised G.3.} The team distinguishes
+adult selection of lessons, starting stages, skips and backward moves
+from automatic advancement after a passing attempt within the selected
+lesson (G.2, BR-002, CON-007). G.3 permits an optional suggestion to go
+back a stage after
 \texttt{DIFFICULTY\_STREAK} failed attempts and a lesson end after
 \texttt{ATTEMPT\_LIMIT}, held back while the child is improving
-(\texttt{IMPROVE\_WINDOW}, \texttt{ATTEMPT\_EXTENSION}). The TA agreed to the change in principle and asked
-that the updated PSG be merged after he marks the submitted version
-(SRC-006). Still needed: the TA's confirmation of the revised rule as
-written. &
+(\texttt{IMPROVE\_WINDOW}, \texttt{ATTEMPT\_EXTENSION}). The TA agreed to the
+adult-control revision in principle and asked that the updated PSG be
+merged after marking the submitted version (SRC-006). Still needed:
+confirmation of the rule as clarified, not a new choice between automatic
+and adult-authorized forward progression. &
 G.3, CON-007 & Shamil Canbolat & Oct.\ 17, 2026 \\
 \addlinespace
-OI-05 & \emph{Ranges of the adult-set values.} The adult chooses
-\texttt{STAGE\_PASS}, \texttt{DIFFICULTY\_STREAK},
-\texttt{ATTEMPT\_LIMIT}, \texttt{IMPROVE\_WINDOW},
-\texttt{ATTEMPT\_EXTENSION} and \texttt{ATTEMPT\_LIMIT\_MAX} for each
-child within a range the team sets
-(SRC-008). No range may be chosen from child testing (SRC-004). Still
-needed: the minimum and maximum of each, the fixed
-\texttt{IMPROVE\_MARGIN}, set by the team, and example drawings of each end of the
-\texttt{STAGE\_PASS} range, made by adults. &
+OI-05 & \emph{Verification of learning thresholds.}
+Section~\ref{sec:constants} defines the ranges and defaults for the six
+adult-configurable values and the fixed \texttt{IMPROVE\_MARGIN}.
+Verify the selected ranges with adult-made drawings, provide examples
+illustrating the endpoints of the \texttt{STAGE\_PASS} range, and
+confirm that the drawing-evaluation method produces results on the
+specified 0--100 scale (SRC-004, SRC-008). No child testing is permitted. &
 G.2, G.3; requirement IDs to be linked when written &
 Ahmed Elzaria & Nov.\ 2, 2026 (V\&V Plan) \\
 \addlinespace
@@ -1815,9 +2477,9 @@ order) may change, for example to add letters after shapes (SRC-009.04). & G.1, 
 data that the lesson logic reads, so adding or reordering a lesson changes
 no code. \\
 \addlinespace
-LC-002 & The ranges of the adult-set values
-(Table~\ref{tab:goalconst}) are TBD (OI-05), and adults may change their
-chosen values at any time. & G.2, G.3, CON-007 & Each range is defined in
+LC-002 & The adult-configurable ranges in
+Table~\ref{tab:goalconst} may be recalibrated after adult-made
+verification (OI-05), and adults may change their chosen values at any time. & G.2, G.3, CON-007 & Each range is defined in
 one place, each child's value is stored in their profile, and the activity
 logic reads only the profile value. \\
 \addlinespace
@@ -1888,9 +2550,11 @@ practice (SRC-001), adults handle setup (SRC-005, \intref{P1}{34:13}),
 and the records concern children, whose privacy the product must protect
 (OI-02). \\
 \addlinespace
-ULC-003 & An adult chooses the lesson and stage; Squigglr may only suggest
-going back a stage, and an adult must accept. & G.3, CON-007 & Deciding
-readiness automatically would need assessment, which is out of scope
+ULC-003 & An adult chooses the lesson, starting stage, and any skip or
+backward move. Passing an attempt advances to the next stage within the
+chosen lesson, never to a new lesson. & G.2, G.3, CON-007 & Deciding
+which lesson or exceptional level a child needs automatically would require
+assessment outside the project scope
 (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}); the TA agreed to the
 change (SRC-006). \\
 \addlinespace
@@ -1938,11 +2602,8 @@ participants are de-identified domain specialists (P1, P2 and P3). No child
 took part in the interview or in any other source listed here.
 
 Table~\ref{tab:src-docs} lists the project documents and meeting sources, and
-Table~\ref{tab:src-other} lists the interview, questionnaire and peer-review sources. The
-supported requirement identifiers are not listed in these tables yet. They
-are added as back-links as each requirement is written, so that every
-dependency appears at both ends: the requirement names its source, and the
-source lists the requirement. Each source and statement has a \LaTeX{} label
+Table~\ref{tab:src-other} lists the interview, questionnaire and peer-review sources. Requirements identify their supporting sources through stable source
+identifiers. Each source and statement has a \LaTeX{} label
 (for example \texttt{src:005.01}), so a requirement can link to it and the
 link works in the PDF.
 
@@ -1950,10 +2611,10 @@ The sources represent users in different ways. Children are the main
 beneficiaries, but by the supervisor's direction (SRC-004) no requirement is
 gathered from children and no information about them is collected. Their
 needs enter the requirements only through adults who know them. The domain
-specialists (SRC-005) are the only outside voice so far. Their advice changed
-the project: progression is chosen by an adult instead of adjusted
-automatically, the stylus is the main input with finger input as a stretch
-goal, and camera tracing became a stretch goal. Parents, educators and occupational therapists have not been
+specialists' interview and questionnaire (SRC-005, SRC-009) are the
+outside evidence for these requirements. Their advice established adult control of lesson selection and optional
+stage changes, stylus as the main input, finger input as a stretch goal,
+and camera tracing as a stretch goal. Parents, educators and occupational therapists have not been
 consulted yet. The specialists advised doing so (SRC-005.03, SRC-005.06), and
 until then the requirements that depend on their views rest on the expert
 statements below and are open to change.

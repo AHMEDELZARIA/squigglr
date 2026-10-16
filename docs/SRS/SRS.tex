@@ -115,6 +115,7 @@ requirement structure (\#131).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 8.1, Product Boundary (\#110).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
+16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 \end{longtable}
 
 ~\\
@@ -1167,6 +1168,22 @@ progress-summary review tasks completed successfully by adults.
 learners served by Squigglr.
 \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
 \emph{Trace:} Section~\ref{sec:stakeholders}, G.1.\\
+\addlinespace
+\texttt{CHILD\_CONTROLS\_MAX} & Maximum number of controls a
+child can use on one child-facing screen.
+\emph{Unit:} controls (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-001.\\
+\addlinespace
+\texttt{UX\_REVIEWERS} & Minimum number of adult reviewers in the
+look-and-feel and usability reviews.
+\emph{Unit:} people (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-003, NFR-UX-006, NFR-UX-007.\\
+\addlinespace
+\texttt{STYLE\_RATING\_MIN} & Minimum median rating, on a five-point
+scale, that reviewers give child-facing screens for being appealing and
+calm.
+\emph{Unit:} rating (1--5). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-006.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -3166,12 +3183,172 @@ Table~\ref{tab:goalconst}.
 
 \section{Look and Feel Requirements}
 \label{sec:look-feel}
+% Long constant names cannot be hyphenated; let lines stretch rather than
+% overflow the margin in this section.
+\begingroup
+\sloppy
+
+This section states how Squigglr looks (Section~\ref{sec:appearance}) and
+the mood its style creates (Section~\ref{sec:style}). A
+\emph{child-facing screen} is any screen the child uses in a guided lesson
+or the creative space; an \emph{adult view} is any screen for setup,
+settings, records or progress summaries. No requirement is gathered from
+children and no study with children takes place (CON-005, CON-006), so
+the fit criteria are checked by inspecting every screen or by adult
+reviewers. An adult review shows that adults find a design suitable, not
+that children can use it; checking that needs a study with ethics
+approval, which is out of scope (\srcref{005.11}).
+
+The specialists advised starting from the Web Content Accessibility
+Guidelines (WCAG) 2.2~\cite{wcag22} (\srcref{005.08}), and the supervisor
+advised taking specific WCAG ideas as non-functional requirements rather
+than treating WCAG as a constraint (\srcref{008}). Each requirement below
+that is based on a WCAG success criterion names it in its rationale. The
+accessibility criteria are listed in
+Section~\ref{sec:usability}, and WCAG itself is listed under Standards
+Compliance Requirements.
+
 \subsection{Appearance Requirements}
-\lips
+\label{sec:appearance}
+
+\begin{srsrequirement}{NFR-UX-001}{Calm, uncluttered child screens}
+  \reqshall{Each child-facing screen shall offer the child no more than
+\texttt{CHILD\_CONTROLS\_MAX} controls and shall show no decorative
+animation or flashing while the child is drawing.}
+  \reqrationale{Too many visual or auditory stimuli can overwhelm children,
+and specialists advised a calm, minimally stimulating interface
+(\srcref{009.05}). A child who cannot read navigates by images, so every
+extra control is something more to interpret (\srcref{005.05}). Banning
+flashing and moving content while the child draws follows WCAG 2.2
+success criteria 2.3.1 Three Flashes or Below Threshold and 2.2.2 Pause,
+Stop, Hide~\cite{wcag22}.}
+  \reqfit{Inspect every child-facing screen in each lesson stage and in the
+creative space. Pass when each screen offers at most
+\texttt{CHILD\_CONTROLS\_MAX} controls and no element animates or
+flashes while a stroke is being drawn.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; \srcref{005.05}; \srcref{009.05}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-002}{Images and icons instead of text}
+  \reqshall{Every control on a child-facing screen shall be identified by
+an image or icon, and no task on a child-facing screen shall require the
+child to read.}
+  \reqrationale{Many learners cannot read yet; children navigate games
+through images and icons rather than text (\srcref{005.05}, FACT-007).}
+  \reqfit{Inspect every child-facing screen. Pass when every control shows
+an image or icon, and each child task in \ucref{003} and \ucref{006} can be
+completed with all on-screen text hidden.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; FACT-007; \srcref{005.05}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-003}{Adult views distinct from child screens}
+  \reqshall{Adult views shall look clearly different from child-facing
+screens, so that an adult can tell at a glance which kind of screen is
+shown.}
+  \reqrationale{Specialists described a separate adult interface for
+personalizing activities and viewing progress (\srcref{005.02}). A
+distinct look helps adults notice when a child has reached an adult-only
+screen, alongside the adult check (SAF-RAY-001).}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers a shuffled
+set of screenshots of every child-facing screen and adult view, without
+titles. Pass when every reviewer sorts every screenshot correctly.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}, \goalref{6}; \srcref{005.02}}
+  \reqtraces{\ucref{001}; \ucref{002}; \ucref{009}; \ucref{010};
+SAF-RAY-001}
+\end{srsrequirement}
+
 \subsection{Style Requirements}
-\lips
+\label{sec:style}
+
+\begin{srsrequirement}{NFR-UX-004}{Feedback that never marks the drawing
+as wrong}
+  \reqshall{Feedback on an attempt, including a missed part or a
+non-passing attempt, shall use encouraging styling, shall not use error
+styling such as warning colours, crosses, alarm sounds or ``wrong''
+symbols, and shall not show a missed part by colour alone.}
+  \reqrationale{Children become frustrated when an activity keeps
+highlighting their mistakes or suggests that their drawing is wrong, so
+feedback should recognize effort instead (\srcref{009.02}). Feedback
+wording and colours should be positive (\srcref{005.06}). Feedback
+describes the drawing, not the child
+(BR-006, \mbox{\reqref{FR-LRN-022}}). Showing a missed part by more than
+colour follows WCAG 2.2 success criterion 1.4.1 Use of
+Color~\cite{wcag22}, so a child who does not see the colour still sees
+the missed part.}
+  \reqfit{For each predefined difficulty and for a non-passing attempt,
+show a prepared drawing and inspect the feedback. Pass when no feedback
+uses any element on the error-styling list in this requirement, and every
+missed part stays visible when the feedback is viewed in greyscale.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{005.06}; \srcref{009.02}}
+  \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
+\ucref{003}; H-AHM-005; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-005}{Consistent look across child screens}
+  \reqshall{The same action shall use the same icon, colour and screen
+position on every child-facing screen.}
+  \reqrationale{Children stay motivated when activities are predictable
+(\srcref{009.02}), and a child who navigates by images relies on each icon
+meaning the same thing everywhere (\srcref{005.05}). This follows WCAG 2.2
+success criteria 3.2.3 Consistent Navigation and 3.2.4 Consistent
+Identification~\cite{wcag22}.}
+  \reqfit{List every action available on child-facing screens and inspect
+each screen where it appears. Pass when each action has one icon, one
+colour and one position across all screens.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.05}; \srcref{009.02}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-006}{Appealing but calm style}
+  \reqshall{Child-facing screens shall have a playful, child-friendly
+style that adult reviewers judge both appealing and calm.}
+  \reqrationale{Specialists warned that the design may not be appealing
+enough for children, and that the right balance is a playful design in a
+calm, minimally stimulating environment (\srcref{009.05}).}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers every
+child-facing screen and ask them to rate how appealing and how calm each
+is, on a five-point scale. Pass when the median of each rating is at least
+\texttt{STYLE\_RATING\_MIN}.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{009.05}}
+  \reqtraces{NFR-UX-001; NFR-UX-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-007}{Style reviewed with educators or
+therapists}
+  \reqshall{The colours, images and feedback style of child-facing screens
+shall be reviewed by at least \texttt{UX\_REVIEWERS} adults, including at
+least one educator or occupational therapist, and each change they
+request shall be made or recorded with a reason.}
+  \reqrationale{Specialists advised designing feedback wording and colours
+with educators and occupational therapists, built up bit by bit
+(\srcref{005.06}), and involving them throughout design (\srcref{009.06}).
+None has been consulted yet (FACT-012).}
+  \reqfit{Pass when the review record lists the reviewers and their roles,
+includes at least one educator or occupational therapist, and gives the
+outcome of every requested change.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{005.06}; \srcref{009.06}; FACT-012}
+  \reqtraces{NFR-UX-004; NFR-UX-006}
+\end{srsrequirement}
+\endgroup
 
 \section{Usability and Humanity Requirements}
+\label{sec:usability}
 \subsection{Ease of Use Requirements}
 \lips
 \subsection{Personalization and Internationalization Requirements}
@@ -3752,7 +3929,9 @@ Advice from the client, not observed user data. \\
   & Issue \href{https://github.com/AHMEDELZARIA/squigglr/issues/107}{\#107} &
 Let the supporting adult choose child-dependent thresholds within a
 team-set minimum and maximum, with example drawings of each end; default
-to the middle of the range. &
+to the middle of the range. Take specific WCAG ideas, such as large icons,
+as non-functional requirements rather than treating WCAG as a
+constraint. &
 Advice from the client, not observed user data. \\
 \bottomrule
 \end{tabularx}

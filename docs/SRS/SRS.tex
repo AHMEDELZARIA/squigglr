@@ -118,6 +118,7 @@ requirement structure (\#131).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
+16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
 \end{longtable}
 
 ~\\
@@ -1182,13 +1183,37 @@ child can use on one child-facing screen.
 \texttt{UX\_REVIEWERS} & Minimum number of adult reviewers in the
 look-and-feel and usability reviews.
 \emph{Unit:} people (count). \emph{Value:} team-defined; TBD.
-\emph{Trace:} NFR-UX-003, NFR-UX-006, NFR-UX-007.\\
+\emph{Trace:} NFR-UX-003, NFR-UX-006, NFR-UX-007, NFR-UX-009,
+NFR-UX-013, NFR-UX-014.\\
 \addlinespace
 \texttt{STYLE\_RATING\_MIN} & Minimum median rating, on a five-point
 scale, that reviewers give child-facing screens for being appealing and
 calm.
 \emph{Unit:} rating (1--5). \emph{Value:} team-defined; TBD.
 \emph{Trace:} NFR-UX-006.\\
+\addlinespace
+\texttt{UX\_PASS\_RATE} & Minimum proportion of reviewers who must
+complete a usability or learning task.
+\emph{Unit:} proportion. \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-009, NFR-UX-013, NFR-UX-014.\\
+\addlinespace
+\texttt{SETUP\_TIME\_MAX} & Maximum time for a first-time adult to
+create a child's profile and start a lesson.
+\emph{Unit:} minutes. \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-009.\\
+\addlinespace
+\texttt{FEEDBACK\_WORDS\_MAX} & Maximum length of a message to the
+child when spoken.
+\emph{Unit:} words. \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-015.\\
+\addlinespace
+\texttt{TARGET\_SIZE\_MIN} & Minimum touch-target size of a control on
+a child-facing screen.
+\emph{Unit:} CSS pixels. \emph{Value:} 44 by 44, from WCAG 2.2 success
+criterion 2.5.5. \emph{Trace:} NFR-UX-018.\\
+\addlinespace
+\texttt{INTERFACE\_LANGUAGE} & Language of all text in adult views.
+\emph{Value:} TBD. \emph{Trace:} ASM-007, NFR-UX-012.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -1894,8 +1919,9 @@ stays pending without blocking practice until an adult decides
 \addlinespace
 Changes to a child's settings: accessibility, audio, whether refinement
 is on & Supporting adult & \ucref{010} &
-NFR-UX TBD (\#114) &
-To be stated with the NFR-UX requirements. \\
+NFR-UX-010, NFR-UX-011 &
+A setting changes only for the child it was changed for (NFR-UX-010,
+NFR-UX-011); changes need the adult check (SAF-RAY-008). \\
 \addlinespace
 Request to view a child's history, attempts or progress summaries &
 Supporting adult & \ucref{009}, \ucref{010} &
@@ -2461,7 +2487,7 @@ the child has a profile (\ucref{001}).}
 \reqfield{Postconditions}{The changes are saved, and every adult-set
 value is within its range.}
 \reqfield{Requirements}{\mbox{\reqref{FR-LRN-017}}; \mbox{SAF-RAY-008};
-NFR-UX TBD (\#114); NFR-SEC TBD (\#82); BR-001, BR-008.}
+NFR-UX-010, NFR-UX-011; NFR-SEC TBD (\#82); BR-001, BR-008.}
 \reqfield{Sources}{\goalref{3}, \goalref{6}; \mbox{SRC-008}, \mbox{SRC-009.01}.}
 \endgroup
 
@@ -3360,27 +3386,340 @@ not.}
 
 \section{Usability and Humanity Requirements}
 \label{sec:usability}
-\subsection{Ease of Use Requirements}
-\lips
-\subsection{Personalization and Internationalization Requirements}
-\lips
-\subsection{Learning Requirements}
-\lips
-\subsection{Understandability and Politeness Requirements}
-\lips
-\subsection{Accessibility Requirements}
-\lips
+% Long constant names cannot be hyphenated; let lines stretch rather than
+% overflow the margin in this section.
+\begingroup
+\sloppy
 
-\emph{Note for the section owner (from \#87):} add a requirement that
-Squigglr shall meet selected Web Content Accessibility Guidelines (WCAG)
-2.2 success criteria; the exact set is TBD and should be criteria the team
-can check without children, such as colour contrast, text alternatives for
-icons and audio that can be paused or muted. Full WCAG conformance is a
-stretch goal. Source: SRC-005, \intref{P2}{39:26}. Related advice: icon-based
-navigation that children can use without reading (SRC-005, \intref{P1}{34:13}) and
-audio feedback with a mute option (SRC-005, \intref{P2}{37:39}). Add a WCAG 2.2 citation to
-refs/References.bib. The standard itself goes in Standards Compliance
-Requirements.
+This section states how easy Squigglr is to use, personalize and learn,
+how its wording treats children and adults, and which accessibility
+criteria it meets. As in Section~\ref{sec:look-feel}, fit criteria are
+checked by the team or by adult reviewers, and an adult review does not
+show that children can use the product (\srcref{005.11}). The adult-set
+values for each child are specified in \mbox{\reqref{FR-LRN-017}} and
+SAF-RAY-008 and are not repeated here.
+
+\subsection{Ease of Use Requirements}
+\label{sec:ease-of-use}
+
+\begin{srsrequirement}{NFR-UX-008}{Practice without adult help}
+  \reqshall{Once an adult has started a lesson, the child shall be able to
+complete it, through every stage and retry, with no adult action other
+than responding to a suggestion to go back a stage.}
+  \reqrationale{Children should be able to practise without constant
+adult help, and parents quickly become annoyed if they must keep
+intervening (\srcref{005.05}). Within a lesson the child does not
+navigate; Squigglr moves between stages (CA-001,
+\mbox{\reqref{FR-LRN-023}}).}
+  \reqfit{Walk through every catalogue lesson with prepared passing and
+non-passing attempts and count the adult actions between the start and
+the end of the lesson. Pass when the only adult actions are responses to
+suggestions.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}, \goalref{3}; \srcref{005.05}}
+  \reqtraces{\ucref{003}; \ucref{005}; \mbox{\reqref{FR-LRN-015}};
+\mbox{\reqref{FR-LRN-023}}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-009}{Quick setup by a new adult}
+  \reqshall{An adult using Squigglr for the first time shall be able to
+create a child's profile and start a lesson for that child within
+\texttt{SETUP\_TIME\_MAX} minutes, with no help from outside Squigglr.}
+  \reqrationale{Adults handle setup (\srcref{005.05}), and they are
+everyday web users rather than trained staff
+(Section~\ref{sec:stakeholders}). Setup that needs help delays
+practice.}
+  \reqfit{Give at least \texttt{UX\_REVIEWERS} adults who have not used
+Squigglr the task ``add a child and start a lesson for them''. Pass when
+at least \texttt{UX\_PASS\_RATE} of them finish within
+\texttt{SETUP\_TIME\_MAX} minutes without help.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}; \srcref{005.05}}
+  \reqtraces{\ucref{001}; \ucref{002}; NFR-UX-014}
+\end{srsrequirement}
+
+\subsection{Personalization and Internationalization Requirements}
+\label{sec:personalization}
+
+\begin{srsrequirement}{NFR-UX-010}{Audio setting for each child}
+  \reqshall{The supporting adult shall be able to turn audio feedback on
+or off for each child, and the choice shall apply to every child-facing
+screen for that child.}
+  \reqrationale{Audio feedback is useful, but users must be able to turn it
+off (\srcref{005.07}), and an adult can turn it off if sound upsets a
+child (ASM-015). The setting is per child because children's needs differ
+(FACT-003).}
+  \reqfit{Turn audio off for one prepared profile and on for another. Run a
+lesson and the creative space for each. Pass when no sound plays for the
+first profile and audio feedback plays for the second.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{FACT-003; ASM-015; \srcref{005.07}}
+  \reqtraces{\ucref{010}; NFR-UX-021; NFR-UX-022; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-011}{Refinement setting for each child}
+  \reqshall{The supporting adult shall be able to turn creative-space
+refinement on or off for each child; while it is off, the child's strokes
+shall be kept exactly as drawn.}
+  \reqrationale{Both questionnaire respondents suggested that refinement
+be optional or adjustable, and unclear lines can matter to a child's
+imagination (\srcref{009.01}). The child can also turn refinement off in
+the creative space (\ucref{007}).}
+  \reqfit{Turn refinement off for a prepared profile and draw prepared
+drawings in the creative space. Pass when every saved stroke matches the
+input exactly; turn it on and verify the drawings are refined.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4}; \srcref{009.01}}
+  \reqtraces{\ucref{007}; \ucref{010}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-012}{Language-free child screens, one adult
+language}
+  \reqshall{Child-facing screens shall need no text to be used, and all
+text in adult views shall be in \texttt{INTERFACE\_LANGUAGE}.}
+  \reqrationale{Children do not need to read to use the child screens,
+while adult tasks such as reviewing records need text (ASM-007). Keeping
+language out of the child screens means another adult language would not
+change them (NFR-UX-002).}
+  \reqfit{Inspect every child-facing screen as in the fit criterion of
+NFR-UX-002, and every adult view. Pass when no child task needs text and
+all adult-view text is in \texttt{INTERFACE\_LANGUAGE}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{ASM-007; \srcref{005.05}}
+  \reqtraces{NFR-UX-002}
+\end{srsrequirement}
+
+\subsection{Learning Requirements}
+\label{sec:ux-learning}
+
+This subsection covers learning to use Squigglr. Learning to draw is
+specified by the FR-LRN requirements.
+
+\begin{srsrequirement}{NFR-UX-013}{Learning a lesson from its
+demonstration}
+  \reqshall{The demonstration of each lesson shall show where the drawing
+starts and which way it goes, so that a child can learn the task without
+words or an adult's explanation.}
+  \reqrationale{Many learners cannot read and learn by watching
+(\srcref{005.05}). The team's proposed demonstration shows where to start
+and which way to go (\intref{Moustafa}{6:03}); the demonstration itself is
+\mbox{\reqref{FR-LRN-003}}.}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adults the demonstration of
+every catalogue lesson with sound and text hidden. Pass when at least
+\texttt{UX\_PASS\_RATE} of them mark the correct start point and direction
+for every lesson.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; \srcref{005.05}}
+  \reqtraces{\mbox{\reqref{FR-LRN-003}}; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-014}{Adult tasks learnable without
+training}
+  \reqshall{An adult shall be able to complete each adult task (creating a
+profile, choosing a lesson, responding to a suggestion, changing settings
+and reviewing progress) without training, using only help shown in
+Squigglr.}
+  \reqrationale{Adults are not assumed to have training in visual-motor
+development or in Squigglr (Section~\ref{sec:stakeholders}), and the
+specialists expect adults to handle these tasks (\srcref{005.05}).}
+  \reqfit{Give at least \texttt{UX\_REVIEWERS} first-time adults each task.
+Pass when at least \texttt{UX\_PASS\_RATE} of them complete every task
+without help from outside Squigglr.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\goalref{3}, \goalref{6}; \srcref{005.05}}
+  \reqtraces{\ucref{001}; \ucref{002}; \ucref{005}; \ucref{009};
+\ucref{010}; NFR-UX-009}
+\end{srsrequirement}
+
+\subsection{Understandability and Politeness Requirements}
+\label{sec:politeness}
+
+\begin{srsrequirement}{NFR-UX-015}{Short, encouraging messages to the
+child}
+  \reqshall{Every message to the child, including feedback on an attempt
+and the end of a lesson, shall be encouraging, shall describe the drawing
+rather than the child, and shall be at most \texttt{FEEDBACK\_WORDS\_MAX}
+words when spoken.}
+  \reqrationale{Feedback wording should be positive (\srcref{005.06}), and
+children become frustrated when their drawing is called wrong
+(\srcref{009.02}). Feedback describes the drawing, not the child (BR-006,
+\mbox{\reqref{FR-LRN-022}}). A lesson that ends at its limit must not feel
+like a failure (SAF-RAY-005). Messages are short because they are heard
+by children who may not read.}
+  \reqfit{List every approved feedback message
+(\mbox{\reqref{FR-LRN-014}}) and the lesson-end message. Pass when each
+has at most \texttt{FEEDBACK\_WORDS\_MAX} words, refers to the drawing and
+not the child, and uses none of the words ``wrong'', ``bad'', ``fail'' or
+``mistake''.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; BR-006; \srcref{005.06}; \srcref{009.02}}
+  \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
+NFR-UX-004; \ucref{003}; H-AHM-005; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-016}{Effort acknowledged}
+  \reqshall{The feedback on every evaluable attempt, including one that
+does not pass, shall acknowledge the child's effort before it shows what
+to change.}
+  \reqrationale{Squigglr should recognize effort and progress, not only
+accuracy (\srcref{009.02}).}
+  \reqfit{For each predefined difficulty, show a prepared non-passing
+attempt. Pass when every feedback message begins with an acknowledgement
+from the approved feedback list.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{009.02}}
+  \reqtraces{NFR-UX-015; \mbox{\reqref{FR-LRN-014}}; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-017}{Plain wording in adult views}
+  \reqshall{Adult views shall use plain language, shall explain each
+glossary term where it first appears in a view, and shall not use
+diagnostic, clinical or ranking words.}
+  \reqrationale{The TA asked that terms such as ``guidance level'' be
+defined rather than left as jargon (\srcref{006}). Records describe
+practice only and are not an assessment (BR-006, SAF-RAY-004), and adults
+are not assumed to have clinical training
+(Section~\ref{sec:stakeholders}).}
+  \reqfit{Inspect every adult view against the glossary
+(Section~\ref{sec:glossary}) and the words ``diagnosis'', ``disorder'',
+``delay'', ``score'', ``rank'' and ``below average''. Pass when every
+glossary term used is explained in the view and none of the listed words
+appears.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{BR-006; \srcref{006}}
+  \reqtraces{SAF-RAY-004; \ucref{009}; \ucref{010}; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\subsection{Accessibility Requirements}
+\label{sec:accessibility}
+
+These requirements take specific WCAG 2.2 success
+criteria~\cite{wcag22} that the team can check without children, as the
+specialists and the supervisor advised (\srcref{005.08}, \srcref{008});
+full WCAG conformance is not required. Together with NFR-UX-001,
+NFR-UX-004 and NFR-UX-005, they are the criteria Squigglr follows
+(OI-08). The stylus is the main input (CON-003); finger input is a
+stretch goal and is not required here.
+
+\begin{srsrequirement}{NFR-UX-018}{Large touch targets}
+  \reqshall{Every control on a child-facing screen shall have a touch
+target of at least \texttt{TARGET\_SIZE\_MIN}.}
+  \reqrationale{Children's grip and fine motor control vary
+(\srcref{005.04}), and the supervisor named large icons as a WCAG idea to
+adopt (\srcref{008}). The size follows WCAG 2.2 success criterion 2.5.5
+Target Size (Enhanced)~\cite{wcag22}.}
+  \reqfit{Measure every control on every child-facing screen at the
+smallest supported screen size. Pass when every touch target is at least
+\texttt{TARGET\_SIZE\_MIN}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.04}; \srcref{008}}
+  \reqtraces{NFR-UX-002; \ucref{003}; \ucref{006}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-019}{Colour contrast}
+  \reqshall{On every screen, text shall have a contrast ratio of at least
+4.5:1 with its background, and icons and graphics needed to use a control
+at least 3:1.}
+  \reqrationale{Some children have sight challenges (\srcref{005.09}). The
+ratios follow WCAG 2.2 success criteria 1.4.3 Contrast (Minimum) and
+1.4.11 Non-text Contrast~\cite{wcag22}.}
+  \reqfit{Check every screen with a contrast checker. Pass when every
+piece of text and every control graphic meets its ratio.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-001; NFR-UX-004}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-020}{Text alternatives for icons}
+  \reqshall{Every icon or image that acts as a control shall have a text
+alternative that assistive technology can read.}
+  \reqrationale{An adult who uses a screen reader must still be able to set
+up and review practice, and designing for disability serves many groups
+(\srcref{005.09}). This follows WCAG 2.2 success criterion 1.1.1 Non-text
+Content~\cite{wcag22}. The child does not need the text
+(NFR-UX-002).}
+  \reqfit{Run an automated accessibility checker on every screen and
+inspect each control. Pass when every control has a text alternative that
+names its action.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-002; NFR-UX-012}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-021}{Feedback not by sound alone}
+  \reqshall{Every message to the child shall be shown on screen and, unless
+audio is turned off, also played as sound; no message shall rely on sound
+alone.}
+  \reqrationale{Offering more than one modality is encouraged in
+inclusive design, and the user can turn the audio off (\srcref{005.07}),
+so turning it off must not hide any feedback (NFR-UX-010). This follows
+WCAG 2.2 success criterion 1.3.3 Sensory Characteristics~\cite{wcag22}.}
+  \reqfit{With audio on and then off, show every approved feedback message
+and the lesson-end message. Pass when each appears on screen both times,
+and sound plays only when audio is on.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.07}}
+  \reqtraces{NFR-UX-010; NFR-UX-015; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-022}{Control of audio}
+  \reqshall{Any sound that plays automatically for more than 3 seconds
+shall have a control to pause or stop it.}
+  \reqrationale{Too much auditory stimulation can overwhelm children
+(\srcref{009.05}). This follows WCAG 2.2 success criterion 1.4.2 Audio
+Control~\cite{wcag22}.}
+  \reqfit{List every sound Squigglr plays. Pass when each sound longer than
+3 seconds can be paused or stopped from the screen it plays on.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.08}; \srcref{009.05}}
+  \reqtraces{NFR-UX-010; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-023}{Keyboard use of adult views}
+  \reqshall{Every function in adult views shall be usable with a keyboard
+alone.}
+  \reqrationale{Adults may review records on a computer
+(Section~\ref{sec:stakeholders}), and some cannot use a pointer. This
+follows WCAG 2.2 success criterion 2.1.1 Keyboard~\cite{wcag22}. Drawing
+on child-facing screens is excluded because it depends on the stylus path
+(CON-003).}
+  \reqfit{Complete every adult task in \ucref{001}, \ucref{002},
+\ucref{005}, \ucref{009} and \ucref{010} using only a keyboard. Pass when
+every task can be completed.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-014}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-024}{Resizable text in adult views}
+  \reqshall{Text in adult views shall be resizable to 200 percent without
+loss of content or function.}
+  \reqrationale{Some adults have sight challenges (\srcref{005.09}). This
+follows WCAG 2.2 success criterion 1.4.4 Resize Text~\cite{wcag22}.}
+  \reqfit{Zoom the browser to 200 percent on every adult view. Pass when
+all text is visible and every function still works.}
+  \reqpriority{Could}
+  \reqphase{PH-3}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-019}
+\end{srsrequirement}
+\endgroup
 
 \section{Performance Requirements}
 \label{sec:performance}
@@ -3659,13 +3998,14 @@ whether any budget is available. &
 G.4 (refinement service) & Shamil Canbolat & Oct.\ 17, 2026 \\
 \addlinespace
 OI-08 & \emph{Selected WCAG 2.2 success criteria.} The specialists
-recommended starting with WCAG (SRC-005, \intref{P2}{39:26}); the set of
-criteria Squigglr follows is TBD. The supervisor advised taking specific
-WCAG ideas as non-functional requirements rather than as a constraint
-(SRC-008). Still needed: a list of criteria the
-team can check without children. &
-G.1; accessibility and standards requirement IDs to be linked when written
-& Moustafa Moustafa (Usability); Shamil Canbolat (Compliance) &
+recommended starting with WCAG (SRC-005, \intref{P2}{39:26}), and the
+supervisor advised taking specific WCAG ideas as non-functional
+requirements rather than as a constraint (SRC-008). The criteria Squigglr
+follows are now listed in NFR-UX-001, NFR-UX-004, NFR-UX-005 and
+NFR-UX-018 to NFR-UX-024. Still needed: WCAG 2.2 listed in Standards
+Compliance Requirements. &
+G.1; NFR-UX-001, NFR-UX-004, NFR-UX-005, NFR-UX-018 to NFR-UX-024
+& Shamil Canbolat (Compliance) &
 Oct.\ 17, 2026 \\
 \addlinespace
 OI-09 & \emph{Supported devices and browsers.} CON-003 leaves the device

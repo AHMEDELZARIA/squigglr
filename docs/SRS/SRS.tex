@@ -1643,8 +1643,8 @@ it, which Table~\ref{tab:work-flows} defines.}
 \endlastfoot
 F1 & Child & The work & Strokes drawn for an attempt or in the
 creative space. \\
-F2 & Child & The work & Navigation: open a lesson, restart, move between
-stages, leave, or restore an original drawing. \\
+F2 & Child & The work & In the creative space, a request to turn
+refinement off or to restore the original drawing. \\
 F3 & The work & Child & Demonstrations and tracing guides for each
 stage. \\
 F4 & The work & Child & Feedback on an attempt, shown on screen and,
@@ -1653,12 +1653,12 @@ F5 & The work & Child & The refined drawing in the creative space. \\
 F6 & Supporting adult & The work & A child's profile details (first name
 and a username) and adult-set values (BR-001, BR-008). \\
 F7 & Supporting adult & The work & The lesson and starting stage chosen
-for a child (BR-003). \\
+for a child, and the start of that lesson (BR-003). \\
 F8 & Supporting adult & The work & A decision on a suggestion to go back
 a stage: accept or decline. \\
 F9 & Supporting adult & The work & Changes to a child's settings
-(accessibility, audio, adult-set values), or a request to restore an
-original drawing. \\
+(accessibility, audio, whether refinement is on, adult-set values), or a
+request to restore an original drawing. \\
 F10 & The work & Supporting adult & A suggestion to go back a stage after
 repeated difficulty (BR-003). \\
 F11 & The work & Supporting adult & Progress summaries and the attempt
@@ -1704,8 +1704,8 @@ F6 & -- & BUC-001 \\
 BE-002 & An adult decides what the child should practise next. &
 F7 & -- & BUC-002 \\
 \addlinespace
-BE-003 & A child starts or continues a guided lesson. &
-F1, F2 & F3, F4 & BUC-003 \\
+BE-003 & An adult starts a guided lesson for the child. &
+F1, F7 & F3, F4 & BUC-003 \\
 \addlinespace
 BE-004 & A child fails \texttt{DIFFICULTY\_STREAK} attempts in a row at
 one stage without improving. &
@@ -1744,20 +1744,22 @@ the profile and the values. Product use case: \ucref{001}.
 the child is ready for, from knowing the child and, once there is
 practice, from the records (ASM-006). The adult then chooses a lesson and
 its starting stage. Product use cases: \ucref{002}, \ucref{004}.
-\item[BUC-003 Practise a guided lesson (BE-003)] The child watches the
-demonstration and draws an attempt at each stage. The work checks each
-attempt against the stage's criteria, gives feedback, and moves the child
-on or offers a retry. The lesson ends when the child finishes it or
-reaches the attempt limit, and every attempt is recorded (BR-002).
+\item[BUC-003 Practise a guided lesson (BE-003)] The adult starts the
+lesson. The child watches the demonstration and draws an attempt at each
+stage. The work checks each attempt against the stage's criteria, gives
+feedback, and moves the child on or offers a retry. The lesson ends when
+the child finishes it or reaches \texttt{ATTEMPT\_LIMIT}, or
+\texttt{ATTEMPT\_LIMIT\_MAX} when extended, and every attempt is recorded
+(BR-002).
 Product use cases: \ucref{003}, \ucref{008}.
 \item[BUC-004 Respond to repeated difficulty (BE-004)] The work suggests
 going back a stage. The adult decides whether to accept; a declined or
 ignored suggestion changes nothing (BR-003). Product use case:
 \ucref{005}.
 \item[BUC-005 Draw freely (BE-005)] The child draws and edits in the
-creative space. The work refines the drawing a little, keeps it
-editable, and lets the child or the adult restore the original
-(BR-005). Product use cases: \ucref{006}, \ucref{007}.
+creative space. The work refines the drawing a little and keeps it
+editable. The child or the adult can turn refinement off or restore the
+original (BR-005; SRC-009.01). Product use cases: \ucref{006}, \ucref{007}.
 \item[BUC-006 Review progress (BE-006)] The adult reads a summary of the
 child's practice, opens the attempts behind it, and uses what they see
 to decide on further practice (BUC-002). The work gives no diagnosis or

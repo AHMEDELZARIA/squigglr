@@ -3203,10 +3203,10 @@ The specialists advised starting from the Web Content Accessibility
 Guidelines (WCAG) 2.2~\cite{wcag22} (\srcref{005.08}), and the supervisor
 advised taking specific WCAG ideas as non-functional requirements rather
 than treating WCAG as a constraint (\srcref{008}). Each requirement below
-that is based on a WCAG success criterion names it in its rationale. The
-accessibility criteria are listed in
-Section~\ref{sec:usability}, and WCAG itself is listed under Standards
-Compliance Requirements.
+that is based on a WCAG success criterion names it in its rationale.
+Further WCAG-based accessibility criteria are in
+Section~\ref{sec:usability}, and listing WCAG as a standard is open issue
+OI-08.
 
 \subsection{Appearance Requirements}
 \label{sec:appearance}
@@ -3283,10 +3283,12 @@ describes the drawing, not the child
 colour follows WCAG 2.2 success criterion 1.4.1 Use of
 Color~\cite{wcag22}, so a child who does not see the colour still sees
 the missed part.}
-  \reqfit{For each predefined difficulty and for a non-passing attempt,
-show a prepared drawing and inspect the feedback. Pass when no feedback
-uses any element on the error-styling list in this requirement, and every
-missed part stays visible when the feedback is viewed in greyscale.}
+  \reqfit{For each predefined difficulty, and for a passing and a
+non-passing attempt, show a prepared drawing and inspect the feedback.
+Pass when every feedback includes an encouraging cue from the approved
+feedback list (\mbox{\reqref{FR-LRN-014}}), none uses an element on the
+error-styling list in this requirement, and every missed part is marked by
+an outline, pattern or icon as well as by colour.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{1}; \srcref{005.06}; \srcref{009.02}}
@@ -3312,15 +3314,15 @@ colour and one position across all screens.}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-006}{Appealing but calm style}
-  \reqshall{Child-facing screens shall have a playful, child-friendly
-style that adult reviewers judge both appealing and calm.}
+  \reqshall{Child-facing screens shall have a style that adult reviewers
+judge both appealing to children and calm.}
   \reqrationale{Specialists warned that the design may not be appealing
 enough for children, and that the right balance is a playful design in a
 calm, minimally stimulating environment (\srcref{009.05}).}
   \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers every
-child-facing screen and ask them to rate how appealing and how calm each
-is, on a five-point scale. Pass when the median of each rating is at least
-\texttt{STYLE\_RATING\_MIN}.}
+child-facing screen and ask them to rate how appealing to children and
+how calm each is, on a five-point scale. Pass when the median of each
+rating is at least \texttt{STYLE\_RATING\_MIN}.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{009.05}}
@@ -3338,8 +3340,9 @@ with educators and occupational therapists, built up bit by bit
 (\srcref{005.06}), and involving them throughout design (\srcref{009.06}).
 None has been consulted yet (FACT-012).}
   \reqfit{Pass when the review record lists the reviewers and their roles,
-includes at least one educator or occupational therapist, and gives the
-outcome of every requested change.}
+includes at least one educator or occupational therapist, and states for
+every requested change either that it was made or the reason it was
+not.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{005.06}; \srcref{009.06}; FACT-012}

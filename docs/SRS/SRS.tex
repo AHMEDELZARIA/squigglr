@@ -104,9 +104,12 @@
 introduced the glossary and constants register, and prepared the shared
 requirement structure (\#131).\\
 14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
+14 October 2026 & Moustafa Moustafa & Wrote Section 8.2, Product Use Case Table (\#108).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#139).\\
 15 October 2026 & Ahmed Elzaria & Specified guided learning activities and formal lesson behaviour; clarified pass-based advancement within adult-selected lessons (\#132).\\
-14 October 2026 & Moustafa Moustafa & Wrote Section 8.2, Product Use Case Table (\#108).\\
+15 October 2026 & Ahmed Elzaria & Added safety-critical requirements SAF-AHM-001 and SAF-AHM-002 for drawing-input integrity (\#135).\\
+\bottomrule
+\end{tabularx}
 15 October 2026 & Moustafa Moustafa & Let the revision history table continue across pages (\#108).\\
 \end{longtable}
 
@@ -2493,6 +2496,38 @@ and every \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} is
 refused, an unset value equals the midpoint, and no change completes
 without the adult check.\\
 \emph{Hazards:} H-RAY-007.
+
+\item[SAF-AHM-001] Squigglr shall prevent duplicate reports of the same
+stylus input event from being counted more than once during evaluation or
+recording of an attempt, while preserving legitimate separately drawn
+strokes, including overlapping strokes.\\
+\emph{Rationale:} duplicate input events can inflate drawing coverage,
+produce incorrect pass or failure decisions, and cause saved records to
+differ from what the learner actually drew (H-AHM-002; BR-004).\\
+\emph{Fit criterion:} replay a known one-stroke or multi-stroke input
+sequence with and without duplicated input events; verify that the
+recorded points, classification and pass result are identical. Replay
+two separate deliberately overlapping strokes and verify that both
+are preserved.\\
+\emph{Related SRS requirements:} FR-LRN-007, FR-LRN-008.\\
+\emph{Hazards:} H-AHM-002.
+
+\item[SAF-AHM-002] Squigglr shall preserve the relative positions and order
+of stylus points within the active drawing surface when the canvas size
+or supported device orientation changes, and shall reject input whose
+coordinates cannot be mapped reliably to that surface.\\
+\emph{Rationale:} an incorrect coordinate mapping can distort a learner's
+drawing, produce an inaccurate passing decision, and corrupt stored
+attempts (H-AHM-003; BR-004).\\
+\emph{Fit criterion:} replay the same prepared stroke sequences before and
+after resizing the drawing surface or changing supported device
+orientation; verify equivalent relative point positions, stroke order
+and pass classifications. Supply invalid or unmappable coordinate values
+and verify that none is classified as passing or counted as an evaluable
+attempt.\\
+\emph{Related SRS requirements:} FR-LRN-007, FR-LRN-010.\\
+\emph{Hazards:} H-AHM-003.
+
 \end{description}
 \subsection{Precision or Accuracy Requirements}
 \lips

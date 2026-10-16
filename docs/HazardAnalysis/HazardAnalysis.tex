@@ -42,6 +42,7 @@
 14 October 2026 & Rayan Nasrallah & Added critical assumptions CA-001 to
 CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#140).\\
+15 October 2026 & Ahmed Elzaria & Added drawing-input and guided-lesson FMEA hazards H-AHM-001 to H-AHM-007 (part of \#135).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -288,6 +289,141 @@ settings behind the adult check; show the values in use next to the
 child's records. Document/Test: test that out-of-range and invalid values
 are refused and that the default is the midpoint. &
 G.2, G.3, SAF-RAY-008 \\
+\end{longtable}
+}
+\end{landscape}
+
+\subsection{Drawing Input and Guided-Lesson Decisions (H-AHM)}
+\label{sec:fmea-ahm}
+Table~\ref{tab:fmea-ahm} examines failures in the capture and interpretation
+of stylus input and in the decisions that use it. These failures can occur
+even on an otherwise supported device with a working network, so they are
+distinct from the environmental failure in H-RAY-002. Effects are assessed
+against drawing accuracy, record integrity and the child's well-being;
+Squigglr does not make clinical assessments (BR-006). Recommended actions
+are traced to the learning-activity requirements in the SRS. Two additional
+safeguards, SAF-AHM-001 and SAF-AHM-002, are specified in the SRS
+Safety-Critical Requirements section.
+\begin{landscape}
+{\footnotesize
+\setlength{\tabcolsep}{2pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{1.85cm}
+  >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{2.4cm}
+  >{\raggedright\arraybackslash}p{2.3cm}
+  >{\raggedright\arraybackslash}p{2.6cm}
+  >{\raggedright\arraybackslash}p{1.9cm}
+  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{2.1cm}@{}}
+\caption{FMEA: drawing input and guided-lesson decisions}
+\label{tab:fmea-ahm}\\
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\mbox{H-AHM-001} & Stylus input capture; attempt state & A stroke or part of
+one stroke disappears during a multi-stroke attempt, but the attempt is
+still finalized and evaluated. & Missed pointer samples, a brief
+input interruption or premature finalization (ASM-004); a stylus lift
+is mistaken for the end of an attempt. & The drawing appears incomplete
+or is scored inaccurately; a child receives undeserved failure feedback
+or loses a practice attempt. Loss: accurate feedback and record integrity. &
+Data integrity & Mitigate: retain ordered points and stroke boundaries;
+distinguish stylus lifts from finalization; treat interrupted or
+unevaluable input as non-passing without consuming an attempt.
+Document/Test: replay partial strokes and interruptions before and
+during a stroke. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010 \\
+\addlinespace
+\mbox{H-AHM-002} & Stylus event capture; attempt evaluation & One drawn stroke
+is captured or evaluated twice, inflating coverage or producing a
+spurious extra line. & Duplicate input events, accidental replay after
+reconnection, or combining the same stroke twice. & A poor attempt may
+pass, or a correct one may fail; saved strokes no longer represent what
+was drawn. Loss: integrity of feedback and practice records. &
+Data integrity & Mitigate: reject duplicate events within the same
+attempt before evaluation, without deleting legitimate separate
+strokes. Document/Test: replay duplicate events and distinct repeated
+strokes; verify that each is handled appropriately. &
+FR-LRN-007, FR-LRN-008; SAF-AHM-001 \\
+\addlinespace
+\mbox{H-AHM-003} & Input coordinates; reference-shape alignment & Valid
+stylus points are mapped to the wrong position or order and used to
+score the drawing. & Wrong canvas scale, coordinate offset or
+incorrect ordering after a resize or orientation change (ASM-004). &
+An accurate attempt fails, an inaccurate attempt passes, or incorrect
+strokes are saved. Loss: data integrity and trustworthy progress
+records. & Data integrity & Mitigate: verify that captured coordinates
+remain in the current drawing surface and retain their recorded order;
+reject input that cannot be mapped reliably. Document/Test: repeat
+known stroke traces before and after resizing or rotating the device. &
+FR-LRN-007, FR-LRN-010; SAF-AHM-002 \\
+\addlinespace
+\mbox{H-AHM-004} & Completeness and pass classifier; lesson flow & An
+incomplete drawing (for example, a square missing a side) is reported
+as passing and advances the child. & The geometric result is high even
+though a required segment is missing, or completeness is not checked
+before threshold comparison. & The system advances despite an
+unfinished task and records a misleading success. Loss: record
+integrity and appropriate guidance. & Data integrity & Eliminate:
+require completeness and the adult-selected passing threshold to both
+hold before a pass; otherwise remain at the same stage. Document/Test:
+use complete and missing-part drawings immediately above and below
+the threshold, including a high-scoring incomplete example. &
+FR-LRN-011, FR-LRN-013, FR-LRN-023 \\
+\addlinespace
+\mbox{H-AHM-005} & Feedback-selection logic; stage-result mapping & A detected
+attempt result or drawing difficulty is associated with the wrong
+pre-approved feedback observation (for example, a missed endpoint is
+reported as a missing segment). & A classification identifier is mapped
+to the wrong feedback entry, or the feedback lookup uses the wrong lesson
+or guidance stage. & The child is directed to correct a part of the
+drawing that was not identified as incorrect; the reported observation
+does not match the evaluated attempt. Loss: accurate guidance and
+feedback integrity. & Data integrity & Mitigate: select feedback from
+the approved catalogue using the evaluated result and correct lesson and
+stage identifiers; when no matching observation exists, do not present
+an unrelated correction. Document/Test: check the mapped message for
+every predefined classification and each drawing stage; test missing and
+mismatched identifiers. & FR-LRN-011, FR-LRN-013, FR-LRN-014 \\
+\addlinespace
+\mbox{H-AHM-006} & Failure-streak and suggestion logic; adult decision &
+Squigglr recommends moving backward at the wrong time, or changes
+the stage without the adult accepting the suggestion. & Invalid input
+is counted as failure, the streak is not reset, or the improvement
+suppression rule is omitted (BR-003). & The child receives unsuitable
+support or a needless interruption; adult control is bypassed. Loss:
+well-being and authorized lesson progression. & Psychological/ well-being &
+Mitigate: base the suggestion only on counted non-passing attempts and
+the defined improvement predicate; leave the current stage unchanged
+until an authorized adult accepts. Document/Test: replay improving,
+non-improving, invalid and threshold-boundary sequences; decline or
+ignore a suggestion. & FR-LRN-009, FR-LRN-018, FR-LRN-019,
+FR-LRN-020 \\
+\addlinespace
+\mbox{H-AHM-007} & Learner settings; attempt and lesson evaluation &
+The active attempt is evaluated using another learner's threshold, a
+stale value or a setting different from the adult's saved selection. &
+Wrong profile linkage, settings not refreshed after an adult change,
+or defaults applied over saved choices (BR-008; CA-006). & A drawing
+passes or fails incorrectly, a lesson ends too early or continues too
+long, and the adult receives misleading records. Loss: well-being and
+record integrity. & Data integrity & Mitigate: use the active learner's
+validated saved settings for passing, suggestions and limits; use
+midpoint defaults only for unset values. Document/Test: switch learner
+profiles and change settings; test boundaries, invalid combinations and
+the exact saved-versus-default choice. & FR-LRN-016, FR-LRN-017,
+FR-LRN-019, FR-LRN-021 \\
 \end{longtable}
 }
 \end{landscape}

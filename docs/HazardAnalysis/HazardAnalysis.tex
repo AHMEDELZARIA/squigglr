@@ -169,15 +169,16 @@ to confirm that it says what we claim it says.
 \item What went well while writing this deliverable?
 
 \textbf{Rayan:} Identifying the hazards was easier than expected because we already had good
-sources to work from. The specialist interview transcript gave us concrete
-statements, with timestamps, about how the intended children use apps and what
+sources to work from. The transcript of our interview with three domain
+specialists on 1 October 2026 gave us concrete statements, with timestamps, about how the intended children use apps and what
 could go wrong for them. For example, the specialists said adults should decide
 progression rather than the app, that audio feedback should be possible to
 mute, and that Squigglr may be used at home, at school or in other settings.
 Each of these pointed directly to a failure mode we could analyse, so we were
-not guessing at hazards from scratch. The supervisor meeting helped in the same
-way: once Dr.~Anand explained that thresholds should be set by the adult within
-a range, the hazards around wrong or extreme threshold values became clear.
+not guessing at hazards from scratch. Our meeting with our supervisor,
+Dr.~Anand, on 14 October 2026 helped in the same way: once Dr.~Anand explained
+that thresholds should be set by the adult for each child within a range, the
+hazards around wrong or extreme threshold values became clear.
 Because the SRS already recorded these sources, business rules and
 assumptions, we could trace each hazard and critical assumption back to a
 specific statement, which also made the mitigations easier to justify.
@@ -189,7 +190,8 @@ did you resolve them?
 documents changed. I wrote my first set of hazards and critical assumptions
 based on the SRS as it stood at the time, where the team would set fixed values
 for thresholds such as \texttt{DIFFICULTY\_STREAK} and \texttt{ATTEMPT\_LIMIT}.
-After the supervisor meeting, I changed those thresholds to be set by the
+In our meeting on 14 October 2026, Dr.~Anand advised that suitable values
+differ from child to child, so I changed those thresholds to be set by the
 supporting adult within a range the team defines. When I reviewed the hazard
 analysis again, I found that this changed the hazards: the risk was no longer
 only a wrong team-chosen value, but also an adult choosing a value at the edge
@@ -218,10 +220,10 @@ adult-only actions when no adult is watching (H-RAY-001). Thinking about
 repeated failed attempts led to the risks of a child becoming distressed
 (H-RAY-004) and of a lesson being restarted straight after it hits its limit
 (H-RAY-005). Assuming one device may be shared led to the risk of a child's
-records being saved under the wrong profile (H-RAY-006). Finally, the
-supervisor's advice that adults should set the thresholds for each child raised
+records being saved under the wrong profile (H-RAY-006). Finally, Dr.~Anand's
+advice in the 14 October meeting that adults should set the thresholds for each child raised
 the risk of a threshold being set to a value that does not suit the child
-(H-RAY-007). The specialist interview also shaped several of the mitigations,
+(H-RAY-007). The 1 October interview with the specialists also shaped several of the mitigations,
 such as letting adults mute audio feedback.
 
 \item Other than the risk of physical harm (some projects may not have any

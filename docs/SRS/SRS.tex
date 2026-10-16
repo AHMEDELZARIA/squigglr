@@ -115,6 +115,7 @@ requirement structure (\#131).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 8.1, Product Boundary (\#110).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
+16 October 2026 & Muhammad Huzaifah & Wrote Section 7, Business Data Model and Data Dictionary, with the data model figure, the entity and CRUD tables and the data dictionary (\#121).\\
 \end{longtable}
 
 ~\\
@@ -1006,6 +1007,16 @@ by a supporting adult. & \hyperref[sec:business-rules]{BR-005}\\
 learning-support staff member who configures activities and reviews
 records, as permitted by the account rules.
 & \hyperref[sec:stakeholders]{Section 2}\\
+\textbf{Lesson choice} & The lesson and starting stage that a supporting
+adult has chosen for a learner.
+& \hyperref[sec:data-dictionary]{Section 7.2}\\
+\textbf{Learner settings} & The values that tailor practice to one
+learner: the adult-set values, the audio setting, the accessibility
+settings and the refinement setting.
+& \hyperref[sec:data-dictionary]{Section 7.2}\\
+\textbf{Team-set values} & The ranges and fixed values that the team
+sets for every learner (BR-009).
+& \hyperref[sec:constants]{Section 4.2}\\
 \textbf{Fit criterion} & An observable or measurable acceptance check
 used to verify whether a requirement or constraint is met.
 & \hyperref[sec:constraints]{Section 3}\\
@@ -1023,6 +1034,9 @@ used to verify whether a requirement or constraint is met.
 & \hyperref[sec:purpose]{Document roadmap}\\
 \textbf{CON} & Mandated constraint identifier; \texttt{CON-\#\#\#}.
 & \hyperref[sec:constraints]{Section 3}\\
+\textbf{CRUD} & Create, reference, update, delete; the four ways in
+which a use case can act on data.
+& \hyperref[sec:bdm]{Section 7.1}\\
 \textbf{FR} & Functional requirement.
 & \hyperref[sec:functional]{Section 9}\\
 \textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
@@ -1060,6 +1074,9 @@ Numbered source statements use \texttt{SRC-\#\#\#.\#\#}.
 & \hyperref[sec:product-scope]{Section 8}\\
 \textbf{ULC} & Unlikely change identifier; \texttt{ULC-\#\#\#}.
 & \hyperref[sec:changes]{Section 27.2}\\
+\textbf{UML} & Unified Modeling Language, whose class-diagram
+multiplicity notation the data model uses.
+& \hyperref[sec:bdm]{Section 7.1}\\
 \textbf{V\&V} & Verification and validation.
 & \hyperref[sec:constraints]{Schedule}\\
 \textbf{WCAG} & Web Content Accessibility Guidelines; selected criteria
@@ -1779,10 +1796,778 @@ event; the maintenance requirements cover it.
 \end{description}
 
 \section{Business Data Model and Data Dictionary}
+\label{sec:data-model}
+
+This section defines the business data that Squigglr creates, uses and
+keeps: what a supporting adult's account, a learner profile, a lesson,
+an attempt record and a creative drawing are, how they relate, and what
+each term in the requirements means. The model is
+conceptual. Following the Volere template~\cite{robertson2012volere}, it
+records the subject matter the business must remember and the rules that hold between its parts; it
+is not a database design, and it fixes no tables, keys, storage or
+technology. The names defined here are the names the functional
+requirements use, in particular those of
+Sections~\ref{sec:fr-creative}, \ref{sec:fr-records} and
+\ref{sec:fr-progress}, and the product use cases UC-001 to UC-010
+(Table~\ref{tab:puc}) create, read and change this data.
+Subsection~\ref{sec:bdm} gives the model as a diagram, a table of
+entities, the data constraints and a check against the use cases.
+Subsection~\ref{sec:data-dictionary} defines every entity, attribute and
+data flow.
+
 \subsection{Business Data Model}
-\lips
+\label{sec:bdm}
+
+Figure~\ref{fig:data-model} shows the business entities and the
+associations between them, and Table~\ref{tab:data-entities} states each
+association with its multiplicity and its source. The entities fall into
+four groups. A supporting adult's account holds learner profiles, and
+each learner profile has its own learner settings (BR-001, BR-008). The
+team maintains the lesson catalogue, the supported items for refinement
+and the team-set values (BR-009; LC-001 in Table~\ref{tab:likelyChanges}).
+Guided practice starts from the lesson choices that adults make (BR-003)
+and produces lesson records, attempt records and go-back suggestions
+(G.3, G.5). The creative space produces creative drawings and their
+refinements (G.4, BR-005). A progress summary holds no data of its own:
+Squigglr builds it from one learner's lesson and attempt records whenever
+an adult opens it (G.6). Strokes, which attempt records,
+creative drawings and refinements are made of, are written inside those
+boxes rather than drawn as a separate box, so that the figure stays
+readable.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=3.45cm, y=-1.9cm,
+  near start/.style={pos=0.3}, near end/.style={pos=0.7},
+  ent/.style={draw, rectangle, minimum width=2.4cm, text width=2.25cm,
+    minimum height=0.95cm, align=center, font=\scriptsize},
+  team/.style={ent, fill=black!12},
+  derived/.style={ent, dashed},
+  assoc/.style={thick},
+  calc/.style={-{Stealth[length=2mm]}, thick, dashed},
+  m/.style={font=\scriptsize, inner sep=1.5pt}]
+% Entities: (column, row)
+\node[team] (tv) at (0,0) {Team-set values};
+\node[ent] (ls) at (1,0) {Learner settings};
+\node[ent] (cd) at (2,0) {Creative drawing\\\{Stroke\}};
+\node[ent] (rf) at (3,0) {Refinement\\original \{Stroke\}};
+\node[ent] (acc) at (0,1) {Supporting\\adult's account};
+\node[ent] (lp) at (1,1) {Learner profile};
+\node[ent] (lc) at (2,1) {Lesson choice};
+\node[team] (si) at (3,1) {Supported item};
+\node[ent] (gs) at (0,2) {Go-back\\suggestion};
+\node[ent] (lr) at (1,2) {Lesson record};
+\node[team] (les) at (2,2) {Lesson};
+\node[derived] (ps) at (0,3) {Progress summary};
+\node[ent] (ar) at (1,3) {Attempt record\\\{Stroke\}};
+\node[team] (st) at (2,3) {Stage};
+\node[team] (pd) at (2,4) {Predefined\\difficulty};
+% Associations with multiplicities at each end
+\draw[assoc] (tv) -- node[m, near start, above] {1}
+  node[m, near end, below] {0..*} (ls);
+\draw[assoc] (ls) -- node[m, near start, right] {1}
+  node[m, near end, right] {1} (lp);
+\draw[assoc] (acc) -- node[m, near start, above] {1}
+  node[m, near end, below] {0..*} (lp);
+\draw[assoc] (lp) -- node[m, near start, above] {1}
+  node[m, near end, below] {0..*} (lc);
+\draw[assoc] (lp) -- node[m, near start, above left] {1}
+  node[m, near end, above left] {0..*} (cd);
+\draw[assoc] (cd) -- node[m, near start, above] {1}
+  node[m, near end, below] {0..*} (rf);
+\draw[assoc] (rf) -- node[m, near start, right] {0..*}
+  node[m, near end, right] {1} (si);
+\draw[assoc] (lc) -- node[m, near start, right] {0..*}
+  node[m, near end, right] {1} (les);
+\draw[assoc] (lp) -- node[m, near start, right] {1}
+  node[m, near end, right] {0..*} (lr);
+\draw[assoc] (gs) -- node[m, near start, above] {0..*}
+  node[m, near end, below] {1} (lr);
+\draw[assoc] (lr) -- node[m, near start, above] {0..*}
+  node[m, near end, below] {1} (les);
+\draw[assoc] (lr) -- node[m, near start, right] {1}
+  node[m, near end, right] {0..*} (ar);
+\draw[assoc] (les) -- node[m, near start, right] {1}
+  node[m, near end, right] {4} (st);
+\draw[assoc] (ar) -- node[m, near start, above] {0..*}
+  node[m, near end, below] {1} (st);
+\draw[assoc] (st) -- node[m, near start, right] {1..*}
+  node[m, near end, right] {0..*} (pd);
+\draw[assoc] (ar) -- node[m, near start, below left] {0..*}
+  node[m, near end, below left] {0..*} (pd);
+% Derived output
+\draw[calc] (lr) -- (ps);
+\draw[calc] (ar) -- (ps);
+% Legend, below the diagram (coordinates in cm)
+\begin{scope}[x=1cm, y=1cm, every node/.style={font=\scriptsize},
+  txt/.style={anchor=north west, text width=3.3cm, align=left,
+    inner sep=0pt}]
+\draw (-1.35,-8.55) rectangle (12.0,-11.75);
+\node[anchor=west, inner sep=0pt] at (-1.2,-8.8) {\textbf{Legend}};
+% Row 1
+\draw (-1.2,-9.1) rectangle (-0.6,-9.45);
+\node[txt] at (-0.25,-9.12) {Entity that Squigglr keeps};
+\draw[fill=black!12] (3.2,-9.1) rectangle (3.8,-9.45);
+\node[txt] at (4.15,-9.12) {Entity that the team maintains};
+\draw[dashed] (7.6,-9.1) rectangle (8.2,-9.45);
+\node[txt] at (8.55,-9.12) {Derived output, with no data of its own};
+% Row 2
+\draw[thick] (-1.2,-10.32) -- (-0.6,-10.32);
+\node[txt] at (-0.25,-10.2) {Association
+  (Table~\ref{tab:data-entities})};
+\draw[-{Stealth[length=2mm]}, thick, dashed] (3.2,-10.32) --
+  (3.8,-10.32);
+\node[txt] at (4.15,-10.2) {Computed from the \mbox{entity} at the tail};
+\node[anchor=north west, inner sep=0pt] at (7.3,-10.2) {\{Stroke\}};
+\node[txt] at (8.55,-10.2) {Made of any number of strokes};
+% Row 3
+\node[anchor=north west, inner sep=0pt] at (-1.2,-10.9) {0..*};
+\node[txt, text width=12.2cm] at (-0.25,-10.9) {Multiplicity at a line
+  end: how many of the entity at that end relate to one entity at the
+  other end. 1 or 4: exactly that many; 0..*: any number; 1..*: one or
+  more.};
+\end{scope}
+\end{tikzpicture}
+\caption{Business data model of Squigglr. Each box is a business entity
+defined in Table~\ref{tab:data-dictionary}; each line is an association
+described in Table~\ref{tab:data-entities}.}
+\label{fig:data-model}
+\end{figure}
+
+Table~\ref{tab:data-entities} lists each entity with its associations and
+key attributes. Multiplicities are written as in a Unified Modeling
+Language (UML) class diagram, and each association names the rule,
+goal or requirement it comes from. The attributes are defined in
+Table~\ref{tab:data-dictionary}.
+
+{\footnotesize
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.19\textwidth}
+  >{\raggedright\arraybackslash}p{0.47\textwidth}
+  >{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\caption{Business entities, their associations and key attributes}
+\label{tab:data-entities}\\
+\toprule
+\textbf{Entity} & \textbf{Associations and multiplicity (source)} &
+\textbf{Key attributes} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Entity} & \textbf{Associations and multiplicity (source)} &
+\textbf{Key attributes} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Supporting adult's account & Holds zero or more learner profiles; each
+learner profile belongs to exactly one account (BR-001). A new account
+holds none until the adult adds a child (UC-001). &
+The adult who holds it; how the adult is identified is left to the
+Access Requirements. \\
+\addlinespace
+Learner profile & Belongs to one account; has exactly one learner
+settings; has zero or more lesson choices, lesson records and creative
+drawings (BR-001, BR-008; FR-REC-006; FR-CRT-023). &
+First name; username. Nothing else about the child (BR-001). \\
+\addlinespace
+Learner settings & Belongs to exactly one learner profile; every value
+lies within the one set of team-set values (BR-008). &
+Adult-set values; audio setting; accessibility settings; refinement
+setting. \\
+\addlinespace
+Team-set values & One set for the whole product; bounds the learner
+settings of every learner profile (BR-009). &
+Range of each adult-set value; the fixed values of
+Table~\ref{tab:goalconst}. \\
+\addlinespace
+Lesson & Part of the lesson catalogue; has exactly four stages in a fixed
+order; is the subject of zero or more lesson choices and lesson records
+(G.1; LC-001). &
+Lesson name. \\
+\addlinespace
+Stage & Belongs to exactly one lesson; has one or more predefined
+difficulties defined for it; zero or more attempt records are made at it
+(G.2, G.5; BR-007). &
+Stage kind; guide used. \\
+\addlinespace
+Predefined difficulty & Defined by the team for one or more stages;
+observed in zero or more attempt records, each time with a correction
+mark (G.5; BR-007; FR-REC-003). &
+Description, such as a missed part of an outline. \\
+\addlinespace
+Supported item & Part of the agreed supported set (OI-03 in
+Table~\ref{tab:openIssues}); each refinement concerns exactly one
+supported item (G.4; FR-CRT-015). &
+Name of the shape or simple object. \\
+\addlinespace
+Lesson choice & Made by an adult for exactly one learner profile and one
+lesson; read when an adult starts that lesson (BR-003; FR-LRN-016;
+UC-002 to UC-004). &
+Starting stage. \\
+\addlinespace
+Lesson record & One for each time a learner profile starts a lesson; of
+exactly one lesson; holds zero or more attempt records and go-back
+suggestions (BR-002; FR-REC-006, FR-REC-008). &
+Starting stage; furthest stage reached; successful attempts per stage;
+extension count; lesson ending. \\
+\addlinespace
+Attempt record & Belongs to exactly one lesson record; made at exactly
+one stage of that lesson; observes zero or more predefined difficulties
+of that stage (G.5; FR-REC-001 to FR-REC-005, FR-REC-008). &
+Actual strokes; observed difficulties; outcome or interrupted mark;
+stage result; attempt end time; adult-set values in use. \\
+\addlinespace
+Go-back suggestion & Made within exactly one lesson record after
+\texttt{DIFFICULTY\_STREAK} failed attempts in a row at one stage
+(BR-003; UC-005). &
+Suggested stage; suggestion status. \\
+\addlinespace
+Creative drawing & Belongs to exactly one learner profile; made of zero
+or more strokes; has zero or more refinements (G.4; FR-CRT-001,
+FR-CRT-015, FR-CRT-023). &
+Strokes; refined state. \\
+\addlinespace
+Refinement & Belongs to exactly one creative drawing; concerns one
+supported item; keeps one or more original strokes (BR-005; FR-CRT-015,
+FR-CRT-017). &
+Original strokes; refinement status. \\
+\addlinespace
+Stroke & Belongs to exactly one attempt record, creative drawing or
+refinement (BR-004, BR-005; ASM-004). &
+Path; colour and width in creative drawings. \\
+\addlinespace
+Progress summary & Derived for exactly one learner profile from that
+learner's lesson and attempt records; holds no data of its own (G.6;
+FR-PRG-001, FR-PRG-005). &
+See Table~\ref{tab:data-dictionary}. \\
+\end{longtable}
+}
+
+The model carries the following data constraints. None is new; each
+restates as a property of the data a rule or goal stated elsewhere, and
+each can be checked by inspecting saved data prepared by adults.
+\begin{itemize}
+  \item A learner profile holds only the child's first name and a
+  username that does not identify the child (BR-001).
+  \item Every adult-set value lies within its team-set range,
+  \texttt{ATTEMPT\_LIMIT} is larger than \texttt{DIFFICULTY\_STREAK},
+  and \texttt{ATTEMPT\_LIMIT\_MAX} is at least \texttt{ATTEMPT\_LIMIT}; a
+  value the adult does not choose is the middle of its range (BR-008).
+  \item Within one lesson record, the evaluable attempts at one stage
+  never exceed \texttt{ATTEMPT\_LIMIT\_MAX} (BR-002). An interrupted
+  attempt, or one whose input is invalid or too ambiguous to evaluate,
+  is not an evaluable attempt and is not counted (FR-LRN-009,
+  FR-LRN-010).
+  \item The actual strokes of an attempt record are the strokes the child
+  drew; they are never replaced by a corrected, ideal or refined shape
+  (BR-004, BR-005).
+  \item Every observed difficulty of an attempt record is a predefined
+  difficulty of that attempt's stage, and a later correction adds a mark
+  without removing the difficulty (G.5, BR-007).
+  \item A refinement keeps every refined stroke within
+  \texttt{REFINE\_TOLERANCE} of the original stroke, and it changes
+  neither the number nor the order, colours and widths of the strokes
+  (G.4, BR-005; FR-CRT-011, FR-CRT-012).
+  \item The original strokes of a refinement never change, so a restore
+  returns them exactly (G.4, BR-005).
+  \item A creative drawing is never an attempt record and never counts in
+  a lesson record or a progress summary (BR-004; FR-CRT-028).
+\end{itemize}
+
+Table~\ref{tab:data-crud} checks the model against the product use cases
+with a create, reference, update and delete (CRUD) table, as the Volere
+template recommends for finding missing requirements. Each cell shows
+whether a use case creates (C), references (R), updates (U) or deletes
+(D) the entity. The last column covers data the team maintains outside any
+product use case (BR-009).
+
+\begin{table}[htbp]
+\centering
+\caption{Use of the business data by the product use cases}
+\label{tab:data-crud}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X
+  *{11}{c}@{}}
+\toprule
+& \multicolumn{10}{c}{\textbf{Product use case UC-}} & \\
+\cmidrule(lr){2-11}
+\textbf{Entity} & 001 & 002 & 003 & 004 & 005 & 006 & 007 & 008 & 009 &
+010 & \textbf{Team} \\
+\midrule
+Supporting adult's account & R & R & & R & R & & & & R & R & \\
+Learner profile & C & R & R & R & R & R & R & R & R & R & \\
+Learner settings & C & & R & & R & & R & R & & RU & \\
+Team-set values & R & & R & & & & R & & R & R & CU \\
+Lesson & & R & R & R & & & & & R & & CU \\
+Stage & & & R & R & R & & & R & R & & CU \\
+Predefined difficulty & & & R & & & & & R & R & & CU \\
+Supported item & & & & & & & R & & & & CU \\
+Lesson choice & & C & R & CU & & & & & & & \\
+Lesson record & & & CU & & R & & & U & R & R & \\
+Attempt record & & & R & & R & & & C & R & R & \\
+Go-back suggestion & & & & & CRU & & & & & & \\
+Creative drawing & & & & & & CRU & RU & & & & \\
+Refinement & & & & & & U & CRU & & & & \\
+Stroke & & & C & & & CRUD & CRU & C & R & R & \\
+Progress summary & & & & & & & & & CR & & \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Every entity except the supporting adult's account is created by a use
+case or by the team, and every entity is read by at least one use case.
+The check leaves four gaps, recorded here so that
+the use cases and requirements can close them. First, no product use case
+creates a supporting adult's account; how an adult obtains an account is
+left to the Access Requirements. Second, no use case changes or removes a
+learner profile once created. Third, apart from erasing strokes in a
+creative drawing, no use case deletes any data: deleting records,
+drawings, profiles and accounts depends on open issue OI-02 in
+Table~\ref{tab:openIssues}. Fourth, a go-back suggestion is read only
+when an adult responds to it, and FR-REC-010 keeps that response.
+FR-LRN-019 and the formal specification treat a declined and an ignored
+suggestion alike, and SAF-RAY-001 keeps a pending suggestion until an
+adult accepts or declines it, but no requirement says when a pending
+suggestion counts as ignored.
+
 \subsection{Data Dictionary}
-\lips
+\label{sec:data-dictionary}
+
+Table~\ref{tab:data-dictionary} defines every class (an entity of
+Figure~\ref{fig:data-model}), every attribute of a class and every data
+flow that enters or leaves the work. Three flows share the name of the
+entity they carry: F5 is the refined drawing, F7 the lesson choice and
+F10 the go-back suggestion. Entries are sorted by type and then
+by name. The Meaning column uses the composition notation of the Volere
+template: ``A = B + C'' means that A is made of B and C; ``\{B\}'' means
+any number of B; ``[B \textbar{} C]'' means exactly one of B or C; and
+``(B)'' means that B may be absent. Units and domains are stated at the
+business level, and every bound uses a named constant rather than a
+number; most are in Table~\ref{tab:goalconst}. The Used by column lists
+the goals, business rules (Section~\ref{sec:business-rules}), use cases
+and requirements that use each entry; F1 to F12 are the data flows of
+Table~\ref{tab:work-flows}. Older names
+from earlier documents are given in the Meaning column where they help a
+reader.
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.13\textwidth}
+  >{\raggedright\arraybackslash}p{0.29\textwidth}
+  >{\raggedright\arraybackslash}p{0.105\textwidth}
+  >{\raggedright\arraybackslash}p{0.21\textwidth}
+  >{\raggedright\arraybackslash\exhyphenpenalty=10000}%
+    p{0.185\textwidth}@{}}
+\caption{Data dictionary}\label{tab:data-dictionary}\\
+\toprule
+\textbf{Name} & \textbf{Meaning} & \textbf{Type} &
+\textbf{Unit, domain or constraint} & \textbf{Used by} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Name} & \textbf{Meaning} & \textbf{Type} &
+\textbf{Unit, domain or constraint} & \textbf{Used by} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Attempt record & The record of one attempt, which is one try at one
+drawing stage of a lesson. Attempt record = Stage + Actual strokes +
+\{Observed difficulty\} + [Outcome \textbar{} Interrupted mark] + (Stage
+result) + Attempt end time + Adult-set values in use. & Class &
+One for each attempt that ends with an outcome, or that an adult
+interrupts after at least one stroke; belongs to exactly one lesson
+record. An interrupted attempt does not count towards an attempt limit.
+& G.5; UC-008; FR-LRN-009; FR-REC-001 to FR-REC-009; FR-PRG-006 \\
+\addlinespace
+Creative drawing & One drawing in the creative space. Creative drawing =
+\{Stroke\} + \{Refinement\} + Refined state. & Class &
+Belongs to the learner profile that was the active learner when it was
+drawn; never an attempt record. & G.4; BR-005; UC-006, UC-007;
+FR-CRT-001 to FR-CRT-030 \\
+\addlinespace
+Go-back suggestion & A suggestion that the learner go back to an earlier
+stage, which an adult accepts or declines (called a difficulty suggestion
+in FR-LRN-019). Go-back suggestion = Suggested stage + Suggestion
+status. & Class &
+Made only after \texttt{DIFFICULTY\_\allowbreak STREAK} failed attempts
+in a row at one stage, and not while the child is improving; changes the
+stage only if an adult accepts it; a declined or ignored suggestion is
+made again only after another full streak. & G.3; BR-003; CON-007;
+UC-005; F8, F10; FR-LRN-019; FR-REC-010; SAF-RAY-001, SAF-RAY-007 \\
+\addlinespace
+Learner profile & One child known to an account (called a child's
+profile in UC-001 and F6). Learner profile = First name + Username. &
+Class &
+Holds nothing else about the child; only the adult who holds the account
+creates, views and manages it. & BR-001; ASM-008; UC-001; F6 \\
+\addlinespace
+Learner settings & The values that tailor practice to one learner.
+Learner settings = Adult-set values + Audio setting + Accessibility
+settings + Refinement setting. & Class &
+Exactly one for each learner profile; changed by the adult who holds the
+account, except that the child can turn refinement off in the creative
+space (BUC-005). & BR-008; ASM-015; UC-001, UC-007, UC-010; F2, F6,
+F9 \\
+\addlinespace
+Lesson & A catalogue item, such as drawing a square, that teaches one
+line, shape or simple drawing through stages that give gradually less
+help (called an activity in earlier documents). Lesson = Lesson name +
+\{Stage\}. & Class &
+Exactly four stages, one of each stage kind, in a fixed order;
+maintained by the team. & G.1; ASM-010; LC-001; FR-LRN-001; UC-002, UC-003; F12 \\
+\addlinespace
+Lesson choice & A lesson and starting stage that an adult has chosen for
+a learner and that wait for an adult to start them. Lesson choice =
+Lesson + Starting stage. & Class &
+Made only by an adult; the starting stage is a stage of the chosen
+lesson. & BR-003; CON-007; FR-LRN-016; UC-002 to UC-004; F7;
+SAF-RAY-001 \\
+\addlinespace
+Lesson record & The record of one start of a lesson by a learner, up to
+the lesson's end. Lesson record = Lesson + Starting stage + Furthest
+stage reached + Successful attempts per stage + Extension count + Lesson
+ending + \{Attempt record\} + \{Go-back suggestion\}. & Class &
+A new lesson record each time the learner starts the lesson; unchanged
+after the lesson ends, except by deletion. & G.5; BR-002; UC-003;
+FR-REC-006 to FR-REC-010; FR-PRG-002; SAF-RAY-006 \\
+\addlinespace
+Predefined difficulty & A problem that the team defines in advance and
+that Squigglr can observe in an attempt, such as a missed part of an
+outline (called an observation in earlier documents). & Class &
+Defined by the team for one or more stages; never generated for a
+particular child. & G.5; BR-007; FR-REC-003; FR-PRG-004 \\
+\addlinespace
+Refinement & One automatic, minimal adjustment of the strokes of a
+creative drawing, made when the child finishes the drawing. Refinement =
+Original strokes + Refinement status. & Class &
+Applied whole or not at all; only in the creative space, never to a
+guided lesson. & G.4; BR-005; UC-007; FR-CRT-010 to FR-CRT-021 \\
+\addlinespace
+Stage & One step of a lesson (also called a guidance level in
+Table~\ref{tab:glossary}). Stage = Stage kind + Guide used +
+\{Predefined difficulty\}. & Class &
+Attempts are made only at the three drawing stages, not at the
+demonstration. & G.1, G.2; BR-002; FR-LRN-002, FR-LRN-003;
+\texttt{STAGE\_PASS} \\
+\addlinespace
+Stroke & One continuous line drawn with the stylus. Stroke = Path +
+(Colour + Width). & Class &
+Belongs to exactly one attempt record, creative drawing or refinement;
+colour and width are kept for strokes in creative drawings. & CON-003;
+ASM-004; BR-004; FR-REC-002; FR-CRT-001; F1 \\
+\addlinespace
+Supported item & A shape or simple object in the agreed supported set,
+which Squigglr refines. & Class &
+The set is agreed by the team (OI-03); drawings of other items are not
+refined. & G.4; FR-CRT-015 \\
+\addlinespace
+Supporting adult's account & The account of a parent, guardian,
+caregiver, educator or learning-support staff member who uses Squigglr
+with one or more children. Supporting adult's account = \{Learner
+profile\}. & Class &
+Held by one adult, who alone sees and manages its learner profiles and
+their records; how the adult is identified is left to the Access
+Requirements. & BR-001; ASM-009; ULC-002 \\
+\addlinespace
+Team-set values & The values the team fixes for every learner.
+Team-set values = \{Range\} + \texttt{IMPROVE\_MARGIN} +
+\texttt{REFINE\_TOLERANCE} + \texttt{RECUR\_MIN}. Range = Minimum +
+Maximum, one range for each adult-set value. & Class &
+Set from adult-made drawings only, never from testing with children; the
+ranges and \texttt{IMPROVE\_MARGIN} have the values of
+Table~\ref{tab:goalconst}, which OI-05 verifies;
+\texttt{REFINE\_TOLERANCE} and \texttt{RECUR\_MIN} are TBD. & BR-009;
+OI-05; LC-002; Table~\ref{tab:goalconst}; F12 \\
+\addlinespace
+Accessi\-bility settings & The accessibility options chosen for a
+learner. & Attribute &
+Content to be set by the Accessibility Requirements. & UC-010; F9 \\
+\addlinespace
+Active learner & The learner profile that an adult has selected for the
+current session, to which attempts, suggestions and creative drawings
+are saved. & Attribute &
+One learner profile of the account in use. & ASM-008; FR-CRT-023,
+FR-CRT-026; SAF-RAY-007 \\
+\addlinespace
+Actual strokes & The strokes the child drew in an attempt. Actual
+strokes = \{Stroke\}. & Attribute &
+In the order drawn, as captured; never replaced by a corrected, ideal
+or refined shape. & BR-004; ULC-005; FR-LRN-007; FR-REC-002; FR-CRT-027 \\
+\addlinespace
+Adult-set values & The six values a supporting adult chooses for each
+child (Table~\ref{tab:goalconst}). Adult-set values =
+\texttt{STAGE\_PASS} + \texttt{DIFFICULTY\_STREAK} +
+\texttt{ATTEMPT\_LIMIT} + \texttt{IMPROVE\_WINDOW} +
+\texttt{ATTEMPT\_EXTENSION} + \texttt{ATTEMPT\_LIMIT\_MAX}. & Attribute &
+Each within its team-set range, by default its middle;
+\texttt{ATTEMPT\_\allowbreak LIMIT} larger than
+\texttt{DIFFICULTY\_\allowbreak STREAK};
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} at least
+\texttt{ATTEMPT\_\allowbreak LIMIT}. \texttt{STAGE\_PASS} is a result in
+points out of 100; the others are counts of attempts. & G.2, G.3; BR-008;
+FR-LRN-017; UC-001, UC-010; F6, F9; SAF-RAY-008 \\
+\addlinespace
+Adult-set values in use & The learner's adult-set values at the time an
+attempt was made. & Attribute &
+As for adult-set values; a later change to the learner settings does
+not alter them. & ASM-006; LC-007; FR-REC-004; FR-PRG-006 \\
+\addlinespace
+Attempt end time & When an attempt ended. & Attribute &
+Date and time. & FR-REC-001; FR-PRG-002, FR-PRG-011 \\
+\addlinespace
+Audio setting & Whether feedback to the learner includes audio. &
+Attribute & On or muted. & ASM-015; UC-010; F4, F9 \\
+\addlinespace
+Colour & The colour of a stroke in a creative drawing. & Attribute &
+One of the colours Squigglr offers; unchanged by refinement. &
+FR-CRT-005, FR-CRT-011 \\
+\addlinespace
+Correction mark & Whether the child corrected an observed difficulty
+later in the same attempt (called a change during the attempt in
+earlier documents). & Attribute &
+Corrected or not corrected; a correction never removes the observed
+difficulty. & G.5; FR-REC-003; FR-PRG-004 \\
+\addlinespace
+Extension count & The number of times the attempt limit of a lesson
+record was extended because the child was improving. & Attribute &
+Count of extensions, at most one at each stage; evaluable attempts at
+one stage never exceed
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002;
+FR-LRN-020; SAF-RAY-006 \\
+\addlinespace
+First name & The child's first name, as the adult enters it. &
+Attribute & First name only; no surname or other detail. & BR-001;
+F6 \\
+\addlinespace
+Furthest stage reached & The latest stage of the lesson that the learner
+reached in a lesson record. & Attribute &
+A stage of the lesson. & G.5; BR-002; FR-REC-006; FR-PRG-002 \\
+\addlinespace
+Guide used & Whether attempts at a stage are made with a guide or
+without one (FR-LRN-012 calls such attempts assisted and independent).
+& Attribute &
+With a guide: tracing a full outline, or drawing between endpoints only.
+Without a guide: drawing with no guide. & G.6; FR-LRN-012; FR-PRG-003 \\
+\addlinespace
+Interrupted mark & Marks an attempt that an adult stopped, by ending the
+session or switching learner, after at least one stroke and before its
+outcome was decided. & Attribute &
+Set or not set; an interrupted attempt has no outcome. & ASM-008,
+ASM-015; FR-REC-005; FR-PRG-009 \\
+\addlinespace
+Latest attempt time & The attempt end time of the most recent attempt
+that a progress summary includes. & Attribute &
+Date and time. & FR-PRG-011 \\
+\addlinespace
+Lesson ending & How the lesson of a lesson record ended. & Attribute &
+In progress; every stage passed; ended at
+\texttt{ATTEMPT\_\allowbreak LIMIT}; ended when a granted extension ran
+out or \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} was
+reached; or unfinished, when an adult stopped it early. & BR-002;
+FR-LRN-021; FR-REC-007; FR-PRG-002; SAF-RAY-005, SAF-RAY-006 \\
+\addlinespace
+Lesson name & The name of a lesson in the catalogue, such as drawing a
+square. & Attribute &
+Names one lesson of the catalogue. & G.1; LC-001 \\
+\addlinespace
+Observed difficulty & A predefined difficulty that Squigglr observed in
+an attempt. Observed difficulty = Predefined difficulty + Correction
+mark. & Attribute &
+A predefined difficulty of the attempt's stage, listed at most once in
+each attempt record. & G.5; BR-007; FR-REC-003; FR-PRG-004; F4 \\
+\addlinespace
+Original strokes & The strokes of a creative drawing exactly as they
+were immediately before a refinement: the same strokes in the same
+order, with the same points, colours and widths. For the first
+refinement of a drawing, they are the child's own strokes. Original
+strokes = \{Stroke\}. & Attribute &
+At least one stroke; never changed, so that a restore returns them
+exactly. & G.4; BR-005; FR-CRT-017 to FR-CRT-019, FR-CRT-023 \\
+\addlinespace
+Outcome & Whether an attempt passed: its drawing is complete and its
+result meets the \texttt{STAGE\_PASS} in use (passed, also called
+successful), or it does not (not passed, also called unsuccessful or
+failed). & Attribute &
+Passed or not passed; absent for an interrupted attempt. & G.2; BR-002;
+FR-LRN-013; FR-REC-001; F4 \\
+\addlinespace
+Path & The points of a stroke, in the order drawn. Path =
+\{Point\}. & Attribute &
+At least one point. & ASM-004; FR-LRN-007; SAF-AHM-002; FR-REC-002; FR-CRT-011, FR-CRT-012 \\
+\addlinespace
+Point & One position on the drawing area that a stroke passes
+through. & Attribute &
+Position on the drawing area, in the same unit of distance as
+\texttt{REFINE\_\allowbreak TOLERANCE}; the unit is TBD and will be fixed
+with the value of that constant. & ASM-004; FR-CRT-012 \\
+\addlinespace
+Practice-only statement & The statement on every progress summary that
+it describes practice only and is not an assessment or
+diagnosis. & Attribute &
+Fixed text, shown on every summary. & BR-006; SAF-RAY-004 \\
+\addlinespace
+Recurring difficulty & A predefined difficulty that a progress summary
+lists because it keeps occurring. Recurring difficulty = Predefined
+difficulty + Stage + Lesson + count of attempts + count
+corrected. & Attribute &
+Observed in at least \texttt{RECUR\_MIN} attempts at the same stage of
+the same lesson; \texttt{RECUR\_MIN} is a team-set count, TBD, to be
+fixed with the other team-set values (OI-05). & G.6; FR-PRG-004 \\
+\addlinespace
+Refined drawing & A creative drawing while a refinement of it is in
+effect: the strokes the refinement produced, as the child may later
+edit them. & Attribute &
+Same number, order, colours and widths of strokes as its original
+strokes; every refined stroke within
+\texttt{REFINE\_\allowbreak TOLERANCE} of its original stroke; stays
+editable. & G.4; BR-005; FR-CRT-011 to FR-CRT-013; F5 \\
+\addlinespace
+Refined state & Whether a creative drawing holds a refinement that has
+not been undone or restored. & Attribute &
+Refined or not refined. & FR-CRT-016 \\
+\addlinespace
+Refinement setting & Whether automatic refinement is on for a learner in
+the creative space. & Attribute &
+On or off. & BR-005; UC-007, UC-010; F2, F9; FR-CRT-030 \\
+\addlinespace
+Refinement status & Where one refinement stands. & Attribute &
+In effect, undone or restored. & FR-CRT-007, FR-CRT-017 \\
+\addlinespace
+Stage kind & Which of the four stages a stage is. & Attribute &
+Demonstration; tracing a full outline; drawing between endpoints only;
+or drawing with no guide, in that order. & G.1; FR-LRN-002 \\
+\addlinespace
+Stage result & The result of an evaluable attempt on the normalized scale
+of Table~\ref{tab:goalconst}, where higher results indicate closer
+agreement with the stage's fixed criteria. & Attribute &
+Points out of 100; absent for an interrupted attempt. & BR-002; ASM-006;
+LC-008; FR-LRN-013, FR-LRN-020; FR-REC-001 \\
+\addlinespace
+Starting stage & The stage at which a learner starts a lesson. &
+Attribute &
+A stage of the lesson, chosen by an adult. & BR-003; UC-004;
+FR-LRN-016; FR-REC-006; FR-PRG-010 \\
+\addlinespace
+Successful attempts per stage & For each stage of a lesson record, the
+number of attempts that passed. Successful attempts per stage =
+\{Stage + count of attempts\}. & Attribute &
+Count of attempts. & G.5; BR-002; FR-REC-006; FR-PRG-002 \\
+\addlinespace
+Suggested stage & The stage a go-back suggestion proposes. & Attribute &
+An earlier stage of the same lesson than the one at which the failed
+attempts were made; on acceptance the adult chooses the earlier stage. &
+BR-003; UC-005; FR-LRN-019 \\
+\addlinespace
+Suggestion status & Where a go-back suggestion stands. & Attribute &
+Pending, accepted, declined or ignored; only an adult accepts or
+declines, and a declined or ignored suggestion changes nothing. & G.3;
+BR-003; UC-005; F8; FR-LRN-019; FR-REC-010 \\
+\addlinespace
+Username & A name for the learner that the adult chooses, so that
+learners under one account can be told apart. & Attribute &
+Must not identify the child. & BR-001; ASM-008; F6 \\
+\addlinespace
+Width & The width of a stroke in a creative drawing. & Attribute &
+Unchanged by refinement. & FR-CRT-011 \\
+\addlinespace
+Attempt record view & What the adult sees for one attempt record. Attempt
+record view = every value of the attempt record, with the actual strokes
+as recorded. & Data flow &
+Shown only to the adult who holds the account. & ULC-002; UC-009,
+UC-010; FR-PRG-006; F11 \\
+\addlinespace
+Catalogue update & What the team adds or changes. Catalogue update =
+\{Lesson\} + \{Supported item\} + (Team-set values). & Data flow &
+Made from adult-made drawings only. & BR-009; LC-001, LC-002; F12 \\
+\addlinespace
+Child navigation & How a child moves through Squigglr. Child
+navigation = [Open a lesson \textbar{} Restart \textbar{} Move back and
+forth \textbar{} Leave]. & Data flow &
+Never changes the lesson choice or the starting stage. & FACT-007;
+BR-003 \\
+\addlinespace
+Editing action & A change the child makes to the open creative drawing.
+Editing action = [Select \textbar{} Move \textbar{} Resize \textbar{}
+Recolour \textbar{} Erase \textbar{} Undo \textbar{} Redo] + Part. Part
+= \{Stroke\}, the strokes the child selects. & Data flow &
+Acts only on the open creative drawing. & G.4; FR-CRT-002 to
+FR-CRT-008 \\
+\addlinespace
+Feedback & What Squigglr tells the child about an attempt. Feedback =
+\{Observed difficulty\} + Outcome. & Data flow &
+Drawn only from predefined difficulties, never generated advice; spoken
+only when the audio setting is on. & G.1; BR-007; ASM-015; FR-LRN-014; F4 \\
+\addlinespace
+Finish mark & The child's mark that a creative drawing is done. & Data
+flow &
+Starts exactly one refinement. & UC-007; FR-CRT-010 \\
+\addlinespace
+Learner profile details & What an adult enters to add a child. Learner
+profile details = First name + Username + (Adult-set values). & Data
+flow &
+From the adult who holds the account only; an adult-set value not
+entered takes the middle of its range. & BR-001, BR-008; UC-001; F6 \\
+\addlinespace
+Learner selection & An adult's choice of the active learner on a
+device. Learner selection = Learner profile. & Data flow &
+One learner profile of the account in use. & ASM-008; SAF-RAY-007 \\
+\addlinespace
+Progress summary & A view of one learner's practice over time.
+Progress summary = Learner profile + \{Lesson record\} + counts of
+attempts made with a guide + counts of attempts made without a guide +
+\{Recurring difficulty\} + Latest attempt time + Practice-only
+statement. & Data flow &
+Derived only from one learner's records, with no data of its own; no
+overall score; the two kinds of attempt are never added together. &
+G.6; BR-006; UC-009; FR-PRG-001 to FR-PRG-012; F11 \\
+\addlinespace
+Refinement off request & A child's request, in the creative space, to
+turn refinement off. & Data flow &
+Made in the creative space only; never reaches a guided lesson. & BR-005;
+UC-007; F2; FR-CRT-030 \\
+\addlinespace
+Refinement result & The adjusted strokes returned for one refinement by
+the service that refines drawings (LC-004). Refinement result =
+\{Path\}, one for each stroke of the drawing. & Data flow &
+Applied whole only if it meets FR-CRT-011 and FR-CRT-012; otherwise the
+drawing is left unchanged. & LC-004; FR-CRT-020, FR-CRT-021 \\
+\addlinespace
+Restore request & A request to restore the original strokes of a
+creative drawing. & Data flow &
+From the child for the open drawing, or from the adult who holds the
+account for any saved drawing. & BR-005; F2, F9; FR-CRT-017 to
+FR-CRT-019 \\
+\addlinespace
+Settings change & An adult's change to a learner's settings. Settings
+change = (Adult-set values) + (Audio setting) + (Accessibility
+settings) + (Refinement setting). & Data flow &
+From the adult who holds the account only; values outside their ranges
+are refused. & BR-008; UC-010; F9; SAF-RAY-008 \\
+\addlinespace
+Stage guide & What Squigglr shows the child at a stage. Stage guide =
+[Demonstration \textbar{} Full outline \textbar{} Endpoints]. & Data
+flow &
+Set by the stage kind; none at the stage with no guide. & G.1; F3 \\
+\addlinespace
+Strokes drawn & The strokes a child draws for an attempt or in the
+creative space. Strokes drawn = \{Stroke\}. & Data flow &
+Positions and order of points as the browser reports them. & CON-003;
+ASM-004; FR-LRN-007; SAF-AHM-001; F1 \\
+\addlinespace
+Suggestion response & An adult's answer to a go-back suggestion.
+Suggestion response = [Accept \textbar{} Decline]. & Data flow &
+From an adult only. & BR-003; UC-005; F8; FR-LRN-018; FR-REC-010; SAF-RAY-001 \\
+\addlinespace
+Summary view choice & What an adult asks a progress summary to show.
+Summary view choice = \{Lesson\} + Date range + \{Recorded
+value\}. & Data flow &
+Changes only what is shown, never the records; until the adult chooses,
+the summary covers all records. & ASM-006; LC-007; FR-PRG-007 \\
+\end{longtable}
+}
 
 \section{The Scope of the Product}
 \label{sec:product-scope}

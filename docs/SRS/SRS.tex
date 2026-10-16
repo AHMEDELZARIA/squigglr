@@ -112,6 +112,7 @@ requirement structure (\#131).\\
 15 October 2026 & Ahmed Elzaria & Added safety-critical requirements SAF-AHM-001 and SAF-AHM-002 for drawing-input integrity (\#135).\\
 15 October 2026 & Moustafa Moustafa & Let the revision history table continue across pages (\#108).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 6, The Scope of the Work, with the context diagram (\#109).\\
+16 October 2026 & Ahmed Elzaria & Added the requirement-to-phase allocation and deferred-feature register in Sections 21 and 25 (\#133).\\
 \end{longtable}
 
 ~\\
@@ -2962,9 +2963,146 @@ Inhibit the New Product}
 \section{Tasks}
 \label{sec:tasks}
 \subsection{Project Planning}
-\lips
+
+The Development Plan (\srcref{002}) defines the project's schedule, team
+responsibilities, development process, communication practices and deliverable
+management. Those arrangements are maintained in the Development Plan rather
+than duplicated in the SRS. This section assigns the SRS requirements to
+delivery phases; the course deadlines also appear under CON-004
+(Table~\ref{tab:con-schedule}).
+
 \subsection{Planning of the Development Phases}
-\lips
+\label{sec:development-phases}
+
+The delivery plan distinguishes the following requirement targets:
+\begin{description}[style=nextline]
+  \item[PH-1 --- Proof of Concept (PoC), November 23, 2026.]
+  A demonstration of the core guided-lesson flow, input capture, stage
+  classification and pass-based progression using prepared examples.
+  \item[PH-2 --- Revision 0, February 1, 2027.]
+  The learner-specific configuration, feedback, retry and stopping rules,
+  and drawing-input and session safeguards required for a usable revision.
+  \item[PH-3 --- Final demonstration, March 15, 2027.]
+  The remaining record-history and progress-presentation safeguards and
+  final integrated functionality.
+  \item[Future.]
+  Enhancements outside the committed capstone delivery phases, recorded
+  in Section~\ref{sec:waiting-room}.
+\end{description}
+
+\emph{Priority} describes the requirement's delivery importance
+(\emph{Must}, \emph{Should} or \emph{Could}); \emph{phase} states the
+first milestone at which that behaviour is targeted. A PH-1 capability
+remains part of PH-2 and PH-3. The phase classification does not relax any
+safety requirement when its associated feature is in use: a phase
+demonstration shall not rely on a safeguard that has not been implemented
+for real learner use.
+
+Table~\ref{tab:requirement-phases} lists every currently specified SRS
+requirement, including the safety requirements derived from the Hazard
+Analysis. The functional-requirement priorities and phases agree with
+Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
+are classified here as \emph{Must} and assigned to the phase containing
+the behaviour they protect. The 33 identified requirements in this SRS are scheduled in PH-1
+through PH-3. Candidate enhancements are assigned to Future in
+Section~\ref{sec:waiting-room}.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth}%
+  >{\raggedright\arraybackslash}p{0.40\textwidth}%
+  >{\raggedright\arraybackslash}p{0.12\textwidth}%
+  >{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
+\caption{Requirement priorities and targeted delivery phases}
+\label{tab:requirement-phases}\\
+\toprule
+\textbf{Requirement ID} & \textbf{Required behaviour} &
+\textbf{Priority} & \textbf{Phase} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Requirement ID} & \textbf{Required behaviour} &
+\textbf{Priority} & \textbf{Phase} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\multicolumn{4}{@{}l}{\textbf{Learning activity requirements (Section 9.1)}}\\
+\addlinespace
+\reqref{FR-LRN-001} & Approved lesson catalogue & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-002} & Ordered guidance stages & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-003} & Demonstration & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-004} & Full-outline guidance & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-005} & Endpoint-only guidance & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-006} & Independent drawing & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-007} & Stylus stroke acquisition & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-008} & Multi-stroke attempts & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-009} & Interrupted attempt handling & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-010} & Invalid and ambiguous input & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-011} & Completeness classification & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-012} & Guidance classification & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-013} & Pass classification & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-014} & Predefined difficulty feedback & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-015} & Retry after non-passing attempts & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-016} & Adult lesson and starting-stage selection & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-017} & Adult-selected practice parameters & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-018} & Adult authorization for discretionary changes & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-019} & Difficulty suggestion & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-020} & Improvement-based extension & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-021} & Stage attempt limit and lesson end & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-022} & No learner evaluation or diagnosis & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-023} & Automatic within-lesson advancement & Must & PH-1 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Hazard-derived safety requirements (Section 12.2)}}\\
+\addlinespace
+\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-002} & Unsupported-device notice & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-003} & Preservation of unsaved attempts & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-004} & Non-diagnostic summaries and exports & Must & PH-3 \\
+\addlinespace
+\texttt{SAF-RAY-005} & Automatic lesson termination & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-006} & Restart and extension history & Must & PH-3 \\
+\addlinespace
+\texttt{SAF-RAY-007} & Active-learner identification and isolation & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-008} & Adult-setting bounds and authorization & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-AHM-002} & Drawing-coordinate integrity & Must & PH-2 \\
+\end{longtable}
+}
+
+The phase allocation is a planning baseline rather than an alternative
+source of requirement definitions. If a requirement's scope or phase
+changes, its entry in this table and, for requirements with a
+\texttt{Phase} field, its individual specification are updated together.
 
 \section{Migration to the New Product}
 \subsection{Requirements for Migration to the New Product}
@@ -2981,7 +3119,66 @@ Inhibit the New Product}
 \lips
 
 \section{Waiting Room}
-\lips
+\label{sec:waiting-room}
+
+The waiting room records candidate capabilities excluded from the PH-1,
+PH-2 and PH-3 delivery commitments. They may be considered after the
+core project goals and their safety requirements have been satisfied.
+Their classification as \emph{Future} is not a requirement to implement
+them during the capstone project.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}%
+  >{\raggedright\arraybackslash}p{0.49\textwidth}%
+  >{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\caption{Capabilities deferred to Future}
+\label{tab:waiting-room}\\
+\toprule
+\textbf{Capability} & \textbf{Reason for deferral and source} &
+\textbf{Phase} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Capability} & \textbf{Reason for deferral and source} &
+\textbf{Phase} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Camera-based finger tracing in the air & The specialists distinguished
+this gross-motor activity from the fine-motor practice supported by
+stylus-on-screen drawing and advised prioritizing touchscreen work
+(FACT-006; \srcref{005}). It is not part of the core guided-lesson
+catalogue (G.1, CON-003). & Future \\
+\addlinespace
+Letter and handwriting tracing & The agreed core catalogue covers
+lines, basic shapes and simple drawings (\reqref{FR-LRN-001}). The
+follow-up questionnaire places letters after shape practice
+(ASM-010, SRC-009.04; LC-001). & Future \\
+\addlinespace
+Finger drawing and input-size progression & Stylus input is the core
+interaction (CON-003). Finger input, or progression between finger,
+large-stylus and smaller-stylus interaction, requires additional
+input-specific verification and calibration (FACT-005; LC-006). & Future \\
+\addlinespace
+Full WCAG conformance & The capstone scope includes selected, verifiable WCAG 2.2 success
+criteria. Full conformance across all applicable criteria is a stretch
+goal, rather than a claim for the capstone release (OI-08; \srcref{005}). & Future \\
+\addlinespace
+Offline lesson use and synchronization & The initial scope assumes
+network access for lessons and records (ASM-005). Full offline operation
+and later synchronization would extend this scope; the existing safety
+requirement to preserve unsaved attempts (SAF-RAY-003) remains part of
+the committed product. & Future \\
+\end{longtable}
+}
+
+Creative-space refinement remains within goal G.4 unless the team
+formally changes that goal (OI-03); it is not moved into the waiting
+room here. Automatic selection of new lessons, diagnostic assessment,
+and AI-generated personalized advice are excluded by CON-007 and
+BR-003, BR-006 and BR-007, respectively; they are not implicitly
+promised as future features.
 
 \section{Ideas for Solution}
 \lips

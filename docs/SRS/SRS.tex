@@ -1,9 +1,8 @@
-% THIS DOCUMENT IS FOLLOWS THE VOLERE TEMPLATE BY Suzanne Robertson and James Robertson
-% ONLY THE SECTION HEADINGS ARE PROVIDED
-%
-% Initial draft from https://github.com/Dieblich/volere
-%
-% Risks are removed because they are covered by the Hazard Analysis
+% Squigglr software requirements specification (SRS).
+% Adapted from the Volere requirements template of Robertson and Robertson;
+% the original LaTeX skeleton was based on https://github.com/Dieblich/volere.
+% Template adaptations and conventions are documented in the Introduction.
+% Risk analysis is maintained in the separate Hazard Analysis document.
 \documentclass[12pt]{article}
 \usepackage{longtable}
 
@@ -15,26 +14,56 @@
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
       colorlinks=true,      % false: boxed links; true: colored links
-    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
-    citecolor=green,        % color of links to bibliography
-    filecolor=magenta,      % color of file links
-    urlcolor=cyan           % color of external links
+    linkcolor=blue,         % internal cross-references
+    citecolor=blue,         % bibliography citations
+    filecolor=blue,         % linked files
+    urlcolor=blue           % external URLs
 }
 
 \newcommand{\lips}{\textit{Insert your content here.}}
-% Link to a speaker turn in the interview transcript (Appendix).
-% \intref{P1}{28:37} prints "\intref{P1}{28:37}"; \intlink{P1}{28:37}{text} prints text.
+% Link directly to the corresponding de-identified interview transcript turn.
+% The InterviewTranscript.text appendix supplies the int:<speaker>-<timestamp> labels.
 \newcommand{\intlink}[3]{\hyperref[int:#1-#2]{#3}}
 \newcommand{\intref}[2]{\intlink{#1}{#2}{#1, #2}}
+
+% Uniform specification format for all functional and nonfunctional requirements.
+% Example:
+% \begin{srsrequirement}{FR-LRN-001}{Example title}
+%   \reqshall{Squigglr shall ...}
+%   \reqrationale{Why the behaviour is needed.}
+%   \reqfit{A repeatable, observable acceptance test.}
+%   \reqpriority{Must}
+%   \reqphase{PH-1}
+%   \reqsources{G.1; \srcref{005}}
+%   \reqtraces{\ucref{003}; H-AHM-001}
+% \end{srsrequirement}
+% Requirement identifiers and labels must remain stable across revisions.
+\newenvironment{srsrequirement}[2]{%
+  \par\medskip\noindent\phantomsection\label{req:#1}%
+  \textbf{#1 --- #2}\par\nobreak\smallskip
+}{\par\medskip}
+\newcommand{\reqfield}[2]{\noindent\textit{#1:} #2\par}
+\newcommand{\reqshall}[1]{\reqfield{Requirement}{#1}}
+\newcommand{\reqrationale}[1]{\reqfield{Rationale}{#1}}
+\newcommand{\reqfit}[1]{\reqfield{Fit criterion}{#1}}
+\newcommand{\reqpriority}[1]{\reqfield{Priority}{#1}}
+\newcommand{\reqphase}[1]{\reqfield{Phase}{#1}}
+\newcommand{\reqsources}[1]{\reqfield{Sources}{#1}}
+\newcommand{\reqtraces}[1]{\reqfield{Traceability}{#1}}
+\newcommand{\reqref}[1]{\hyperref[req:#1]{#1}}
+\newcommand{\srcref}[1]{\hyperref[src:#1]{SRC-#1}}
+% Existing identifiers in PR #118: UC-001 ... UC-010. The anchors become
+% active when that PR adds the corresponding uc:### labels.
+\providecommand{\ucref}[1]{\hyperref[uc:#1]{UC-#1}}
 
 \input{../Comments.text}
 \input{../Common.text}
 
 \begin{document}
 
-\title{Software Requirements Specification for \progname: subtitle describing software} 
+\title{Software Requirements Specification for \progname:\\ A Browser-Based Visual-Motor Practice and Progress-Tracking Platform}
 \author{\authname}
-\date{\today}
+\date{October 15, 2026}
 	
 \maketitle
 
@@ -48,7 +77,7 @@
 
 \section*{Revision History}
 
-\begin{tabularx}{\textwidth}{p{3cm}p{3cm}X}
+\begin{tabularx}{\textwidth}{p{3cm}p{3cm}>{\raggedright\arraybackslash}X}
 \toprule {\textbf{Date}} & {\textbf{Developer(s)}} & {\textbf{Change}}\\
 \midrule
 13 October 2026 & Rayan Nasrallah & Added the de-identified specialist interview transcript as an appendix (\#84).\\
@@ -61,13 +90,113 @@
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 18, Open Issues, and Section 27, Likely and Unlikely Changes (\#90).\\
 15 October 2026 & Rayan Nasrallah & Added the specialist questionnaire responses as SRC-009, with an appendix.\\
+15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions,
+introduced the glossary and constants register, and prepared the shared
+requirement structure (\#131).\\
+14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
 \bottomrule
 \end{tabularx}
 
 ~\\
 
-~\newpage
+
+\clearpage
+\pagenumbering{arabic}
+\phantomsection
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+\label{sec:introduction}
+
+\paragraph{Purpose and intended readers.}
+This Software Requirements Specification (SRS) defines the externally
+observable behaviour, constraints and quality requirements of \progname.
+It establishes a shared basis for the development team, the supervisor,
+reviewers and future maintainers to understand, design, implement and
+verify the product. It specifies \emph{what} Squigglr must provide rather
+than prescribing an implementation, except where a stakeholder has imposed
+a constraint. The project serves children practising drawing on a
+stylus-enabled touchscreen and the supporting adults who configure
+activities and review practice records (\srcref{001}, \srcref{004}).
+The scope, stakeholders, goals and constraints are established in
+Sections~\ref{sec:purpose}--\ref{sec:constraints}; requirements are refined
+in Section~\ref{sec:functional} and the subsequent quality sections.
+
+\paragraph{Template and adaptations.}
+This document follows the Volere Requirements Specification Template by
+Suzanne Robertson and James Robertson~\cite{robertson2012volere}; its
+LaTeX skeleton was adapted from the course's Volere template. The team
+retains the original headings except where changes clarify the capstone
+scope. In particular, Section~\ref{sec:terminology} includes a new
+symbolic-constants register; Section~\ref{sec:functional} separates
+learning activities, formal specification, creative drawing, attempt
+records and progress summaries; and Section~\ref{sec:changes} records
+likely and unlikely changes. Section~\ref{sec:traceability} provides
+cross-document traceability, while Appendix~\ref{app:sources} records
+requirement evidence. A separate Hazard Analysis covers risks, failures
+and mitigation measures rather than repeating Volere's risks material.
+The source register includes anonymized interview paraphrases with
+speaker codes and timestamps, and questionnaire statements identified by
+respondent and question code. The de-identified interview transcript is
+reproduced in Appendix~\ref{app:interview}, providing direct links to the
+supporting interview turns (\srcref{005}).
+
+\paragraph{Conventions and requirement format.}
+Project goals use \texttt{G.1}--\texttt{G.6}; constraints use
+\texttt{CON-\#\#\#}; facts \texttt{FACT-\#\#\#}; business rules
+\texttt{BR-\#\#\#}; assumptions \texttt{ASM-\#\#\#}; and fictional
+personas \texttt{PER-\#}. Requirement sources use
+\texttt{SRC-\#\#\#}; numbered statements within a source use
+\texttt{SRC-\#\#\#.\#\#}; and interview participants use anonymized
+codes \texttt{P1}, \texttt{P2} and \texttt{P3}. Product use cases use
+\texttt{UC-\#\#\#}; open questions use \texttt{OI-\#\#}; and likely
+and unlikely changes use \texttt{LC-\#\#\#} and
+\texttt{ULC-\#\#\#}, respectively.
+Functional requirements have the prefixes \texttt{FR-LRN},
+\texttt{FR-CRT}, \texttt{FR-REC} and \texttt{FR-PRG}, each followed by a
+three-digit suffix. Nonfunctional requirements use their section's
+assigned prefix. Hazard Analysis uses owner-prefixed identifiers such as
+\texttt{H-AHM}, likewise followed by a three-digit suffix.
+Identifiers, once assigned, are not renumbered. Each
+requirement contains a short title, one testable ``shall'' statement,
+rationale where needed, a fit criterion, a priority, a phase, evidence
+sources and links to related use cases, requirements or hazards.
+\emph{Must}, \emph{Should} and \emph{Could} identify delivery priority.
+Delivery phases are \emph{PH-1} (PoC demo: Nov.~23, 2026),
+\emph{PH-2} (Rev~0: Feb.~1, 2027), \emph{PH-3} (final demo:
+Mar.~15, 2027), and \emph{Future}. These phase identifiers are
+distinct from the interview participant codes; the requirement-by-phase
+plan belongs in Section~\ref{sec:tasks}.
+Symbolic constants are written in monospaced capitals (for example,
+\texttt{STAGE\_PASS}) and defined once in
+Section~\ref{sec:constants}. A value marked \emph{TBD} is not an
+approved threshold; unresolved values appear in the constants register,
+and are also linked to an open issue in Section~\ref{sec:open-issues}
+where such an issue exists. Diagrams, if used, must include a legend
+identifying their symbols and arrow meanings.
+Section~\ref{sec:fr-formal} will define any state-machine notation
+when the formal specification is completed.
+
+\paragraph{Document roadmap.}
+\hyperref[sec:purpose]{Sections~1--5} establish the problem,
+stakeholders, constraints, terminology and assumptions.
+\hyperref[sec:work-scope]{Sections~6--9} describe the work and product
+boundaries, data and use cases, and functional behaviour.
+\hyperref[sec:look-feel]{Sections~10--17} specify quality and
+compliance requirements.
+\hyperref[sec:open-issues]{Sections~18--26} document open questions,
+reusable solutions, project implications, implementation phases and
+deferred features. \hyperref[sec:changes]{Sections~27--28} cover
+change expectations and traceability. The appendices contain the
+\hyperref[app:sources]{requirement sources register},
+\hyperref[app:interview]{de-identified specialist interview transcript},
+\hyperref[app:questionnaire]{follow-up specialist questionnaire (SRC-009)},
+\hyperref[app:ai-use]{generative AI-use disclosure} and
+\hyperref[app:reflection]{team reflection}.
+Each section range links to its first section; the table of contents
+provides links to individual sections.
+
 \section{Purpose of the Project}
+\label{sec:purpose}
 
 This section states the problem Squigglr addresses, who has it, and the
 goals the project commits to. The problem and goals come from the Problem
@@ -146,8 +275,9 @@ G.1 Support structured drawing practice &
 or simple drawings, starts with a demonstration, and gives feedback and a
 retry at each drawing stage (SRC-001).
 \emph{Advantage:} structured practice at a suitable level supports
-visual-motor development (SRC-001), and children can enter a lesson,
-practise, restart and go back and forth on their own (SRC-005, \intref{P1}{34:13}).
+visual-motor development (SRC-001), and once an adult starts a lesson the
+child practises without constant adult help (SRC-005, \intref{P1}{34:13}).
+Within a lesson the child does not navigate; Squigglr moves between stages.
 Serves children.
 \emph{Measurement:} met when the team completes every stage of every
 catalogue lesson with prepared correct attempts, each attempt passes, and
@@ -243,56 +373,15 @@ summaries and locate the supporting attempts, with at least
 \end{longtable}
 }
 
-Table~\ref{tab:goalconst} lists the constants used in the goals. On the
-supervisor's advice (SRC-008), a constant marked \emph{Adult} is set for each
-child by the supporting adult. The team defines only its minimum and
-maximum. When an adult creates a child profile, Squigglr asks them to choose
-a value, shows example drawings of what the minimum and maximum look like,
-and lets them change it later. If the adult does not choose, the default is
-the middle of the range. A constant marked \emph{Team} has one fixed value.
-The team sets the ranges and fixed values, using adult-made drawings, and
-records them here; no value is
-chosen from child testing (SRC-004).
-
-\begin{table}[htbp]
-\centering
-\caption{Constants used in the goals}
-\label{tab:goalconst}
-\small
-\begin{tabularx}{\textwidth}{@{}lXlll@{}}
-\toprule
-\textbf{Constant} & \textbf{Meaning} & \textbf{Set by} & \textbf{Range} &
-\textbf{Value} \\
-\midrule
-\texttt{STAGE\_PASS} & Criteria an attempt must meet to pass each stage
-of a lesson (G.2) & Adult & TBD & Midpoint \\
-\texttt{DIFFICULTY\_STREAK} & Failed attempts in a row before Squigglr may
-suggest returning to an earlier stage (G.3) & Adult & TBD & Midpoint \\
-\texttt{ATTEMPT\_LIMIT} & Unsuccessful attempts at one stage before the
-lesson ends and its progress is saved; larger than
-\texttt{DIFFICULTY\_STREAK} (G.3) & Adult & TBD & Midpoint \\
-\texttt{IMPROVE\_WINDOW} & Number of recent attempts compared to decide
-whether a child is improving at a stage (G.3) & Adult & TBD & Midpoint \\
-\texttt{IMPROVE\_MARGIN} & Minimum rise in the average attempt result,
-against the stage's criteria, that counts as improving (G.3) & Team & -- &
-TBD \\
-\texttt{ATTEMPT\_EXTENSION} & Extra attempts allowed each time a child is
-improving when \texttt{ATTEMPT\_LIMIT} is reached (G.3) & Adult & TBD &
-Midpoint \\
-\texttt{ATTEMPT\_LIMIT\_MAX} & Most attempts at one stage, including
-extensions; at least \texttt{ATTEMPT\_LIMIT} (G.3) & Adult & TBD &
-Midpoint \\
-\texttt{REFINE\_TOLERANCE} & Maximum distance between a refined
-drawing and the original strokes (G.4) & Team & -- & TBD \\
-\texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers in the G.6
-check & Team & -- & TBD \\
-\texttt{REVIEW\_PASS\_RATE} & Minimum share of G.6 reviewer tasks that
-must succeed & Team & -- & TBD \\
-\bottomrule
-\end{tabularx}
-\end{table}
+The symbolic constants used to evaluate these goals, including values
+configurable by supporting adults, are recorded in the central register
+(Table~\ref{tab:goalconst}, Section~\ref{sec:constants}). Unknown
+bounds and fixed values remain explicitly unresolved; OI-05 tracks
+adult-configurable ranges and the improvement margin, while other
+TBD values are recorded in Section~\ref{sec:constants} (\srcref{008}).
 
 \section{Stakeholders}
+\label{sec:stakeholders}
 
 This section identifies who has an interest in Squigglr, who uses it, and
 how each group informed the requirements. Sources are cited by their
@@ -394,9 +483,9 @@ help:
   easiest starting point (SRC-005, \intref{P1}{26:46}), and finger input is a
   stretch goal. Some children may also have gross-motor or vision
   challenges (SRC-005, \intref{P2}{19:05}).
-  \item \textbf{Support needs:} children should be able to enter a lesson,
-  practise, restart, and move back and forth without constant adult help
-  (SRC-005, \intref{P1}{34:13}). Adults decide when a child moves to a new lesson
+  \item \textbf{Support needs:} once an adult starts a lesson, he should be
+  able to practise without constant adult help (SRC-005, \intref{P1}{34:13}).
+  He does not need to navigate, exit or restart a lesson. Adults decide when a child moves to a new lesson
   or skips a stage (SRC-005, \intref{P1}{28:37}).
   \item \textbf{Device experience:} many young children already know how
   to navigate touchscreen applications on tablets (SRC-005, \intref{P1}{34:13}).
@@ -459,8 +548,9 @@ concerns come from the sources cited; none were gathered from children
 \endhead
 \bottomrule
 \endlastfoot
-Children & May not read; need to find and restart a lesson alone
-(SRC-005, \intref{P1}{34:13}). & Icon-based navigation that needs little text. \\
+Children & May not read; need to practise without constant adult help
+(SRC-005, \intref{P1}{34:13}). & An adult starts the lesson; within it the
+child does not navigate, and Squigglr moves between stages. \\
 Children & Grip and fine-motor ability vary (SRC-005, \intref{P3}{25:36}). &
 Stylus is the main input; finger input is a stretch goal. \\
 Children (guided lessons) & Attempts must show what the child actually
@@ -639,6 +729,7 @@ technicians outside the team have been identified. Who maintains Squigglr
 after the project ends is an open item (TBD).
 
 \section{Mandated Constraints}
+\label{sec:constraints}
 This section lists constraints imposed on Squigglr from outside the team:
 by the supervisor, the teaching assistant (TA), the domain specialists
 interviewed (SRC-005), the course and the university. They are not design
@@ -817,9 +908,224 @@ the project.\\
 \end{description}
 
 \section{Naming Conventions and Terminology}
-\subsection{Glossary of All Terms, Including Acronyms, Used by Stakeholders
-involved in the Project}
-\lips
+\label{sec:terminology}
+\subsection{Glossary and Acronyms}
+\label{sec:glossary}
+The entries in Table~\ref{tab:glossary} standardize terminology already
+used in the goals, business rules and stakeholder evidence. The final
+version must be reconciled with all requirements contributed by the other
+section owners; a new term must be defined before its first substantive
+use and entered here. Source identifiers link to the supporting evidence
+register in Appendix~\ref{app:sources}.
+
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.58\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
+\caption{Project terminology and acronyms}\label{tab:glossary}\\
+\toprule
+\textbf{Term or acronym} & \textbf{Definition} & \textbf{Context}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Term or acronym} & \textbf{Definition} & \textbf{Context}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\textbf{Visual-motor integration} & Coordination of visual information
+with movement, relevant to drawing and writing-readiness activities.
+& \hyperref[sec:purpose]{Section 1}\\
+\textbf{Guided lesson} & A structured activity in the agreed lesson
+catalogue in which drawing guidance is provided in successive stages.
+& \hyperref[sec:purpose]{G.1--G.3}\\
+\textbf{Stage (guidance level)} & A step within a lesson that provides a
+specified amount of help, from demonstration through independent drawing.
+The progression policy is subject to OI-04.
+& \hyperref[sec:purpose]{G.2--G.3}\\
+\textbf{Attempt} & One try at the drawing task of a lesson
+stage; its strokes, observed difficulties and outcome are represented in
+the practice record. & \hyperref[sec:business-rules]{BR-002, BR-004}\\
+\textbf{Attempt record} & The record of the actual strokes, stage,
+predefined observations and outcome of an attempt; guided records are
+not replaced by refined shapes.
+& \hyperref[sec:business-rules]{BR-004}\\
+\textbf{Creative refinement} & Automatic, minimal adjustment of
+the child's strokes in the creative space only. The drawing remains
+editable, and the original can be restored by the child or, if needed,
+by a supporting adult. & \hyperref[sec:business-rules]{BR-005}\\
+\textbf{Supporting adult} & A parent, guardian, caregiver, educator or
+learning-support staff member who configures activities and reviews
+records, as permitted by the account rules.
+& \hyperref[sec:stakeholders]{Section 2}\\
+\textbf{Fit criterion} & An observable or measurable acceptance check
+used to verify whether a requirement or constraint is met.
+& \hyperref[sec:constraints]{Section 3}\\
+\textbf{ADHD} & Attention-deficit/hyperactivity disorder.
+& \hyperref[sec:purpose]{Section 1}\\
+\textbf{AI} & Artificial intelligence.
+& \hyperref[sec:business-rules]{BR-007}\\
+\textbf{ASM} & Assumption identifier; \texttt{ASM-\#\#\#}.
+& \hyperref[sec:assumptions]{Section 5.3}\\
+\textbf{BR} & Business rule identifier; \texttt{BR-\#\#\#}.
+& \hyperref[sec:business-rules]{Section 5.2}\\
+\textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}.
+& \hyperref[sec:facts]{Section 5.1}\\
+\textbf{BUC} & Business use case.
+& \hyperref[sec:purpose]{Document roadmap}\\
+\textbf{CON} & Mandated constraint identifier; \texttt{CON-\#\#\#}.
+& \hyperref[sec:constraints]{Section 3}\\
+\textbf{FR} & Functional requirement.
+& \hyperref[sec:functional]{Section 9}\\
+\textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
+& \hyperref[sec:changes]{Section 27.1}\\
+\textbf{HA} & Hazard Analysis, a separate document identifying failures,
+losses, mitigation measures and related requirements.
+& \hyperref[sec:introduction]{Introduction}\\
+\textbf{NFR} & Nonfunctional requirement; a required quality or constraint
+on system performance or operation.
+& \hyperref[sec:performance]{Section 12}\\
+\textbf{OI} & Open issue identifier; \texttt{OI-\#\#}.
+& \hyperref[sec:open-issues]{Section 18}\\
+\textbf{PER} & Fictional persona identifier; \texttt{PER-\#}.
+& \hyperref[sec:stakeholders]{Section 2.5}\\
+\textbf{P1--P3} & Anonymized identifiers for the three domain specialists
+interviewed as part of requirements elicitation; not delivery phases.
+& \hyperref[sec:src-interview]{Appendix A: Interview statements}\\
+\textbf{POC / PoC} & Proof of concept; the planned capstone
+feasibility demonstration, not a production release.
+& \hyperref[sec:constraints]{Schedule}\\
+\textbf{PSG} & Problem Statement and Goals project document.
+& \hyperref[sec:purpose]{Section 1}\\
+\textbf{PUC} & Product use case.
+& \hyperref[sec:product-scope]{Section 8}\\
+\textbf{SRS} & Software Requirements Specification, this document.
+& \hyperref[sec:introduction]{Introduction}\\
+\textbf{SRC} & Requirement source identifier; \texttt{SRC-\#\#\#}.
+Numbered source statements use \texttt{SRC-\#\#\#.\#\#}.
+& \hyperref[app:sources]{Appendix A}\\
+\textbf{TA} & Teaching assistant.
+& \hyperref[sec:purpose]{Section 1}\\
+\textbf{TBD} & To be determined; a value or decision not yet approved.
+& \hyperref[sec:constants]{Section 4.2}\\
+\textbf{UC} & Product use case identifier; \texttt{UC-\#\#\#}.
+& \hyperref[sec:product-scope]{Section 8}\\
+\textbf{ULC} & Unlikely change identifier; \texttt{ULC-\#\#\#}.
+& \hyperref[sec:changes]{Section 27.2}\\
+\textbf{V\&V} & Verification and validation.
+& \hyperref[sec:constraints]{Schedule}\\
+\textbf{WCAG} & Web Content Accessibility Guidelines; selected criteria
+may inform project accessibility requirements, without a claim of
+complete conformance (\srcref{008}).
+& \hyperref[sec:open-issues]{OI-08}\\
+\end{longtable}}
+
+\subsection{Symbolic Constants}
+\label{sec:constants}
+Values that affect learning-stage checks, progression suggestions,
+creative refinement and adult reviews are named here rather than
+repeated as literal numbers. The underlying meanings come from
+G.2--G.6, BR-002, BR-008 and supervisor guidance (\srcref{008}).
+For a constant set by an adult, the team must determine an admissible
+minimum and maximum. The adult chooses a value for the learner profile,
+may change it later, and otherwise receives the midpoint default
+(BR-008). A team-set constant is fixed only after its value has been
+approved. No TBD is an agreed numeric value, and the software must not
+silently assume one.
+
+{\small\setlength{\tabcolsep}{5pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
+\caption{Central symbolic constants register}\label{tab:goalconst}\\
+\toprule
+\textbf{Constant} & \textbf{Definition, unit, value, rationale and trace}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Constant} & \textbf{Definition, unit, value, rationale and trace}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\texttt{STAGE\_PASS} & Criteria an attempt must meet to pass a
+stage without making a judgement about the learner. \emph{Unit:} scoring
+unit TBD. \emph{Value:} adult-set within team-set bounds; bounds TBD;
+default: midpoint of the range (BR-008). \emph{Trace:} G.2,
+BR-002, BR-008, OI-05.\\
+\addlinespace
+\texttt{DIFFICULTY\_STREAK} & Consecutive unsuccessful attempts
+before Squigglr may suggest returning to an earlier stage.
+\emph{Unit:} count of failed attempts. \emph{Value:} adult-set within
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
+\emph{Trace:} G.3, BR-003, OI-05.\\
+\addlinespace
+\texttt{ATTEMPT\_LIMIT} & Number of unsuccessful attempts
+that triggers the lesson-end or extension decision; limits repetition.
+\emph{Unit:} count of failed attempts. \emph{Value:} adult-set within
+team-set bounds; bounds TBD; default: midpoint of the range
+(BR-008); must exceed
+\texttt{DIFFICULTY\_STREAK}. \emph{Trace:} G.3, BR-002, OI-05.\\
+\addlinespace
+\texttt{IMPROVE\_WINDOW} & Number of attempts in each
+comparison window used by the improvement rule.
+\emph{Unit:} count of attempts. \emph{Value:} adult-set within
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
+\emph{Trace:} G.3, BR-002, OI-05.\\
+\addlinespace
+\texttt{IMPROVE\_MARGIN} & Minimum increase in average
+attempt results across comparison windows that qualifies as improvement.
+\emph{Unit:} scoring unit TBD. \emph{Value:} team-set; TBD.
+\emph{Trace:} G.3, BR-002, OI-05.\\
+\addlinespace
+\texttt{ATTEMPT\_EXTENSION} & Additional attempts permitted
+when recent results satisfy the improvement criterion.
+\emph{Unit:} count of attempts. \emph{Value:} adult-set within
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008).
+\emph{Trace:} G.3, BR-002, OI-05.\\
+\addlinespace
+\texttt{ATTEMPT\_LIMIT\_MAX} & Maximum permitted attempts
+at a stage, including extensions.
+\emph{Unit:} count of attempts. \emph{Value:} adult-set within
+team-set bounds; bounds TBD; default: midpoint of the range (BR-008); at least
+\texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3, BR-002, OI-05.\\
+\addlinespace
+\texttt{REFINE\_TOLERANCE} & Maximum difference between
+refined and original strokes, to preserve the child's original work.
+\emph{Unit:} distance unit TBD. \emph{Value:} team-set; TBD.
+\emph{Trace:} G.4; team-defined value pending, with the
+refinement verification criterion to be specified.\\
+\addlinespace
+\texttt{ADULT\_REVIEWERS} & Minimum number of adults
+reviewing prepared progress summaries for understandability.
+\emph{Unit:} people (count). \emph{Value:} team-set; TBD.
+\emph{Trace:} G.6; validation procedure TBD.\\
+\addlinespace
+\texttt{REVIEW\_PASS\_RATE} & Minimum fraction of adult
+summary-review tasks successfully completed.
+\emph{Unit:} proportion. \emph{Value:} team-set; TBD.
+\emph{Trace:} G.6; validation procedure TBD.\\
+\addlinespace
+\texttt{AGE\_RANGE} & Intended age range of learners, to be
+confirmed with adult stakeholders rather than inferred from personas.
+\emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
+\emph{Trace:} Section~2.4, target age-range decision open.\\
+\end{longtable}}
+
+\paragraph{Resolution and validation.}
+OI-05 tracks the bounds of adult-configurable constants and the
+team-set improvement margin; the target is the V\&V Plan on
+November~2, 2026. The team will define and check the supported ranges
+using adult-made drawings rather than data from children
+(CON-005, CON-006; \srcref{004}, \srcref{008}). The exact scoring units
+for \texttt{STAGE\_PASS} and \texttt{IMPROVE\_MARGIN} depend on the
+formal classification model in Section~\ref{sec:fr-formal}; the coordinate scale for
+\texttt{REFINE\_TOLERANCE} requires agreement with the creative-drawing
+owner. \texttt{ADULT\_REVIEWERS} and
+\texttt{REVIEW\_PASS\_RATE} require a verification plan.
+The age bounds (\texttt{AGE\_RANGE}) and outstanding refinement and
+review constants are unresolved in this register; no open-issue
+identifiers are assigned here until the section owner creates them. Any constant
+introduced by another section owner must be added to this single
+register before merging that owner's requirements.
+
+
 
 \section{Relevant Facts And Assumptions}
 \label{sec:facts-assumptions}
@@ -1174,6 +1480,7 @@ still ends the lesson. Relevant to safety.
 \end{description}
 
 \section{The Scope of the Work}
+\label{sec:work-scope}
 \subsection{The Current Situation}
 \lips
 \subsection{The Context of the Work}
@@ -1190,6 +1497,7 @@ still ends the lesson. Relevant to safety.
 \lips
 
 \section{The Scope of the Product}
+\label{sec:product-scope}
 \subsection{Product Boundary}
 \lips
 \subsection{Product Use Case Table}
@@ -1198,10 +1506,34 @@ still ends the lesson. Relevant to safety.
 \lips
 
 \section{Functional Requirements}
-\subsection{Functional Requirements}
+\label{sec:functional}
+The following requirements are grouped by externally visible product
+function. Requirements use the identifiers and common field format
+defined in the Introduction; the relevant owners will populate each
+group from documented sources and stakeholder evidence.
+
+\subsection{Learning Activity Requirements}
+\label{sec:fr-learning}
+\lips
+
+\subsection{Formal Specification}
+\label{sec:fr-formal}
+\lips
+
+\subsection{Creative Drawing Requirements}
+\label{sec:fr-creative}
+\lips
+
+\subsection{Attempt Record Requirements}
+\label{sec:fr-records}
+\lips
+
+\subsection{Progress Summary Requirements}
+\label{sec:fr-progress}
 \lips
 
 \section{Look and Feel Requirements}
+\label{sec:look-feel}
 \subsection{Appearance Requirements}
 \lips
 \subsection{Style Requirements}
@@ -1231,10 +1563,96 @@ refs/References.bib. The standard itself goes in Standards Compliance
 Requirements.
 
 \section{Performance Requirements}
+\label{sec:performance}
 \subsection{Speed and Latency Requirements}
 \lips
 \subsection{Safety-Critical Requirements}
-\lips
+This subsection holds safety requirements that come from the Hazard Analysis
+and do not fit another section. Each lists the hazards it mitigates.
+
+\begin{description}
+\item[SAF-RAY-001] Squigglr shall allow lesson choice, starting-stage
+choice, learner switching and acceptance of a go-back suggestion only after
+an adult check that a child cannot complete by tapping icons, and shall keep
+a pending suggestion, without blocking practice, until an adult accepts or
+declines it.\\
+\emph{Rationale:} children should be able to practise without constant
+adult help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults
+(CON-007; SRC-005, \intref{P1}{28:37}). The form of the check is
+\texttt{ADULT\_CHECK}, TBD.\\
+\emph{Fit criterion:} in prepared walkthroughs, no adult-only action
+completes without passing the adult check, and a pending suggestion changes
+nothing until an adult acts.\\
+\emph{Hazards:} H-RAY-001, H-RAY-006.
+\item[SAF-RAY-002] Before a lesson starts, Squigglr shall check the device
+and browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not
+match, show an adult-readable notice that results may be unreliable.\\
+\emph{Rationale:} the team does not control the device (CON-001--CON-003).\\
+\emph{Fit criterion:} on each prepared unsupported combination the notice
+appears before the first attempt; on supported ones it does not.\\
+\emph{Hazards:} H-RAY-002.
+\item[SAF-RAY-003] Squigglr shall keep each completed attempt on the device
+until the server confirms it is saved, and shall tell the adult which
+attempts could not be saved.\\
+\emph{Rationale:} offline access is not promised (SRC-005,
+\intref{Moustafa}{6:03}), and G.5 needs complete records.\\
+\emph{Fit criterion:} with the connection cut during or after prepared
+attempts, no confirmed attempt is lost and every unsaved attempt is reported
+to the adult.\\
+\emph{Hazards:} H-RAY-002.
+\item[SAF-RAY-004] No record, summary or export shall show a
+diagnostic label, a judgement of the child's abilities or a comparison with
+other children, and every summary and
+export shall state that it describes practice only and is not an assessment
+or diagnosis.\\
+\emph{Rationale:} Squigglr makes no diagnosis (SRC-001; SRC-005,
+\intref{Moustafa}{6:03}), and adults reading records may have no training.\\
+\emph{Fit criterion:} inspection of every summary and export template finds
+none of the excluded content and finds the statement present.\\
+\emph{Hazards:} H-RAY-003.
+\item[SAF-RAY-005] Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT},
+or at \texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from
+the child, and shall keep the progress saved up to that point.\\
+\emph{Rationale:} the child is not expected to exit a lesson, and no adult
+may be watching (CA-001), so repeated failure must end on its own (G.3).\\
+\emph{Fit criterion:} in prepared sequences of failed attempts, each lesson
+ends at the limit in use with no child input, and the saved record matches
+the attempts made.\\
+\emph{Hazards:} H-RAY-004.
+\item[SAF-RAY-006] Squigglr shall record each lesson that ends at
+\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each
+improvement extension, show the adult how many times these happened for
+each lesson, and keep earlier attempts when a lesson is restarted.\\
+\emph{Rationale:} a restart could otherwise hide repeated failure from the
+adult.\\
+\emph{Fit criterion:} in prepared sequences that reach the limit and then
+restart, the count and all earlier attempts appear in the adult view.\\
+\emph{Hazards:} H-RAY-005.
+\item[SAF-RAY-007] Squigglr shall identify the active learner on every
+practice screen in a form a child who cannot read can recognize, and shall
+save every attempt and suggestion to that learner only.\\
+\emph{Rationale:} school devices may be shared by several children
+(SRC-004).\\
+\emph{Fit criterion:} in prepared multi-learner sessions on one device,
+every attempt and suggestion is saved under the learner shown when it was
+made.\\
+\emph{Hazards:} H-RAY-006.
+\item[SAF-RAY-008] Squigglr shall save a child's adult-set values
+(Table~\ref{tab:goalconst}) only within their team-set ranges, with
+\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the middle of each range when the
+adult does not choose; shall allow changes only after the adult check; and
+shall show the values in use alongside the child's records.\\
+\emph{Rationale:} the supervisor advised that the adult chooses these
+values (SRC-008); a wrong value can stop a child passing a stage they can
+draw, and a child must not change it.\\
+\emph{Fit criterion:} in prepared walkthroughs, every out-of-range value and
+every \texttt{ATTEMPT\_LIMIT} not larger than \texttt{DIFFICULTY\_STREAK}
+and every \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} is
+refused, an unset value equals the midpoint, and no change completes
+without the adult check.\\
+\emph{Hazards:} H-RAY-007.
+\end{description}
 \subsection{Precision or Accuracy Requirements}
 \lips
 \subsection{Robustness or Fault-Tolerance Requirements}
@@ -1279,7 +1697,6 @@ Requirements.
 \lips
 
 \section{Cultural Requirements}
-\subsection{Cultural Requirements}
 \lips
 
 \section{Compliance Requirements}
@@ -1294,6 +1711,7 @@ Accessibility Requirements). It is not legally required for this project;
 the domain specialists recommended it as a starting point (SRC-005, \intref{P2}{39:26}). Full conformance is a stretch goal.
 
 \section{Open Issues}
+\label{sec:open-issues}
 
 This section lists questions that are not yet settled and could change the
 requirements. Each issue has an identifier (OI-\#\#), an owner, the decision
@@ -1424,6 +1842,7 @@ Inhibit the New Product}
 \lips
 
 \section{Tasks}
+\label{sec:tasks}
 \subsection{Project Planning}
 \lips
 \subsection{Planning of the Development Phases}
@@ -1584,12 +2003,20 @@ that takes months (SRC-005, \intref{P2}{22:56}). \\
 \end{longtable}
 }
 
+\section{Traceability}
+\label{sec:traceability}
+\lips
+
+\clearpage
+\bibliographystyle{plain}
+\bibliography{../../refs/References}
+
 \newpage{}
 \section{Appendix --- Requirement Sources}
 \label{app:sources}
 
 This appendix is the requirement sources register. Each source has a fixed
-identifier (SRC-001 to SRC-008) that is never renumbered. A requirement names
+identifier (SRC-001 to SRC-009) that is never renumbered. A requirement names
 the sources it comes from in its rationale or source field. A statement from
 the specialist interview is cited by its source identifier, participant code
 and transcript timestamp, for example ``(SRC-005, \intref{P1}{28:37})''; the statement
@@ -1599,7 +2026,7 @@ participants are de-identified domain specialists (P1, P2 and P3). No child
 took part in the interview or in any other source listed here.
 
 Table~\ref{tab:src-docs} lists the project documents and meeting sources, and
-Table~\ref{tab:src-other} lists the interview and peer-review sources. The
+Table~\ref{tab:src-other} lists the interview, questionnaire and peer-review sources. The
 supported requirement identifiers are not listed in these tables yet. They
 are added as back-links as each requirement is written, so that every
 dependency appears at both ends: the requirement names its source, and the
@@ -1832,6 +2259,7 @@ one condition too early.
 
 \newpage{}
 \section{Appendix --- Generative AI Use Disclosure}
+\label{app:ai-use}
 
 \wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
 
@@ -1867,6 +2295,7 @@ whether material was generated by a human or an AI system.}
 \newpage{}
 
 \section{Appendix --- Reflection}
+\label{app:reflection}
 
 \input{../Reflection.text}
 

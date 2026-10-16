@@ -6,6 +6,7 @@
 \documentclass[12pt]{article}
 \usepackage{longtable}
 \usepackage{amsmath}
+\usepackage{amssymb}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -90,12 +91,12 @@
 14 October 2026 & Rayan Nasrallah & Wrote Section 5, Relevant Facts and Assumptions, with business rules (\#88).\\
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 18, Open Issues, and Section 27, Likely and Unlikely Changes (\#90).\\
-14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added the specialist questionnaire responses as SRC-009, with an appendix.\\
 15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions,
 introduced the glossary and constants register, and prepared the shared
 requirement structure (\#131).\\
 15 October 2026 & Ahmed Elzaria & Specified guided learning activities and formal lesson behaviour; clarified pass-based advancement within adult-selected lessons (\#132).\\
+\bottomrule
 \end{tabularx}
 
 ~\\
@@ -280,9 +281,8 @@ G.1 Support structured drawing practice &
 or simple drawings, starts with a demonstration, and gives feedback and a
 retry at each drawing stage (SRC-001).
 \emph{Advantage:} structured practice at a suitable level supports
-visual-motor development (SRC-001), and once an adult starts a lesson the
-child practises without constant adult help (SRC-005, \intref{P1}{34:13}).
-Within a lesson the child does not navigate; Squigglr moves between stages.
+visual-motor development (SRC-001), and children can enter a lesson,
+practise, restart and go back and forth on their own (SRC-005, \intref{P1}{34:13}).
 Serves children.
 \emph{Measurement:} met when the team completes every stage of every
 catalogue lesson with prepared correct attempts, each attempt passes, and
@@ -496,9 +496,9 @@ help:
   easiest starting point (SRC-005, \intref{P1}{26:46}), and finger input is a
   stretch goal. Some children may also have gross-motor or vision
   challenges (SRC-005, \intref{P2}{19:05}).
-  \item \textbf{Support needs:} once an adult starts a lesson, he should be
-  able to practise without constant adult help (SRC-005, \intref{P1}{34:13}).
-  He does not need to navigate, exit or restart a lesson. Adults decide when a child moves to a new lesson
+  \item \textbf{Support needs:} children should be able to enter a lesson,
+  practise, restart, and move back and forth without constant adult help
+  (SRC-005, \intref{P1}{34:13}). Adults decide when a child moves to a new lesson
   or skips a stage (SRC-005, \intref{P1}{28:37}).
   \item \textbf{Device experience:} many young children already know how
   to navigate touchscreen applications on tablets (SRC-005, \intref{P1}{34:13}).
@@ -561,9 +561,8 @@ concerns come from the sources cited; none were gathered from children
 \endhead
 \bottomrule
 \endlastfoot
-Children & May not read; need to practise without constant adult help
-(SRC-005, \intref{P1}{34:13}). & An adult starts the lesson; within it the
-child does not navigate, and Squigglr moves between stages. \\
+Children & May not read; need to find and restart a lesson alone
+(SRC-005, \intref{P1}{34:13}). & Icon-based navigation that needs little text. \\
 Children & Grip and fine-motor ability vary (SRC-005, \intref{P3}{25:36}). &
 Stylus is the main input; finger input is a stretch goal. \\
 Children (guided lessons) & Attempts must show what the child actually
@@ -780,7 +779,7 @@ CON-006 & The project shall run no study involving children. &
 SRC-004, SRC-005\\
 CON-007 & Squigglr shall not change lessons, skip guidance stages or
 move backward without adult authorization; pass-based forward movement
-within the selected lesson is allowed. & SRC-005; G.2--G.3\\
+within the selected lesson is allowed. & SRC-001, SRC-005, SRC-006\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -835,8 +834,9 @@ advances within the current lesson without an additional adult action;
 passing the final stage completes that lesson without starting another.
 Verify that switching lessons, skipping and returning to an earlier stage
 cannot occur without an adult choice or acceptance.\\
-\emph{Source:} SRC-005; G.2, G.3; BR-002, BR-003; team clarification
-recorded in revision history (\#132).
+\emph{Source:} SRC-001, SRC-005 (\intref{P1}{28:37};
+\intref{P2}{29:18}), SRC-006; team decision documented in
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/132}{\#132}.
 \end{description}
 
 \subsection{Implementation Environment of the Current System}
@@ -1057,6 +1057,20 @@ The result is not a measure of the child's ability (BR-006). Attempt-count
 settings shall be integers, and values violating the allowed ranges or
 the two cross-setting inequalities shall be rejected (BR-008).
 
+\paragraph{Basis and verification of numerical values.}
+The project team selected the initial ranges, defaults, five-point
+\texttt{IMPROVE\_MARGIN} and 0--100 result scale in a team discussion on
+15 October 2026 concerning issue
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/132}{\#132}.
+These are team-selected engineering starting values, not thresholds
+established by child testing or supplied numerically by the supervisor.
+The supervisor's 14 October guidance (\srcref{008}) requires
+adult-configurable ranges, midpoint defaults and example drawings
+illustrating both ends of the \texttt{STAGE\_PASS} range. The chosen
+values and the drawing-to-score interpretation are checked using
+prepared or adult-made examples at the lower and upper boundaries of
+each configurable range (OI-05; CON-005--006).
+
 {\small\setlength{\tabcolsep}{5pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
 \caption{Central symbolic constants register}\label{tab:goalconst}\\
@@ -1255,9 +1269,11 @@ ends, and the furthest stage reached and the number of successful attempts
 at each stage are saved. If, when \texttt{ATTEMPT\_LIMIT} is reached, the
 average result of the last \texttt{IMPROVE\_WINDOW} attempts is better
 than that of the \texttt{IMPROVE\_WINDOW} attempts before them by at least
-\texttt{IMPROVE\_MARGIN}, the child is improving and Squigglr allows
-\texttt{ATTEMPT\_EXTENSION} more attempts. Total attempts at a stage never
-exceed \texttt{ATTEMPT\_LIMIT\_MAX}.\\
+\texttt{IMPROVE\_MARGIN}, the child is improving and Squigglr grants a single extension of up to
+\texttt{ATTEMPT\_EXTENSION} additional evaluable attempts. The extension
+cannot be granted a second time at the same stage, regardless of later
+result changes. Total evaluable attempts at a stage never exceed
+\texttt{ATTEMPT\_LIMIT\_MAX}.\\
 \emph{Rationale:} moving forward on a pass checks the drawing against fixed
 criteria and does not assess the child (G.2). Ending the lesson stops a
 child from repeating a stage they cannot pass without limit, and saving the
@@ -1552,7 +1568,7 @@ to complete the core catalogue.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.1; \srcref{001}; \hyperref[src:009.04]{SRC-009.04}}
-  \reqtraces{ASM-010; LC-001; UC-002}
+  \reqtraces{ASM-010; LC-001; \ucref{002}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
@@ -1567,7 +1583,7 @@ practice begins.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.1--G.2; \srcref{001}; \srcref{005}}
-  \reqtraces{BR-003; UC-003; UC-004}
+  \reqtraces{BR-003; \ucref{003}; \ucref{004}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-003}{Demonstration}
@@ -1581,7 +1597,7 @@ or passed-stage record.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.1; \srcref{001}; \srcref{005}}
-  \reqtraces{BR-004; UC-003; UC-008}
+  \reqtraces{BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-004}{Full-outline guidance}
@@ -1594,7 +1610,7 @@ reference shape is visible, and draw an attempt using stylus input.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.1; \srcref{001}; \srcref{005}}
-  \reqtraces{CON-003; UC-003}
+  \reqtraces{CON-003; \ucref{003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-005}{Endpoint-only guidance}
@@ -1609,7 +1625,7 @@ accepted.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.1--G.2; \srcref{001}; \srcref{005}}
-  \reqtraces{CON-003; UC-003}
+  \reqtraces{CON-003; \ucref{003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-006}{Independent drawing}
@@ -1623,7 +1639,7 @@ stylus.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.2; \srcref{001}}
-  \reqtraces{BR-004; UC-003; UC-008}
+  \reqtraces{BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \paragraph{Input, classification and feedback.}
@@ -1638,7 +1654,7 @@ captured point order, number of strokes and boundaries match the samples.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.2, G.5; \srcref{001}; \srcref{004}}
-  \reqtraces{CON-003; ASM-004; BR-004; UC-003; UC-008}
+  \reqtraces{CON-003; ASM-004; BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-008}{Multi-stroke attempts}
@@ -1652,7 +1668,7 @@ figure, not two independently completed attempts.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.1--G.2; ASM-004; \srcref{001}}
-  \reqtraces{FR-LRN-007; UC-003; UC-008}
+  \reqtraces{FR-LRN-007; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-009}{Interrupted attempt handling}
@@ -1668,7 +1684,7 @@ stage attempt counters are unchanged.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.2, G.5; ASM-004; \srcref{001}}
-  \reqtraces{FR-LRN-008; BR-004; UC-003; UC-008}
+  \reqtraces{FR-LRN-008; BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-010}{Invalid and ambiguous input}
@@ -1685,7 +1701,7 @@ counters are unchanged.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.2; ASM-004; BR-004; \srcref{001}}
-  \reqtraces{FR-LRN-007; UC-003; H-AHM (input hazards)}
+  \reqtraces{FR-LRN-007; \ucref{003}; H-AHM-001; H-AHM-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-011}{Completeness classification}
@@ -1699,7 +1715,7 @@ verify complete and incomplete classifications match the known examples.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.2; BR-002; \srcref{001}}
-  \reqtraces{FR-LRN-013; UC-003; UC-008}
+  \reqtraces{FR-LRN-013; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-012}{Guidance classification}
@@ -1714,7 +1730,7 @@ independent.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.2, G.6; \srcref{001}}
-  \reqtraces{FR-LRN-004--006; UC-008; UC-009}
+  \reqtraces{FR-LRN-004--006; \ucref{008}; \ucref{009}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-013}{Pass classification}
@@ -1729,7 +1745,7 @@ meeting the threshold pass.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.2; BR-002; BR-006; \srcref{008}}
-  \reqtraces{FR-LRN-010--011; UC-003; H-AHM (wrong completion)}
+  \reqtraces{FR-LRN-010--011; \ucref{003}; H-AHM-004}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-014}{Predefined difficulty feedback}
@@ -1744,12 +1760,12 @@ free-generated advice or diagnosis is shown.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.1--G.2; BR-007; \srcref{001}; \hyperref[src:009.02]{SRC-009.02}}
-  \reqtraces{FR-LRN-011; UC-003; H-AHM (misleading feedback)}
+  \reqtraces{FR-LRN-011; \ucref{003}; H-AHM-005}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-015}{Retry after non-passing attempts}
   \reqshall{Squigglr shall allow the learner to retry a drawing stage following an
-attempt that does not pass, provided the lesson has not reached its
+attempt that does not pass, provided the stage has not reached its
 applicable attempt limit.}
   \reqrationale{G.1 requires opportunities to practise again without treating failure as a
 permanent stage result.}
@@ -1759,7 +1775,7 @@ and verify that the lesson-end rule is followed instead.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.1--G.3; BR-002; \srcref{001}}
-  \reqtraces{FR-LRN-021; UC-003}
+  \reqtraces{FR-LRN-021; \ucref{003}}
 \end{srsrequirement}
 
 \paragraph{Adult control, suggestions and stopping rules.}
@@ -1775,7 +1791,7 @@ action does not change the configured lesson or starting stage.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.3; CON-007; \hyperref[src:005.01]{SRC-005.01}; \srcref{006}}
-  \reqtraces{BR-003; UC-002; UC-004}
+  \reqtraces{BR-003; \ucref{002}; \ucref{004}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-017}{Adult-selected practice parameters}
@@ -1793,7 +1809,7 @@ combinations are rejected.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.2--G.3; BR-008; \srcref{008}}
-  \reqtraces{OI-05; UC-001; UC-010; H-AHM (settings not applied)}
+  \reqtraces{OI-05; \ucref{001}; \ucref{010}; H-AHM-007}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-018}{Adult authorization for discretionary changes}
@@ -1812,59 +1828,71 @@ without an additional adult action (FR-LRN-023).}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.2--G.3; CON-007; BR-002--003; \hyperref[src:005.01]{SRC-005.01}}
-  \reqtraces{OI-04 (TA confirmation); FR-LRN-023; UC-004; UC-005;
-H-AHM (misleading suggestion)}
+  \reqtraces{OI-04 (TA confirmation); FR-LRN-023; \ucref{004}; \ucref{005};
+H-AHM-006}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-019}{Difficulty suggestion}
   \reqshall{Squigglr shall offer, without applying, an optional suggestion to return to
-an earlier guidance stage when the learner reaches
-\texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing evaluable attempts at the
-active drawing stage and the improvement rule does not suppress suggestions.}
+an earlier drawing stage when the learner reaches
+\texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing evaluable attempts
+at an eligible stage and the improvement rule does not suppress suggestions.
+When an adult declines or ignores the suggestion, another suggestion shall
+require a new full failure streak.}
   \reqrationale{A supporting adult should decide whether earlier guidance is appropriate
 (G.3, BR-003).}
   \reqfit{Replay known failing sequences immediately below and at the selected streak
-threshold, both improving and non-improving; verify that a suggestion occurs
-only at the applicable threshold, is suppressed during qualifying improvement
-and never changes the stage by itself.}
+threshold at both eligible stages, including sequences with fewer than
+twice the configured \texttt{IMPROVE\_WINDOW} results and sequences with qualifying
+improvement; verify that insufficient history does not delay the first
+suggestion, that qualifying improvement suppresses it, and that a declined
+suggestion reappears only after another full failure streak.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.3; BR-003; \hyperref[src:005.01]{SRC-005.01}; \srcref{008}}
-  \reqtraces{FR-LRN-018; FR-LRN-020; UC-005}
+  \reqtraces{FR-LRN-018; FR-LRN-020; \ucref{005}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-020}{Improvement-based extension}
-  \reqshall{Squigglr shall suppress a difficulty suggestion and allow up to
-\texttt{ATTEMPT\_\allowbreak EXTENSION} additional stage attempts when the average result
-of the most recent \texttt{IMPROVE\_\allowbreak WINDOW} attempts exceeds the average of
-the preceding equally sized window by at least \texttt{IMPROVE\_\allowbreak MARGIN},
-subject to \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}.}
+  \reqshall{Squigglr shall suppress a difficulty suggestion while the learner
+qualifies as improving, and, when the unsuccessful-attempt count first reaches
+\texttt{ATTEMPT\_\allowbreak LIMIT}, grant up to
+\texttt{ATTEMPT\_\allowbreak EXTENSION} additional evaluable stage attempts if the average
+result of the most recent \texttt{IMPROVE\_\allowbreak WINDOW} attempts exceeds the average
+of the preceding equally sized window by at least
+\texttt{IMPROVE\_\allowbreak MARGIN}, subject to
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. The extension shall be granted at most
+once per stage and expire after the allotted additional evaluable attempts,
+even if results continue to improve.}
   \reqrationale{The agreed improvement rule reduces premature interruption while retaining a
 hard cap (G.3, BR-002).}
   \reqfit{Evaluate prepared improving and non-improving sequences exactly at the margin
 boundary and at the applicable limit; verify extension and suggestion
-suppression only for qualifying improvement, with no attempt beyond the
-maximum.}
+suppression only for qualifying improvement, exactly the permitted
+number of extension attempts without regranting, and no attempt beyond
+the maximum.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.3; BR-002--003; \srcref{001}; \srcref{008}}
-  \reqtraces{FR-LRN-019; FR-LRN-021; OI-05; UC-003}
+  \reqtraces{FR-LRN-019; FR-LRN-021; OI-05; \ucref{003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-021}{Stage attempt limit and lesson end}
   \reqshall{Squigglr shall end the active lesson when its unsuccessful-attempt count
-reaches \texttt{ATTEMPT\_\allowbreak LIMIT} without a qualifying extension, or the
-allowed total-attempt count reaches \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, and make
+reaches \texttt{ATTEMPT\_\allowbreak LIMIT} without a qualifying extension,
+or a granted extension is exhausted, or the allowed total-attempt count
+reaches \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, and make
 the furthest stage reached available for the lesson record.}
   \reqrationale{The limits prevent indefinite repetition and preserve usable progress (G.3,
 G.5, BR-002).}
   \reqfit{Replay sequences at the base limit and at the maximum, with and without
-qualifying improvement; verify exact lesson-end conditions and verify that
-the highest stage reached is included in the saved lesson outcome.}
+qualifying improvement; verify that a granted extension expires after
+the allotted attempts, does not renew, and is capped by the maximum.
+Verify that the highest stage reached is included in the saved lesson outcome.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{G.3, G.5; BR-002; \srcref{001}}
-  \reqtraces{FR-LRN-015; FR-LRN-020; UC-003; UC-008}
+  \reqtraces{FR-LRN-015; FR-LRN-020; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-022}{No learner evaluation or diagnosis}
@@ -1878,7 +1906,7 @@ that none assigns a diagnosis, ability label or inter-child ranking.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.2; BR-006; \srcref{001}; \srcref{008}}
-  \reqtraces{FR-LRN-013--014; UC-003; UC-009}
+  \reqtraces{FR-LRN-013--014; \ucref{003}; \ucref{009}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-023}{Automatic within-lesson advancement}
@@ -1898,7 +1926,7 @@ started, and no stage is skipped automatically.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.2--G.3; BR-002--003; CON-007; \srcref{001}}
-  \reqtraces{FR-LRN-013; FR-LRN-016; FR-LRN-018; UC-003; UC-004;
+  \reqtraces{FR-LRN-013; FR-LRN-016; FR-LRN-018; \ucref{003}; \ucref{004};
 OI-04 (TA confirmation)}
 \end{srsrequirement}
 
@@ -1973,18 +2001,23 @@ The levels $D,T,E,I$ mean \emph{demonstration}, full-outline
 respectively. Only levels in $A$ admit scored drawing attempts; $D$ is a
 non-scored demonstration. A state is
 \[
-\sigma=(\ell,p,l,q,n_f,n_a,k,H,s,f),
+\sigma=(\ell,p,l,q,n_f,n_a,k,H,s,z,x,f),
 \]
 where $l\in L$ is the current guidance level of the adult-selected lesson,
-$q\in Q$ is the session status, $n_f\in\mathrm{N}_0$ counts non-passing
-evaluable attempts at this stage, $n_a\in\mathrm{N}_0$ counts finalized, evaluable
-attempts at this stage, $k\in\mathrm{N}_0$ is the consecutive
-non-passing streak, $H=(r_1,\ldots,r_m)$ is the ordered list of
-stage-result values, $s\in\{0,1\}$ records whether a suggestion is pending,
-and $f\in L$ is the furthest stage reached in the lesson.
+$q\in Q$ is the session status, $n_f\in\mathbb{N}_0$ counts non-passing
+evaluable attempts at this stage, $n_a\in\mathbb{N}_0$ counts finalized,
+evaluable attempts at this stage, $k\in\mathbb{N}_0$ is the consecutive
+non-passing streak, and $H=(r_1,\ldots,r_m)$ is the ordered list of
+stage-result values. The flag $s\in\{0,1\}$ indicates a pending
+suggestion; $z\in\{0,1\}$ indicates whether the single stage extension
+has been granted; $x\in\mathbb{N}_0$ counts evaluable attempts consumed
+\emph{after} that grant, with $0\le x\le e_p$ and $x=0$ when $z=0$.
+Finally, $f\in L$ is the furthest stage reached in the lesson.
 On a stage change (either normal pass-based progression or an
-authorized adult adjustment), the stage-specific counts, streak and $H$
-start empty; $f$ retains the furthest stage reached so far. \emph{No child ability estimate} is part of this state (BR-006).
+authorized adult adjustment), the stage-specific counts, streak, history,
+pending suggestion and extension state reset to zero or empty; $f$ retains
+the furthest stage reached so far. \emph{No child ability estimate} is
+part of this state (BR-006).
 
 \paragraph{Drawing input and attempt classification.}
 An attempt is a finite ordered list of stylus strokes
@@ -2049,35 +2082,52 @@ w_p &= \texttt{IMPROVE\_\allowbreak WINDOW}(p), &
  \delta &= \texttt{IMPROVE\_\allowbreak MARGIN}.
 \end{aligned}
 \]
-For $|H|\ge 2w_p$, with $H=(r_1,\ldots,r_m)$, define
+For $H=(r_1,\ldots,r_m)$, define the total improvement predicate
 \[
-\operatorname{Improving}(H,p)\iff
-\frac{1}{w_p}\sum_{i=m-w_p+1}^{m} r_i
--\frac{1}{w_p}\sum_{i=m-2w_p+1}^{m-w_p}r_i\ge\delta.
+\operatorname{Improving}(H,p)=
+\begin{cases}
+\textsf{false}, & m<2w_p,\\
+\displaystyle
+\left(\frac{1}{w_p}\sum_{i=m-w_p+1}^{m} r_i
+-\frac{1}{w_p}\sum_{i=m-2w_p+1}^{m-w_p}r_i\ge\delta\right),
+& m\ge 2w_p.
+\end{cases}
 \]
-If $|H|<2w_p$, the improvement predicate is not evaluated and no
-improvement-dependent suggestion is issued. For the default
-$w_p=2$, the first comparison uses four evaluable attempts.
+Insufficient history therefore does not count as improvement and does
+not delay a difficulty suggestion. For the default $w_p=2$, the first
+comparison uses four evaluable attempts; a shorter history still allows
+the suggestion at the selected failure-streak threshold.
 
 For an eligible return to a preceding guidance level, the suggestion
 trigger is
 \[
 \operatorname{SuggestBack}(\sigma)\iff
-q=\textsf{active}\land l\in\{E,I\}\land k\ge d_p
+q=\textsf{active}\land s=0\land l\in\{E,I\}\land k\ge d_p
 \land\neg\operatorname{Improving}(H,p).
 \]
-The suggestion guard is evaluated only when
-$\operatorname{Improving}(H,p)$ is defined. The rule applies to drawing
-levels $E$ and $I$; $T$ has no preceding drawing level. A suggestion changes
-$q$ to $\textsf{suggested}$ and
-$s$ to $1$, but \emph{does not change $l$}.
+The rule applies to drawing levels $E$ and $I$; $T$ has no preceding
+drawing level. A suggestion changes $q$ to $\textsf{suggested}$ and $s$
+to $1$, but \emph{does not change $l$}. Declining or ignoring a suggestion
+resets the streak counter $k$ to zero, preventing an immediate re-offer;
+a new suggestion requires another $d_p$ consecutive failures.
 
 \paragraph{State-transition rules.}
 Table~\ref{tab:lrn-transitions} gives the level-changing and
 stage-stopping rules. Here $\sigma'$ is the state after the event,
 ``unchanged'' means the active lesson and level remain exactly as before,
 and $\operatorname{AdultAccept}$ is a verified adult action rather than any
-child drawing input. For pass-based forward transitions define
+child drawing input. Likewise, $\operatorname{AdultSelect}$ is the
+authorized action selecting a lesson and its starting level.
+A granted extension sets $z=1$ once, with $x=0$; each subsequently
+finalized evaluable attempt increments $x$. The extension cannot be
+granted again at this stage even if later scores qualify as improvement.
+After finalization, a passing result takes priority over stop and
+suggestion rules. Otherwise, reaching the base failure limit first
+triggers either the single extension grant (if improving and still below
+the hard cap) or lesson end. After a grant, exhausting $x=e_p$ or
+reaching $n_a=h_p$ ends the lesson. A suggestion is offered only when
+none of these higher-priority rules ends the lesson.
+For pass-based forward transitions define
 $\operatorname{Next}(T)=E$ and $\operatorname{Next}(E)=I$; $I$ has no
 successor within its lesson. Passing the last stage ends \emph{that} lesson.
 
@@ -2094,9 +2144,11 @@ successor within its lesson. Passing the last stage ends \emph{that} lesson.
 \endhead
 \bottomrule
 \endlastfoot
-Adult selects lesson / starting level & Supporting adult is authorized
-& Set $(\ell,l)$ to adult selection; reset stage counters; keep any
-previously persisted lesson record.\\
+Adult selects lesson / starting level
+($\operatorname{AdultSelect}$) & Supporting adult is authorized
+& Set $(\ell,l)$ to adult selection, $q=\textsf{active}$;
+reset stage counters, history, suggestion and extension state;
+keep any previously persisted lesson record.\\
 \addlinespace
 Begin practice after demonstration & $q=\textsf{active}$,
 $l=D$; child continues after viewing the example
@@ -2105,9 +2157,10 @@ This does not start another lesson or require new adult authorization.\\
 \addlinespace
 Finalize evaluable attempt & $l\in A$, $q=\textsf{active}$
 & Classify $C_{\ell,l}(X)$ and $G(l)$; report pass/fail using the
-stage threshold; increment $n_a$ and, for non-pass, $n_f,k$. On pass,
-record the result and apply the prescribed forward-stage or lesson-end
-transition below.\\
+stage threshold; increment $n_a$ and, for non-pass, $n_f,k$.
+If $z=1$, increment $x$ for this additional evaluable attempt.
+On pass, record the result and apply the prescribed forward-stage or
+lesson-end transition below.\\
 \addlinespace
 Interrupted or invalid input & Missing finalization or
 $C_{\ell,l}(X)=\textsf{invalid}$
@@ -2118,23 +2171,29 @@ Offer suggestion & $\operatorname{SuggestBack}(\sigma)$
 & Set $s=1$, $q=\textsf{suggested}$; leave $\ell,l$ unchanged.\\
 \addlinespace
 Ignore or decline suggestion & $s=1$
-& Clear $s$, return $q$ to $\textsf{active}$; leave $\ell,l$ unchanged.\\
+& Clear $s$, reset $k=0$, return $q$ to $\textsf{active}$;
+leave $\ell,l$ unchanged and retain the attempt history $H$ and
+cumulative stage counts.\\
 \addlinespace
 Adult accepts suggestion & $s=1$ and an authorized adult
 chooses a preceding level
 & Activate the chosen earlier level, clear $s$, reset stage counts;
 retain the lesson's furthest stage reached.\\
 \addlinespace
-End at limit & The attempt did not pass, and either
-$n_f\ge b_p$ without qualifying extension or $n_a\ge h_p$
+End at limit & The finalized attempt did not pass and either
+$z=0\land n_f\ge b_p\land
+(\neg\operatorname{Improving}(H,p)\lor n_a\ge h_p)$,
+or $z=1\land(x\ge e_p\lor n_a\ge h_p)$
 & Set $q=\textsf{ended}$; report the furthest stage reached for saving;
-no more attempts in the ended session. A pass is handled by its own
-transition before this stop condition.\\
+no more attempts in the ended session. A pass takes priority over this
+stop condition.\\
 \addlinespace
-Extend at limit & $n_f\ge b_p$, $\operatorname{Improving}(H,p)$,
-and $n_a<h_p$
-& Permit up to $e_p$ additional attempts without exceeding $h_p$;
-suppress a conflicting return suggestion.\\
+Extend at base limit & $z=0$, $n_f\ge b_p$,
+$\operatorname{Improving}(H,p)$, $n_a<h_p$,
+and the finalized attempt did not pass
+& Set $z=1$, $x=0$; allow at most $e_p$ additional evaluable attempts,
+subject to $n_a<h_p$. Do not regrant this extension or offer a conflicting
+return suggestion.\\
 \addlinespace
 Passing a nonfinal drawing stage & $\operatorname{Pass}(X,l,p)$ and
 $l\in\{T,E\}$
@@ -2161,7 +2220,8 @@ event, the model requires:
   \Longrightarrow \neg\operatorname{Pass}(X,l,p);\\
 &\textbf{I4:}\quad \text{pass/feedback never substitutes refined strokes
    for actual guided strokes};\\
-&\textbf{I5:}\quad n_a\le h_p\ \text{while stage attempt limits apply};\\
+&\textbf{I5:}\quad n_a\le h_p\ \land\ 0\le x\le e_p
+   \land (z=0\Rightarrow x=0);\\
 &\textbf{I6:}\quad \operatorname{Pass}(X,T,p)
   \Longrightarrow (\ell',l')=(\ell,E);\\
 &\textbf{I7:}\quad \operatorname{Pass}(X,E,p)
@@ -2175,8 +2235,10 @@ transition, a change to the active stage requires an authorized adult
 selection or acceptance (CON-007). Invariants I1 and I6--I8 ensure that
 a new lesson is never selected automatically and that passing an attempt
 advances only within the current lesson. I2--I5 cover suggestions, invalid
-input, faithful records and the stage attempt bound. These rules are verified using prepared adult-made attempt sequences
-(CON-005--006), including boundary tests for the values and ranges in
+input, faithful records, bounded stage attempts and the one-time extension.
+These rules are verified using prepared adult-made attempt sequences
+(CON-005--006), including threshold cases with insufficient improvement
+history, declined suggestions, a full extension and the hard cap in
 Table~\ref{tab:goalconst}.
 
 \subsection{Creative Drawing Requirements}
@@ -2226,92 +2288,7 @@ Requirements.
 \subsection{Speed and Latency Requirements}
 \lips
 \subsection{Safety-Critical Requirements}
-This subsection holds safety requirements that come from the Hazard Analysis
-and do not fit another section. Each lists the hazards it mitigates.
-
-\begin{description}
-\item[SAF-RAY-001] Squigglr shall allow lesson choice, starting-stage
-choice, learner switching and acceptance of a go-back suggestion only after
-an adult check that a child cannot complete by tapping icons, and shall keep
-a pending suggestion, without blocking practice, until an adult accepts or
-declines it.\\
-\emph{Rationale:} children should be able to practise without constant
-adult help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults
-(CON-007; SRC-005, \intref{P1}{28:37}). The form of the check is
-\texttt{ADULT\_CHECK}, TBD.\\
-\emph{Fit criterion:} in prepared walkthroughs, no adult-only action
-completes without passing the adult check, and a pending suggestion changes
-nothing until an adult acts.\\
-\emph{Hazards:} H-RAY-001, H-RAY-006.
-\item[SAF-RAY-002] Before a lesson starts, Squigglr shall check the device
-and browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not
-match, show an adult-readable notice that results may be unreliable.\\
-\emph{Rationale:} the team does not control the device (CON-001--CON-003).\\
-\emph{Fit criterion:} on each prepared unsupported combination the notice
-appears before the first attempt; on supported ones it does not.\\
-\emph{Hazards:} H-RAY-002.
-\item[SAF-RAY-003] Squigglr shall keep each completed attempt on the device
-until the server confirms it is saved, and shall tell the adult which
-attempts could not be saved.\\
-\emph{Rationale:} offline access is not promised (SRC-005,
-\intref{Moustafa}{6:03}), and G.5 needs complete records.\\
-\emph{Fit criterion:} with the connection cut during or after prepared
-attempts, no confirmed attempt is lost and every unsaved attempt is reported
-to the adult.\\
-\emph{Hazards:} H-RAY-002.
-\item[SAF-RAY-004] No record, summary or export shall show a
-diagnostic label, a judgement of the child's abilities or a comparison with
-other children, and every summary and
-export shall state that it describes practice only and is not an assessment
-or diagnosis.\\
-\emph{Rationale:} Squigglr makes no diagnosis (SRC-001; SRC-005,
-\intref{Moustafa}{6:03}), and adults reading records may have no training.\\
-\emph{Fit criterion:} inspection of every summary and export template finds
-none of the excluded content and finds the statement present.\\
-\emph{Hazards:} H-RAY-003.
-\item[SAF-RAY-005] Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT},
-or at \texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from
-the child, and shall keep the progress saved up to that point.\\
-\emph{Rationale:} the child is not expected to exit a lesson, and no adult
-may be watching (CA-001), so repeated failure must end on its own (G.3).\\
-\emph{Fit criterion:} in prepared sequences of failed attempts, each lesson
-ends at the limit in use with no child input, and the saved record matches
-the attempts made.\\
-\emph{Hazards:} H-RAY-004.
-\item[SAF-RAY-006] Squigglr shall record each lesson that ends at
-\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each
-improvement extension, show the adult how many times these happened for
-each lesson, and keep earlier attempts when a lesson is restarted.\\
-\emph{Rationale:} a restart could otherwise hide repeated failure from the
-adult.\\
-\emph{Fit criterion:} in prepared sequences that reach the limit and then
-restart, the count and all earlier attempts appear in the adult view.\\
-\emph{Hazards:} H-RAY-005.
-\item[SAF-RAY-007] Squigglr shall identify the active learner on every
-practice screen in a form a child who cannot read can recognize, and shall
-save every attempt and suggestion to that learner only.\\
-\emph{Rationale:} school devices may be shared by several children
-(SRC-004).\\
-\emph{Fit criterion:} in prepared multi-learner sessions on one device,
-every attempt and suggestion is saved under the learner shown when it was
-made.\\
-\emph{Hazards:} H-RAY-006.
-\item[SAF-RAY-008] Squigglr shall save a child's adult-set values
-(Table~\ref{tab:goalconst}) only within their team-set ranges, with
-\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
-\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the middle of each range when the
-adult does not choose; shall allow changes only after the adult check; and
-shall show the values in use alongside the child's records.\\
-\emph{Rationale:} the supervisor advised that the adult chooses these
-values (SRC-008); a wrong value can stop a child passing a stage they can
-draw, and a child must not change it.\\
-\emph{Fit criterion:} in prepared walkthroughs, every out-of-range value and
-every \texttt{ATTEMPT\_LIMIT} not larger than \texttt{DIFFICULTY\_STREAK}
-and every \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} is
-refused, an unset value equals the midpoint, and no change completes
-without the adult check.\\
-\emph{Hazards:} H-RAY-007.
-\end{description}
+\lips
 \subsection{Precision or Accuracy Requirements}
 \lips
 \subsection{Robustness or Fault-Tolerance Requirements}
@@ -2447,7 +2424,8 @@ Verify the selected ranges with adult-made drawings, provide examples
 illustrating the endpoints of the \texttt{STAGE\_PASS} range, and
 confirm that the drawing-evaluation method produces results on the
 specified 0--100 scale (SRC-004, SRC-008). No child testing is permitted. &
-G.2, G.3; requirement IDs to be linked when written &
+G.2, G.3; \reqref{FR-LRN-017}, \reqref{FR-LRN-020},
+\reqref{FR-LRN-021} &
 Ahmed Elzaria & Nov.\ 2, 2026 (V\&V Plan) \\
 \addlinespace
 OI-06 & \emph{Data isolation between institutions.} A peer reviewer asked

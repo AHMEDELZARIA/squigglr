@@ -14,6 +14,8 @@
 \usepackage{float}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
+\usepackage[numbers]{natbib}
+\usepackage{xurl}
 \usepackage{hyperref}
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
@@ -115,6 +117,7 @@ requirement structure (\#131).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 8.1, Product Boundary (\#110).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
+16 October 2026 & Muhammad Huzaifah & Wrote Section 19, Off-the-Shelf Solutions, with the product comparison, candidate components and the bibliography (\#124).\\
 \end{longtable}
 
 ~\\
@@ -1009,27 +1012,56 @@ records, as permitted by the account rules.
 \textbf{Fit criterion} & An observable or measurable acceptance check
 used to verify whether a requirement or constraint is met.
 & \hyperref[sec:constraints]{Section 3}\\
+\textbf{Open-weight model} & A trained model whose weights are published, so
+that a team can run it on its own hardware.
+& \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{Vision-language model} & A model that takes both images and text as
+input.
+& \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{Zero data retention} & An arrangement, which the provider must
+approve, under which the provider does not keep the data sent to it.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{ADHD} & Attention-deficit/hyperactivity disorder.
 & \hyperref[sec:purpose]{Section 1}\\
 \textbf{AI} & Artificial intelligence.
 & \hyperref[sec:business-rules]{BR-007}\\
+\textbf{API} & Application programming interface; a defined way for one
+program to request a service from another.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{ASM} & Assumption identifier; \texttt{ASM-\#\#\#}.
 & \hyperref[sec:assumptions]{Section 5.3}\\
 \textbf{BR} & Business rule identifier; \texttt{BR-\#\#\#}.
 & \hyperref[sec:business-rules]{Section 5.2}\\
+\textbf{BSD} & Berkeley Software Distribution; a software licence that allows
+reuse if the copyright notice is kept.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}.
 & \hyperref[sec:facts]{Section 5.1}\\
 \textbf{BUC} & Business use case.
 & \hyperref[sec:purpose]{Document roadmap}\\
+\textbf{CC BY} & Creative Commons Attribution; a licence that allows copying
+and reuse with credit to the creator.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{CON} & Mandated constraint identifier; \texttt{CON-\#\#\#}.
 & \hyperref[sec:constraints]{Section 3}\\
 \textbf{FR} & Functional requirement.
 & \hyperref[sec:functional]{Section 9}\\
+\textbf{GPL} & GNU General Public License; its conditions also apply to code
+copied from a program released under it.
+& \hyperref[sec:ots-products]{Section 19.1}\\
+\textbf{GPU} & Graphics processing unit.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
 & \hyperref[sec:changes]{Section 27.1}\\
 \textbf{HA} & Hazard Analysis, a separate document identifying failures,
 losses, mitigation measures and related requirements.
 & \hyperref[sec:introduction]{Introduction}\\
+\textbf{JSON} & JavaScript Object Notation; a text format for structured
+data.
+& \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{MIT} & Massachusetts Institute of Technology licence; a software
+licence that allows reuse if the copyright notice is kept.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{NFR} & Nonfunctional requirement; a required quality or constraint
 on system performance or operation.
 & \hyperref[sec:performance]{Section 12}\\
@@ -1062,6 +1094,9 @@ Numbered source statements use \texttt{SRC-\#\#\#.\#\#}.
 & \hyperref[sec:changes]{Section 27.2}\\
 \textbf{V\&V} & Verification and validation.
 & \hyperref[sec:constraints]{Schedule}\\
+\textbf{W3C} & World Wide Web Consortium, which publishes web standards such
+as Pointer Events.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{WCAG} & Web Content Accessibility Guidelines; selected criteria
 may inform project accessibility requirements, without a claim of
 complete conformance (\srcref{008}).
@@ -3488,12 +3523,498 @@ CON-001, CON-003 & Shamil Canbolat & Nov.\ 2, 2026 (V\&V Plan) \\
 }
 
 \section{Off-the-Shelf Solutions}
+\label{sec:ots}
+
+This section surveys the products and components that already exist and
+records how closely each matches Squigglr's goals. The survey gives the
+comparison promised in the User Business subsection and answers two
+peer-review issues (SRC-007): what existing handwriting, tracing and
+motor-skill apps do and what gap remains
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/69}{\#69}), and
+which existing models the team might use for refinement
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/74}{\#74}). As the
+Volere template intends, the survey shows that alternatives were considered
+and how closely they match the needs; it is not a feasibility study
+\citep{robertson2012volere}. Nothing here is a requirement or a
+design decision. Every product, library and model named is a candidate the
+team may evaluate, and the Development Plan leaves the choice of model open
+until the proof-of-concept work (SRC-002).
+
+The findings are preliminary desk research, done on Oct.\ 15, 2026. The
+team searched the web, Apple's App Store and Google Play for handwriting
+apps, letter and shape tracing apps (including web-based ones), children's
+drawing apps, and fine-motor or occupational therapy practice apps, then
+read each candidate's own store listing, website or documentation. Every
+statement about a product comes from those sources, cited below. No
+product was installed or tested, and no child took part (CON-005), so a
+missing feature means only that the sources read do not describe it.
+Prices are United States prices on that date, given only where the vendor
+states them. The specialist interview did not cover existing apps
+(FACT-013); the follow-up questionnaire (SRC-009) covered refinement in the
+creative space and letter activities.
+
+Table~\ref{tab:ots-dimensions} lists the dimensions used to compare
+products. Each comes from a goal, constraint or business rule, so the
+comparison measures fit to this project, not general quality. The
+Reusable Components subsection adds the Development Plan's criteria for
+choosing a refinement approach. The data a product collects about a child
+(BR-001) is not a dimension: vendors describe their data handling in
+different terms, and Squigglr's own privacy requirements are still open
+(OI-02). The privacy terms of candidate refinement services are compared
+in the Reusable Components subsection instead.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Dimensions used to compare existing products with Squigglr}
+\label{tab:ots-dimensions}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X%
+>{\raggedright\arraybackslash}p{0.2\textwidth}@{}}
+\toprule
+\textbf{Dim.} & \textbf{What Squigglr needs} & \textbf{Source} \\
+\midrule
+D1 & Graded guidance with a stylus: each lesson on a line, shape or simple
+drawing moves through stages that give less help, from a demonstration to
+drawing with no guide. & G.1, G.2, CON-003 \\
+D2 & Adult control: the adult chooses the lesson and the starting stage,
+and the child goes back a stage only if an adult accepts. & G.3, CON-007,
+BR-003 \\
+D3 & Records of the process: each attempt keeps the child's actual
+strokes, the stage (the guide used), every predefined difficulty, later
+corrections and the outcome. & G.5, BR-004 \\
+D4 & Adult summaries without judgement: attempts made with a guide are
+shown apart from attempts made without one, with no score, diagnostic
+label or comparison with other children. & G.6, BR-006 \\
+D5 & Runs in a web browser with no installation. & CON-001, CON-002 \\
+D6 & Minimal, editable refinement: in a creative space the child's own
+strokes are adjusted within \texttt{REFINE\_TOLERANCE}, stay editable,
+and the original can be restored. & G.4, BR-005 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \subsection{Ready-Made Products}
-\lips
+\label{sec:ots-products}
+The survey kept twelve products in five groups. Together they cover the
+kinds of product that the search found a supporting adult might use
+instead of Squigglr, plus the drawing-assistance features closest to
+refinement. Each product is
+described below from its vendor's sources, and Table~\ref{tab:ots-matrix}
+scores it against the dimensions of Table~\ref{tab:ots-dimensions}.
+
+\paragraph{Handwriting and tracing apps.}
+Kaligo, by Learn \& Go, is a handwriting and literacy app for tablets that
+recommends a stylus, with a web portal for teachers
+\citep{LearnAndGo2026Kaligo,LearnAndGo2026Requirements}. Teachers assign
+and create lessons, set the difficulty and visual guidance for each
+student, view each completed exercise as a replay or screenshot, and
+follow class progress. The vendor also offers a screening use in which
+artificial intelligence (AI) assesses handwriting and fine motor skills to
+identify students who need support \citep{LearnAndGo2026Teachers}, and the
+App Store listing describes a learning experience that adapts to each
+child's pace \citep{LearnAndGo2026Kaligo}. The app is installed from an
+app store, and an internet connection is needed to synchronise lessons and
+results \citep{LearnAndGo2026Requirements}. The download is free; school
+prices are not stated on the pages read.
+
+Wet-Dry-Try, from Learning Without Tears, is an iPad app based on the
+Handwriting Without Tears curriculum. Children practise capitals, numbers
+and lowercase letters in step-by-step sequences in a developmental order,
+a virtual coach gives spoken feedback on errors, up to three children can
+share one device, and the settings offer three sensitivity levels
+\citep{LearningWithoutTears2026WetDryTryApp}. A classroom licence costs
+US\$3.99 per student per year \citep{LearningWithoutTears2026WetDryTry}.
+
+LetterSchool takes each letter, number or geometric shape through three
+games that give less help each time: tap the dots in order, trace the
+path, then write it from memory; earning a star unlocks the next game
+\citep{LetterSchool2026HowWhy,LetterSchool2026Play}. A ``Golden'' level
+displays the child's exact writing so that adults can track progress, and
+progress is stored for up to three players on one device. On Android the
+first five letters, numbers and shapes are free, and the rest is a
+one-time purchase
+\citep{LetterSchool2026Play}.
+
+Writing Wizard, by L'Escapadou, traces letters, numbers, words and, for
+toddlers, shapes. Adults set the letter size, the difficulty and whether
+the model is shown; a five-star mode asks the child to trace an item five
+times, each harder than the last; and reports let adults replay and export
+what the child traced \citep{Abel2026WritingWizard}. Installed versions
+exist for iPad, iPhone, Android, Kindle Fire and Windows
+\citep{LEscapadou2026WritingWizard}, and the school edition costs
+US\$13.99 on the App Store \citep{Abel2026WritingWizard}.
+
+\paragraph{Fine-motor and occupational therapy practice apps.}
+Dexteria, by BinaryLabs, is an iPhone and iPad app for practising fine
+motor skills and handwriting readiness. Dexteria creates performance and
+usage reports that can be emailed, its companion app compares performance
+with reference ranges and produces reports for school documentation, and
+the vendor states that it is not a medical device; the app costs US\$6.99
+\citep{BinaryLabs2026Dexteria}. Dynamilis, by School Rebound, is an iPad
+app for children aged five to twelve. Dynamilis analyses handwriting
+written with an Apple Pencil or Logitech Crayon, gives a handwriting
+profile and recommends a specialist when the score falls below a
+threshold, offers personalised practice activities, and has a replay mode
+for its analysis; a subscription costs US\$14.99 a month or US\$89.99 a
+year \citep{SchoolRebound2026Dynamilis}.
+
+\paragraph{Web-based tracing tools.}
+Tracing Town's Tracing Playground runs in the browser with no account or
+download and accepts touch, stylus or mouse. A start dot, an arrow and
+numbered strokes guide each stroke of a shape or letter, the page says in
+words when the finger leaves the path, nothing is timed or scored, and
+nothing is recorded or sent from the device
+\citep{TracingTown2026Playground}.
+
+\paragraph{Children's drawing apps.}
+The Crayola Create and Play app, which also has an online version, offers
+drawing, colouring and educational activities for children aged three to
+eight, by subscription after a free trial; the vendor states that it has
+no rules, points or time limits \citep{Crayola2026CreateAndPlay}. Tux
+Paint is a free, open-source drawing program released under version~2 of
+the GNU General Public License (GPL), installed on Windows, macOS, Linux,
+Android and other systems \citep{TuxPaint2026Download}.
+
+\paragraph{Drawing-assistance features.}
+Google's AutoDraw is a free web tool that guesses what the user is drawing
+and suggests drawings made by artists \citep{Motzenbecker2017AutoDraw};
+choosing a suggestion replaces the user's sketch
+\citep{Lardinois2017AutoDraw}. Smart Script, part of iPadOS~18, smooths
+and straightens text handwritten with an Apple Pencil while keeping the
+look of the writer's own handwriting \citep{Apple2024SmartScript}.
+QuickShape, in the Procreate drawing app, snaps a held stroke into a
+perfect line, arc, ellipse, triangle or quadrilateral that can then be
+edited through its nodes \citep{Procreate2026QuickShape}.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Existing products scored against the comparison dimensions}
+\label{tab:ots-matrix}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}%
+>{\raggedright\arraybackslash}Xcccccc@{}}
+\toprule
+\textbf{Product} & \textbf{Delivery} & \textbf{D1} & \textbf{D2} &
+\textbf{D3} & \textbf{D4} & \textbf{D5} & \textbf{D6} \\
+\midrule
+Kaligo & Tablet app; teacher web portal & Part & Part & Part & No & No
+& -- \\
+Wet-Dry-Try & iPad app & Part & Part & -- & -- & No & -- \\
+LetterSchool & Tablet and phone app & Yes & -- & Part & -- & No & -- \\
+Writing Wizard & Installed app & Part & Part & Part & -- & No & -- \\
+Dexteria & iPhone and iPad app & -- & -- & Part & No & No & -- \\
+Dynamilis & iPad app & -- & -- & Part & No & No & -- \\
+Tracing Playground & Web page & Part & -- & No & No & Yes & -- \\
+Crayola Create and Play & App and online version & -- & -- & -- & -- &
+Part & -- \\
+Tux Paint & Installed program & -- & -- & -- & -- & No & -- \\
+AutoDraw & Web tool & -- & -- & -- & -- & Yes & No \\
+Smart Script & iPadOS feature & -- & -- & -- & -- & No & Part \\
+QuickShape & Drawing-app feature & -- & -- & -- & -- & -- & Part \\
+\bottomrule
+\end{tabularx}
+
+\smallskip
+\begin{minipage}{\textwidth}
+\raggedright
+Yes: the sources describe the feature. Part: they describe a weaker or
+different form, explained in the text. No: they describe the opposite,
+such as an installed app, a score or no records at all. --: the sources
+read do not describe it, which does not show that the product lacks it.
+\end{minipage}
+\end{table}
+
+The ``Part'' marks in Table~\ref{tab:ots-matrix} have these reasons. For
+D1, Kaligo lets teachers adjust visual guidance but describes no fixed
+sequence of stages, Wet-Dry-Try's step-by-step sequences cover only
+letters and numbers, Writing Wizard's five-star mode is mainly for letters
+and words, and Tracing Playground has a single guided level. For D2,
+Kaligo, Wet-Dry-Try and Writing Wizard let adults set difficulty,
+guidance or sensitivity, but none describes an adult choosing the
+starting point within a graded sequence, and Kaligo also adapts on its
+own. For D3, the products that keep anything keep a replay, a screenshot
+or the final writing (Kaligo, Writing Wizard, Dynamilis, LetterSchool) or
+usage reports (Dexteria). For D5, Crayola Create and Play has an online
+version beside its app. For D6, Smart Script refines handwritten text, not
+drawings, and QuickShape replaces a stroke with a perfect form, which is
+more than a minimal change.
+
+\paragraph{Gap.}
+No surveyed product combines the six dimensions, and three gaps stand out.
+First, records of the process (G.5): none of the sources read describes a
+record of which guide the child used, which predefined difficulties
+occurred and which were later corrected (D3). Second, adult summaries
+without judgement (G.6): the products that analyse a child's work for
+adults screen skills (Kaligo), compare with reference ranges (Dexteria) or
+score handwriting against a threshold (Dynamilis), all of which BR-006
+rules out, and none is described as separating attempts made with a guide
+from attempts made without one (D4). Third, refinement that keeps the
+drawing the child's own (G.4): the drawing-assistance features replace the
+sketch with an artist's drawing (AutoDraw) or a perfect shape
+(QuickShape), or refine handwritten text rather than drawings (Smart
+Script), and none of the children's products describes refinement at all
+(D6). Graded guidance (G.1, G.2) does exist, most closely in LetterSchool,
+but in installed apps centred on letters and numbers; the one browser-based
+tracing tool records nothing (D3, D5). Squigglr's differentiable value is
+therefore the combination: graded drawing practice in a browser, records
+that show the process behind each drawing, and adult summaries that report
+that process without judging the child. Each part exists somewhere; no
+product found offers them together. Whether supporting adults value this
+combination is not yet confirmed: the needs come from SRC-001 and SRC-005,
+and the value of refinement rests on ASM-011, which the specialists'
+questionnaire answers (SRC-009.01) support but do not establish.
+
+\paragraph{Products that must not be used.}
+No stakeholder has ruled out a product. Two observations follow from the
+business rules; they are not decisions. A product whose adult reports
+screen, score or compare children (Kaligo's screening, Dexteria's
+reference ranges, Dynamilis's profile) conflicts with BR-006, so it could
+not be offered to adults as Squigglr's records. A product that replaces
+the child's drawing (AutoDraw) conflicts with BR-005. Services excluded by
+their own terms are noted in the Reusable Components subsection.
+
 \subsection{Reusable Components}
-\lips
+\label{sec:ots-components}
+This subsection lists candidate building blocks: first approaches to
+refining a creative drawing, then supporting libraries and services.
+They are candidates, not mandates. The team chooses among them after the
+proof-of-concept experiments, and this specification requires none of
+them. The Development Plan names four criteria for choosing a refinement
+approach: drawing preservation, output validity, response time and cost
+(SRC-002). Three more come from this document. Refinement must stay
+minimal, with every refined point within \texttt{REFINE\_TOLERANCE} of the
+original strokes (G.4, BR-005). The provider may change, so it should sit
+behind one interface that takes stroke coordinates and returns adjusted
+coordinates at the same scale (LC-004). The child's drawings should reach
+as few outside parties as possible, in line with the supervisor's advice
+to collect no information about children (SRC-004) while the privacy
+requirements are still open (OI-02). Response times and request costs are
+not known yet; the proof-of-concept experiment on model-based enhancement
+will record them (SRC-002). Costs that are known appear in the Costs
+section. Table~\ref{tab:ots-components} summarises the candidates.
+
+\paragraph{Does refinement need AI?}
+The supervisor asked whether the corrections need AI at all (SRC-004,
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/21}{\#21}). The
+sources suggest that refinement as G.4 measures it does not. Geometric
+smoothing and simplification adjust the child's own path within a stated
+maximum error, need no training, and run in the browser, so the drawing
+need not leave the device \citep{PaperJS2026Path,Agafonkin2013SimplifyJS}.
+These methods do not know what a drawing depicts, so an adjustment that
+depends on the item drawn needs recognition, and published methods
+recognise strokes or infer geometric relations without a trained model
+\citep{WobbrockEtAl2007,IgarashiEtAl1997}. A pretrained model adds the
+ability to interpret a whole drawing, at the price of sending the drawing
+to a service or hosting a model, slower responses, fees, and validating
+every instruction before it is applied (SRC-002). The Development Plan
+already tries geometric refinement first, describes it as geometric
+processing rather than AI, and keeps it as the fallback if model work is
+deferred (SRC-002).
+
+\paragraph{Geometric refinement.}
+The Paper.js library, which the Development Plan expects to use, smooths
+paths by several methods, one of which (the centripetal Catmull--Rom
+spline) guarantees no self-intersections. Its \texttt{simplify} method
+fits as few curves as possible through a path's points within an allowed
+maximum error, and is documented for point data from a mouse or touch
+device \citep{PaperJS2026Path}. Paper.js is released under the
+Massachusetts Institute of Technology (MIT) License
+\citep{PaperJS2020License}. Simplify.js reduces the points of a line with
+the Douglas--Peucker and radial-distance algorithms under a tolerance, and
+is released under a Berkeley Software Distribution (BSD) licence
+\citep{Agafonkin2013SimplifyJS}. A tolerance bounds the fitting error, but
+whether every refined point stays within \texttt{REFINE\_TOLERANCE} of the
+original strokes, as G.4 measures, still has to be checked on prepared
+drawings.
+
+\paragraph{Published stroke methods.}
+Interactive beautification \citep{IgarashiEtAl1997} infers geometric
+relations such as perpendicularity, congruence and symmetry between a new
+stroke and existing ones, tidies one stroke at a time, and offers several
+candidate results when the intent is ambiguous. Candidates could let the
+child or the adult choose, but snapping to exact geometry may move points
+further than \texttt{REFINE\_TOLERANCE} allows. The \$1 recogniser
+\citep{WobbrockEtAl2007} matches a single stroke against stored templates
+in about 100 lines of code, and in its authors' study exceeded 97\%
+accuracy with one loaded template. A matcher of this kind could tell
+whether a drawing is one of the agreed supported items (G.4) without
+training or an outside service; drawings made of several strokes would
+need more than this method offers.
+
+\paragraph{Pretrained models.}
+The Development Plan plans an existing pretrained model that accepts a
+drawing preview and returns structured drawing instructions, which
+Squigglr validates before applying; no model has been selected and no
+custom training is planned (SRC-002). The candidates found fall into three
+kinds.
+\begin{itemize}
+  \item \emph{Hosted multimodal models}, reached through an application
+  programming interface (API). The OpenAI API accepts images as input
+  \citep{OpenAI2026DataControls}, and its Structured Outputs feature makes
+  responses follow a JavaScript Object Notation (JSON) schema supplied by
+  the developer \citep{OpenAI2026StructuredOutputs}, which suits
+  instructions that must be validated. The Anthropic API also accepts
+  images \citep{Anthropic2026Vision}. Their privacy terms differ. OpenAI
+  does not train on API data by default and keeps abuse-monitoring logs
+  for up to 30 days unless the customer is approved for zero data
+  retention \citep{OpenAI2026DataControls}; its guidance says developers
+  should not process personal data of children under 13 without first
+  setting up zero data retention \citep{OpenAI2026Under18}. Anthropic may
+  not train models on customer content \citep{Anthropic2025CommercialTerms},
+  deletes API inputs and outputs within 30 days except in listed cases
+  such as enforcing its usage policy \citep{Anthropic2026Retention}, and
+  asks organisations whose products minors use to add safety measures,
+  follow child-privacy law and disclose that users are interacting with
+  AI \citep{Anthropic2026Minors}. Both charge by usage; fees are not
+  estimated here.
+  \item \emph{Open-weight vision-language models} that the team could host
+  itself, such as Qwen2.5-VL-7B-Instruct. Its model card lists the Apache
+  License 2.0 and describes locating objects with bounding boxes or points
+  and giving stable JSON output for coordinates \citep{Qwen2026VL7B}.
+  Self-hosting keeps drawings away from outside providers but needs a
+  machine with a graphics processing unit (GPU), which the team would run
+  and pay for; the model card's examples load the model onto one.
+  \item \emph{Stroke-based generative models}, such as Sketch-RNN, which
+  generates vector drawings and was released with trained models and
+  code in Google's Magenta project \citep{Eck2017SketchRNN} under the
+  Apache License 2.0 \citep{Magenta2016License}. The model's training
+  data is the Quick, Draw! dataset of 50 million drawings in 345
+  categories, stored as timestamped strokes and licensed under Creative
+  Commons Attribution 4.0 (CC BY 4.0) \citep{Google2017QuickDraw}.
+  Output in strokes stays editable, but the model generates drawings
+  rather than adjusting the child's, so its fit with BR-005 is doubtful.
+\end{itemize}
+
+\paragraph{Supporting libraries and services.}
+The Development Plan expects Paper.js with Pointer Events for drawing
+input, Supabase for records and adult authentication, and Vercel for
+hosting (SRC-002). Pointer Events is a World Wide Web Consortium (W3C)
+Recommendation for hardware-independent input from a mouse, pen or
+touchscreen \citep{W3C2026PointerEvents}; which devices and browsers
+Squigglr supports is still open (OI-09). Supabase provides a Postgres
+database, authentication and file storage, is open source under the Apache
+License 2.0, and can be self-hosted \citep{Supabase2026GitHub}; the
+self-hosting option bears on data isolation between institutions (OI-06,
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}). Vercel's
+Hobby plan is free but limited to non-commercial personal use, and when a
+usage limit is exceeded the feature usually stays unavailable until 30
+days have passed \citep{Vercel2026Hobby}.
+
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.27\textwidth}%
+>{\raggedright\arraybackslash}p{0.16\textwidth}%
+>{\raggedright\arraybackslash}p{0.26\textwidth}@{}}
+\caption{Candidate components, not mandates}\label{tab:ots-components}\\
+\toprule
+\textbf{Candidate} & \textbf{What it offers} & \textbf{Licence or cost} &
+\textbf{Main concern for Squigglr} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Candidate} & \textbf{What it offers} & \textbf{Licence or cost} &
+\textbf{Main concern for Squigglr} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\multicolumn{4}{@{}l}{\emph{Refinement: geometric, no AI}} \\
+Paper.js smoothing and simplification & Smoothing; curve fitting within a
+maximum error; editable paths & MIT; free & Error bound must be checked
+against \texttt{REFINE\_TOLERANCE}; no recognition \\
+Simplify.js & Point reduction under a tolerance & BSD; free & Reduces
+points only; no smoothing \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Refinement: published stroke methods}} \\
+Interactive beautification & Inferred geometric relations; several
+candidates per stroke & Paper; no library & Snapping may exceed
+\texttt{REFINE\_TOLERANCE} \\
+\$1 recogniser & Template matching of single strokes, no training & Paper
+with pseudocode & Single strokes only \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Refinement: pretrained models}} \\
+OpenAI API & Image input; output that follows a supplied schema &
+Usage-based fees & Logs kept up to 30 days by default; children's data
+guidance \\
+Anthropic API & Image input & Usage-based fees & Data deleted within 30
+days, with exceptions; safeguards for minors \\
+Qwen2.5-VL-7B-Instruct & Object location; JSON coordinates & Apache 2.0;
+hosting cost & GPU hosting run by the team \\
+Sketch-RNN with Quick, Draw! & Generation of vector drawings & Apache 2.0;
+data CC BY 4.0 & Generates rather than adjusts (BR-005) \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Supporting libraries and services}} \\
+Pointer Events & Pen, touch and mouse input & Open web standard & Device
+support still open (OI-09) \\
+Supabase & Database, authentication and storage; self-hosting &
+Apache 2.0; hosted plans & Access policies need configuration and testing
+(SRC-002) \\
+Vercel & Hosting and preview deployments & Hobby plan free; paid plans &
+Hobby is non-commercial only and pauses at its limits \\
+\end{longtable}
+}
+
+\paragraph{Services that should not be used.}
+Two observations follow from the sources; they are not decisions. The
+Gemini API's terms forbid using it in a website or app that is directed
+towards, or likely to be accessed by, people under 18, so Squigglr could
+not use it as a refinement provider under those terms. The same terms let
+Google use content sent to the free tier to improve its products, with
+human review \citep{Google2026GeminiTerms}; any free tier with such terms
+would expose
+children's drawings in a way the supervisor's advice (SRC-004) and the
+open privacy issue (OI-02) argue against. A service that returns only a
+bitmap image does not meet the need for editable strokes (SRC-002).
+
 \subsection{Products That Can Be Copied}
-\lips
+\label{sec:ots-copy}
+Volere asks this question of every project and warns that copying relies
+on the base being of good quality \citep{robertson2012volere}. The
+team has not evaluated the quality of any base listed here and found no
+published specification of any surveyed product that could be reused.
+The answer therefore has three parts: code and data that may legally be
+copied, interaction patterns worth imitating, and patterns to avoid.
+
+\paragraph{Code and data whose licences allow copying.}
+Paper.js and Simplify.js allow reuse as long as their copyright notices
+are kept \citep{PaperJS2020License,Agafonkin2013SimplifyJS}, and the
+Magenta code is under the Apache License 2.0 \citep{Magenta2016License}.
+Tux Paint's source code may be copied under the GPL version~2
+\citep{TuxPaint2026Download}, whose conditions would then apply to the
+copied code; Tux Paint is built as an installed program, not a website.
+The Quick, Draw! drawings may be copied under the CC BY 4.0 licence, but
+they were contributed by players
+of a public game, the dataset records no player ages, and the drawings
+may still contain inappropriate content \citep{Google2017QuickDraw}. They
+therefore cannot serve as the adult-made drawings from which Squigglr's
+ranges are set (BR-009, ASM-014).
+
+\paragraph{Interaction patterns worth imitating.}
+Ideas, not code, are the most useful things to copy.
+\begin{itemize}
+  \item LetterSchool's tap, trace and write sequence gives the same item
+  with less help each time \citep{LetterSchool2026HowWhy}, as Squigglr's
+  stages do (G.1, G.2).
+  \item Tracing Playground marks the start with a dot, shows direction
+  with an arrow, numbers the strokes, says in words when the finger leaves
+  the path, has no timer or score, and follows the device's reduced-motion
+  setting \citep{TracingTown2026Playground}; these suit children who may
+  not read (FACT-007).
+  \item Writing Wizard's and Kaligo's replays of what the child traced
+  \citep{Abel2026WritingWizard,LearnAndGo2026Teachers} show adults the
+  actual strokes behind a result (G.5, BR-004).
+  \item QuickShape keeps a corrected shape editable
+  \citep{Procreate2026QuickShape}, and Smart Script keeps the look of the
+  writer's own hand \citep{Apple2024SmartScript}; both match the intent
+  of BR-005.
+\end{itemize}
+
+\paragraph{Patterns to avoid.}
+Skill screening, scores against a threshold and comparison with reference
+ranges conflict with BR-006, and replacing the child's drawing with an
+artist's conflicts with BR-005. No surveyed product can be copied whole,
+because none combines the dimensions in Table~\ref{tab:ots-dimensions}.
 
 \section{New Problems}
 \subsection{Effects on the Current Environment}

@@ -91,13 +91,13 @@
 14 October 2026 & Rayan Nasrallah & Wrote Section 5, Relevant Facts and Assumptions, with business rules (\#88).\\
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 18, Open Issues, and Section 27, Likely and Unlikely Changes (\#90).\\
-14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added the specialist questionnaire responses as SRC-009, with an appendix.\\
 15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions,
 introduced the glossary and constants register, and prepared the shared
 requirement structure (\#131).\\
-15 October 2026 & Ahmed Elzaria & Specified guided learning activities and formal lesson behaviour; clarified pass-based advancement within adult-selected lessons (\#132).\\
+14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#139).\\
+15 October 2026 & Ahmed Elzaria & Specified guided learning activities and formal lesson behaviour; clarified pass-based advancement within adult-selected lessons (\#132).\\
 \bottomrule
 \end{tabularx}
 
@@ -283,8 +283,9 @@ G.1 Support structured drawing practice &
 or simple drawings, starts with a demonstration, and gives feedback and a
 retry at each drawing stage (SRC-001).
 \emph{Advantage:} structured practice at a suitable level supports
-visual-motor development (SRC-001), and children can enter a lesson,
-practise, restart and go back and forth on their own (SRC-005, \intref{P1}{34:13}).
+visual-motor development (SRC-001), and once an adult starts a lesson the
+child practises without constant adult help (SRC-005, \intref{P1}{34:13}).
+Within a lesson the child does not navigate; Squigglr moves between stages.
 Serves children.
 \emph{Measurement:} met when the team completes every stage of every
 catalogue lesson with prepared correct attempts, each attempt passes, and
@@ -498,9 +499,9 @@ help:
   easiest starting point (SRC-005, \intref{P1}{26:46}), and finger input is a
   stretch goal. Some children may also have gross-motor or vision
   challenges (SRC-005, \intref{P2}{19:05}).
-  \item \textbf{Support needs:} children should be able to enter a lesson,
-  practise, restart, and move back and forth without constant adult help
-  (SRC-005, \intref{P1}{34:13}). Adults decide when a child moves to a new lesson
+  \item \textbf{Support needs:} once an adult starts a lesson, he should be
+  able to practise without constant adult help (SRC-005, \intref{P1}{34:13}).
+  He does not need to navigate, exit or restart a lesson. Adults decide when a child moves to a new lesson
   or skips a stage (SRC-005, \intref{P1}{28:37}).
   \item \textbf{Device experience:} many young children already know how
   to navigate touchscreen applications on tablets (SRC-005, \intref{P1}{34:13}).
@@ -563,8 +564,9 @@ concerns come from the sources cited; none were gathered from children
 \endhead
 \bottomrule
 \endlastfoot
-Children & May not read; need to find and restart a lesson alone
-(SRC-005, \intref{P1}{34:13}). & Icon-based navigation that needs little text. \\
+Children & May not read; need to practise without constant adult help
+(SRC-005, \intref{P1}{34:13}). & An adult starts the lesson; within it the
+child does not navigate, and Squigglr moves between stages. \\
 Children & Grip and fine-motor ability vary (SRC-005, \intref{P3}{25:36}). &
 Stylus is the main input; finger input is a stretch goal. \\
 Children (guided lessons) & Attempts must show what the child actually
@@ -2290,7 +2292,91 @@ Requirements.
 \subsection{Speed and Latency Requirements}
 \lips
 \subsection{Safety-Critical Requirements}
-\lips
+This subsection holds safety requirements that come from the Hazard Analysis
+and do not fit another section. Each lists the hazards it mitigates.
+\begin{description}
+\item[SAF-RAY-001] Squigglr shall allow lesson choice, starting-stage
+choice, learner switching and acceptance of a go-back suggestion only after
+an adult check that a child cannot complete by tapping icons, and shall keep
+a pending suggestion, without blocking practice, until an adult accepts or
+declines it.\\
+\emph{Rationale:} children should be able to practise without constant
+adult help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults
+(CON-007; SRC-005, \intref{P1}{28:37}). The form of the check is
+\texttt{ADULT\_CHECK}, TBD.\\
+\emph{Fit criterion:} in prepared walkthroughs, no adult-only action
+completes without passing the adult check, and a pending suggestion changes
+nothing until an adult acts.\\
+\emph{Hazards:} H-RAY-001, H-RAY-006.
+\item[SAF-RAY-002] Before a lesson starts, Squigglr shall check the device
+and browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not
+match, show an adult-readable notice that results may be unreliable.\\
+\emph{Rationale:} the team does not control the device (CON-001--CON-003).\\
+\emph{Fit criterion:} on each prepared unsupported combination the notice
+appears before the first attempt; on supported ones it does not.\\
+\emph{Hazards:} H-RAY-002.
+\item[SAF-RAY-003] Squigglr shall keep each completed attempt on the device
+until the server confirms it is saved, and shall tell the adult which
+attempts could not be saved.\\
+\emph{Rationale:} offline access is not promised (SRC-005,
+\intref{Moustafa}{6:03}), and G.5 needs complete records.\\
+\emph{Fit criterion:} with the connection cut during or after prepared
+attempts, no confirmed attempt is lost and every unsaved attempt is reported
+to the adult.\\
+\emph{Hazards:} H-RAY-002.
+\item[SAF-RAY-004] No record, summary or export shall show a
+diagnostic label, a judgement of the child's abilities or a comparison with
+other children, and every summary and
+export shall state that it describes practice only and is not an assessment
+or diagnosis.\\
+\emph{Rationale:} Squigglr makes no diagnosis (SRC-001; SRC-005,
+\intref{Moustafa}{6:03}), and adults reading records may have no training.\\
+\emph{Fit criterion:} inspection of every summary and export template finds
+none of the excluded content and finds the statement present.\\
+\emph{Hazards:} H-RAY-003.
+\item[SAF-RAY-005] Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT},
+or at \texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from
+the child, and shall keep the progress saved up to that point.\\
+\emph{Rationale:} the child is not expected to exit a lesson, and no adult
+may be watching (CA-001), so repeated failure must end on its own (G.3).\\
+\emph{Fit criterion:} in prepared sequences of failed attempts, each lesson
+ends at the limit in use with no child input, and the saved record matches
+the attempts made.\\
+\emph{Hazards:} H-RAY-004.
+\item[SAF-RAY-006] Squigglr shall record each lesson that ends at
+\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each
+improvement extension, show the adult how many times these happened for
+each lesson, and keep earlier attempts when a lesson is restarted.\\
+\emph{Rationale:} a restart could otherwise hide repeated failure from the
+adult.\\
+\emph{Fit criterion:} in prepared sequences that reach the limit and then
+restart, the count and all earlier attempts appear in the adult view.\\
+\emph{Hazards:} H-RAY-005.
+\item[SAF-RAY-007] Squigglr shall identify the active learner on every
+practice screen in a form a child who cannot read can recognize, and shall
+save every attempt and suggestion to that learner only.\\
+\emph{Rationale:} school devices may be shared by several children
+(SRC-004).\\
+\emph{Fit criterion:} in prepared multi-learner sessions on one device,
+every attempt and suggestion is saved under the learner shown when it was
+made.\\
+\emph{Hazards:} H-RAY-006.
+\item[SAF-RAY-008] Squigglr shall save a child's adult-set values
+(Table~\ref{tab:goalconst}) only within their team-set ranges, with
+\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the middle of each range when the
+adult does not choose; shall allow changes only after the adult check; and
+shall show the values in use alongside the child's records.\\
+\emph{Rationale:} the supervisor advised that the adult chooses these
+values (SRC-008); a wrong value can stop a child passing a stage they can
+draw, and a child must not change it.\\
+\emph{Fit criterion:} in prepared walkthroughs, every out-of-range value and
+every \texttt{ATTEMPT\_LIMIT} not larger than \texttt{DIFFICULTY\_STREAK}
+and every \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} is
+refused, an unset value equals the midpoint, and no change completes
+without the adult check.\\
+\emph{Hazards:} H-RAY-007.
+\end{description}
 \subsection{Precision or Accuracy Requirements}
 \lips
 \subsection{Robustness or Fault-Tolerance Requirements}
@@ -2931,9 +3017,7 @@ uses that materially contributed to your work}
 consistency, and appropriateness of the submitted document, regardless of
 whether material was generated by a human or an AI system.}
 \end{itemize}}
-
 \subsection*{Individual Disclosures}
-
 \textbf{Rayan:} I used Anthropic's Claude Opus 5.5 at medium effort,
 accessed through Claude Code, while preparing my sections of this document.
 I developed the ideas and made the project decisions in my sections myself,
@@ -2949,7 +3033,6 @@ formatting. Through Claude Code, it also helped manage the repository
 (branches, commits, and merges) and helped me review my teammates' pull
 requests by checking their changes against our decisions and the rest of
 the document; I decided which review comments to post.
-
 All ideas and decisions in my sections are my own. I reviewed every
 AI-assisted passage against my intended meaning and checked each cited
 statement against the original transcript, questionnaire, or meeting notes
@@ -2965,7 +3048,6 @@ to confirm that it says what we claim it says.
 \begin{enumerate}
 
 \item What went well while writing this deliverable?
-
 \textbf{Rayan:} What went well was that most of my sections could be built on
 what our stakeholders had actually told us, rather than on our own guesses.
 Moustafa and I interviewed three domain specialists on October 1, 2026, and
@@ -2980,10 +3062,8 @@ pull request per section, which kept each review small and let each section be
 checked and merged on its own. The main thing I took from this is that
 recording sources as we go makes the requirements much easier to justify and
 to change later.
-
 \item What pain points did you experience during this deliverable, and how did
 you resolve them?
-
 \textbf{Rayan:} The main pain point was that decisions kept changing as we
 learned more, and each change affected several sections at once. In our
 interview on October 1, 2026, the specialists said that the supporting adult,
@@ -3007,10 +3087,8 @@ any claim I could not trace to a source or a team decision. Looking back, I
 learned that requirements are never really finished early in a project, and
 that keeping each change in one place and tracing it to its source is what
 makes them manageable.
-
 \item How many of your requirements were inspired by speaking to your
 client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
-
 \textbf{Rayan:} In my sections, I wrote 24 requirements: 7 mandated
 constraints, 9 business rules and 8 safety requirements. Of these, 18 cite at
 least one conversation with our stakeholders or their proxies. Ten come from
@@ -3025,10 +3103,8 @@ requirements, such as the deliverable deadlines. Since none of these
 stakeholders are the children themselves, nearly every requirement that
 affects how a child uses Squigglr rests on what adults and specialists told
 us, which is why we plan to check them with the domain specialists again later.
-
 \item Which of the courses you have taken, or are currently taking, will help
 your team to be successful with your capstone project.
-
 \textbf{Rayan:} Two courses help directly. The first is SFWRENG 4HC3,
 Human-Computer Interaction, which I am taking now and where our group's term
 project is Squigglr itself. The user research we do there, such as planning
@@ -3047,7 +3123,6 @@ event occurs, the system shall\ldots'', so that the wording stays precise.
 Being able to transfer those concepts helped me a lot with this deliverable in
 particular, because I already knew how to write goals and requirements that
 are precise and checkable and only had to adapt them to a new template.
-
 \item What knowledge and skills will the team collectively need to acquire to
 successfully complete this capstone project? Examples of possible knowledge
 to acquire include domain specific knowledge from the domain of your
@@ -3055,7 +3130,6 @@ application, or software engineering knowledge, mechatronics knowledge or
 computer science knowledge. Skills may be related to technology, or writing,
 or presentation, or team management, etc. You should look to identify at
 least one item for each team member.
-
 \textbf{Rayan:} The most important knowledge the team needs is domain
 knowledge about the children Squigglr is for: how autistic children and
 children with ADHD develop visual-motor skills, how they use apps, and what
@@ -3066,12 +3140,10 @@ is why it was necessary to get input from people who have designed software
 for autistic children and children with ADHD, rather than relying only on our
 own ideas. Their experience is what turned our general idea into requirements
 we can actually justify.
-
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
 member pursue, and why did they make this choice?
-
 \textbf{Rayan:} The two approaches we chose for acquiring this domain
 knowledge were interviews and questionnaires with domain specialists.
 Moustafa and I pursued both. We interviewed three specialists on October 1,
@@ -3083,7 +3155,6 @@ as refinement in the creative space and letter activities. The questionnaire
 also gave the specialists time to think through their answers. Using both
 worked well together: the interview showed us what we did not know, and the
 questionnaire filled in the gaps it left.
-
 \end{enumerate}
 
 \end{document}

@@ -27,6 +27,11 @@
 % The InterviewTranscript.text appendix supplies the int:<speaker>-<timestamp> labels.
 \newcommand{\intlink}[3]{\hyperref[int:#1-#2]{#3}}
 \newcommand{\intref}[2]{\intlink{#1}{#2}{#1, #2}}
+% Link to a goal in Table~\ref{tab:goals}: \goalref{3} prints "G.3".
+\newcommand{\goalref}[1]{\hyperref[goal:#1]{G.#1}}
+% Link to a product use case in Table~\ref{tab:puc}: \ucref{001} prints
+% "UC-001".
+\newcommand{\ucref}[1]{\hyperref[uc:#1]{UC-#1}}
 
 % Uniform specification format for all functional and nonfunctional requirements.
 % Example:
@@ -79,9 +84,12 @@
 
 \section*{Revision History}
 
-\begin{tabularx}{\textwidth}{p{3cm}p{3cm}>{\raggedright\arraybackslash}X}
+\begin{longtable}{@{}p{3cm}p{3cm}>{\raggedright\arraybackslash}p{\dimexpr\textwidth-6cm-4\tabcolsep\relax}@{}}
 \toprule {\textbf{Date}} & {\textbf{Developer(s)}} & {\textbf{Change}}\\
 \midrule
+\endhead
+\bottomrule
+\endlastfoot
 13 October 2026 & Rayan Nasrallah & Added the de-identified specialist interview transcript as an appendix (\#84).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 1, Purpose of the Project, with the six goals and their constants (\#85).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 2, Stakeholders, including personas (\#86).\\
@@ -96,11 +104,14 @@
 introduced the glossary and constants register, and prepared the shared
 requirement structure (\#131).\\
 14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
+14 October 2026 & Moustafa Moustafa & Wrote Section 8.2, Product Use Case Table (\#108).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#139).\\
 15 October 2026 & Ahmed Elzaria & Specified guided learning activities and formal lesson behaviour; clarified pass-based advancement within adult-selected lessons (\#132).\\
 15 October 2026 & Ahmed Elzaria & Added safety-critical requirements SAF-AHM-001 and SAF-AHM-002 for drawing-input integrity (\#135).\\
 \bottomrule
 \end{tabularx}
+15 October 2026 & Moustafa Moustafa & Let the revision history table continue across pages (\#108).\\
+\end{longtable}
 
 ~\\
 
@@ -279,6 +290,7 @@ lesson.
 \endhead
 \bottomrule
 \endlastfoot
+\phantomsection\label{goal:1}%
 G.1 Support structured drawing practice &
 \emph{Purpose:} every lesson in the agreed catalogue covers lines, shapes
 or simple drawings, starts with a demonstration, and gives feedback and a
@@ -292,6 +304,7 @@ Serves children.
 catalogue lesson with prepared correct attempts, each attempt passes, and
 each drawing stage accepts a drawing, gives feedback and allows a retry. \\
 \addlinespace
+\phantomsection\label{goal:2}%
 G.2 Support progression towards independent drawing &
 \emph{Purpose:} within an adult-selected lesson, Squigglr automatically
 advances to the next drawing stage when an attempt meets that stage's
@@ -315,6 +328,7 @@ was made at, with no mislabelled record; and (d) for prepared attempts
 scored just above and just below the chosen \texttt{STAGE\_PASS}, at its
 minimum, default and maximum, each attempt passes or fails as expected. \\
 \addlinespace
+\phantomsection\label{goal:3}%
 G.3 Let supporting adults control support and difficulty &
 \emph{Purpose:} adults choose which lesson a child practises and may let
 the child start at a later stage. Changing to another lesson, skipping a
@@ -347,6 +361,7 @@ criteria, each lesson without improvement ends exactly at
 with its progress saved, no lesson or starting stage changes without an adult's
 action, and these hold at the minimum, default and maximum of each value. \\
 \addlinespace
+\phantomsection\label{goal:4}%
 G.4 Support editable creative drawing and refinement &
 \emph{Purpose:} in the creative space, Squigglr refines a child's drawing
 of a shape or object in the agreed supported set by adjusting the child's
@@ -362,6 +377,7 @@ refined parts can be moved, resized, recoloured, erased and undone; (c)
 restoring returns the original strokes exactly; and (d) a failed refinement
 request leaves the drawing unchanged. \\
 \addlinespace
+\phantomsection\label{goal:5}%
 G.5 Preserve meaningful activity records &
 \emph{Purpose:} each attempt's record keeps the stage, every predefined
 difficulty observed, later corrections and the final outcome; each
@@ -373,6 +389,7 @@ used and the corrections made (SRC-001). Serves supporting adults.
 actions, stages and outcomes, every saved record matches its known
 contents, with no difficulty lost after a correction. \\
 \addlinespace
+\phantomsection\label{goal:6}%
 G.6 Make progress understandable to supporting adults &
 \emph{Purpose:} summaries show a child's progress over time, separate
 attempts made without a guide from attempts made with one, and link to the
@@ -1530,8 +1547,109 @@ still ends the lesson. Relevant to safety.
 \subsection{Product Boundary}
 \lips
 \subsection{Product Use Case Table}
-\lips
+\label{sec:puc-table}
+
+Table~\ref{tab:puc} lists the ten product use cases, UC-001 to UC-010.
+Each row names the actor who starts or carries out the use case, the
+trigger that starts it, what the actor wants when it ends (the user goal)
+and the project goals it serves (Table~\ref{tab:goals}). Squigglr is
+named as the actor where the product starts the use case itself. The
+identifiers are fixed and never renumbered; requirements trace to them,
+and Section~\ref{sec:puc} gives each use case's full flows. Names such as
+\texttt{STAGE\_PASS} are named constants defined in the constants register
+(Table~\ref{tab:goalconst}).
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.09\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.25\textwidth}
+  >{\raggedright\arraybackslash}p{0.29\textwidth}
+  >{\raggedright\arraybackslash}p{0.08\textwidth}@{}}
+\caption{Product use cases}\label{tab:puc}\\
+\toprule
+\textbf{ID} & \textbf{Actor: use case} & \textbf{Trigger} &
+\textbf{User goal} & \textbf{Goals} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Actor: use case} & \textbf{Trigger} &
+\textbf{User goal} & \textbf{Goals} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\phantomsection\label{uc:001}%
+UC-001 & \emph{Supporting adult:} create a child's profile &
+The adult adds a child to Squigglr. &
+The child's profile exists, and every adult-set value is within its
+range, or at the middle of the range if the adult did not choose one. &
+\goalref{3} \\
+\addlinespace
+\phantomsection\label{uc:002}%
+UC-002 & \emph{Supporting adult:} choose a lesson &
+The adult chooses a lesson for a child. &
+The chosen lesson is ready for the adult to start. & \goalref{1},
+\goalref{3} \\
+\addlinespace
+\phantomsection\label{uc:003}%
+UC-003 & \emph{Child:} practise a guided lesson &
+An adult starts a lesson for the child. &
+The child moves to the next stage after an attempt meets
+\texttt{STAGE\_PASS}, or retries; the lesson ends when the child finishes
+it or reaches \texttt{ATTEMPT\_LIMIT}, or \texttt{ATTEMPT\_LIMIT\_MAX}
+when extended (BR-002), and the furthest stage reached is saved.
+& \goalref{1}, \goalref{2}, \goalref{3} \\
+\addlinespace
+\phantomsection\label{uc:004}%
+UC-004 & \emph{Supporting adult:} start the child at a later stage &
+The adult judges that the child needs less help in a lesson. &
+The lesson starts at the stage the adult chose. & \goalref{3} \\
+\addlinespace
+\phantomsection\label{uc:005}%
+UC-005 & \emph{Supporting adult:} respond to a suggestion to go back a stage &
+Squigglr suggests an earlier stage after \texttt{DIFFICULTY\_STREAK}
+failed attempts in a row. &
+The stage changes only if the adult accepts; a declined or ignored
+suggestion changes nothing. & \goalref{3} \\
+\addlinespace
+\phantomsection\label{uc:006}%
+UC-006 & \emph{Child:} create and edit artwork &
+The child opens the creative space. &
+The child's drawing is saved and stays editable. & \goalref{4} \\
+\addlinespace
+\phantomsection\label{uc:007}%
+UC-007 & \emph{Squigglr:} refine artwork and restore the original &
+The child finishes a drawing in the creative space. &
+The drawing is refined within \texttt{REFINE\_TOLERANCE} and stays
+editable; refinement can be turned off; the original strokes can be
+restored; a failed refinement leaves the drawing unchanged. & \goalref{4} \\
+\addlinespace
+\phantomsection\label{uc:008}%
+UC-008 & \emph{Squigglr:} record an attempt &
+The child ends an attempt at a lesson stage. &
+The record keeps the stage, every predefined difficulty observed, later
+corrections and the outcome. & \goalref{5} \\
+\addlinespace
+\phantomsection\label{uc:009}%
+UC-009 & \emph{Supporting adult:} review progress &
+The adult opens a child's progress summary. &
+The adult sees the child's progress over time, with attempts made
+without a guide separated from attempts made with one, and can open the
+attempts behind it. & \goalref{6} \\
+\addlinespace
+\phantomsection\label{uc:010}%
+UC-010 & \emph{Supporting adult:} review history and change settings &
+The adult opens a child's history or settings. &
+Only an authorised adult sees the history; the accessibility and audio
+settings, whether refinement is on, and the adult-set values are changed,
+and each adult-set value stays within its range. & \goalref{3}, \goalref{6} \\
+\end{longtable}
+}
+
 \subsection{Individual Product Use Cases (PUC's)}
+\label{sec:puc}
 \lips
 
 \section{Functional Requirements}

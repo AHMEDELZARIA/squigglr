@@ -41,6 +41,7 @@
 \midrule
 14 October 2026 & Rayan Nasrallah & Added critical assumptions CA-001 to
 CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
+15 October 2026 & Rayan Nasrallah & Added Rayan's reflection answers (\#140).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -371,40 +372,42 @@ to confirm that it says what we claim it says.
 
 \item What went well while writing this deliverable?
 
-\textbf{Rayan:} Identifying the hazards was easier than expected because we already had good
-sources to work from. The transcript of our interview with three domain
-specialists on October 1, 2026 gave us concrete statements, with timestamps, about how the intended children use apps and what
-could go wrong for them. For example, the specialists said adults should decide
-progression rather than the app, that audio feedback should be possible to
-mute, and that Squigglr may be used at home, at school or in other settings.
-Each of these pointed directly to a failure mode we could analyse, so we were
-not guessing at hazards from scratch. Our meeting with our supervisor,
-Dr.~Anand, on October 14, 2026 helped in the same way: once Dr.~Anand explained
-that thresholds should be set by the adult for each child within a range, the
-hazards around wrong or extreme threshold values became clear.
-Because the SRS already recorded these sources, business rules and
-assumptions, we could trace each hazard and critical assumption back to a
-specific statement, which also made the mitigations easier to justify.
+\textbf{Rayan:} Identifying the hazards was easier than expected because we
+already had good sources to work from. The transcript of our interview with
+three domain specialists on October 1, 2026 gave us concrete statements, with
+timestamps, about how the intended children use apps and what could go wrong
+for them. For example, the specialists said adults should decide progression
+rather than the app, that audio feedback should be possible to mute, and that
+Squigglr may be used at home, at school or in other settings. Each of these
+pointed directly to a failure mode we could analyse, so we were not guessing at
+hazards from scratch. Our meeting with our supervisor, Dr.~Anand, on October
+14, 2026 helped in the same way: once Dr.~Anand explained that thresholds
+should be set by the adult for each child within a range, the hazards around
+wrong or extreme threshold values became clear. Because the SRS already
+recorded these sources, business rules and assumptions, we could trace each
+hazard and critical assumption back to a specific statement, which also made
+the mitigations easier to justify.
 
 \item What pain points did you experience during this deliverable, and how
 did you resolve them?
 
-\textbf{Rayan:} The main pain point was that my hazards kept changing as other parts of the
-documents changed. I wrote my first set of hazards and critical assumptions
-based on the SRS as it stood at the time, where the team would set fixed values
-for thresholds such as \texttt{DIFFICULTY\_STREAK} and \texttt{ATTEMPT\_LIMIT}.
-In our meeting on October 14, 2026, Dr.~Anand advised that suitable values
-differ from child to child, so I changed those thresholds to be set by the
-supporting adult within a range the team defines. When I reviewed the hazard
-analysis again, I found that this changed the hazards: the risk was no longer
-only a wrong team-chosen value, but also an adult choosing a value at the edge
-of the range, so I added a new hazard and safety requirement for it. The same
-thing happened when I added the improvement rule, which can extend a lesson
-while a child is improving, and when we confirmed that the child does not
-navigate inside a lesson. Each time, I had to go back and update the affected
-hazards, critical assumptions and mitigations so they matched the SRS. It was
-time-consuming, but it showed me how closely the hazard analysis depends on the
-requirements, and that it has to be reviewed again whenever the SRS changes.
+\textbf{Rayan:} The main pain point was that my hazards kept changing as other
+parts of the documents changed. I wrote my first set of hazards and critical
+assumptions based on the SRS as it stood at the time, where the team would set
+fixed values for thresholds such as \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT}. In our meeting on October 14, 2026, Dr.~Anand advised
+that suitable values differ from child to child, so I changed those thresholds
+to be set by the supporting adult within a range the team defines. When I
+reviewed the hazard analysis again, I found that this changed the hazards: the
+risk was no longer only a wrong team-chosen value, but also an adult choosing a
+value at the edge of the range, so I added a new hazard and safety requirement
+for it. The same thing happened when I added the improvement rule, which can
+extend a lesson while a child is improving, and when we confirmed that the
+child does not navigate inside a lesson. Each time, I had to go back and update
+the affected hazards, critical assumptions and mitigations so they matched the
+SRS. It was time-consuming, but it showed me how closely the hazard analysis
+depends on the requirements, and that it has to be reviewed again whenever the
+SRS changes.
 
 \item Which of your listed risks had your team thought of before this
 deliverable, and which did you think of while doing this deliverable? For
@@ -448,25 +451,25 @@ who understand the users.
 appreciable risks of this form), list at least 2 other types of risk in
 software products. Why are they important to consider?
 
-\textbf{Rayan:} Most software carries risks that have nothing to do with physical harm. One is
-privacy and security. Almost every application stores some information about
-its users, and if that information is exposed, accessed by the wrong person or
-mixed up between users, it can harm those users and destroy their trust in the
-product. This matters even more when the users are vulnerable. In Squigglr, for
-example, the records describe a child's difficulties, so they must only be
-visible to the adults responsible for that child. A second is data integrity
-and availability. People make decisions based on what software shows them, so
-data that is lost, corrupted or shown incorrectly can lead them to the wrong
-decision, even when nothing visibly crashes. In our case, an adult choosing a
-child's next lesson relies on the attempt records being complete and accurate.
-A third is psychological harm. Software that frustrates, confuses or misleads
-its users can affect their well-being or lead them to wrong conclusions, for
-example by implying something about a person that the software cannot actually
-judge. For Squigglr, that means avoiding repeated failure without a break and
-making sure progress summaries are never read as a diagnosis. These risks are
-important to consider because they are easy to overlook when there is no
-obvious physical danger, yet they can cause real harm to users and to the
-people who rely on the software.
+\textbf{Rayan:} Most software carries risks that have nothing to do with
+physical harm. One is privacy and security. Almost every application stores
+some information about its users, and if that information is exposed, accessed
+by the wrong person or mixed up between users, it can harm those users and
+destroy their trust in the product. This matters even more when the users are
+vulnerable. In Squigglr, for example, the records describe a child's
+difficulties, so they must only be visible to the adults responsible for that
+child. A second is data integrity and availability. People make decisions based
+on what software shows them, so data that is lost, corrupted or shown
+incorrectly can lead them to the wrong decision, even when nothing visibly
+crashes. In our case, an adult choosing a child's next lesson relies on the
+attempt records being complete and accurate. A third is psychological harm.
+Software that frustrates, confuses or misleads its users can affect their
+well-being or lead them to wrong conclusions, for example by implying something
+about a person that the software cannot actually judge. For Squigglr, that
+means avoiding repeated failure without a break and making sure progress
+summaries are never read as a diagnosis. These risks are important to consider
+because they are easy to overlook when there is no obvious physical danger, yet
+they can cause real harm to users and to the people who rely on the software.
 
 \end{enumerate}
 

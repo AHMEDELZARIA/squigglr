@@ -2,6 +2,9 @@
 
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{pdflscape}
 \usepackage{hyperref}
 
 \hypersetup{
@@ -36,9 +39,8 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+14 October 2026 & Rayan Nasrallah & Added critical assumptions CA-001 to
+CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -72,10 +74,71 @@ important library, these are also potential components.}
 
 \section{Critical Assumptions}
 
-\wss{These assumptions that are made about the software or system.  You should
-minimize the number of assumptions that remove potential hazards.  For instance,
-you could assume a part will never fail, but it is generally better to include
-this potential failure mode.}
+The assumptions below are kept few and are written so that they do not
+remove hazards. Squigglr does not assume that an adult watches the child
+during practice, that the network is always available, or that the device
+meets Squigglr's requirements; those conditions are treated as failure
+modes in the Failure Mode and Effect Analysis (FMEA). Sources are cited by
+their identifiers in the Software Requirements Specification (SRS),
+Appendix A, and interview turns by speaker and timestamp, for example
+(SRC-005, P1, 34:13). Each assumption lists the H-RAY hazards it affects.
+
+\begin{description}
+\item[CA-001] An adult sets up Squigglr for a child, chooses and starts
+the lesson and its starting stage, and is the only person meant to accept
+a suggestion to go back a stage. Within a lesson the child does not
+navigate, exit or restart; Squigglr moves between stages. An adult may not
+be present or watching while the child practises.\\
+\emph{Rationale:} children should practise without constant adult help,
+while adults handle setup (SRC-005, P1, 34:13), and adults decide progression
+(SRC-005, P1, 28:37; CON-007).\\
+\emph{Hazards affected:} H-RAY-001, H-RAY-004, H-RAY-005.
+
+\item[CA-002] The device, browser, touchscreen or stylus in use may not be
+one of the supported combinations (\texttt{SUPPORTED\_DEVICES}, TBD), and
+Squigglr may be opened on a device without a stylus, where the child can
+draw with a finger but not as intended (ASM-003).\\
+\emph{Rationale:} Squigglr is a website opened from a web address with no
+installation (CON-001, CON-002), so the team does not control the device.
+The supported combinations are not yet defined (CON-003), and the team did
+not promise that Squigglr works on every device (SRC-005, Moustafa,
+6:03).\\
+\emph{Hazards affected:} H-RAY-002.
+
+\item[CA-003] The network connection may be slow or lost at any time,
+including during an attempt.\\
+\emph{Rationale:} attempts are saved to an account and reviewed later from
+another device, and offline access was not promised (SRC-005, Moustafa,
+6:03). Home and school networks are outside the team's control.\\
+\emph{Hazards affected:} H-RAY-002, H-RAY-006.
+
+\item[CA-004] One device may be used by several children, at school or at
+home.\\
+\emph{Rationale:} school devices may be shared by several children
+(SRC-004), and Squigglr may be used at home, at school or in other settings
+such as rehabilitation centres (SRC-005, P2, 21:25).\\
+\emph{Hazards affected:} H-RAY-006.
+
+\item[CA-005] The adults who read practice records are not assumed to have
+training in visual-motor development, and they may show the records to
+other people, such as teachers or therapists.\\
+\emph{Rationale:} parents and caregivers are not assumed to be specialists
+(SRS, Hands-On Users), and records exist to support conversations about
+what a child needs (SRC-005, Moustafa, 6:03). Squigglr makes no diagnosis
+or treatment claims (SRC-001).\\
+\emph{Hazards affected:} H-RAY-003.
+
+\item[CA-006] The supporting adult chooses the adult-set values, such as
+\texttt{STAGE\_PASS}, \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT}, for each child within a range the team sets
+(SRC-008). The ranges are not found from child testing, and the value an
+adult picks, or the default, may not suit their child.\\
+\emph{Rationale:} no information is gathered from children and no study
+with children is run (CON-005, CON-006), so the ranges cannot be tuned on
+children (SRS, Goals of the Project). Children reach these skills at
+different points (SRC-005, P1, 20:27).\\
+\emph{Hazards affected:} H-RAY-004, H-RAY-005, H-RAY-007.
+\end{description}
 
 \section{Failure Mode and Effect Analysis}
 
@@ -87,6 +150,146 @@ requirements.}
 \wss{If no safety requirement can be devised, other mitigation strategies can be
 entered in the table, including strategies involving providing additional
 documentation, and/or test cases.}
+
+\subsection{Supervision, Context of Use and Use of Records (H-RAY)}
+
+Table~\ref{tab:fmea-ray} covers hazards from how Squigglr is supervised,
+where and on what it is used, and how its records are read. Each
+recommended action starts with Eliminate, Mitigate or Document/Test.
+Mitigating requirements trace to the goals (G.\#) and constraints
+(CON-\#\#\#) in the SRS, or to safety requirements SAF-RAY-\#\#\# in the SRS,
+Safety-Critical Requirements.
+
+\begin{landscape}
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{1.4cm}
+  >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{2.4cm}
+  >{\raggedright\arraybackslash}p{2.3cm}
+  >{\raggedright\arraybackslash}p{2.6cm}
+  >{\raggedright\arraybackslash}p{1.9cm}
+  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{2.0cm}@{}}
+\caption{FMEA: supervision, context of use and use of records}
+\label{tab:fmea-ray}\\
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+H-RAY-001 & Lesson flow; adult controls & A child practises with no
+adult watching, or the adult is inattentive, and the child reaches an
+adult-only action. & Children are meant to practise without constant adult
+help (CA-001); adult controls use the same touch interface as the child. &
+The child accepts a suggestion to go back a stage, or changes lesson or
+stage, without an adult's decision; the child's distress goes unnoticed.
+Loss: progression not chosen by an adult; well-being. &
+Psychological/ well-being &
+Mitigate: place every adult-only action (choosing a lesson or stage,
+accepting a suggestion) behind an adult check that a child cannot pass by
+tapping icons; keep a pending suggestion waiting, without blocking
+practice, until an adult reviews it. &
+CON-007, G.3, SAF-RAY-001 \\
+\addlinespace
+H-RAY-002 & Browser front end; saving of attempts & Squigglr is used on an
+unsupported device or browser, without a stylus, or loses its connection
+during an attempt, at home, at school or on a shared device. & Device not
+controlled by the team (CA-002); no offline access (CA-003). & Strokes
+are not captured correctly, the child's attempt is lost, or a lesson
+cannot be completed; the child is frustrated and the record is incomplete.
+Loss: lost practice data; availability. &
+Data integrity or Availability &
+Mitigate: before a lesson starts, check the device and browser against
+\texttt{SUPPORTED\_DEVICES} and show the adult a notice when they do not
+match; keep each attempt until the server confirms it is saved, and tell
+the adult when an attempt could not be saved. &
+CON-001, CON-002, CON-003, G.5, SAF-RAY-002, SAF-RAY-003 \\
+\addlinespace
+H-RAY-003 & Attempt records; progress summaries & Practice records are
+used as clinical or diagnostic evidence, or as a measure of the child's
+ability. & Adults reading records lack specialist training, and records
+may be passed to others (CA-005); fewer attempts may be read as better
+skill (SRC-005, Moustafa, 6:03). & An adult or professional draws a wrong
+conclusion about the child, such as a label or a placement decision.
+Loss: harm to the child's well-being and to decisions about support. &
+Psychological/ well-being &
+Eliminate: show no diagnostic labels, judgements of the child's abilities
+or comparisons with other children in any record or summary. Mitigate: state on every summary and
+export that the records describe practice only and are not an assessment.
+&
+G.5, G.6, SAF-RAY-004 \\
+\addlinespace
+H-RAY-004 & Lesson flow; feedback & Repeated failed attempts at one stage
+continue until the child becomes frustrated or agitated. & Failure
+feedback repeats; \texttt{ATTEMPT\_LIMIT} may be too high for a given
+child (CA-006); an improvement extension lengthens the lesson; no adult may be watching (CA-001). & The child becomes
+distressed, stops practising or refuses the activity later. Loss:
+well-being; the practice benefit. &
+Psychological/ well-being &
+Mitigate: end the lesson at \texttt{ATTEMPT\_LIMIT}, or at
+\texttt{ATTEMPT\_LIMIT\_MAX} when extended, and save progress (G.3); let audio feedback be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
+\texttt{ATTEMPT\_LIMIT} and that no extended lesson passes
+\texttt{ATTEMPT\_LIMIT\_MAX}. &
+G.3, SAF-RAY-005 \\
+\addlinespace
+H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
+\texttt{ATTEMPT\_LIMIT}, it is restarted at once and the repetition
+continues. & No adult may be watching (CA-001); a restart starts a new
+count of attempts. & The limit does not stop the
+repetition, and the adult cannot see how often it happened. Loss:
+well-being; misleading records. &
+Psychological/ well-being &
+Mitigate: record each lesson that ended at \texttt{ATTEMPT\_LIMIT} and
+show the adult how many times this happened per lesson; keep earlier
+attempts when a lesson is restarted. Document/Test: test that a restart
+after the limit keeps the earlier record. &
+G.3, G.5, SAF-RAY-006 \\
+\addlinespace
+H-RAY-006 & Learner selection; attempt records & On a shared device,
+attempts or a pending suggestion are saved to, or shown for, the wrong
+child. & Several children use one device (CA-004); the active child is
+not changed between sessions; a lost connection leaves a session open
+(CA-003). & One child's records are shown to another child or adult, or a
+child's history is mixed with another's, so an adult accepts a suggestion
+based on the wrong attempts. Loss: privacy; record integrity. &
+Privacy/ security &
+Mitigate: show which learner is active on every practice screen in a way
+a child who cannot read can recognize; require an adult action to switch
+learners; show the attempts behind a suggestion when the adult reviews it.
+&
+G.5, SAF-RAY-001, SAF-RAY-007 \\
+\addlinespace
+H-RAY-007 & Child profile settings; lesson flow & A stage check or lesson
+limit uses a value that does not suit the child: \texttt{STAGE\_PASS} too
+strict or too lenient, or \texttt{ATTEMPT\_LIMIT} not larger than
+\texttt{DIFFICULTY\_STREAK}, or \texttt{ATTEMPT\_LIMIT\_MAX} below
+\texttt{ATTEMPT\_LIMIT}. & The adult misjudges the example drawings or
+leaves a default that does not suit the child (CA-006); a value is saved
+outside its range; a child changes a setting. & A child cannot pass a stage
+they can draw, or passes one they cannot, and the records mislead the
+adult. Loss: well-being; misleading records. &
+Psychological/ well-being &
+Mitigate: accept only values within the team-set range, and only an
+\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK}; show
+example drawings of each end of the \texttt{STAGE\_PASS} range; place
+settings behind the adult check; show the values in use next to the
+child's records. Document/Test: test that out-of-range and invalid values
+are refused and that the default is the midpoint. &
+G.2, G.3, SAF-RAY-008 \\
+\end{longtable}
+}
+\end{landscape}
 
 \section{Safety and Security Requirements}
 

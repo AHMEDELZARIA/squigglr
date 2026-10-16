@@ -112,6 +112,7 @@ requirement structure (\#131).\\
 15 October 2026 & Ahmed Elzaria & Added safety-critical requirements SAF-AHM-001 and SAF-AHM-002 for drawing-input integrity (\#135).\\
 15 October 2026 & Moustafa Moustafa & Let the revision history table continue across pages (\#108).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 6, The Scope of the Work, with the context diagram (\#109).\\
+15 October 2026 & Moustafa Moustafa & Wrote Section 8.1, Product Boundary (\#110).\\
 \end{longtable}
 
 ~\\
@@ -1783,8 +1784,170 @@ event; the maintenance requirements cover it.
 
 \section{The Scope of the Product}
 \label{sec:product-scope}
+
+This section describes Squigglr's own part of the work in
+Section~\ref{sec:work-scope}: the inputs and outputs that cross the
+product's boundary, the product use cases, and the full flow of each use
+case.
+
 \subsection{Product Boundary}
-\lips
+\label{sec:product-boundary}
+
+Table~\ref{tab:product-inputs} lists every input Squigglr accepts and
+Table~\ref{tab:product-outputs} every output it produces, covering the
+inputs and outputs in the Problem Statement and Goals (SRC-001) and the
+data flows in Table~\ref{tab:work-flows}. Each row names the use cases
+(Table~\ref{tab:puc}) and requirements that handle it. For each input,
+the last column states what Squigglr does when the input is invalid or
+missing, so that every possible input has a defined response. An
+identifier marked TBD names a requirement group that is not written yet;
+the owner's issue is given.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.19\textwidth}
+  >{\raggedright\arraybackslash}p{0.13\textwidth}
+  >{\raggedright\arraybackslash}p{0.1\textwidth}
+  >{\raggedright\arraybackslash}p{0.18\textwidth}
+  >{\raggedright\arraybackslash}p{0.3\textwidth}@{}}
+\caption{Product inputs}\label{tab:product-inputs}\\
+\toprule
+\textbf{Input} & \textbf{From} & \textbf{Use cases} &
+\textbf{Requirements} & \textbf{If invalid or missing} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Input} & \textbf{From} & \textbf{Use cases} &
+\textbf{Requirements} & \textbf{If invalid or missing} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+A child's profile details and adult-set values & Supporting adult &
+\ucref{001}, \ucref{010} &
+\mbox{\reqref{FR-LRN-017}}, SAF-RAY-008 &
+A value outside its range, an \texttt{ATTEMPT\_LIMIT} not larger than
+\texttt{DIFFICULTY\_STREAK}, or an \texttt{ATTEMPT\_LIMIT\_MAX} smaller
+than \texttt{ATTEMPT\_LIMIT} is not saved. A value the adult does not
+choose is set to the middle of its range (SAF-RAY-008). \\
+\addlinespace
+Lesson choice, starting stage and the start of the lesson &
+Supporting adult & \ucref{002}, \ucref{004} &
+\mbox{\reqref{FR-LRN-016}}, \mbox{\reqref{FR-LRN-018}}, SAF-RAY-001 &
+Without an adult's choice no lesson starts; a child cannot choose or
+start one by tapping icons (SAF-RAY-001). On an unsupported device or
+browser, the adult sees a notice that results may be unreliable
+(SAF-RAY-002). \\
+\addlinespace
+Stylus strokes for an attempt in a guided lesson & Child &
+\ucref{003}, \ucref{008} &
+\mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}} &
+An interrupted or unfinished attempt is not passed and does not count
+toward the attempt limits (\mbox{\reqref{FR-LRN-009}}). Missing, invalid or
+ambiguous input is not passed and is not counted
+(\mbox{\reqref{FR-LRN-010}}). \\
+\addlinespace
+Strokes and edits in the creative space: draw, move, resize, recolour,
+erase, undo & Child & \ucref{006} &
+FR-CRT TBD (\#83) &
+To be stated with the FR-CRT requirements. \\
+\addlinespace
+Request to turn refinement off or restore the original drawing &
+Child or supporting adult & \ucref{007}, \ucref{010} &
+FR-CRT TBD (\#83); BR-005 &
+A failed refinement leaves the drawing unchanged (\goalref{4}). \\
+\addlinespace
+Decision on a suggestion to go back a stage & Supporting adult &
+\ucref{005} &
+\mbox{\reqref{FR-LRN-018}}, \mbox{\reqref{FR-LRN-019}}, SAF-RAY-001 &
+A declined or ignored suggestion changes nothing, and the suggestion
+stays pending without blocking practice until an adult decides
+(SAF-RAY-001; BR-003). Only an adult can accept it. \\
+\addlinespace
+Changes to a child's settings: accessibility, audio, whether refinement
+is on & Supporting adult & \ucref{010} &
+NFR-UX TBD (\#114) &
+To be stated with the NFR-UX requirements. \\
+\addlinespace
+Request to view a child's history, attempts or progress summaries &
+Supporting adult & \ucref{009}, \ucref{010} &
+BR-001; NFR-SEC TBD (\#82) &
+A request from anyone other than the adult who holds the account is
+refused, and nothing is shown (BR-001). \\
+\addlinespace
+Lesson catalogue, ranges of the adult-set values and fixed values &
+Squigglr team & -- &
+\mbox{\reqref{FR-LRN-001}}, BR-009 &
+Not entered by users; set and checked by the team (BR-009). \\
+\addlinespace
+Any of the above while the network connection is lost & Child or
+supporting adult & All &
+SAF-RAY-003 &
+Each completed attempt is kept on the device until the server confirms
+it is saved, and the adult is told which attempts could not be saved
+(SAF-RAY-003). \\
+\end{longtable}
+}
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.38\textwidth}
+  >{\raggedright\arraybackslash}p{0.14\textwidth}
+  >{\raggedright\arraybackslash}p{0.14\textwidth}
+  >{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\caption{Product outputs}\label{tab:product-outputs}\\
+\toprule
+\textbf{Output} & \textbf{To} & \textbf{Use cases} &
+\textbf{Requirements} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Output} & \textbf{To} & \textbf{Use cases} &
+\textbf{Requirements} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Demonstration and guidance for each stage: full outline, endpoints
+only, or no guide & Child & \ucref{003} &
+\mbox{\reqref{FR-LRN-002}}--\mbox{\reqref{FR-LRN-006}} \\
+\addlinespace
+The active learner, shown in a form a child who cannot read can
+recognize & Child & \ucref{003} & SAF-RAY-007 \\
+\addlinespace
+Feedback on an attempt, its result, and moving on to the next stage &
+Child & \ucref{003} &
+\mbox{\reqref{FR-LRN-011}}--\mbox{\reqref{FR-LRN-015}},
+\mbox{\reqref{FR-LRN-023}} \\
+\addlinespace
+Suggestion to go back a stage, or an extension while the child improves &
+Supporting adult & \ucref{005} &
+\mbox{\reqref{FR-LRN-019}}, \mbox{\reqref{FR-LRN-020}} \\
+\addlinespace
+End of a lesson at \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX},
+with progress saved & Child; supporting adult & \ucref{003} &
+\mbox{\reqref{FR-LRN-021}}, SAF-RAY-005, SAF-RAY-006 \\
+\addlinespace
+Refined, editable drawing whose original can be restored & Child &
+\ucref{006}, \ucref{007} & FR-CRT TBD (\#83) \\
+\addlinespace
+Attempt records: stage, difficulties, corrections and outcome &
+Supporting adult & \ucref{008}, \ucref{009} &
+FR-REC TBD (\#83); SAF-RAY-004, SAF-RAY-007 \\
+\addlinespace
+Progress summaries linked to the attempts behind them, with no
+diagnosis or judgement of the child & Supporting adult & \ucref{009} &
+FR-PRG TBD (\#83); \mbox{\reqref{FR-LRN-022}}, SAF-RAY-004 \\
+\addlinespace
+The adult-set values in use, shown with the child's records &
+Supporting adult & \ucref{010} & SAF-RAY-008 \\
+\addlinespace
+Notices to the adult: unsupported device or browser, attempts not
+saved & Supporting adult & All & SAF-RAY-002, SAF-RAY-003 \\
+\end{longtable}
+}
 \subsection{Product Use Case Table}
 \label{sec:puc-table}
 

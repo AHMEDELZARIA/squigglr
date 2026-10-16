@@ -1894,31 +1894,92 @@ to confirm that it says what we claim it says.
 
 \input{../Reflection.text}
 
-\input{../SRS_Reflection.text}
+\begin{enumerate}
 
-\subsection*{Rayan Nasrallah}
+\item What went well while writing this deliverable?
 
-\textbf{1. What went well?}
-The specialist interview gave us a source for most of my sections. The full de-identified transcript is an appendix, so Section 1, Section 2, Section 5 and Appendix A cite P1--P3 by timestamp instead of relying on our own assumptions. Splitting my issue (\#79) into one sub-issue and one PR per section (\#84--\#91) kept each review small. Each branch could be checked and merged on its own.
+\textbf{Rayan:} What went well was that most of my sections could be built on
+what our stakeholders had actually told us, rather than on our own guesses.
+Moustafa and I interviewed three domain specialists on October 1, 2026, and
+the de-identified transcript is now an appendix to the SRS. Because of this,
+Sections 1, 2 and 5 and the requirement sources in Appendix A cite the
+specialists (P1 to P3) by timestamp, so a reader can check exactly where each
+statement came from. Our meetings with our supervisor, Dr.~Anand, on September
+23 and October 14, 2026, and with our TA on September 23 and October 7, 2026,
+gave us the same kind of traceable source for the constraints and business
+rules. It also helped that I split my part of the SRS into one issue and one
+pull request per section, which kept each review small and let each section be
+checked and merged on its own. The main thing I took from this is that
+recording sources as we go makes the requirements much easier to justify and
+to change later.
 
-\textbf{2. Pain points and how I resolved them}
-\begin{itemize}
-  \item \emph{Decisions kept changing as we learned more.} Examples: who controls progression, the supervisor's advice on adult-configurable thresholds (\#102), and the follow-up questionnaire (\#129). Each change touched several sections. I fixed this by updating every affected requirement in the same PR and recording what was settled in Open Issues (Section 18).
-  \item \emph{Merge conflicts.} Several branches were open at once and each added a revision-history row, so later PRs conflicted on that table. I merged main into each branch and kept every row.
-  \item \emph{Keeping claims sourced.} Some early drafts included details nobody had discussed. I went back through each section, checked every claim against the transcript or a team decision, and removed what had no source.
-\end{itemize}
+\item What pain points did you experience during this deliverable, and how did
+you resolve them?
 
-\textbf{3. How many requirements came from stakeholders?}
-\textbf{[Rayan: give the count.]} The SRS cites the interview (SRC-007), the supervisor meeting (SRC-008) and the questionnaire (SRC-009) 29 times in total. Examples of rules that came from them: adults set the lesson and stage, there is no single overall score, thresholds are adult-configurable within team-set ranges, and refinement can be turned off.
+\textbf{Rayan:} The main pain point was that decisions kept changing as we
+learned more, and each change affected several sections at once. In our
+interview on October 1, 2026, the specialists said that the supporting adult,
+not the app, should decide when a child moves to an easier or harder stage, so
+we changed our progression goal from automatic to adult-controlled. In our
+meeting on October 14, 2026, Dr.~Anand advised that thresholds such as the
+pass criteria and the number of failed attempts should be set by the adult for
+each child within a range the team defines, which changed several constraints,
+business rules and goals. The answers to the follow-up questionnaire that
+Moustafa and I sent the specialists, returned between October 2 and 4, 2026,
+then led us to let refinement in the creative space be turned off. I resolved
+this by updating every affected section in the same pull request as each
+change, and by recording anything still unsettled in Open Issues (Section 18),
+so that nothing was left half-changed. A smaller problem was that several of
+my branches were open at once and each added a row to the revision history, so
+later pull requests conflicted on that table; I merged main into each branch
+and kept every row. I also found that some early drafts included details
+nobody had actually discussed, so I went back through each section and removed
+any claim I could not trace to a source or a team decision. Looking back, I
+learned that requirements are never really finished early in a project, and
+that keeping each change in one place and tracing it to its source is what
+makes them manageable.
 
-\textbf{4. Courses that will help}
-\textbf{[Rayan: list your courses and what each gives the project, e.g. SFWRENG 4HC3 for user research and requirements from stakeholders.]}
+\item How many of your requirements were inspired by speaking to your
+client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
 
-\textbf{5. Knowledge and skills the team needs (at least one per member)}
-\textbf{[Rayan: confirm with the team. Areas this SRS showed we need: visual-motor development and support for autistic and ADHD children; capturing and comparing stylus strokes in the browser; privacy for children's records; accessibility (selected WCAG 2.2 criteria); testing without a study with children.]}
+\textbf{Rayan:} In my sections, I wrote 24 requirements: 7 mandated
+constraints, 9 business rules and 8 safety requirements. Of these, 18 cite at
+least one conversation with our stakeholders or their proxies. Ten come from
+our interview with the specialists on October 1, 2026, including that adults
+choose the lesson and stage, that guided lesson records keep the child's
+actual strokes, and that Squigglr gives no diagnosis. Eleven come from our
+meetings with Dr.~Anand on September 23 and October 14, 2026, including that
+Squigglr is a website, that no information is gathered from or about children,
+and that the adult sets each child's thresholds within a team-set range. Some
+cite both. The other six come from our own project documents and the course
+requirements, such as the deliverable deadlines. Since none of these
+stakeholders are the children themselves, nearly every requirement that
+affects how a child uses Squigglr rests on what adults and specialists told
+us, which is why we plan to check them with parents and educators later.
 
-\textbf{6. Approaches to acquiring each, and who pursues which}
-\textbf{[Rayan: needs each member's own choice. Possible approaches: follow-up questions to the specialists, reading published sources, building small prototypes, the WCAG documentation and course material.]}
+\item Which of the courses you have taken, or are currently taking, will help
+your team to be successful with your capstone project.
 
+\textbf{Rayan:} \textbf{[Rayan: list your courses and what each gives the
+project.]}
+
+\item What knowledge and skills will the team collectively need to acquire to
+successfully complete this capstone project? Examples of possible knowledge
+to acquire include domain specific knowledge from the domain of your
+application, or software engineering knowledge, mechatronics knowledge or
+computer science knowledge. Skills may be related to technology, or writing,
+or presentation, or team management, etc. You should look to identify at
+least one item for each team member.
+
+\textbf{Rayan:} \textbf{[Rayan: confirm with the team.]}
+
+\item For each of the knowledge areas and skills identified in the previous
+question, what are at least two approaches to acquiring the knowledge or
+mastering the skill? Of the identified approaches, which will each team
+member pursue, and why did they make this choice?
+
+\textbf{Rayan:} \textbf{[Rayan: each member's own choice.]}
+
+\end{enumerate}
 
 \end{document}

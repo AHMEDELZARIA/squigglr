@@ -5,6 +5,9 @@
 \usepackage{array}
 \usepackage{longtable}
 \usepackage{pdflscape}
+\usepackage[round]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
 \usepackage{hyperref}
 
 \hypersetup{
@@ -43,6 +46,7 @@
 CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#140).\\
 15 October 2026 & Ahmed Elzaria & Added drawing-input and guided-lesson FMEA hazards H-AHM-001 to H-AHM-007 (part of \#135).\\
+16 October 2026 & Muhammad Huzaifah & Listed the HA-derived requirements with their hazards in Section 6 and planned their phases in the Section 7 roadmap (\#128).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -430,13 +434,633 @@ FR-LRN-019, FR-LRN-021 \\
 
 \section{Safety and Security Requirements}
 
-\wss{Newly discovered requirements.  These should also be added to the SRS.  (A
-rationale design process how and why to fake it.)}
+This section lists the safety and security requirements derived from the
+hazard analysis (HA). A requirement is HA-derived when its ID appears in
+the Mitigating requirement IDs column of any of the three per-author FMEA
+tables (H-RAY, H-AHM and H-MUH) in the Failure Mode and Effect Analysis
+section, so that it carries out the recommended action of at least one
+hazard. As the teaching assistant (TA) advised
+(SRC-006), each requirement is written once, in the SRS, together with its
+rationale, fit criterion, priority,
+phase and sources. This section therefore adds no requirement of its own:
+Table~\ref{tab:safety-reqs} repeats the statement of each HA-derived
+requirement exactly as the SRS states it.
+
+The table has two groups. Functional requirements come first, in the order
+of the SRS subsections that hold them: the Learning Activity, Creative
+Drawing, Attempt Record and Progress Summary requirements.
+Safety-critical requirements follow (SAF-RAY and SAF-AHM); the SRS keeps
+them in its Safety-Critical Requirements subsection because
+they do not fit another section. For each requirement, the table gives
+its ID, with the short title the SRS gives it where there is one, its
+statement, the hazards whose FMEA rows cite it, and the SRS subsection that
+holds it. The subsection is named in words, because the SRS is a separate
+document; for the same reason, a statement that refers to an SRS table
+names the table by its caption. Names in monospaced capitals, such as \texttt{STAGE\_PASS}, are
+symbolic constants that the SRS defines in its table ``Central symbolic
+constants register''.
+
+Some rows of the H-RAY table also cite goals (G.2, G.3, G.5 and G.6) or
+constraints (CON-001, CON-002, CON-003 and CON-007) among their
+mitigations. A goal states what \progname{} is for, and a constraint is
+imposed on the project from outside, so neither is a requirement and
+neither is repeated here. Every row that cites a goal or a constraint also
+cites at least one safety-critical requirement of
+Table~\ref{tab:safety-reqs}.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{2.1cm}
+  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.75cm-6\tabcolsep\relax}
+  >{\raggedright\arraybackslash}p{1.75cm}
+  >{\raggedright\arraybackslash}p{1.9cm}@{}}
+\caption{HA-derived requirements, as stated in the SRS}
+\label{tab:safety-reqs}\\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} &
+\textbf{SRS section} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} &
+\textbf{SRS section} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{@{}r@{}}{\emph{Continued on the next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{4}{@{}l}{\textbf{Functional requirements}} \\*
+\addlinespace
+FR-LRN-007\newline\emph{Stylus stroke acquisition} & Squigglr shall accept
+stylus-drawn strokes as ordered sequences of input points for the active lesson
+attempt and preserve their order and stroke boundaries for subsequent
+classification. & H-AHM-001, H-AHM-002, H-AHM-003 & Learning Activity \\
+\addlinespace
+FR-LRN-008\newline\emph{Multi-stroke attempts} & Squigglr shall evaluate the
+collected strokes of a single attempt together rather than classify each stylus
+lift as a completed attempt. & H-AHM-001, H-AHM-002 & Learning Activity \\
+\addlinespace
+FR-LRN-009\newline\emph{Interrupted attempt handling} & Squigglr shall
+distinguish an interrupted or unfinished drawing attempt from a completed
+drawing attempt, shall not record it as passed, and shall not consume an
+evaluable attempt from the stage limit. & H-AHM-001, H-AHM-006 & Learning
+Activity \\
+\addlinespace
+FR-LRN-010\newline\emph{Invalid and ambiguous input} & Squigglr shall withhold
+passing status from an attempt whose required stylus input is missing, invalid
+or too ambiguous to evaluate against the stage criteria, and shall not count
+such input toward the stage's evaluable-attempt or unsuccessful-attempt limits.
+& H-AHM-001, H-AHM-003 & Learning Activity \\
+\addlinespace
+FR-LRN-011\newline\emph{Completeness classification} & Squigglr shall classify
+every evaluable drawing attempt as complete or incomplete relative to the
+selected lesson and guidance stage. & H-AHM-004, H-AHM-005 & Learning Activity
+\\
+\addlinespace
+FR-LRN-013\newline\emph{Pass classification} & Squigglr shall report an
+evaluable attempt as passing its stage only when the drawing is classified as
+complete and its result meets the current learner's \texttt{STAGE\_\allowbreak
+PASS} criterion. & H-AHM-004, H-AHM-005 & Learning Activity \\
+\addlinespace
+FR-LRN-014\newline\emph{Predefined difficulty feedback} & Squigglr shall present
+only pre-approved, stage-relevant feedback observations for evaluated attempts,
+including applicable missed tracing portions, incomplete lines or shapes and
+incorrect endpoints. & H-AHM-005 & Learning Activity \\
+\addlinespace
+FR-LRN-016\newline\emph{Adult lesson and starting-stage selection} & Squigglr
+shall use the lesson and starting guidance stage selected by the supporting
+adult for the learner's session, including an adult-selected later starting
+stage. & H-AHM-007 & Learning Activity \\
+\addlinespace
+FR-LRN-017\newline\emph{Adult-selected practice parameters} & Squigglr shall
+apply the learner's adult-selected values for \texttt{STAGE\_\allowbreak PASS},
+\texttt{DIFFICULTY\_\allowbreak STREAK}, \texttt{ATTEMPT\_\allowbreak LIMIT},
+\texttt{IMPROVE\_\allowbreak WINDOW}, \texttt{ATTEMPT\_\allowbreak EXTENSION}
+and \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, using the documented
+midpoint default for any unset value and rejecting out-of-range or inconsistent
+selections. & H-AHM-007 & Learning Activity \\
+\addlinespace
+FR-LRN-018\newline\emph{Adult authorization for discretionary changes} &
+Squigglr shall require explicit authorization from the supporting adult before
+changing to another lesson, skipping a guidance stage or moving backward to an
+earlier stage; routine pass-based advancement to the next stage of the current
+lesson requires no additional adult action. & H-AHM-006 & Learning Activity \\
+\addlinespace
+FR-LRN-019\newline\emph{Difficulty suggestion} & Squigglr shall offer, without
+applying, an optional suggestion to return to an earlier drawing stage when the
+learner reaches \texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing
+evaluable attempts at an eligible stage and the improvement rule does not
+suppress suggestions. When an adult declines or ignores the suggestion, another
+suggestion shall require a new full failure streak. & H-AHM-006, H-AHM-007 &
+Learning Activity \\
+\addlinespace
+FR-LRN-020\newline\emph{Improvement-\allowbreak{}based extension} & Squigglr
+shall suppress a difficulty suggestion while the learner qualifies as improving,
+and, when the unsuccessful-attempt count first reaches
+\texttt{ATTEMPT\_\allowbreak LIMIT}, grant up to \texttt{ATTEMPT\_\allowbreak
+EXTENSION} additional evaluable stage attempts if the average result of the most
+recent \texttt{IMPROVE\_\allowbreak WINDOW} attempts exceeds the average of the
+preceding equally sized window by at least \texttt{IMPROVE\_\allowbreak MARGIN},
+subject to \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. The extension
+shall be granted at most once per stage and expire after the allotted additional
+evaluable attempts, even if results continue to improve. & H-AHM-006 & Learning
+Activity \\
+\addlinespace
+FR-LRN-021\newline\emph{Stage attempt limit and lesson end} & Squigglr shall end
+the active lesson when its unsuccessful-attempt count reaches
+\texttt{ATTEMPT\_\allowbreak LIMIT} without a qualifying extension, or a granted
+extension is exhausted, or the allowed total-attempt count reaches
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, and make the furthest
+stage reached available for the lesson record. & H-AHM-007 & Learning Activity
+\\
+\addlinespace
+FR-LRN-023\newline\emph{Automatic within-lesson advancement} & Squigglr shall
+automatically advance from full-outline tracing to endpoint-only guidance, and
+from endpoint-only guidance to independent drawing, upon a passing attempt at
+the active stage; a passing independent drawing attempt completes the current
+lesson without starting a different lesson. & H-AHM-004 & Learning Activity \\
+\addlinespace
+FR-CRT-007\newline\emph{Undo a change} & Squigglr shall let the child undo the
+changes to the open creative drawing one at a time, most recent first, back to
+the drawing as it was when the child opened it. & H-MUH-001 & Creative Drawing
+\\
+\addlinespace
+FR-CRT-008\newline\emph{Redo an undone change} & Squigglr shall let the child
+redo undone changes one at a time until the child makes a new change. &
+H-MUH-001 & Creative Drawing \\
+\addlinespace
+FR-CRT-010\newline\emph{Refine a finished drawing} & Squigglr shall refine the
+open creative drawing automatically each time the child finishes it while
+refinement is turned on, and at no other time. & H-MUH-002 & Creative Drawing \\
+\addlinespace
+FR-CRT-011\newline\emph{Change only stroke paths} & Squigglr shall change only
+the path of each existing stroke when it refines a creative drawing. & H-MUH-002
+& Creative Drawing \\
+\addlinespace
+FR-CRT-012\newline\emph{Stay within the refinement tolerance} & Squigglr shall
+keep every refined stroke within \texttt{REFINE\_\allowbreak TOLERANCE} of the
+corresponding original stroke. & H-MUH-002, H-MUH-006 & Creative Drawing \\
+\addlinespace
+FR-CRT-013\newline\emph{Keep the refined drawing editable} & Squigglr shall let
+the child edit each stroke of a refined drawing with the same actions, and with
+the same results, as a stroke the child drew. & H-MUH-001 & Creative Drawing \\
+\addlinespace
+FR-CRT-014\newline\emph{Do not refine a stroke twice} & Squigglr shall not
+refine again a stroke that an earlier refinement changed, unless the child has
+edited that stroke since. & H-MUH-002 & Creative Drawing \\
+\addlinespace
+FR-CRT-015\newline\emph{Leave unsupported drawings unchanged} & Squigglr shall
+leave a finished creative drawing unchanged if it has no strokes or is not a
+drawing of an item in the supported set. & H-MUH-002, H-MUH-006 & Creative
+Drawing \\
+\addlinespace
+FR-CRT-016\newline\emph{Show whether a drawing is refined} & Squigglr shall
+show, while a creative drawing is open, whether it holds a refinement that has
+not been undone or restored. & H-MUH-003, H-MUH-006 & Creative Drawing \\
+\addlinespace
+FR-CRT-017\newline\emph{Restore the exact original} & Squigglr shall return a
+creative drawing, on restore, exactly to the original of its most recent
+refinement that has not been undone or restored. & H-MUH-001, H-MUH-003 &
+Creative Drawing \\
+\addlinespace
+FR-CRT-018\newline\emph{Child restores the original} & Squigglr shall let the
+child restore the original of the open creative drawing. & H-MUH-001, H-MUH-006
+& Creative Drawing \\
+\addlinespace
+FR-CRT-019\newline\emph{Adult restores the original} & Squigglr shall let the
+supporting adult, after passing the adult check of SAF-RAY-001, restore the
+original of any creative drawing saved under a learner profile in that adult's
+account. & H-MUH-001 & Creative Drawing \\
+\addlinespace
+FR-CRT-020\newline\emph{Leave the drawing unchanged when refinement fails} &
+Squigglr shall make no change to a creative drawing when its refinement fails or
+the refinement result violates FR-CRT-011 or FR-CRT-012. & H-MUH-002 & Creative
+Drawing \\
+\addlinespace
+FR-CRT-021\newline\emph{Discard an out-of-date result} & Squigglr shall discard
+a refinement result if the drawing has been changed or closed since that
+refinement started. & H-MUH-002 & Creative Drawing \\
+\addlinespace
+FR-CRT-023\newline\emph{Save to the active learner} & Squigglr shall save each
+creative drawing, with the originals of its refinements, to the learner profile
+that was active when the child drew it, without any action from the child. &
+H-MUH-003, H-MUH-004, H-MUH-005 & Creative Drawing \\
+\addlinespace
+FR-CRT-024\newline\emph{Reopen a drawing as it was left} & Squigglr shall reopen
+a saved creative drawing exactly as it was last saved, with every stroke
+editable and every refinement that has not been undone or restored still
+restorable. & H-MUH-001, H-MUH-005 & Creative Drawing \\
+\addlinespace
+FR-CRT-025\newline\emph{Keep changes through a lost connection} & Squigglr shall
+save, once the connection returns, every change the child made to an open
+creative drawing while the connection was lost. & H-MUH-005 & Creative Drawing
+\\
+\addlinespace
+FR-CRT-026\newline\emph{Show only the active learner's drawings} & Squigglr
+shall show in the creative space only the creative drawings saved under the
+active learner profile. & H-MUH-004 & Creative Drawing \\
+\addlinespace
+FR-CRT-027\newline\emph{No refinement in guided lessons} & Squigglr shall not
+refine any stroke drawn in a guided lesson. & H-MUH-002 & Creative Drawing \\
+\addlinespace
+FR-CRT-028\newline\emph{Creative drawings are not attempts} & Squigglr shall not
+count a creative drawing as an attempt. & H-MUH-003 & Creative Drawing \\
+\addlinespace
+FR-CRT-029\newline\emph{Show unsaved changes} & Squigglr shall show, while a
+creative drawing is open, whether every change to it has been saved. & H-MUH-005
+& Creative Drawing \\
+\addlinespace
+FR-CRT-030\newline\emph{Turn refinement off} & Squigglr shall let the child, and
+the supporting adult, turn automatic refinement off and on for a learner
+profile. & H-MUH-006 & Creative Drawing \\
+\addlinespace
+FR-REC-001\newline\emph{Attempt record} & Squigglr shall keep, for each attempt
+that ends with an outcome, an attempt record holding the lesson, the stage, the
+attempt's result, the outcome (whether the attempt passed its stage, FR-LRN-013)
+and the date and time the attempt ended. & H-MUH-003 & Attempt Record \\
+\addlinespace
+FR-REC-002\newline\emph{Actual strokes} & Squigglr shall keep in each attempt
+record the strokes the child drew in the attempt, in the order drawn, as they
+were captured. & H-MUH-003 & Attempt Record \\
+\addlinespace
+FR-REC-003\newline\emph{Difficulties and corrections} & Squigglr shall keep in
+each attempt record every predefined difficulty observed during the attempt,
+each marked as corrected or not corrected within that attempt. & H-MUH-007 &
+Attempt Record \\
+\addlinespace
+FR-REC-004\newline\emph{Adult-set values in use} & Squigglr shall keep in each
+attempt record the value of each adult-set value that was in use for the learner
+when the attempt was made. & H-MUH-007 & Attempt Record \\
+\addlinespace
+FR-REC-005\newline\emph{Interrupted attempt} & Squigglr shall keep an attempt
+that an adult stops in Squigglr, by ending the session or switching learner,
+after at least one stroke but before its outcome is decided, as an attempt
+record marked as interrupted, holding the strokes and predefined difficulties up
+to that point and no outcome. & H-MUH-004 & Attempt Record \\
+\addlinespace
+FR-REC-006\newline\emph{Lesson record} & Squigglr shall keep, each time a
+learner starts a lesson, a lesson record holding the lesson, the starting stage,
+the furthest stage reached, the number of successful attempts at each stage and
+how the lesson ended. & H-MUH-007 & Attempt Record \\
+\addlinespace
+FR-REC-007\newline\emph{Unfinished lesson} & Squigglr shall keep the lesson
+record of a lesson that stops before its last stage is passed and before it
+reaches an attempt limit, marked as unfinished, with the furthest stage reached
+and the successful attempts at each stage up to that point. & H-MUH-007 &
+Attempt Record \\
+\addlinespace
+FR-REC-008\newline\emph{Each attempt saved once} & Squigglr shall save each
+attempt record exactly once, under the lesson record of the lesson in which the
+attempt was made. & H-MUH-004 & Attempt Record \\
+\addlinespace
+FR-REC-009\newline\emph{Saved records unchanged} & Squigglr shall keep the
+contents of every saved attempt record, and of every lesson record whose lesson
+has ended, unchanged except by deletion. & H-MUH-003, H-MUH-004, H-MUH-007 &
+Attempt Record \\
+\addlinespace
+FR-PRG-001\newline\emph{One learner per summary} & Squigglr shall show in each
+progress summary only the records of the one learner profile that the summary
+names. & H-MUH-004 & Progress Summary \\
+\addlinespace
+FR-PRG-002\newline\emph{Progress over time by lesson} & Squigglr shall show, for
+each lesson in a progress summary, the learner's lesson records in the order
+they were started, each with its starting stage, furthest stage reached,
+successful attempts at each stage and how the lesson ended. & H-MUH-008 &
+Progress Summary \\
+\addlinespace
+FR-PRG-003\newline\emph{With and without a guide kept apart} & Squigglr shall
+show attempts made without a guide separately from attempts made with a guide in
+every part of a progress summary that counts or lists attempts. & H-MUH-003 &
+Progress Summary \\
+\addlinespace
+FR-PRG-004\newline\emph{Recurring difficulties} & Squigglr shall list in each
+progress summary every predefined difficulty observed in at least
+\texttt{RECUR\_\allowbreak MIN} of the learner's attempts at the same stage of
+the same lesson, with the number of those attempts and the number in which the
+child corrected it. & H-MUH-008 & Progress Summary \\
+\addlinespace
+FR-PRG-005\newline\emph{Open the attempts behind the summary} & Squigglr shall
+let the adult open, from each figure or item in a progress summary, the attempt
+records from which it was computed. & H-MUH-008 & Progress Summary \\
+\addlinespace
+FR-PRG-006\newline\emph{Attempt record view} & Squigglr shall show, for each
+attempt record the adult opens, every value kept in it under FR-REC-001 to
+FR-REC-005, with the strokes drawn as recorded. & H-MUH-008 & Progress Summary
+\\
+\addlinespace
+FR-PRG-008\newline\emph{Empty history} & Squigglr shall show, when the learner
+has no saved attempt record in the chosen lessons and dates, a progress summary
+that states that no practice is recorded and shows no stage, count or
+difficulty. & H-MUH-008 & Progress Summary \\
+\addlinespace
+FR-PRG-009\newline\emph{Interrupted attempts shown apart} & Squigglr shall show
+interrupted attempts in a progress summary separately from successful and
+unsuccessful attempts. & H-MUH-008 & Progress Summary \\
+\addlinespace
+FR-PRG-010\newline\emph{Stages not attempted} & Squigglr shall mark each stage
+of a lesson that the learner has not attempted, including a stage before an
+adult-chosen starting stage, as not attempted, distinct from a stage attempted
+without success. & H-MUH-003, H-MUH-008 & Progress Summary \\
+\addlinespace
+FR-PRG-011\newline\emph{Latest attempt included} & Squigglr shall state on each
+progress summary the date and time of the most recent attempt it includes. &
+H-MUH-008 & Progress Summary \\
+\addlinespace
+\midrule
+\multicolumn{4}{@{}l}{\textbf{Safety-critical requirements}} \\*
+\addlinespace
+SAF-RAY-001 & Squigglr shall allow lesson choice, starting-stage choice, learner
+switching and acceptance of a go-back suggestion only after an adult check that
+a child cannot complete by tapping icons, and shall keep a pending suggestion,
+without blocking practice, until an adult accepts or declines it. & H-RAY-001,
+H-RAY-006 & Safety-Critical \\
+\addlinespace
+SAF-RAY-002 & Before a lesson starts, Squigglr shall check the device and
+browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not match,
+show an adult-readable notice that results may be unreliable. & H-RAY-002 &
+Safety-Critical \\
+\addlinespace
+SAF-RAY-003 & Squigglr shall keep each completed attempt on the device until the
+server confirms it is saved, and shall tell the adult which attempts could not
+be saved. & H-RAY-002 & Safety-Critical \\
+\addlinespace
+SAF-RAY-004 & No record, summary or export shall show a diagnostic label, a
+judgement of the child's abilities or a comparison with other children, and
+every summary and export shall state that it describes practice only and is not
+an assessment or diagnosis. & H-RAY-003 & Safety-Critical \\
+\addlinespace
+SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or at
+\texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from the child,
+and shall keep the progress saved up to that point. & H-RAY-004 &
+Safety-Critical \\
+\addlinespace
+SAF-RAY-006 & Squigglr shall record each lesson that ends at
+\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement
+extension, show the adult how many times these happened for each lesson, and
+keep earlier attempts when a lesson is restarted. & H-RAY-005 & Safety-Critical
+\\
+\addlinespace
+SAF-RAY-007 & Squigglr shall identify the active learner on every practice
+screen in a form a child who cannot read can recognize, and shall save every
+attempt and suggestion to that learner only. & H-RAY-006 & Safety-Critical \\
+\addlinespace
+SAF-RAY-008 & Squigglr shall save a child's adult-set values (the SRS table
+``Central symbolic constants register'') only within their team-set ranges, with
+\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the
+middle of each range when the adult does not choose; shall allow changes only
+after the adult check; and shall show the values in use alongside the child's
+records. & H-RAY-007 & Safety-Critical \\
+\addlinespace
+SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
+event from being counted more than once during evaluation or recording of an
+attempt, while preserving legitimate separately drawn strokes, including
+overlapping strokes. & H-AHM-002 & Safety-Critical \\
+\addlinespace
+SAF-AHM-002 & Squigglr shall preserve the relative positions and order of stylus
+points within the active drawing surface when the canvas size or supported
+device orientation changes, and shall reject input whose coordinates cannot be
+mapped reliably to that surface. & H-AHM-003 & Safety-Critical \\
+\end{longtable}
+}
+
+In total, 65 requirements are HA-derived: 14 Learning Activity, 22
+Creative Drawing, nine Attempt Record and ten Progress Summary
+requirements, and ten safety-critical requirements. Every row of the three
+FMEA tables cites at least one of them. The Roadmap section that follows
+states the phase in which each is planned.
 
 \section{Roadmap}
 
-\wss{Which safety requirements will be implemented as part of the capstone timeline?
-Which requirements will be implemented in the future?}
+This section states when each HA-derived requirement of
+Table~\ref{tab:safety-reqs} is planned to be met. The capstone timeline has
+three phases, each named after the course deliverable that ends it: PH-1,
+the proof-of-concept (PoC) demonstration, from Nov.~23, 2026; PH-2,
+Revision~0 (Rev~0), from Feb.~1, 2027; and PH-3, the final demonstration,
+from Mar.~15, 2027. These identifiers are those of the SRS Introduction and
+are distinct from the interview participant codes. Each date is the start
+of the course window for that
+deliverable in the Development Plan (SRC-002). Work planned after the
+capstone has the phase Future. A phase states when a requirement is
+planned to be met; no requirement is claimed here to be implemented.
+The PoC experiments use team-created drawings and prepared attempts
+(SRC-002), and the PoC does not need a complete application, so the
+requirements planned for PH-2 protect the people who use the product as a
+whole.
+
+A functional requirement's phase is the one in its Phase field in the SRS.
+The safety-critical requirements have no Phase field, so for each of them
+Table~\ref{tab:roadmap} gives the phase of the functions it protects and
+the reason. The table gives one reason for each group of requirements that
+share a purpose, and names the hazards each group mitigates.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{1.7cm}
+  >{\raggedright\arraybackslash}p{2.1cm}
+  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-3.8cm-4\tabcolsep\relax}
+  @{}}
+\caption{Phase of each HA-derived requirement}
+\label{tab:roadmap}\\
+\toprule
+\textbf{Phase (date)} & \textbf{Requirement IDs} & \textbf{Rationale} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Phase (date)} & \textbf{Requirement IDs} & \textbf{Rationale} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{@{}r@{}}{\emph{Continued on the next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+PH-1 (Nov.~23, 2026) & FR-CRT-007, FR-CRT-010, FR-CRT-011, FR-CRT-012,
+FR-CRT-013, FR-CRT-017, FR-CRT-018 &
+Editable refinement that can be undone is the main technical uncertainty
+of the PoC. Its second experiment refines drawings of the agreed supported
+set into editable paths, modifies the result, undoes the refinement and
+compares the restored drawing with the saved original (SRC-002). These
+requirements state what that experiment must show, so the controls on a
+creative change that cannot be undone or is applied wrongly are planned
+from the first phase (H-MUH-001, H-MUH-002, H-MUH-003, H-MUH-006). \\
+\addlinespace
+PH-1 (Nov.~23, 2026) & FR-CRT-020 &
+The third PoC experiment must show that an invalid instruction from a
+candidate model is rejected and leaves the drawing unchanged (SRC-002).
+This requirement states that behaviour. If the model investigation is
+deferred, as the Development Plan allows, the requirement still applies
+to a failed geometric refinement (H-MUH-002). \\
+\addlinespace
+PH-1 (Nov.~23, 2026) & FR-REC-001, FR-REC-003 &
+The fourth PoC experiment inspects the attempt records to confirm that the
+observations and the assistance used remain available (SRC-002). These two
+requirements define that record: each attempt's lesson, stage and outcome,
+and every predefined difficulty observed, marked as corrected or not
+(H-MUH-003, H-MUH-007). \\
+\addlinespace
+PH-1 (Nov.~23, 2026) & FR-LRN-007, FR-LRN-010, SAF-AHM-001, SAF-AHM-002 &
+The first PoC experiment draws with touch and a compatible stylus on the
+target tablet, repeats the interactions on an additional device and browser,
+and checks that strokes follow the input position and remain continuous
+(SRC-002). These requirements state what the capture must keep: the order
+and boundaries of strokes (FR-LRN-007), no passing status for missing or
+ambiguous input (FR-LRN-010), no repeated count of one input event
+(SAF-AHM-001) and no distortion of stroke positions when the canvas size or
+device orientation changes (SAF-AHM-002) (H-AHM-001, H-AHM-002,
+H-AHM-003). \\
+\addlinespace
+PH-1 (Nov.~23, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023 &
+The fourth PoC experiment uses prepared sequences of successful and
+unsuccessful attempts and demonstrates reduced assistance following success
+(SRC-002). These requirements state when an attempt is complete and passes
+(FR-LRN-011, FR-LRN-013), that the lesson and starting stage the adult chose
+are used (FR-LRN-016) and that a passing attempt advances within the lesson
+without a further adult action (FR-LRN-023) (H-AHM-004, H-AHM-005,
+H-AHM-007). \\
+\midrule
+PH-2 (Feb.~1, 2027) & FR-CRT-014, FR-CRT-015, FR-CRT-016, FR-CRT-019,
+FR-CRT-021 &
+Rev~0 demonstrates the product as a whole, after the focused PoC
+experiments. These requirements bound refinement
+in the cases the PoC experiments do not cover: a stroke that would be
+refined twice, a drawing outside the supported set, a result that arrives
+after the drawing has changed, a refinement that cannot be seen, and a
+restore by the adult after the adult check of SAF-RAY-001 (H-MUH-001,
+H-MUH-002, H-MUH-003, H-MUH-006). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & FR-CRT-023, FR-CRT-024, FR-CRT-026, FR-CRT-027,
+FR-CRT-028 &
+Saving creative drawings to learner profiles, and keeping them apart from
+guided lessons and attempts, needs adult accounts, learner profiles and
+stored records. The PoC does not need a complete application (SRC-002), so
+these requirements are planned for Rev~0 (H-MUH-001, H-MUH-002, H-MUH-003,
+H-MUH-004, H-MUH-005). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & FR-CRT-030 &
+Refinement is turned off for a learner profile, so this requirement needs
+the learner profiles and settings planned for Rev~0, like the requirements
+that keep creative drawings to one learner. Until then, every refinement
+stays within \texttt{REFINE\_TOLERANCE} and can be undone or restored
+(FR-CRT-007, FR-CRT-012, FR-CRT-017, FR-CRT-018, PH-1) (H-MUH-006). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & FR-REC-002, FR-REC-004 to FR-REC-009 &
+Complete attempt and lesson records, each saved once and unchanged after
+saving, are needed as soon as adults rely on the records (G.5). The values
+kept by FR-REC-004 have ranges that the SRS table ``Central symbolic
+constants register'' defines; their verification is due Nov.~2, 2026
+(OI-05) (H-MUH-003, H-MUH-004, H-MUH-007). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & FR-PRG-001 to FR-PRG-006, FR-PRG-008 to FR-PRG-011 &
+Progress summaries are built from the complete records, so they are
+planned with them (G.6). These requirements keep each summary to one
+learner and consistent with the records behind it (H-MUH-003, H-MUH-004,
+H-MUH-008). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & SAF-RAY-001, SAF-RAY-007 &
+Adult-only actions, learner switching and an active learner exist only
+once the product has adult accounts and several learner profiles, which
+the PoC does not need. Both are planned with the requirements that keep
+drawings and summaries to one learner (FR-CRT-023, FR-CRT-026,
+FR-PRG-001) (H-RAY-001, H-RAY-006). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & SAF-RAY-002 &
+The device check needs the list of supported devices and browsers
+(\texttt{SUPPORTED\_DEVICES}), which the team sets by Nov.~2, 2026
+(OI-09). The first PoC experiment records the hardware and browser
+versions tested (SRC-002), which informs that list (H-RAY-002). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & SAF-RAY-003 &
+Keeping each completed attempt on the device until the server confirms
+the save protects the stored records, which are planned for Rev~0. The
+requirement is planned with FR-REC-008 and FR-PRG-011 (H-RAY-002). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & SAF-RAY-004 &
+The requirement applies to every record view and progress summary, which
+are planned for Rev~0 with the Progress Summary requirements (H-RAY-003). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & SAF-RAY-005, SAF-RAY-006 &
+Ending a lesson at its limit, and recording lessons that reach the limit
+and are restarted, belong to the complete lesson flow and the lesson
+record. The fourth PoC experiment, as the Development Plan describes it,
+demonstrates changes in assistance rather than lesson ends (SRC-002).
+Both are planned with FR-REC-006 and FR-REC-007, and SAF-RAY-005 with
+FR-LRN-021, which ends the lesson at its attempt limit (H-RAY-004,
+H-RAY-005). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & SAF-RAY-008 &
+Checking adult-set values uses their team-set ranges, which the SRS table
+``Central symbolic constants register'' defines and whose verification is
+due Nov.~2, 2026 (OI-05). Applying the adult's values is planned with
+FR-LRN-017, and showing the values in use with the records with FR-REC-004
+(H-RAY-007). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & FR-LRN-008, FR-LRN-009 &
+Attempts of several strokes, and attempts that are interrupted or
+unfinished, extend the stroke capture planned for PH-1 (FR-LRN-007). Their
+phase is the one in their Phase field in the SRS (H-AHM-001, H-AHM-002,
+H-AHM-006). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & FR-LRN-014, FR-LRN-017 to FR-LRN-021 &
+Feedback observations, the adult's chosen values, adult authorization of
+discretionary changes, the difficulty suggestion, the improvement extension
+and the end of a lesson at its attempt limit belong to the complete lesson
+flow. Their phase is the one in their Phase field in the SRS, and it matches
+that of SAF-RAY-005, SAF-RAY-006 and SAF-RAY-008, which protect the same
+functions (H-AHM-005, H-AHM-006, H-AHM-007). \\
+\midrule
+PH-3 (Mar.~15, 2027) & FR-CRT-008 &
+Redo (priority Could) only recovers a change undone by mistake. Until PH-3,
+every change can still be undone (FR-CRT-007, PH-1), and the original of a
+refinement can be restored (FR-CRT-017, FR-CRT-018, PH-1) (H-MUH-001). \\
+\addlinespace
+PH-3 (Mar.~15, 2027) & FR-CRT-025 &
+Keeping the changes made while the connection is lost (priority Should)
+is the only requirement that saves them (H-MUH-005). Until PH-3, every
+creative drawing is saved without any action from the child and reopens
+as it was left (FR-CRT-023, FR-CRT-024, PH-2), so only the changes made
+while the connection is lost are at risk. Offline use is out of scope
+(ASM-005), and the FMEA's test of closing the page during a lost
+connection records which changes are kept (H-MUH-005). \\
+\addlinespace
+PH-3 (Mar.~15, 2027) & FR-CRT-029 &
+Showing whether every change has been saved (priority Should) lets an adult
+keep the page open until a change made while the connection was lost has
+been saved, because offline use is out of scope (ASM-005) and such changes
+are kept only while the page stays open (FR-CRT-025) (H-MUH-005). \\
+\end{longtable}
+}
+
+No HA-derived requirement is planned for Future: every row of the three
+FMEA tables has its mitigating requirements planned within the capstone.
+Four of
+the items left outside the scope of this analysis, as the Scope and
+Purpose of Hazard Analysis section explains, are features that may be
+added later. Each would need hazards and safety
+requirements of its own before it is built, so those safety requirements
+are Future work:
+\begin{itemize}
+  \item \emph{Camera-based finger tracing}, a stretch goal (SRC-001): a
+  camera would capture images of the child, while a learner profile holds
+  only a first name and a non-identifying username (BR-001), so its
+  privacy hazards must be analysed first.
+  \item \emph{Letter tracing and drawing}, a stretch goal (SRC-001): the
+  existing requirements apply to letter lessons, and letter-specific
+  hazards, such as an adult reading letter attempts as an assessment
+  (BR-006), need requirements when letters are specified.
+  \item \emph{Finger input as a supported input} (CON-003, LC-006): stage
+  checks and value ranges are set for stylus input, so the canvas and
+  lesson hazards must be reviewed before finger input is supported.
+  \item \emph{An offline mode} (ASM-005): changes and attempts kept
+  without a connection would extend FR-CRT-025 and SAF-RAY-003, whose
+  hazards are H-MUH-005 and H-RAY-002.
+\end{itemize}
 
 \newpage{}
 

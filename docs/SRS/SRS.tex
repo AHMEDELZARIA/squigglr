@@ -119,6 +119,7 @@ requirement structure (\#131).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
+16 October 2026 & Moustafa Moustafa & Added safety-critical requirements SAF-MOU-001 and SAF-MOU-002 and linked NFR-UX requirements to hazards H-MOU-001 to H-MOU-006 (\#115).\\
 \end{longtable}
 
 ~\\
@@ -3263,7 +3264,7 @@ flashes while a stroke is being drawn.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{1}; \srcref{005.05}; \srcref{009.05}}
-  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; H-MOU TBD (\#115)}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-002}{Images and icons instead of text}
@@ -3278,7 +3279,7 @@ completed with all on-screen text hidden.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{1}; FACT-007; \srcref{005.05}}
-  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-001}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-001; H-MOU-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-003}{Adult views distinct from child screens}
@@ -3327,7 +3328,7 @@ an outline, pattern or icon as well as by colour.}
   \reqphase{PH-1}
   \reqsources{\goalref{1}; \srcref{005.06}; \srcref{009.02}}
   \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
-\ucref{003}; H-AHM-005; H-MOU TBD (\#115)}
+\ucref{003}; H-AHM-005; H-MOU-002; H-MOU-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-005}{Consistent look across child screens}
@@ -3360,7 +3361,7 @@ rating is at least \texttt{STYLE\_RATING\_MIN}.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{009.05}}
-  \reqtraces{NFR-UX-001; NFR-UX-007}
+  \reqtraces{NFR-UX-001; NFR-UX-007; H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-007}{Style reviewed with educators or
@@ -3380,7 +3381,7 @@ not.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{005.06}; \srcref{009.06}; FACT-012}
-  \reqtraces{NFR-UX-004; NFR-UX-006}
+  \reqtraces{NFR-UX-004; NFR-UX-006; H-MOU-001; H-MOU-002}
 \end{srsrequirement}
 \endgroup
 
@@ -3457,7 +3458,7 @@ first profile and audio feedback plays for the second.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{FACT-003; ASM-015; \srcref{005.07}}
-  \reqtraces{\ucref{010}; NFR-UX-021; NFR-UX-022; H-MOU TBD (\#115)}
+  \reqtraces{\ucref{010}; NFR-UX-021; NFR-UX-022; H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-011}{Refinement setting for each child}
@@ -3474,7 +3475,7 @@ input exactly; turn it on and verify the drawings are refined.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\goalref{4}; \srcref{009.01}}
-  \reqtraces{\ucref{007}; \ucref{010}}
+  \reqtraces{\ucref{007}; \ucref{010}; H-MOU-006}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-012}{Language-free child screens, one adult
@@ -3564,7 +3565,7 @@ not the child, and uses none of the words ``wrong'', ``bad'', ``fail'' or
   \reqphase{PH-1}
   \reqsources{\goalref{1}; BR-006; \srcref{005.06}; \srcref{009.02}}
   \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
-NFR-UX-004; \ucref{003}; H-AHM-005; H-MOU TBD (\#115)}
+NFR-UX-004; \ucref{003}; H-AHM-005; H-MOU-002; H-MOU-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-016}{Effort acknowledged}
@@ -3579,7 +3580,8 @@ from the approved feedback list.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\srcref{009.02}}
-  \reqtraces{NFR-UX-015; \mbox{\reqref{FR-LRN-014}}; \ucref{003}}
+  \reqtraces{NFR-UX-015; \mbox{\reqref{FR-LRN-014}}; \ucref{003};
+H-MOU-002}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-017}{Plain wording in adult views}
@@ -3599,7 +3601,7 @@ appears.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{BR-006; \srcref{006}}
-  \reqtraces{SAF-RAY-004; \ucref{009}; \ucref{010}; H-MOU TBD (\#115)}
+  \reqtraces{SAF-RAY-004; \ucref{009}; \ucref{010}; H-MOU-005}
 \end{srsrequirement}
 
 \subsection{Accessibility Requirements}
@@ -3675,7 +3677,7 @@ and sound plays only when audio is on.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\srcref{005.07}}
-  \reqtraces{NFR-UX-010; NFR-UX-015; \ucref{003}}
+  \reqtraces{NFR-UX-010; NFR-UX-015; \ucref{003}; H-MOU-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-022}{Control of audio}
@@ -3689,7 +3691,7 @@ Control~\cite{wcag22}.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\srcref{005.08}; \srcref{009.05}}
-  \reqtraces{NFR-UX-010; H-MOU TBD (\#115)}
+  \reqtraces{NFR-UX-010; H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-023}{Keyboard use of adult views}
@@ -3844,6 +3846,36 @@ and verify that none is classified as passing or counted as an evaluable
 attempt.\\
 \emph{Related SRS requirements:} FR-LRN-007, FR-LRN-010.\\
 \emph{Hazards:} H-AHM-003.
+
+\item[SAF-MOU-001] In guided lessons, feedback on a missed part shall show
+the child where the part is missing without drawing it for them.\\
+\emph{Rationale:} the aim of practice is drawing with gradually less help
+(G.2); if Squigglr completes the drawing, the child can come to rely on it
+(H-MOU-004). The child's actual strokes are what is recorded (BR-004).\\
+\emph{Fit criterion:} for each predefined difficulty, show a prepared
+attempt with a missed part and compare the strokes on screen and in the
+record before and after the feedback. Pass when the feedback adds no
+stroke to the attempt.\\
+\emph{Related SRS requirements:} FR-LRN-014, FR-LRN-023, BR-004.\\
+\emph{Hazards:} H-MOU-004.
+
+\item[SAF-MOU-002] Records and progress summaries shall keep attempts
+made with a guide separate from attempts made without one,
+shall not include creative-space drawings, and shall not present the
+number of attempts as a measure of the child's skill.\\
+\emph{Rationale:} a summary that blurs assisted and independent attempts,
+counts refined drawings as practice or treats fewer attempts as better
+skill can lead an adult to move the child on too early or hold them back
+(H-MOU-005; SRC-005, \intref{Moustafa}{6:03}). Refinement must never reach
+the records adults rely on (BR-005).\\
+\emph{Fit criterion:} for prepared histories with known assisted,
+independent and creative-space work, check every summary and record. Pass
+when assisted and independent attempts are shown separately, no
+creative-space drawing appears, and no view ranks or rates the child by
+the number of attempts.\\
+\emph{Related SRS requirements:} G.6, FR-LRN-012, SAF-RAY-004,
+NFR-UX-017.\\
+\emph{Hazards:} H-MOU-005.
 
 \end{description}
 \subsection{Precision or Accuracy Requirements}

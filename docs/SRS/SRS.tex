@@ -120,6 +120,7 @@ requirement structure (\#131).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
 16 October 2026 & Moustafa Moustafa & Added safety-critical requirements SAF-MOU-001 to SAF-MOU-003 and linked NFR-UX requirements to hazards H-MOU-001 to H-MOU-006 (\#115).\\
+17 October 2026 & Moustafa Moustafa & Added my reflection responses to the appendix (\#117).\\
 \end{longtable}
 
 ~\\
@@ -4832,6 +4833,18 @@ written requirements and the hazards in the other document. It was
 satisfying to see the different sections start fitting together rather
 than feeling like separate pieces of writing.
 
+\textbf{Moustafa:} What went well was that we did most of the thinking
+before we started writing. Rayan and I interviewed three domain specialists
+on October 1, and they later filled out a follow-up questionnaire for us.
+Along with our meetings with our supervisor, Dr.~Anand, and our TA, that
+shaped a lot of the app before we assumed anything ourselves. For example,
+the specialists are why the adult decides when a child moves on, and
+Dr.~Anand is why adults set the thresholds within a range we define. So
+when it came time to write my sections, it felt more like organizing than
+coming up with things from scratch. For most requirements I could just ask
+myself what the specialists, Dr.~Anand or the TA had said, and put it
+there with the source.
+
 \item What pain points did you experience during this deliverable, and how did
 you resolve them?
 
@@ -4881,6 +4894,19 @@ before submitting a pull request. It was a good reminder that writing
 a correct section is only part of the job; it also has to integrate
 safely into the team's document.
 
+\textbf{Moustafa:} The biggest pain point was how long and repetitive the
+document was. With five of us writing different sections, there was a good
+chance two people were writing about the same thing in different places,
+and even a slightly different idea of how something should work meant we
+would contradict each other. As Ahmed and Rayan merged their sections while
+I wrote mine, I kept noticing things that did not line up. For example, my
+use cases had the child opening a lesson, while Rayan's assumptions said
+only the adult starts one. Each time, one of us had to change our part, so
+we would message or call to decide which version made more sense. Checking
+a document this size by hand was really tedious, so we used AI to review
+it and flag inconsistencies, and then we decided together which version was
+right.
+
 \item How many of your requirements were inspired by speaking to your
 client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
 
@@ -4921,6 +4947,20 @@ stylus events and coordinate-mapping errors. I learned that talking
 to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering
 judgement about failure cases and edge conditions.
+
+\textbf{Moustafa:} I wrote 27 requirements: 24 look-and-feel and usability
+requirements (NFR-UX-001 to NFR-UX-024) and three safety requirements
+(SAF-MOU-001 to SAF-MOU-003). Of these, 25 cite something our stakeholders
+or their proxies told us. Most come from the specialists. The interview
+gave us things like icon-based navigation for kids who can't read yet,
+positive feedback wording, and audio that can be turned off. The
+questionnaire added that the app should stay calm and not overwhelming,
+that refinement should be optional, and that feedback should recognize
+effort. Our supervisor told us to borrow specific WCAG ideas, like large
+icons, instead of treating WCAG as a constraint, which shaped the whole
+accessibility section, and our TA's comment about defining jargon became
+the plain-wording requirement for adult views. The two that don't cite
+anyone, SAF-MOU-001 and SAF-MOU-003, came out of our hazard analysis.
 
 \item Which of the courses you have taken, or are currently taking, will help
 your team to be successful with your capstone project.
@@ -4964,6 +5004,20 @@ system should advance, retry, suggest an earlier stage or end the
 lesson. These courses helped me move from describing a feature to
 specifying behaviour that somebody can actually verify.
 
+\textbf{Moustafa:} Two courses help me the most. The first is SFWRENG 4HC3,
+Human-Computer Interaction. A lot of what it teaches feels obvious at first,
+but once you actually go through the concepts you realize how much thought
+a good interface needs, and I had never thought about UI that deeply
+before. That matters a lot for Squigglr, because it is built for young kids
+and kids with disabilities, so being able to navigate the app easily is one
+of the most important parts of the whole project. Most of my accessibility
+and usability sections came from that way of thinking. The second is
+SFWRENG 3A04, Software Design III: Large System Design. In that course we
+worked with business use cases and wrote use cases with a main flow and
+alternative flows, which is exactly what I did for the business use cases
+and product use cases here. We did the same thing in 3RA3. 3A04 will also
+help when we plan the architecture for the design document.
+
 \item What knowledge and skills will the team collectively need to acquire to
 successfully complete this capstone project? Examples of possible knowledge
 to acquire include domain specific knowledge from the domain of your
@@ -5002,6 +5056,18 @@ we also need more domain knowledge about early visual-motor practice
 and accessible interfaces. None of us should assume that something
 which seems intuitive to us will necessarily work well for the children
 or adults who would use Squigglr.
+
+\textbf{Moustafa:} As the frontend lead, the main thing I need to learn is
+how to handle stylus drawing in the browser properly. That means getting
+accurate, smooth input from the stylus, handling things like palm rejection
+and different screen sizes, and making sure what the child draws is exactly
+what gets saved. I also need to learn how to actually build the
+accessibility side I wrote in Sections 10 and 11, like checking contrast,
+touch target sizes and text alternatives, instead of just specifying them.
+For the team as a whole, I think the biggest skill is testing without
+children. Since we can't run studies with them, we need to get good at
+designing reviews with adults and prepared drawings that still tell us
+something useful.
 
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
@@ -5042,6 +5108,21 @@ questionnaires would help check our assumptions. These are the
 approaches I would recommend we confirm as a team, because they let
 us learn efficiently while still checking that what we build works
 as intended.
+
+\textbf{Moustafa:} For the stylus drawing, the two approaches are reading
+the browser documentation on pointer and touch input, and building a small
+drawing prototype early to test on real tablets with a stylus. I'll do
+both, but lean on the prototype, because input problems like palm rejection
+or lag only show up when you actually draw on the device. For
+accessibility, I can either go through the WCAG 2.2 success criteria we
+picked and learn the tools that check them, or look at how existing kids'
+apps handle things like icons and touch targets. I'll start with WCAG and
+the checking tools, since our requirements are written against those
+criteria, so that's how they'll be tested. For testing without children, I
+can learn from how other projects ran reviews with adults, or ask our
+specialists how they evaluate apps when children can't take part. I'll go
+with the specialists, because they've done exactly this before and offered
+to help guide us.
 
 \end{enumerate}
 

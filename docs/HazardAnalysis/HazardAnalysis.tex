@@ -45,6 +45,8 @@ CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 15 October 2026 & Ahmed Elzaria & Added drawing-input and guided-lesson FMEA hazards H-AHM-001 to H-AHM-007 (part of \#135).\\
 16 October 2026 & Moustafa Moustafa & Added sensory, feedback, progress-view
 and refinement hazards H-MOU-001 to H-MOU-006 (\#115).\\
+17 October 2026 & Moustafa Moustafa & Added my reflection responses to the
+appendix (\#117).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -692,6 +694,17 @@ safeguards in the SRS. I think that connection between the two
 documents was the strongest part of my work, because the hazards led
 to concrete requirements that we can eventually test.
 
+\textbf{Moustafa:} What went well was how much this deliverable changed the
+way I think about what we're building. When I think of developing a drawing
+app for kids, the last thing that comes to mind is hazards and safety. But
+going through my rows made me realize how many gaps we could have had if we
+hadn't thought about this. For example, I never would have guessed a
+drawing app could cause physical harm, but rapid flashing can trigger
+seizures in people with photosensitive epilepsy, which is why WCAG limits
+flashing to three times a second. That became H-MOU-001 and SAF-MOU-003. I
+think thinking in terms of hazards early on is going to be really useful
+for my career in general, not just for this project.
+
 \item What pain points did you experience during this deliverable, and how
 did you resolve them?
 
@@ -732,6 +745,17 @@ aligned as the SRS changed. Whenever we clarified a lesson rule or
 added a safety requirement, I had to check the FMEA again rather than
 assuming the old wording still worked. It took extra revisions, but
 the result was more precise and easier to review.
+
+\textbf{Moustafa:} The main pain point was that some of my hazards depended
+on requirements nobody had written yet. For example, the hazards about
+refinement changing a drawing too much and progress views misleading adults
+belong with Muhammad's creative-drawing and progress-summary requirements,
+which weren't written when I was doing my rows. I couldn't just leave the
+mitigation column empty, so where a goal or business rule already covered
+the hazard, I traced to that, and where nothing did, I wrote my own safety
+requirements, SAF-MOU-001 and SAF-MOU-002. It also meant my rows came in
+late, because I needed my own usability sections done first so the hazards
+had something to point to.
 
 \item Which of your listed risks had your team thought of before this
 deliverable, and which did you think of while doing this deliverable? For
@@ -800,6 +824,23 @@ settings are changed or profiles are switched. That exercise showed
 me that a lot of meaningful risks are not obvious until you follow
 the data and decisions across the entire workflow.
 
+\textbf{Moustafa:} Most of my risks were things we had already thought
+about before this deliverable, because we planned against them in the
+presentation we gave the specialists on October 1. We had already decided
+that feedback would highlight the unfinished part of a drawing instead of
+failing the attempt or finishing it for the child, that there would be no
+scores and fewer attempts wouldn't mean better skill, and that refinement
+would only tidy the child's own drawing, with the original always
+restorable. Those became H-MOU-002, H-MOU-004, H-MOU-005 and H-MOU-006. The
+other two came up while doing this deliverable. Sensory overload
+(H-MOU-001) came from the questionnaire, where one specialist warned about
+excessive visual or auditory stimuli, and the flashing part came from WCAG
+while I was writing the accessibility requirements. Confusing feedback
+(H-MOU-003) came from the same work: once I let adults mute audio and said
+feedback can't rely on colour alone, I started asking what happens to a
+child who gets sound-only or colour-only feedback, or feedback they need
+to read.
+
 \item Other than the risk of physical harm (some projects may not have any
 appreciable risks of this form), list at least 2 other types of risk in
 software products. Why are they important to consider?
@@ -844,6 +885,21 @@ reminded me that software safety is about more than preventing a crash
 or a hardware failure. It also means making sure people can trust
 what the system tells them and that it behaves in a way appropriate
 for its users.
+
+
+\textbf{Moustafa:} Two other types of risk are accessibility risk and legal
+or compliance risk. Accessibility risk is when some people simply can't use
+the software, and it's easy to miss because teams usually test on people
+like themselves. For Squigglr, a child who can't read yet, is colour-blind
+or has trouble with fine motor control could fail to use the app without
+anyone noticing, which is the opposite of what we're building it for.
+That's what most of my usability and accessibility requirements are there
+to prevent. Legal and compliance risk is when software breaks a law or
+regulation, which can get it pulled or fined even if it works fine. One of
+our specialists pointed out that WCAG is adopted as law in many countries,
+and Squigglr keeps records about children, so we have to think about both
+accessibility and privacy rules before we can put it in front of real
+families or schools.
 
 \end{enumerate}
 

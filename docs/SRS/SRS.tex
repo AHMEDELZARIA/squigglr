@@ -4187,6 +4187,27 @@ AI-assisted passage against my intended meaning and checked each cited
 statement against the original transcript, questionnaire, or meeting notes
 to confirm that it says what we claim it says.
 
+\textbf{Ahmed:} I used OpenAI's ChatGPT (GPT-6) while preparing my
+sections of the SRS, particularly the document structure, learning
+activity requirements, formal lesson specification and development-phase
+planning. All the ideas behind my contributions are my own, and project
+decisions were made through discussion with my teammates. I used AI to
+help express those ideas in a clear and grammatically correct way,
+including turning my notes into requirement statements, improving
+sentence structure and making technical explanations easier to follow.
+It also helped with \LaTeX{} formatting and with checking the clarity
+of section references and wording across related requirements. Our team 
+also used AI to help divide the workload fairly and evenly among members, 
+taking into account the scope and complexity of each task. I personally used it 
+to help write clear and descriptive pull request descriptions that accurately 
+summarized the changes I made, making them easier for my teammates to review.
+
+I reviewed the AI-assisted text to make sure it expressed the decisions
+we had made and stayed consistent with the SRS, our meeting discussions
+and the parts of the document written by other team members. AI was a
+writing and formatting aid; the final content and decisions remained
+my responsibility and the team's.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -4212,6 +4233,26 @@ pull request per section, which kept each review small and let each section be
 checked and merged on its own. The main thing I took from this is that
 recording sources as we go makes the requirements much easier to justify and
 to change later.
+
+\textbf{Ahmed:} What went well for me was being able to build the
+learning activity requirements around a flow we had already discussed
+as a team. We knew that an adult would choose the lesson and starting
+stage, while the child would move through progressively less guided
+drawing stages based on their attempts. Having those decisions in place
+made it easier to write requirements that describe exactly what the
+application should do instead of leaving the behaviour open to
+interpretation.
+
+I also think splitting my work into smaller, focused contributions
+helped a lot. I worked on the SRS structure first, then the learning
+requirements and formal specification, and later the development
+phases. That gave the team something specific to review each time. The
+formal specification was especially useful because it forced me to
+think through cases like failed attempts, improvement extensions and
+adult-approved changes. I could then compare those rules with the
+written requirements and the hazards in the other document. It was
+satisfying to see the different sections start fitting together rather
+than feeling like separate pieces of writing.
 
 \item What pain points did you experience during this deliverable, and how did
 you resolve them?
@@ -4240,6 +4281,28 @@ learned that requirements are never really finished early in a project, and
 that keeping each change in one place and tracing it to its source is what
 makes them manageable.
 
+\textbf{Ahmed:} My biggest difficulty was keeping everything
+consistent as the requirements changed. A rule that sounded simple in
+a meeting often had several consequences once I tried to specify it.
+For example, we had to distinguish between automatically moving to
+the next stage after a passing drawing and changing lessons or moving
+backward, which should require an adult's approval. We also had to
+make sure that interrupted attempts did not count toward the attempt
+limit and that a child could not keep receiving extensions indefinitely.
+I ended up revisiting the same requirements and state transitions
+multiple times to make those distinctions clear.
+
+The \LaTeX{} and Git workflow was another challenge. Some section
+references initially appeared as question marks until I checked the
+labels and rebuilt the document, and integrating changes from multiple
+branches meant I had to be careful not to replace newer work from my
+teammates. One review caught an issue where a previous version would
+have removed safety requirements that were already on main. I
+corrected that and became much more deliberate about checking diffs
+before submitting a pull request. It was a good reminder that writing
+a correct section is only part of the job; it also has to integrate
+safely into the team's document.
+
 \item How many of your requirements were inspired by speaking to your
 client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
 
@@ -4257,6 +4320,29 @@ requirements, such as the deliverable deadlines. Since none of these
 stakeholders are the children themselves, nearly every requirement that
 affects how a child uses Squigglr rests on what adults and specialists told
 us, which is why we plan to check them with the domain specialists again later.
+
+\textbf{Ahmed:} I contributed 25 individually identified
+requirements: 23 learning activity requirements (FR-LRN-001 through
+FR-LRN-023) and two safety-critical requirements (SAF-AHM-001 and
+SAF-AHM-002). At least 13 of the learning requirements explicitly
+cite the domain-specialist interview, follow-up questionnaire, or
+meetings with our supervisor and TA as sources. For example, the
+specialists' advice shaped the distinction between adult-controlled
+lesson decisions and routine progression within a lesson. Our
+supervisor's feedback about letting adults choose thresholds within
+team-defined ranges also affected the pass, settings and
+improvement-related requirements.
+
+The remaining requirements mainly came from working through what was
+needed to make those agreed behaviours reliable and testable. When we
+specified stylus capture, for example, I had to account for multiple
+strokes, interrupted input and incorrect classifications even though
+nobody had handed us a detailed rule for each case. The two additional
+safety requirements came from my failure-mode analysis of duplicate
+stylus events and coordinate-mapping errors. I learned that talking
+to stakeholders establishes the direction, but turning their needs
+into a complete specification also requires careful engineering
+judgement about failure cases and edge conditions.
 
 \item Which of the courses you have taken, or are currently taking, will help
 your team to be successful with your capstone project.
@@ -4280,6 +4366,26 @@ Being able to transfer those concepts helped me a lot with this deliverable in
 particular, because I already knew how to write goals and requirements that
 are precise and checkable and only had to adapt them to a new template.
 
+\textbf{Ahmed:} SFWRENG 4HC3, Human-Computer Interaction, has been
+very relevant because it keeps bringing the discussion back to what
+users actually need and how they will experience the product. The
+work on personas, scenarios and requirements elicitation helped me
+think about the difference between a child drawing in a lesson and an
+adult setting it up or reviewing the results. That distinction became
+important when writing our lesson-control requirements.
+
+Our Machine Learning course has also been useful, even though
+Squigglr is not meant to diagnose or assess children. Learning how
+a model or classifier produces an output made me think more carefully
+about what it means for a drawing to pass a fixed criterion and what
+can go wrong if the classification is inaccurate. The formal models
+and state-based reasoning we encounter in software engineering and
+real-time systems are relevant too. I used that way of thinking when
+writing the guided-lesson transitions, such as exactly when the
+system should advance, retry, suggest an earlier stage or end the
+lesson. These courses helped me move from describing a feature to
+specifying behaviour that somebody can actually verify.
+
 \item What knowledge and skills will the team collectively need to acquire to
 successfully complete this capstone project? Examples of possible knowledge
 to acquire include domain specific knowledge from the domain of your
@@ -4299,6 +4405,26 @@ for autistic children and children with ADHD, rather than relying only on our
 own ideas. Their experience is what turned our general idea into requirements
 we can actually justify.
 
+\textbf{Ahmed:} The team needs a mix of technical skills and an
+understanding of the people we are building for. For my part, I need
+to keep improving at turning a user flow into a clear interface and a
+set of consistent, testable requirements. Rayan's backend work will
+require reliable data modelling and access control, especially since
+one adult account may have several learner profiles and practice
+histories. Moustafa will need strong experience with browser drawing
+input and responsive canvas behaviour, because the accuracy of
+stylus events affects both evaluation and saved records.
+
+Huzaifah will need a good verification and testing approach, including
+ways to reproduce edge cases such as interrupted strokes, threshold
+boundaries and failed saves. Shamil's role will benefit from strong
+stakeholder communication and documentation skills so that decisions,
+questions and feedback do not get lost between meetings. As a team,
+we also need more domain knowledge about early visual-motor practice
+and accessible interfaces. None of us should assume that something
+which seems intuitive to us will necessarily work well for the children
+or adults who would use Squigglr.
+
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
@@ -4315,6 +4441,29 @@ as refinement in the creative space and letter activities. The questionnaire
 also gave the specialists time to think through their answers. Using both
 worked well together: the interview showed us what we did not know, and the
 questionnaire filled in the gaps it left.
+
+\textbf{Ahmed:} I see two useful approaches for each of these
+areas: learning from established material and then testing what we
+learn in something concrete. For my UI and requirements work, that
+means reviewing HCI guidance and examples from similar applications,
+then building prototypes and asking adults to walk through the flows.
+The second approach matters because something that looks clear on
+paper may still be confusing when somebody tries to use it.
+
+For Rayan's data and access-control work, official documentation and
+small integration prototypes can complement each other; I would
+prioritize testing the multi-learner and saving flows early. For
+Moustafa's stylus and canvas work, browser input documentation is a
+starting point, but trying the same prepared strokes on different
+touchscreen sizes will reveal problems that documentation cannot.
+For Huzaifah, studying testing methods and building repeatable
+synthetic test cases provide both the theory and evidence that our
+requirements are met. For Shamil, reading relevant research and
+following up with adult stakeholders through interviews or
+questionnaires would help check our assumptions. These are the
+approaches I would recommend we confirm as a team, because they let
+us learn efficiently while still checking that what we build works
+as intended.
 
 \end{enumerate}
 

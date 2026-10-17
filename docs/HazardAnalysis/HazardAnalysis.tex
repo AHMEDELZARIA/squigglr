@@ -428,6 +428,106 @@ FR-LRN-019, FR-LRN-021 \\
 }
 \end{landscape}
 
+\subsection{Security, Saving and AI-Assisted Refinement (H-SHA)}
+\label{sec:fmea-sha}
+
+Table~\ref{tab:fmea-sha} covers hazards regarding account and data security, 
+practice records, and the external AI refinement provider. Effects are assessed 
+based on privacy, data integrity, and the trustworthiness of content shown to children 
+and adults.
+
+\begin{landscape}
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{1.4cm}
+  >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{2.4cm}
+  >{\raggedright\arraybackslash}p{2.3cm}
+  >{\raggedright\arraybackslash}p{2.6cm}
+  >{\raggedright\arraybackslash}p{1.9cm}
+  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{2.0cm}@{}}
+\caption{FMEA: security, saving and AI-assisted refinement}
+\label{tab:fmea-sha}\\
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+H-SHA-001 & Authentication; account management 
+& An unauthorized user gains access to a learners account data or the entire account.
+& Weak or reused credentials; missing server-side authorization checks & 
+The child's privacy is violated as the unauthorized user can read or write over
+personal data. Loss: privacy and trust in the system. & Privacy/security &
+Mitigate: implement authentication at every endpoint the data is accessed at;
+encrypt user data with one-way hash; end session and logout after a extended
+inactivity; Document/Test: test that attempts to access other accounts' data
+under the hood is rejected by the server &
+SAF-SHA-001 \\
+\addlinespace
+H-SHA-002 & Data transmission; third-party integrations & Private learner
+data is sent to an third-party service (other than ones approved for functionality)
+& Error reporting or refinement service receive raw request payloads of private learner data; 
+developers use unininspected external SDK & Privacy policy violated and child's private
+data exposed Loss: privacy; regulatory compliance. &
+Privacy/security &
+Administer protocol for reviewing all third-party services that are essential
+before implementing, reject all non-essential services. Document/Test: run grey-box 
+(white-box if open source) integration tests in contained environments inspecting 
+whether third-party services transmit PII. &
+SAF-SHA-002 \\
+\addlinespace
+H-SHA-003 & Attempt persistence; save confirmation & A practice attempt is
+lost without the user being informed, or the system reports a false successful
+save. & Network error after rendering of success response; network error without
+notification & Adult believes child's progress is being tracked with complete 
+records when records are missing in reality. Loss: misleading progress reporting; 
+adult trust in the application. & Data integrity &
+
+Mitigate: confirm a save with a silent verification ping that informs the adult
+if the save did not really save; Document/Test: run integration testing wherein
+saves are accompanied by simulated errors and verify that it is reported. &
+SAF-SHA-003 \\
+\addlinespace
+H-SHA-004 & AI refinement provider; lesson content delivery & The external
+AI refinement service is unavailable, returns an error, or returns unintelligible
+content. & Provider outage; rate-limiting; response schema mismatch due to update. 
+& The child's lesson cannot proceed or is shown incomplete content; Loss: availability; 
+lesson continuity. &
+Availability &
+Mitigate: create a default fallback page for administrative pages and fallback content
+for the child; send diagnositic alert to server and inform adult of error; Document/Test: 
+test the system response with incorrectly formatted content or a mock unresponsive server;
+verify that fallback content replaces the returned content and that the adult user is informed &
+SAF-SHA-004 \\
+\addlinespace
+H-SHA-005 & AI refinement output; feedback and guidance content 
+
+& The AI refinement provider returns inaccurate or inappropriate, content
+which is shown to a child or adult. & The provider is prompted with guardrails
+that are too permissive; system error on the providers end. & A child is shown
+confusing or meaningless guidance or inappropriate text; Loss: well-being; trust 
+in the application. & Psychological/well-being &
+Eliminate: allow users to report inappropriate output; catalogue confirmed
+incorrect output as part of API guardrails for output validation; never display
+raw provider output without filtering through validation; Document/Test: deliberately
+attempt to recreate inappropriate output by imitating report diagnostics; have human
+confirmation of reported content and adjust content validation guardrails. &
+SAF-SHA-005 \\
+\end{longtable}
+}
+\end{landscape}
+
 \section{Safety and Security Requirements}
 
 \wss{Newly discovered requirements.  These should also be added to the SRS.  (A

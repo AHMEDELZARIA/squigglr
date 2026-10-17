@@ -113,9 +113,15 @@ requirement structure (\#131).\\
 15 October 2026 & Moustafa Moustafa & Let the revision history table continue across pages (\#108).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 6, The Scope of the Work, with the context diagram (\#109).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 8.1, Product Boundary (\#110).\\
+16 October 2026 & Ahmed Elzaria & Added the requirement-to-phase allocation and deferred-feature register in Sections 21 and 25 (\#133).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
 16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-005 for security, data integrity and AI-assisted refinement (#82)\\
+16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
+16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
+16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
+16 October 2026 & Moustafa Moustafa & Added safety-critical requirements SAF-MOU-001 to SAF-MOU-003 and linked NFR-UX requirements to hazards H-MOU-001 to H-MOU-006 (\#115).\\
+17 October 2026 & Moustafa Moustafa & Added my reflection responses to the appendix and my generative AI use disclosure (\#117).\\
 \end{longtable}
 
 ~\\
@@ -370,8 +376,9 @@ action, and these hold at the minimum, default and maximum of each value. \\
 G.4 Support editable creative drawing and refinement &
 \emph{Purpose:} in the creative space, Squigglr refines a child's drawing
 of a shape or object in the agreed supported set by adjusting the child's
-own strokes; the result stays editable and the original can be restored
-(SRC-001; \intref{Moustafa}{6:03}).
+own strokes; the result stays editable, the original can be restored, and
+refinement can be turned off (SRC-001; \intref{Moustafa}{6:03};
+\hyperref[src:009.01]{SRC-009.01}).
 \emph{Advantage:} creative drawing gives room for self-expression, and
 editability keeps the child in control of the work (SRC-001). Serves
 children.
@@ -379,8 +386,9 @@ children.
 set, met when for every drawing (a) every point of the refined drawing lies
 within \texttt{REFINE\_TOLERANCE} (TBD) of the original strokes; (b) the
 refined parts can be moved, resized, recoloured, erased and undone; (c)
-restoring returns the original strokes exactly; and (d) a failed refinement
-request leaves the drawing unchanged. \\
+restoring returns the original strokes exactly; (d) a failed refinement
+request leaves the drawing unchanged; and (e) with refinement turned off,
+the child's strokes are kept exactly as drawn. \\
 \addlinespace
 \phantomsection\label{goal:5}%
 G.5 Preserve meaningful activity records &
@@ -597,8 +605,8 @@ drew (SRC-005, \intref{Moustafa}{6:03}). & Records keep the child's actual
 strokes; no corrected shape is counted as their work. \\
 Children (creative space) & Get a cleaner version of their own drawing
 that is still theirs (SRC-005, \intref{Moustafa}{6:03}). & Refinement adjusts the
-child's strokes rather than replacing them; the result stays editable and
-the original can be restored. \\
+child's strokes rather than replacing them; the result stays editable,
+the original can be restored, and refinement can be turned off. \\
 Children & Two children with the same diagnosis may need different
 support (SRC-005, \intref{Rayan}{2:04}). & Adults choose the lesson and starting
 stage for each child; nothing is set by diagnosis. \\
@@ -1001,8 +1009,9 @@ not replaced by refined shapes.
 & \hyperref[sec:business-rules]{BR-004}\\
 \textbf{Creative refinement} & Automatic, minimal adjustment of
 the child's strokes in the creative space only. The drawing remains
-editable, and the original can be restored by the child or, if needed,
-by a supporting adult. & \hyperref[sec:business-rules]{BR-005}\\
+editable, and the original can be restored, or refinement turned off,
+by the child or, if needed, by a supporting adult.
+& \hyperref[sec:business-rules]{BR-005}\\
 \textbf{Supporting adult} & A parent, guardian, caregiver, educator or
 learning-support staff member who configures activities and reviews
 records, as permitted by the account rules.
@@ -1168,6 +1177,46 @@ progress-summary review tasks completed successfully by adults.
 learners served by Squigglr.
 \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
 \emph{Trace:} Section~\ref{sec:stakeholders}, G.1.\\
+\addlinespace
+\texttt{CHILD\_CONTROLS\_MAX} & Maximum number of controls a
+child can use on one child-facing screen.
+\emph{Unit:} controls (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-001.\\
+\addlinespace
+\texttt{UX\_REVIEWERS} & Minimum number of adult reviewers in the
+look-and-feel and usability reviews.
+\emph{Unit:} people (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-003, NFR-UX-006, NFR-UX-007, NFR-UX-009,
+NFR-UX-013, NFR-UX-014.\\
+\addlinespace
+\texttt{STYLE\_RATING\_MIN} & Minimum median rating, on a five-point
+scale, that reviewers give child-facing screens for being appealing and
+calm.
+\emph{Unit:} rating (1--5). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-006.\\
+\addlinespace
+\texttt{UX\_PASS\_RATE} & Minimum proportion of reviewers who must
+complete a usability or learning task.
+\emph{Unit:} proportion. \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-009, NFR-UX-013, NFR-UX-014.\\
+\addlinespace
+\texttt{SETUP\_TIME\_MAX} & Maximum time for a first-time adult to
+create a child's profile and start a lesson.
+\emph{Unit:} minutes. \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-009.\\
+\addlinespace
+\texttt{FEEDBACK\_WORDS\_MAX} & Maximum length of a message to the
+child when spoken.
+\emph{Unit:} words. \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-015.\\
+\addlinespace
+\texttt{TARGET\_SIZE\_MIN} & Minimum touch-target size of a control on
+a child-facing screen.
+\emph{Unit:} CSS pixels. \emph{Value:} 44 by 44, from WCAG 2.2 success
+criterion 2.5.5. \emph{Trace:} NFR-UX-018.\\
+\addlinespace
+\texttt{INTERFACE\_LANGUAGE} & Language of all text in adult views.
+\emph{Value:} TBD. \emph{Trace:} ASM-007, NFR-UX-012.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -1327,13 +1376,16 @@ shows a corrected shape would mislead them.\\
 \emph{Source:} G.5; SRC-005, \intref{Moustafa}{6:03}.
 \item[BR-005] Refinement of strokes happens only in the creative space.
 It is automatic and minimal, the refined drawing stays editable, and the
-child's original drawing can be restored, by the child or, if the child
-cannot, by the adult.\\
+child's original drawing can be restored. Refinement can also be turned
+off for the creative space. Restoring and turning off are done by the child
+or, if the child cannot, by the adult.\\
 \emph{Rationale:} the work must remain the child's own, and refinement
 must never reach the records adults rely on (BR-004). Refinement needs no
-action from the child, and an adult can restore the original for a child
-who cannot use the control.\\
-\emph{Source:} G.4; SRC-001.
+action from the child, and an adult can restore the original or turn
+refinement off for a child who cannot use the controls. Both questionnaire
+respondents suggested that refinement be optional or adjustable
+(\hyperref[src:009.01]{SRC-009.01}).\\
+\emph{Source:} G.4; SRC-001; \hyperref[src:009.01]{SRC-009.01}.
 \item[BR-006] Squigglr gives no diagnosis, no judgement of a child's
 abilities, no comparison with other children, and no claim that its
 practice improves any skill.\\
@@ -1870,8 +1922,9 @@ stays pending without blocking practice until an adult decides
 \addlinespace
 Changes to a child's settings: accessibility, audio, whether refinement
 is on & Supporting adult & \ucref{010} &
-NFR-UX TBD (\#114) &
-To be stated with the NFR-UX requirements. \\
+NFR-UX-010, NFR-UX-011 &
+A setting changes only for the child it was changed for (NFR-UX-010,
+NFR-UX-011); changes need the adult check (SAF-RAY-008). \\
 \addlinespace
 Request to view a child's history, attempts or progress summaries &
 Supporting adult & \ucref{009}, \ucref{010} &
@@ -2437,7 +2490,7 @@ the child has a profile (\ucref{001}).}
 \reqfield{Postconditions}{The changes are saved, and every adult-set
 value is within its range.}
 \reqfield{Requirements}{\mbox{\reqref{FR-LRN-017}}; \mbox{SAF-RAY-008};
-NFR-UX TBD (\#114); NFR-SEC TBD (\#82); BR-001, BR-008.}
+NFR-UX-010, NFR-UX-011; NFR-SEC TBD (\#82); BR-001, BR-008.}
 \reqfield{Sources}{\goalref{3}, \goalref{6}; \mbox{SRC-008}, \mbox{SRC-009.01}.}
 \endgroup
 
@@ -3167,33 +3220,513 @@ Table~\ref{tab:goalconst}.
 
 \section{Look and Feel Requirements}
 \label{sec:look-feel}
+% Long constant names cannot be hyphenated; let lines stretch rather than
+% overflow the margin in this section.
+\begingroup
+\sloppy
+
+This section states how Squigglr looks (Section~\ref{sec:appearance}) and
+the mood its style creates (Section~\ref{sec:style}). A
+\emph{child-facing screen} is any screen the child uses in a guided lesson
+or the creative space; an \emph{adult view} is any screen for setup,
+settings, records or progress summaries. No requirement is gathered from
+children and no study with children takes place (CON-005, CON-006), so
+the fit criteria are checked by inspecting every screen or by adult
+reviewers. An adult review shows that adults find a design suitable, not
+that children can use it; checking that needs a study with ethics
+approval, which is out of scope (\srcref{005.11}).
+
+The specialists advised starting from the Web Content Accessibility
+Guidelines (WCAG) 2.2~\cite{wcag22} (\srcref{005.08}), and the supervisor
+advised taking specific WCAG ideas as non-functional requirements rather
+than treating WCAG as a constraint (\srcref{008}). Each requirement below
+that is based on a WCAG success criterion names it in its rationale.
+Further WCAG-based accessibility criteria are in
+Section~\ref{sec:usability}, and listing WCAG as a standard is open issue
+OI-08.
+
 \subsection{Appearance Requirements}
-\lips
+\label{sec:appearance}
+
+\begin{srsrequirement}{NFR-UX-001}{Calm, uncluttered child screens}
+  \reqshall{Each child-facing screen shall offer the child no more than
+\texttt{CHILD\_CONTROLS\_MAX} controls and shall show no decorative
+animation or flashing while the child is drawing.}
+  \reqrationale{Too many visual or auditory stimuli can overwhelm children,
+and specialists advised a calm, minimally stimulating interface
+(\srcref{009.05}). A child who cannot read navigates by images, so every
+extra control is something more to interpret (\srcref{005.05}). Banning
+flashing and moving content while the child draws follows WCAG 2.2
+success criteria 2.3.1 Three Flashes or Below Threshold and 2.2.2 Pause,
+Stop, Hide~\cite{wcag22}.}
+  \reqfit{Inspect every child-facing screen in each lesson stage and in the
+creative space. Pass when each screen offers at most
+\texttt{CHILD\_CONTROLS\_MAX} controls and no element animates or
+flashes while a stroke is being drawn.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; \srcref{005.05}; \srcref{009.05}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; SAF-MOU-003;
+H-MOU-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-002}{Images and icons instead of text}
+  \reqshall{Every control on a child-facing screen shall be identified by
+an image or icon, and no task on a child-facing screen shall require the
+child to read.}
+  \reqrationale{Many learners cannot read yet; children navigate games
+through images and icons rather than text (\srcref{005.05}, FACT-007).}
+  \reqfit{Inspect every child-facing screen. Pass when every control shows
+an image or icon, and each child task in \ucref{003} and \ucref{006} can be
+completed with all on-screen text hidden.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; FACT-007; \srcref{005.05}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-001; H-MOU-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-003}{Adult views distinct from child screens}
+  \reqshall{Adult views shall look clearly different from child-facing
+screens, so that an adult can tell at a glance which kind of screen is
+shown.}
+  \reqrationale{Specialists described a separate adult interface for
+personalizing activities and viewing progress (\srcref{005.02}). A
+distinct look helps adults notice when a child has reached an adult-only
+screen, alongside the adult check (SAF-RAY-001).}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers a shuffled
+set of screenshots of every child-facing screen and adult view, without
+titles. Pass when every reviewer sorts every screenshot correctly.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}, \goalref{6}; \srcref{005.02}}
+  \reqtraces{\ucref{001}; \ucref{002}; \ucref{009}; \ucref{010};
+SAF-RAY-001}
+\end{srsrequirement}
+
 \subsection{Style Requirements}
-\lips
+\label{sec:style}
+
+\begin{srsrequirement}{NFR-UX-004}{Feedback that never marks the drawing
+as wrong}
+  \reqshall{Feedback on an attempt, including a missed part or a
+non-passing attempt, shall use encouraging styling, shall not use error
+styling such as warning colours, crosses, alarm sounds or ``wrong''
+symbols, and shall not show a missed part by colour alone.}
+  \reqrationale{Children become frustrated when an activity keeps
+highlighting their mistakes or suggests that their drawing is wrong, so
+feedback should recognize effort instead (\srcref{009.02}). Feedback
+wording and colours should be positive (\srcref{005.06}). Feedback
+describes the drawing, not the child
+(BR-006, \mbox{\reqref{FR-LRN-022}}). Showing a missed part by more than
+colour follows WCAG 2.2 success criterion 1.4.1 Use of
+Color~\cite{wcag22}, so a child who does not see the colour still sees
+the missed part.}
+  \reqfit{For each predefined difficulty, and for a passing and a
+non-passing attempt, show a prepared drawing and inspect the feedback.
+Pass when every feedback includes an encouraging cue from the approved
+feedback list (\mbox{\reqref{FR-LRN-014}}), none uses an element on the
+error-styling list in this requirement, and every missed part is marked by
+an outline, pattern or icon as well as by colour.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{005.06}; \srcref{009.02}}
+  \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
+\ucref{003}; H-AHM-005; H-MOU-002; H-MOU-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-005}{Consistent look across child screens}
+  \reqshall{The same action shall use the same icon, colour and screen
+position on every child-facing screen.}
+  \reqrationale{Children stay motivated when activities are predictable
+(\srcref{009.02}), and a child who navigates by images relies on each icon
+meaning the same thing everywhere (\srcref{005.05}). This follows WCAG 2.2
+success criteria 3.2.3 Consistent Navigation and 3.2.4 Consistent
+Identification~\cite{wcag22}.}
+  \reqfit{List every action available on child-facing screens and inspect
+each screen where it appears. Pass when each action has one icon, one
+colour and one position across all screens.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.05}; \srcref{009.02}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-006}{Appealing but calm style}
+  \reqshall{Child-facing screens shall have a style that adult reviewers
+judge both appealing to children and calm.}
+  \reqrationale{Specialists warned that the design may not be appealing
+enough for children, and that the right balance is a playful design in a
+calm, minimally stimulating environment (\srcref{009.05}).}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers every
+child-facing screen and ask them to rate how appealing to children and
+how calm each is, on a five-point scale. Pass when the median of each
+rating is at least \texttt{STYLE\_RATING\_MIN}.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{009.05}}
+  \reqtraces{NFR-UX-001; NFR-UX-007; H-MOU-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-007}{Style reviewed with educators or
+therapists}
+  \reqshall{The colours, images and feedback style of child-facing screens
+shall be reviewed by at least \texttt{UX\_REVIEWERS} adults, including at
+least one educator or occupational therapist, and each change they
+request shall be made or recorded with a reason.}
+  \reqrationale{Specialists advised designing feedback wording and colours
+with educators and occupational therapists, built up bit by bit
+(\srcref{005.06}), and involving them throughout design (\srcref{009.06}).
+None has been consulted yet (FACT-012).}
+  \reqfit{Pass when the review record lists the reviewers and their roles,
+includes at least one educator or occupational therapist, and states for
+every requested change either that it was made or the reason it was
+not.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{005.06}; \srcref{009.06}; FACT-012}
+  \reqtraces{NFR-UX-004; NFR-UX-006; H-MOU-001; H-MOU-002}
+\end{srsrequirement}
+\endgroup
 
 \section{Usability and Humanity Requirements}
-\subsection{Ease of Use Requirements}
-\lips
-\subsection{Personalization and Internationalization Requirements}
-\lips
-\subsection{Learning Requirements}
-\lips
-\subsection{Understandability and Politeness Requirements}
-\lips
-\subsection{Accessibility Requirements}
-\lips
+\label{sec:usability}
+% Long constant names cannot be hyphenated; let lines stretch rather than
+% overflow the margin in this section.
+\begingroup
+\sloppy
 
-\emph{Note for the section owner (from \#87):} add a requirement that
-Squigglr shall meet selected Web Content Accessibility Guidelines (WCAG)
-2.2 success criteria; the exact set is TBD and should be criteria the team
-can check without children, such as colour contrast, text alternatives for
-icons and audio that can be paused or muted. Full WCAG conformance is a
-stretch goal. Source: SRC-005, \intref{P2}{39:26}. Related advice: icon-based
-navigation that children can use without reading (SRC-005, \intref{P1}{34:13}) and
-audio feedback with a mute option (SRC-005, \intref{P2}{37:39}). Add a WCAG 2.2 citation to
-refs/References.bib. The standard itself goes in Standards Compliance
-Requirements.
+This section states how easy Squigglr is to use, personalize and learn,
+how its wording treats children and adults, and which accessibility
+criteria it meets. As in Section~\ref{sec:look-feel}, fit criteria are
+checked by the team or by adult reviewers, and an adult review does not
+show that children can use the product (\srcref{005.11}). The adult-set
+values for each child are specified in \mbox{\reqref{FR-LRN-017}} and
+SAF-RAY-008 and are not repeated here.
+
+\subsection{Ease of Use Requirements}
+\label{sec:ease-of-use}
+
+\begin{srsrequirement}{NFR-UX-008}{Practice without adult help}
+  \reqshall{Once an adult has started a lesson, Squigglr shall need no
+adult action through every stage and retry until the lesson ends, other
+than a response to a suggestion to go back a stage.}
+  \reqrationale{Children should be able to practise without constant
+adult help, and parents quickly become annoyed if they must keep
+intervening (\srcref{005.05}). Within a lesson the child does not
+navigate; Squigglr moves between stages (CA-001,
+\mbox{\reqref{FR-LRN-023}}).}
+  \reqfit{Walk through every catalogue lesson with prepared passing and
+non-passing attempts and count the adult actions between the start and
+the end of the lesson. Pass when the only adult actions are responses to
+suggestions.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}, \goalref{3}; \srcref{005.05}}
+  \reqtraces{\ucref{003}; \ucref{005}; \mbox{\reqref{FR-LRN-015}};
+\mbox{\reqref{FR-LRN-023}}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-009}{Quick setup by a new adult}
+  \reqshall{An adult using Squigglr for the first time shall be able to
+create a child's profile and start a lesson for that child within
+\texttt{SETUP\_TIME\_MAX} minutes, with no help from outside Squigglr.}
+  \reqrationale{Adults handle setup (\srcref{005.05}), and they are
+everyday web users rather than trained staff
+(Section~\ref{sec:stakeholders}). Setup that needs help delays
+practice.}
+  \reqfit{Give at least \texttt{UX\_REVIEWERS} adults who have not used
+Squigglr the task ``add a child and start a lesson for them''. Pass when
+at least \texttt{UX\_PASS\_RATE} of them finish within
+\texttt{SETUP\_TIME\_MAX} minutes without help.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}; \srcref{005.05}}
+  \reqtraces{\ucref{001}; \ucref{002}; NFR-UX-014}
+\end{srsrequirement}
+
+\subsection{Personalization and Internationalization Requirements}
+\label{sec:personalization}
+
+\begin{srsrequirement}{NFR-UX-010}{Audio setting for each child}
+  \reqshall{The supporting adult shall be able to turn audio feedback on
+or off for each child, and the choice shall apply to every child-facing
+screen for that child.}
+  \reqrationale{Audio feedback is useful, but users must be able to turn it
+off (\srcref{005.07}), and an adult can turn it off if sound upsets a
+child (ASM-015). The setting is per child because children's needs differ
+(FACT-003).}
+  \reqfit{Turn audio off for one prepared profile and on for another. Run a
+lesson and the creative space for each. Pass when no sound plays for the
+first profile and audio feedback plays for the second.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{FACT-003; ASM-015; \srcref{005.07}}
+  \reqtraces{\ucref{010}; NFR-UX-021; NFR-UX-022; H-MOU-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-011}{Refinement setting for each child}
+  \reqshall{The supporting adult shall be able to turn creative-space
+refinement on or off for each child; while it is off, the child's strokes
+shall be kept exactly as drawn.}
+  \reqrationale{Both questionnaire respondents suggested that refinement
+be optional or adjustable, and unclear lines can matter to a child's
+imagination (\srcref{009.01}). The child can also turn refinement off in
+the creative space (\ucref{007}).}
+  \reqfit{Turn refinement off for a prepared profile and draw prepared
+drawings in the creative space. Pass when every saved stroke matches the
+input exactly; turn it on and verify the drawings are refined.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4}; \srcref{009.01}}
+  \reqtraces{\ucref{007}; \ucref{010}; H-MOU-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-012}{Language-free child screens, one adult
+language}
+  \reqshall{Child-facing screens shall need no text to be used, and all
+text in adult views shall be in \texttt{INTERFACE\_LANGUAGE}.}
+  \reqrationale{Children do not need to read to use the child screens,
+while adult tasks such as reviewing records need text (ASM-007). Keeping
+language out of the child screens means another adult language would not
+change them (NFR-UX-002).}
+  \reqfit{Inspect every child-facing screen as in the fit criterion of
+NFR-UX-002, and every adult view. Pass when no child task needs text and
+all adult-view text is in \texttt{INTERFACE\_LANGUAGE}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{ASM-007; \srcref{005.05}}
+  \reqtraces{NFR-UX-002}
+\end{srsrequirement}
+
+\subsection{Learning Requirements}
+\label{sec:ux-learning}
+
+This subsection covers learning to use Squigglr. Learning to draw is
+specified by the FR-LRN requirements.
+
+\begin{srsrequirement}{NFR-UX-013}{Learning a lesson from its
+demonstration}
+  \reqshall{The demonstration of each lesson shall show, without words,
+where the drawing starts and which way it goes.}
+  \reqrationale{Many learners cannot read and learn by watching
+(\srcref{005.05}), so the demonstration must show the task without an
+adult's explanation. Whether children learn from it can be checked only in
+a study with ethics approval, which is out of scope (\srcref{005.11}). The
+team's proposed demonstration shows where to start and which way to go
+(\intref{Moustafa}{6:03}); the demonstration itself is
+\mbox{\reqref{FR-LRN-003}}.}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adults the demonstration of
+every catalogue lesson with sound and text hidden. Pass when at least
+\texttt{UX\_PASS\_RATE} of them mark the correct start point and direction
+for every lesson.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; \srcref{005.05}}
+  \reqtraces{\mbox{\reqref{FR-LRN-003}}; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-014}{Adult tasks learnable without
+training}
+  \reqshall{An adult shall be able to complete each adult task (creating a
+profile, choosing a lesson, responding to a suggestion, changing settings
+and reviewing progress) without training, using only help shown in
+Squigglr.}
+  \reqrationale{Adults are not assumed to have training in visual-motor
+development or in Squigglr (Section~\ref{sec:stakeholders}), and the
+specialists expect adults to handle these tasks (\srcref{005.05}).}
+  \reqfit{Give at least \texttt{UX\_REVIEWERS} first-time adults each task.
+Pass when at least \texttt{UX\_PASS\_RATE} of them complete every task
+without help from outside Squigglr.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\goalref{3}, \goalref{6}; \srcref{005.05}}
+  \reqtraces{\ucref{001}; \ucref{002}; \ucref{005}; \ucref{009};
+\ucref{010}; NFR-UX-009}
+\end{srsrequirement}
+
+\subsection{Understandability and Politeness Requirements}
+\label{sec:politeness}
+
+\begin{srsrequirement}{NFR-UX-015}{Short, encouraging messages to the
+child}
+  \reqshall{Every message to the child, including feedback on an attempt
+and the end of a lesson, shall be encouraging, shall describe the drawing
+rather than the child, and shall be at most \texttt{FEEDBACK\_WORDS\_MAX}
+words when spoken.}
+  \reqrationale{Feedback wording should be positive (\srcref{005.06}), and
+children become frustrated when their drawing is called wrong
+(\srcref{009.02}). Feedback describes the drawing, not the child (BR-006,
+\mbox{\reqref{FR-LRN-022}}). A lesson that ends at its limit must not feel
+like a failure (SAF-RAY-005). Messages are short because they are heard
+by children who may not read.}
+  \reqfit{List every approved feedback message
+(\mbox{\reqref{FR-LRN-014}}) and the lesson-end message. Pass when each
+has at most \texttt{FEEDBACK\_WORDS\_MAX} words, refers to the drawing and
+not the child, and uses none of the words ``wrong'', ``bad'', ``fail'' or
+``mistake''.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; BR-006; \srcref{005.06}; \srcref{009.02}}
+  \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
+NFR-UX-004; \ucref{003}; H-AHM-005; H-MOU-002; H-MOU-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-016}{Effort acknowledged}
+  \reqshall{The feedback on every evaluable attempt, including one that
+does not pass, shall acknowledge the child's effort before it shows what
+to change.}
+  \reqrationale{Squigglr should recognize effort and progress, not only
+accuracy (\srcref{009.02}).}
+  \reqfit{For each predefined difficulty, show a prepared non-passing
+attempt. Pass when every feedback message begins with an acknowledgement
+from the approved feedback list.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{009.02}}
+  \reqtraces{NFR-UX-015; \mbox{\reqref{FR-LRN-014}}; \ucref{003};
+H-MOU-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-017}{Plain wording in adult views}
+  \reqshall{Adult views shall use plain language, shall explain each
+glossary term where it first appears in a view, and shall not use
+diagnostic, clinical or ranking words.}
+  \reqrationale{The TA asked that terms such as ``guidance level'' be
+defined rather than left as jargon (\srcref{006}). Records describe
+practice only and are not an assessment (BR-006, SAF-RAY-004), and adults
+are not assumed to have clinical training
+(Section~\ref{sec:stakeholders}).}
+  \reqfit{Inspect every adult view against the glossary
+(Section~\ref{sec:glossary}) and the words ``diagnosis'', ``disorder'',
+``delay'', ``score'', ``rank'' and ``below average''. Pass when every
+glossary term used is explained in the view and none of the listed words
+appears.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{BR-006; \srcref{006}}
+  \reqtraces{SAF-RAY-004; \ucref{009}; \ucref{010}; H-MOU-005}
+\end{srsrequirement}
+
+\subsection{Accessibility Requirements}
+\label{sec:accessibility}
+
+These requirements take specific WCAG 2.2 success
+criteria~\cite{wcag22} that the team can check without children, as the
+specialists and the supervisor advised (\srcref{005.08}, \srcref{008});
+full WCAG conformance is not required. Together with NFR-UX-001,
+NFR-UX-004 and NFR-UX-005, they are the criteria Squigglr follows
+(OI-08). The stylus is the main input (CON-003); finger input is a
+stretch goal and is not required here.
+
+\begin{srsrequirement}{NFR-UX-018}{Large touch targets}
+  \reqshall{Every control on a child-facing screen shall have a touch
+target of at least \texttt{TARGET\_SIZE\_MIN}.}
+  \reqrationale{Children's grip and fine motor control vary
+(\srcref{005.04}), and the supervisor named large icons as a WCAG idea to
+adopt (\srcref{008}). The size follows WCAG 2.2 success criterion 2.5.5
+Target Size (Enhanced)~\cite{wcag22}.}
+  \reqfit{Measure every control on every child-facing screen at the
+smallest supported screen size. Pass when every touch target is at least
+\texttt{TARGET\_SIZE\_MIN}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.04}; \srcref{008}}
+  \reqtraces{NFR-UX-002; \ucref{003}; \ucref{006}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-019}{Colour contrast}
+  \reqshall{On every screen, text shall have a contrast ratio of at least
+4.5:1 with its background, and icons and graphics needed to use a control
+at least 3:1.}
+  \reqrationale{Some children have sight challenges (\srcref{005.09}). The
+ratios follow WCAG 2.2 success criteria 1.4.3 Contrast (Minimum) and
+1.4.11 Non-text Contrast~\cite{wcag22}.}
+  \reqfit{Check every screen with a contrast checker. Pass when every
+piece of text and every control graphic meets its ratio.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-001; NFR-UX-004}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-020}{Text alternatives for icons}
+  \reqshall{Every icon or image that acts as a control shall have a text
+alternative that assistive technology can read.}
+  \reqrationale{An adult who uses a screen reader must still be able to set
+up and review practice, and designing for disability serves many groups
+(\srcref{005.09}). This follows WCAG 2.2 success criterion 1.1.1 Non-text
+Content~\cite{wcag22}. The child does not need the text
+(NFR-UX-002).}
+  \reqfit{Run an automated accessibility checker on every screen and
+inspect each control. Pass when every control has a text alternative that
+names its action.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-002; NFR-UX-012}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-021}{Feedback not by sound alone}
+  \reqshall{Every message to the child shall be shown on screen and, unless
+audio is turned off, also played as sound; no message shall rely on sound
+alone.}
+  \reqrationale{Offering more than one modality is encouraged in
+inclusive design, and the user can turn the audio off (\srcref{005.07}),
+so turning it off must not hide any feedback (NFR-UX-010). This follows
+WCAG 2.2 success criterion 1.3.3 Sensory Characteristics~\cite{wcag22}.}
+  \reqfit{With audio on and then off, show every approved feedback message
+and the lesson-end message. Pass when each appears on screen both times,
+and sound plays only when audio is on.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.07}}
+  \reqtraces{NFR-UX-010; NFR-UX-015; \ucref{003}; H-MOU-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-022}{Control of audio}
+  \reqshall{Any sound that plays automatically for more than 3 seconds
+shall have a control to pause or stop it.}
+  \reqrationale{Too much auditory stimulation can overwhelm children
+(\srcref{009.05}). This follows WCAG 2.2 success criterion 1.4.2 Audio
+Control~\cite{wcag22}.}
+  \reqfit{List every sound Squigglr plays. Pass when each sound longer than
+3 seconds can be paused or stopped from the screen it plays on.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.08}; \srcref{009.05}}
+  \reqtraces{NFR-UX-010; H-MOU-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-023}{Keyboard use of adult views}
+  \reqshall{Every function in adult views shall be usable with a keyboard
+alone.}
+  \reqrationale{Adults may review records on a computer
+(Section~\ref{sec:stakeholders}), and some cannot use a pointer. This
+follows WCAG 2.2 success criterion 2.1.1 Keyboard~\cite{wcag22}. Drawing
+on child-facing screens is excluded because it depends on the stylus path
+(CON-003).}
+  \reqfit{Complete every adult task in \ucref{001}, \ucref{002},
+\ucref{005}, \ucref{009} and \ucref{010} using only a keyboard. Pass when
+every task can be completed.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-014}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-024}{Resizable text in adult views}
+  \reqshall{Text in adult views shall be resizable to 200 percent without
+loss of content or function.}
+  \reqrationale{Some adults have sight challenges (\srcref{005.09}). This
+follows WCAG 2.2 success criterion 1.4.4 Resize Text~\cite{wcag22}.}
+  \reqfit{Zoom the browser to 200 percent on every adult view. Pass when
+all text is visible and every function still works.}
+  \reqpriority{Could}
+  \reqphase{PH-3}
+  \reqsources{\srcref{005.08}; \srcref{005.09}}
+  \reqtraces{NFR-UX-019}
+\end{srsrequirement}
+\endgroup
 
 \section{Performance Requirements}
 \label{sec:performance}
@@ -3376,6 +3909,50 @@ by imitating report diagnostics of a manufactured inappropriate output case
 do not yield similarly inappropriate results after content moderation update.\\
 \emph{Hazards:} H-SHA-005
 
+\item[SAF-MOU-001] In guided lessons, feedback on a missed part shall show
+the child where the part is missing without drawing it for them.\\
+\emph{Rationale:} the aim of practice is drawing with gradually less help
+(G.2); if Squigglr completes the drawing, the child can come to rely on it
+(H-MOU-004). The child's actual strokes are what is recorded (BR-004).\\
+\emph{Fit criterion:} for each predefined difficulty, show a prepared
+attempt with a missed part and compare the strokes on screen and in the
+record before and after the feedback. Pass when the feedback adds no
+stroke to the attempt.\\
+\emph{Related SRS requirements:} FR-LRN-014, FR-LRN-023, BR-004.\\
+\emph{Hazards:} H-MOU-004.
+
+\item[SAF-MOU-002] Records and progress summaries shall keep attempts
+made with a guide separate from attempts made without one,
+shall not include creative-space drawings, and shall not present the
+number of attempts as a measure of the child's skill.\\
+\emph{Rationale:} a summary that blurs assisted and independent attempts,
+counts refined drawings as practice or treats fewer attempts as better
+skill can lead an adult to move the child on too early or hold them back
+(H-MOU-005; SRC-005, \intref{Moustafa}{6:03}). Refinement must never reach
+the records adults rely on (BR-005).\\
+\emph{Fit criterion:} for prepared histories with known assisted,
+independent and creative-space work, check every summary and record. Pass
+when assisted and independent attempts are shown separately, no
+creative-space drawing appears, and no view ranks or rates the child by
+the number of attempts.\\
+\emph{Related SRS requirements:} G.6, FR-LRN-012, SAF-RAY-004,
+NFR-UX-017.\\
+\emph{Hazards:} H-MOU-005.
+
+\item[SAF-MOU-003] No content on any child-facing screen shall flash more
+than three times in any one-second period.\\
+\emph{Rationale:} flashing can trigger seizures in rare cases, the only
+physical harm in the hazard analysis (H-MOU-001). NFR-UX-001 bans flashing
+while the child is drawing, but feedback, the lesson-end message and screen
+transitions also appear on child-facing screens. This follows WCAG 2.2
+success criterion 2.3.1 Three Flashes or Below Threshold~\cite{wcag22}.\\
+\emph{Fit criterion:} record every child-facing screen, including all
+feedback, the lesson-end message and every transition, and count the
+flashes in each one-second window. Pass when no window has more than three
+flashes.\\
+\emph{Related SRS requirements:} NFR-UX-001.\\
+\emph{Hazards:} H-MOU-001.
+
 \end{description}
 \subsection{Precision or Accuracy Requirements}
 \lips
@@ -3531,13 +4108,14 @@ whether any budget is available. &
 G.4 (refinement service) & Shamil Canbolat & Oct.\ 17, 2026 \\
 \addlinespace
 OI-08 & \emph{Selected WCAG 2.2 success criteria.} The specialists
-recommended starting with WCAG (SRC-005, \intref{P2}{39:26}); the set of
-criteria Squigglr follows is TBD. The supervisor advised taking specific
-WCAG ideas as non-functional requirements rather than as a constraint
-(SRC-008). Still needed: a list of criteria the
-team can check without children. &
-G.1; accessibility and standards requirement IDs to be linked when written
-& Moustafa Moustafa (Usability); Shamil Canbolat (Compliance) &
+recommended starting with WCAG (SRC-005, \intref{P2}{39:26}), and the
+supervisor advised taking specific WCAG ideas as non-functional
+requirements rather than as a constraint (SRC-008). The criteria Squigglr
+follows are now listed in NFR-UX-001, NFR-UX-004, NFR-UX-005 and
+NFR-UX-018 to NFR-UX-024. Still needed: WCAG 2.2 listed in Standards
+Compliance Requirements. &
+G.1; NFR-UX-001, NFR-UX-004, NFR-UX-005, NFR-UX-018 to NFR-UX-024
+& Shamil Canbolat (Compliance) &
 Oct.\ 17, 2026 \\
 \addlinespace
 OI-09 & \emph{Supported devices and browsers.} CON-003 leaves the device
@@ -3571,9 +4149,146 @@ Inhibit the New Product}
 \section{Tasks}
 \label{sec:tasks}
 \subsection{Project Planning}
-\lips
+
+The Development Plan (\srcref{002}) defines the project's schedule, team
+responsibilities, development process, communication practices and deliverable
+management. Those arrangements are maintained in the Development Plan rather
+than duplicated in the SRS. This section assigns the SRS requirements to
+delivery phases; the course deadlines also appear under CON-004
+(Table~\ref{tab:con-schedule}).
+
 \subsection{Planning of the Development Phases}
-\lips
+\label{sec:development-phases}
+
+The delivery plan distinguishes the following requirement targets:
+\begin{description}[style=nextline]
+  \item[PH-1 --- Proof of Concept (PoC), November 23, 2026.]
+  A demonstration of the core guided-lesson flow, input capture, stage
+  classification and pass-based progression using prepared examples.
+  \item[PH-2 --- Revision 0, February 1, 2027.]
+  The learner-specific configuration, feedback, retry and stopping rules,
+  and drawing-input and session safeguards required for a usable revision.
+  \item[PH-3 --- Final demonstration, March 15, 2027.]
+  The remaining record-history and progress-presentation safeguards and
+  final integrated functionality.
+  \item[Future.]
+  Enhancements outside the committed capstone delivery phases, recorded
+  in Section~\ref{sec:waiting-room}.
+\end{description}
+
+\emph{Priority} describes the requirement's delivery importance
+(\emph{Must}, \emph{Should} or \emph{Could}); \emph{phase} states the
+first milestone at which that behaviour is targeted. A PH-1 capability
+remains part of PH-2 and PH-3. The phase classification does not relax any
+safety requirement when its associated feature is in use: a phase
+demonstration shall not rely on a safeguard that has not been implemented
+for real learner use.
+
+Table~\ref{tab:requirement-phases} lists every currently specified SRS
+requirement, including the safety requirements derived from the Hazard
+Analysis. The functional-requirement priorities and phases agree with
+Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
+are classified here as \emph{Must} and assigned to the phase containing
+the behaviour they protect. The 33 identified requirements in this SRS are scheduled in PH-1
+through PH-3. Candidate enhancements are assigned to Future in
+Section~\ref{sec:waiting-room}.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth}%
+  >{\raggedright\arraybackslash}p{0.40\textwidth}%
+  >{\raggedright\arraybackslash}p{0.12\textwidth}%
+  >{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
+\caption{Requirement priorities and targeted delivery phases}
+\label{tab:requirement-phases}\\
+\toprule
+\textbf{Requirement ID} & \textbf{Required behaviour} &
+\textbf{Priority} & \textbf{Phase} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Requirement ID} & \textbf{Required behaviour} &
+\textbf{Priority} & \textbf{Phase} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\multicolumn{4}{@{}l}{\textbf{Learning activity requirements (Section 9.1)}}\\
+\addlinespace
+\reqref{FR-LRN-001} & Approved lesson catalogue & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-002} & Ordered guidance stages & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-003} & Demonstration & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-004} & Full-outline guidance & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-005} & Endpoint-only guidance & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-006} & Independent drawing & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-007} & Stylus stroke acquisition & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-008} & Multi-stroke attempts & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-009} & Interrupted attempt handling & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-010} & Invalid and ambiguous input & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-011} & Completeness classification & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-012} & Guidance classification & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-013} & Pass classification & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-014} & Predefined difficulty feedback & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-015} & Retry after non-passing attempts & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-016} & Adult lesson and starting-stage selection & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-017} & Adult-selected practice parameters & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-018} & Adult authorization for discretionary changes & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-019} & Difficulty suggestion & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-020} & Improvement-based extension & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-021} & Stage attempt limit and lesson end & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-022} & No learner evaluation or diagnosis & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-023} & Automatic within-lesson advancement & Must & PH-1 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Hazard-derived safety requirements (Section 12.2)}}\\
+\addlinespace
+\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-002} & Unsupported-device notice & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-003} & Preservation of unsaved attempts & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-004} & Non-diagnostic summaries and exports & Must & PH-3 \\
+\addlinespace
+\texttt{SAF-RAY-005} & Automatic lesson termination & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-006} & Restart and extension history & Must & PH-3 \\
+\addlinespace
+\texttt{SAF-RAY-007} & Active-learner identification and isolation & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-008} & Adult-setting bounds and authorization & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-AHM-002} & Drawing-coordinate integrity & Must & PH-2 \\
+\end{longtable}
+}
+
+The phase allocation is a planning baseline rather than an alternative
+source of requirement definitions. If a requirement's scope or phase
+changes, its entry in this table and, for requirements with a
+\texttt{Phase} field, its individual specification are updated together.
 
 \section{Migration to the New Product}
 \subsection{Requirements for Migration to the New Product}
@@ -3590,7 +4305,66 @@ Inhibit the New Product}
 \lips
 
 \section{Waiting Room}
-\lips
+\label{sec:waiting-room}
+
+The waiting room records candidate capabilities excluded from the PH-1,
+PH-2 and PH-3 delivery commitments. They may be considered after the
+core project goals and their safety requirements have been satisfied.
+Their classification as \emph{Future} is not a requirement to implement
+them during the capstone project.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}%
+  >{\raggedright\arraybackslash}p{0.49\textwidth}%
+  >{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\caption{Capabilities deferred to Future}
+\label{tab:waiting-room}\\
+\toprule
+\textbf{Capability} & \textbf{Reason for deferral and source} &
+\textbf{Phase} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Capability} & \textbf{Reason for deferral and source} &
+\textbf{Phase} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Camera-based finger tracing in the air & The specialists distinguished
+this gross-motor activity from the fine-motor practice supported by
+stylus-on-screen drawing and advised prioritizing touchscreen work
+(FACT-006; \srcref{005}). It is not part of the core guided-lesson
+catalogue (G.1, CON-003). & Future \\
+\addlinespace
+Letter and handwriting tracing & The agreed core catalogue covers
+lines, basic shapes and simple drawings (\reqref{FR-LRN-001}). The
+follow-up questionnaire places letters after shape practice
+(ASM-010, SRC-009.04; LC-001). & Future \\
+\addlinespace
+Finger drawing and input-size progression & Stylus input is the core
+interaction (CON-003). Finger input, or progression between finger,
+large-stylus and smaller-stylus interaction, requires additional
+input-specific verification and calibration (FACT-005; LC-006). & Future \\
+\addlinespace
+Full WCAG conformance & The capstone scope includes selected, verifiable WCAG 2.2 success
+criteria. Full conformance across all applicable criteria is a stretch
+goal, rather than a claim for the capstone release (OI-08; \srcref{005}). & Future \\
+\addlinespace
+Offline lesson use and synchronization & The initial scope assumes
+network access for lessons and records (ASM-005). Full offline operation
+and later synchronization would extend this scope; the existing safety
+requirement to preserve unsaved attempts (SAF-RAY-003) remains part of
+the committed product. & Future \\
+\end{longtable}
+}
+
+Creative-space refinement remains within goal G.4 unless the team
+formally changes that goal (OI-03); it is not moved into the waiting
+room here. Automatic selection of new lessons, diagnostic assessment,
+and AI-generated personalized advice are excluded by CON-007 and
+BR-003, BR-006 and BR-007, respectively; they are not implicitly
+promised as future features.
 
 \section{Ideas for Solution}
 \lips
@@ -3720,8 +4494,8 @@ abilities (SRC-008), and effectiveness claims would need studies the
 project cannot run (CON-006). \\
 \addlinespace
 ULC-005 & In guided lessons, the record keeps the child's actual strokes;
-refinement happens only in the creative space, and the original can be
-restored. & G.4, G.5 & A record of practice is meaningful only
+refinement happens only in the creative space, the original can be
+restored, and refinement can be turned off. & G.4, G.5 & A record of practice is meaningful only
 if it shows what the child drew (SRC-001; SRC-005,
 \intref{Moustafa}{6:03}). \\
 \addlinespace
@@ -3812,7 +4586,9 @@ Advice from the client, not observed user data. \\
   & Issue \href{https://github.com/AHMEDELZARIA/squigglr/issues/107}{\#107} &
 Let the supporting adult choose child-dependent thresholds within a
 team-set minimum and maximum, with example drawings of each end; default
-to the middle of the range. &
+to the middle of the range. Take specific WCAG ideas, such as large icons,
+as non-functional requirements rather than treating WCAG as a
+constraint. &
 Advice from the client, not observed user data. \\
 \bottomrule
 \end{tabularx}
@@ -4050,6 +4826,49 @@ AI-assisted passage against my intended meaning and checked each cited
 statement against the original transcript, questionnaire, or meeting notes
 to confirm that it says what we claim it says.
 
+\textbf{Ahmed:} I used OpenAI's ChatGPT (GPT-6) while preparing my
+sections of the SRS, particularly the document structure, learning
+activity requirements, formal lesson specification and development-phase
+planning. All the ideas behind my contributions are my own, and project
+decisions were made through discussion with my teammates. I used AI to
+help express those ideas in a clear and grammatically correct way,
+including turning my notes into requirement statements, improving
+sentence structure and making technical explanations easier to follow.
+It also helped with \LaTeX{} formatting and with checking the clarity
+of section references and wording across related requirements. Our team 
+also used AI to help divide the workload fairly and evenly among members, 
+taking into account the scope and complexity of each task. I personally used it 
+to help write clear and descriptive pull request descriptions that accurately 
+summarized the changes I made, making them easier for my teammates to review.
+
+I reviewed the AI-assisted text to make sure it expressed the decisions
+we had made and stayed consistent with the SRS, our meeting discussions
+and the parts of the document written by other team members. AI was a
+writing and formatting aid; the final content and decisions remained
+my responsibility and the team's.
+
+\textbf{Moustafa:} I used Anthropic's Claude Opus 5.5, accessed through
+Claude Code, alternating between medium and high effort depending on the
+task. Because the document was so large, I relied on it heavily to save
+time on project management. Connected to the GitHub CLI, it split my
+assignment into ten sub-issues so I could track my work in smaller pieces,
+checked which tasks I still had left, and made my commits and pull
+requests. For writing, I decided what each part should say and gave it my
+ideas, sometimes after brainstorming with it. It then wrote a first draft
+and the \LaTeX{} for it, which I refined until it said exactly what I
+intended. In this document, that covered Sections 6, 8, 10 and 11, the
+SAF-MOU safety requirements in Section 12.2, and my changes to Appendix A.
+I also used it for review: as teammates merged their sections, I had it
+read the document again to check that my additions stayed consistent with
+the rest and contradicted nothing, and it helped me review my teammates'
+pull requests. GitHub Copilot also gave a light automated review on a few
+of my pull requests.
+
+All ideas in my sections are my own. I reviewed every AI-drafted passage
+against my intended meaning before including it, and I decided which
+flagged inconsistencies and review comments were valid and how to resolve
+them.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -4075,6 +4894,38 @@ pull request per section, which kept each review small and let each section be
 checked and merged on its own. The main thing I took from this is that
 recording sources as we go makes the requirements much easier to justify and
 to change later.
+
+\textbf{Ahmed:} What went well for me was being able to build the
+learning activity requirements around a flow we had already discussed
+as a team. We knew that an adult would choose the lesson and starting
+stage, while the child would move through progressively less guided
+drawing stages based on their attempts. Having those decisions in place
+made it easier to write requirements that describe exactly what the
+application should do instead of leaving the behaviour open to
+interpretation.
+
+I also think splitting my work into smaller, focused contributions
+helped a lot. I worked on the SRS structure first, then the learning
+requirements and formal specification, and later the development
+phases. That gave the team something specific to review each time. The
+formal specification was especially useful because it forced me to
+think through cases like failed attempts, improvement extensions and
+adult-approved changes. I could then compare those rules with the
+written requirements and the hazards in the other document. It was
+satisfying to see the different sections start fitting together rather
+than feeling like separate pieces of writing.
+
+\textbf{Moustafa:} What went well was that we did most of the thinking
+before we started writing. Rayan and I interviewed three domain specialists
+on October 1, and they later filled out a follow-up questionnaire for us.
+Along with our meetings with our supervisor, Dr.~Anand, and our TA, that
+shaped a lot of the app before we assumed anything ourselves. For example,
+the specialists are why the adult decides when a child moves on, and
+Dr.~Anand is why adults set the thresholds within a range we define. So
+when it came time to write my sections, it felt more like organizing than
+coming up with things from scratch. For most requirements I could just ask
+myself what the specialists, Dr.~Anand or the TA had said, and put it
+there with the source.
 
 \item What pain points did you experience during this deliverable, and how did
 you resolve them?
@@ -4103,6 +4954,41 @@ learned that requirements are never really finished early in a project, and
 that keeping each change in one place and tracing it to its source is what
 makes them manageable.
 
+\textbf{Ahmed:} My biggest difficulty was keeping everything
+consistent as the requirements changed. A rule that sounded simple in
+a meeting often had several consequences once I tried to specify it.
+For example, we had to distinguish between automatically moving to
+the next stage after a passing drawing and changing lessons or moving
+backward, which should require an adult's approval. We also had to
+make sure that interrupted attempts did not count toward the attempt
+limit and that a child could not keep receiving extensions indefinitely.
+I ended up revisiting the same requirements and state transitions
+multiple times to make those distinctions clear.
+
+The \LaTeX{} and Git workflow was another challenge. Some section
+references initially appeared as question marks until I checked the
+labels and rebuilt the document, and integrating changes from multiple
+branches meant I had to be careful not to replace newer work from my
+teammates. One review caught an issue where a previous version would
+have removed safety requirements that were already on main. I
+corrected that and became much more deliberate about checking diffs
+before submitting a pull request. It was a good reminder that writing
+a correct section is only part of the job; it also has to integrate
+safely into the team's document.
+
+\textbf{Moustafa:} The biggest pain point was how long and repetitive the
+document was. With five of us writing different sections, there was a good
+chance two people were writing about the same thing in different places,
+and even a slightly different idea of how something should work meant we
+would contradict each other. As Ahmed and Rayan merged their sections while
+I wrote mine, I kept noticing things that did not line up. For example, my
+use cases had the child opening a lesson, while Rayan's assumptions said
+only the adult starts one. Each time, one of us had to change our part, so
+we would message or call to decide which version made more sense. Checking
+a document this size by hand was really tedious, so we used AI to review
+it and flag inconsistencies, and then we decided together which version was
+right.
+
 \item How many of your requirements were inspired by speaking to your
 client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
 
@@ -4120,6 +5006,43 @@ requirements, such as the deliverable deadlines. Since none of these
 stakeholders are the children themselves, nearly every requirement that
 affects how a child uses Squigglr rests on what adults and specialists told
 us, which is why we plan to check them with the domain specialists again later.
+
+\textbf{Ahmed:} I contributed 25 individually identified
+requirements: 23 learning activity requirements (FR-LRN-001 through
+FR-LRN-023) and two safety-critical requirements (SAF-AHM-001 and
+SAF-AHM-002). At least 13 of the learning requirements explicitly
+cite the domain-specialist interview, follow-up questionnaire, or
+meetings with our supervisor and TA as sources. For example, the
+specialists' advice shaped the distinction between adult-controlled
+lesson decisions and routine progression within a lesson. Our
+supervisor's feedback about letting adults choose thresholds within
+team-defined ranges also affected the pass, settings and
+improvement-related requirements.
+
+The remaining requirements mainly came from working through what was
+needed to make those agreed behaviours reliable and testable. When we
+specified stylus capture, for example, I had to account for multiple
+strokes, interrupted input and incorrect classifications even though
+nobody had handed us a detailed rule for each case. The two additional
+safety requirements came from my failure-mode analysis of duplicate
+stylus events and coordinate-mapping errors. I learned that talking
+to stakeholders establishes the direction, but turning their needs
+into a complete specification also requires careful engineering
+judgement about failure cases and edge conditions.
+
+\textbf{Moustafa:} I wrote 27 requirements: 24 look-and-feel and usability
+requirements (NFR-UX-001 to NFR-UX-024) and three safety requirements
+(SAF-MOU-001 to SAF-MOU-003). Of these, 25 cite something our stakeholders
+or their proxies told us. Most come from the specialists. The interview
+gave us things like icon-based navigation for kids who can't read yet,
+positive feedback wording, and audio that can be turned off. The
+questionnaire added that the app should stay calm and not overwhelming,
+that refinement should be optional, and that feedback should recognize
+effort. Our supervisor told us to borrow specific WCAG ideas, like large
+icons, instead of treating WCAG as a constraint, which shaped the whole
+accessibility section, and our TA's comment about defining jargon became
+the plain-wording requirement for adult views. The two that don't cite
+anyone, SAF-MOU-001 and SAF-MOU-003, came out of our hazard analysis.
 
 \item Which of the courses you have taken, or are currently taking, will help
 your team to be successful with your capstone project.
@@ -4143,6 +5066,40 @@ Being able to transfer those concepts helped me a lot with this deliverable in
 particular, because I already knew how to write goals and requirements that
 are precise and checkable and only had to adapt them to a new template.
 
+\textbf{Ahmed:} SFWRENG 4HC3, Human-Computer Interaction, has been
+very relevant because it keeps bringing the discussion back to what
+users actually need and how they will experience the product. The
+work on personas, scenarios and requirements elicitation helped me
+think about the difference between a child drawing in a lesson and an
+adult setting it up or reviewing the results. That distinction became
+important when writing our lesson-control requirements.
+
+Our Machine Learning course has also been useful, even though
+Squigglr is not meant to diagnose or assess children. Learning how
+a model or classifier produces an output made me think more carefully
+about what it means for a drawing to pass a fixed criterion and what
+can go wrong if the classification is inaccurate. The formal models
+and state-based reasoning we encounter in software engineering and
+real-time systems are relevant too. I used that way of thinking when
+writing the guided-lesson transitions, such as exactly when the
+system should advance, retry, suggest an earlier stage or end the
+lesson. These courses helped me move from describing a feature to
+specifying behaviour that somebody can actually verify.
+
+\textbf{Moustafa:} Two courses help me the most. The first is SFWRENG 4HC3,
+Human-Computer Interaction. A lot of what it teaches feels obvious at first,
+but once you actually go through the concepts you realize how much thought
+a good interface needs, and I had never thought about UI that deeply
+before. That matters a lot for Squigglr, because it is built for young kids
+and kids with disabilities, so being able to navigate the app easily is one
+of the most important parts of the whole project. Most of my accessibility
+and usability sections came from that way of thinking. The second is
+SFWRENG 3A04, Software Design III: Large System Design. In that course we
+worked with business use cases and wrote use cases with a main flow and
+alternative flows, which is exactly what I did for the business use cases
+and product use cases here. We did the same thing in 3RA3. 3A04 will also
+help when we plan the architecture for the design document.
+
 \item What knowledge and skills will the team collectively need to acquire to
 successfully complete this capstone project? Examples of possible knowledge
 to acquire include domain specific knowledge from the domain of your
@@ -4162,6 +5119,38 @@ for autistic children and children with ADHD, rather than relying only on our
 own ideas. Their experience is what turned our general idea into requirements
 we can actually justify.
 
+\textbf{Ahmed:} The team needs a mix of technical skills and an
+understanding of the people we are building for. For my part, I need
+to keep improving at turning a user flow into a clear interface and a
+set of consistent, testable requirements. Rayan's backend work will
+require reliable data modelling and access control, especially since
+one adult account may have several learner profiles and practice
+histories. Moustafa will need strong experience with browser drawing
+input and responsive canvas behaviour, because the accuracy of
+stylus events affects both evaluation and saved records.
+
+Huzaifah will need a good verification and testing approach, including
+ways to reproduce edge cases such as interrupted strokes, threshold
+boundaries and failed saves. Shamil's role will benefit from strong
+stakeholder communication and documentation skills so that decisions,
+questions and feedback do not get lost between meetings. As a team,
+we also need more domain knowledge about early visual-motor practice
+and accessible interfaces. None of us should assume that something
+which seems intuitive to us will necessarily work well for the children
+or adults who would use Squigglr.
+
+\textbf{Moustafa:} As the frontend lead, the main thing I need to learn is
+how to handle stylus drawing in the browser properly. That means getting
+accurate, smooth input from the stylus, handling things like palm rejection
+and different screen sizes, and making sure what the child draws is exactly
+what gets saved. I also need to learn how to actually build the
+accessibility side I wrote in Sections 10 and 11, like checking contrast,
+touch target sizes and text alternatives, instead of just specifying them.
+For the team as a whole, I think the biggest skill is testing without
+children. Since we can't run studies with them, we need to get good at
+designing reviews with adults and prepared drawings that still tell us
+something useful.
+
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
@@ -4178,6 +5167,44 @@ as refinement in the creative space and letter activities. The questionnaire
 also gave the specialists time to think through their answers. Using both
 worked well together: the interview showed us what we did not know, and the
 questionnaire filled in the gaps it left.
+
+\textbf{Ahmed:} I see two useful approaches for each of these
+areas: learning from established material and then testing what we
+learn in something concrete. For my UI and requirements work, that
+means reviewing HCI guidance and examples from similar applications,
+then building prototypes and asking adults to walk through the flows.
+The second approach matters because something that looks clear on
+paper may still be confusing when somebody tries to use it.
+
+For Rayan's data and access-control work, official documentation and
+small integration prototypes can complement each other; I would
+prioritize testing the multi-learner and saving flows early. For
+Moustafa's stylus and canvas work, browser input documentation is a
+starting point, but trying the same prepared strokes on different
+touchscreen sizes will reveal problems that documentation cannot.
+For Huzaifah, studying testing methods and building repeatable
+synthetic test cases provide both the theory and evidence that our
+requirements are met. For Shamil, reading relevant research and
+following up with adult stakeholders through interviews or
+questionnaires would help check our assumptions. These are the
+approaches I would recommend we confirm as a team, because they let
+us learn efficiently while still checking that what we build works
+as intended.
+
+\textbf{Moustafa:} For the stylus drawing, the two approaches are reading
+the browser documentation on pointer and touch input, and building a small
+drawing prototype early to test on real tablets with a stylus. I'll do
+both, but lean on the prototype, because input problems like palm rejection
+or lag only show up when you actually draw on the device. For
+accessibility, I can either go through the WCAG 2.2 success criteria we
+picked and learn the tools that check them, or look at how existing kids'
+apps handle things like icons and touch targets. I'll start with WCAG and
+the checking tools, since our requirements are written against those
+criteria, so that's how they'll be tested. For testing without children, I
+can learn from how other projects ran reviews with adults, or ask our
+specialists how they evaluate apps when children can't take part. I'll go
+with the specialists, because they've done exactly this before and offered
+to help guide us.
 
 \end{enumerate}
 

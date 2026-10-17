@@ -117,6 +117,7 @@ requirement structure (\#131).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
+16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 \end{longtable}
 
 ~\\
@@ -371,8 +372,9 @@ action, and these hold at the minimum, default and maximum of each value. \\
 G.4 Support editable creative drawing and refinement &
 \emph{Purpose:} in the creative space, Squigglr refines a child's drawing
 of a shape or object in the agreed supported set by adjusting the child's
-own strokes; the result stays editable and the original can be restored
-(SRC-001; \intref{Moustafa}{6:03}).
+own strokes; the result stays editable, the original can be restored, and
+refinement can be turned off (SRC-001; \intref{Moustafa}{6:03};
+\hyperref[src:009.01]{SRC-009.01}).
 \emph{Advantage:} creative drawing gives room for self-expression, and
 editability keeps the child in control of the work (SRC-001). Serves
 children.
@@ -380,8 +382,9 @@ children.
 set, met when for every drawing (a) every point of the refined drawing lies
 within \texttt{REFINE\_TOLERANCE} (TBD) of the original strokes; (b) the
 refined parts can be moved, resized, recoloured, erased and undone; (c)
-restoring returns the original strokes exactly; and (d) a failed refinement
-request leaves the drawing unchanged. \\
+restoring returns the original strokes exactly; (d) a failed refinement
+request leaves the drawing unchanged; and (e) with refinement turned off,
+the child's strokes are kept exactly as drawn. \\
 \addlinespace
 \phantomsection\label{goal:5}%
 G.5 Preserve meaningful activity records &
@@ -598,8 +601,8 @@ drew (SRC-005, \intref{Moustafa}{6:03}). & Records keep the child's actual
 strokes; no corrected shape is counted as their work. \\
 Children (creative space) & Get a cleaner version of their own drawing
 that is still theirs (SRC-005, \intref{Moustafa}{6:03}). & Refinement adjusts the
-child's strokes rather than replacing them; the result stays editable and
-the original can be restored. \\
+child's strokes rather than replacing them; the result stays editable,
+the original can be restored, and refinement can be turned off. \\
 Children & Two children with the same diagnosis may need different
 support (SRC-005, \intref{Rayan}{2:04}). & Adults choose the lesson and starting
 stage for each child; nothing is set by diagnosis. \\
@@ -1002,8 +1005,9 @@ not replaced by refined shapes.
 & \hyperref[sec:business-rules]{BR-004}\\
 \textbf{Creative refinement} & Automatic, minimal adjustment of
 the child's strokes in the creative space only. The drawing remains
-editable, and the original can be restored by the child or, if needed,
-by a supporting adult. & \hyperref[sec:business-rules]{BR-005}\\
+editable, and the original can be restored, or refinement turned off,
+by the child or, if needed, by a supporting adult.
+& \hyperref[sec:business-rules]{BR-005}\\
 \textbf{Supporting adult} & A parent, guardian, caregiver, educator or
 learning-support staff member who configures activities and reviews
 records, as permitted by the account rules.
@@ -1344,13 +1348,16 @@ shows a corrected shape would mislead them.\\
 \emph{Source:} G.5; SRC-005, \intref{Moustafa}{6:03}.
 \item[BR-005] Refinement of strokes happens only in the creative space.
 It is automatic and minimal, the refined drawing stays editable, and the
-child's original drawing can be restored, by the child or, if the child
-cannot, by the adult.\\
+child's original drawing can be restored. Refinement can also be turned
+off for the creative space. Restoring and turning off are done by the child
+or, if the child cannot, by the adult.\\
 \emph{Rationale:} the work must remain the child's own, and refinement
 must never reach the records adults rely on (BR-004). Refinement needs no
-action from the child, and an adult can restore the original for a child
-who cannot use the control.\\
-\emph{Source:} G.4; SRC-001.
+action from the child, and an adult can restore the original or turn
+refinement off for a child who cannot use the controls. Both questionnaire
+respondents suggested that refinement be optional or adjustable
+(\hyperref[src:009.01]{SRC-009.01}).\\
+\emph{Source:} G.4; SRC-001; \hyperref[src:009.01]{SRC-009.01}.
 \item[BR-006] Squigglr gives no diagnosis, no judgement of a child's
 abilities, no comparison with other children, and no claim that its
 practice improves any skill.\\
@@ -4037,8 +4044,8 @@ abilities (SRC-008), and effectiveness claims would need studies the
 project cannot run (CON-006). \\
 \addlinespace
 ULC-005 & In guided lessons, the record keeps the child's actual strokes;
-refinement happens only in the creative space, and the original can be
-restored. & G.4, G.5 & A record of practice is meaningful only
+refinement happens only in the creative space, the original can be
+restored, and refinement can be turned off. & G.4, G.5 & A record of practice is meaningful only
 if it shows what the child drew (SRC-001; SRC-005,
 \intref{Moustafa}{6:03}). \\
 \addlinespace

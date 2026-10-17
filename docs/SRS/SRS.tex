@@ -112,6 +112,11 @@ requirement structure (\#131).\\
 15 October 2026 & Ahmed Elzaria & Added safety-critical requirements SAF-AHM-001 and SAF-AHM-002 for drawing-input integrity (\#135).\\
 15 October 2026 & Moustafa Moustafa & Let the revision history table continue across pages (\#108).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 6, The Scope of the Work, with the context diagram (\#109).\\
+15 October 2026 & Moustafa Moustafa & Wrote Section 8.1, Product Boundary (\#110).\\
+16 October 2026 & Ahmed Elzaria & Added the requirement-to-phase allocation and deferred-feature register in Sections 21 and 25 (\#133).\\
+16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
+16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
+16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 \end{longtable}
 
@@ -1168,6 +1173,22 @@ progress-summary review tasks completed successfully by adults.
 learners served by Squigglr.
 \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
 \emph{Trace:} Section~\ref{sec:stakeholders}, G.1.\\
+\addlinespace
+\texttt{CHILD\_CONTROLS\_MAX} & Maximum number of controls a
+child can use on one child-facing screen.
+\emph{Unit:} controls (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-001.\\
+\addlinespace
+\texttt{UX\_REVIEWERS} & Minimum number of adult reviewers in the
+look-and-feel and usability reviews.
+\emph{Unit:} people (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-003, NFR-UX-006, NFR-UX-007.\\
+\addlinespace
+\texttt{STYLE\_RATING\_MIN} & Minimum median rating, on a five-point
+scale, that reviewers give child-facing screens for being appealing and
+calm.
+\emph{Unit:} rating (1--5). \emph{Value:} team-defined; TBD.
+\emph{Trace:} NFR-UX-006.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -1790,8 +1811,170 @@ event; the maintenance requirements cover it.
 
 \section{The Scope of the Product}
 \label{sec:product-scope}
+
+This section describes Squigglr's own part of the work in
+Section~\ref{sec:work-scope}: the inputs and outputs that cross the
+product's boundary, the product use cases, and the full flow of each use
+case.
+
 \subsection{Product Boundary}
-\lips
+\label{sec:product-boundary}
+
+Table~\ref{tab:product-inputs} lists every input Squigglr accepts and
+Table~\ref{tab:product-outputs} every output it produces, covering the
+inputs and outputs in the Problem Statement and Goals (SRC-001) and the
+data flows in Table~\ref{tab:work-flows}. Each row names the use cases
+(Table~\ref{tab:puc}) and requirements that handle it. For each input,
+the last column states what Squigglr does when the input is invalid or
+missing, so that every possible input has a defined response. An
+identifier marked TBD names a requirement group that is not written yet;
+the owner's issue is given.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.19\textwidth}
+  >{\raggedright\arraybackslash}p{0.13\textwidth}
+  >{\raggedright\arraybackslash}p{0.1\textwidth}
+  >{\raggedright\arraybackslash}p{0.18\textwidth}
+  >{\raggedright\arraybackslash}p{0.3\textwidth}@{}}
+\caption{Product inputs}\label{tab:product-inputs}\\
+\toprule
+\textbf{Input} & \textbf{From} & \textbf{Use cases} &
+\textbf{Requirements} & \textbf{If invalid or missing} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Input} & \textbf{From} & \textbf{Use cases} &
+\textbf{Requirements} & \textbf{If invalid or missing} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+A child's profile details and adult-set values & Supporting adult &
+\ucref{001}, \ucref{010} &
+\mbox{\reqref{FR-LRN-017}}, SAF-RAY-008 &
+A value outside its range, an \texttt{ATTEMPT\_LIMIT} not larger than
+\texttt{DIFFICULTY\_STREAK}, or an \texttt{ATTEMPT\_LIMIT\_MAX} smaller
+than \texttt{ATTEMPT\_LIMIT} is not saved. A value the adult does not
+choose is set to the middle of its range (SAF-RAY-008). \\
+\addlinespace
+Lesson choice, starting stage and the start of the lesson &
+Supporting adult & \ucref{002}, \ucref{004} &
+\mbox{\reqref{FR-LRN-016}}, \mbox{\reqref{FR-LRN-018}}, SAF-RAY-001 &
+Without an adult's choice no lesson starts; a child cannot choose or
+start one by tapping icons (SAF-RAY-001). On an unsupported device or
+browser, the adult sees a notice that results may be unreliable
+(SAF-RAY-002). \\
+\addlinespace
+Stylus strokes for an attempt in a guided lesson & Child &
+\ucref{003}, \ucref{008} &
+\mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}} &
+An interrupted or unfinished attempt is not passed and does not count
+toward the attempt limits (\mbox{\reqref{FR-LRN-009}}). Missing, invalid or
+ambiguous input is not passed and is not counted
+(\mbox{\reqref{FR-LRN-010}}). \\
+\addlinespace
+Strokes and edits in the creative space: draw, move, resize, recolour,
+erase, undo & Child & \ucref{006} &
+FR-CRT TBD (\#83) &
+To be stated with the FR-CRT requirements. \\
+\addlinespace
+Request to turn refinement off or restore the original drawing &
+Child or supporting adult & \ucref{007}, \ucref{010} &
+FR-CRT TBD (\#83); BR-005 &
+A failed refinement leaves the drawing unchanged (\goalref{4}). \\
+\addlinespace
+Decision on a suggestion to go back a stage & Supporting adult &
+\ucref{005} &
+\mbox{\reqref{FR-LRN-018}}, \mbox{\reqref{FR-LRN-019}}, SAF-RAY-001 &
+A declined or ignored suggestion changes nothing, and the suggestion
+stays pending without blocking practice until an adult decides
+(SAF-RAY-001; BR-003). Only an adult can accept it. \\
+\addlinespace
+Changes to a child's settings: accessibility, audio, whether refinement
+is on & Supporting adult & \ucref{010} &
+NFR-UX TBD (\#114) &
+To be stated with the NFR-UX requirements. \\
+\addlinespace
+Request to view a child's history, attempts or progress summaries &
+Supporting adult & \ucref{009}, \ucref{010} &
+BR-001; NFR-SEC TBD (\#82) &
+A request from anyone other than the adult who holds the account is
+refused, and nothing is shown (BR-001). \\
+\addlinespace
+Lesson catalogue, ranges of the adult-set values and fixed values &
+Squigglr team & -- &
+\mbox{\reqref{FR-LRN-001}}, BR-009 &
+Not entered by users; set and checked by the team (BR-009). \\
+\addlinespace
+Any of the above while the network connection is lost & Child or
+supporting adult & All &
+SAF-RAY-003 &
+Each completed attempt is kept on the device until the server confirms
+it is saved, and the adult is told which attempts could not be saved
+(SAF-RAY-003). \\
+\end{longtable}
+}
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.38\textwidth}
+  >{\raggedright\arraybackslash}p{0.14\textwidth}
+  >{\raggedright\arraybackslash}p{0.14\textwidth}
+  >{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+\caption{Product outputs}\label{tab:product-outputs}\\
+\toprule
+\textbf{Output} & \textbf{To} & \textbf{Use cases} &
+\textbf{Requirements} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Output} & \textbf{To} & \textbf{Use cases} &
+\textbf{Requirements} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Demonstration and guidance for each stage: full outline, endpoints
+only, or no guide & Child & \ucref{003} &
+\mbox{\reqref{FR-LRN-002}}--\mbox{\reqref{FR-LRN-006}} \\
+\addlinespace
+The active learner, shown in a form a child who cannot read can
+recognize & Child & \ucref{003} & SAF-RAY-007 \\
+\addlinespace
+Feedback on an attempt, its result, and moving on to the next stage &
+Child & \ucref{003} &
+\mbox{\reqref{FR-LRN-011}}--\mbox{\reqref{FR-LRN-015}},
+\mbox{\reqref{FR-LRN-023}} \\
+\addlinespace
+Suggestion to go back a stage, or an extension while the child improves &
+Supporting adult & \ucref{005} &
+\mbox{\reqref{FR-LRN-019}}, \mbox{\reqref{FR-LRN-020}} \\
+\addlinespace
+End of a lesson at \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX},
+with progress saved & Child; supporting adult & \ucref{003} &
+\mbox{\reqref{FR-LRN-021}}, SAF-RAY-005, SAF-RAY-006 \\
+\addlinespace
+Refined, editable drawing whose original can be restored & Child &
+\ucref{006}, \ucref{007} & FR-CRT TBD (\#83) \\
+\addlinespace
+Attempt records: stage, difficulties, corrections and outcome &
+Supporting adult & \ucref{008}, \ucref{009} &
+FR-REC TBD (\#83); SAF-RAY-004, SAF-RAY-007 \\
+\addlinespace
+Progress summaries linked to the attempts behind them, with no
+diagnosis or judgement of the child & Supporting adult & \ucref{009} &
+FR-PRG TBD (\#83); \mbox{\reqref{FR-LRN-022}}, SAF-RAY-004 \\
+\addlinespace
+The adult-set values in use, shown with the child's records &
+Supporting adult & \ucref{010} & SAF-RAY-008 \\
+\addlinespace
+Notices to the adult: unsupported device or browser, attempts not
+saved & Supporting adult & All & SAF-RAY-002, SAF-RAY-003 \\
+\end{longtable}
+}
 \subsection{Product Use Case Table}
 \label{sec:puc-table}
 
@@ -1896,7 +2079,391 @@ and each adult-set value stays within its range. & \goalref{3}, \goalref{6} \\
 
 \subsection{Individual Product Use Cases (PUC's)}
 \label{sec:puc}
-\lips
+
+% Long identifiers and constant names cannot be hyphenated; let lines
+% stretch rather than overflow the margin in this subsection.
+\begingroup
+\sloppy
+This subsection gives the full flow of each product use case in
+Table~\ref{tab:puc}. Each use case lists its actor, preconditions,
+trigger, main flow, alternative flows, failure flows and postconditions,
+and the requirements and sources it depends on. Alternative flows are
+other normal paths; failure flows handle the invalid or missing inputs in
+Table~\ref{tab:product-inputs}. Both are numbered by the main-flow step
+where they branch, so ``3a'' branches at step 3. The lesson behaviour in
+\ucref{003} and \ucref{005} is specified formally in
+Section~\ref{sec:fr-formal}. An identifier marked TBD names a
+requirement group that is not written yet; the owner's issue is given.
+
+\subsubsection{UC-001: Create a child's profile}
+\label{puc:001}
+\reqfield{Actor}{Supporting adult who holds the account.}
+\reqfield{Preconditions}{The adult is signed in to their own account
+(BR-001).}
+\reqfield{Trigger}{The adult adds a child to Squigglr.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item The adult enters the child's first name and a username that does
+  not identify the child (BR-001).
+  \item Squigglr asks for each adult-set value, shows its range and, for
+  \texttt{STAGE\_PASS}, shows example drawings of the minimum and maximum
+  (BR-008).
+  \item The adult chooses each value.
+  \item Squigglr saves the profile and the values.
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[3a.] The adult leaves a value unset. Squigglr sets it to the
+  middle of its range (\mbox{SAF-RAY-008}).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[3b.] A value is outside its range, \texttt{ATTEMPT\_LIMIT} is not
+  larger than \texttt{DIFFICULTY\_STREAK}, or \texttt{ATTEMPT\_LIMIT\_MAX}
+  is smaller than \texttt{ATTEMPT\_LIMIT}. Squigglr does not save it and
+  returns to step 3 (\mbox{\reqref{FR-LRN-017}}, \mbox{SAF-RAY-008}).
+  \item[4a.] The profile cannot be saved. Squigglr tells the adult, and no
+  partial profile is created.
+\end{description}
+\reqfield{Postconditions}{The profile exists, and every adult-set value is
+within its range or at its midpoint.}
+\reqfield{Requirements}{\mbox{\reqref{FR-LRN-017}}; \mbox{SAF-RAY-008}; BR-001,
+BR-008.}
+\reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
+
+\subsubsection{UC-002: Choose a lesson}
+\label{puc:002}
+\reqfield{Actor}{Supporting adult.}
+\reqfield{Preconditions}{The child has a profile (\ucref{001}).}
+\reqfield{Trigger}{The adult chooses a lesson for a child.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item The adult selects the child, and Squigglr shows that child as the
+  active learner (\mbox{SAF-RAY-007}).
+  \item The adult chooses a lesson from the catalogue
+  (\mbox{\reqref{FR-LRN-001}}).
+  \item Squigglr checks the device and browser against
+  \texttt{SUPPORTED\_DEVICES} (\mbox{SAF-RAY-002}).
+  \item The adult completes the adult check and starts the lesson at its
+  first stage (\mbox{SAF-RAY-001}, \mbox{\reqref{FR-LRN-016}}). The lesson
+  continues in \ucref{003}.
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[4a.] The adult chooses a later starting stage (\ucref{004}).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[3a.] The device or browser is not supported. The adult sees a
+  notice that results may be unreliable and decides whether to continue
+  (\mbox{SAF-RAY-002}).
+  \item[4b.] A child tries to choose or start a lesson by tapping icons.
+  The adult check is not completed, and no lesson starts (\mbox{SAF-RAY-001}).
+\end{description}
+\reqfield{Postconditions}{The chosen lesson is running for the selected
+child.}
+\reqfield{Requirements}{\mbox{\reqref{FR-LRN-001}},
+\mbox{\reqref{FR-LRN-016}}, \mbox{\reqref{FR-LRN-018}}; \mbox{SAF-RAY-001},
+\mbox{SAF-RAY-002}, \mbox{SAF-RAY-007}.}
+\reqfield{Sources}{\goalref{1}, \goalref{3}; \mbox{SRC-005.01}.}
+
+\subsubsection{UC-003: Practise a guided lesson}
+\label{puc:003}
+\reqfield{Actor}{Child.}
+\reqfield{Preconditions}{An adult has started the lesson for the child
+(\ucref{002} or \ucref{004}).}
+\reqfield{Trigger}{An adult starts a lesson for the child.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item Squigglr shows the demonstration, which is not an attempt
+  (\mbox{\reqref{FR-LRN-003}}), then moves to the starting stage.
+  \item Squigglr shows the stage's guidance: the full outline, the
+  endpoints only, or no guide
+  (\mbox{\reqref{FR-LRN-004}}--\mbox{\reqref{FR-LRN-006}}).
+  \item The child draws one or more strokes. Lifting the stylus does not
+  end the attempt (\mbox{\reqref{FR-LRN-007}},
+  \mbox{\reqref{FR-LRN-008}}).
+  \item When the attempt is finalized, Squigglr classifies it as complete
+  or incomplete and as assisted or independent, and passes it only if it
+  is complete and meets \texttt{STAGE\_PASS}
+  (\mbox{\reqref{FR-LRN-011}}--\mbox{\reqref{FR-LRN-013}}).
+  \item Squigglr shows pre-approved feedback about the drawing, never
+  about the child (\mbox{\reqref{FR-LRN-014}},
+  \mbox{\reqref{FR-LRN-022}}), and records the attempt (\ucref{008}).
+  \item On a pass, Squigglr moves to the next stage and repeats from
+  step 2. A pass at independent drawing completes the lesson
+  (\mbox{\reqref{FR-LRN-023}}).
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[6a.] The attempt does not pass and the stage's limit is not
+  reached. The child retries from step 3 (\mbox{\reqref{FR-LRN-015}}).
+  \item[6b.] The child has \texttt{DIFFICULTY\_STREAK} non-passing
+  attempts in a row and is not improving. Squigglr offers the adult a
+  suggestion to go back a stage (\ucref{005}); practice continues
+  meanwhile (\mbox{\reqref{FR-LRN-019}}, \mbox{SAF-RAY-001}).
+  \item[6c.] The unsuccessful attempts reach \texttt{ATTEMPT\_LIMIT}
+  while the child is improving. Squigglr allows up to
+  \texttt{ATTEMPT\_EXTENSION} more attempts, never more than
+  \texttt{ATTEMPT\_LIMIT\_MAX} in total, and the child continues from
+  step 3 (\mbox{\reqref{FR-LRN-020}}).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[3a.] The attempt is interrupted or unfinished. It is not passed
+  and does not count toward the limits (\mbox{\reqref{FR-LRN-009}}).
+  \item[3b.] The input is missing, invalid, too ambiguous to evaluate, or
+  cannot be mapped reliably to the drawing surface. It is not passed and
+  does not count (\mbox{\reqref{FR-LRN-010}}, \mbox{SAF-AHM-002}).
+  \item[3c.] The same stylus event is reported more than once. It counts
+  once (\mbox{SAF-AHM-001}).
+  \item[6d.] The unsuccessful attempts reach \texttt{ATTEMPT\_LIMIT}
+  without an extension, an extension is used up, or the total reaches
+  \texttt{ATTEMPT\_LIMIT\_MAX}. The lesson ends with no action from the
+  child, and the progress so far is saved (\mbox{\reqref{FR-LRN-021}},
+  \mbox{SAF-RAY-005}, \mbox{SAF-RAY-006}).
+  \item[*a.] At any step, the connection is lost. Each completed attempt
+  is kept on the device until the server confirms it is saved, and the
+  adult is told which attempts could not be saved (\mbox{SAF-RAY-003}).
+\end{description}
+\reqfield{Postconditions}{Every evaluable attempt is recorded, the
+furthest stage reached is saved, and no stage moved back without an
+adult's acceptance.}
+\reqfield{Requirements}{\mbox{\reqref{FR-LRN-002}}--\mbox{\reqref{FR-LRN-015}},
+\mbox{\reqref{FR-LRN-019}}--\mbox{\reqref{FR-LRN-023}}; \mbox{SAF-RAY-003},
+\mbox{SAF-RAY-005}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-007}; \mbox{SAF-AHM-001},
+\mbox{SAF-AHM-002}.}
+\reqfield{Sources}{\goalref{1}, \goalref{2}, \goalref{3}; \mbox{SRC-005.01}.}
+
+\subsubsection{UC-004: Start the child at a later stage}
+\label{puc:004}
+\reqfield{Actor}{Supporting adult.}
+\reqfield{Preconditions}{The child has a profile (\ucref{001}).}
+\reqfield{Trigger}{The adult judges that the child needs less help in a
+lesson, from knowing the child or from the records (\ucref{009}).}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item The adult selects the child and the lesson, as in \ucref{002}
+  steps 1 to 3.
+  \item The adult chooses a later starting stage.
+  \item The adult completes the adult check (\mbox{SAF-RAY-001}).
+  \item Squigglr starts the lesson at that stage, with the stage's counts
+  at zero (\mbox{\reqref{FR-LRN-016}}; Section~\ref{sec:fr-formal}).
+  The lesson continues in \ucref{003}.
+\end{enumerate}
+\noindent\textit{Alternative flows:} None.
+\par
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[3a.] A child tries to change the starting stage. The adult check
+  is not completed, and the stage does not change (\mbox{SAF-RAY-001},
+  \mbox{\reqref{FR-LRN-018}}).
+\end{description}
+\reqfield{Postconditions}{The lesson starts at the stage the adult chose.}
+\reqfield{Requirements}{\mbox{\reqref{FR-LRN-016}},
+\mbox{\reqref{FR-LRN-018}}; \mbox{SAF-RAY-001}; BR-003.}
+\reqfield{Sources}{\goalref{3}; \mbox{SRC-005.01}.}
+
+\subsubsection{UC-005: Respond to a suggestion to go back a stage}
+\label{puc:005}
+\reqfield{Actor}{Supporting adult.}
+\reqfield{Preconditions}{A lesson is running (\ucref{003}), and the child
+has \texttt{DIFFICULTY\_STREAK} non-passing attempts in a row at an
+eligible stage without improving.}
+\reqfield{Trigger}{Squigglr suggests going back a stage
+(\mbox{\reqref{FR-LRN-019}}).}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item Squigglr shows the suggestion and keeps it pending without
+  blocking practice (\mbox{SAF-RAY-001}).
+  \item The adult completes the adult check and accepts.
+  \item Squigglr moves the lesson back one stage, with the stage's counts
+  at zero (Section~\ref{sec:fr-formal}).
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[2a.] The adult declines. Nothing changes, and a new suggestion
+  needs a new full streak (\mbox{\reqref{FR-LRN-019}}).
+  \item[2b.] The adult does not respond. The suggestion stays pending and
+  nothing changes (\mbox{SAF-RAY-001}, BR-003).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[2c.] A child tries to accept the suggestion. The adult check is
+  not completed, and nothing changes (\mbox{SAF-RAY-001}).
+\end{description}
+\reqfield{Postconditions}{The stage has changed only if an adult
+accepted.}
+\reqfield{Requirements}{\mbox{\reqref{FR-LRN-018}}--\mbox{\reqref{FR-LRN-020}};
+\mbox{SAF-RAY-001}; BR-003.}
+\reqfield{Sources}{\goalref{3}; \mbox{SRC-005.01}.}
+
+\subsubsection{UC-006: Create and edit artwork}
+\label{puc:006}
+\reqfield{Actor}{Child.}
+\reqfield{Preconditions}{The child is the active learner (\mbox{SAF-RAY-007}).}
+\reqfield{Trigger}{The child opens the creative space.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item The child draws strokes on the canvas.
+  \item The child edits the drawing: moves, resizes, recolours, erases
+  or undoes parts of it (\goalref{4}).
+  \item Squigglr saves the drawing, which stays editable. Refinement runs
+  as in \ucref{007}.
+\end{enumerate}
+\noindent\textit{Alternative flows:} None.
+\par
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[2a.] An edit cannot be applied. The drawing stays as it was.
+  \item[3a.] The drawing cannot be saved. The child keeps drawing, and
+  the adult is told that it was not saved.
+\end{description}
+\reqfield{Postconditions}{The drawing is saved and stays editable.}
+\reqfield{Requirements}{FR-CRT TBD (\#83).}
+\reqfield{Sources}{\goalref{4}; \mbox{SRC-009.01}.}
+
+\subsubsection{UC-007: Refine artwork and restore the original}
+\label{puc:007}
+\reqfield{Actor}{Squigglr; the child or the supporting adult restores
+the original or turns refinement off.}
+\reqfield{Preconditions}{A drawing exists in the creative space
+(\ucref{006}), and refinement is on.}
+\reqfield{Trigger}{The child finishes a drawing in the creative space.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item Squigglr refines the child's own strokes, moving no point more
+  than \texttt{REFINE\_TOLERANCE} (BR-005, \goalref{4}).
+  \item The refined drawing stays editable (\ucref{006}).
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[2a.] The child or the adult restores the original. Squigglr
+  returns the original strokes exactly (\goalref{4}, BR-005).
+  \item[2b.] The child or the adult turns refinement off. Later drawings
+  are not refined (\mbox{SRC-009.01}).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[1a.] Refinement fails. The drawing is left unchanged
+  (\goalref{4}).
+\end{description}
+\reqfield{Postconditions}{The drawing is refined or unchanged, stays
+editable, and its original can be restored. Refinement never reaches a
+guided-lesson record (BR-004, BR-005).}
+\reqfield{Requirements}{FR-CRT TBD (\#83); BR-004, BR-005.}
+\reqfield{Sources}{\goalref{4}; \mbox{SRC-009.01}.}
+
+\subsubsection{UC-008: Record an attempt}
+\label{puc:008}
+\reqfield{Actor}{Squigglr.}
+\reqfield{Preconditions}{A lesson is running for an identified learner
+(\ucref{003}, \mbox{SAF-RAY-007}).}
+\reqfield{Trigger}{The child ends an attempt at a lesson stage.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item Squigglr records the child's actual strokes, never a corrected
+  shape (BR-004), with the stage, the guidance and completeness
+  classifications, every predefined difficulty observed, later
+  corrections and the outcome (\goalref{5};
+  \mbox{\reqref{FR-LRN-011}}, \mbox{\reqref{FR-LRN-012}}).
+  \item Squigglr saves the record to the active learner only
+  (\mbox{SAF-RAY-007}).
+  \item The server confirms the record is saved.
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[1a.] The attempt ends the lesson at a limit, or an extension is
+  granted. Squigglr also records that event (\mbox{SAF-RAY-006}).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[1b.] The attempt is interrupted or its input is invalid. It is
+  not recorded as passed and does not count
+  (\mbox{\reqref{FR-LRN-009}}, \mbox{\reqref{FR-LRN-010}}).
+  \item[1c.] A stylus event is reported more than once. It is recorded
+  once (\mbox{SAF-AHM-001}).
+  \item[3a.] The server does not confirm. The record stays on the device
+  until it is saved, and the adult is told which attempts could not be
+  saved (\mbox{SAF-RAY-003}).
+\end{description}
+\reqfield{Postconditions}{The record matches what the child drew and
+holds no score, diagnosis or comparison (\mbox{SAF-RAY-004}).}
+\reqfield{Requirements}{FR-REC TBD (\#83);
+\mbox{\reqref{FR-LRN-009}}--\mbox{\reqref{FR-LRN-012}}; \mbox{SAF-RAY-003},
+\mbox{SAF-RAY-004}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-007}; \mbox{SAF-AHM-001}.}
+\reqfield{Sources}{\goalref{5}; \mbox{SRC-001}.}
+
+\subsubsection{UC-009: Review progress}
+\label{puc:009}
+\reqfield{Actor}{Supporting adult who holds the account.}
+\reqfield{Preconditions}{The adult is signed in to their own account.}
+\reqfield{Trigger}{The adult opens a child's progress summary.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item Squigglr shows the child's progress over time, with attempts
+  made without a guide separated from attempts made with one
+  (\goalref{6}), the adult-set values in use (\mbox{SAF-RAY-008}), and a
+  statement that the summary describes practice only and is not an
+  assessment (\mbox{SAF-RAY-004}).
+  \item The adult opens an attempt behind the summary.
+  \item Squigglr shows that attempt's record (\ucref{008}).
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[1a.] The child has no practice yet. Squigglr says so.
+  \item[1b.] Lessons ended at a limit or were extended. Squigglr shows
+  how many times for each lesson (\mbox{SAF-RAY-006}).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[1c.] The request comes from anyone other than the account holder.
+  It is refused, and nothing is shown (BR-001).
+  \item[1d.] Some attempts are not saved yet. The adult is told which
+  (\mbox{SAF-RAY-003}).
+\end{description}
+\reqfield{Postconditions}{The adult has seen the child's progress;
+nothing is changed.}
+\reqfield{Requirements}{FR-PRG TBD (\#83); \mbox{\reqref{FR-LRN-022}};
+\mbox{SAF-RAY-003}, \mbox{SAF-RAY-004}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-008};
+BR-001, BR-006.}
+\reqfield{Sources}{\goalref{6}; \mbox{SRC-005.02}.}
+
+\subsubsection{UC-010: Review history and change settings}
+\label{puc:010}
+\reqfield{Actor}{Supporting adult who holds the account.}
+\reqfield{Preconditions}{The adult is signed in to their own account, and
+the child has a profile (\ucref{001}).}
+\reqfield{Trigger}{The adult opens a child's history or settings.}
+\noindent\textit{Main flow:}
+\begin{enumerate}[nosep, leftmargin=2.2em]
+  \item Squigglr shows the child's history and current settings.
+  \item The adult changes the accessibility or audio settings, whether
+  refinement is on, or the adult-set values.
+  \item The adult completes the adult check (\mbox{SAF-RAY-008}).
+  \item Squigglr saves the changes.
+\end{enumerate}
+\noindent\textit{Alternative flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[2a.] The adult restores the original of a creative drawing
+  (\ucref{007}).
+\end{description}
+\noindent\textit{Failure flows:}
+\begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
+  \item[1a.] The request comes from anyone other than the account holder.
+  It is refused, and nothing is shown (BR-001).
+  \item[3a.] A child tries to change a setting. The adult check is not
+  completed, and nothing changes (\mbox{SAF-RAY-008}).
+  \item[4a.] An adult-set value is outside its range or inconsistent with
+  the others. It is not saved (\mbox{\reqref{FR-LRN-017}},
+  \mbox{SAF-RAY-008}).
+\end{description}
+\reqfield{Postconditions}{The changes are saved, and every adult-set
+value is within its range.}
+\reqfield{Requirements}{\mbox{\reqref{FR-LRN-017}}; \mbox{SAF-RAY-008};
+NFR-UX TBD (\#114); NFR-SEC TBD (\#82); BR-001, BR-008.}
+\reqfield{Sources}{\goalref{3}, \goalref{6}; \mbox{SRC-008}, \mbox{SRC-009.01}.}
+\endgroup
 
 \section{Functional Requirements}
 \label{sec:functional}
@@ -2624,12 +3191,175 @@ Table~\ref{tab:goalconst}.
 
 \section{Look and Feel Requirements}
 \label{sec:look-feel}
+% Long constant names cannot be hyphenated; let lines stretch rather than
+% overflow the margin in this section.
+\begingroup
+\sloppy
+
+This section states how Squigglr looks (Section~\ref{sec:appearance}) and
+the mood its style creates (Section~\ref{sec:style}). A
+\emph{child-facing screen} is any screen the child uses in a guided lesson
+or the creative space; an \emph{adult view} is any screen for setup,
+settings, records or progress summaries. No requirement is gathered from
+children and no study with children takes place (CON-005, CON-006), so
+the fit criteria are checked by inspecting every screen or by adult
+reviewers. An adult review shows that adults find a design suitable, not
+that children can use it; checking that needs a study with ethics
+approval, which is out of scope (\srcref{005.11}).
+
+The specialists advised starting from the Web Content Accessibility
+Guidelines (WCAG) 2.2~\cite{wcag22} (\srcref{005.08}), and the supervisor
+advised taking specific WCAG ideas as non-functional requirements rather
+than treating WCAG as a constraint (\srcref{008}). Each requirement below
+that is based on a WCAG success criterion names it in its rationale.
+Further WCAG-based accessibility criteria are in
+Section~\ref{sec:usability}, and listing WCAG as a standard is open issue
+OI-08.
+
 \subsection{Appearance Requirements}
-\lips
+\label{sec:appearance}
+
+\begin{srsrequirement}{NFR-UX-001}{Calm, uncluttered child screens}
+  \reqshall{Each child-facing screen shall offer the child no more than
+\texttt{CHILD\_CONTROLS\_MAX} controls and shall show no decorative
+animation or flashing while the child is drawing.}
+  \reqrationale{Too many visual or auditory stimuli can overwhelm children,
+and specialists advised a calm, minimally stimulating interface
+(\srcref{009.05}). A child who cannot read navigates by images, so every
+extra control is something more to interpret (\srcref{005.05}). Banning
+flashing and moving content while the child draws follows WCAG 2.2
+success criteria 2.3.1 Three Flashes or Below Threshold and 2.2.2 Pause,
+Stop, Hide~\cite{wcag22}.}
+  \reqfit{Inspect every child-facing screen in each lesson stage and in the
+creative space. Pass when each screen offers at most
+\texttt{CHILD\_CONTROLS\_MAX} controls and no element animates or
+flashes while a stroke is being drawn.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; \srcref{005.05}; \srcref{009.05}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-002}{Images and icons instead of text}
+  \reqshall{Every control on a child-facing screen shall be identified by
+an image or icon, and no task on a child-facing screen shall require the
+child to read.}
+  \reqrationale{Many learners cannot read yet; children navigate games
+through images and icons rather than text (\srcref{005.05}, FACT-007).}
+  \reqfit{Inspect every child-facing screen. Pass when every control shows
+an image or icon, and each child task in \ucref{003} and \ucref{006} can be
+completed with all on-screen text hidden.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; FACT-007; \srcref{005.05}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-003}{Adult views distinct from child screens}
+  \reqshall{Adult views shall look clearly different from child-facing
+screens, so that an adult can tell at a glance which kind of screen is
+shown.}
+  \reqrationale{Specialists described a separate adult interface for
+personalizing activities and viewing progress (\srcref{005.02}). A
+distinct look helps adults notice when a child has reached an adult-only
+screen, alongside the adult check (SAF-RAY-001).}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers a shuffled
+set of screenshots of every child-facing screen and adult view, without
+titles. Pass when every reviewer sorts every screenshot correctly.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}, \goalref{6}; \srcref{005.02}}
+  \reqtraces{\ucref{001}; \ucref{002}; \ucref{009}; \ucref{010};
+SAF-RAY-001}
+\end{srsrequirement}
+
 \subsection{Style Requirements}
-\lips
+\label{sec:style}
+
+\begin{srsrequirement}{NFR-UX-004}{Feedback that never marks the drawing
+as wrong}
+  \reqshall{Feedback on an attempt, including a missed part or a
+non-passing attempt, shall use encouraging styling, shall not use error
+styling such as warning colours, crosses, alarm sounds or ``wrong''
+symbols, and shall not show a missed part by colour alone.}
+  \reqrationale{Children become frustrated when an activity keeps
+highlighting their mistakes or suggests that their drawing is wrong, so
+feedback should recognize effort instead (\srcref{009.02}). Feedback
+wording and colours should be positive (\srcref{005.06}). Feedback
+describes the drawing, not the child
+(BR-006, \mbox{\reqref{FR-LRN-022}}). Showing a missed part by more than
+colour follows WCAG 2.2 success criterion 1.4.1 Use of
+Color~\cite{wcag22}, so a child who does not see the colour still sees
+the missed part.}
+  \reqfit{For each predefined difficulty, and for a passing and a
+non-passing attempt, show a prepared drawing and inspect the feedback.
+Pass when every feedback includes an encouraging cue from the approved
+feedback list (\mbox{\reqref{FR-LRN-014}}), none uses an element on the
+error-styling list in this requirement, and every missed part is marked by
+an outline, pattern or icon as well as by colour.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{005.06}; \srcref{009.02}}
+  \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
+\ucref{003}; H-AHM-005; H-MOU TBD (\#115)}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-005}{Consistent look across child screens}
+  \reqshall{The same action shall use the same icon, colour and screen
+position on every child-facing screen.}
+  \reqrationale{Children stay motivated when activities are predictable
+(\srcref{009.02}), and a child who navigates by images relies on each icon
+meaning the same thing everywhere (\srcref{005.05}). This follows WCAG 2.2
+success criteria 3.2.3 Consistent Navigation and 3.2.4 Consistent
+Identification~\cite{wcag22}.}
+  \reqfit{List every action available on child-facing screens and inspect
+each screen where it appears. Pass when each action has one icon, one
+colour and one position across all screens.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{005.05}; \srcref{009.02}}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-006}{Appealing but calm style}
+  \reqshall{Child-facing screens shall have a style that adult reviewers
+judge both appealing to children and calm.}
+  \reqrationale{Specialists warned that the design may not be appealing
+enough for children, and that the right balance is a playful design in a
+calm, minimally stimulating environment (\srcref{009.05}).}
+  \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers every
+child-facing screen and ask them to rate how appealing to children and
+how calm each is, on a five-point scale. Pass when the median of each
+rating is at least \texttt{STYLE\_RATING\_MIN}.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{009.05}}
+  \reqtraces{NFR-UX-001; NFR-UX-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-UX-007}{Style reviewed with educators or
+therapists}
+  \reqshall{The colours, images and feedback style of child-facing screens
+shall be reviewed by at least \texttt{UX\_REVIEWERS} adults, including at
+least one educator or occupational therapist, and each change they
+request shall be made or recorded with a reason.}
+  \reqrationale{Specialists advised designing feedback wording and colours
+with educators and occupational therapists, built up bit by bit
+(\srcref{005.06}), and involving them throughout design (\srcref{009.06}).
+None has been consulted yet (FACT-012).}
+  \reqfit{Pass when the review record lists the reviewers and their roles,
+includes at least one educator or occupational therapist, and states for
+every requested change either that it was made or the reason it was
+not.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\srcref{005.06}; \srcref{009.06}; FACT-012}
+  \reqtraces{NFR-UX-004; NFR-UX-006}
+\end{srsrequirement}
+\endgroup
 
 \section{Usability and Humanity Requirements}
+\label{sec:usability}
 \subsection{Ease of Use Requirements}
 \lips
 \subsection{Personalization and Internationalization Requirements}
@@ -2969,9 +3699,146 @@ Inhibit the New Product}
 \section{Tasks}
 \label{sec:tasks}
 \subsection{Project Planning}
-\lips
+
+The Development Plan (\srcref{002}) defines the project's schedule, team
+responsibilities, development process, communication practices and deliverable
+management. Those arrangements are maintained in the Development Plan rather
+than duplicated in the SRS. This section assigns the SRS requirements to
+delivery phases; the course deadlines also appear under CON-004
+(Table~\ref{tab:con-schedule}).
+
 \subsection{Planning of the Development Phases}
-\lips
+\label{sec:development-phases}
+
+The delivery plan distinguishes the following requirement targets:
+\begin{description}[style=nextline]
+  \item[PH-1 --- Proof of Concept (PoC), November 23, 2026.]
+  A demonstration of the core guided-lesson flow, input capture, stage
+  classification and pass-based progression using prepared examples.
+  \item[PH-2 --- Revision 0, February 1, 2027.]
+  The learner-specific configuration, feedback, retry and stopping rules,
+  and drawing-input and session safeguards required for a usable revision.
+  \item[PH-3 --- Final demonstration, March 15, 2027.]
+  The remaining record-history and progress-presentation safeguards and
+  final integrated functionality.
+  \item[Future.]
+  Enhancements outside the committed capstone delivery phases, recorded
+  in Section~\ref{sec:waiting-room}.
+\end{description}
+
+\emph{Priority} describes the requirement's delivery importance
+(\emph{Must}, \emph{Should} or \emph{Could}); \emph{phase} states the
+first milestone at which that behaviour is targeted. A PH-1 capability
+remains part of PH-2 and PH-3. The phase classification does not relax any
+safety requirement when its associated feature is in use: a phase
+demonstration shall not rely on a safeguard that has not been implemented
+for real learner use.
+
+Table~\ref{tab:requirement-phases} lists every currently specified SRS
+requirement, including the safety requirements derived from the Hazard
+Analysis. The functional-requirement priorities and phases agree with
+Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
+are classified here as \emph{Must} and assigned to the phase containing
+the behaviour they protect. The 33 identified requirements in this SRS are scheduled in PH-1
+through PH-3. Candidate enhancements are assigned to Future in
+Section~\ref{sec:waiting-room}.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth}%
+  >{\raggedright\arraybackslash}p{0.40\textwidth}%
+  >{\raggedright\arraybackslash}p{0.12\textwidth}%
+  >{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
+\caption{Requirement priorities and targeted delivery phases}
+\label{tab:requirement-phases}\\
+\toprule
+\textbf{Requirement ID} & \textbf{Required behaviour} &
+\textbf{Priority} & \textbf{Phase} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Requirement ID} & \textbf{Required behaviour} &
+\textbf{Priority} & \textbf{Phase} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\multicolumn{4}{@{}l}{\textbf{Learning activity requirements (Section 9.1)}}\\
+\addlinespace
+\reqref{FR-LRN-001} & Approved lesson catalogue & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-002} & Ordered guidance stages & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-003} & Demonstration & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-004} & Full-outline guidance & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-005} & Endpoint-only guidance & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-006} & Independent drawing & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-007} & Stylus stroke acquisition & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-008} & Multi-stroke attempts & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-009} & Interrupted attempt handling & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-010} & Invalid and ambiguous input & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-011} & Completeness classification & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-012} & Guidance classification & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-013} & Pass classification & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-014} & Predefined difficulty feedback & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-015} & Retry after non-passing attempts & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-016} & Adult lesson and starting-stage selection & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-017} & Adult-selected practice parameters & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-018} & Adult authorization for discretionary changes & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-019} & Difficulty suggestion & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-020} & Improvement-based extension & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-021} & Stage attempt limit and lesson end & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-022} & No learner evaluation or diagnosis & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-023} & Automatic within-lesson advancement & Must & PH-1 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Hazard-derived safety requirements (Section 12.2)}}\\
+\addlinespace
+\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-002} & Unsupported-device notice & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-003} & Preservation of unsaved attempts & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-004} & Non-diagnostic summaries and exports & Must & PH-3 \\
+\addlinespace
+\texttt{SAF-RAY-005} & Automatic lesson termination & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-006} & Restart and extension history & Must & PH-3 \\
+\addlinespace
+\texttt{SAF-RAY-007} & Active-learner identification and isolation & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-008} & Adult-setting bounds and authorization & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-AHM-002} & Drawing-coordinate integrity & Must & PH-2 \\
+\end{longtable}
+}
+
+The phase allocation is a planning baseline rather than an alternative
+source of requirement definitions. If a requirement's scope or phase
+changes, its entry in this table and, for requirements with a
+\texttt{Phase} field, its individual specification are updated together.
 
 \section{Migration to the New Product}
 \subsection{Requirements for Migration to the New Product}
@@ -2988,7 +3855,66 @@ Inhibit the New Product}
 \lips
 
 \section{Waiting Room}
-\lips
+\label{sec:waiting-room}
+
+The waiting room records candidate capabilities excluded from the PH-1,
+PH-2 and PH-3 delivery commitments. They may be considered after the
+core project goals and their safety requirements have been satisfied.
+Their classification as \emph{Future} is not a requirement to implement
+them during the capstone project.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}%
+  >{\raggedright\arraybackslash}p{0.49\textwidth}%
+  >{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\caption{Capabilities deferred to Future}
+\label{tab:waiting-room}\\
+\toprule
+\textbf{Capability} & \textbf{Reason for deferral and source} &
+\textbf{Phase} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Capability} & \textbf{Reason for deferral and source} &
+\textbf{Phase} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Camera-based finger tracing in the air & The specialists distinguished
+this gross-motor activity from the fine-motor practice supported by
+stylus-on-screen drawing and advised prioritizing touchscreen work
+(FACT-006; \srcref{005}). It is not part of the core guided-lesson
+catalogue (G.1, CON-003). & Future \\
+\addlinespace
+Letter and handwriting tracing & The agreed core catalogue covers
+lines, basic shapes and simple drawings (\reqref{FR-LRN-001}). The
+follow-up questionnaire places letters after shape practice
+(ASM-010, SRC-009.04; LC-001). & Future \\
+\addlinespace
+Finger drawing and input-size progression & Stylus input is the core
+interaction (CON-003). Finger input, or progression between finger,
+large-stylus and smaller-stylus interaction, requires additional
+input-specific verification and calibration (FACT-005; LC-006). & Future \\
+\addlinespace
+Full WCAG conformance & The capstone scope includes selected, verifiable WCAG 2.2 success
+criteria. Full conformance across all applicable criteria is a stretch
+goal, rather than a claim for the capstone release (OI-08; \srcref{005}). & Future \\
+\addlinespace
+Offline lesson use and synchronization & The initial scope assumes
+network access for lessons and records (ASM-005). Full offline operation
+and later synchronization would extend this scope; the existing safety
+requirement to preserve unsaved attempts (SAF-RAY-003) remains part of
+the committed product. & Future \\
+\end{longtable}
+}
+
+Creative-space refinement remains within goal G.4 unless the team
+formally changes that goal (OI-03); it is not moved into the waiting
+room here. Automatic selection of new lessons, diagnostic assessment,
+and AI-generated personalized advice are excluded by CON-007 and
+BR-003, BR-006 and BR-007, respectively; they are not implicitly
+promised as future features.
 
 \section{Ideas for Solution}
 \lips
@@ -3210,7 +4136,9 @@ Advice from the client, not observed user data. \\
   & Issue \href{https://github.com/AHMEDELZARIA/squigglr/issues/107}{\#107} &
 Let the supporting adult choose child-dependent thresholds within a
 team-set minimum and maximum, with example drawings of each end; default
-to the middle of the range. &
+to the middle of the range. Take specific WCAG ideas, such as large icons,
+as non-functional requirements rather than treating WCAG as a
+constraint. &
 Advice from the client, not observed user data. \\
 \bottomrule
 \end{tabularx}
@@ -3284,9 +4212,12 @@ therapists or educational specialists, using milestones from the literature
 if they exist.
 \item[{\phantomsection%
   \label{src:005.04}SRC-005.04 (\intref{P3}{24:34}; \intref{P3}{25:36}; \intref{P1}{26:46})}]
-Holding a pen affects how children draw and the usability of the app.
-Finger input is the easiest start; a larger stylus and then a smaller one
-could be later difficulty levels if fine motor practice is a goal.
+The specialists disagreed on input. P3 said that how a child holds a pen
+affects how they draw and the usability of the app, and suggested finger
+input unless fine motor practice is the goal; R2 later agreed that finger
+drawing may be simpler (\srcref{009.03}). P1 agreed that a finger is the
+easiest start, but said fine motor practice needs a held tool, moving from
+a larger stylus to a smaller one as later difficulty levels.
 \item[{\phantomsection%
   \label{src:005.05}SRC-005.05 (\intref{P1}{34:13})}]
 The app should be child-friendly: a child who cannot read yet should be able
@@ -3325,6 +4256,12 @@ does not.
   \label{src:005.12}SRC-005.12 (\intlink{Rayan}{41:51}{41:51--42:48})}]
 All three participants agreed to the use of the transcript for eliciting
 requirements.
+\item[{\phantomsection%
+  \label{src:005.13}SRC-005.13 (\intref{P2}{35:36})}]
+How the child and the caregiver share the app, for example with the child
+as the user and the caregiver giving access, is the team's design decision;
+there is no single right workflow. Many drawing apps for children already
+exist.
 \end{description}
 
 \subsection{Key Questionnaire Statements}
@@ -3439,6 +4376,27 @@ AI-assisted passage against my intended meaning and checked each cited
 statement against the original transcript, questionnaire, or meeting notes
 to confirm that it says what we claim it says.
 
+\textbf{Ahmed:} I used OpenAI's ChatGPT (GPT-6) while preparing my
+sections of the SRS, particularly the document structure, learning
+activity requirements, formal lesson specification and development-phase
+planning. All the ideas behind my contributions are my own, and project
+decisions were made through discussion with my teammates. I used AI to
+help express those ideas in a clear and grammatically correct way,
+including turning my notes into requirement statements, improving
+sentence structure and making technical explanations easier to follow.
+It also helped with \LaTeX{} formatting and with checking the clarity
+of section references and wording across related requirements. Our team 
+also used AI to help divide the workload fairly and evenly among members, 
+taking into account the scope and complexity of each task. I personally used it 
+to help write clear and descriptive pull request descriptions that accurately 
+summarized the changes I made, making them easier for my teammates to review.
+
+I reviewed the AI-assisted text to make sure it expressed the decisions
+we had made and stayed consistent with the SRS, our meeting discussions
+and the parts of the document written by other team members. AI was a
+writing and formatting aid; the final content and decisions remained
+my responsibility and the team's.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -3464,6 +4422,26 @@ pull request per section, which kept each review small and let each section be
 checked and merged on its own. The main thing I took from this is that
 recording sources as we go makes the requirements much easier to justify and
 to change later.
+
+\textbf{Ahmed:} What went well for me was being able to build the
+learning activity requirements around a flow we had already discussed
+as a team. We knew that an adult would choose the lesson and starting
+stage, while the child would move through progressively less guided
+drawing stages based on their attempts. Having those decisions in place
+made it easier to write requirements that describe exactly what the
+application should do instead of leaving the behaviour open to
+interpretation.
+
+I also think splitting my work into smaller, focused contributions
+helped a lot. I worked on the SRS structure first, then the learning
+requirements and formal specification, and later the development
+phases. That gave the team something specific to review each time. The
+formal specification was especially useful because it forced me to
+think through cases like failed attempts, improvement extensions and
+adult-approved changes. I could then compare those rules with the
+written requirements and the hazards in the other document. It was
+satisfying to see the different sections start fitting together rather
+than feeling like separate pieces of writing.
 
 \item What pain points did you experience during this deliverable, and how did
 you resolve them?
@@ -3492,6 +4470,28 @@ learned that requirements are never really finished early in a project, and
 that keeping each change in one place and tracing it to its source is what
 makes them manageable.
 
+\textbf{Ahmed:} My biggest difficulty was keeping everything
+consistent as the requirements changed. A rule that sounded simple in
+a meeting often had several consequences once I tried to specify it.
+For example, we had to distinguish between automatically moving to
+the next stage after a passing drawing and changing lessons or moving
+backward, which should require an adult's approval. We also had to
+make sure that interrupted attempts did not count toward the attempt
+limit and that a child could not keep receiving extensions indefinitely.
+I ended up revisiting the same requirements and state transitions
+multiple times to make those distinctions clear.
+
+The \LaTeX{} and Git workflow was another challenge. Some section
+references initially appeared as question marks until I checked the
+labels and rebuilt the document, and integrating changes from multiple
+branches meant I had to be careful not to replace newer work from my
+teammates. One review caught an issue where a previous version would
+have removed safety requirements that were already on main. I
+corrected that and became much more deliberate about checking diffs
+before submitting a pull request. It was a good reminder that writing
+a correct section is only part of the job; it also has to integrate
+safely into the team's document.
+
 \item How many of your requirements were inspired by speaking to your
 client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
 
@@ -3509,6 +4509,29 @@ requirements, such as the deliverable deadlines. Since none of these
 stakeholders are the children themselves, nearly every requirement that
 affects how a child uses Squigglr rests on what adults and specialists told
 us, which is why we plan to check them with the domain specialists again later.
+
+\textbf{Ahmed:} I contributed 25 individually identified
+requirements: 23 learning activity requirements (FR-LRN-001 through
+FR-LRN-023) and two safety-critical requirements (SAF-AHM-001 and
+SAF-AHM-002). At least 13 of the learning requirements explicitly
+cite the domain-specialist interview, follow-up questionnaire, or
+meetings with our supervisor and TA as sources. For example, the
+specialists' advice shaped the distinction between adult-controlled
+lesson decisions and routine progression within a lesson. Our
+supervisor's feedback about letting adults choose thresholds within
+team-defined ranges also affected the pass, settings and
+improvement-related requirements.
+
+The remaining requirements mainly came from working through what was
+needed to make those agreed behaviours reliable and testable. When we
+specified stylus capture, for example, I had to account for multiple
+strokes, interrupted input and incorrect classifications even though
+nobody had handed us a detailed rule for each case. The two additional
+safety requirements came from my failure-mode analysis of duplicate
+stylus events and coordinate-mapping errors. I learned that talking
+to stakeholders establishes the direction, but turning their needs
+into a complete specification also requires careful engineering
+judgement about failure cases and edge conditions.
 
 \item Which of the courses you have taken, or are currently taking, will help
 your team to be successful with your capstone project.
@@ -3532,6 +4555,26 @@ Being able to transfer those concepts helped me a lot with this deliverable in
 particular, because I already knew how to write goals and requirements that
 are precise and checkable and only had to adapt them to a new template.
 
+\textbf{Ahmed:} SFWRENG 4HC3, Human-Computer Interaction, has been
+very relevant because it keeps bringing the discussion back to what
+users actually need and how they will experience the product. The
+work on personas, scenarios and requirements elicitation helped me
+think about the difference between a child drawing in a lesson and an
+adult setting it up or reviewing the results. That distinction became
+important when writing our lesson-control requirements.
+
+Our Machine Learning course has also been useful, even though
+Squigglr is not meant to diagnose or assess children. Learning how
+a model or classifier produces an output made me think more carefully
+about what it means for a drawing to pass a fixed criterion and what
+can go wrong if the classification is inaccurate. The formal models
+and state-based reasoning we encounter in software engineering and
+real-time systems are relevant too. I used that way of thinking when
+writing the guided-lesson transitions, such as exactly when the
+system should advance, retry, suggest an earlier stage or end the
+lesson. These courses helped me move from describing a feature to
+specifying behaviour that somebody can actually verify.
+
 \item What knowledge and skills will the team collectively need to acquire to
 successfully complete this capstone project? Examples of possible knowledge
 to acquire include domain specific knowledge from the domain of your
@@ -3551,6 +4594,26 @@ for autistic children and children with ADHD, rather than relying only on our
 own ideas. Their experience is what turned our general idea into requirements
 we can actually justify.
 
+\textbf{Ahmed:} The team needs a mix of technical skills and an
+understanding of the people we are building for. For my part, I need
+to keep improving at turning a user flow into a clear interface and a
+set of consistent, testable requirements. Rayan's backend work will
+require reliable data modelling and access control, especially since
+one adult account may have several learner profiles and practice
+histories. Moustafa will need strong experience with browser drawing
+input and responsive canvas behaviour, because the accuracy of
+stylus events affects both evaluation and saved records.
+
+Huzaifah will need a good verification and testing approach, including
+ways to reproduce edge cases such as interrupted strokes, threshold
+boundaries and failed saves. Shamil's role will benefit from strong
+stakeholder communication and documentation skills so that decisions,
+questions and feedback do not get lost between meetings. As a team,
+we also need more domain knowledge about early visual-motor practice
+and accessible interfaces. None of us should assume that something
+which seems intuitive to us will necessarily work well for the children
+or adults who would use Squigglr.
+
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
@@ -3567,6 +4630,29 @@ as refinement in the creative space and letter activities. The questionnaire
 also gave the specialists time to think through their answers. Using both
 worked well together: the interview showed us what we did not know, and the
 questionnaire filled in the gaps it left.
+
+\textbf{Ahmed:} I see two useful approaches for each of these
+areas: learning from established material and then testing what we
+learn in something concrete. For my UI and requirements work, that
+means reviewing HCI guidance and examples from similar applications,
+then building prototypes and asking adults to walk through the flows.
+The second approach matters because something that looks clear on
+paper may still be confusing when somebody tries to use it.
+
+For Rayan's data and access-control work, official documentation and
+small integration prototypes can complement each other; I would
+prioritize testing the multi-learner and saving flows early. For
+Moustafa's stylus and canvas work, browser input documentation is a
+starting point, but trying the same prepared strokes on different
+touchscreen sizes will reveal problems that documentation cannot.
+For Huzaifah, studying testing methods and building repeatable
+synthetic test cases provide both the theory and evidence that our
+requirements are met. For Shamil, reading relevant research and
+following up with adult stakeholders through interviews or
+questionnaires would help check our assumptions. These are the
+approaches I would recommend we confirm as a team, because they let
+us learn efficiently while still checking that what we build works
+as intended.
 
 \end{enumerate}
 

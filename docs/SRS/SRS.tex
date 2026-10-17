@@ -119,7 +119,7 @@ requirement structure (\#131).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
-16 October 2026 & Moustafa Moustafa & Added safety-critical requirements SAF-MOU-001 and SAF-MOU-002 and linked NFR-UX requirements to hazards H-MOU-001 to H-MOU-006 (\#115).\\
+16 October 2026 & Moustafa Moustafa & Added safety-critical requirements SAF-MOU-001 to SAF-MOU-003 and linked NFR-UX requirements to hazards H-MOU-001 to H-MOU-006 (\#115).\\
 \end{longtable}
 
 ~\\
@@ -3264,7 +3264,8 @@ flashes while a stroke is being drawn.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{1}; \srcref{005.05}; \srcref{009.05}}
-  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; H-MOU-001}
+  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; SAF-MOU-003;
+H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-002}{Images and icons instead of text}
@@ -3876,6 +3877,20 @@ the number of attempts.\\
 \emph{Related SRS requirements:} G.6, FR-LRN-012, SAF-RAY-004,
 NFR-UX-017.\\
 \emph{Hazards:} H-MOU-005.
+
+\item[SAF-MOU-003] No content on any child-facing screen shall flash more
+than three times in any one-second period.\\
+\emph{Rationale:} flashing can trigger seizures in rare cases, the only
+physical harm in the hazard analysis (H-MOU-001). NFR-UX-001 bans flashing
+while the child is drawing, but feedback, the lesson-end message and screen
+transitions also appear on child-facing screens. This follows WCAG 2.2
+success criterion 2.3.1 Three Flashes or Below Threshold~\cite{wcag22}.\\
+\emph{Fit criterion:} record every child-facing screen, including all
+feedback, the lesson-end message and every transition, and count the
+flashes in each one-second window. Pass when no window has more than three
+flashes.\\
+\emph{Related SRS requirements:} NFR-UX-001.\\
+\emph{Hazards:} H-MOU-001.
 
 \end{description}
 \subsection{Precision or Accuracy Requirements}

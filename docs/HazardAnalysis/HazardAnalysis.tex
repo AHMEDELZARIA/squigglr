@@ -43,6 +43,7 @@
 CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#140).\\
 15 October 2026 & Ahmed Elzaria & Added drawing-input and guided-lesson FMEA hazards H-AHM-001 to H-AHM-007 (part of \#135).\\
+16 October 2026 & Shamil Canbolat & Added security and AI-assisted refinement FMEA hazards H-SHA-001 to H-SHA-005, my AI use disclosure, and reflection questions (part of \#82).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -448,7 +449,7 @@ and adults.
   >{\raggedright\arraybackslash}p{1.9cm}
   >{\raggedright\arraybackslash}p{3.4cm}
   >{\raggedright\arraybackslash}p{2.0cm}@{}}
-\caption{FMEA: security, saving and AI-assisted refinement}
+\caption{FMEA: security and AI-assisted refinement}
 \label{tab:fmea-sha}\\
 \toprule
 \textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
@@ -479,9 +480,9 @@ H-SHA-002 & Data transmission; third-party integrations & Private learner
 data is sent to an third-party service (other than ones approved for functionality)
 & Error reporting or refinement service receive raw request payloads of private learner data; 
 developers use unininspected external SDK & Privacy policy violated and child's private
-data exposed Loss: privacy; regulatory compliance. &
+data exposed. Loss: privacy; regulatory compliance. &
 Privacy/security &
-Administer protocol for reviewing all third-party services that are essential
+Mitigate: administer protocol for reviewing all third-party services that are essential
 before implementing, reject all non-essential services. Document/Test: run grey-box 
 (white-box if open source) integration tests in contained environments inspecting 
 whether third-party services transmit PII. &
@@ -493,26 +494,23 @@ save. & Network error after rendering of success response; network error without
 notification & Adult believes child's progress is being tracked with complete 
 records when records are missing in reality. Loss: misleading progress reporting; 
 adult trust in the application. & Data integrity &
-
 Mitigate: confirm a save with a silent verification ping that informs the adult
 if the save did not really save; Document/Test: run integration testing wherein
 saves are accompanied by simulated errors and verify that it is reported. &
-SAF-SHA-003 \\
+G.3, SAF-SHA-003 \\
 \addlinespace
 H-SHA-004 & AI refinement provider; lesson content delivery & The external
 AI refinement service is unavailable, returns an error, or returns unintelligible
 content. & Provider outage; rate-limiting; response schema mismatch due to update. 
 & The child's lesson cannot proceed or is shown incomplete content; Loss: availability; 
-lesson continuity. &
-Availability &
+lesson continuity. & Availability &
 Mitigate: create a default fallback page for administrative pages and fallback content
 for the child; send diagnositic alert to server and inform adult of error; Document/Test: 
 test the system response with incorrectly formatted content or a mock unresponsive server;
 verify that fallback content replaces the returned content and that the adult user is informed &
-SAF-SHA-004 \\
+G.4, SAF-SHA-004 \\
 \addlinespace
 H-SHA-005 & AI refinement output; feedback and guidance content 
-
 & The AI refinement provider returns inaccurate or inappropriate, content
 which is shown to a child or adult. & The provider is prompted with guardrails
 that are too permissive; system error on the providers end. & A child is shown
@@ -523,7 +521,7 @@ incorrect output as part of API guardrails for output validation; never display
 raw provider output without filtering through validation; Document/Test: deliberately
 attempt to recreate inappropriate output by imitating report diagnostics; have human
 confirmation of reported content and adjust content validation guardrails. &
-SAF-SHA-005 \\
+G.1, G.4, SAF-SHA-005 \\
 \end{longtable}
 }
 \end{landscape}
@@ -596,6 +594,17 @@ AI-assisted passage against my intended meaning and checked each cited
 statement against the original transcript, questionnaire, or meeting notes
 to confirm that it says what we claim it says.
 
+\textbf{Shamil:} For the FMEA table I used the Kiro IDE which uses automatically 
+selects an optimal LLM for consistency among multiple versions of Claude and others.
+I used the chatbot to generate a skeleton of table section with starting text 
+for idea generation and brainstorming and kept short column text where it 
+was only simple classifiers. I mostly used my own words for the written content, 
+but occasionally repurposed generated text with rewording, paraphrasing, or 
+by completely rewriting. When rewriting, I removed sections based on false 
+assumptions and made sure it was consistent with the rest of the document.
+None of the text for the reflection questions is AI-generated. All decisions 
+in my sections are my own and I reviewed all AI-assisted passages thoroughly.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -624,6 +633,21 @@ recorded these sources, business rules and assumptions, we could trace each
 hazard and critical assumption back to a specific statement, which also made
 the mitigations easier to justify.
 
+\textbf{Shamil:} Identifying mitigationa and elimination strategies for the
+hazards went well for me because I have previously taken classes on requirements 
+and testing. I was able to select proper testing methods like integration testing 
+or identify which of my original testing ideas were not fit for the project. For
+instances where the AI refinement provider returned inaccurate or inappropriate
+content (H-SHA-005), I considered fuzz testing to assess the durability and coverage of the
+API guardrails. After realizing that this would require human confirmation regardless,
+I decided to just have a human tester recreate the problematic outputs after
+modifying the guardrails. Similarly, I recognized that grey-box testing was suited 
+for the case in which confidential user data is mistakenly shared with a non-essential
+third-party service (H-SHA-002). Testers can run different scenarios and observe the
+public-facing API to see if the target content is being shared or not. The requirements
+course also went over testing in relations to requirements, so I was able to connect
+the safety requirements to specific hazards without issue.
+
 \item What pain points did you experience during this deliverable, and how
 did you resolve them?
 
@@ -644,6 +668,20 @@ the affected hazards, critical assumptions and mitigations so they matched the
 SRS. It was time-consuming, but it showed me how closely the hazard analysis
 depends on the requirements, and that it has to be reviewed again whenever the
 SRS changes.
+
+\textbf{Shamil:} My main pain point was in producing FMEA items that would
+translate to non-overlapping requirements. I accomplished this well by making
+unauthorized data access (H-SHA-001) and data leakage to third parties (H-SHA-002)
+distinct as well as provider outage (H-SHA-004) and inappropriate provider response
+(H-SHA-005). The former two could have been unauthorized data access in general,
+however this would not cover cases in which our own service leaks data unknowingly.
+Splitting these cases into two rows also gave room to discuss account access in
+general, which would not apply to third-party data leakage. For the latter two,
+I decided that cases in which a provider outage sends a default or fallback data
+response which is erroneously used in the application does not necessarily overlap
+with inappropriate AI output because the first case can be fixed simply with a single
+error catch whereas the second case must be handled individually and updated with
+new incorrect outputs.
 
 \item Which of your listed risks had your team thought of before this
 deliverable, and which did you think of while doing this deliverable? For
@@ -683,6 +721,17 @@ Squigglr. This showed me that the hazard analysis cannot be done well in
 isolation; it depends on knowing the requirements and on hearing from people
 who understand the users.
 
+\textbf{Shamil:} We thought of hazards related to unauthorized account access
+(H-SHA-001) before the hazard analysis simply because it was obvious and a basic 
+need to be addressed. Additionally, we had an idea of the issues that would come with 
+using a third-party AI provider, including PII leakage to the provider (H-SHA-002), 
+provider outage (H-SHA-004), and inappropriate/inaccurate output (H-SHA-005) which are 
+also obvious. The hazard of false save confirmation (H-SHA-003)c ame to use later as
+we consulted more experts and realized the value of user trust, especially regarding
+transparency for parents of child users. We did not want to mislead parents or have
+them find out too late that their childs progress was not saved; after brainstorming,
+we chose to tackle this by making the saving confirmation more robust.
+
 \item Other than the risk of physical harm (some projects may not have any
 appreciable risks of this form), list at least 2 other types of risk in
 software products. Why are they important to consider?
@@ -706,6 +755,14 @@ means avoiding repeated failure without a break and making sure progress
 summaries are never read as a diagnosis. These risks are important to consider
 because they are easy to overlook when there is no obvious physical danger, yet
 they can cause real harm to users and to the people who rely on the software.
+
+\textbf{Shamil:} Loss of privacy and trust in the application are two types of
+risks other than physical harm that are important to address. Having one's PII
+leaked can cause emotional distress and fear for safety. It is also irreversible 
+once a malicious actor has access or if the information becomes public. Furthermore,
+it leads to the second harm which is loss of trust. This harms the products 
+reputation and prevents potential customers from considering an otherwise helpful
+product.
 
 \end{enumerate}
 

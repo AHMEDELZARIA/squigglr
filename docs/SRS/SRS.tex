@@ -115,6 +115,7 @@ requirement structure (\#131).\\
 15 October 2026 & Moustafa Moustafa & Wrote Section 8.1, Product Boundary (\#110).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
+16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-005 for security, data integrity and AI-assisted refinement (#82)\\
 \end{longtable}
 
 ~\\
@@ -3315,6 +3316,65 @@ and verify that none is classified as passing or counted as an evaluable
 attempt.\\
 \emph{Related SRS requirements:} FR-LRN-007, FR-LRN-010.\\
 \emph{Hazards:} H-AHM-003.
+
+\item[SAF-SHA-001] Squigglr shall authenticate data at every endpoint where 
+it is accessed, encrypt user data with one-way hash, and end the session 
+and logout after extended user inactivity. (\texttt{IDLE\_TIMEOUT}, TBD).\\
+\emph{Rationale:} personal data, especially that of children's, is confidential. 
+unauthorized access to a user account or isolated user information violates
+privacy and undermines user trust. Squigglr is a website with no installation
+(CON-001, CON-002) so access must be authenticated at server endpoints.\\
+\emph{Fit criterion:} with mock accounts, while logged in to one account,
+attempts to access a wide range of datatypes from another account using 
+server commands are rejected; mock account is logged out after \texttt{IDLE\_TIMEOUT}
+and attempts to access that accounts information are rejected. \\
+\emph{Hazards:} H-SHA-001.
+
+\item[SAF-SHA-002] Squigglr shall confirm that all essential third-party services
+do not transmit PII through their public interface.\\
+\emph{Rationale:} refinement services may receive raw private data; user data
+is protected by privacy commitments; third-party services are implemented as
+web dependencies (CON-001) which may transmit user data incongruously.\\
+\emph{Fit criterion:} confirm that network traffic for each third-party 
+contains no PII data transmitted to a non-approved destination.\\
+\emph{Hazards:} H-SHA-002.
+
+\item[SAF-SHA-003] Squigglr shall inform adult users if a save failed after
+with a verification ping after each save.\\
+\emph{Rationale:} G.5 requires complete, meaningful activity records;
+Adults want to know which sessions contributed to their child's progress
+report in detail.\\
+\emph{Fit criterion:} for \texttt{CORRECT\_FAILED\_SAVES} (99\%) of 
+\texttt{TOTAL\_FAILED\_SAVES} (TBD) failed save requests, Squigglr 
+does not report the attempt as saved and notifies the adult. For 
+\texttt{CORRECT\_FAILED\_SAVES} of \texttt{TOTAL\_FAILED\_SAVES} 
+successful saves, Squigglr does not record a failed save or notify
+the adult.\\
+\emph{Hazards:} H-SHA-003.
+
+\item[SAF-SHA-004] Squigglr shall default to pre-prepared fallback content
+when the AI refinement tool is unavailable or returning errors or misformated
+content, after which it will send a diagnostic alert to the server and inform 
+the adult of the error.\\
+\emph{Rationale:} An unhandled provider error interrupting a child's drawing
+session would violate G.4, and failing to catch the error creates confusion
+for the child with unpredictable outputs.\\
+\emph{Fit criterion:} fallback content replaces the provided content when
+purposefully incorrectly formatted content is submitted and when a mock 
+server fails to provide a response; The adult user is informed in both cases.\\
+\emph{Hazards:} H-SHA-004.
+
+\item[SAF-SHA-005] Squigglr shall allow users to report inappropriate AI
+generated content through a form; human reviewers shall use catalogued
+confirmed incorrect output to potentially update API guardrails and 
+permissiveness.\\
+\emph{Rationale:} Raw provider output may be inaccurate or inappropriate;
+Content moderation must adapt to new, unforseen inputs as the application
+grows in userbase.\\
+\emph{Fit criterion:} deliberate attempts to recreate inappropriate output 
+by imitating report diagnostics of a manufactured inappropriate output case 
+do not yield similarly inappropriate results after content moderation update.\\
+\emph{Hazards:} H-SHA-005
 
 \end{description}
 \subsection{Precision or Accuracy Requirements}

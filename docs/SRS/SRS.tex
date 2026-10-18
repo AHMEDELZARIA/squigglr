@@ -125,6 +125,7 @@ requirement structure (\#131).\\
 16 October 2026 & Muhammad Huzaifah & Wrote Section 9.3, Creative Drawing Requirements, with FR-CRT-001 to FR-CRT-030 (\#122).\\
 16 October 2026 & Muhammad Huzaifah & Wrote the Attempt Record (FR-REC) and Progress Summary (FR-PRG) Requirements in Sections 9.4 and 9.5 (\#123).\\
 16 October 2026 & Muhammad Huzaifah & Wrote Section 19, Off-the-Shelf Solutions, with the product comparison, candidate components and the bibliography (\#124).\\
+16 October 2026 & Muhammad Huzaifah & Wrote Sections 20, 22, 23, 24 and 26: New Problems, Migration to the New Product, Costs, User Documentation and Training, and Ideas for Solution (\#125).\\
 17 October 2026 & Moustafa Moustafa & Added my reflection responses to the appendix and my generative AI use disclosure (\#117).\\
 17 October 2026 & Muhammad Huzaifah & Wrote Section 7, Business Data Model and Data Dictionary, with the data model figure, the data constraints and the data dictionary (\#121).\\
 \end{longtable}
@@ -1111,6 +1112,12 @@ copied from a program released under it.
 & \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
 & \hyperref[sec:changes]{Section 27.1}\\
+\textbf{DevOps} & Development and Operations.
+& \hyperref[sec:costs]{Section 23}\\
+\textbf{GB} & Gigabyte.
+& \hyperref[sec:costs]{Section 23}\\
+\textbf{MB} & Megabyte.
+& \hyperref[sec:new-problems]{Section 20}\\
 \textbf{HA} & Hazard Analysis, a separate document identifying failures,
 losses, mitigation measures and related requirements.
 & \hyperref[sec:introduction]{Introduction}\\
@@ -1148,6 +1155,8 @@ Numbered source statements use \texttt{SRC-\#\#\#.\#\#}.
 & \hyperref[sec:constants]{Section 4.2}\\
 \textbf{UC} & Product use case identifier; \texttt{UC-\#\#\#}.
 & \hyperref[sec:product-scope]{Section 8}\\
+\textbf{UI/UX} & User interface and user experience.
+& \hyperref[sec:user-docs]{Section 24}\\
 \textbf{ULC} & Unlikely change identifier; \texttt{ULC-\#\#\#}.
 & \hyperref[sec:changes]{Section 27.2}\\
 \textbf{V\&V} & Verification and validation.
@@ -6257,17 +6266,431 @@ artist's conflicts with BR-005. No surveyed product can be copied whole,
 because none combines the dimensions in Table~\ref{tab:ots-dimensions}.
 
 \section{New Problems}
+\label{sec:new-problems}
+This section records the problems that introducing Squigglr may create:
+in the places where it is used, for the systems it runs alongside, for its
+users, in the environment it is built for, and later in its life. Each
+problem is stated as a cause and its effect, followed by the precaution
+this specification already takes or the open item that will decide it.
+Links point to business rules (BR) and assumptions (ASM) in
+Section~\ref{sec:facts-assumptions}, open issues (OI) in
+Table~\ref{tab:openIssues} and likely changes (LC) in
+Table~\ref{tab:likelyChanges}. Critical assumptions (CA) and hazard
+identifiers (H-RAY, H-AHM, H-MUH) from the Hazard Analysis, and the safety
+requirements (SAF-RAY, SAF-AHM) in Safety-Critical Requirements, are given
+as plain text.
+Nothing in this section is a requirement; each precaution names where the
+related requirement or decision is, or will be, recorded.
+
 \subsection{Effects on the Current Environment}
-\lips
+Squigglr will be used at home, in classrooms and in places such as
+rehabilitation centres (Anticipated Workplace Environment).
+Table~\ref{tab:new-problems-environment} lists how it changes the work of
+the adults and children in those places. The Volere template also asks
+what the product must not do there; the last row answers that.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: effects on the current environment}
+\label{tab:new-problems-environment}\\
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+More work for supporting adults &
+Squigglr gives adults new tasks: creating a learner profile, choosing six
+adult-set values, with example drawings to help with
+\texttt{STAGE\_PASS} (BR-008), choosing lessons and starting stages,
+answering go-back suggestions (BR-003) and reviewing records. An educator
+with a short slot per learner (PER-3) or a
+parent who reviews once a week (PER-2) may leave defaults in place or let
+suggestions wait. &
+Each value defaults to the middle of its range (BR-008); a declined or
+ignored suggestion changes nothing (G.3); the user documentation in
+Section~\ref{sec:user-docs} explains each task. Links: ASM-016, CA-006;
+SAF-RAY-001, SAF-RAY-008; H-RAY-001, H-RAY-007. \\
+\addlinespace
+Shared and centrally managed school devices &
+One school device may be used by several children (SRC-004), and
+educators cannot install software on managed devices (PER-3). A session
+left open, or a learner not switched, can show one child's records to
+another child or save attempts to the wrong learner profile. &
+An adult selects the right learner (ASM-008); how a shared device is
+signed in and left after a session is OI-01; SAF-RAY-007 identifies the
+active learner. Hazards: H-RAY-006, H-MUH-004. \\
+\addlinespace
+Practice moves onto a screen &
+Practice with Squigglr is time on a device. Squigglr cannot see how long a
+child has used the device, or whether the child is distressed or
+uncomfortable (ASM-002), so long or repeated sessions can go unnoticed
+when no adult is watching. &
+The adult stays responsible for the child's time on the device (ASM-002)
+and can stop a session or mute audio (ASM-015); a lesson ends at
+\texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX} when extended
+(G.3). Hazards: H-RAY-004, H-RAY-005. \\
+\addlinespace
+Relationship with professional support &
+Occupational therapists and educators may already support the child.
+Squigglr keeps practice records, but the specialists advised deciding with
+such professionals which measures help an adult
+(SRC-005, \intref{P2}{31:42}). An adult could treat Squigglr as a
+substitute for that support. &
+Squigglr makes no claim that its practice improves any skill (BR-006;
+FACT-001, FACT-002); the user documentation states that Squigglr offers
+practice, not therapy or assessment. \\
+\addlinespace
+What Squigglr must not do &
+Squigglr must not take over decisions that belong to the adults around the
+child. Squigglr never selects another lesson, skips a stage or moves a
+child back a stage without an adult's authorization (CON-007, BR-003),
+never gives a child personalized AI-generated feedback in a guided
+activity (BR-007), never replaces a child's strokes in a guided-lesson
+record (BR-004), and never lets refinement act outside the creative space
+(BR-005). Breaking
+any of these would override an adult's judgement or mislead the adults who
+rely on the records. &
+These are business rules and unlikely changes (ULC-003 to ULC-005,
+Table~\ref{tab:unlikelyChanges}). Hazards: H-MUH-002 (refinement reaching
+a guided-lesson record), H-MUH-003 (assisted work shown as
+independent). \\
+\end{longtable}
+}
+
 \subsection{Effects on the Installed Systems}
-\lips
+Squigglr installs nothing on the user's device (CON-002) and replaces no
+existing system (Implementation Environment of the Current System). The
+systems it must coexist with are the browsers, devices and networks that
+homes and schools already use, and the outside services Squigglr itself
+depends on. Table~\ref{tab:new-problems-installed} lists the conflicts
+that can arise with each.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: effects on the installed systems}
+\label{tab:new-problems-installed}\\
+\toprule
+\textbf{System} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{System} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Browsers and devices already in use &
+Squigglr runs in whatever browser the adult's or school's device has
+(CON-001). Squigglr depends on that browser reporting stylus strokes in
+enough detail (ASM-004), on devices the team does not control (CA-002),
+and on browser updates not changing how input is reported. Strokes may
+then be captured wrongly, or not at all, on some devices. &
+The supported device and browser combinations are OI-09; SAF-RAY-002 shows
+a notice on an unsupported device; drawing input can be read through one
+input module (LC-003). Hazard: H-RAY-002. \\
+\addlinespace
+Browser storage on a shared device &
+Keeping each completed attempt on the device until the server confirms
+that it is saved (SAF-RAY-003) means practice data may sit in the browser
+of a shared or school device. The next user of the device could see or
+overwrite another child's unsaved attempts, or the data could stay on the
+device after the session ends. &
+How a shared device is left after a session is OI-01; who may see records
+is part of the privacy requirements (OI-02). Hazards: H-RAY-006,
+H-MUH-004. \\
+\addlinespace
+School networks and content filters &
+A managed school network may block the Squigglr website or the outside
+services it calls (ASM-013). Lessons then fail to load in class, or saves
+and refinement fail. &
+The documentation for school administrators lists what must be allowed
+(Table~\ref{tab:user-docs}); a failed refinement leaves the drawing
+unchanged (G.4); unsaved attempts are kept and reported (SAF-RAY-003). \\
+\addlinespace
+New outside services &
+Squigglr adds services that homes and schools did not depend on before: a
+hosting service, an authentication service for adult accounts and,
+possibly, an outside model for refinement (SRC-002). An outage, price
+change or change of terms at any of them affects every user at once, and a
+drawing sent to an outside model leaves the team's control. &
+The interfaces are specified in Requirements for Interfacing with Adjacent
+Systems and the data sent outside in Privacy Requirements; the refinement
+provider can sit behind one interface (LC-004); costs are in
+Section~\ref{sec:costs}. \\
+\end{longtable}
+}
+
 \subsection{Potential User Problems}
-\lips
+Squigglr has no existing users, so this subsection lists adverse reactions
+its intended users may have, drawn from the personas (PER-1 to PER-3) and
+the assumptions in Section~\ref{sec:assumptions}.
+Table~\ref{tab:new-problems-users} gives each reaction and the precaution
+taken.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: potential user problems}
+\label{tab:new-problems-users}\\
+\toprule
+\textbf{Problem (user)} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Problem (user)} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Frustration from repetition (child) &
+Failing the same stage again and again, or restarting a lesson at once
+after it ends, can agitate a child who dislikes repeated tasks (PER-1).
+The child may become distressed or refuse the activity later. &
+A lesson ends at \texttt{ATTEMPT\_LIMIT} (G.3, BR-002), and the adult
+sets the limits for each child (BR-008). Hazards: H-RAY-004,
+H-RAY-005. \\
+\addlinespace
+Reaction to sensory feedback (child) &
+Sounds, colours or animation used as feedback may upset some children,
+who react to sensory feedback in different ways (ASM-015). &
+Audio can be turned off (SRC-005, \intref{P2}{37:39}); feedback is to be
+designed with educators and occupational therapists (LC-005) and is
+covered by the Usability and Humanity Requirements. \\
+\addlinespace
+Refinement that does not feel like the child's own (child) &
+Refinement is automatic (BR-005), so the drawing changes without the child
+asking. Whether children value this, and whether they still see the result
+as theirs, is unverified (ASM-011, FACT-013). A child may be upset by the
+change or not know how to get the original back. &
+Refinement is minimal, within \texttt{REFINE\_TOLERANCE}, and the result
+stays editable; the child, or an adult, can restore the original or turn
+refinement off (BR-005, G.4, UC-007, UC-010). The scope of G.4 is OI-03. Hazards: H-MUH-001, H-MUH-002,
+H-MUH-006. \\
+\addlinespace
+Summaries read as a diagnosis (adult) &
+Adults reading records are not assumed to have training in visual-motor
+development (CA-005), and fewer attempts may be read as better skill. An
+adult may draw a wrong conclusion about the child and pass it on. &
+No record or summary gives a diagnosis, judgement or comparison (BR-006,
+SAF-RAY-004); the documentation explains how to read a summary
+(Table~\ref{tab:user-docs}). Hazard: H-RAY-003. \\
+\addlinespace
+Over-trust in default values (adult) &
+An adult may keep the default values, or pick values from the example
+drawings, without knowing whether they suit the child (CA-006, ASM-016).
+The child may be held at a stage too long or moved on too soon, and the
+records may then mislead the adult. &
+Example drawings show each end of the \texttt{STAGE\_PASS} range
+(BR-008); the values in use are shown with the records (ASM-006); the
+ranges are OI-05. Hazard: H-RAY-007. \\
+\addlinespace
+Worry about the child's data (adult) &
+Parents want their child's data kept private (PER-2), and how records are
+shared or deleted is not yet decided (OI-02, FACT-013). Adults may refuse
+to use Squigglr, or share records more widely than they intend. &
+A learner profile holds only a first name and a non-identifying username
+(BR-001); privacy requirements follow from OI-02; a privacy notice is
+part of the user documentation (Table~\ref{tab:user-docs}). \\
+\end{longtable}
+}
+
 \subsection{Limitations in the Anticipated Implementation Environment That May
 Inhibit the New Product}
-\lips
+Table~\ref{tab:new-problems-limits} lists the limits of the environment
+that Squigglr is built for and used in that may stop it from working as
+specified. Several are the implementation risks the Development Plan's
+Proof of Concept (POC) is designed to test (SRC-002).
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: limitations in the implementation environment}
+\label{tab:new-problems-limits}\\
+\toprule
+\textbf{Limitation} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Limitation} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Stylus input in the browser &
+Whether supported browsers report stylus strokes in enough detail is
+untested (ASM-004). Stage checks and records could be wrong; if browser
+input proves unreliable, an installed app may be needed, which would change
+CON-001 (ULC-001). &
+A POC experiment draws on a target tablet and on a second device and
+browser combination and records any input failures (SRC-002); the
+supported combinations are OI-09. Hazards: H-AHM-001, H-AHM-003; safety
+requirement SAF-AHM-002. \\
+\addlinespace
+Devices without a stylus &
+Not every home or school may have a touchscreen device with a stylus
+(ASM-003). Children then draw with a finger, for which the stage checks
+and ranges are not tuned. &
+Finger input is a stretch goal (LC-006); SAF-RAY-002 tells the adult when
+a device is not supported. \\
+\addlinespace
+Online use only &
+Squigglr needs a network connection to load lessons and to save and view
+records, and offline use is out of scope (ASM-005); a connection may be
+lost at any time (CA-003). Attempts may be lost, and an adult may decide
+from incomplete records. &
+SAF-RAY-003 keeps unsaved attempts and reports them; network loss is
+covered by the Robustness or Fault-Tolerance Requirements. Hazards:
+H-RAY-002, H-MUH-005, H-MUH-008. \\
+\addlinespace
+Limits of free service plans &
+The planned hosting service (Vercel) and database and authentication
+service (Supabase) (SRC-002) have free plans with usage limits. The
+hosting free plan is for personal, non-commercial use and has one
+developer seat \citep{Vercel2026Pricing}. The database free plan includes
+a 500\,MB database and pauses a project after one week of inactivity
+\citep{Supabase2026Pricing}. A limit reached, or a project paused during a
+break, makes Squigglr unavailable or stops saves. &
+The Development Plan requires service limits and costs to be monitored
+(SRC-002); the plan choice and its cost are in Section~\ref{sec:costs};
+the budget is OI-07. \\
+\addlinespace
+Refinement model not yet chosen &
+No model has been selected. A pretrained model may return invalid drawing
+instructions, misread the drawing or change it too much, and its response
+time and request cost are unknown (SRC-002). &
+A POC experiment records valid and invalid outputs, response times and
+estimated request costs, and checks that a rejected instruction leaves the
+drawing unchanged; geometric refinement can be used while model work is
+deferred (SRC-002). Links: LC-004, OI-03; hazard H-MUH-002. \\
+\addlinespace
+No testing with children &
+No study with children may run (CON-006), so value ranges and
+\texttt{REFINE\_TOLERANCE} are set from adult-made drawings (BR-009,
+ASM-014). They may not match how children draw. &
+The adult chooses each value for the child within a range (BR-008);
+ASM-014 is marked relevant to safety and is an input to the Hazard
+Analysis. \\
+\addlinespace
+Course schedule and effort &
+The course fixes the deadlines (CON-004), and the team plans around about
+ten hours per member per week (SRC-002). Not every planned feature may be
+ready for each release. &
+The POC plan allows narrowing the supported drawing set, simplifying the
+guidance rules or using geometric refinement only (SRC-002); the phases
+are set in Planning of the Development Phases. \\
+\end{longtable}
+}
+
 \subsection{Follow-Up Problems}
-\lips
+Follow-up problems are situations that Squigglr may create later and that
+the team may not be able to handle. Table~\ref{tab:new-problems-follow-up}
+lists them with the precaution or the open item that covers each.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: follow-up problems}
+\label{tab:new-problems-follow-up}\\
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Demand for stretch features &
+Adults or schools may ask for finger input, camera finger tracing or
+letter activities, which are stretch goals (SRC-001; FACT-006; ASM-010).
+The team may face pressure to add features the schedule cannot support,
+or to add them without the checks the core features have. &
+Deferred features are kept in the Waiting Room section; new input types
+can be added through one input module (LC-003, LC-006). \\
+\addlinespace
+A growing lesson catalogue &
+Lessons may be added or reordered, for example to add letters after shapes
+(LC-001, SRC-009.04). Each new lesson needs its stages, predefined difficulties
+and adult-made example drawings for \texttt{STAGE\_PASS} (BR-008,
+BR-009), so content work grows with every lesson. &
+Lessons and their stages can be stored as data, so adding or reordering a
+lesson changes no code (LC-001). \\
+\addlinespace
+Growing stored data &
+Every attempt keeps the child's actual strokes (BR-004) and every recorded
+value (LC-007), and each creative drawing keeps its original strokes
+(BR-005). Storage grows with use and could reach the database free plan's
+500\,MB limit \citep{Supabase2026Pricing}, after which saves could
+fail. &
+Capacity is covered by the Capacity Requirements; storage use is monitored
+(SRC-002); failed saves are reported (SAF-RAY-003); how long records are
+kept follows from OI-02. \\
+\addlinespace
+Use by institutions &
+Schools or centres may adopt Squigglr; a peer reviewer asked how their
+records would be kept apart
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}), and an
+educator may manage many learners (ASM-012). One shared store of records
+may not meet an institution's expectations. &
+OI-06 decides whether separate institutions are supported in this project
+and, if so, the access and privacy requirements that keep their records
+apart. \\
+\addlinespace
+Maintenance after the course &
+Who maintains Squigglr after the project ends is not decided (Maintenance
+Users and Service Technicians). Hosting accounts, provider access and
+lesson content may lapse while adults' accounts and children's practice
+records stay stored with no one responsible for them. &
+Who maintains Squigglr after the project ends is an open item (Maintenance
+Users and Service Technicians), and how stored records are deleted is part
+of OI-02. \\
+\addlinespace
+Changes by outside providers &
+Providers may change prices, limits or terms; one vendor states that its
+pricing may change \citep{Supabase2026Pricing}. A refinement provider may
+change or withdraw a model (LC-004). Costs may then rise above the course
+limit, or refinement may stop working. &
+The refinement provider can sit behind one interface (LC-004), with
+geometric refinement as a fallback (SRC-002); the budget is OI-07. \\
+\addlinespace
+Pressure to evaluate children &
+If Squigglr is presented as an educational tool rather than as practice,
+adults or schools may expect it to evaluate children. The supervisor
+advised that any evaluation would need strong justification, because the
+team cannot judge a child's abilities (SRC-008). &
+Squigglr gives no diagnosis, judgement or comparison (BR-006, ULC-004). \\
+\addlinespace
+Laws that may apply after wider use &
+Wider use, for example by schools or outside the course, may bring legal
+obligations about records of children that the project has not had to
+meet. &
+Which laws and standards apply is decided in the Legal Requirements
+section; this section assumes none. \\
+\end{longtable}
+}
 
 \section{Tasks}
 \label{sec:tasks}
@@ -6414,18 +6837,267 @@ changes, its entry in this table and, for requirements with a
 \texttt{Phase} field, its individual specification are updated together.
 
 \section{Migration to the New Product}
+\label{sec:migration}
+This section asks what must be converted or carried over before Squigglr
+can be used. Squigglr is a new product (Implementation Environment of the
+Current System), so both subsections find nothing to migrate. Each gives
+its reason and the condition that would change the answer.
+
 \subsection{Requirements for Migration to the New Product}
-\lips
+Not applicable. There is no existing product to convert, decommission or
+run in parallel, because Squigglr is new and replaces no system. Getting
+started is part of the product, not a migration task: an adult creates a
+learner profile and chooses the adult-set values (UC-001, BR-001,
+BR-008), and these steps are covered by the use cases and by the
+user documentation in Section~\ref{sec:user-docs}. Between the releases
+set in Planning of the Development Phases, Squigglr holds only prepared or
+adult-made data (CON-005, BR-009, ASM-014). Because every release is
+tested again in full (SRC-008), that data can be created again for each
+release instead of being converted. If adults keep real records in one
+release and a later release changes how records are stored, for example to
+show new values (LC-007) or to measure improvement differently (LC-008),
+migrating those records would become a requirement here.
+
 \subsection{Data That Has to be Modified or Translated for the New System}
-\lips
+Not applicable. No data held elsewhere is imported into Squigglr: no use
+case from UC-001 to UC-010 enters children's earlier drawings or adults'
+own notes. Every attempt record, lesson record and creative drawing is
+created inside Squigglr as the child practises (G.4, G.5), so nothing has
+to be translated into a new format.
 
 \section{Costs}
-\lips
+\label{sec:costs}
+This section lists the costs of building and running Squigglr that are
+known from a source, and names the costs that are not yet known, with who
+will settle each and when. No figure here is an estimate by the team.
+Table~\ref{tab:costs} gives each item. Amounts are copied as the sources
+state them; vendor amounts are list prices before tax on the date the page
+was accessed and may change.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}%
+>{\raggedright\arraybackslash}p{0.17\textwidth}%
+>{\raggedright\arraybackslash}p{0.36\textwidth}%
+>{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
+\caption{Known and unknown costs}\label{tab:costs}\\
+\toprule
+\textbf{Item} & \textbf{Cost or limit} & \textbf{Basis and source} &
+\textbf{Status} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Item} & \textbf{Cost or limit} & \textbf{Basis and source} &
+\textbf{Status} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Course spending limit & At most \$500 per team &
+Spending on equipment, supplies or digital services by a team should not
+exceed this amount, and receipts are kept \citep{Smith2026Outline}. &
+Limit set by the course. \\
+\addlinespace
+Expense reimbursement & Up to \$150 per group &
+The department reimburses approved expenses; each needs the written
+approval of the administrative TA \citep{Smith2026Outline}. Tokens for
+AI services are not eligible \citep{Smith2026L02}. &
+Limit set by the course. \\
+\addlinespace
+Expo poster & Printing up to \$60 per group covered &
+Covered by the department \citep{Smith2026Outline}. &
+Known; no cost to the team within the limit. \\
+\addlinespace
+Hosting (Vercel) & Free plan: \$0 per month. Paid plan: \$20 per month
+per developer seat &
+Planned host (SRC-002). The free plan is for personal, non-commercial use,
+has one developer seat and monthly limits, such as 100\,GB of data
+transfer; the paid plan includes \$20 of usage credit
+\citep{Vercel2026Pricing}. &
+Plan TBD: Development and Operations (DevOps) Lead (Shamil Canbolat),
+after OI-07, before the POC demonstration window. \\
+\addlinespace
+Database and adult accounts (Supabase) & Free plan: \$0 per month. Paid
+plan: from \$25 per month &
+Planned database and authentication service (SRC-002). The free plan
+includes a 500\,MB database and 50{,}000 monthly active users, pauses a
+project after one week of inactivity and allows two active projects; the
+paid plan includes 8\,GB of disk per project and has a spend cap on by
+default \citep{Supabase2026Pricing}. &
+Plan TBD: as for hosting. \\
+\addlinespace
+Refinement model requests & Unknown &
+No model has been selected; a POC experiment records estimated request
+costs (SRC-002). Tokens are not reimbursable \citep{Smith2026L02}.
+Geometric refinement uses no outside model (SRC-002). &
+TBD from POC evidence: Testing Lead (Muhammad Huzaifah) coordinates the
+evaluation (SRC-002), by the POC demonstration window. \\
+\addlinespace
+Devices for development and testing & Unknown &
+The POC needs a target tablet with a compatible stylus and a second device
+and browser combination (SRC-002). Whether team members already own
+suitable devices is not recorded. &
+TBD with the supported devices (OI-09): Shamil Canbolat, Nov.\ 2, 2026. \\
+\addlinespace
+Devices and network for users & Not a project cost &
+Homes and schools use their own touchscreen device with a stylus and their
+own network (ASM-003, ASM-005); no sale or purchase of Squigglr is
+planned (Customer). &
+Known. \\
+\addlinespace
+Team effort & About ten hours per member per week &
+Planning average for each of the five members, including scheduled course
+activities (SRC-002). This is a planning assumption, not measured
+effort. &
+Known as a plan; effort per phase belongs in the Tasks section. \\
+\end{longtable}
+}
+
+The total monetary cost is TBD, which matches Budget Constraints. With
+both free plans and geometric refinement only, the known service costs are
+\$0, subject to the free plans' limits and terms; device costs are still
+unknown. Any paid plan or model requests must fit within the \$500 course
+limit, of which at most \$150 can be reimbursed. Whether any budget is
+available is OI-07 (Shamil Canbolat, Oct.\ 17, 2026). The Volere template
+suggests estimating cost from counts of use cases and requirements
+\citep{robertson2012volere}; those counts are not final while the
+requirements are being written, so no such estimate is given here.
+
 \section{User Documentation and Training}
+\label{sec:user-docs}
+This section describes the user documentation and training Squigglr needs,
+not the documents themselves. Following the Volere template
+\citep{robertson2012volere}, each item is derived from the use cases
+(UC-001 to UC-010) and the business rules and assumptions the adult must
+understand to carry them out.
+
 \subsection{User Documentation Requirements}
-\lips
+Table~\ref{tab:user-docs} lists the documentation supporting adults need.
+Every use case from UC-001 to UC-010 is covered by at least one item.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth}%
+>{\raggedright\arraybackslash}p{0.41\textwidth}%
+>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\caption{User documentation items}\label{tab:user-docs}\\
+\toprule
+\textbf{Item} & \textbf{Purpose and contents} &
+\textbf{Use cases and sources} & \textbf{Audience} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Item} & \textbf{Purpose and contents} &
+\textbf{Use cases and sources} & \textbf{Audience} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Getting started &
+Create a learner profile that holds only a first name and
+a non-identifying username. Choose each adult-set value: what it means,
+its range, the example drawings for \texttt{STAGE\_PASS}, and that a value
+not chosen is set to the middle of its range, which may not suit the
+child. Change the values later. &
+UC-001, UC-010; BR-001, BR-008; ASM-016 &
+Supporting adults \\
+\addlinespace
+Lessons and stages &
+The lesson catalogue; the stages from demonstration to drawing with no
+guide; choosing a lesson and a starting stage; what happens when a lesson
+ends at \texttt{ATTEMPT\_LIMIT} or is extended while the child
+improves. &
+UC-002, UC-003, UC-004; G.1 to G.3; BR-002, BR-003 &
+Supporting adults \\
+\addlinespace
+Go-back suggestions &
+What a suggestion means, that nothing changes unless an adult accepts it,
+and how to see the attempts behind it before deciding. &
+UC-005; BR-003; CON-007 &
+Supporting adults \\
+\addlinespace
+Reading records and summaries &
+What each attempt and lesson record holds; how attempts made with a guide
+are told apart from those made without one; how to open the attempts
+behind a summary; the values in use for each attempt; and that records
+describe practice only and are not a diagnosis or a measure of ability,
+including when shared with others. &
+UC-008, UC-009, UC-010; G.5, G.6; BR-006; ASM-006; CA-005; SAF-RAY-004 &
+Supporting adults, and those they share records with \\
+\addlinespace
+Creative space and refinement &
+That refinement happens automatically and changes the drawing only a
+little; which items are supported; how the child or an adult restores the
+original or turns refinement off or on; that refinement never reaches
+guided-lesson records; and what, if anything, is sent to an outside
+service. &
+UC-006, UC-007, UC-010; G.4; BR-004, BR-005; OI-03 &
+Supporting adults \\
+\addlinespace
+Safe use and shared devices &
+Selecting the right learner on a shared device and leaving the device
+after a session; muting audio and stopping a session; the adult's
+responsibility for the child's safety and time on the device; supported
+devices and browsers; the need for a network connection, and what happens
+to attempts that could not be saved. &
+ASM-002, ASM-005, ASM-008, ASM-015; OI-01, OI-09; SAF-RAY-003 &
+Supporting adults \\
+\addlinespace
+Privacy notice &
+What Squigglr stores about the adult and each child, who can see it, and
+how records are shared and deleted. &
+BR-001; ASM-009; OI-02 &
+Supporting adults \\
+\addlinespace
+Notes for school administrators &
+The web address and the outside services a managed network must allow,
+and confirmation that nothing is installed. &
+CON-002; ASM-013 &
+School administrators \\
+\end{longtable}
+}
+
+Each item appears as help inside the adult views, where the task is done,
+and is collected in a written User Guide, which the course template
+provides as a separate document. As the Volere template advises, the
+guide uses the terms defined in this specification and turns the use case
+scenarios into its step-by-step instructions. The guide is written in the
+interface language (ASM-007). Developer documents, such as the design
+documents, are not user documentation and are not listed.
+
+Children receive no written documentation, because many cannot read
+(ASM-007). Instead, each lesson starts with a demonstration (G.1), and
+children move through Squigglr using images and icons rather than text
+(FACT-007; SRC-005, \intref{P1}{34:13}). How quickly children and adults
+must be able to learn Squigglr is specified in Learning Requirements and
+is not repeated here.
+
+The user interface and user experience (UI/UX) Lead coordinates the
+documentation, as the lead for user flows
+and usability (SRC-002). Each item is first written for the release that
+delivers the use cases it covers, and is updated whenever those use cases,
+the lesson catalogue (LC-001) or the adult-set values (LC-002) change.
+Who keeps it current after the project ends follows the maintenance
+decision in Table~\ref{tab:new-problems-follow-up}. No documentation
+requirement is stated here: the behaviour the documentation explains is
+already specified by the use cases and business rules, the practice-only
+statement is SAF-RAY-004, and learnability is in Learning Requirements, so
+a separate requirement would repeat them.
+
 \subsection{Training Requirements}
-\lips
+No training sessions are planned for any user. Supporting adults are
+assumed to be everyday web users (Hands-On Users of the Project), and the
+documentation in Table~\ref{tab:user-docs}, shown where each task is done,
+is meant to let them set up and use Squigglr without help. Whether it is
+enough is checked, not assumed: the adult-reviewer tasks in the G.6
+measurement and the planned usability sessions with adult reviewers
+(SRC-001) test whether adults can complete their tasks with only this
+help. Children receive no training beyond the demonstration that starts
+each lesson (G.1). The adult introduces Squigglr to the child, and the
+getting-started item suggests how to begin a first session, for example by
+choosing an early stage and checking the audio setting. If schools adopt
+Squigglr and an educator manages many learners (ASM-012), a short
+walkthrough for educators may be needed; it is not planned in this
+project.
 
 \section{Waiting Room}
 \label{sec:waiting-room}
@@ -6490,7 +7162,108 @@ BR-003, BR-006 and BR-007, respectively; they are not implicitly
 promised as future features.
 
 \section{Ideas for Solution}
-\lips
+\label{sec:solution-ideas}
+This section is non-normative: it records ideas for how the team might
+build Squigglr, so that they are not lost and are not mistaken for
+requirements; none of them binds the design. Ready-made products and
+components that could be reused are in the Off-the-Shelf Solutions
+section; this section is about how the team might put the product
+together. Table~\ref{tab:solution-ideas} gives each idea with its
+trade-off and source.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.26\textwidth}%
+>{\raggedright\arraybackslash}p{0.44\textwidth}%
+>{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\caption{Ideas for solution (non-normative)}\label{tab:solution-ideas}\\
+\toprule
+\textbf{Idea} & \textbf{Trade-off} & \textbf{Source} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Idea} & \textbf{Trade-off} & \textbf{Source} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\emph{Geometric refinement first.} Smooth and simplify the child's own
+paths, and try a pretrained model only for changes that geometry cannot
+make. &
+No outside service, request cost or data leaving Squigglr, and results are
+predictable. Geometry can only tidy strokes, not interpret a drawing, and
+the supervisor's question of whether AI is needed (SRC-004) stays open
+until POC evidence exists. &
+SRC-002 (Drawing Assessment and Enhancement; POC experiments); SRC-004 \\
+\addlinespace
+\emph{Check model output before applying it.} Treat each model response
+as untrusted: apply it only if every operation is from a known set, refers
+to the current drawing and keeps every point within
+\texttt{REFINE\_TOLERANCE}; otherwise leave the drawing unchanged. &
+Adds checking logic and rejects some useful responses, but makes the G.4
+check that a failed refinement leaves the drawing unchanged simple to
+test. &
+SRC-002; G.4; H-MUH-002 \\
+\addlinespace
+\emph{Keep the original strokes apart.} Store the child's original
+strokes separately from the refined drawing, so that restoring switches
+back to them rather than undoing each change. &
+More stored data per creative drawing (Growing stored data,
+Table~\ref{tab:new-problems-follow-up}); restoring is exact however many
+edits followed. &
+SRC-002; BR-005; H-MUH-001, H-MUH-003 \\
+\addlinespace
+\emph{One refinement interface.} Put every refinement method behind one
+interface that takes stroke coordinates and returns adjusted coordinates
+at the same scale. &
+A provider or a geometric method can be swapped in one module. An
+interface that returns only adjusted coordinates cannot express adding a
+shape, which the Development Plan lists as a candidate model instruction;
+adding content would also go beyond minimal refinement (BR-005). &
+LC-004; SRC-002 \\
+\addlinespace
+\emph{Lessons and feedback as content.} Store lessons, stages, predefined
+difficulties, example drawings and feedback wording as data that the
+lesson logic reads. &
+Adding a lesson or rewording feedback changes no code, but the data needs
+its own checks so that no lesson is released without its difficulties or
+example drawings. &
+LC-001, LC-005; BR-008, BR-009 \\
+\addlinespace
+\emph{One input module.} Turn browser pointer events into strokes in one
+place, so that the rest of Squigglr sees only strokes. &
+A new device or finger input affects one module, but that module must be
+tested on each supported device, because emulation cannot replace stylus
+testing (SRC-002). &
+LC-003, LC-006; SRC-002 \\
+\addlinespace
+\emph{Local queue for unsaved attempts.} Hold each completed attempt in
+the browser until the server confirms the save, then delete the local
+copy. &
+Keeps attempts through a lost connection (CA-003), but copies left on a
+shared device can be seen by the next user (H-RAY-006), so when they are
+cleared must be settled with OI-01. &
+SAF-RAY-003; CA-003; OI-01 \\
+\addlinespace
+\emph{Spending controls.} Use the vendors' own controls: the database
+service turns a spend cap on by default on its paid plan
+\citep{Supabase2026Pricing}, and the hosting service gives each new team a
+usage budget with notifications and can pause all projects when it is
+reached \citep{Vercel2026Pricing}. &
+Keeps spending within the course limit (Section~\ref{sec:costs}), but a
+reached cap can pause the service, which is the availability problem in
+Table~\ref{tab:new-problems-limits}. &
+Vendor pages; OI-07 \\
+\addlinespace
+\emph{Model on university computing.} Run a pretrained model on the
+department's graphics processing unit (GPU) cluster, which the course
+outline says is available for large language model computing, instead of
+a paid outside service. &
+No per-request fee, and drawings stay with the university. The team would
+run the model itself, and whether a public website may call the cluster,
+and for how long after the course, is unknown. &
+\citep{Smith2026Outline}; SRC-002 (no custom model training planned) \\
+\end{longtable}
+}
 
 \section{Likely and Unlikely Changes}
 \label{sec:changes}

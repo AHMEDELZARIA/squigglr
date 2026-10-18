@@ -3967,7 +3967,7 @@ Squigglr does not record a failed save or notify the adult.\\
 \emph{Hazards:} H-SHA-003.
 
 \item[SAF-SHA-004] Squigglr shall default to pre-prepared fallback content
-when the AI refinement tool is unavailable or returning errors or misformated
+when the AI refinement tool is unavailable or returning errors or misformatted
 content, after which it will send a diagnostic alert to the server and inform 
 the adult of the error.\\
 \emph{Rationale:} An unhandled provider error interrupting a child's drawing
@@ -4038,7 +4038,56 @@ flashes.\\
 \subsection{Precision or Accuracy Requirements}
 \lips
 \subsection{Robustness or Fault-Tolerance Requirements}
-\lips
+\label{sec:robustness}
+
+\begin{srsrequirement}{NFR-PERF-004}{Attempt preservation on network loss}
+  \reqshall{Squigglr shall retain any completed attempt on the device if 
+connection is lost during the attempt or after the latest attempt until 
+the server confirms it is saved (after connection is restored).}
+  \reqrationale{G.5 requires complete practice records; losing their current 
+attempt may upset a child.
+\reqref{SAF-RAY-003}.}
+  \reqfit{Pass when attempts are saved after connection is intentionally
+cut during a mock attempt three times consecutively.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \srcref{005.02}}
+  \reqtraces{\reqref{SAF-RAY-003}; \ucref{003}; \ucref{006}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-005}{Refinement provider fallback}
+  \reqshall{Squigglr shall display the child's original unrefined 
+strokes when the AI refinement service is unavailable or returns 
+misformatted or inappropriate output.}
+  \reqrationale{Ignoring AI refinement in the rare cases where
+the output is missing or unuseable creates a smoother experience
+for the child and prioritizes avoiding interruptions to acquiring
+full refinement coverage. Complements \reqref{SAF-SHA-004}.}
+  \reqfit{Pass when the childs original strokes are kept ten times
+consecutively after intentionally returning misformatted outputs or 
+making the mock service unavailable.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4}; \srcref{009.01}}
+  \reqtraces{\reqref{SAF-SHA-004}; \ucref{003}; \ucref{006}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-006}{Save failure transparency}
+  \reqshall{Squigglr shall not report a successful save if a 
+save operation fails and shall instead display a visible notification 
+to the adult describing which record was not saved.}
+  \reqrationale{G.5 requires complete and meaningful practice records.
+Silently losing a save and reporting success would inform the adult 
+based on a record that does not reflect the child's actual practice. 
+Complements \reqref{SAF-SHA-003}.}
+  \reqfit{Pass when Squigglr does not display a success confirmation and 
+instead shows a clearly visible failure notification to the adult identifying
+the unsaved record.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \srcref{005.02}}
+  \reqtraces{\reqref{SAF-SHA-003}; \ucref{009}; \ucref{010}}
+\end{srsrequirement}
 \subsection{Capacity Requirements}
 \lips
 \subsection{Scalability or Extensibility Requirements}
@@ -4939,7 +4988,7 @@ I may have kept them as they are. When rewriting, I removed sections based
 on false assumptions and made sure it was consistent with the rest of the 
 document. None of the text for the reflection questions is AI-generated. 
 All decisions in my sections are my own and I reviewed all AI-assisted 
-passages thoroughly.
+passages.
 
 \textbf{Moustafa:} I used Anthropic's Claude Opus 5.5, accessed through
 Claude Code, alternating between medium and high effort depending on the

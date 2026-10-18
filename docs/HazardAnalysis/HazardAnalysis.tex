@@ -48,6 +48,7 @@ CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 15 October 2026 & Ahmed Elzaria & Added drawing-input and guided-lesson FMEA hazards H-AHM-001 to H-AHM-007 (part of \#135).\\
 16 October 2026 & Moustafa Moustafa & Added sensory, feedback, progress-view
 and refinement hazards H-MOU-001 to H-MOU-006 (\#115).\\
+16 October 2026 & Muhammad Huzaifah & Added the FMEA method, H-MUH-001 to H-MUH-008 and the coverage table (\#127).\\
 16 October 2026 & Muhammad Huzaifah & Wrote the front matter, the
 Introduction with the hazard definition and template changes, the losses
 and out-of-scope items, and the system boundary and components
@@ -756,14 +757,93 @@ different points (SRC-005, P1, 20:27).\\
 
 \section{Failure Mode and Effect Analysis}\label{sec:fmea}
 
-\wss{Include your FMEA table here. This is the most important part of this document.}
-\wss{The safety requirements in the table do not have to have the prefix SR.
-The most important thing is to show traceability to your SRS. You might trace to
-requirements you have already written, or you might need to add new
-requirements.}
-\wss{If no safety requirement can be devised, other mitigation strategies can be
-entered in the table, including strategies involving providing additional
-documentation, and/or test cases.}
+This section applies Failure Mode and Effect Analysis (FMEA) to the
+components of \progname{}. Subsection~\ref{sec:fmea-method} states how the
+analysis was carried out. Each team member's rows are in a table of their
+own: Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM),
+Table~\ref{tab:fmea-mou} (H-MOU) and Table~\ref{tab:fmea-muh} (H-MUH).
+Table~\ref{tab:fmea-coverage} places every row of the four tables under a
+component and checks that every
+component has been examined for every category of harm. Each row ends with
+the requirements of the Software Requirements Specification (SRS) that
+mitigate it; the Safety and Security Requirements section lists the
+requirements derived from this analysis again.
+
+\subsection{Method}\label{sec:fmea-method}
+
+FMEA is a bottom-up method: it starts from the functions of each component
+and asks how each can fail \citep{Smith2026L08}. The components are the
+functional components named in the System Boundaries and Components
+section, not modules of a design. The analysis uses the course's
+definitions \citep{Smith2026L08}:
+\begin{itemize}
+  \item a \emph{failure} is a departure of a component from its required or
+  intended function;
+  \item a \emph{failure mode} is the manner in which the failure is
+  observed by a child, an adult or a tester;
+  \item an \emph{effect} is the consequence of a failure mode; each row
+  names the losses it leads to, and the H-MUH rows use the IDs L1 to L5 of
+  the Scope and Purpose section;
+  \item a \emph{cause} is a reason the failure mode occurs, including
+  conditions outside the boundary, such as a lost connection (CA-003) or a
+  device shared by several children (CA-004);
+  \item a \emph{recommended action} says what is done to eliminate or
+  mitigate the hazard, and becomes a safety requirement.
+\end{itemize}
+
+Failure modes were found in three steps. First, the functions of each
+component were taken from its role in the System Boundaries and Components
+section, and four guide words were applied to each function: it is not
+performed; it is performed wrongly or only in part; it is performed at the
+wrong time or out of order; and it is performed when it should not be.
+Second, every component was checked against the five categories of harm
+(Physical, Psychological/well-being, Privacy/security, Data integrity and
+Availability), so that a component that works as specified but still harms
+a child is also recorded; safety is not the same as correctness
+\citep{Smith2026L08}. For the creative refinement component, which uses an
+external model, this check also covered the risks of artificial
+intelligence (AI) that arise from how \progname{} uses the model:
+compromise of privacy, over-reliance, loss of human agency, lack of
+capability or robustness, and lack of transparency \citep{SlatteryEtAl2024}.
+Third, each team member writes the rows for the parts of the SRS they own,
+so each hazard ID carries its writer's prefix (H-RAY, H-MOU, H-AHM, H-MUH or
+H-SHA), and each member's rows form a table of their own. The coverage
+check of Subsection~\ref{sec:fmea-coverage} then places every row of every
+table under one of the components, so that the rows of all members are
+checked against the same components and categories.
+
+Every row has a recommended action. Each action begins with
+\emph{Eliminate} (remove the failure mode, for example by not offering a
+function where it can cause the harm), \emph{Mitigate} (reduce its effect,
+or make it visible and recoverable) or \emph{Document/Test} (a statement to
+users or a verification activity that limits or checks what remains); one
+cell may hold several. Actions state what \progname{} must do, not how. The
+last column of each row names, by ID, the SRS requirements, goals or
+constraints that carry out its action. For the H-MUH rows, each cited
+requirement lists the hazard among its own traces, so the trace runs in
+both directions. An action that needs a
+requirement not yet in the SRS is added to the owner's section of the SRS,
+or to its Safety-Critical Requirements subsection, before its ID appears in
+the table.
+
+Rows are not ranked, and no row is left out because its failure seems
+unlikely. Many FMEAs rank rows by a risk priority number, the product of
+ratings for severity, probability of occurrence and detection, and mitigate
+only the rows above a threshold. The course advises against this, because
+accidents have followed from judging that a failure is not likely to
+happen, and there is seldom a good basis for the probabilities
+\citep{Smith2026L08}. \progname{} has no usage data from children on which
+to base them (CON-005, CON-006), so every row is mitigated.
+
+Rows from different owners can describe the same failure. When two rows
+share a failure mode and a cause, they are combined by reference: one row
+keeps the shared causes and their mitigations, and the other states that it
+is combined with that row, keeps only the causes that are its own, and
+keeps its ID, so that no requirement's trace is broken. In Table~\ref{tab:fmea-muh}, rows are
+grouped by component in the order of the components table of the System
+Boundaries and Components section, and by ID within a group. Where a row's causes
+also lie in another component, the coverage check of
+Table~\ref{tab:fmea-coverage} records it under that component too.
 
 \subsection{Supervision, Context of Use and Use of Records (H-RAY)}
 
@@ -1167,6 +1247,389 @@ G.4, BR-005, NFR-UX-011 \\
 \end{longtable}
 }
 \end{landscape}
+
+\subsection{Creative Drawing, Attempt Records and Summaries
+(H-MUH)}\label{sec:fmea-muh}
+
+Table~\ref{tab:fmea-muh} covers hazards from creative drawing and its
+refinement, attempt records and progress summaries. Each group of rows
+starts with the ID and name of its component, and the Component cell
+repeats the name exactly. The last column cites SRS requirements by ID:
+creative drawing (FR-CRT), attempt record (FR-REC) and progress summary
+(FR-PRG) requirements. Where a row has several causes, each cause is
+labelled (a), (b) and so on, and the recommended action and mitigating
+requirements for that cause carry the same label, so that every cause
+traces to the requirements that mitigate it. Table~\ref{tab:fmea-coverage}
+places the rows of all four tables under the components.
+
+\begin{landscape}
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{1.6cm}
+  >{\raggedright\arraybackslash}p{1.75cm}
+  >{\raggedright\arraybackslash}p{2.6cm}
+  >{\raggedright\arraybackslash}p{2.25cm}
+  >{\raggedright\arraybackslash}p{2.1cm}
+  >{\raggedright\arraybackslash}p{1.5cm}
+  >{\raggedright\arraybackslash}p{2.9cm}
+  >{\raggedright\arraybackslash}p{2.3cm}@{}}
+\caption{FMEA: creative drawing, attempt records and progress summaries}
+\label{tab:fmea-muh}\\
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{@{}r@{}}{\emph{Continued on the next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+%
+\multicolumn{8}{@{}l}{\textbf{C4 Creative refinement with an external
+model}} \\*
+\addlinespace
+H-MUH-001 & Creative refinement with an external model & A creative change
+cannot be reversed: undo does not step back an edit, a refinement or a
+restore; restoring the original is not available to the child or to the
+adult; or a restore does not return the original strokes exactly. &
+(a)~The original strokes are replaced by the refined drawing, or are lost
+when the drawing is saved, closed and reopened. (b)~A refinement or a
+restore is not one undoable change, or an undone change cannot be redone.
+(c)~After several refinements, it is unclear which original a restore
+returns. (d)~Only one of the child and the adult can restore, or the
+adult cannot reach the child's drawings. &
+The child loses their own drawing and is left with a version they did not
+draw, which can upset a child who wants the work to stay theirs (BR-005).
+Loss: L4 (data); L2 (well-being). &
+Data integrity; Psycho\-logical/\allowbreak{}well-being &
+(a)~Eliminate: keep the original strokes of every refinement with the
+drawing, also after it is saved and reopened. (b)~Mitigate: make every
+edit, refinement and restore one undoable change, and let an undone change
+be redone. (c)~Mitigate: on restore, return exactly the drawing as it was
+before its latest refinement that has not been undone or restored.
+(d)~Mitigate: let the child restore the original directly, and the adult
+from the adult's own access, after the adult check of SAF-RAY-001. Document/Test: on prepared adult-made
+drawings, refine, edit, close, reopen and restore, and compare the
+restored strokes point by point with the original. &
+(a)~FR-CRT-017, FR-CRT-024\newline
+(b)~FR-CRT-007, FR-CRT-008, FR-CRT-013\newline
+(c)~FR-CRT-017\newline
+(d)~FR-CRT-018, FR-CRT-019 \\
+\addlinespace
+H-MUH-002 & Creative refinement with an external model & A refinement
+changes the drawing wrongly: a point moves further than
+\texttt{REFINE\_TOLERANCE}; a stroke is added, removed or recoloured; only
+part of a result is applied; or a refinement reaches a drawing outside the
+supported set, an older version of the drawing, or strokes drawn in a
+guided lesson. &
+(a)~The external model returns invalid, malformed, partial or excessive
+changes, and the team does not train it (LC-004). (b)~A slow connection
+(CA-003) delivers a result after the child has kept drawing or has closed
+the drawing. (c)~A stroke is refined again each time the child finishes,
+so the changes add up. (d)~The drawing is empty or is not of a supported
+item (OI-03). (e)~Nothing bars refinement from guided lessons. &
+The drawing is no longer what the child drew, and the child may no longer
+see it as their own; a refined guided attempt would make its record show
+strokes the child did not draw (BR-004). Loss: L4 (data); L2
+(well-being); L5 (misleading record). &
+Data integrity; Psycho\-logical/\allowbreak{}well-being &
+(a)~Mitigate: change only the paths of existing strokes and keep every
+refined stroke within \texttt{REFINE\_TOLERANCE}; apply a result whole or
+not at all, and leave the drawing unchanged when refinement fails or its
+result breaks these rules. (b)~Mitigate: discard a result computed for an
+earlier version of the drawing. (c)~Mitigate: refine only when the child
+finishes a drawing, and refine a stroke again only if the child has edited
+it. (d)~Mitigate: leave such a drawing unchanged. (e)~Eliminate: refine no
+stroke drawn in a guided lesson. Document/Test: test with simulated
+invalid, excessive, partial and late results, with drawings outside the
+supported set, and with guided-lesson strokes. &
+(a)~FR-CRT-011, FR-CRT-012, FR-CRT-020\newline
+(b)~FR-CRT-021\newline
+(c)~FR-CRT-010, FR-CRT-014\newline
+(d)~FR-CRT-015\newline
+(e)~FR-CRT-027 \\
+\addlinespace
+H-MUH-006 & Creative refinement with an external model & A refinement
+that meets every rule is still not accepted by the child as their own
+drawing: the child erases or redraws the refined parts, stops drawing, or
+is upset after the refinement. &
+(a)~Refinement happens with no action from the child (BR-005), and the
+value children place on it has not been checked (ASM-011, FACT-013).
+(b)~A child who cannot read may not see what changed, or that the
+original can come back (FACT-007). (c)~Some children are agitated by
+unexpected changes to their work (PER-1). &
+The child loses the sense that the work is their own, which the creative
+space exists to give, and may avoid the creative space or come to see
+their unrefined drawings as not good enough. Loss: L2 (well-being). &
+Psycho\-logical/\allowbreak{}well-being &
+(a)~Mitigate: keep every refinement small, within
+\texttt{REFINE\_TOLERANCE}, and limited to drawings of supported items;
+let the child or the adult turn refinement off. Document/Test: check
+ASM-011 against the specialists' questionnaire
+answers (SRC-009.01), which do not establish children's or caregivers'
+preferences, and have supporting adults judge, on adult-made drawings,
+whether each refined drawing is still the same drawing.
+(b)~Mitigate: show whether the open drawing holds a refinement.
+(c)~Mitigate: let the child restore the original directly, without an
+adult. &
+(a)~FR-CRT-012, FR-CRT-015, FR-CRT-030\newline
+(b)~FR-CRT-016\newline
+(c)~FR-CRT-018 \\
+\midrule
+%
+\multicolumn{8}{@{}l}{\textbf{C5 Attempt storage and history}} \\*
+\addlinespace
+H-MUH-003 & Attempt storage and history & Records no longer show which
+work was the child's own and which was assisted: an attempt's stage is
+missing or wrong, a guided attempt keeps a corrected shape instead of the
+child's strokes, a creative drawing appears as an attempt, or a refined
+drawing cannot be told from the child's original. &
+(a)~The stage is not saved with the attempt, or is taken from the
+lesson's stage when the save completes rather than when the child drew.
+(b)~Strokes are smoothed or corrected before they are saved (BR-004).
+(c)~Creative drawings and attempts are stored or counted together.
+(d)~The originals or the refined state of a creative drawing are not
+saved with it. (e)~A summary merges attempts made with and without a
+guide, or shows stages before an adult-chosen starting stage (UC-004) as
+failed. &
+A summary counts attempts made with a guide as made without one, or the
+reverse, so the adult moves the child on too early or holds the child
+back; an adult takes refined work for the child's unaided drawing. Loss:
+L5 (misleading information). &
+Data integrity &
+(a)~Mitigate: keep the stage in every attempt record, and never change a
+saved record. (b)~Mitigate: keep the strokes as captured, in the order
+drawn. (c)~Eliminate: never count a creative drawing as an attempt.
+(d)~Mitigate: save the originals of every refinement with the drawing,
+show whether an open drawing is refined, and restore the exact original.
+(e)~Mitigate: keep attempts made with and without a guide apart in every
+summary, and mark stages not attempted. Document/Test: test summaries on
+prepared histories that mix both kinds of attempt, start at a later stage,
+and include refined creative drawings. &
+(a)~FR-REC-001, FR-REC-009\newline
+(b)~FR-REC-002\newline
+(c)~FR-CRT-028\newline
+(d)~FR-CRT-016, FR-CRT-017, FR-CRT-023\newline
+(e)~FR-PRG-003, FR-PRG-010 \\
+\addlinespace
+H-MUH-004 & Attempt storage and history & An attempt record, part of one,
+or a creative drawing is saved to, merged with or shown under the wrong
+attempt, lesson record or learner profile. &
+(a)~A save retried after a lost connection (CA-003) is stored twice or
+under another lesson record, or the same learner has two sessions open at
+once. (b)~An adult switches learner or ends the session while an attempt
+is in progress. (c)~A creative drawing is saved to the learner active
+when the save completes rather than when it was drawn. (d)~Combined with
+H-RAY-006: the wrong learner is active on a shared device (CA-004); that
+cause and
+its mitigations are analysed in H-RAY-006. &
+One child's history holds another child's work or duplicate attempts, so
+counts and summaries mislead the adult; a child may see another child's
+drawings. Loss: L4 (data); L5 (misleading information); L3 (privacy). &
+Data integrity; Privacy/\allowbreak{}security &
+(a)~Mitigate: save each attempt record exactly once, under the lesson
+record of the lesson in which it was made, also after a retry and with two
+sessions at once; never change a saved record. (b)~Mitigate: keep an
+attempt stopped this way as interrupted, with no outcome. (c)~Mitigate:
+save each creative drawing to the learner who was active when it was
+drawn, and show only the active learner's drawings. (d)~Mitigate: limit
+each summary to one learner, so that a mix-up is not hidden in a combined
+view. Document/Test: test retried saves, two sessions for one learner at
+once, and a learner switch during an attempt. &
+(a)~FR-REC-008, FR-REC-009\newline
+(b)~FR-REC-005\newline
+(c)~FR-CRT-023, FR-CRT-026\newline
+(d)~FR-PRG-001 \\
+\addlinespace
+H-MUH-005 & Attempt storage and history & A creative drawing, or the
+latest changes to it, is not saved, so it is missing, or older than the
+child left it, when it is reopened. &
+(a)~The child leaves the creative space, or an adult ends the session,
+before the drawing is saved. (b)~The connection is lost while the child
+draws (CA-003). (c)~The page is closed while changes are still unsaved,
+for example while the connection is lost. &
+The child's work is lost; a child who wanted to finish the drawing or show
+it to someone is disappointed or upset. Loss: L4 (data); L2
+(well-being). &
+Data integrity; Psycho\-logical/\allowbreak{}well-being &
+(a)~Mitigate: save every creative drawing, with the originals of its
+refinements, to the active learner with no action from the child, and
+reopen it exactly as last saved. (b)~Mitigate: save the changes made while
+the connection was lost once it returns. (c)~Mitigate: show whether the
+open drawing's changes are all saved. Document/Test: test closing the
+page during and after a lost connection, and record which changes each
+reopened drawing keeps. &
+(a)~FR-CRT-023, FR-CRT-024\newline
+(b)~FR-CRT-025\newline
+(c)~FR-CRT-023, FR-CRT-025, FR-CRT-029 \\
+\addlinespace
+H-MUH-007 & Attempt storage and history & An attempt record or lesson
+record does not hold what happened: a predefined difficulty is missing
+because the child later corrected it, the adult-set values shown are not
+those in use at the time, a lesson stopped early has no lesson record, or
+a saved record is later changed. &
+(a)~A later correction replaces the record of the difficulty it
+corrected. (b)~Records refer to the learner's current adult-set values,
+which an adult may change at any time (BR-008). (c)~A lesson's progress is
+saved only when the lesson ends at its limit, the one case BR-002 states,
+and not when an adult stops it early (ASM-015). (d)~Saved records are
+recomputed when the lesson
+catalogue (LC-001) or a value changes. &
+The adult misses a recurring difficulty, or judges a stage against the
+wrong pass value, and makes a poor decision about the child's support;
+earlier practice is lost from the history. Loss: L5 (misleading
+information); L4 (data). &
+Data integrity &
+(a)~Mitigate: keep every predefined difficulty observed in an attempt,
+each marked as corrected or not. (b)~Mitigate: keep with each attempt the
+adult-set values in use when it was made. (c)~Mitigate: keep a lesson
+record for every lesson start, marked as unfinished when the lesson stops
+early. (d)~Mitigate: never change a saved record except by deletion.
+Document/Test: compare saved records with prepared adult-made attempts
+that include a difficulty corrected later in the attempt (G.5). &
+(a)~FR-REC-003\newline
+(b)~FR-REC-004\newline
+(c)~FR-REC-006, FR-REC-007\newline
+(d)~FR-REC-009 \\
+\midrule
+%
+\multicolumn{8}{@{}l}{\textbf{C6 Adult access and summaries}} \\*
+\addlinespace
+H-MUH-008 & Adult access and summaries & A progress summary does not agree
+with the saved records behind it: a count, a stage or a recurring
+difficulty is wrong or missing; the latest attempts are left out without
+notice; interrupted attempts or stages not attempted are counted as
+unsuccessful; an empty history shows figures; or a figure opens attempts
+other than those it was computed from. &
+(a)~The summary is computed from out-of-date or incomplete records, for
+example while attempts are still unsaved (CA-003). (b)~Interrupted
+attempts and stages never attempted have no state of their own and fall
+into ``unsuccessful'', and an empty history shows figures.
+(c)~``Recurring'' has no fixed threshold. (d)~A figure is not linked to
+the records it was computed from. &
+The adult misjudges the child's progress: moves the child on too early,
+holds the child back, or worries about failures that did not happen.
+Loss: L5 (misleading information). &
+Data integrity &
+(a)~Mitigate: state on each summary the latest attempt it includes, and
+show each lesson's records in the order started, with how each lesson
+ended. (b)~Mitigate: show interrupted attempts and stages not attempted
+apart from unsuccessful attempts, and state when no practice is recorded.
+(c)~Mitigate: list a difficulty as recurring only when it is observed in
+at least \texttt{RECUR\_MIN} attempts at one stage of one lesson.
+(d)~Mitigate: let the adult open the attempt records behind every figure
+and see every value they hold. Document/Test: compare each summary with
+figures computed by hand for prepared histories, including empty,
+interrupted-only and later-starting-stage histories. &
+(a)~FR-PRG-002, FR-PRG-011\newline
+(b)~FR-PRG-008, FR-PRG-009, FR-PRG-010\newline
+(c)~FR-PRG-004\newline
+(d)~FR-PRG-005, FR-PRG-006 \\
+\end{longtable}
+}
+\end{landscape}
+
+\subsection{Coverage of Components and Categories}
+\label{sec:fmea-coverage}
+
+Table~\ref{tab:fmea-coverage} checks the FMEA against every pair of a
+component and a category of harm. A hazard ID in plain type is a row of
+Table~\ref{tab:fmea-ray}, Table~\ref{tab:fmea-ahm}, Table~\ref{tab:fmea-mou}
+or Table~\ref{tab:fmea-muh} placed under that component; an ID in
+parentheses is a row placed under another component whose causes lie
+partly in this one. The Component cell of an H-RAY, H-AHM or H-MOU row
+names the functions it concerns in its author's words, so this table
+assigns each of those rows to a component of the System Boundaries and
+Components section. Each ID
+appears in the column of its row's category; a row whose Category cell
+names two categories appears in both. A dash marks a pair for which no row
+records a failure mode.
+
+\begin{table}[htbp]
+\centering
+\caption{Coverage of the FMEA: components against categories of harm}
+\label{tab:fmea-coverage}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\exhyphenpenalty=10000 % keep hazard IDs on one line
+\begin{tabularx}{\textwidth}{@{}
+  >{\raggedright\arraybackslash}p{2.0cm}
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Component} & \textbf{Physical} &
+\textbf{Psycho\-logical/\allowbreak{}well-being} &
+\textbf{Privacy/\allowbreak{}security} & \textbf{Data integrity} &
+\textbf{Avail\-ability} \\
+\midrule
+C1 Touch and stylus canvas & H-MOU-001 & H-MOU-001, H-MOU-003,
+(H-MOU-002), (H-MUH-001) & --- & H-RAY-002, H-AHM-001, H-AHM-002,
+H-AHM-003, (H-MUH-001) & H-RAY-002 \\
+\addlinespace
+C2 Lesson and assessment logic & --- & H-RAY-004, H-RAY-005, H-MOU-002,
+H-MOU-004, (H-RAY-001), (H-RAY-007) & --- & H-AHM-004, H-AHM-005,
+(H-AHM-001), (H-AHM-002), (H-AHM-003), (H-AHM-007) & --- \\
+\addlinespace
+C3 Guidance-\allowbreak{}suggestion logic & --- & H-AHM-006 & (H-RAY-006) &
+--- & --- \\
+\addlinespace
+C4 Creative refinement with an external model & --- & H-MOU-006,
+H-MUH-001, H-MUH-002, H-MUH-006 & --- & H-MUH-001, H-MUH-002, (H-MUH-003)
+& --- \\
+\addlinespace
+C5 Attempt storage and history & --- & H-MUH-005, (H-RAY-003),
+(H-RAY-005), (H-MOU-005) & H-MUH-004, (H-RAY-006) & H-MUH-003, H-MUH-004,
+H-MUH-005, H-MUH-007, (H-RAY-002), (H-MOU-005) & (H-RAY-002) \\
+\addlinespace
+C6 Adult access and summaries & --- & H-RAY-001, H-RAY-003, H-MOU-005 &
+(H-MUH-004) & H-MOU-005, H-MUH-008, (H-MUH-003), (H-MUH-004) & --- \\
+\addlinespace
+C7 Hosting and authentication & --- & --- & --- & --- & --- \\
+\addlinespace
+C8 Learner profiles and adult-set values & --- & H-RAY-007 & H-RAY-006,
+(H-MUH-004) & H-AHM-007, (H-MUH-004) & --- \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Several pairs were examined and no credible failure mode was found in
+them:
+\begin{itemize}
+  \item \emph{Physical:} \progname{} controls no equipment, so it has two
+  paths to bodily harm. Content that flashes on a child-facing screen can
+  trigger a seizure; the canvas (C1) presents every child-facing screen and
+  its feedback, so \mbox{H-MOU-001} is placed there. Practice that does not end or
+  that restarts at once lies in the lesson and assessment logic (C2), where
+  H-RAY-004 and H-RAY-005 end each lesson at its limit and show restarts to
+  the adult. The guidance-suggestion logic (C3), creative refinement (C4),
+  storage (C5), summaries (C6), hosting and authentication (C7) and learner
+  profiles (C8) neither present child-facing content nor lengthen practice.
+  \item \emph{Psychological/well-being:} the child never signs in, so a
+  failure of hosting or authentication (C7) reaches only the adult, as
+  lost availability.
+  \item \emph{Privacy/security:} the canvas (C1) shows only the open
+  attempt or drawing, and the lesson and assessment logic (C2) holds only
+  the current attempt; showing them for the wrong learner is analysed
+  under learner profiles (H-RAY-006) and storage (H-MUH-004).
+  \item \emph{Availability:} when summaries (C6) or learner profiles (C8)
+  cannot be used, the cause is the device (H-RAY-002) or hosting and
+  authentication (C7), so the failure is analysed there; H-RAY-002 is also
+  listed under the canvas (C1) and storage (C5). A go-back suggestion that
+  is not made (C3) changes nothing, and practice continues (G.3).
+\end{itemize}
 
 \section{Safety and Security Requirements}\label{sec:safety-reqs}
 

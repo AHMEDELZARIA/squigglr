@@ -45,7 +45,7 @@
 %   \reqfit{A repeatable, observable acceptance test.}
 %   \reqpriority{Must}
 %   \reqphase{PH-1}
-%   \reqsources{G.1; \srcref{005}}
+%   \reqsources{\goalref{1}; \srcref{005}}
 %   \reqtraces{\ucref{003}; H-AHM-001}
 % \end{srsrequirement}
 % Requirement identifiers and labels must remain stable across revisions.
@@ -118,6 +118,7 @@ requirement structure (\#131).\\
 16 October 2026 & Ahmed Elzaria & Added the requirement-to-phase allocation and deferred-feature register in Sections 21 and 25 (\#133).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
+16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-005 for security, data integrity and AI-assisted refinement (\#82)\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
@@ -128,6 +129,8 @@ requirement structure (\#131).\\
 16 October 2026 & Muhammad Huzaifah & Wrote Sections 20, 22, 23, 24 and 26: New Problems, Migration to the New Product, Costs, User Documentation and Training, and Ideas for Solution (\#125).\\
 17 October 2026 & Moustafa Moustafa & Added my reflection responses to the appendix and my generative AI use disclosure (\#117).\\
 17 October 2026 & Muhammad Huzaifah & Wrote Section 7, Business Data Model and Data Dictionary, with the data model figure, the data constraints and the data dictionary (\#121).\\
+17 October 2026 & Shamil Canbolat & Added sections 13-17, the remainder of section 12, and my AI use disclosure (\#82). \\
+18 October 2026 & Shamil Canbolat & Added section 28 and my reflection questions and performed final QA review (\#82). \\
 \end{longtable}
 
 ~\\
@@ -207,7 +210,7 @@ and are also linked to an open issue in Section~\ref{sec:open-issues}
 where such an issue exists. Diagrams, if used, must include a legend
 identifying their symbols and arrow meanings.
 Section~\ref{sec:fr-formal} defines the state-machine notation used to
-specify guided-lesson behaviour.
+specify guided lesson behaviour.
 
 \paragraph{Document roadmap.}
 \hyperref[sec:purpose]{Sections~1--5} establish the problem,
@@ -262,7 +265,7 @@ drawing's final result is kept without the process behind it: the guidance
 used, the difficulties met and the corrections made. Squigglr's value is
 in keeping that process visible to supporting adults while children
 practise with gradually less support. The comparison with existing products
-appears in the Off-the-Shelf Solutions section of this document.
+appears in the off-the-shelf Solutions section of this document.
 
 \subsection{Goals of the Project}
 
@@ -286,9 +289,9 @@ follows the activity the team presented to the domain specialists
 
 G.3 was revised after the PSG was submitted. The submitted PSG said
 Squigglr adjusts guidance and difficulty automatically. Following the
-domain-specialist interview (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18})
+domain specialist interview (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18})
 and the Oct.~7 TA discussion (SRC-006), the team assigned \emph{lesson
-selection, starting-stage selection and discretionary stage changes} to a
+selection, starting stage selection and discretionary stage changes} to a
 supporting adult (G.3). A passing drawing attempt still advances
 automatically to the next stage \emph{within the lesson the adult selected}
 (G.2, BR-002); completing a lesson never automatically selects another
@@ -385,7 +388,7 @@ of a shape or object in the agreed supported set by adjusting the child's
 own strokes; the result stays editable, the original can be restored, and
 refinement can be turned off (SRC-001; \intref{Moustafa}{6:03};
 \hyperref[src:009.01]{SRC-009.01}).
-\emph{Advantage:} creative drawing gives room for self-expression, and
+\emph{Advantage:} creative drawing gives room for self expression, and
 editability keeps the child in control of the work (SRC-001). Serves
 children.
 \emph{Measurement:} using prepared drawings of each item in the supported
@@ -443,7 +446,7 @@ is not listed as a stakeholder.
 
 Each stakeholder is classed by how directly they use Squigglr.
 \emph{Primary} stakeholders use it directly: children, parents, guardians
-and caregivers, and educators and learning-support staff.
+and caregivers, and educators and learning support staff.
 \emph{Secondary} stakeholders shape it or are affected by it without using
 it: the client, school administrators, and the domain specialists.
 \emph{Tertiary} stakeholders have an indirect interest: occupational
@@ -554,7 +557,7 @@ labels, or
 comparisons with other children (SRC-005, \intref{Moustafa}{6:03}).
 
 \paragraph{Experience levels.} Table~\ref{tab:userExperience} rates each
-user group's subject-matter and technological experience on a scale of novice, journeyman and master.
+user group's subject matter and technological experience on a scale of novice, journeyman and master.
 
 \begin{table}[H]
 \centering
@@ -832,7 +835,7 @@ solution.
 \begin{description}
 \item[CON-001] Squigglr shall be a website used in a web browser.\\
 \emph{Rationale:} Installing apps on school devices is difficult, and for
-Canadian schools a website is much easier to adopt than an app-store app.\\
+Canadian schools a website is much easier to adopt than an App Store app.\\
 \emph{Imposed by:} supervisor and TA.\\
 \emph{Fit criterion:} Squigglr opens and runs from a web address in a
 browser.\\
@@ -844,7 +847,7 @@ so adults may not be able to install software. Opening a web address is
 enough to start.\\
 \emph{Imposed by:} supervisor and TA.\\
 \emph{Fit criterion:} a first-time user starts an activity without
-installing any app, plug-in or browser extension.\\
+installing any app, plugin or browser extension.\\
 \emph{Source:} SRC-003, SRC-004.
 \item[CON-003] Squigglr shall work on touchscreen devices with stylus
 input.\\
@@ -887,12 +890,12 @@ run alongside; it is a new product.
 \subsection{Partner or Collaborative Applications}
 Not applicable. No stakeholder requires Squigglr to work with a specific
 partner application. Candidate integrations, if any, belong in the
-Off-the-Shelf Solutions section.
+off-the-shelf Solutions section.
 
-\subsection{Off-the-Shelf Software}
+\subsection{Off-the-shelf Software}
 Not applicable. No stakeholder mandates any specific off-the-shelf
 software. Candidate libraries and services are discussed in the
-Off-the-Shelf Solutions section, not here.
+off-the-shelf Solutions section, not here.
 
 \subsection{Anticipated Workplace Environment}
 Squigglr will be used at home, in classrooms and in other places where
@@ -955,7 +958,7 @@ The supervisor and the university set rules that protect children.
 children for requirements or evaluation.\\
 \emph{Rationale:} The users are children, and the supervisor directed that
 no information about them be collected. Requirements come from adults and
-personas, and every check uses prepared or adult-made attempts. This
+personas, and every check uses prepared or attempts made by adults. This
 constraint covers the project's work; how Squigglr itself protects the
 practice records it keeps is a privacy requirement, not this constraint.\\
 \emph{Imposed by:} supervisor.\\
@@ -996,7 +999,7 @@ identifiers link to Appendix~\ref{app:sources}.
 \bottomrule
 \endlastfoot
 \textbf{Visual-motor integration} & Coordination of visual information
-with movement, relevant to drawing and writing-readiness activities.
+with movement, relevant to drawing and writing readiness activities.
 & \hyperref[sec:purpose]{Section 1}\\
 \textbf{Guided lesson} & A structured activity in the agreed lesson
 catalogue in which drawing guidance is provided in successive stages.
@@ -1173,15 +1176,15 @@ complete conformance (\srcref{008}).
 \subsection{Symbolic Constants}
 \label{sec:constants}
 Table~\ref{tab:goalconst} specifies the parameters used in guided lessons,
-creative refinement and progress-summary verification. The six
+creative refinement and progress summary verification. The six
 adult-configurable parameters have an allowed range and a default value
 for each learner profile (BR-008, \srcref{008}). Their defaults are
 the midpoints of their respective ranges. Each configuration shall satisfy
 \texttt{ATTEMPT\_LIMIT} $>$ \texttt{DIFFICULTY\_STREAK} and
 \texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}.
-Drawing-stage results are expressed on a normalized scale from 0 to 100;
+Drawing stage results are expressed on a normalized scale from 0 to 100;
 higher results indicate closer agreement with the stage's fixed criteria.
-The result is not a measure of the child's ability (BR-006). Attempt-count
+The result is not a measure of the child's ability (BR-006). Attempt count
 settings shall be integers, and values violating the allowed ranges or
 the two cross-setting inequalities shall be rejected (BR-008).
 
@@ -1196,7 +1199,7 @@ The supervisor's 14 October guidance (\srcref{008}) requires
 adult-configurable ranges, midpoint defaults and example drawings
 illustrating both ends of the \texttt{STAGE\_PASS} range. The chosen
 values and the drawing-to-score interpretation are checked using
-prepared or adult-made examples at the lower and upper boundaries of
+prepared or examples made by adults at the lower and upper boundaries of
 each configurable range (OI-05; CON-005--006).
 
 {\small\setlength{\tabcolsep}{5pt}
@@ -1212,7 +1215,7 @@ each configurable range (OI-05; CON-005--006).
 \endhead
 \bottomrule
 \endlastfoot
-\texttt{STAGE\_PASS} & Minimum stage-result threshold for a
+\texttt{STAGE\_PASS} & Minimum stage result threshold for a
 complete attempt to pass a drawing stage. \emph{Unit:} points out of 100.
 \emph{Range:} 70--90. \emph{Default:} 80.
 \emph{Trace:} G.2, BR-002, BR-008, OI-05.\\
@@ -1223,7 +1226,7 @@ before Squigglr may suggest returning to an earlier stage.
 \emph{Default:} 4. \emph{Trace:} G.3, BR-003, OI-05.\\
 \addlinespace
 \texttt{ATTEMPT\_LIMIT} & Number of unsuccessful attempts
-that triggers the lesson-end or extension decision.
+that triggers the lesson ending or extension decision.
 \emph{Unit:} failed attempts. \emph{Range:} 6--10.
 \emph{Default:} 8; must exceed \texttt{DIFFICULTY\_STREAK}.
 \emph{Trace:} G.3, BR-002, OI-05.\\
@@ -1234,7 +1237,7 @@ comparison window used by the improvement rule.
 \emph{Default:} 2. \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{IMPROVE\_MARGIN} & Minimum increase in average
-stage-result points across consecutive comparison windows that qualifies
+stage result points across consecutive comparison windows that qualifies
 as improvement. \emph{Unit:} points out of 100.
 \emph{Value:} 5 points (fixed by the team).
 \emph{Trace:} G.3, BR-002, OI-05.\\
@@ -1256,12 +1259,12 @@ refined strokes and the child's original strokes in the creative space.
 TBD. \emph{Trace:} G.4, BR-005.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers
-for progress-summary understandability checks.
+for progress summary understandability checks.
 \emph{Unit:} people (count). \emph{Value:} team-defined; TBD.
 \emph{Trace:} G.6.\\
 \addlinespace
 \texttt{REVIEW\_PASS\_RATE} & Minimum proportion of
-progress-summary review tasks completed successfully by adults.
+progress summary review tasks completed successfully by adults.
 \emph{Unit:} proportion. \emph{Value:} team-defined; TBD.
 \emph{Trace:} G.6.\\
 \addlinespace
@@ -1274,7 +1277,7 @@ recurring. \emph{Unit:} attempts (integer $\geq 2$).
 \texttt{AGE\_RANGE} & Intended lower and upper ages of
 learners served by Squigglr.
 \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
-\emph{Trace:} Section~\ref{sec:stakeholders}, G.1.\\
+\emph{Trace:} Section~\ref{sec:stakeholders}, \goalref{1}.\\
 \addlinespace
 \texttt{CHILD\_CONTROLS\_MAX} & Maximum number of controls a
 child can use on one child-facing screen.
@@ -1308,13 +1311,57 @@ child when spoken.
 \emph{Unit:} words. \emph{Value:} team-defined; TBD.
 \emph{Trace:} NFR-UX-015.\\
 \addlinespace
-\texttt{TARGET\_SIZE\_MIN} & Minimum touch-target size of a control on
+\texttt{TARGET\_SIZE\_MIN} & Minimum touch target size of a control on
 a child-facing screen.
 \emph{Unit:} CSS pixels. \emph{Value:} 44 by 44, from WCAG 2.2 success
 criterion 2.5.5. \emph{Trace:} NFR-UX-018.\\
 \addlinespace
 \texttt{INTERFACE\_LANGUAGE} & Language of all text in adult views.
 \emph{Value:} TBD. \emph{Trace:} ASM-007, NFR-UX-012.\\
+\addlinespace
+\texttt{IDLE\_TIMEOUT} & Duration of user inactivity after which
+Squigglr ends the session and logs out the user.
+\emph{Unit:} minutes. \emph{Value:} team-defined; TBD.
+\emph{Trace:} SAF-SHA-001.\\
+\addlinespace
+\texttt{FAILED\_SAVES} & Number of consecutive failed save attempts
+used in the fit criterion sample for save failure notification tests.
+\emph{Unit:} save attempts (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} SAF-SHA-003.\\
+\addlinespace
+\texttt{FEEDBACK\_LATENCY\_MAX} & Maximum allowed time between
+the completion of a stylus stroke and visual acknowledgement of that 
+stroke during a lesson.
+\emph{Unit:} milliseconds. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-PERF-001.\\
+\addlinespace
+\texttt{REFINE\_LATENCY\_MAX} & Maximum allowed time between system's
+AI refinement request and visual acknowledgement of that request
+strokes (or falling back to unrefined strokes).
+\emph{Unit:} seconds. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-PERF-002.\\
+\addlinespace
+\texttt{SUMMARY\_LOAD\_MAX} & Maximum allowed time for an
+adult's progress summary page to become fully visible after request.
+\emph{Unit:} seconds. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-PERF-003.\\
+\addlinespace
+\texttt{LOCATE\_TIME\_MAX} & Maximum time a team member unfamiliar with
+the codebase should need to locate the module responsible for a given
+stage behaviour.
+\emph{Unit:} minutes. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-MAINT-002.\\
+\addlinespace
+\texttt{CONCURRENT\_CAPACITY} & Maximum number of simultaneous active
+users the system shall support without degrading response times below
+the thresholds in Section~\ref{sec:speed}.
+\emph{Unit:} concurrent sessions (count). \emph{Value:} TBD; to be
+set in the VnV Plan.
+\emph{Trace:} NFR-PERF-008.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -1357,7 +1404,7 @@ not per diagnosis (G.3).
 child is ready for the next level requires assessment, which is too
 complex for the project's time frame, and that an adult who knows the
 child should decide (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}).\\
-\emph{Relevance:} basis for adult-controlled lesson selection and
+\emph{Relevance:} basis for adult controlled lesson selection and
 nonroutine stage changes (CON-007, G.3, BR-003); the team retains fixed
 pass-based forward progression within the selected lesson (G.2).
 \item[FACT-005] The specialists stated that how a child holds a tool
@@ -1425,7 +1472,7 @@ an identifier of the form BR-\#\#\#, a rationale and its sources.
 \item[BR-001] Only the adult who holds an account, a parent or an
 educator, may create, view and manage the learner profiles under it and
 their records. One account can hold several learner profiles. A learner
-profile holds only the child's first name and a username that does not
+profile holds only the child's username that does not
 identify the child; no other information about the child is collected.\\
 \emph{Rationale:} practice records describe a child's difficulties and
 are personal information. Keeping each profile to a first name and a
@@ -1703,7 +1750,7 @@ therapy programmes run by occupational therapists (SRC-005,
 \intref{P1}{32:42}). Structured programmes exist that grade the same
 activity into easier and harder levels (SRC-001), and many drawing
 applications are available for children (SRC-005, \intref{P2}{35:36}). The
-comparison with existing products is in the Off-the-Shelf Solutions
+comparison with existing products is in the off-the-shelf Solutions
 section.
 
 The adults who support a child follow progress mainly through what the
@@ -2736,7 +2783,7 @@ Table~\ref{tab:puc}. Each use case lists its actor, preconditions,
 trigger, main flow, alternative flows, failure flows and postconditions,
 and the requirements and sources it depends on. Alternative flows are
 other normal paths; failure flows handle the invalid or missing inputs in
-Table~\ref{tab:product-inputs}. Both are numbered by the main-flow step
+Table~\ref{tab:product-inputs}. Both are numbered by the main flow step
 where they branch, so ``3a'' branches at step 3. The lesson behaviour in
 \ucref{003} and \ucref{005} is specified formally in
 Section~\ref{sec:fr-formal}. An identifier marked TBD names a
@@ -2997,7 +3044,7 @@ the original or turns refinement off.}
 \end{description}
 \reqfield{Postconditions}{The drawing is refined or unchanged, stays
 editable, and its original can be restored. Refinement never reaches a
-guided-lesson record (BR-004, BR-005).}
+guided lesson record (BR-004, BR-005).}
 \reqfield{Requirements}{FR-CRT TBD (\#83); BR-004, BR-005.}
 \reqfield{Sources}{\goalref{4}; \mbox{SRC-009.01}.}
 
@@ -3115,7 +3162,7 @@ NFR-UX-010, NFR-UX-011; NFR-SEC TBD (\#82); BR-001, BR-008.}
 \section{Functional Requirements}
 \label{sec:functional}
 Functional requirements are grouped by externally observable product
-behaviour. Each requirement uses the identifier, fit-criterion and
+behaviour. Each requirement uses the identifier, fit criterion and
 traceability conventions defined in the Introduction.
 
 \subsection{Learning Activity Requirements}
@@ -3125,11 +3172,11 @@ This subsection specifies the externally observable behaviour of guided
 lessons. It builds on G.1--G.3, CON-003, CON-007 and BR-002--BR-009,
 with source statements in Appendix~\ref{app:sources}.
 The core catalogue covers lines, shapes and simple drawings; letter tracing
-is deferred (ASM-010, LC-001). Delivery-phase identifiers follow the
+is deferred (ASM-010, LC-001). Delivery phase identifiers follow the
 conventions in the Introduction and the phase plan in
 Section~\ref{sec:tasks}.
 
-\paragraph{Within-lesson progression and adult control.}
+\paragraph{Progression within lessons and adult control.}
 A supporting adult selects each lesson and its starting stage and authorizes
 skips or backward changes (G.3, CON-007). Within the selected lesson, a
 passing drawing attempt automatically advances to the next guidance stage
@@ -3139,24 +3186,24 @@ Squigglr does not automatically select another lesson.
 \paragraph{Lesson content and guidance.}
 \begin{srsrequirement}{FR-LRN-001}{Approved lesson catalogue}
   \reqshall{Squigglr shall offer guided lessons for the approved catalogue of lines,
-basic shapes and simple drawings, excluding letter-tracing activities from
+basic shapes and simple drawings, excluding letter tracing activities from
 the core catalogue.}
   \reqrationale{These are the agreed categories for structured practice; letters are deferred
 (G.1, ASM-010). The lesson catalogue is maintained separately from the stage rules
 (LC-001).}
-  \reqfit{Inspect the adult-visible lesson catalogue and verify that every approved
+  \reqfit{Inspect the lesson catalogue and verify that every approved
 catalogue entry is selectable, classified as a line, shape or simple drawing,
 and has the stages in FR-LRN-002; verify that no letter activity is required
 to complete the core catalogue.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.1; \srcref{001}; \hyperref[src:009.04]{SRC-009.04}}
+  \reqsources{\goalref{1}; \srcref{001}; \hyperref[src:009.04]{SRC-009.04}}
   \reqtraces{ASM-010; LC-001; \ucref{002}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
   \reqshall{Squigglr shall make the following ordered guidance stages available for each
-guided lesson: demonstration, full-outline tracing, endpoint-only guidance
+guided lesson: demonstration, full outline tracing, endpoint-only guidance
 and independent drawing.}
   \reqrationale{The activity described to specialists removes guidance in this order
 (G.1--G.2).}
@@ -3165,7 +3212,7 @@ confirm that the stage chosen by an adult is the stage presented when
 practice begins.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.1--G.2; \srcref{001}; \srcref{005}}
+  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
   \reqtraces{BR-003; \ucref{003}; \ucref{004}}
 \end{srsrequirement}
 
@@ -3176,10 +3223,10 @@ demonstration stage without treating that demonstration as a learner attempt.}
 inflate the learner's records.}
   \reqfit{Start each approved lesson in its demonstration stage; verify that the
 intended drawing can be viewed and that watching it adds no learner attempt
-or passed-stage record.}
+or passed stage record.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.1; \srcref{001}; \srcref{005}}
+  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}}
   \reqtraces{BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
@@ -3192,7 +3239,7 @@ progression.}
 reference shape is visible, and draw an attempt using stylus input.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.1; \srcref{001}; \srcref{005}}
+  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}}
   \reqtraces{CON-003; \ucref{003}}
 \end{srsrequirement}
 
@@ -3207,7 +3254,7 @@ endpoints are shown, the full outline is absent, and stylus drawing is
 accepted.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.1--G.2; \srcref{001}; \srcref{005}}
+  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
   \reqtraces{CON-003; \ucref{003}}
 \end{srsrequirement}
 
@@ -3221,7 +3268,7 @@ nor endpoint guides appear and that an attempt can still be made using the
 stylus.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2; \srcref{001}}
+  \reqsources{\goalref{2}; \srcref{001}}
   \reqtraces{BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
@@ -3236,7 +3283,7 @@ structure (ASM-004, BR-004).}
 captured point order, number of strokes and boundaries match the samples.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2, G.5; \srcref{001}; \srcref{004}}
+  \reqsources{\goalref{2}, \goalref{5}; \srcref{001}; \srcref{004}}
   \reqtraces{CON-003; ASM-004; BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
@@ -3250,8 +3297,8 @@ draw the second; confirm that one attempt is evaluated against the complete
 figure, not two independently completed attempts.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.1--G.2; ASM-004; \srcref{001}}
-  \reqtraces{FR-LRN-007; \ucref{003}; \ucref{008}}
+  \reqsources{\goalref{1}--\goalref{2}; ASM-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-007}; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-009}{Interrupted attempt handling}
@@ -3266,15 +3313,15 @@ unfinished attempts are distinguishable from finalized attempts and that
 stage attempt counters are unchanged.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.2, G.5; ASM-004; \srcref{001}}
-  \reqtraces{FR-LRN-008; BR-004; \ucref{003}; \ucref{008}}
+  \reqsources{\goalref{2}, \goalref{5}; ASM-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-008}; BR-004; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-010}{Invalid and ambiguous input}
   \reqshall{Squigglr shall withhold passing status from an attempt whose required stylus
 input is missing, invalid or too ambiguous to evaluate against the stage
 criteria, and shall not count such input toward the stage's evaluable-attempt
-or unsuccessful-attempt limits.}
+or unsuccessful attempt limits.}
   \reqrationale{Unreliable acquisition must not silently turn a malformed drawing into a
 successful result (ASM-004).}
   \reqfit{Submit empty input, input with missing coordinate data and data for which the
@@ -3283,8 +3330,8 @@ that a non-success status is available, and that the stage's attempt
 counters are unchanged.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2; ASM-004; BR-004; \srcref{001}}
-  \reqtraces{FR-LRN-007; \ucref{003}; H-AHM-001; H-AHM-003}
+  \reqsources{\goalref{2}; ASM-004; BR-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-007}; \ucref{003}; H-AHM-001; H-AHM-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-011}{Completeness classification}
@@ -3297,8 +3344,8 @@ present and with a deliberately missing side, segment or required endpoint;
 verify complete and incomplete classifications match the known examples.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2; BR-002; \srcref{001}}
-  \reqtraces{FR-LRN-013; \ucref{003}; \ucref{008}}
+  \reqsources{\goalref{2}; BR-002; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-013}; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-012}{Guidance classification}
@@ -3312,8 +3359,8 @@ endpoint attempts are marked assisted and no-guide attempts are marked
 independent.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.2, G.6; \srcref{001}}
-  \reqtraces{FR-LRN-004--006; \ucref{008}; \ucref{009}}
+  \reqsources{\goalref{2}, \goalref{6}; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-004}--\reqref{FR-LRN-006}; \ucref{008}; \ucref{009}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-013}{Pass classification}
@@ -3327,8 +3374,8 @@ above the adult-selected threshold, verify that only complete drawings
 meeting the threshold pass.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2; BR-002; BR-006; \srcref{008}}
-  \reqtraces{FR-LRN-010--011; \ucref{003}; H-AHM-004}
+  \reqsources{\goalref{2}; BR-002; BR-006; \srcref{008}}
+  \reqtraces{\reqref{FR-LRN-010}--\reqref{FR-LRN-011}; \ucref{003}; H-AHM-004}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-014}{Predefined difficulty feedback}
@@ -3342,8 +3389,8 @@ verify that the corresponding approved observation appears; verify that no
 free-generated advice or diagnosis is shown.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.1--G.2; BR-007; \srcref{001}; \hyperref[src:009.02]{SRC-009.02}}
-  \reqtraces{FR-LRN-011; \ucref{003}; H-AHM-005}
+  \reqsources{\goalref{1}--\goalref{2}; BR-007; \srcref{001}; \hyperref[src:009.02]{SRC-009.02}}
+  \reqtraces{\reqref{FR-LRN-011}; \ucref{003}; H-AHM-005}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-015}{Retry after non-passing attempts}
@@ -3357,12 +3404,12 @@ another attempt can be started at the same drawing stage; repeat at the limit
 and verify that the lesson-end rule is followed instead.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.1--G.3; BR-002; \srcref{001}}
-  \reqtraces{FR-LRN-021; \ucref{003}}
+  \reqsources{\goalref{1}--\goalref{3}; BR-002; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-021}; \ucref{003}}
 \end{srsrequirement}
 
 \paragraph{Adult control, suggestions and stopping rules.}
-\begin{srsrequirement}{FR-LRN-016}{Adult lesson and starting-stage selection}
+\begin{srsrequirement}{FR-LRN-016}{Adult lesson and starting stage selection}
   \reqshall{Squigglr shall use the lesson and starting guidance stage selected by the
 supporting adult for the learner's session, including an adult-selected later
 starting stage.}
@@ -3373,7 +3420,7 @@ verify that the selected stage is used; check that a child-only practice
 action does not change the configured lesson or starting stage.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.3; CON-007; \hyperref[src:005.01]{SRC-005.01}; \srcref{006}}
+  \reqsources{\goalref{3}; CON-007; \hyperref[src:005.01]{SRC-005.01}; \srcref{006}}
   \reqtraces{BR-003; \ucref{002}; \ucref{004}}
 \end{srsrequirement}
 
@@ -3391,7 +3438,7 @@ selected values are used, defaults are applied correctly, and invalid
 combinations are rejected.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.2--G.3; BR-008; \srcref{008}}
+  \reqsources{\goalref{2}--\goalref{3}; BR-008; \srcref{008}}
   \reqtraces{OI-05; \ucref{001}; \ucref{010}; H-AHM-007}
 \end{srsrequirement}
 
@@ -3410,8 +3457,8 @@ independently that a passing attempt advances within the selected lesson
 without an additional adult action (FR-LRN-023).}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.2--G.3; CON-007; BR-002--003; \hyperref[src:005.01]{SRC-005.01}}
-  \reqtraces{OI-04 (TA confirmation); FR-LRN-023; \ucref{004}; \ucref{005};
+  \reqsources{\goalref{2}--\goalref{3}; CON-007; BR-002--003; \hyperref[src:005.01]{SRC-005.01}}
+  \reqtraces{OI-04 (TA confirmation); \reqref{FR-LRN-023}; \ucref{004}; \ucref{005};
 H-AHM-006}
 \end{srsrequirement}
 
@@ -3432,8 +3479,8 @@ suggestion, that qualifying improvement suppresses it, and that a declined
 suggestion reappears only after another full failure streak.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.3; BR-003; \hyperref[src:005.01]{SRC-005.01}; \srcref{008}}
-  \reqtraces{FR-LRN-018; FR-LRN-020; \ucref{005}}
+  \reqsources{\goalref{3}; BR-003; \hyperref[src:005.01]{SRC-005.01}; \srcref{008}}
+  \reqtraces{\reqref{FR-LRN-018}; \reqref{FR-LRN-020}; \ucref{005}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-020}{Improvement-based extension}
@@ -3456,8 +3503,8 @@ number of extension attempts without regranting, and no attempt beyond
 the maximum.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.3; BR-002--003; \srcref{001}; \srcref{008}}
-  \reqtraces{FR-LRN-019; FR-LRN-021; OI-05; \ucref{003}}
+  \reqsources{\goalref{3}; BR-002--003; \srcref{001}; \srcref{008}}
+  \reqtraces{\reqref{FR-LRN-019}; \reqref{FR-LRN-021}; OI-05; \ucref{003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-021}{Stage attempt limit and lesson end}
@@ -3474,8 +3521,8 @@ the allotted attempts, does not renew, and is capped by the maximum.
 Verify that the highest stage reached is included in the saved lesson outcome.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.3, G.5; BR-002; \srcref{001}}
-  \reqtraces{FR-LRN-015; FR-LRN-020; \ucref{003}; \ucref{008}}
+  \reqsources{\goalref{3}, \goalref{5}; BR-002; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-015}; \reqref{FR-LRN-020}; \ucref{003}; \ucref{008}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-022}{No learner evaluation or diagnosis}
@@ -3483,13 +3530,13 @@ Verify that the highest stage reached is included in the saved lesson outcome.}
 of the drawing attempt rather than as assessments, diagnoses or comparisons
 of children.}
   \reqrationale{The product is a practice tool, not an assessment instrument (BR-006).}
-  \reqfit{Inspect all guided-lesson feedback and completion outcomes, using prepared
+  \reqfit{Inspect all guided lesson feedback and completion outcomes, using prepared
 attempts; verify that each refers to the task, stage or observed strokes and
 that none assigns a diagnosis, ability label or inter-child ranking.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2; BR-006; \srcref{001}; \srcref{008}}
-  \reqtraces{FR-LRN-013--014; \ucref{003}; \ucref{009}}
+  \reqsources{\goalref{2}; BR-006; \srcref{001}; \srcref{008}}
+  \reqtraces{\reqref{FR-LRN-013}--\reqref{FR-LRN-014}; \ucref{003}; \ucref{009}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-023}{Automatic within-lesson advancement}
@@ -3508,8 +3555,8 @@ a non-passing attempt stays at its current stage, a different lesson is not
 started, and no stage is skipped automatically.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2--G.3; BR-002--003; CON-007; \srcref{001}}
-  \reqtraces{FR-LRN-013; FR-LRN-016; FR-LRN-018; \ucref{003}; \ucref{004};
+  \reqsources{\goalref{2}--\goalref{3}; BR-002--003; CON-007; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-013}; \reqref{FR-LRN-016}; \reqref{FR-LRN-018}; \ucref{003}; \ucref{004};
 OI-04 (TA confirmation)}
 \end{srsrequirement}
 
@@ -3591,7 +3638,7 @@ $q\in Q$ is the session status, $n_f\in\mathbb{N}_0$ counts non-passing
 evaluable attempts at this stage, $n_a\in\mathbb{N}_0$ counts finalized,
 evaluable attempts at this stage, $k\in\mathbb{N}_0$ is the consecutive
 non-passing streak, and $H=(r_1,\ldots,r_m)$ is the ordered list of
-stage-result values. The flag $s\in\{0,1\}$ indicates a pending
+stage result values. The flag $s\in\{0,1\}$ indicates a pending
 suggestion; $z\in\{0,1\}$ indicates whether the single stage extension
 has been granted; $x\in\mathbb{N}_0$ counts evaluable attempts consumed
 \emph{after} that grant, with $0\le x\le e_p$ and $x=0$ when $z=0$.
@@ -3617,7 +3664,7 @@ interpret the strokes is available, and let
 $\operatorname{Complete}_{\ell,l}(X)$ mean that every required part of
 the drawing is present according to the lesson's fixed stage criteria.
 These functions use the fixed completeness criteria of the selected lesson
-and stage. Stage-result values use the normalized 0--100 scale specified in
+and stage. Stage result values use the normalized 0--100 scale specified in
 Table~\ref{tab:goalconst}; the actual scoring function is defined for
 each lesson's drawing criteria rather than as an assessment of a learner.
 Define
@@ -3716,7 +3763,7 @@ successor within its lesson. Passing the last stage ends \emph{that} lesson.
 
 {\small
 \begin{longtable}{@{}p{0.22\textwidth}p{0.29\textwidth}p{0.36\textwidth}@{}}
-\caption{Guided-lesson state transitions and authorization}\label{tab:lrn-transitions}\\
+\caption{guided lesson state transitions and authorization}\label{tab:lrn-transitions}\\
 \toprule
 \textbf{Event} & \textbf{Guard} & \textbf{Required state change or output}\\
 \midrule
@@ -3876,7 +3923,7 @@ order drawn; each follows the points the browser reported for it
 (\reqref{FR-CRT-002}).}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; CON-003; \srcref{001}}
+  \reqsources{\goalref{4}; CON-003; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-002}}
 \end{srsrequirement}
 
@@ -3893,7 +3940,7 @@ selected strokes are visibly marked, and the next editing action changes
 exactly the selected strokes.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; \srcref{001}}
+  \reqsources{\goalref{4}; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-003} to \reqref{FR-CRT-006}}
 \end{srsrequirement}
 
@@ -3907,7 +3954,7 @@ prepared drawing, every point of the part has moved by the same offset,
 in the direction of the movement, and no other stroke has changed.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; \srcref{001}}
+  \reqsources{\goalref{4}; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
 \end{srsrequirement}
 
@@ -3923,7 +3970,7 @@ multiplied by the same factor, greater than one when enlarged and less
 than one when shrunk, and no other stroke has changed.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; \srcref{001}}
+  \reqsources{\goalref{4}; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
 \end{srsrequirement}
 
@@ -3937,7 +3984,7 @@ prepared drawing, every selected stroke has the chosen colour, its points
 are unchanged, and no other stroke has changed.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; \srcref{001}}
+  \reqsources{\goalref{4}; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
 \end{srsrequirement}
 
@@ -3951,7 +3998,7 @@ no other stroke has changed; undoing the erase
 (\reqref{FR-CRT-007}) brings them back exactly.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; \srcref{001}}
+  \reqsources{\goalref{4}; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-007}}
 \end{srsrequirement}
 
@@ -3974,7 +4021,7 @@ was before the corresponding change, and after the last undo it is
 exactly as it was when opened.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; \srcref{001}; \srcref{005}, \intref{P1}{34:13}}
+  \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{005}, \intref{P1}{34:13}}
   \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-008}, \reqref{FR-CRT-017}; H-MUH-001}
 \end{srsrequirement}
 
@@ -3989,7 +4036,7 @@ exactly to the state before the matching undo; after any new change, no
 redo is available.}
   \reqpriority{Could}
   \reqphase{PH-3}
-  \reqsources{G.4; \srcref{001}}
+  \reqsources{\goalref{4}; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-007}; H-MUH-001}
 \end{srsrequirement}
 
@@ -4004,7 +4051,7 @@ drawing; the canvas is empty, and the earlier drawing can be reopened
 unchanged (\reqref{FR-CRT-024}).}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.4; \srcref{001}}
+  \reqsources{\goalref{4}; \srcref{001}}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-023}, \reqref{FR-CRT-024}}
 \end{srsrequirement}
 
@@ -4028,7 +4075,7 @@ starts exactly one refinement; drawing, editing, undoing, restoring and leaving 
 space without finishing start none.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; \srcref{001}; \srcref{005}, \intref{Moustafa}{6:03}
+  \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{005}, \intref{Moustafa}{6:03}
 (as presented by the team)}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-011}, \reqref{FR-CRT-012},
 \reqref{FR-CRT-014}, \reqref{FR-CRT-015}, \reqref{FR-CRT-030}; H-MUH-002}
@@ -4052,7 +4099,7 @@ refined stroke has the colour and width of the corresponding original
 stroke.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; \srcref{005}, \intref{Moustafa}{6:03} (as
+  \reqsources{\goalref{4}; BR-005; \srcref{005}, \intref{Moustafa}{6:03} (as
 presented by the team); \hyperref[src:009.01]{SRC-009.01}}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-012}, \reqref{FR-CRT-020}; H-MUH-002}
 \end{srsrequirement}
@@ -4073,7 +4120,7 @@ lies within \texttt{REFINE\_\allowbreak TOLERANCE} of the corresponding refined
 stroke.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; BR-009; ASM-014}
+  \reqsources{\goalref{4}; BR-005; BR-009; ASM-014}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-011}, \reqref{FR-CRT-020}; H-MUH-002, H-MUH-006}
 \end{srsrequirement}
 \end{sloppypar}
@@ -4091,7 +4138,7 @@ rules out (SRC-002).}
 applied to refined strokes meets its own fit criterion.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; \srcref{001}; \srcref{002}}
+  \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{002}}
   \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-002} to \reqref{FR-CRT-007}; H-MUH-001}
 \end{srsrequirement}
 
@@ -4109,7 +4156,7 @@ stroke and draws one new stroke, finishing again changes no stroke other
 than those two.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; BR-005}
+  \reqsources{\goalref{4}; BR-005}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-010}, \reqref{FR-CRT-012}; H-MUH-002}
 \end{srsrequirement}
 
@@ -4128,7 +4175,7 @@ drawing in a prepared set of adult-made drawings of items outside the
 supported set, leaves each drawing exactly as it was and editable.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; BR-005; \srcref{002}}
+  \reqsources{\goalref{4}; BR-005; \srcref{002}}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-010}; H-MUH-002, H-MUH-006}
 \end{srsrequirement}
 
@@ -4146,27 +4193,8 @@ undone; refinement failed), what Squigglr shows matches the state in
 every case.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.4; BR-005}
+  \reqsources{\goalref{4}; BR-005}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-017}; H-MUH-003, H-MUH-006}
-\end{srsrequirement}
-
-\begin{srsrequirement}{FR-CRT-030}{Turn refinement off}
-  \reqshall{Squigglr shall let the child, and the supporting adult, turn
-automatic refinement off and on for a learner profile.}
-  \reqrationale{UC-007, UC-010 and the data flows F2 and F9 let refinement be
-turned off, and both questionnaire respondents suggested that refinement be
-optional or adjustable (SRC-009.01). Whether children value automatic
-refinement is not verified (ASM-011); a child who does not accept refined
-drawings as their own needs a way to keep drawings unrefined (G.4).}
-  \reqfit{After the tester, once as the child in the creative space and
-once as the adult in the learner's settings, turns refinement off,
-finishing a prepared drawing of the supported set leaves its strokes
-exactly as drawn; after refinement is turned on again, finishing the
-drawing refines it.}
-  \reqpriority{Should}
-  \reqphase{PH-2}
-  \reqsources{G.4; BR-005; ASM-011; \hyperref[src:009.01]{SRC-009.01}}
-  \reqtraces{\ucref{007}; \ucref{010}; \reqref{FR-CRT-010}; H-MUH-006}
 \end{srsrequirement}
 
 The third group covers restoring the original. BR-005 lets the child, or
@@ -4196,7 +4224,7 @@ refinement after the second; (d) no restore is offered when no
 refinement remains that has not been undone or restored.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; \srcref{001}}
+  \reqsources{\goalref{4}; BR-005; \srcref{001}}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-007}, \reqref{FR-CRT-018},
 \reqref{FR-CRT-019}; H-MUH-001, H-MUH-003}
 \end{srsrequirement}
@@ -4214,7 +4242,7 @@ drawing, the tester restores the original with one action, and the result
 meets \reqref{FR-CRT-017}.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; \srcref{001}; \srcref{005}, \intref{Moustafa}{6:03}
+  \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{005}, \intref{Moustafa}{6:03}
 (as presented by the team)}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-017}; H-MUH-001, H-MUH-006}
 \end{srsrequirement}
@@ -4235,9 +4263,9 @@ drawing under its learner profile shows a result that meets
 \reqref{FR-CRT-017}.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; BR-001; BR-005}
+  \reqsources{\goalref{4}; BR-001; BR-005}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-017}, \reqref{FR-CRT-023},
-SAF-RAY-001; H-MUH-001}
+\reqref{SAF-RAY-001}; H-MUH-001}
 \end{srsrequirement}
 
 The fourth group covers failure and interruption. A refinement may fail,
@@ -4268,7 +4296,7 @@ can be edited (\reqref{FR-CRT-002} to
 \reqref{FR-CRT-016} applies, is shown as not refined.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.4; BR-005; ASM-005; \srcref{002}}
+  \reqsources{\goalref{4}; BR-005; ASM-005; \srcref{002}}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-011}, \reqref{FR-CRT-012}; H-MUH-002}
 \end{srsrequirement}
 
@@ -4286,7 +4314,7 @@ unrefined; (b) if the tester leaves the creative space before the result
 arrives, reopening the drawing shows it exactly as left, unrefined.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; BR-005; ASM-005}
+  \reqsources{\goalref{4}; BR-005; ASM-005}
   \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-022}, \reqref{FR-CRT-024}; H-MUH-002}
 \end{srsrequirement}
 
@@ -4303,7 +4331,7 @@ changes meet \reqref{FR-CRT-001} and
 \reqref{FR-CRT-021} then applies.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.4; \srcref{005}, \intref{P1}{34:13}}
+  \reqsources{\goalref{4}; \srcref{005}, \intref{P1}{34:13}}
   \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-021}}
 \end{srsrequirement}
 
@@ -4327,7 +4355,7 @@ space shows that learner's drawing exactly as left, and not the other
 learner's.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; BR-001; BR-005}
+  \reqsources{\goalref{4}; BR-001; BR-005}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-024}, \reqref{FR-CRT-026}; H-MUH-003, H-MUH-004, H-MUH-005}
 \end{srsrequirement}
 
@@ -4345,7 +4373,7 @@ the same refined state, every stroke can be edited
 \reqref{FR-CRT-017}.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; BR-005}
+  \reqsources{\goalref{4}; BR-005}
   \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-017}, \reqref{FR-CRT-023}; H-MUH-001, H-MUH-005}
 \end{srsrequirement}
 
@@ -4362,26 +4390,8 @@ is restored, and the tester leaves the creative space; reopening the
 drawing shows every change.}
   \reqpriority{Should}
   \reqphase{PH-3}
-  \reqsources{G.4; ASM-005}
+  \reqsources{\goalref{4}; ASM-005}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-023}; H-MUH-005}
-\end{srsrequirement}
-
-\begin{srsrequirement}{FR-CRT-029}{Show unsaved changes}
-  \reqshall{Squigglr shall show, while a creative drawing is open, whether every change
-to it has been saved.}
-  \reqrationale{Offline use is out of scope (ASM-005), so changes made
-while the connection is lost are kept only while the page stays open
-(\reqref{FR-CRT-025}); an adult who can see that changes are
-not yet saved can keep the page open until they are. How the state is
-shown to a child who cannot read is a usability requirement.}
-  \reqfit{With a prepared drawing open, the tester edits it
-with the connection cut; the display shows unsaved changes; after the
-connection returns and the save completes, it shows that all changes are
-saved.}
-  \reqpriority{Should}
-  \reqphase{PH-3}
-  \reqsources{G.4; ASM-005; CA-003}
-  \reqtraces{\ucref{006}; \reqref{FR-CRT-023}, \reqref{FR-CRT-025}; H-MUH-005}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-CRT-026}{Show only the active learner's drawings}
@@ -4417,7 +4427,7 @@ each catalogue lesson, no refinement starts, and the strokes shown during and
 after each attempt are point for point the strokes drawn.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; G.5; BR-004; BR-005; \srcref{005},
+  \reqsources{\goalref{4}; \goalref{5}; BR-004; BR-005; \srcref{005},
 \intref{Moustafa}{6:03} (as presented by the team)}
   \reqtraces{\ucref{003}, \ucref{007}; \reqref{FR-CRT-010}; H-MUH-002}
 \end{srsrequirement}
@@ -4433,10 +4443,46 @@ attempt record, lesson record and progress summary of that learner
 exactly as before.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.4; G.5; G.6; BR-004}
+  \reqsources{\goalref{4}; \goalref{5}; \goalref{6}; BR-004}
   \reqtraces{\ucref{006}, \ucref{008}, \ucref{009}; \reqref{FR-CRT-023}; H-MUH-003}
 \end{srsrequirement}
 
+\begin{srsrequirement}{FR-CRT-029}{Show unsaved changes}
+  \reqshall{Squigglr shall show, while a creative drawing is open, whether every change
+to it has been saved.}
+  \reqrationale{Offline use is out of scope (ASM-005), so changes made
+while the connection is lost are kept only while the page stays open
+(\reqref{FR-CRT-025}); an adult who can see that changes are
+not yet saved can keep the page open until they are. How the state is
+shown to a child who cannot read is a usability requirement.}
+  \reqfit{With a prepared drawing open, the tester edits it
+with the connection cut; the display shows unsaved changes; after the
+connection returns and the save completes, it shows that all changes are
+saved.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\goalref{4}; ASM-005; CA-003}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-023}, \reqref{FR-CRT-025}; H-MUH-005}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-030}{Turn refinement off}
+  \reqshall{Squigglr shall let the child, and the supporting adult, turn
+automatic refinement off and on for a learner profile.}
+  \reqrationale{UC-007, UC-010 and the data flows F2 and F9 let refinement be
+turned off, and both questionnaire respondents suggested that refinement be
+optional or adjustable (SRC-009.01). Whether children value automatic
+refinement is not verified (ASM-011); a child who does not accept refined
+drawings as their own needs a way to keep drawings unrefined (G.4).}
+  \reqfit{After the tester, once as the child in the creative space and
+once as the adult in the learner's settings, turns refinement off,
+finishing a prepared drawing of the supported set leaves its strokes
+exactly as drawn; after refinement is turned on again, finishing the
+drawing refines it.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4}; BR-005; ASM-011; \hyperref[src:009.01]{SRC-009.01}}
+  \reqtraces{\ucref{007}; \ucref{010}; \reqref{FR-CRT-010}; H-MUH-006}
+\end{srsrequirement}
 
 \subsection{Attempt Record Requirements}
 \label{sec:fr-records}
@@ -4492,10 +4538,10 @@ records are in
 the order the attempts ended.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.2, G.5; BR-002; \srcref{001}; \srcref{002} (PoC plan, adaptive
+  \reqsources{\goalref{2}, \goalref{5}; BR-002; \srcref{001}; \srcref{002} (PoC plan, adaptive
 guidance experiment)}
-  \reqtraces{\ucref{003}, \ucref{008}; SAF-RAY-007,
-FR-LRN-013, FR-LRN-020, FR-PRG-002, FR-PRG-003; H-MUH-003}
+  \reqtraces{\ucref{003}, \ucref{008}; \reqref{SAF-RAY-007},
+\reqref{FR-LRN-013}, \reqref{FR-LRN-020}, \reqref{FR-PRG-002}, \reqref{FR-PRG-003}; H-MUH-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-002}{Actual strokes}
@@ -4514,10 +4560,10 @@ the same strokes, point for point and in the same order, and no attempt
 record holds a stroke that was not drawn in that attempt.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.5; BR-004; ASM-004; \srcref{001}; \srcref{005},
+  \reqsources{\goalref{5}; BR-004; ASM-004; \srcref{001}; \srcref{005},
 \intref{Moustafa}{6:03}}
-  \reqtraces{\ucref{003}, \ucref{008}; FR-LRN-007,
-SAF-AHM-001, SAF-AHM-002, FR-PRG-006; H-MUH-003}
+  \reqtraces{\ucref{003}, \ucref{008}; \reqref{FR-LRN-007},
+\reqref{SAF-AHM-001}, \reqref{SAF-AHM-002}, \reqref{FR-PRG-006}; H-MUH-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-003}{Difficulties and corrections}
@@ -4536,10 +4582,10 @@ saved attempt record lists every known difficulty once, with the correct
 mark, and lists no other difficulty.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{G.5; BR-007; \srcref{001}; \srcref{002} (PoC plan, adaptive
+  \reqsources{\goalref{5}; BR-007; \srcref{001}; \srcref{002} (PoC plan, adaptive
 guidance experiment); \srcref{005}, \intref{Moustafa}{6:03}}
-  \reqtraces{\ucref{003}, \ucref{008}; FR-PRG-004,
-FR-PRG-006; H-MUH-007}
+  \reqtraces{\ucref{003}, \ucref{008}; \reqref{FR-PRG-004},
+\reqref{FR-PRG-006}; H-MUH-007}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-004}{Adult-set values in use}
@@ -4558,9 +4604,9 @@ adult changes each adult-set value, each
 attempt record holds the values in use when that attempt was made.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.5; BR-008; ASM-006; LC-007; \srcref{008}}
-  \reqtraces{\ucref{008}, \ucref{010}; SAF-RAY-008,
-FR-PRG-006; H-MUH-007}
+  \reqsources{\goalref{5}; BR-008; ASM-006; LC-007; \srcref{008}}
+  \reqtraces{\ucref{008}, \ucref{010}; \reqref{SAF-RAY-008},
+\reqref{FR-PRG-006}; H-MUH-007}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-005}{Interrupted attempt}
@@ -4583,9 +4629,9 @@ interrupted, holds the strokes drawn and has no outcome; an attempt
 stopped before any stroke leaves no attempt record.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.5; ASM-008, ASM-015; CA-003, CA-004}
-  \reqtraces{\ucref{003}, \ucref{008}; FR-LRN-009,
-FR-PRG-009; H-MUH-004}
+  \reqsources{\goalref{5}; ASM-008, ASM-015; CA-003, CA-004}
+  \reqtraces{\ucref{003}, \ucref{008}; \reqref{FR-LRN-009},
+\reqref{FR-PRG-009}; H-MUH-004}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-006}{Lesson record}
@@ -4604,8 +4650,8 @@ chosen by an adult, each lesson record shows the known starting stage,
 furthest stage, count of successful attempts at each stage and ending.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.5; BR-002, BR-003; \srcref{001}}
-  \reqtraces{\ucref{003}, \ucref{004}, \ucref{008}; SAF-RAY-006, FR-PRG-002, FR-PRG-010; H-MUH-007}
+  \reqsources{\goalref{5}; BR-002, BR-003; \srcref{001}}
+  \reqtraces{\ucref{003}, \ucref{004}, \ucref{008}; \reqref{SAF-RAY-006}, \reqref{FR-PRG-002}, \reqref{FR-PRG-010}; H-MUH-007}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-007}{Unfinished lesson}
@@ -4623,9 +4669,9 @@ shows the known furthest stage and counts; for prepared lessons whose
 last stage is passed, no lesson record is marked as unfinished.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.5; BR-002; ASM-015}
-  \reqtraces{\ucref{003}, \ucref{008}; SAF-RAY-006,
-FR-PRG-002; H-MUH-007}
+  \reqsources{\goalref{5}; BR-002; ASM-015}
+  \reqtraces{\ucref{003}, \ucref{008}; \reqref{SAF-RAY-006},
+\reqref{FR-PRG-002}; H-MUH-007}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-008}{Each attempt saved once}
@@ -4642,8 +4688,8 @@ exactly one attempt record, under the lesson record in which it was made,
 and the counts in each lesson record equal the known counts.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.5; ASM-005; CA-003, CA-004}
-  \reqtraces{\ucref{008}; SAF-RAY-003, SAF-RAY-007; H-MUH-004, H-RAY-002, H-RAY-006}
+  \reqsources{\goalref{5}; ASM-005; CA-003, CA-004}
+  \reqtraces{\ucref{008}; \reqref{SAF-RAY-003}, \reqref{SAF-RAY-007}; H-MUH-004, H-RAY-002, H-RAY-006}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-009}{Saved records unchanged}
@@ -4662,8 +4708,8 @@ catalogue, every saved attempt record and every lesson record of an ended
 lesson is identical to its contents before those changes.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.5; BR-004, BR-008; LC-001, LC-002}
-  \reqtraces{\ucref{008}, \ucref{010}; FR-REC-004; H-MUH-003, H-MUH-004, H-MUH-007}
+  \reqsources{\goalref{5}; BR-004, BR-008; LC-001, LC-002}
+  \reqtraces{\ucref{008}, \ucref{010}; \reqref{FR-REC-004}; H-MUH-003, H-MUH-004, H-MUH-007}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-REC-010}{Suggestion responses}
@@ -4678,8 +4724,8 @@ accepted, declined and not yet answered, every lesson record lists each
 suggestion once, with the known response, and lists no other suggestion.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.3; BR-003}
-  \reqtraces{\ucref{005}; \ucref{008}; FR-LRN-019; SAF-RAY-001, SAF-RAY-007}
+  \reqsources{\goalref{3}; BR-003}
+  \reqtraces{\ucref{005}; \ucref{008}; \reqref{FR-LRN-019}; \reqref{SAF-RAY-001}, \reqref{SAF-RAY-007}}
 \end{srsrequirement}
 
 \subsection{Progress Summary Requirements}
@@ -4719,8 +4765,8 @@ profiles, each with a known history, every summary names one learner and
 contains every record of that learner and no record of another.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.6; BR-001; ASM-008; \srcref{004}}
-  \reqtraces{\ucref{009}, \ucref{010}; SAF-RAY-007; H-MUH-004, H-RAY-006}
+  \reqsources{\goalref{6}; BR-001; ASM-008; \srcref{004}}
+  \reqtraces{\ucref{009}, \ucref{010}; \reqref{SAF-RAY-007}; H-MUH-004, H-RAY-006}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-002}{Progress over time by lesson}
@@ -4739,9 +4785,9 @@ lists the lesson records in start order with the known values and
 endings.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.6; BR-002; \srcref{001}}
-  \reqtraces{\ucref{009}; FR-REC-001, FR-REC-006,
-FR-REC-007, SAF-RAY-006; H-MUH-008}
+  \reqsources{\goalref{6}; BR-002; \srcref{001}}
+  \reqtraces{\ucref{009}; \reqref{FR-REC-001}, \reqref{FR-REC-006},
+\reqref{FR-REC-007}, \reqref{SAF-RAY-006}; H-MUH-008}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-003}{With and without a guide kept apart}
@@ -4759,8 +4805,8 @@ which attempts were made without a guide, with at least
 \texttt{REVIEW\_\allowbreak PASS\_\allowbreak RATE} of their tasks succeeding.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.2, G.6; \srcref{001}}
-  \reqtraces{\ucref{009}; FR-REC-001, FR-LRN-012; H-MUH-003}
+  \reqsources{\goalref{2}, \goalref{6}; \srcref{001}}
+  \reqtraces{\ucref{009}; \reqref{FR-REC-001}, \reqref{FR-LRN-012}; H-MUH-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-004}{Recurring difficulties}
@@ -4781,9 +4827,9 @@ and another in one attempt fewer, the summary lists the first, with the
 known counts, and not the second.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.6; BR-007; \srcref{001}; \srcref{005},
+  \reqsources{\goalref{6}; BR-007; \srcref{001}; \srcref{005},
 \intref{Moustafa}{6:03}}
-  \reqtraces{\ucref{009}; FR-REC-003; H-MUH-008}
+  \reqtraces{\ucref{009}; \reqref{FR-REC-003}; H-MUH-008}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-005}{Open the attempts behind the summary}
@@ -4799,8 +4845,8 @@ items, with at least \texttt{REVIEW\_\allowbreak PASS\_\allowbreak RATE} of thei
 succeeding.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.6; \srcref{001}}
-  \reqtraces{\ucref{009}; FR-PRG-006; H-MUH-008}
+  \reqsources{\goalref{6}; \srcref{001}}
+  \reqtraces{\ucref{009}; \reqref{FR-PRG-006}; H-MUH-008}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-006}{Attempt record view}
@@ -4816,9 +4862,9 @@ predefined difficulties with their correction marks, adult-set values in
 use, and strokes identical to those recorded.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.5, G.6; BR-004; ASM-006}
-  \reqtraces{\ucref{009}, \ucref{010}; FR-REC-001 to
-FR-REC-005; H-MUH-008}
+  \reqsources{\goalref{5}, \goalref{6}; BR-004; ASM-006}
+  \reqtraces{\ucref{009}, \ucref{010}; \reqref{FR-REC-001} to
+\reqref{FR-REC-005}; H-MUH-008}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-007}{Adult chooses the view}
@@ -4835,8 +4881,8 @@ dates and values changes only what the summary shows: the records are
 unchanged, and attempts made with and without a guide stay separate.}
   \reqpriority{Should}
   \reqphase{PH-3}
-  \reqsources{G.6; ASM-006; LC-007; \hyperref[src:005.03]{SRC-005.03}}
-  \reqtraces{\ucref{009}; FR-PRG-003}
+  \reqsources{\goalref{6}; ASM-006; LC-007; \hyperref[src:005.03]{SRC-005.03}}
+  \reqtraces{\ucref{009}; \reqref{FR-PRG-003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-008}{Empty history}
@@ -4850,8 +4896,8 @@ records all lie outside the chosen dates, the summary states that no
 practice is recorded and shows no stage, count or difficulty.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.6; BR-006}
-  \reqtraces{\ucref{009}; FR-PRG-007; H-MUH-008, H-RAY-003}
+  \reqsources{\goalref{6}; BR-006}
+  \reqtraces{\ucref{009}; \reqref{FR-PRG-007}; H-MUH-008, H-RAY-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-009}{Interrupted attempts shown apart}
@@ -4867,8 +4913,8 @@ interrupted attempts to any history leaves its successful and
 unsuccessful counts unchanged.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.6; ASM-015}
-  \reqtraces{\ucref{009}; FR-REC-005; H-MUH-008}
+  \reqsources{\goalref{6}; ASM-015}
+  \reqtraces{\ucref{009}; \reqref{FR-REC-005}; H-MUH-008}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-010}{Stages not attempted}
@@ -4885,8 +4931,8 @@ marks the skipped stages as not attempted and shows the attempted stage
 with zero successful attempts.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.6; BR-003; \srcref{001}}
-  \reqtraces{\ucref{004}, \ucref{009}; FR-REC-006; H-MUH-003, H-MUH-008}
+  \reqsources{\goalref{6}; BR-003; \srcref{001}}
+  \reqtraces{\ucref{004}, \ucref{009}; \reqref{FR-REC-006}; H-MUH-003, H-MUH-008}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-011}{Latest attempt included}
@@ -4902,8 +4948,8 @@ time of the latest saved attempt and includes none of the held-back
 attempts.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{G.6; ASM-005; CA-003}
-  \reqtraces{\ucref{009}; SAF-RAY-003; H-MUH-008, H-RAY-002}
+  \reqsources{\goalref{6}; ASM-005; CA-003}
+  \reqtraces{\ucref{009}; \reqref{SAF-RAY-003}; H-MUH-008, H-RAY-002}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-PRG-012}{No overall score}
@@ -4918,9 +4964,9 @@ finds no score, grade, rating or percentage computed from attempts at
 more than one stage.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{G.6; BR-006; \srcref{001}, \srcref{008}; \srcref{005},
+  \reqsources{\goalref{6}; BR-006; \srcref{001}, \srcref{008}; \srcref{005},
 \intref{Moustafa}{6:03}}
-  \reqtraces{\ucref{009}; SAF-RAY-004; H-RAY-003}
+  \reqtraces{\ucref{009}; \reqref{SAF-RAY-004}; H-RAY-003}
 \end{srsrequirement}
 
 \section{Look and Feel Requirements}
@@ -4971,7 +5017,7 @@ flashes while a stroke is being drawn.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{1}; \srcref{005.05}; \srcref{009.05}}
-  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002; SAF-MOU-003;
+  \reqtraces{\ucref{003}; \ucref{006}; \reqref{NFR-UX-002}; \reqref{SAF-MOU-003};
 H-MOU-001}
 \end{srsrequirement}
 
@@ -4987,7 +5033,7 @@ completed with all on-screen text hidden.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{1}; FACT-007; \srcref{005.05}}
-  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-001; H-MOU-003}
+  \reqtraces{\ucref{003}; \ucref{006}; \reqref{NFR-UX-001}; H-MOU-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-003}{Adult views distinct from child screens}
@@ -5005,7 +5051,7 @@ titles. Pass when every reviewer sorts every screenshot correctly.}
   \reqphase{PH-2}
   \reqsources{\goalref{3}, \goalref{6}; \srcref{005.02}}
   \reqtraces{\ucref{001}; \ucref{002}; \ucref{009}; \ucref{010};
-SAF-RAY-001}
+\reqref{SAF-RAY-001}}
 \end{srsrequirement}
 
 \subsection{Style Requirements}
@@ -5053,7 +5099,7 @@ colour and one position across all screens.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\srcref{005.05}; \srcref{009.02}}
-  \reqtraces{\ucref{003}; \ucref{006}; NFR-UX-002}
+  \reqtraces{\ucref{003}; \ucref{006}; \reqref{NFR-UX-002}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-006}{Appealing but calm style}
@@ -5069,7 +5115,7 @@ rating is at least \texttt{STYLE\_RATING\_MIN}.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{009.05}}
-  \reqtraces{NFR-UX-001; NFR-UX-007; H-MOU-001}
+  \reqtraces{\reqref{NFR-UX-001}; \reqref{NFR-UX-007}; H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-007}{Style reviewed with educators or
@@ -5089,7 +5135,7 @@ not.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{005.06}; \srcref{009.06}; FACT-012}
-  \reqtraces{NFR-UX-004; NFR-UX-006; H-MOU-001; H-MOU-002}
+  \reqtraces{\reqref{NFR-UX-004}; \reqref{NFR-UX-006}; H-MOU-001; H-MOU-002}
 \end{srsrequirement}
 \endgroup
 
@@ -5146,7 +5192,7 @@ at least \texttt{UX\_PASS\_RATE} of them finish within
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\goalref{3}; \srcref{005.05}}
-  \reqtraces{\ucref{001}; \ucref{002}; NFR-UX-014}
+  \reqtraces{\ucref{001}; \ucref{002}; \reqref{NFR-UX-014}}
 \end{srsrequirement}
 
 \subsection{Personalization and Internationalization Requirements}
@@ -5166,11 +5212,11 @@ first profile and audio feedback plays for the second.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{FACT-003; ASM-015; \srcref{005.07}}
-  \reqtraces{\ucref{010}; NFR-UX-021; NFR-UX-022; H-MOU-001}
+  \reqtraces{\ucref{010}; \reqref{NFR-UX-021}; \reqref{NFR-UX-022}; H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-011}{Refinement setting for each child}
-  \reqshall{The supporting adult shall be able to turn creative-space
+  \reqshall{The supporting adult shall be able to turn creative space
 refinement on or off for each child; while it is off, the child's strokes
 shall be kept exactly as drawn.}
   \reqrationale{Both questionnaire respondents suggested that refinement
@@ -5200,7 +5246,7 @@ all adult-view text is in \texttt{INTERFACE\_LANGUAGE}.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{ASM-007; \srcref{005.05}}
-  \reqtraces{NFR-UX-002}
+  \reqtraces{\reqref{NFR-UX-002}}
 \end{srsrequirement}
 
 \subsection{Learning Requirements}
@@ -5246,7 +5292,7 @@ without help from outside Squigglr.}
   \reqphase{PH-3}
   \reqsources{\goalref{3}, \goalref{6}; \srcref{005.05}}
   \reqtraces{\ucref{001}; \ucref{002}; \ucref{005}; \ucref{009};
-\ucref{010}; NFR-UX-009}
+\ucref{010}; \reqref{NFR-UX-009}}
 \end{srsrequirement}
 
 \subsection{Understandability and Politeness Requirements}
@@ -5273,7 +5319,7 @@ not the child, and uses none of the words ``wrong'', ``bad'', ``fail'' or
   \reqphase{PH-1}
   \reqsources{\goalref{1}; BR-006; \srcref{005.06}; \srcref{009.02}}
   \reqtraces{\mbox{\reqref{FR-LRN-014}}; \mbox{\reqref{FR-LRN-022}};
-NFR-UX-004; \ucref{003}; H-AHM-005; H-MOU-002; H-MOU-003}
+\reqref{NFR-UX-004}; \ucref{003}; H-AHM-005; H-MOU-002; H-MOU-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-016}{Effort acknowledged}
@@ -5288,7 +5334,7 @@ from the approved feedback list.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\srcref{009.02}}
-  \reqtraces{NFR-UX-015; \mbox{\reqref{FR-LRN-014}}; \ucref{003};
+  \reqtraces{\reqref{NFR-UX-015}; \mbox{\reqref{FR-LRN-014}}; \ucref{003};
 H-MOU-002}
 \end{srsrequirement}
 
@@ -5309,7 +5355,7 @@ appears.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{BR-006; \srcref{006}}
-  \reqtraces{SAF-RAY-004; \ucref{009}; \ucref{010}; H-MOU-005}
+  \reqtraces{\reqref{SAF-RAY-004}; \ucref{009}; \ucref{010}; H-MOU-005}
 \end{srsrequirement}
 
 \subsection{Accessibility Requirements}
@@ -5336,7 +5382,7 @@ smallest supported screen size. Pass when every touch target is at least
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\srcref{005.04}; \srcref{008}}
-  \reqtraces{NFR-UX-002; \ucref{003}; \ucref{006}}
+  \reqtraces{\reqref{NFR-UX-002}; \ucref{003}; \ucref{006}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-019}{Colour contrast}
@@ -5351,7 +5397,7 @@ piece of text and every control graphic meets its ratio.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\srcref{005.08}; \srcref{005.09}}
-  \reqtraces{NFR-UX-001; NFR-UX-004}
+  \reqtraces{\reqref{NFR-UX-001}; \reqref{NFR-UX-004}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-020}{Text alternatives for icons}
@@ -5368,11 +5414,11 @@ names its action.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\srcref{005.08}; \srcref{005.09}}
-  \reqtraces{NFR-UX-002; NFR-UX-012}
+  \reqtraces{\reqref{NFR-UX-002}; \reqref{NFR-UX-012}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-021}{Feedback not by sound alone}
-  \reqshall{Every message to the child shall be shown on screen and, unless
+  \reqshall{Every message to the child shall be shown on screen in symbols (NFR-UX-012) and, unless
 audio is turned off, also played as sound; no message shall rely on sound
 alone.}
   \reqrationale{Offering more than one modality is encouraged in
@@ -5385,7 +5431,7 @@ and sound plays only when audio is on.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\srcref{005.07}}
-  \reqtraces{NFR-UX-010; NFR-UX-015; \ucref{003}; H-MOU-003}
+  \reqtraces{\reqref{NFR-UX-010}; \reqref{NFR-UX-012}; \reqref{NFR-UX-015}; \ucref{003}; H-MOU-003}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-022}{Control of audio}
@@ -5399,7 +5445,7 @@ Control~\cite{wcag22}.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\srcref{005.08}; \srcref{009.05}}
-  \reqtraces{NFR-UX-010; H-MOU-001}
+  \reqtraces{\reqref{NFR-UX-010}; H-MOU-001}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-023}{Keyboard use of adult views}
@@ -5416,7 +5462,7 @@ every task can be completed.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{005.08}; \srcref{005.09}}
-  \reqtraces{NFR-UX-014}
+  \reqtraces{\reqref{NFR-UX-014}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-024}{Resizable text in adult views}
@@ -5429,20 +5475,72 @@ all text is visible and every function still works.}
   \reqpriority{Could}
   \reqphase{PH-3}
   \reqsources{\srcref{005.08}; \srcref{005.09}}
-  \reqtraces{NFR-UX-019}
+  \reqtraces{\reqref{NFR-UX-019}}
 \end{srsrequirement}
 \endgroup
 
 \section{Performance Requirements}
 \label{sec:performance}
 \subsection{Speed and Latency Requirements}
-\lips
+\label{sec:speed}
+
+\begin{srsrequirement}{NFR-PERF-001}{Stroke feedback latency}
+  \reqshall{Squigglr shall display visual acknowledgement of an inputted
+stroke within \texttt{FEEDBACK\_LATENCY\_MAX} milliseconds of the
+stroke's final input point being received.}
+  \reqrationale{Delay between stroke input and visual stroke generation
+creates a poor experience in general and confuses children with learning
+difficulties in particular.}
+  \reqfit{Pass when the time passed from the final input point to the 
+first visible stroke render in each lesson stage is within \texttt{FEEDBACK\_LATENCY\_MAX}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}; \goalref{2}}
+  \reqtraces{\reqref{FR-LRN-007}; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-002}{AI refinement response latency}
+  \reqshall{Squigglr shall display the AI refined result within 
+\texttt{REFINE\_LATENCY\_MAX} seconds of the final input point being
+received on a drawing that includes AI refinement and the canvas remains
+open for interaction during that time.}
+  \reqrationale{Long, unresponsive pauses break engagement and may be 
+interpreted as an error (G.4).}
+  \reqfit{Pass when the time passed from the final input point to the 
+refined result display is within \texttt{REFINE\_LATENCY\_MAX} seconds and the
+canvas accepts new input without any blocking or error during that period.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4}}
+  \reqtraces{\ucref{007}; \reqref{NFR-UX-011}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-003}{Progress summary page load}
+  \reqshall{Squigglr shall display the summary page within
+\texttt{SUMMARY\_LOAD\_MAX} seconds of an adult request.}
+  \reqrationale{Adults reviewing records expect performance similar 
+to everyday web tools (G.6);}
+  \reqfit{Pass when time from request to fully visible
+summary is within \texttt{SUMMARY\_LOAD\_MAX} seconds for ten
+consecutive attempts.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}}
+  \reqtraces{\ucref{009}}
+\end{srsrequirement}
+
 \subsection{Safety-Critical Requirements}
 This subsection holds safety requirements that come from the Hazard Analysis
 and do not fit another section. Each lists the hazards it mitigates.
 
+% NOTE: phanton sections are used below because we did not use the srsrequirement
+% tags like we did for the other requirements. Phantom sections allow you to
+% jump to that point when its linked to somewhere else without actually being
+% a section. If you change it to use srsrequirement tags, then remove the phantom 
+% sections as they are no longer needed.
+
 \begin{description}
-\item[SAF-RAY-001] Squigglr shall allow lesson choice, starting-stage
+\item[SAF-RAY-001]\phantomsection\label{req:SAF-RAY-001} Squigglr shall allow lesson choice, starting stage
 choice, learner switching and acceptance of a go-back suggestion only after
 an adult check that a child cannot complete by tapping icons, and shall keep
 a pending suggestion, without blocking practice, until an adult accepts or
@@ -5455,14 +5553,14 @@ adult help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults
 completes without passing the adult check, and a pending suggestion changes
 nothing until an adult acts.\\
 \emph{Hazards:} H-RAY-001, H-RAY-006.
-\item[SAF-RAY-002] Before a lesson starts, Squigglr shall check the device
+\item[SAF-RAY-002]\phantomsection\label{req:SAF-RAY-002} Before a lesson starts, Squigglr shall check the device
 and browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not
 match, show an adult-readable notice that results may be unreliable.\\
 \emph{Rationale:} the team does not control the device (CON-001--CON-003).\\
 \emph{Fit criterion:} on each prepared unsupported combination the notice
 appears before the first attempt; on supported ones it does not.\\
 \emph{Hazards:} H-RAY-002.
-\item[SAF-RAY-003] Squigglr shall keep each completed attempt on the device
+\item[SAF-RAY-003]\phantomsection\label{req:SAF-RAY-003} Squigglr shall keep each completed attempt on the device
 until the server confirms it is saved, and shall tell the adult which
 attempts could not be saved.\\
 \emph{Rationale:} offline access is not promised (SRC-005,
@@ -5471,7 +5569,7 @@ attempts could not be saved.\\
 attempts, no confirmed attempt is lost and every unsaved attempt is reported
 to the adult.\\
 \emph{Hazards:} H-RAY-002.
-\item[SAF-RAY-004] No record, summary or export shall show a
+\item[SAF-RAY-004]\phantomsection\label{req:SAF-RAY-004} No record, summary or export shall show a
 diagnostic label, a judgement of the child's abilities or a comparison with
 other children, and every summary and
 export shall state that it describes practice only and is not an assessment
@@ -5481,7 +5579,7 @@ or diagnosis.\\
 \emph{Fit criterion:} inspection of every summary and export template finds
 none of the excluded content and finds the statement present.\\
 \emph{Hazards:} H-RAY-003.
-\item[SAF-RAY-005] Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT},
+\item[SAF-RAY-005]\phantomsection\label{req:SAF-RAY-005} Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT},
 or at \texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from
 the child, and shall keep the progress saved up to that point.\\
 \emph{Rationale:} the child is not expected to exit a lesson, and no adult
@@ -5490,7 +5588,7 @@ may be watching (CA-001), so repeated failure must end on its own (G.3).\\
 ends at the limit in use with no child input, and the saved record matches
 the attempts made.\\
 \emph{Hazards:} H-RAY-004.
-\item[SAF-RAY-006] Squigglr shall record each lesson that ends at
+\item[SAF-RAY-006]\phantomsection\label{req:SAF-RAY-006} Squigglr shall record each lesson that ends at
 \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each
 improvement extension, show the adult how many times these happened for
 each lesson, and keep earlier attempts when a lesson is restarted.\\
@@ -5499,7 +5597,7 @@ adult.\\
 \emph{Fit criterion:} in prepared sequences that reach the limit and then
 restart, the count and all earlier attempts appear in the adult view.\\
 \emph{Hazards:} H-RAY-005.
-\item[SAF-RAY-007] Squigglr shall identify the active learner on every
+\item[SAF-RAY-007]\phantomsection\label{req:SAF-RAY-007} Squigglr shall identify the active learner on every
 practice screen in a form a child who cannot read can recognize, and shall
 save every attempt and suggestion to that learner only.\\
 \emph{Rationale:} school devices may be shared by several children
@@ -5508,7 +5606,7 @@ save every attempt and suggestion to that learner only.\\
 every attempt and suggestion is saved under the learner shown when it was
 made.\\
 \emph{Hazards:} H-RAY-006.
-\item[SAF-RAY-008] Squigglr shall save a child's adult-set values
+\item[SAF-RAY-008]\phantomsection\label{req:SAF-RAY-008} Squigglr shall save a child's adult-set values
 (Table~\ref{tab:goalconst}) only within their team-set ranges, with
 \texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
 \texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the middle of each range when the
@@ -5524,7 +5622,7 @@ refused, an unset value equals the midpoint, and no change completes
 without the adult check.\\
 \emph{Hazards:} H-RAY-007.
 
-\item[SAF-AHM-001] Squigglr shall prevent duplicate reports of the same
+\item[SAF-AHM-001]\phantomsection\label{req:SAF-AHM-001} Squigglr shall prevent duplicate reports of the same
 stylus input event from being counted more than once during evaluation or
 recording of an attempt, while preserving legitimate separately drawn
 strokes, including overlapping strokes.\\
@@ -5539,7 +5637,7 @@ are preserved.\\
 \emph{Related SRS requirements:} FR-LRN-007, FR-LRN-008.\\
 \emph{Hazards:} H-AHM-002.
 
-\item[SAF-AHM-002] Squigglr shall preserve the relative positions and order
+\item[SAF-AHM-002]\phantomsection\label{req:SAF-AHM-002} Squigglr shall preserve the relative positions and order
 of stylus points within the active drawing surface when the canvas size
 or supported device orientation changes, and shall reject input whose
 coordinates cannot be mapped reliably to that surface.\\
@@ -5555,6 +5653,63 @@ attempt.\\
 \emph{Related SRS requirements:} FR-LRN-007, FR-LRN-010.\\
 \emph{Hazards:} H-AHM-003.
 
+\item[SAF-SHA-001]\phantomsection\label{req:SAF-SHA-001} Squigglr shall authenticate data at every endpoint where 
+it is accessed, encrypt user data, and end the session 
+and logout after extended user inactivity. (\texttt{IDLE\_TIMEOUT}, TBD).\\
+\emph{Rationale:} personal data, especially that of children's, is confidential. 
+unauthorized access to a user account or isolated user information violates
+privacy and undermines user trust. Squigglr is a website with no installation
+(CON-001, CON-002) so access must be authenticated at server endpoints.\\
+\emph{Fit criterion:} with mock accounts, while logged in to one account,
+attempts to access a wide range of datatypes from another account using 
+server commands are rejected; mock account is logged out after \texttt{IDLE\_TIMEOUT}
+and attempts to access that accounts information are rejected. \\
+\emph{Hazards:} H-SHA-001.
+
+\item[SAF-SHA-002]\phantomsection\label{req:SAF-SHA-002} Squigglr shall confirm that all essential third-party services
+do not transmit PII through their public interface.\\
+\emph{Rationale:} refinement services may receive raw private data; user data
+is protected by privacy commitments; third-party services are implemented as
+web dependencies (CON-001) which may transmit user data incongruously.\\
+\emph{Fit criterion:} confirm that network traffic for each third-party 
+contains no PII data transmitted to a non-approved destination.\\
+\emph{Hazards:} H-SHA-002.
+
+\item[SAF-SHA-003]\phantomsection\label{req:SAF-SHA-003} Squigglr shall send a verification ping after each save
+and inform adult users when a save fails.\\
+\emph{Rationale:} G.5 requires complete, meaningful activity records;
+Adults want to know which sessions contributed to their child's progress
+report in detail.\\
+\emph{Fit criterion:} for 99\% of \texttt{FAILED\_SAVES} (TBD) 
+failed save requests, Squigglr does not report the attempt as saved and 
+notifies the adult. For 99\% of \texttt{FAILED\_SAVES} successful saves, 
+Squigglr does not record a failed save or notify the adult.\\
+\emph{Hazards:} H-SHA-003.
+
+\item[SAF-SHA-004]\phantomsection\label{req:SAF-SHA-004} Squigglr shall default to pre-prepared fallback text content
+when the AI refinement tool is unavailable, returns an error or returns misformatted
+content, after which it will send a diagnostic alert to the server and inform 
+the adult of the error.\\
+\emph{Rationale:} An unhandled provider error interrupting a child's drawing
+session would violate G.4, and failing to catch the error creates confusion
+for the child with unpredictable text outputs.\\
+\emph{Fit criterion:} fallback content replaces the provided content when
+purposefully incorrectly formatted content is received and when a mock 
+server fails to provide a response; the adult user is informed in both cases.\\
+\emph{Hazards:} H-SHA-004.
+
+\item[SAF-SHA-005]\phantomsection\label{req:SAF-SHA-005} Squigglr shall allow users to report inappropriate AI
+generated content through a form; human reviewers shall use catalogued
+confirmed incorrect output to potentially update API guardrails and 
+permissiveness.\\
+\emph{Rationale:} Raw provider output may be inaccurate or inappropriate;
+content moderation must adapt to new, unforeseen inputs as the application
+grows its user base.\\
+\emph{Fit criterion:} deliberate attempts to recreate inappropriate output 
+by imitating report diagnostics of a manufactured inappropriate output case 
+do not yield similarly inappropriate results after content moderation update.\\
+\emph{Hazards:} H-SHA-005
+
 \item[SAF-MOU-001] In guided lessons, feedback on a missed part shall show
 the child where the part is missing without drawing it for them.\\
 \emph{Rationale:} the aim of practice is drawing with gradually less help
@@ -5569,7 +5724,7 @@ stroke to the attempt.\\
 
 \item[SAF-MOU-002] Records and progress summaries shall keep attempts
 made with a guide separate from attempts made without one,
-shall not include creative-space drawings, and shall not present the
+shall not include creative space drawings, and shall not present the
 number of attempts as a measure of the child's skill.\\
 \emph{Rationale:} a summary that blurs assisted and independent attempts,
 counts refined drawings as practice or treats fewer attempts as better
@@ -5577,9 +5732,9 @@ skill can lead an adult to move the child on too early or hold them back
 (H-MOU-005; SRC-005, \intref{Moustafa}{6:03}). Refinement must never reach
 the records adults rely on (BR-005).\\
 \emph{Fit criterion:} for prepared histories with known assisted,
-independent and creative-space work, check every summary and record. Pass
+independent and creative space work, check every summary and record. Pass
 when assisted and independent attempts are shown separately, no
-creative-space drawing appears, and no view ranks or rates the child by
+creative space drawing appears, and no view ranks or rates the child by
 the number of attempts.\\
 \emph{Related SRS requirements:} G.6, FR-LRN-012, SAF-RAY-004,
 NFR-UX-017.\\
@@ -5601,61 +5756,464 @@ flashes.\\
 
 \end{description}
 \subsection{Precision or Accuracy Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-PERF-004}{Stage result scoring accuracy}
+  \reqshall{Squigglr shall compute a deterministic stage result 
+score for all attempts: the same strokes and stage criteria shall
+produce the same evaluation.}
+  \reqrationale{Adults use stage results to monitor a child's progress
+(G.5, G.6). Nondeterministic scoring may produce arbitrary or difficult-to-
+interpret results that are unsuitable for progress tracking. Deterministic
+scoring is also easier to implement and non-deterministic scoring has
+no clear benefits.}
+  \reqfit{Pass when identical programmed strokes on the same stage,
+generated with a tool like Selenium, produce identical scores for ten
+consecutive runs.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{2}; \goalref{5}; \goalref{6}}
+  \reqtraces{\reqref{FR-LRN-007}; \reqref{FR-LRN-008}}
+\end{srsrequirement}
+
 \subsection{Robustness or Fault-Tolerance Requirements}
-\lips
+\label{sec:robustness}
+
+\begin{srsrequirement}{NFR-PERF-005}{Attempt preservation on network loss}
+  \reqshall{Squigglr shall retain any completed attempt on the device if 
+connection is lost during the attempt or after the latest attempt until 
+the server confirms it is saved (after connection is restored).}
+  \reqrationale{G.5 requires complete practice records; losing their current 
+attempt may upset a child.}
+  \reqfit{Pass when attempts are saved after connection is intentionally
+cut during a mock attempt three times consecutively.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}}
+  \reqtraces{\reqref{SAF-RAY-003}; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-006}{Refinement provider fallback}
+  \reqshall{Squigglr shall display the child's original unrefined 
+strokes when the AI refinement service is unavailable or returns 
+misformatted or inappropriate output.}
+  \reqrationale{Ignoring AI refinement in the rare cases where
+the output is missing or unusable creates a smoother experience
+for the child and prioritizes avoiding interruptions to acquiring
+full refinement coverage. Complements \reqref{SAF-SHA-004}.}
+  \reqfit{Pass when the child's original strokes are kept ten times
+consecutively after intentionally returning misformatted outputs or 
+making the mock service unavailable.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4}; \srcref{009.01}}
+  \reqtraces{\reqref{SAF-SHA-004}; \ucref{003}; \ucref{006}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-007}{Save failure transparency}
+  \reqshall{Squigglr shall not report a successful save if a 
+save operation fails and shall instead display a visible notification 
+to the adult describing which record was not saved.}
+  \reqrationale{G.5 requires complete and meaningful practice records.
+Silently losing a save and reporting success would inform the adult 
+based on a record that does not reflect the child's actual practice. 
+Complements \reqref{SAF-SHA-003}.}
+  \reqfit{Pass when Squigglr does not display a success confirmation and 
+instead shows a clearly visible failure notification to the adult identifying
+the unsaved record.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}}
+  \reqtraces{\reqref{SAF-SHA-003}; \ucref{009}}
+\end{srsrequirement}
+
 \subsection{Capacity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-PERF-008}{Concurrent session capacity}
+  \reqshall{Squigglr shall support a concurrent session target of 
+\texttt{CONCURRENT\_CAPACITY} (TBD) simultaneous active users without 
+degrading response times below the thresholds stated in 
+Section~\ref{sec:speed} (NFR-PERF-001, NFR-PERF-002, and NFR-PERF-003).}
+  \reqrationale{The anticipated system deployment is to a small number 
+of schools or households. The exact session target is deferred to
+the VnV Plan.}
+  \reqfit{To be defined in the VnV Plan; pass when the system sustains
+the latency thresholds outlined in Section~\ref{sec:speed} under the 
+agreed concurrent load without error or failure.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\goalref{1}; \goalref{5}}
+  \reqtraces{\reqref{FR-PERF-001}; \reqref{FR-PERF-002}; \reqref{FR-PERF-003}}
+\end{srsrequirement}
+
 \subsection{Scalability or Extensibility Requirements}
-\lips
+
+Adding or removing lessons from the Squigglr lesson catalogue requires
+no change to the lesson execution logic or any other module's source
+code. Lesson content is stored as data and read at runtime
+(LC-001, Section~\ref{sec:changes}). This is a design-level decision; no
+standalone NFR is required here because the constraint is already
+captured by \reqref{NFR-MAINT-001}.
+
 \subsection{Longevity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-PERF-009}{Operational lifetime through capstone}
+  \reqshall{Squigglr shall remain fully functional on the supported
+browsers and devices (OI-09) through PH-3, the end of the capstone project period.}
+  \reqrationale{After final evaluation and the exposition, post capstone 
+maintenance is outside the project scope.}
+  \reqfit{Pass when Squigglr can be launched and all features exercised
+on the supported browsers and devices as listed in OI-09 at the PH-3
+milestone; any browser or device that fails this check shall be
+removed from the supported list and OI-09 updated accordingly.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{\goalref{1}; \goalref{2}; \goalref{3}}
+  \reqtraces{}
+\end{srsrequirement}
 
 \section{Operational and Environmental Requirements}
 \subsection{Expected Physical Environment}
-\lips
+
+Squigglr is meant for use on a touchscreen tablet or laptop (CON-003).
+A stylus is required for interaction with motor practice features. Finger 
+input is a stretch goal (LC-006). Expected settings include the domicile,
+classroom, and therapy centres where children draw (FACT-009) often with 
+an adult nearby. The device is expected to be placed on a flat surface or 
+held in the user's hands.
+
 \subsection{Wider Environment Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-OPS-001}{HTTPS-only communication}
+  \reqshall{Squigglr shall exchange all data between the browser client
+and server under encrypted HTTPS protocol.}
+  \reqrationale{Account data travels over networks that the Squigglr team 
+does not control (ASM-005). HTTPS prevents unauthorized access and tampering 
+in transit. School and other facility networks may also block non-HTTPS traffic.}
+  \reqfit{Confirm that every request made by Squigglr uses the \texttt{https://} 
+scheme. Verify that navigating to the \texttt{http://} URL either redirects to 
+HTTPS or is blocked.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{}
+  \reqtraces{}
+\end{srsrequirement}
+
 \subsection{Requirements for Interfacing with Adjacent Systems}
-\lips
+
+\begin{srsrequirement}{NFR-OPS-002}{Adjacent system interfaces}
+  \reqshall{Squigglr shall interact with the following external systems:
+\begin{description}
+  \item[Authentication and session provider.] Squigglr shall delegate
+  account creation, login, and session management to a third-party
+  authentication provider.
+  \item[AI refinement service.] Squigglr shall send the child's raw stroke
+  data (without child PII \reqref{SAF-SHA-002}) to a third-party AI model 
+  for visual refinement when visual refinement is active and shall receive 
+  refined stroke data in return.
+  \item[Hosting and content-delivery network (Supabase / Vercel).] Squigglr
+  shall be served from Vercel for the front end and Supabase for the back end.
+  For authentication and hosting, Squigglr shall display an error message 
+  in the event of provider unavailability until the availability returns.
+\end{description}}
+  \reqrationale{The choice of Supabase and Vercel is arbitrary and abstract
+descriptions of adjacent systems leaves the requirements open to substitutes.}
+  \reqfit{Confirm that the error message displays for a mock outage of the 
+  authentication and hosting services. (For AI refinement, provider 
+  unavailability protocol is described in \reqref{NFR-PERF-006})}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{ASM-005; \reqref{NFR-PERF-006}; \ucref{001}}
+\end{srsrequirement}
+
 \subsection{Productization Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-OPS-003}{No installation required}
+  \reqshall{Squigglr shall require no download, plugin, or
+  browser extension and shall be usable directly from a supported
+browser.}
+  \reqrationale{Installing applications on centrally administered device
+ecosystems is difficult or impossible without administrator approval
+(CON-001, CON-002) while a website URL is much easier to access.}
+  \reqfit{Pass when lesson and account features on Squigglr can
+be opened on each supported browser and device combination (OI-09)
+without installation}.
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{CON-001; CON-002; \srcref{003}; \srcref{004}}
+  \reqtraces{CON-001; CON-002; OI-09;}
+\end{srsrequirement}
+
 \subsection{Release Requirements}
-\lips
+
+Squigglr has no installation package. A release is a deployment to the
+hosting platform (Vercel) triggered by merging to the production branch.
 
 \section{Maintainability and Support Requirements}
 \subsection{Maintenance Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-MAINT-001}{Lesson catalogue update without code change}
+  \reqshall{Squigglr shall require no change to the source code to add, remove,
+or edit a lesson from the lesson catalogue; all lessons shall be stored as data
+read at runtime.}
+  \reqrationale{Lessons will need to be updated and the catalogue will need to be
+added to as the user base grows and the development team learns from previous
+experience. An extensible catalogue should be data-driven to make lessons
+easier to upload and eventually allow content creation to be offloaded to
+non-code teams.}
+  \reqfit{Confirm that lessons are stored as data objects and that the application
+renders them at runtime from these objects. Successfully upload, delete, and edit
+a lesson in a developer view.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{\reqref{FR-LRN-001}; \reqref{FR-LRN-002}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-MAINT-002}{Programmer locatability of stage behaviour}
+  \reqshall{A team member unfamiliar with the codebase shall be able
+to locate the module responsible for a given stage behaviour within
+\texttt{LOCATE\_TIME\_MAX} minutes.}
+  \reqrationale{Future contributions must be easy to implement as the application
+will need many iterations with a growing user base.}
+  \reqfit{Passes if a team member unfamiliar with the codebase reads a description
+of a stage behaviour written by a team member familiar with the codebase and takes
+less than \texttt{LOCATE\_TIME\_MAX} minutes to find the corresponding module.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{\reqref{FR-LRN-007}; \reqref{FR-LRN-008}}
+\end{srsrequirement}
+
 \subsection{Supportability Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-MAINT-003}{Module interface descriptions consistent with MG/MIS}
+  \reqshall{Each top-level Squigglr module shall have an interface
+description (exported functions, types, and pre/post-conditions).}
+  \reqrationale{Defining the contract between modules via the service
+they provide and those using it improves comprehensibility as different
+teams work on multiple modules asynchronously.}
+  \reqfit{Confirm that every issue created for development of a module
+has a requirement for an interface description.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{\reqref{NFR-MAINT-002}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-MAINT-004}{Consistent coding style}
+  \reqshall{Squigglr shall be developed along with a CI pipeline 
+that rejects any commit that introduces a violation of pre-configured
+linter or formatter rules determined by the team.}
+  \reqrationale{A consistent style is standard practice and reduces
+confusion among contributors.}
+  \reqfit{Confirm that the CI pipeline rejects commits that introduce
+a linter or formatter violation by testing two different violations.}
+  \reqpriority{Should}
+  \reqphase{PH-1}
+  \reqsources{}
+  \reqtraces{\reqref{NFR-MAINT-002}}
+\end{srsrequirement}
+
 \subsection{Adaptability Requirements}
-\lips
+
+The adaptability of Squigglr is addressed at the design level through
+the likely changes catalogue (LC-001 through LC-008) in Section~\ref{sec:changes}. 
+Some likely changes are already captured by requirements like LC-001 (stored lesson 
+changes) in \reqref{NFR-MAINT-001} and LC-004 in \reqref{NFR-OPS-002} No standalone 
+NFR is required here. 
 
 \section{Security Requirements}
 \subsection{Access Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-001}{Adult account data access}
+  \reqshall{Squigglr shall only allow the adult owner of an account
+to read and write to their respective child's profile.}
+  \reqrationale{Each adult account holds one or more child learner profiles
+(BR-001). Allowing unauthorized users to modify or read other childrens accounts
+violates privacy and undermines trust in the application.}
+  \reqfit{Using two test accounts, while authenticated as account A attempt
+to read or modify a child profile and attempt records belonging to account B
+via direct server requests. Pass when every such request is rejected and
+account A's own data is unchanged.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}}
+  \reqtraces{\reqref{SAF-SHA-001}; BR-001; \ucref{009}; \ucref{010}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-SEC-002}{Session token invalidation on deliberate logout}
+  \reqshall{Squigglr shall invalidate the corresponding session token of an adult
+user when they deliberately log out so that a captured or replayed copy of that token 
+cannot be used to access the account afterwards.}
+  \reqrationale{A token captured during an active session (e.g.\ from a shared-device
+browser history or network log) could otherwise remain valid indefinitely (OI-01). Explicit
+logout is the adult's signal that the device may pass to another user.}
+  \reqfit{Obtain a valid session token while authenticated, log out deliberately, 
+and attempt to make an authenticated API request by reusing the token. 
+Pass when the request is rejected three times consecutively.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}}
+  \reqtraces{\reqref{SAF-SHA-001}; \reqref{NFR-SEC-001}; OI-01}
+\end{srsrequirement}
+
 \subsection{Integrity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-003}{Immutability of confirmed attempt records}
+  \reqshall{Squigglr shall not allow an attempt record that has been confirmed 
+saved by the server to be modifiable by any subsequent client request.}
+  \reqrationale{Immutability on attempt records ensures adult trust in the
+accuracy of their child's records (G.5). The option to delete account information
+on request is standard, but changing existing records threatens non-repudiation.}
+  \reqfit{Pass when a modification request on an already confirmed saved record
+fails consecutively three times with an appropriate error message logged.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}}
+  \reqtraces{}
+\end{srsrequirement}
+
 \subsection{Privacy Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-004}{Minimal personal data collection}
+  \reqshall{Squigglr shall not store any child-identifying information
+beyond a non-identifying username.}
+  \reqrationale{Personal information about children is not necessary for
+Squigglr to function
+and minimizing collected data limits security risks. The supervising
+adult's contact details are collected at account registration if identifying
+information is needed; this supports Squigglr's
+accountability, consent, and access obligations under PIPEDA~\cite{pipeda}.}
+  \reqfit{Passes if there is no field during child registration beyond
+a username that does not prompt for their real name.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{}
+  \reqtraces{BR-001; \reqref{NFR-SEC-001}}
+\end{srsrequirement}
+
+\emph{Note:} Institutional self-hosting or per-institution data partitioning 
+is out of scope for this project. Account-level access control
+is already enforced by \reqref{NFR-SEC-001} and \reqref{SAF-SHA-001},
+which is sufficient for a single-instance capstone project like Squigglr.
+
 \subsection{Audit Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-005}{Server-side logging of authentication events}
+  \reqshall{Squigglr shall record every failed login session-timeout event 
+in a server-side audit log; the log entries shall not
+be accessible to adult users through any application interface.}
+  \reqrationale{Audit logs are useful for security as they provide diagnostics
+after abnormal behavior like brute-force attacks. Logs are hidden from users
+because they reveal personal information and users have no legitimate use for 
+them in most cases.}
+  \reqfit{Trigger ten failed login attempts and ten logouts by inactivity.
+Confirm that all events are recorded in the audit log with a time stamp
+and that a mock adult account is denied access to the audit log through request.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{\reqref{SAF-SHA-001}}
+\end{srsrequirement}
+
 \subsection{Immunity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-006}{Input sanitisation against injection}
+  \reqshall{Squigglr shall sanitise all text inputs supplied by a user
+to prevent injection attacks, including but not limited to SQL injection 
+and cross-site scripting (XSS).}
+  \reqfit{Passes if a pre-prepared set of SQL injections and XSS probe strings 
+  are sanitized through every text submission field in the application and API
+  text submission endpoint.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{}
+\end{srsrequirement}
+
 
 \section{Cultural Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-CULT-001}{Interface Language of Adult Views}
+  \reqshall{All text in adult views shall be in \texttt{INTERFACE\_LANGUAGE}.}
+  \reqrationale{Required by \reqref{NFR-UX-012} and assumes that every adult
+who uses Squigglr understands that language (ASM-007). Child-facing screens 
+contain no text as all controls are identified by images or icons (\reqref{NFR-UX-002}), 
+so child screens carry no cultural localisation.}
+  \reqfit{Confirm that every text string in the adult view is in 
+\texttt{INTERFACE\_LANGUAGE}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{ASM-007}
+  \reqtraces{\reqref{NFR-UX-012}; \reqref{NFR-UX-002};}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-CULT-002}{Cultural Sensitivity of Symbols and Imagery}
+  \reqshall{Squigglr shall contain no symbols or imagery that carry a known negative 
+cultural meaning in communities likely to use Squigglr.}
+  \reqrationale{The style review required by \reqref{NFR-UX-007} should assess
+such associations in aesthetic choices and clarity, because such associations
+may not be obvious to the development team; negative symbols can distress a child
+and create a negative experience for both the child and adult.}
+  \reqfit{Passes if style review finds no negative cultural associations or if concerns
+raised by the style review are addressed and approved by the reviewers.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{\reqref{NFR-UX-007}}
+\end{srsrequirement}
+
 
 \section{Compliance Requirements}
-\subsection{Legal Requirements}
-\lips
-\subsection{Standards Compliance Requirements}
-\lips
 
-\emph{Note for the section owner (from \#87):} list WCAG 2.2 as the
-accessibility standard Squigglr follows for selected success criteria (see
-Accessibility Requirements). It is not legally required for this project;
-the domain specialists recommended it as a starting point (SRC-005, \intref{P2}{39:26}). Full conformance is a stretch goal.
+\subsection{Legal Requirements}
+\begin{srsrequirement}{NFR-COMP-001}{PIPEDA}
+  \reqshall{Squigglr shall comply with applicable obligations under 
+PIPEDA~\cite{pipeda}.}
+  \reqrationale{PIPEDA applies because Squigglr is a Canadian project 
+hosted for Canadian schools that collects personal information in the 
+course of commercial-like activity.}
+  \reqfit{Confirm that Squigglr's collection and handling of personal 
+information complies with PIPEDA obligations.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{PIPEDA~\cite{pipeda}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-COMP-002}{Ontario FIPPA Applicability}
+  \reqshall{Squigglr shall be compliant with the Ontario Freedom
+of Information and Protection of Privacy Act (FIPPA) before adoption
+by any school boards.}
+  \reqrationale{Applicability is TBD, adoption by school board is out of the scope of the project.}
+  \reqfit{Before any Ontario school board adoption, confirm that Squigglr is compliant with FIPPA.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{}
+\end{srsrequirement}
+
+\emph{Note:} GDPR does not apply because EU jurisdiction is out of 
+scope for Squigglr. COPPA does not apply because US jurisdiction 
+is out of scope for Squigglr and child-identifying data is not 
+collected (BR-001).
+
+\subsection{Standards Compliance Requirements}
+
+\begin{srsrequirement}{NFR-COMP-005}{WCAG 2.2 Success Criteria}
+  \reqshall{Squigglr shall meet the selected WCAG 2.2 success 
+criteria~\cite{wcag22} encompassed by \reqref{NFR-UX-001}, 
+\reqref{NFR-UX-004}, \reqref{NFR-UX-005}, and \reqref{NFR-UX-018}--\reqref{NFR-UX-023}.}
+  \reqrationale{The selected criteria follow the specialist 
+  recommendation (SRC-005), supervisor advice (SRC-008), and OI-08. 
+  Full WCAG conformance is a stretch goal (Section~25).}
+  \reqfit{Confirm that Squigglr is compliant with the listed WCAG 2.2 success criteria.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{WCAG 2.2~\cite{wcag22}}
+\end{srsrequirement}
 
 \section{Open Issues}
 \label{sec:open-issues}
@@ -5761,7 +6319,7 @@ follows are now listed in NFR-UX-001, NFR-UX-004, NFR-UX-005 and
 NFR-UX-018 to NFR-UX-024. Still needed: WCAG 2.2 listed in Standards
 Compliance Requirements. &
 G.1; NFR-UX-001, NFR-UX-004, NFR-UX-005, NFR-UX-018 to NFR-UX-024
-& Shamil Canbolat (Compliance) &
+& Shamil Canbolat &
 Oct.\ 17, 2026 \\
 \addlinespace
 OI-09 & \emph{Supported devices and browsers.} CON-003 leaves the device
@@ -6709,7 +7267,7 @@ delivery phases; the course deadlines also appear under CON-004
 The delivery plan distinguishes the following requirement targets:
 \begin{description}[style=nextline]
   \item[PH-1 --- Proof of Concept (PoC), November 23, 2026.]
-  A demonstration of the core guided-lesson flow, input capture, stage
+  A demonstration of the core guided lesson flow, input capture, stage
   classification and pass-based progression using prepared examples.
   \item[PH-2 --- Revision 0, February 1, 2027.]
   The learner-specific configuration, feedback, retry and stopping rules,
@@ -6735,7 +7293,7 @@ requirement, including the safety requirements derived from the Hazard
 Analysis. The functional-requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
 are classified here as \emph{Must} and assigned to the phase containing
-the behaviour they protect. The 33 identified requirements in this SRS are scheduled in PH-1
+the behaviour they protect. The 144 identified requirements in this SRS are scheduled in PH-1
 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -6791,7 +7349,7 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \reqref{FR-LRN-015} & Retry after non-passing attempts & Must & PH-1 \\
 \addlinespace
-\reqref{FR-LRN-016} & Adult lesson and starting-stage selection & Must & PH-1 \\
+\reqref{FR-LRN-016} & Adult lesson and starting stage selection & Must & PH-1 \\
 \addlinespace
 \reqref{FR-LRN-017} & Adult-selected practice parameters & Must & PH-2 \\
 \addlinespace
@@ -6807,7 +7365,187 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \reqref{FR-LRN-023} & Automatic within-lesson advancement & Must & PH-1 \\
 \addlinespace
-\multicolumn{4}{@{}l}{\textbf{Hazard-derived safety requirements (Section 12.2)}}\\
+\multicolumn{4}{@{}l}{\textbf{Creative Drawing Requirements (Section 9.3)}}\\
+\addlinespace
+\reqref{FR-CRT-001} & Draw strokes & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-002} & Select a part & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-003} & Move a part & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-004} & Resize a part & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-005} & Recolour a part & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-006} & Erase a part & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-007} & Undo a change & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-008} & Redo an undone change & Could & PH-3 \\
+\addlinespace
+\reqref{FR-CRT-009} & Start a new drawing & Should & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-010} & Refine a finished drawing & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-011} & Change only stroke paths & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-012} & Stay within the refinement tolerance & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-013} & Keep the refined drawing editable & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-014} & Do not refine a stroke twice & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-015} & Leave unsupported drawing unchanged & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-016} & Show whether a drawing is refined & Should & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-017} & Restore the exact original & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-018} & Child restores the original & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-019} & Adult restores the original & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-020} & Leave the drawing unchanged when refinement fails & Must & PH-1 \\
+\addlinespace
+\reqref{FR-CRT-021} & Discard an out-of-date result & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-022} & Keep drawing while refinement runs & Should & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-023} & Save to the active learner & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-024} & Reopen a drawing as it was left & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-025} & Keep changes through a lost connection & Should & PH-3 \\
+\addlinespace
+\reqref{FR-CRT-026} & Show only the active learner's drawings & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-027} & No refinement in guided lessons & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-028} & Creative drawings are not attempts & Must & PH-2 \\
+\addlinespace
+\reqref{FR-CRT-029} & Show unsaved changes & Should & PH-3 \\
+\addlinespace
+\reqref{FR-CRT-030} & Turn refinement off & Should & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Attempt Record Requirements (Section 9.4)}}\\
+\addlinespace
+\reqref{FR-REC-001} & Attempt record & Must & PH-1 \\
+\addlinespace
+\reqref{FR-REC-002} & Actual strokes & Must & PH-2 \\
+\addlinespace
+\reqref{FR-REC-003} & Difficulties and corrections & Must & PH-1 \\
+\addlinespace
+\reqref{FR-REC-004} & Adult-set values in use & Must & PH-2 \\
+\addlinespace
+\reqref{FR-REC-005} & Interrupted attempt & Should & PH-2 \\
+\addlinespace
+\reqref{FR-REC-006} & Lesson record & Must & PH-2 \\
+\addlinespace
+\reqref{FR-REC-007} & Unfinished lesson & Should & PH-2 \\
+\addlinespace
+\reqref{FR-REC-008} & Each attempt saved once & Must & PH-2 \\
+\addlinespace
+\reqref{FR-REC-009} & Saved records unchanged & Must & PH-2 \\
+\addlinespace
+\reqref{FR-REC-010} & Suggestion responses & Should & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Progress Summary Requirements (Section 9.5)}}\\
+\addlinespace
+\reqref{FR-PRG-001} & One learner per summary & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-002} & Progress over time by lesson & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-003} & With and without a guide kept apart & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-004} & Recurring difficulties & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-005} & Open attempts behind the summary & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-006} & Attempt record view & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-007} & Adult chooses the view & Should & PH-3 \\
+\addlinespace
+\reqref{FR-PRG-008} & Empty history & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-009} & Interrupted attempts shown apart & Should & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-010} & Stages not attempted & Must & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-011} & Latest attempt included & Should & PH-2 \\
+\addlinespace
+\reqref{FR-PRG-012} & No overall score & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Appearance Requirements (Section 10.1)}}\\
+\addlinespace
+\reqref{NFR-UX-001} & Calm, uncluttered child screens & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-002} & Images and icons instead of text & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-003} & Adult views distinct from child screens & Should & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Style Requirements (Section 10.2)}}\\
+\addlinespace
+\reqref{NFR-UX-004} & Feedback that never marks the drawing as wrong & Must & PH-1 \\
+\addlinespace
+\reqref{NFR-UX-005} & Consistent look across child screens & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-006} & Appealing but calm style & Should & PH-3 \\
+\addlinespace
+\reqref{NFR-UX-007} & Style reviewed with educators or therapists & Should & PH-3 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Ease of Use Requirements (Section 11.1)}}\\
+\addlinespace
+\reqref{NFR-UX-008} & Practice without adult help & Must & PH-1 \\
+\addlinespace
+\reqref{NFR-UX-009} & Quick setup by a new adult & Should & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Personalization and Internationalization Requirements (Section 11.2)}}\\
+\addlinespace
+\reqref{NFR-UX-010} & Audio setting for each child & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-011} & Refinement setting for each child & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-012} & Language-free child screens, one adult language & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Learning Requirements (Section 11.3)}}\\
+\addlinespace
+\reqref{NFR-UX-013} & Learning a lesson from its demonstration & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-014} & Adult tasks learnable without training & Should & PH-3 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Understandability and Politeness Requirements (Section 11.4)}}\\
+\addlinespace
+\reqref{NFR-UX-015} & Short, encouraging messages to the child & Must & PH-1 \\
+\addlinespace
+\reqref{NFR-UX-016} & Effort acknowledged & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-017} & Plain wording in adult views & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Accessibility Requirements (Section 11.5)}}\\
+\addlinespace
+\reqref{NFR-UX-018} & Large touch targets & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-019} & Colour contrast & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-020} & Text alternatives for icons & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-021} & Feedback not by sound alone & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-022} & Control of audio & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-UX-023} & Keyboard use of adult views & Should & PH-3 \\
+\addlinespace
+\reqref{NFR-UX-024} & Resizable text in adult views & Could & PH-3 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Speed and Latency Requirements (Section 12.1)}}\\
+\addlinespace
+\reqref{NFR-PERF-001} & Stroke feedback latency & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-PERF-002} & AI refinement response latency & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-PERF-003} & Progress summary page load & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Safety-Critical Requirements (Section 12.2)}}\\
 \addlinespace
 \texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-2 \\
 \addlinespace
@@ -6828,6 +7566,110 @@ Section~\ref{sec:waiting-room}.
 \texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-AHM-002} & Drawing-coordinate integrity & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-SHA-001} & Authentication, encryption and session timeout & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-SHA-002} & Prevent PII transmission to third parties & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-SHA-003} & Verify saves and report save failures & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-SHA-004} & Fallback when AI refinement fails & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-SHA-005} & Report inappropriate AI-generated content & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-MOU-001} & Show missed parts without drawing them & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-MOU-002} & Keep assisted and independent records separate & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-MOU-003} & Limit flashing on child-facing screens & Must & PH-2 \\
+\multicolumn{4}{@{}l}{\textbf{Precision or Accuracy Requirements (Section 12.3)}}\\
+\addlinespace
+\reqref{NFR-PERF-004} & Stage result scoring accuracy & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Robustness or Fault-Tolerance Requirements (Section 12.4)}}\\
+\addlinespace
+\reqref{NFR-PERF-005} & Attempt preservation on network loss & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-PERF-006} & Refinement provider fallback & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-PERF-007} & Save failure transparency & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Capacity Requirements (Section 12.5)}}\\
+\addlinespace
+\reqref{NFR-PERF-008} & Concurrent session capacity & Should & PH-3 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Scalability or Extensibility Requirements (Section 12.6)}}\\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Longevity Requirements (Section 12.7)}}\\
+\addlinespace
+\reqref{NFR-PERF-009} & Operational lifetime through capstone & Must & PH-3 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Wider Environment Requirements (Section 13.2)}}\\
+\addlinespace
+\reqref{NFR-OPS-001} & HTTPS-only communication & Must & PH-1 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Requirements for Interfacing with Adjacent Systems (Section 13.3)}}\\
+\addlinespace
+\reqref{NFR-OPS-002} & Adjacent system interfaces & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Productization Requirements (Section 13.4)}}\\
+\addlinespace
+\reqref{NFR-OPS-003} & No installation required & Must & PH-1 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Release Requirements (Section 13.5)}}\\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Maintenance Requirements (Section 14.1)}}\\
+\addlinespace
+\reqref{NFR-MAINT-001} & Lesson catalogue update without code change & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Supportability Requirements (Section 14.2)}}\\
+\addlinespace
+\reqref{NFR-MAINT-002} & Programmer locatability of stage behaviour & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-MAINT-003} & Module interface descriptions & Should & PH-2 \\
+\addlinespace
+\reqref{NFR-MAINT-004} & Consistent coding style & Should & PH-1 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Adaptability Requirements (Section 14.3)}}\\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Access Requirements (Section 15.1)}}\\
+\addlinespace
+\reqref{NFR-SEC-001} & Adult account data access & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-SEC-002} & Session token invalidation on logout & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Integrity Requirements (Section 15.2)}}\\
+\addlinespace
+\reqref{NFR-SEC-003} & Immutability of confirmed attempt records & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Privacy Requirements (Section 15.3)}}\\
+\addlinespace
+\reqref{NFR-SEC-004} & Minimal personal data collection & Must & PH-1 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Audit Requirements (Section 15.4)}}\\
+\addlinespace
+\reqref{NFR-SEC-005} & Server-side logging of authentication events & Should & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Immunity Requirements (Section 15.5)}}\\
+\addlinespace
+\reqref{NFR-SEC-006} & Input sanitisation against injection & Must & PH-2 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Cultural Requirements (Section 16)}}\\
+\addlinespace
+\reqref{NFR-CULT-001} & Interface language of adult views & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-CULT-002} & Cultural sensitivity of symbols and imagery & Must & PH-3 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Legal Requirements (Section 17.1)}}\\
+\addlinespace
+\reqref{NFR-COMP-001} & PIPEDA & Must & PH-3 \\
+\addlinespace
+\reqref{NFR-COMP-002} & Ontario FIPPA applicability & Must & PH-3 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textbf{Standards Compliance Requirements (Section 17.2)}}\\
+\addlinespace
+\reqref{NFR-COMP-005} & WCAG 2.2 selected success criteria & Must & PH-3 \\
+
 \end{longtable}
 }
 
@@ -7129,7 +7971,7 @@ them during the capstone project.
 Camera-based finger tracing in the air & The specialists distinguished
 this gross-motor activity from the fine-motor practice supported by
 stylus-on-screen drawing and advised prioritizing touchscreen work
-(FACT-006; \srcref{005}). It is not part of the core guided-lesson
+(FACT-006; \srcref{005}). It is not part of the core guided lesson
 catalogue (G.1, CON-003). & Future \\
 \addlinespace
 Letter and handwriting tracing & The agreed core catalogue covers
@@ -7154,7 +7996,7 @@ the committed product. & Future \\
 \end{longtable}
 }
 
-Creative-space refinement remains within goal G.4 unless the team
+Creative space refinement remains within goal G.4 unless the team
 formally changes that goal (OI-03); it is not moved into the waiting
 room here. Automatic selection of new lessons, diagnostic assessment,
 and AI-generated personalized advice are excluded by CON-007 and
@@ -7404,7 +8246,222 @@ that takes months (SRC-005, \intref{P2}{22:56}). \\
 
 \section{Traceability}
 \label{sec:traceability}
-\lips
+
+This section provides three traceability views of the requirements links:
+sources through product use cases to requirements
+(Section~\ref{sec:goal-uc-req}), functional-to-nonfunctional
+links (Section~\ref{sec:fr-nfr}), and hazards to their mitigating
+requirements (Section~\ref{sec:hazard-req}). Entries are based on the
+requirements' own \emph{Sources}, \emph{Traceability} and \emph{Hazards}
+fields and on the corresponding Product Use Case and FMEA tables. Discussion 
+of similar behaviour does not imply a requirements link.
+
+\subsection{Goal/source to use case to requirement}
+\label{sec:goal-uc-req}
+
+Table~\ref{tab:goal-uc-req} follows each product use case's stated project
+goals and sources to requirements whose own \emph{Sources} field names at
+least one of those goals and whose \emph{Traceability} field names that use
+case.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}
+>{\raggedright\arraybackslash}p{0.15\textwidth}
+>{\raggedright\arraybackslash}p{0.56\textwidth}@{}}
+\caption{Goal/source to product use case to requirement}
+\label{tab:goal-uc-req}\\
+\toprule
+\textbf{Goal and source in use case} & \textbf{Use case} &
+\textbf{Requirements with matching Sources and Traceability fields} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Goal and source in use case} & \textbf{Use case} &
+\textbf{Requirements with matching Sources and Traceability fields} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+G.3; SRC-008 & \ucref{001} &
+\reqref{FR-LRN-017}; \reqref{NFR-UX-003}; \reqref{NFR-UX-009};
+\reqref{NFR-UX-014} \\
+\addlinespace
+G.1, G.3; SRC-005.01 & \ucref{002} &
+\reqref{FR-LRN-001}; \reqref{FR-LRN-016}; \reqref{NFR-UX-003};
+\reqref{NFR-UX-009}; \reqref{NFR-UX-014} \\
+\addlinespace
+G.1--G.3; SRC-005.01 & \ucref{003} &
+\reqref{FR-LRN-002}--\reqref{FR-LRN-015};
+\reqref{FR-LRN-020}--\reqref{FR-LRN-023};
+\reqref{NFR-UX-001}; \reqref{NFR-UX-002}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-008}; \reqref{NFR-UX-013}; \reqref{NFR-UX-015};
+\reqref{NFR-PERF-001} \\
+\addlinespace
+G.3; SRC-005.01 & \ucref{004} &
+\reqref{FR-LRN-016}; \reqref{FR-LRN-018}; \reqref{FR-LRN-023} \\
+\addlinespace
+G.3; SRC-005.01 & \ucref{005} &
+\reqref{FR-LRN-018}; \reqref{FR-LRN-019}; \reqref{NFR-UX-008};
+\reqref{NFR-UX-014} \\
+\addlinespace
+G.4; SRC-009.01 & \ucref{006} & -- \\
+\addlinespace
+G.4; SRC-009.01 & \ucref{007} &
+\reqref{NFR-UX-011}; \reqref{NFR-PERF-002} \\
+\addlinespace
+G.5; SRC-001 & \ucref{008} &
+\reqref{FR-LRN-007}; \reqref{FR-LRN-009}; \reqref{FR-LRN-021} \\
+\addlinespace
+G.6; SRC-005.02 & \ucref{009} &
+\reqref{FR-LRN-012}; \reqref{NFR-UX-003}; \reqref{NFR-UX-014};
+\reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
+\addlinespace
+G.3, G.6; SRC-008, SRC-009.01 & \ucref{010} &
+\reqref{FR-LRN-017}; \reqref{NFR-UX-003}; \reqref{NFR-UX-014};
+\reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
+\end{longtable}}
+
+\subsection{Functional to nonfunctional requirements}
+\label{sec:fr-nfr}
+
+Table~\ref{tab:fr-nfr} records cross-type references in a
+requirement's \emph{Traceability} field. One-way references
+should not be mistaken for a reciprocal links.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}
+>{\raggedright\arraybackslash}p{0.31\textwidth}
+>{\raggedright\arraybackslash}p{0.31\textwidth}@{}}
+\caption{Direct functional-to-nonfunctional requirement links}
+\label{tab:fr-nfr}\\
+\toprule
+\textbf{Functional requirement} & \textbf{Nonfunctional requirement} &
+\textbf{Declared by} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Functional requirement} & \textbf{Nonfunctional requirement} &
+\textbf{Declared by} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\reqref{FR-LRN-003} & \reqref{NFR-UX-013} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-007} & \reqref{NFR-PERF-001}; \reqref{NFR-PERF-004};
+\reqref{NFR-MAINT-002} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-008} & \reqref{NFR-PERF-004}; \reqref{NFR-MAINT-002} &
+NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-014} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015};
+\reqref{NFR-UX-016} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-022} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015} &
+NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-001}; \reqref{FR-LRN-002} &
+\reqref{NFR-MAINT-001} & NFR Traceability \\
+\end{longtable}}
+
+\subsection{Hazards to mitigating requirements}
+\label{sec:hazard-req}
+
+Table~\ref{tab:hazard-req} transcribes requirement IDs from the
+Hazard Analysis FMEA's \emph{Mitigating requirement IDs} column. The final
+column lists only requirements whose own \emph{Hazards} or
+\emph{Traceability} field names that hazard; a dash indicates a mitigation
+link that the SRS does not currently declare back to the hazard.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.13\textwidth}
+>{\raggedright\arraybackslash}p{0.48\textwidth}
+>{\raggedright\arraybackslash}p{0.31\textwidth}@{}}
+\caption{Hazards and requirement links}
+\label{tab:hazard-req}\\
+\toprule
+\textbf{Hazard} & \textbf{FMEA mitigating requirements} &
+\textbf{Requirements that declare this hazard in the SRS} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard} & \textbf{FMEA mitigating requirements} &
+\textbf{Requirements that declare this hazard in the SRS} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+H-RAY-001 & SAF-RAY-001 & SAF-RAY-001 \\
+\addlinespace
+H-RAY-002 & SAF-RAY-002; SAF-RAY-003 & SAF-RAY-002; SAF-RAY-003 \\
+\addlinespace
+H-RAY-003 & SAF-RAY-004 & SAF-RAY-004 \\
+\addlinespace
+H-RAY-004 & SAF-RAY-005 & SAF-RAY-005 \\
+\addlinespace
+H-RAY-005 & SAF-RAY-006 & SAF-RAY-006 \\
+\addlinespace
+H-RAY-006 & SAF-RAY-001; SAF-RAY-007 & SAF-RAY-001; SAF-RAY-007 \\
+\addlinespace
+H-RAY-007 & SAF-RAY-008 & SAF-RAY-008 \\
+\addlinespace
+H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010} &
+\reqref{FR-LRN-010} \\
+\addlinespace
+H-AHM-002 & \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 &
+SAF-AHM-001 \\
+\addlinespace
+H-AHM-003 & \reqref{FR-LRN-007}; \reqref{FR-LRN-010}; SAF-AHM-002 &
+\reqref{FR-LRN-010}; SAF-AHM-002 \\
+\addlinespace
+H-AHM-004 & \reqref{FR-LRN-011}; \reqref{FR-LRN-013};
+\reqref{FR-LRN-023} & \reqref{FR-LRN-013} \\
+\addlinespace
+H-AHM-005 & \reqref{FR-LRN-011}; \reqref{FR-LRN-013};
+\reqref{FR-LRN-014} & \reqref{FR-LRN-014}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-015} \\
+\addlinespace
+H-AHM-006 & \reqref{FR-LRN-009}; \reqref{FR-LRN-018}--
+\reqref{FR-LRN-020} & \reqref{FR-LRN-018} \\
+\addlinespace
+H-AHM-007 & \reqref{FR-LRN-016}; \reqref{FR-LRN-017};
+\reqref{FR-LRN-019}; \reqref{FR-LRN-021} & \reqref{FR-LRN-017} \\
+\addlinespace
+H-SHA-001 & SAF-SHA-001 & SAF-SHA-001 \\
+\addlinespace
+H-SHA-002 & SAF-SHA-002 & SAF-SHA-002 \\
+\addlinespace
+H-SHA-003 & SAF-SHA-003 & SAF-SHA-003 \\
+\addlinespace
+H-SHA-004 & SAF-SHA-004 & SAF-SHA-004 \\
+\addlinespace
+H-SHA-005 & SAF-SHA-005 & SAF-SHA-005 \\
+\addlinespace
+H-MOU-001 & SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
+\reqref{NFR-UX-007}; \reqref{NFR-UX-010}; \reqref{NFR-UX-022} &
+SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
+\reqref{NFR-UX-007}; \reqref{NFR-UX-010}; \reqref{NFR-UX-022} \\
+\addlinespace
+H-MOU-002 & \reqref{NFR-UX-004}; \reqref{NFR-UX-007};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-016}; \reqref{FR-LRN-022} &
+\reqref{NFR-UX-004}; \reqref{NFR-UX-007};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-016} \\
+\addlinespace
+H-MOU-003 & \reqref{NFR-UX-002}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-021} &
+\reqref{NFR-UX-002}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-021} \\
+\addlinespace
+H-MOU-004 & SAF-MOU-001; \reqref{FR-LRN-014};
+\reqref{FR-LRN-023} & SAF-MOU-001 \\
+\addlinespace
+H-MOU-005 & SAF-MOU-002; \reqref{FR-LRN-012};
+\reqref{NFR-UX-017}; SAF-RAY-004 &
+SAF-MOU-002; \reqref{NFR-UX-017} \\
+\addlinespace
+H-MOU-006 & \reqref{NFR-UX-011} & \reqref{NFR-UX-011} \\
+\end{longtable}}
+
 
 \clearpage
 \bibliographystyle{plain}
@@ -7743,6 +8800,21 @@ and the parts of the document written by other team members. AI was a
 writing and formatting aid; the final content and decisions remained
 my responsibility and the team's.
 
+\textbf{Shamil:} For the SRS I used the Kiro IDE which uses automatically 
+selects an optimal LLM for consistency among multiple versions of Claude,
+along with VS Code Copilot which uses ChatGPT 6 Luna. I used the chatbot 
+to generate a skeletons of my sections with starting text based on analysis 
+of the document. I used this starting text for idea generation and brainstorming, 
+using my own words for the written content, but sometimes repurposing generated 
+text with rewording, paraphrasing, or by completely rewriting. For short standalone 
+sentences I may have kept them as they are. When rewriting, I removed sections based 
+on false assumptions and made sure it was consistent with the rest of the 
+document. None of the text for the reflection questions is AI-generated. 
+I also used AI to make citations for compliance documents in the references
+document and generate the table for the traceability section.
+All decisions in my sections are my own and I reviewed all AI-assisted 
+passages.
+
 \textbf{Moustafa:} I used Anthropic's Claude Opus 5.5, accessed through
 Claude Code, alternating between medium and high effort depending on the
 task. Because the document was so large, I relied on it heavily to save
@@ -7811,6 +8883,17 @@ written requirements and the hazards in the other document. It was
 satisfying to see the different sections start fitting together rather
 than feeling like separate pieces of writing.
 
+\textbf{Shamil:} Producing requirements for each of my sections went well
+for me. I had worked on the Proof of Concept (POC) section for the previous
+deliverable and one point of feedback we received was that this section
+was too ambitious and that the POC should not be a smaller version of the
+final project. Having gone into more detail than necessary in that deliverable,
+I had a decent idea of what this project required and could express
+that in words. When my partners were preparing the GitHub issues for us, they
+included suggestions, examples, and additional details for some of the sections
+which I used to generate the requirements. Some sections were obviously
+not required in our project so those were easy as well.
+
 \textbf{Moustafa:} What went well was that we did most of the thinking
 before we started writing. Rayan and I interviewed three domain specialists
 on October 1, and they later filled out a follow-up questionnaire for us.
@@ -7872,6 +8955,20 @@ before submitting a pull request. It was a good reminder that writing
 a correct section is only part of the job; it also has to integrate
 safely into the team's document.
 
+\textbf{Shamil:} The main pain point was traceability, which was caused
+by our team's asynchronous progress and work split. We split the work evenly
+using AI to analyze the sections, but we did not properly take into account
+which sections would be based off of other sections. Due to this, for example,
+Ahmed created constants in Section~\ref{sec:constants} attached to my sections
+before I had even made those sections. Huzaifah realized while doing starting
+his assigned section that my section aligned better with the work he had already
+done, so we switched cases mid-project. These problems were compounded by the
+fact that some started the project and were communicating much earlier than
+others like Huzaifah and I, so communication was strained and we had to make
+assumptions in our work. In an attempt to prioritize an even work split, we
+overlooked that assigning sections based on their link to our work in the 
+Project Statement and Goals would have made everyone's job easier.
+
 \textbf{Moustafa:} The biggest pain point was how long and repetitive the
 document was. With five of us writing different sections, there was a good
 chance two people were writing about the same thing in different places,
@@ -7926,6 +9023,21 @@ to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering
 judgement about failure cases and edge conditions.
 
+\textbf{Shamil:} I contributed nine performance, five safety-critical, 
+three operational and environmental, four maintainability and support, 
+six security, two cultural, and two compliance requirements for a total
+of 31 requirements. I did not personally consult any clients or proxies
+to generate my requirements, but some of my requirements are traceable
+from other sections that were solicited from stakeholders. For example,
+\reqref{NFR-OPS-003} (no installation required) is based on constraints
+chosen after speaking with clients/proxies. Including the one just 
+mentioned, five of my requirements are based on such sections.  
+\reqref{NFR-SEC-001} and \reqref{NFR-SEC-004} cite \srcref{004}, which is
+a supervisor meeting (our supervisor is also a client). 
+\reqref{NFR-CULT-001} and \reqref{NFR-CULT-002} draw on
+\reqref{NFR-UX-002}, \reqref{NFR-UX-012} and \reqref{NFR-UX-007},
+respectively, all of which were solicited UX requirements.
+
 \textbf{Moustafa:} I wrote 27 requirements: 24 look-and-feel and usability
 requirements (NFR-UX-001 to NFR-UX-024) and three safety requirements
 (SAF-MOU-001 to SAF-MOU-003). Of these, 25 cite something our stakeholders
@@ -7977,10 +9089,27 @@ about what it means for a drawing to pass a fixed criterion and what
 can go wrong if the classification is inaccurate. The formal models
 and state-based reasoning we encounter in software engineering and
 real-time systems are relevant too. I used that way of thinking when
-writing the guided-lesson transitions, such as exactly when the
+writing the guided lesson transitions, such as exactly when the
 system should advance, retry, suggest an earlier stage or end the
 lesson. These courses helped me move from describing a feature to
 specifying behaviour that somebody can actually verify.
+
+\textbf{Shamil:} 
+
+Identifying mitigation and elimination strategies for the
+hazards went well for me because I have previously taken classes on requirements 
+and testing. I was able to select proper testing methods like integration testing 
+or identify which of my original testing ideas were not fit for the project. For
+instances where the AI refinement provider returned inaccurate or inappropriate
+content (H-SHA-005), I considered fuzz testing to assess the durability and coverage of the
+API guardrails. After realizing that this would require human confirmation regardless,
+I decided to just have a human tester recreate the problematic outputs after
+modifying the guardrails. Similarly, I recognized that grey-box testing was suited 
+for the case in which confidential user data is mistakenly shared with a non-essential
+third-party service (H-SHA-002). Testers can run different scenarios and observe the
+public-facing API to see if the target content is being shared or not. The requirements
+course also covered testing in relation to requirements, so I was able to connect
+the safety requirements to specific hazards without issue.
 
 \textbf{Moustafa:} Two courses help me the most. The first is SFWRENG 4HC3,
 Human-Computer Interaction. A lot of what it teaches feels obvious at first,
@@ -8004,19 +9133,8 @@ computer science knowledge. Skills may be related to technology, or writing,
 or presentation, or team management, etc. You should look to identify at
 least one item for each team member.
 
-\textbf{Rayan:} The most important knowledge the team needs is domain
-knowledge about the children Squigglr is for: how autistic children and
-children with ADHD develop visual-motor skills, how they use apps, and what
-helps or frustrates them. None of us has a background in this area, and it is
-not something we could safely guess, because a wrong assumption could make
-the app harder or more upsetting for the children it is meant to help. That
-is why it was necessary to get input from people who have designed software
-for autistic children and children with ADHD, rather than relying only on our
-own ideas. Their experience is what turned our general idea into requirements
-we can actually justify.
-
-\textbf{Ahmed:} The team needs a mix of technical skills and an
-understanding of the people we are building for. For my part, I need
+\textbf{Team:} The team needs a mix of technical skills and an
+understanding of the people we are building for. For Ahmed's part, he needs
 to keep improving at turning a user flow into a clear interface and a
 set of consistent, testable requirements. Rayan's backend work will
 require reliable data modelling and access control, especially since
@@ -8035,46 +9153,41 @@ and accessible interfaces. None of us should assume that something
 which seems intuitive to us will necessarily work well for the children
 or adults who would use Squigglr.
 
-\textbf{Moustafa:} As the frontend lead, the main thing I need to learn is
-how to handle stylus drawing in the browser properly. That means getting
-accurate, smooth input from the stylus, handling things like palm rejection
-and different screen sizes, and making sure what the child draws is exactly
-what gets saved. I also need to learn how to actually build the
-accessibility side I wrote in Sections 10 and 11, like checking contrast,
-touch target sizes and text alternatives, instead of just specifying them.
-For the team as a whole, I think the biggest skill is testing without
-children. Since we can't run studies with them, we need to get good at
-designing reviews with adults and prepared drawings that still tell us
-something useful.
+Thus, the most important knowledge the team needs is domain
+knowledge about the children Squigglr is for: how autistic children and
+children with ADHD develop visual-motor skills, how they use apps, and what
+helps or frustrates them. None of us has a background in this area, and it is
+not something we could safely guess, because a wrong assumption could make
+the app harder or more upsetting for the children it is meant to help. That
+is why it was necessary to get input from people who have designed software
+for autistic children and children with ADHD, rather than relying only on our
+own ideas. Their experience is what turned our general idea into requirements
+we can actually justify.
 
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
 member pursue, and why did they make this choice?
 
-\textbf{Rayan:} The two approaches we chose for acquiring this domain
-knowledge were interviews and questionnaires with domain specialists.
-Moustafa and I pursued both. We interviewed three specialists on October 1,
-2026, because a live conversation let us ask follow-up questions and explore
-topics we had not expected, such as who should control a child's
-progression. We then sent them a written questionnaire, answered between
-October 2 and 4, 2026, to cover the topics the interview did not reach, such
-as refinement in the creative space and letter activities. The questionnaire
-also gave the specialists time to think through their answers. Using both
-worked well together: the interview showed us what we did not know, and the
-questionnaire filled in the gaps it left.
-
-\textbf{Ahmed:} I see two useful approaches for each of these
-areas: learning from established material and then testing what we
-learn in something concrete. For my UI and requirements work, that
+\textbf{Team:} We see two useful approaches for each of these
+areas: learning from established sources and then testing what we
+learn in something concrete. For Ahmed's UI and requirements work, that
 means reviewing HCI guidance and examples from similar applications,
 then building prototypes and asking adults to walk through the flows.
+For Rayan and Moustafa, this was in the form of interviews and questionnaires 
+with domain specialists. They interviewed three specialists on October 1,
+2026, because a live conversation let them ask follow-up questions and explore
+unexpected topics, such as who should control a child's progression. the written 
+questionnaire, answered between October 2 and 4, 2026, covered the topics the 
+interview did not reach, such as refinement in the creative space and letter 
+activities. Using both worked well together: the interview showed the team what
+it did not know, and the questionnaire filled in the gaps it left.
+
 The second approach matters because something that looks clear on
 paper may still be confusing when somebody tries to use it.
-
 For Rayan's data and access-control work, official documentation and
-small integration prototypes can complement each other; I would
-prioritize testing the multi-learner and saving flows early. For
+small integration prototypes can complement each other; Ahmed 
+prioritized testing the multi-learner and saving flows early. For
 Moustafa's stylus and canvas work, browser input documentation is a
 starting point, but trying the same prepared strokes on different
 touchscreen sizes will reveal problems that documentation cannot.
@@ -8082,25 +9195,9 @@ For Huzaifah, studying testing methods and building repeatable
 synthetic test cases provide both the theory and evidence that our
 requirements are met. For Shamil, reading relevant research and
 following up with adult stakeholders through interviews or
-questionnaires would help check our assumptions. These are the
-approaches I would recommend we confirm as a team, because they let
-us learn efficiently while still checking that what we build works
+questionnaires would help check our assumptions. These approaches
+let us learn efficiently while still checking that what we build works
 as intended.
-
-\textbf{Moustafa:} For the stylus drawing, the two approaches are reading
-the browser documentation on pointer and touch input, and building a small
-drawing prototype early to test on real tablets with a stylus. I'll do
-both, but lean on the prototype, because input problems like palm rejection
-or lag only show up when you actually draw on the device. For
-accessibility, I can either go through the WCAG 2.2 success criteria we
-picked and learn the tools that check them, or look at how existing kids'
-apps handle things like icons and touch targets. I'll start with WCAG and
-the checking tools, since our requirements are written against those
-criteria, so that's how they'll be tested. For testing without children, I
-can learn from how other projects ran reviews with adults, or ask our
-specialists how they evaluate apps when children can't take part. I'll go
-with the specialists, because they've done exactly this before and offered
-to help guide us.
 
 \end{enumerate}
 

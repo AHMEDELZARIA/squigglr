@@ -4171,20 +4171,86 @@ removed from the supported list and OI-09 updated accordingly.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\goalref{1}; \goalref{2}; \goalref{3}}
-  \reqtraces{\reqref{NFR-OPS-001}}
+  \reqtraces{\reqref{NFR-OPS-002}}
 \end{srsrequirement}
 
 \section{Operational and Environmental Requirements}
 \subsection{Expected Physical Environment}
-\lips
+
+Squigglr is meant for use on a touchscreen tablet or laptop (CON-003).
+A stylus is required for interaction with motor practice features. Finger 
+input is a stretch goal (LC-006). Expected settings include the domicile,
+classroom, and therapy centres where children draw (FACT-009) often with 
+an adult nearby. The device is expected to be placed on a flat surface or 
+held in the user's hands.
+
 \subsection{Wider Environment Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-OPS-001}{HTTPS-only communication}
+  \reqshall{Squigglr shall exchange all data between the browser client
+and server under encrypted HTTPS protocol.}
+  \reqrationale{Account data travels over networks that the Squigglr team 
+does not control (ASM-005). HTTPS prevents unauthorized access and tampering 
+in transit. School and other facility networks may also block non-HTTPS traffic.}
+  \reqfit{Confirm that every request made by Squigglr uses the \texttt{https://} 
+scheme. Verify that navigating to the \texttt{http://} URL either redirects to 
+HTTPS or is blocked.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{5}; \goalref{6};}
+  \reqtraces{ASM-005; ASM-013; CON-001}
+\end{srsrequirement}
+
 \subsection{Requirements for Interfacing with Adjacent Systems}
-\lips
+
+\begin{srsrequirement}{NFR-OPS-002}{Adjacent system interfaces}
+  \reqshall{Squigglr shall interact with the following external systems:
+\begin{description}
+  \item[Authentication and session provider.] Squigglr shall delegate
+  account creation, login, and session management to a third-party
+  authentication provider.
+  \item[AI refinement service.] Squigglr shall send the child's raw stroke
+  data (without child PII \reqref{SAF-SHA-002}) to a third-party AI model 
+  for visual refinement and shall receive refined stroke data in return.
+  \item[Hosting and content-delivery network (Supabase / Vercel).] Squigglr
+  shall be served from Vercel for the front-end and Supabase for back-end for
+  application assets.
+  For authentication and hosting, Squigglr shall display an error message 
+  in the event of provider unavailability until the availability returns.
+\end{description}}
+  \reqrationale{The choice of Supabase and Vercel is arbitrary and abstract
+descriptions of adjacent systems leaves the requirements open to substitutes.}
+  \reqfit{Confirm that the error message displays for a mock outage of the 
+  authentication and hosting services. (For AI refinement, provider 
+  unavailability protocol is described in \reqref{NFR-PERF-007})}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}; \srcref{003}; \srcref{004}}
+  \reqtraces{ASM-005; ASM-013; \reqref{NFR-PERF-007}; \ucref{001}; \ucref{005}}
+\end{srsrequirement}
+
 \subsection{Productization Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-OPS-003}{No installation required}
+  \reqshall{Squigglr shall require no download, plug-in, or
+browser extension and will be usable directly from a supported
+browser.}
+  \reqrationale{Installing applications on centrally administered device
+ecosystems is difficult or impossible without administrator approval
+(CON-001, CON-002) while a website URL is much easier to access.}
+  \reqfit{Passes when lesson and account features on Squigglr can
+be opened on each supported browser and device combination (OI-09)
+without installation}.
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{CON-001; CON-002; \srcref{003}; \srcref{004}}
+  \reqtraces{CON-001; CON-002; OI-09;}
+\end{srsrequirement}
+
 \subsection{Release Requirements}
-\lips
+
+Squigglr has no installation package. A release is a deployment to the
+hosting platform (Vercel) triggered by merging to the production branch.
 
 \section{Maintainability and Support Requirements}
 \subsection{Maintenance Requirements}

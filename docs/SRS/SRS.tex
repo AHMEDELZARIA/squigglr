@@ -4386,10 +4386,7 @@ beyond a non-identifying username.}
 and minimizing collected data limits security risks. The supervising
 adult's contact details are collected at account registration if any
 identifying information is needed anyways; This satisfies Squigglr's 
-accountability, consent, and access obligations under PIPEDA~\cite{pipeda}. 
-PIPEDA applies because Squigglr is a Canadian project hosted for Canadian 
-schools that collects personal information in the course of commercial-like
-activity.}
+accountability, consent, and access obligations under PIPEDA~\cite{pipeda}.}
   \reqfit{Passes if there is no field during child registration beyond
 a username that does not prompt for their real name.}
   \reqpriority{Must}
@@ -4471,15 +4468,54 @@ raised by the style review are adressed and approved by the reviewers.}
 
 
 \section{Compliance Requirements}
-\subsection{Legal Requirements}
-\lips
-\subsection{Standards Compliance Requirements}
-\lips
 
-\emph{Note for the section owner (from \#87):} list WCAG 2.2 as the
-accessibility standard Squigglr follows for selected success criteria (see
-Accessibility Requirements). It is not legally required for this project;
-the domain specialists recommended it as a starting point (SRC-005, \intref{P2}{39:26}). Full conformance is a stretch goal.
+\subsection{Legal Requirements}
+\begin{srsrequirement}{NFR-COMP-001}{PIPEDA}
+  \reqshall{Squigglr shall comply with applicable obligations under 
+PIPEDA~\cite{pipeda}.}
+  \reqrationale{PIPEDA applies because Squigglr is a Canadian project 
+hosted for Canadian schools that collects personal information in the 
+course of commercial-like activity.}
+  \reqfit{Confirm that Squigglr's collection and handling of personal 
+information complies with PIPEDA obligations.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{PIPEDA~\cite{pipeda}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-COMP-002}{Ontario FIPPA Applicability}
+  \reqshall{Squigglr shall be compliant with the Ontario Freedom
+of Information and Protection of Privacy Act (FIPPA) before adoption
+by any school boards.}
+  \reqrationale{Applicability is TBD, adoption by school board is out of the scope of the project.}
+  \reqfit{Before any Ontario school board adoption, confirm that Squigglr is compliant with FIPPA.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{}
+\end{srsrequirement}
+
+\emph{Note:} GDPR does not apply because EU jurisdiction is out of 
+scope for Squigglr. COPPA does not apply because US jurisdiction 
+is out of scope for Squigglr and child-identifying data is not 
+collected (BR-001).
+
+\subsection{Standards Compliance Requirements}
+
+\begin{srsrequirement}{NFR-COMP-005}{WCAG 2.2 Success Criteria}
+  \reqshall{Squigglr shall meet the selected WCAG 2.2 success 
+criteria~\cite{wcag22} encompassed by \reqref{NFR-UX-001}, 
+\reqref{NFR-UX-004}, \reqref{NFR-UX-005}, and \reqref{NFR-UX-018}--\reqref{NFR-UX-023}.}
+  \reqrationale{The selected criteria follow the specialist 
+  recommendation (SRC-005), supervisor advice (SRC-008), and OI-08. 
+  Full WCAG conformance is a stretch goal (Section~25).}
+  \reqfit{Confirm that Squigglr is compliant with the listed WCAG 2.2 success criteria.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{WCAG 2.2~\cite{wcag22}}
+\end{srsrequirement}
 
 \section{Open Issues}
 \label{sec:open-issues}
@@ -5318,15 +5354,16 @@ writing and formatting aid; the final content and decisions remained
 my responsibility and the team's.
 
 \textbf{Shamil:} For the SRS I used the Kiro IDE which uses automatically 
-selects an optimal LLM for consistency among multiple versions of Claude 
-and others. I used the chatbot to generate a skeletons of my sections with 
-starting text based on analysis of the document. I used this starting text 
-for idea generation and brainstorming, using my own words for the written 
-content, but occasionally repurposing generated text with rewording, 
-paraphrasing, or by completely rewriting. For short standalone sentences 
-I may have kept them as they are. When rewriting, I removed sections based 
+selects an optimal LLM for consistency among multiple versions of Claude,
+along with VS Code Copilot which uses ChatGPT 6 Luna. I used the chatbot 
+to generate a skeletons of my sections with starting text based on analysis 
+of the document. I used this starting text for idea generation and brainstorming, 
+using my own words for the written content, but sometimes repurposing generated 
+text with rewording, paraphrasing, or by completely rewriting. For short standalone 
+sentences I may have kept them as they are. When rewriting, I removed sections based 
 on false assumptions and made sure it was consistent with the rest of the 
 document. None of the text for the reflection questions is AI-generated. 
+I also used AI to make citations for compliance documents in References.bib.
 All decisions in my sections are my own and I reviewed all AI-assisted 
 passages.
 

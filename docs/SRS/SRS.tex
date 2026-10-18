@@ -4328,18 +4328,147 @@ NFR is required here.
 
 \section{Security Requirements}
 \subsection{Access Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-001}{Adult account data access}
+  \reqshall{Squigglr shall only allow the adult owner of an account
+to read and write to their respective child's profile.}
+  \reqrationale{Each adult account holds one or more child learner profiles
+(BR-001). Allowing unauthorized users to modify or read other childrens accounts
+violates privacy and undermines trust in the application.}
+  \reqfit{Using two test accounts, while authenticated as account A attempt
+to read or modify a child profile and attempt records belonging to account B
+via direct server requests. Pass when every such request is rejected and
+account A's own data is unchanged.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}; \srcref{004}}
+  \reqtraces{SAF-SHA-001; BR-001; \ucref{009}; \ucref{010}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-SEC-002}{Session token invalidation on deliberate logout}
+  \reqshall{Squigglr shall invalidate the corresponding session token of an adult
+user when they deliberately log out so that a captured or replayed copy of that token 
+cannot be used to access the account afterwards.}
+  \reqrationale{A token captured during an active session (e.g.\ from a shared-device
+browser history or network log) could otherwise remain valid indefinitely (OI-01). Explicit
+logout is the adult's signal that the device may pass to another user.}
+  \reqfit{Obtain a valid session token while authenticated, log out deliberately, 
+and attempt to make an authenticated API request by reusing the token. 
+Pass when the request is rejected three times consecutively.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}}
+  \reqtraces{SAF-SHA-001; NFR-SEC-001; OI-01}
+\end{srsrequirement}
+
 \subsection{Integrity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-003}{Immutability of confirmed attempt records}
+  \reqshall{Squigglr shall not allow an attempt record that has been confirmed 
+saved by the server to be modifiable by any subsequent client request.}
+  \reqrationale{Immutability on attempt records ensures adult trust in the
+accuracy of their child's records (G.5). The option to delete account information
+on request is standard, but changing existing records threatens non-repudiation.}
+  \reqfit{Passes when a modification request on an already confirmed saved record
+fails consecutively three times with an appropriate error message logged.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}; \goalref{6}}
+  \reqtraces{SAF-AHM-001; SAF-AHM-002; SAF-SHA-003; FR-LRN-013}
+\end{srsrequirement}
+
 \subsection{Privacy Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-004}{Minimal personal data collection}
+  \reqshall{Squigglr shall not store any child-identifying information
+beyond a non-identifying username.}
+  \reqrationale{Children's PII are not necessary for Squigglr to function
+and minimizing collected data limits security risks. The supervising
+adult's contact details are collected at account registration if any
+identifying information is needed anyways; This satisfies Squigglr's 
+accountability, consent, and access obligations under PIPEDA~\cite{pipeda}. 
+PIPEDA applies because Squigglr is a Canadian project hosted for Canadian 
+schools that collects personal information in the course of commercial-like
+activity.}
+  \reqfit{Passes if there is no field during child registration beyond
+a username that does not prompt for their real name.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{5}; \goalref{6}; \srcref{004}}
+  \reqtraces{BR-001; NFR-SEC-001}
+\end{srsrequirement}
+
+\emph{Note:} Institutional self-hosting or per-institution data partitioning 
+is out of scope for this project. Account-level access control
+is already enforced by \reqref{NFR-SEC-001} and \reqref{SAF-SHA-001},
+which is sufficient for a single-instance capstone project like Squigglr.
+
 \subsection{Audit Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-004}{Server-side logging of authentication events}
+  \reqshall{Squigglr shall record every failed login session-timeout event 
+in a server-side audit log; the log entries shall not
+be accessible to adult users through any application interface.}
+  \reqrationale{Audit logs are useful for security as they provide diagnostics
+after abnormal behavior like brute-force attacks. Logs are hidden from users
+because they reveal personal information and users have no legitimate use for 
+them in most cases.}
+  \reqfit{Trigger ten failed login attempts and ten logouts by inactivity.
+Confirm that all events are recorded in the audit log with a time stamp
+and that a mock adult account is denied access to the audit log through request.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{SAF-SHA-001; NFR-SEC-001; NFR-SEC-007}
+\end{srsrequirement}
+
 \subsection{Immunity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-SEC-005}{Input sanitisation against injection}
+  \reqshall{Squigglr shall sanitise all text inputs supplied by a user
+to prevent injection attacks, including but not limited to SQL injection 
+and cross-site scripting (XSS).}
+  \reqfit{Passes if a pre-prepared set of SQL injections and XSS probe strings 
+  are sanitized through every text submission field in the application and API
+  text submission endpoint.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{SAF-AHM-001; NFR-SEC-001; NFR-SEC-002}
+\end{srsrequirement}
+
 
 \section{Cultural Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-CULT-001}{Interface Language of Adult Views}
+  \reqshall{All text in adult views shall be in \texttt{INTERFACE\_LANGUAGE}.}
+  \reqrationale{Required by \reqref{NFR-UX-012} and assumes that every adult
+who uses Squigglr understands that language (ASM-007). Child-facing screens 
+contain no text as all controls are identified by images or icons (\reqref{NFR-UX-002}), 
+so child screens carry no cultural localisation.}
+  \reqfit{Confirm that every text string in the adult view is in 
+\texttt{INTERFACE\_LANGUAGE}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{ASM-007}
+  \reqtraces{NFR-UX-012; NFR-UX-002;}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-CULT-002}{Cultural Sensitivity of Symbols and Imagery}
+  \reqshall{Squigglr shall contain no symbols or imagery that carry a known negative 
+cultural meaning in communities likely to use Squigglr.}
+  \reqrationale{The style review required by \reqref{NFR-UX-007} should assesses 
+for such associations in to aesthetic choices and clarity as such associations
+may not be obvious to the development team; negative symbols can distress a child
+and create a negative experience for both the child and adult.}
+  \reqfit{Passes if style review finds no negative cultural associations or if concerns
+raised by the style review are adressed and approved by the reviewers.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{}
+  \reqtraces{NFR-UX-007}
+\end{srsrequirement}
+
 
 \section{Compliance Requirements}
 \subsection{Legal Requirements}

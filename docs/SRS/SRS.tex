@@ -201,7 +201,7 @@ and are also linked to an open issue in Section~\ref{sec:open-issues}
 where such an issue exists. Diagrams, if used, must include a legend
 identifying their symbols and arrow meanings.
 Section~\ref{sec:fr-formal} defines the state-machine notation used to
-specify guided-lesson behaviour.
+specify guided lesson behaviour.
 
 \paragraph{Document roadmap.}
 \hyperref[sec:purpose]{Sections~1--5} establish the problem,
@@ -256,7 +256,7 @@ drawing's final result is kept without the process behind it: the guidance
 used, the difficulties met and the corrections made. Squigglr's value is
 in keeping that process visible to supporting adults while children
 practise with gradually less support. The comparison with existing products
-appears in the Off-the-Shelf Solutions section of this document.
+appears in the off-the-shelf Solutions section of this document.
 
 \subsection{Goals of the Project}
 
@@ -280,9 +280,9 @@ follows the activity the team presented to the domain specialists
 
 G.3 was revised after the PSG was submitted. The submitted PSG said
 Squigglr adjusts guidance and difficulty automatically. Following the
-domain-specialist interview (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18})
+domain specialist interview (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18})
 and the Oct.~7 TA discussion (SRC-006), the team assigned \emph{lesson
-selection, starting-stage selection and discretionary stage changes} to a
+selection, starting stage selection and discretionary stage changes} to a
 supporting adult (G.3). A passing drawing attempt still advances
 automatically to the next stage \emph{within the lesson the adult selected}
 (G.2, BR-002); completing a lesson never automatically selects another
@@ -379,7 +379,7 @@ of a shape or object in the agreed supported set by adjusting the child's
 own strokes; the result stays editable, the original can be restored, and
 refinement can be turned off (SRC-001; \intref{Moustafa}{6:03};
 \hyperref[src:009.01]{SRC-009.01}).
-\emph{Advantage:} creative drawing gives room for self-expression, and
+\emph{Advantage:} creative drawing gives room for self expression, and
 editability keeps the child in control of the work (SRC-001). Serves
 children.
 \emph{Measurement:} using prepared drawings of each item in the supported
@@ -437,7 +437,7 @@ is not listed as a stakeholder.
 
 Each stakeholder is classed by how directly they use Squigglr.
 \emph{Primary} stakeholders use it directly: children, parents, guardians
-and caregivers, and educators and learning-support staff.
+and caregivers, and educators and learning support staff.
 \emph{Secondary} stakeholders shape it or are affected by it without using
 it: the client, school administrators, and the domain specialists.
 \emph{Tertiary} stakeholders have an indirect interest: occupational
@@ -548,7 +548,7 @@ labels, or
 comparisons with other children (SRC-005, \intref{Moustafa}{6:03}).
 
 \paragraph{Experience levels.} Table~\ref{tab:userExperience} rates each
-user group's subject-matter and technological experience on a scale of novice, journeyman and master.
+user group's subject matter and technological experience on a scale of novice, journeyman and master.
 
 \begin{table}[H]
 \centering
@@ -826,7 +826,7 @@ solution.
 \begin{description}
 \item[CON-001] Squigglr shall be a website used in a web browser.\\
 \emph{Rationale:} Installing apps on school devices is difficult, and for
-Canadian schools a website is much easier to adopt than an app-store app.\\
+Canadian schools a website is much easier to adopt than an App Store app.\\
 \emph{Imposed by:} supervisor and TA.\\
 \emph{Fit criterion:} Squigglr opens and runs from a web address in a
 browser.\\
@@ -838,7 +838,7 @@ so adults may not be able to install software. Opening a web address is
 enough to start.\\
 \emph{Imposed by:} supervisor and TA.\\
 \emph{Fit criterion:} a first-time user starts an activity without
-installing any app, plug-in or browser extension.\\
+installing any app, plugin or browser extension.\\
 \emph{Source:} SRC-003, SRC-004.
 \item[CON-003] Squigglr shall work on touchscreen devices with stylus
 input.\\
@@ -881,12 +881,12 @@ run alongside; it is a new product.
 \subsection{Partner or Collaborative Applications}
 Not applicable. No stakeholder requires Squigglr to work with a specific
 partner application. Candidate integrations, if any, belong in the
-Off-the-Shelf Solutions section.
+off-the-shelf Solutions section.
 
-\subsection{Off-the-Shelf Software}
+\subsection{Off-the-shelf Software}
 Not applicable. No stakeholder mandates any specific off-the-shelf
 software. Candidate libraries and services are discussed in the
-Off-the-Shelf Solutions section, not here.
+off-the-shelf Solutions section, not here.
 
 \subsection{Anticipated Workplace Environment}
 Squigglr will be used at home, in classrooms and in other places where
@@ -949,7 +949,7 @@ The supervisor and the university set rules that protect children.
 children for requirements or evaluation.\\
 \emph{Rationale:} The users are children, and the supervisor directed that
 no information about them be collected. Requirements come from adults and
-personas, and every check uses prepared or adult-made attempts. This
+personas, and every check uses prepared or attempts made by adults. This
 constraint covers the project's work; how Squigglr itself protects the
 practice records it keeps is a privacy requirement, not this constraint.\\
 \emph{Imposed by:} supervisor.\\
@@ -990,7 +990,7 @@ identifiers link to Appendix~\ref{app:sources}.
 \bottomrule
 \endlastfoot
 \textbf{Visual-motor integration} & Coordination of visual information
-with movement, relevant to drawing and writing-readiness activities.
+with movement, relevant to drawing and writing readiness activities.
 & \hyperref[sec:purpose]{Section 1}\\
 \textbf{Guided lesson} & A structured activity in the agreed lesson
 catalogue in which drawing guidance is provided in successive stages.
@@ -1081,15 +1081,15 @@ complete conformance (\srcref{008}).
 \subsection{Symbolic Constants}
 \label{sec:constants}
 Table~\ref{tab:goalconst} specifies the parameters used in guided lessons,
-creative refinement and progress-summary verification. The six
+creative refinement and progress summary verification. The six
 adult-configurable parameters have an allowed range and a default value
 for each learner profile (BR-008, \srcref{008}). Their defaults are
 the midpoints of their respective ranges. Each configuration shall satisfy
 \texttt{ATTEMPT\_LIMIT} $>$ \texttt{DIFFICULTY\_STREAK} and
 \texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}.
-Drawing-stage results are expressed on a normalized scale from 0 to 100;
+Drawing stage results are expressed on a normalized scale from 0 to 100;
 higher results indicate closer agreement with the stage's fixed criteria.
-The result is not a measure of the child's ability (BR-006). Attempt-count
+The result is not a measure of the child's ability (BR-006). Attempt count
 settings shall be integers, and values violating the allowed ranges or
 the two cross-setting inequalities shall be rejected (BR-008).
 
@@ -1104,7 +1104,7 @@ The supervisor's 14 October guidance (\srcref{008}) requires
 adult-configurable ranges, midpoint defaults and example drawings
 illustrating both ends of the \texttt{STAGE\_PASS} range. The chosen
 values and the drawing-to-score interpretation are checked using
-prepared or adult-made examples at the lower and upper boundaries of
+prepared or examples made by adults at the lower and upper boundaries of
 each configurable range (OI-05; CON-005--006).
 
 {\small\setlength{\tabcolsep}{5pt}
@@ -1131,7 +1131,7 @@ before Squigglr may suggest returning to an earlier stage.
 \emph{Default:} 4. \emph{Trace:} G.3, BR-003, OI-05.\\
 \addlinespace
 \texttt{ATTEMPT\_LIMIT} & Number of unsuccessful attempts
-that triggers the lesson-end or extension decision.
+that triggers the lesson ending or extension decision.
 \emph{Unit:} failed attempts. \emph{Range:} 6--10.
 \emph{Default:} 8; must exceed \texttt{DIFFICULTY\_STREAK}.
 \emph{Trace:} G.3, BR-002, OI-05.\\
@@ -1164,12 +1164,12 @@ refined strokes and the child's original strokes in the creative space.
 TBD. \emph{Trace:} G.4, BR-005.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers
-for progress-summary understandability checks.
+for progress summary understandability checks.
 \emph{Unit:} people (count). \emph{Value:} team-defined; TBD.
 \emph{Trace:} G.6.\\
 \addlinespace
 \texttt{REVIEW\_PASS\_RATE} & Minimum proportion of
-progress-summary review tasks completed successfully by adults.
+progress summary review tasks completed successfully by adults.
 \emph{Unit:} proportion. \emph{Value:} team-defined; TBD.
 \emph{Trace:} G.6.\\
 \addlinespace
@@ -1210,7 +1210,7 @@ child when spoken.
 \emph{Unit:} words. \emph{Value:} team-defined; TBD.
 \emph{Trace:} NFR-UX-015.\\
 \addlinespace
-\texttt{TARGET\_SIZE\_MIN} & Minimum touch-target size of a control on
+\texttt{TARGET\_SIZE\_MIN} & Minimum touch target size of a control on
 a child-facing screen.
 \emph{Unit:} CSS pixels. \emph{Value:} 44 by 44, from WCAG 2.2 success
 criterion 2.5.5. \emph{Trace:} NFR-UX-018.\\
@@ -1224,7 +1224,7 @@ Squigglr ends the session and logs out the user.
 \emph{Trace:} SAF-SHA-001.\\
 \addlinespace
 \texttt{FAILED\_SAVES} & Number of consecutive failed save attempts
-used in the fit-criterion sample for save-failure notification tests.
+used in the fit criterion sample for save failure notification tests.
 \emph{Unit:} save attempts (count). \emph{Value:} team-defined; TBD.
 \emph{Trace:} SAF-SHA-003.\\
 \addlinespace
@@ -1303,7 +1303,7 @@ not per diagnosis (G.3).
 child is ready for the next level requires assessment, which is too
 complex for the project's time frame, and that an adult who knows the
 child should decide (SRC-005, \intref{P1}{28:37}; \intref{P2}{29:18}).\\
-\emph{Relevance:} basis for adult-controlled lesson selection and
+\emph{Relevance:} basis for adult controlled lesson selection and
 nonroutine stage changes (CON-007, G.3, BR-003); the team retains fixed
 pass-based forward progression within the selected lesson (G.2).
 \item[FACT-005] The specialists stated that how a child holds a tool
@@ -1649,7 +1649,7 @@ therapy programmes run by occupational therapists (SRC-005,
 \intref{P1}{32:42}). Structured programmes exist that grade the same
 activity into easier and harder levels (SRC-001), and many drawing
 applications are available for children (SRC-005, \intref{P2}{35:36}). The
-comparison with existing products is in the Off-the-Shelf Solutions
+comparison with existing products is in the off-the-shelf Solutions
 section.
 
 The adults who support a child follow progress mainly through what the
@@ -2162,7 +2162,7 @@ Table~\ref{tab:puc}. Each use case lists its actor, preconditions,
 trigger, main flow, alternative flows, failure flows and postconditions,
 and the requirements and sources it depends on. Alternative flows are
 other normal paths; failure flows handle the invalid or missing inputs in
-Table~\ref{tab:product-inputs}. Both are numbered by the main-flow step
+Table~\ref{tab:product-inputs}. Both are numbered by the main flow step
 where they branch, so ``3a'' branches at step 3. The lesson behaviour in
 \ucref{003} and \ucref{005} is specified formally in
 Section~\ref{sec:fr-formal}. An identifier marked TBD names a
@@ -2423,7 +2423,7 @@ the original or turns refinement off.}
 \end{description}
 \reqfield{Postconditions}{The drawing is refined or unchanged, stays
 editable, and its original can be restored. Refinement never reaches a
-guided-lesson record (BR-004, BR-005).}
+guided lesson record (BR-004, BR-005).}
 \reqfield{Requirements}{FR-CRT TBD (\#83); BR-004, BR-005.}
 \reqfield{Sources}{\goalref{4}; \mbox{SRC-009.01}.}
 
@@ -2541,7 +2541,7 @@ NFR-UX-010, NFR-UX-011; NFR-SEC TBD (\#82); BR-001, BR-008.}
 \section{Functional Requirements}
 \label{sec:functional}
 Functional requirements are grouped by externally observable product
-behaviour. Each requirement uses the identifier, fit-criterion and
+behaviour. Each requirement uses the identifier, fit criterion and
 traceability conventions defined in the Introduction.
 
 \subsection{Learning Activity Requirements}
@@ -2551,11 +2551,11 @@ This subsection specifies the externally observable behaviour of guided
 lessons. It builds on G.1--G.3, CON-003, CON-007 and BR-002--BR-009,
 with source statements in Appendix~\ref{app:sources}.
 The core catalogue covers lines, shapes and simple drawings; letter tracing
-is deferred (ASM-010, LC-001). Delivery-phase identifiers follow the
+is deferred (ASM-010, LC-001). Delivery phase identifiers follow the
 conventions in the Introduction and the phase plan in
 Section~\ref{sec:tasks}.
 
-\paragraph{Within-lesson progression and adult control.}
+\paragraph{Progression within lessons and adult control.}
 A supporting adult selects each lesson and its starting stage and authorizes
 skips or backward changes (G.3, CON-007). Within the selected lesson, a
 passing drawing attempt automatically advances to the next guidance stage
@@ -2565,12 +2565,12 @@ Squigglr does not automatically select another lesson.
 \paragraph{Lesson content and guidance.}
 \begin{srsrequirement}{FR-LRN-001}{Approved lesson catalogue}
   \reqshall{Squigglr shall offer guided lessons for the approved catalogue of lines,
-basic shapes and simple drawings, excluding letter-tracing activities from
+basic shapes and simple drawings, excluding letter tracing activities from
 the core catalogue.}
   \reqrationale{These are the agreed categories for structured practice; letters are deferred
 (G.1, ASM-010). The lesson catalogue is maintained separately from the stage rules
 (LC-001).}
-  \reqfit{Inspect the adult-visible lesson catalogue and verify that every approved
+  \reqfit{Inspect the lesson catalogue and verify that every approved
 catalogue entry is selectable, classified as a line, shape or simple drawing,
 and has the stages in FR-LRN-002; verify that no letter activity is required
 to complete the core catalogue.}
@@ -2582,7 +2582,7 @@ to complete the core catalogue.}
 
 \begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
   \reqshall{Squigglr shall make the following ordered guidance stages available for each
-guided lesson: demonstration, full-outline tracing, endpoint-only guidance
+guided lesson: demonstration, full outline tracing, endpoint-only guidance
 and independent drawing.}
   \reqrationale{The activity described to specialists removes guidance in this order
 (G.1--G.2).}
@@ -2602,7 +2602,7 @@ demonstration stage without treating that demonstration as a learner attempt.}
 inflate the learner's records.}
   \reqfit{Start each approved lesson in its demonstration stage; verify that the
 intended drawing can be viewed and that watching it adds no learner attempt
-or passed-stage record.}
+or passed stage record.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{G.1; \srcref{001}; \srcref{005}}
@@ -2700,7 +2700,7 @@ stage attempt counters are unchanged.}
   \reqshall{Squigglr shall withhold passing status from an attempt whose required stylus
 input is missing, invalid or too ambiguous to evaluate against the stage
 criteria, and shall not count such input toward the stage's evaluable-attempt
-or unsuccessful-attempt limits.}
+or unsuccessful attempt limits.}
   \reqrationale{Unreliable acquisition must not silently turn a malformed drawing into a
 successful result (ASM-004).}
   \reqfit{Submit empty input, input with missing coordinate data and data for which the
@@ -2788,7 +2788,7 @@ and verify that the lesson-end rule is followed instead.}
 \end{srsrequirement}
 
 \paragraph{Adult control, suggestions and stopping rules.}
-\begin{srsrequirement}{FR-LRN-016}{Adult lesson and starting-stage selection}
+\begin{srsrequirement}{FR-LRN-016}{Adult lesson and starting stage selection}
   \reqshall{Squigglr shall use the lesson and starting guidance stage selected by the
 supporting adult for the learner's session, including an adult-selected later
 starting stage.}
@@ -2909,7 +2909,7 @@ Verify that the highest stage reached is included in the saved lesson outcome.}
 of the drawing attempt rather than as assessments, diagnoses or comparisons
 of children.}
   \reqrationale{The product is a practice tool, not an assessment instrument (BR-006).}
-  \reqfit{Inspect all guided-lesson feedback and completion outcomes, using prepared
+  \reqfit{Inspect all guided lesson feedback and completion outcomes, using prepared
 attempts; verify that each refers to the task, stage or observed strokes and
 that none assigns a diagnosis, ability label or inter-child ranking.}
   \reqpriority{Must}
@@ -3142,7 +3142,7 @@ successor within its lesson. Passing the last stage ends \emph{that} lesson.
 
 {\small
 \begin{longtable}{@{}p{0.22\textwidth}p{0.29\textwidth}p{0.36\textwidth}@{}}
-\caption{Guided-lesson state transitions and authorization}\label{tab:lrn-transitions}\\
+\caption{guided lesson state transitions and authorization}\label{tab:lrn-transitions}\\
 \toprule
 \textbf{Event} & \textbf{Guard} & \textbf{Required state change or output}\\
 \midrule
@@ -3827,7 +3827,7 @@ This subsection holds safety requirements that come from the Hazard Analysis
 and do not fit another section. Each lists the hazards it mitigates.
 
 \begin{description}
-\item[SAF-RAY-001] Squigglr shall allow lesson choice, starting-stage
+\item[SAF-RAY-001] Squigglr shall allow lesson choice, starting stage
 choice, learner switching and acceptance of a go-back suggestion only after
 an adult check that a child cannot complete by tapping icons, and shall keep
 a pending suggestion, without blocking practice, until an adult accepts or
@@ -4232,7 +4232,7 @@ descriptions of adjacent systems leaves the requirements open to substitutes.}
 \subsection{Productization Requirements}
 
 \begin{srsrequirement}{NFR-OPS-003}{No installation required}
-  \reqshall{Squigglr shall require no download, plug-in, or
+  \reqshall{Squigglr shall require no download, plugin, or
 browser extension and will be usable directly from a supported
 browser.}
   \reqrationale{Installing applications on centrally administered device
@@ -4466,7 +4466,7 @@ CON-001, CON-003 & Shamil Canbolat & Nov.\ 2, 2026 (V\&V Plan) \\
 \end{longtable}
 }
 
-\section{Off-the-Shelf Solutions}
+\section{Off-the-shelf Solutions}
 \subsection{Ready-Made Products}
 \lips
 \subsection{Reusable Components}
@@ -4504,7 +4504,7 @@ delivery phases; the course deadlines also appear under CON-004
 The delivery plan distinguishes the following requirement targets:
 \begin{description}[style=nextline]
   \item[PH-1 --- Proof of Concept (PoC), November 23, 2026.]
-  A demonstration of the core guided-lesson flow, input capture, stage
+  A demonstration of the core guided lesson flow, input capture, stage
   classification and pass-based progression using prepared examples.
   \item[PH-2 --- Revision 0, February 1, 2027.]
   The learner-specific configuration, feedback, retry and stopping rules,
@@ -4586,7 +4586,7 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \reqref{FR-LRN-015} & Retry after non-passing attempts & Must & PH-1 \\
 \addlinespace
-\reqref{FR-LRN-016} & Adult lesson and starting-stage selection & Must & PH-1 \\
+\reqref{FR-LRN-016} & Adult lesson and starting stage selection & Must & PH-1 \\
 \addlinespace
 \reqref{FR-LRN-017} & Adult-selected practice parameters & Must & PH-2 \\
 \addlinespace
@@ -4675,7 +4675,7 @@ them during the capstone project.
 Camera-based finger tracing in the air & The specialists distinguished
 this gross-motor activity from the fine-motor practice supported by
 stylus-on-screen drawing and advised prioritizing touchscreen work
-(FACT-006; \srcref{005}). It is not part of the core guided-lesson
+(FACT-006; \srcref{005}). It is not part of the core guided lesson
 catalogue (G.1, CON-003). & Future \\
 \addlinespace
 Letter and handwriting tracing & The agreed core catalogue covers
@@ -5435,7 +5435,7 @@ about what it means for a drawing to pass a fixed criterion and what
 can go wrong if the classification is inaccurate. The formal models
 and state-based reasoning we encounter in software engineering and
 real-time systems are relevant too. I used that way of thinking when
-writing the guided-lesson transitions, such as exactly when the
+writing the guided lesson transitions, such as exactly when the
 system should advance, retry, suggest an earlier stage or end the
 lesson. These courses helped me move from describing a feature to
 specifying behaviour that somebody can actually verify.

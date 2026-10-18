@@ -4254,11 +4254,77 @@ hosting platform (Vercel) triggered by merging to the production branch.
 
 \section{Maintainability and Support Requirements}
 \subsection{Maintenance Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-MAINT-001}{Lesson catalogue update without code change}
+  \reqshall{Squigglr shall require no change to the source code to add, remove,
+or editing a lesson from the lesson catalogue; all lessons shall be stored as data
+read at runtime.}
+  \reqrationale{Lessons will need to be updated and the catalogue will need to be
+added to as the userbase grows and the development team learns from previous 
+experience. An applications with an extensible content system should use a 
+data-driven content system for easier uploading and eventually offloading of 
+content creation to non-code teams.}
+  \reqfit{Confirm that lessons are stored as data objects and that the application
+renders them at runtime from these objects. Successfully upload, delete, and edit
+a lesson in a developer view.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{\reqref{FR-LRN-001}; \reqref{FR-LRN-002}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-MAINT-002}{Programmer locatability of stage behaviour}
+  \reqshall{A team member unfamiliar with the codebase shall be able
+to locate the module responsible for a given stage behaviour within
+\texttt{LOCATE\_TIME\_MAX} minutes.}
+  \reqrationale{Future contributions must be easy to implement as the application
+will need many iterations with a growing user base.}
+  \reqfit{Passes if a team member unfamiliar with the codebase reads a description
+of a stage behaviour written by a team member familiar with the codebase and takes
+less than \texttt{LOCATE\_TIME\_MAX} minutes to find the corresponding module.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\srcref{008}}
+  \reqtraces{\reqref{FR-LRN-007}; \reqref{FR-LRN-008}}
+\end{srsrequirement}
+
 \subsection{Supportability Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-MAINT-003}{Module interface descriptions consistent with MG/MIS}
+  \reqshall{Each top-level Squigglr module shall have an interface
+description (exported functions, types, and pre/post-conditions).}
+  \reqrationale{Defining the contract between modules via the service
+they provide and those using it improves comprehensibility as different
+teams work on multiple modules asynchronously.}
+  \reqfit{Confirm that every issue created for development of a module
+has a requirement for an interface description.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{}
+  \reqtraces{NFR-MAINT-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-MAINT-004}{Consistent coding style}
+  \reqshall{Squigglr shall be developed along with a CI pipeline 
+that rejects any commit that introduces a violation of pre-configured
+linter or formatter rules determined by the team.}
+  \reqrationale{A consistent style is standard practice and reduces
+confusion among contributors.}
+  \reqfit{Confirm that the CI pipeline rejects commits that introduces 
+a linter or formatter violation by testing two different violations.}
+  \reqpriority{Should}
+  \reqphase{PH-1}
+  \reqsources{}
+  \reqtraces{NFR-MAINT-002}
+\end{srsrequirement}
+
 \subsection{Adaptability Requirements}
-\lips
+
+The adaptability of Squigglr is addressed at the design level through
+the likely changes catalogue (LC-001 through LC-008) in Section~\ref{sec:changes}. 
+Some likely changes are already captured by requirements like LC-001 (stored lesson 
+changes) in \reqref{NFR-MAINT-001} and LC-004 in \reqref{NFR-OPS-002} No standalone 
+NFR is required here. 
 
 \section{Security Requirements}
 \subsection{Access Requirements}

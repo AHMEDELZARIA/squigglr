@@ -5793,14 +5793,13 @@ compared to the original item.}
 connection is lost during the attempt or after the latest attempt until 
 the server confirms it is saved (after connection is restored).}
   \reqrationale{G.5 requires complete practice records; losing their current 
-attempt may upset a child.
-\reqref{SAF-RAY-003}.}
+attempt may upset a child.}
   \reqfit{Pass when attempts are saved after connection is intentionally
 cut during a mock attempt three times consecutively.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{5}}
-  \reqtraces{SAF-RAY-003; \ucref{003}}
+  \reqtraces{\reqref{SAF-RAY-003}; \ucref{003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-PERF-007}{Refinement provider fallback}
@@ -6110,7 +6109,7 @@ which is sufficient for a single-instance capstone project like Squigglr.
 
 \subsection{Audit Requirements}
 
-\begin{srsrequirement}{NFR-SEC-004}{Server-side logging of authentication events}
+\begin{srsrequirement}{NFR-SEC-005}{Server-side logging of authentication events}
   \reqshall{Squigglr shall record every failed login session-timeout event 
 in a server-side audit log; the log entries shall not
 be accessible to adult users through any application interface.}
@@ -6129,7 +6128,7 @@ and that a mock adult account is denied access to the audit log through request.
 
 \subsection{Immunity Requirements}
 
-\begin{srsrequirement}{NFR-SEC-005}{Input sanitisation against injection}
+\begin{srsrequirement}{NFR-SEC-006}{Input sanitisation against injection}
   \reqshall{Squigglr shall sanitise all text inputs supplied by a user
 to prevent injection attacks, including but not limited to SQL injection 
 and cross-site scripting (XSS).}
@@ -8536,8 +8535,8 @@ text with rewording, paraphrasing, or by completely rewriting. For short standal
 sentences I may have kept them as they are. When rewriting, I removed sections based 
 on false assumptions and made sure it was consistent with the rest of the 
 document. None of the text for the reflection questions is AI-generated. 
-I also used AI to make citations for compliance documents in References.bib
-and generate a starting table for the traceability section.
+I also used AI to make citations for compliance documents in the references
+document and generate the table for the traceability section.
 All decisions in my sections are my own and I reviewed all AI-assisted 
 passages.
 
@@ -8609,6 +8608,17 @@ written requirements and the hazards in the other document. It was
 satisfying to see the different sections start fitting together rather
 than feeling like separate pieces of writing.
 
+\textbf{Shamil:} Producing requirements for each of my sections went well
+for me. I had worked on the Proof of Concept (POC) section for the previous
+deliverable and one point of feedback we received was that this section
+was too ambitious and that the POC should not be a smaller version of the
+final project. Having went into more detail than necessary in that deliverable
+I thus had a decent idea of what was required of this project and could express
+that in words. When my partners were preparing the GitHub issues for us, they
+included suggestions, examples, and additional details for some of the sections
+which I used to generate the requirements. Some sections were obviously
+not required in our project so those were easy as well.
+
 \textbf{Moustafa:} What went well was that we did most of the thinking
 before we started writing. Rayan and I interviewed three domain specialists
 on October 1, and they later filled out a follow-up questionnaire for us.
@@ -8670,6 +8680,20 @@ before submitting a pull request. It was a good reminder that writing
 a correct section is only part of the job; it also has to integrate
 safely into the team's document.
 
+\textbf{Shamil:} The main pain point was traceability, which was caused
+by our team's asynchronous progress and work split. We split the work evenly
+using AI to analyze the sections, but we did not properly take into account
+which sections would be based off of other sections. Due to this, for example,
+Ahmed created constants in Section~\ref{sec:constants} attached to my sections
+before I had even made those sections. Huzaifah realized while doing starting
+his assigned section that my section aligned better with the work he had already
+done, so we switched cases mid-project. These problems were compounded by the
+fact that some started the project and were communicating much earlier than
+others like Huzaifah and I, so communication was strained and we had to make
+assumptions in our work. In an attempt to prioritize an even work split, we
+overlooked that assigning sections based on their link to our work in the 
+Project Statement and Goals would have made everyone's job easier.
+
 \textbf{Moustafa:} The biggest pain point was how long and repetitive the
 document was. With five of us writing different sections, there was a good
 chance two people were writing about the same thing in different places,
@@ -8723,6 +8747,21 @@ stylus events and coordinate-mapping errors. I learned that talking
 to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering
 judgement about failure cases and edge conditions.
+
+\textbf{Shamil:} I contributed ten performance, five safety-critical, 
+three operational and environmental, four maintainability and support, 
+six security, two cultural, and two compliance requirements for a total
+of 32 requirements. I did not personally consult any clients or proxies
+to generate my requirements, but some of my requirements are traceable
+from other sections that were solicited from stakeholders. For example,
+\reqref{NFR-OPS-003} (no installation required) is based on constraints
+chosen after speaking with clients/proxies. Including the one just 
+mentioned, five of my requirements are based on such sections.  
+\reqref{NFR-SEC-001} and \reqref{NFR-SEC-004} cite \reqsrc{SRC-004} which was
+a supervisor meeting (our supervisor is himself a client). 
+\reqref{NFR-CULT-001} and \reqref{NFR-CULT-002} use \reqsrc{NFR-UX-002} 
+and \reqsrc{NFR-UX-012} as well as \reqsrc{NFR-UX-007} respectively which
+were all solicited UX requirements.
 
 \textbf{Moustafa:} I wrote 27 requirements: 24 look-and-feel and usability
 requirements (NFR-UX-001 to NFR-UX-024) and three safety requirements
@@ -8780,6 +8819,23 @@ system should advance, retry, suggest an earlier stage or end the
 lesson. These courses helped me move from describing a feature to
 specifying behaviour that somebody can actually verify.
 
+\textbf{Shamil:} 
+
+Identifying mitigationa and elimination strategies for the
+hazards went well for me because I have previously taken classes on requirements 
+and testing. I was able to select proper testing methods like integration testing 
+or identify which of my original testing ideas were not fit for the project. For
+instances where the AI refinement provider returned inaccurate or inappropriate
+content (H-SHA-005), I considered fuzz testing to assess the durability and coverage of the
+API guardrails. After realizing that this would require human confirmation regardless,
+I decided to just have a human tester recreate the problematic outputs after
+modifying the guardrails. Similarly, I recognized that grey-box testing was suited 
+for the case in which confidential user data is mistakenly shared with a non-essential
+third-party service (H-SHA-002). Testers can run different scenarios and observe the
+public-facing API to see if the target content is being shared or not. The requirements
+course also went over testing in relations to requirements, so I was able to connect
+the safety requirements to specific hazards without issue.
+
 \textbf{Moustafa:} Two courses help me the most. The first is SFWRENG 4HC3,
 Human-Computer Interaction. A lot of what it teaches feels obvious at first,
 but once you actually go through the concepts you realize how much thought
@@ -8802,19 +8858,8 @@ computer science knowledge. Skills may be related to technology, or writing,
 or presentation, or team management, etc. You should look to identify at
 least one item for each team member.
 
-\textbf{Rayan:} The most important knowledge the team needs is domain
-knowledge about the children Squigglr is for: how autistic children and
-children with ADHD develop visual-motor skills, how they use apps, and what
-helps or frustrates them. None of us has a background in this area, and it is
-not something we could safely guess, because a wrong assumption could make
-the app harder or more upsetting for the children it is meant to help. That
-is why it was necessary to get input from people who have designed software
-for autistic children and children with ADHD, rather than relying only on our
-own ideas. Their experience is what turned our general idea into requirements
-we can actually justify.
-
-\textbf{Ahmed:} The team needs a mix of technical skills and an
-understanding of the people we are building for. For my part, I need
+\textbf{Team:} The team needs a mix of technical skills and an
+understanding of the people we are building for. For Ahmed's part, he needs
 to keep improving at turning a user flow into a clear interface and a
 set of consistent, testable requirements. Rayan's backend work will
 require reliable data modelling and access control, especially since
@@ -8833,46 +8878,41 @@ and accessible interfaces. None of us should assume that something
 which seems intuitive to us will necessarily work well for the children
 or adults who would use Squigglr.
 
-\textbf{Moustafa:} As the frontend lead, the main thing I need to learn is
-how to handle stylus drawing in the browser properly. That means getting
-accurate, smooth input from the stylus, handling things like palm rejection
-and different screen sizes, and making sure what the child draws is exactly
-what gets saved. I also need to learn how to actually build the
-accessibility side I wrote in Sections 10 and 11, like checking contrast,
-touch target sizes and text alternatives, instead of just specifying them.
-For the team as a whole, I think the biggest skill is testing without
-children. Since we can't run studies with them, we need to get good at
-designing reviews with adults and prepared drawings that still tell us
-something useful.
+Thus, the most important knowledge the team needs is domain
+knowledge about the children Squigglr is for: how autistic children and
+children with ADHD develop visual-motor skills, how they use apps, and what
+helps or frustrates them. None of us has a background in this area, and it is
+not something we could safely guess, because a wrong assumption could make
+the app harder or more upsetting for the children it is meant to help. That
+is why it was necessary to get input from people who have designed software
+for autistic children and children with ADHD, rather than relying only on our
+own ideas. Their experience is what turned our general idea into requirements
+we can actually justify.
 
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
 member pursue, and why did they make this choice?
 
-\textbf{Rayan:} The two approaches we chose for acquiring this domain
-knowledge were interviews and questionnaires with domain specialists.
-Moustafa and I pursued both. We interviewed three specialists on October 1,
-2026, because a live conversation let us ask follow-up questions and explore
-topics we had not expected, such as who should control a child's
-progression. We then sent them a written questionnaire, answered between
-October 2 and 4, 2026, to cover the topics the interview did not reach, such
-as refinement in the creative space and letter activities. The questionnaire
-also gave the specialists time to think through their answers. Using both
-worked well together: the interview showed us what we did not know, and the
-questionnaire filled in the gaps it left.
-
-\textbf{Ahmed:} I see two useful approaches for each of these
-areas: learning from established material and then testing what we
-learn in something concrete. For my UI and requirements work, that
+\textbf{Team:} We see two useful approaches for each of these
+areas: learning from established sources and then testing what we
+learn in something concrete. For Ahmed's UI and requirements work, that
 means reviewing HCI guidance and examples from similar applications,
 then building prototypes and asking adults to walk through the flows.
+For Rayan and Moustafa, this was in the form of interviews and questionnaires 
+with domain specialists. They interviewed three specialists on October 1,
+2026, because a live conversation let them ask follow-up questions and explore
+unexpected topics, such as who should control a child's progression. the written 
+questionnaire, answered between October 2 and 4, 2026, covered the topics the 
+interview did not reach, such as refinement in the creative space and letter 
+activities. Using both worked well together: the interview showed the team what
+it did not know, and the questionnaire filled in the gaps it left.
+
 The second approach matters because something that looks clear on
 paper may still be confusing when somebody tries to use it.
-
 For Rayan's data and access-control work, official documentation and
-small integration prototypes can complement each other; I would
-prioritize testing the multi-learner and saving flows early. For
+small integration prototypes can complement each other; Ahmed 
+prioritized testing the multi-learner and saving flows early. For
 Moustafa's stylus and canvas work, browser input documentation is a
 starting point, but trying the same prepared strokes on different
 touchscreen sizes will reveal problems that documentation cannot.
@@ -8880,25 +8920,9 @@ For Huzaifah, studying testing methods and building repeatable
 synthetic test cases provide both the theory and evidence that our
 requirements are met. For Shamil, reading relevant research and
 following up with adult stakeholders through interviews or
-questionnaires would help check our assumptions. These are the
-approaches I would recommend we confirm as a team, because they let
-us learn efficiently while still checking that what we build works
+questionnaires would help check our assumptions. These approaches
+let us learn efficiently while still checking that what we build works
 as intended.
-
-\textbf{Moustafa:} For the stylus drawing, the two approaches are reading
-the browser documentation on pointer and touch input, and building a small
-drawing prototype early to test on real tablets with a stylus. I'll do
-both, but lean on the prototype, because input problems like palm rejection
-or lag only show up when you actually draw on the device. For
-accessibility, I can either go through the WCAG 2.2 success criteria we
-picked and learn the tools that check them, or look at how existing kids'
-apps handle things like icons and touch targets. I'll start with WCAG and
-the checking tools, since our requirements are written against those
-criteria, so that's how they'll be tested. For testing without children, I
-can learn from how other projects ran reviews with adults, or ask our
-specialists how they evaluate apps when children can't take part. I'll go
-with the specialists, because they've done exactly this before and offered
-to help guide us.
 
 \end{enumerate}
 

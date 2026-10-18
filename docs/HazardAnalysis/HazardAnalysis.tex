@@ -155,9 +155,10 @@ different points (SRC-005, P1, 20:27).\\
 This section applies Failure Mode and Effect Analysis (FMEA) to the
 components of \progname{}. Subsection~\ref{sec:fmea-method} states how the
 analysis was carried out. Each team member's rows are in a table of their
-own: Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM)
-and Table~\ref{tab:fmea-muh} (H-MUH). Table~\ref{tab:fmea-coverage} places
-every row of the three tables under a component and checks that every
+own: Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM),
+Table~\ref{tab:fmea-mou} (H-MOU) and Table~\ref{tab:fmea-muh} (H-MUH).
+Table~\ref{tab:fmea-coverage} places every row of the four tables under a
+component and checks that every
 component has been examined for every category of harm. Each row ends with
 the requirements of the Software Requirements Specification (SRS) that
 mitigate it; the Safety and Security Requirements section lists the
@@ -654,7 +655,7 @@ creative drawing (FR-CRT), attempt record (FR-REC) and progress summary
 labelled (a), (b) and so on, and the recommended action and mitigating
 requirements for that cause carry the same label, so that every cause
 traces to the requirements that mitigate it. Table~\ref{tab:fmea-coverage}
-places the rows of all three tables under the components.
+places the rows of all four tables under the components.
 
 \begin{landscape}
 {\scriptsize
@@ -705,7 +706,7 @@ adult cannot reach the child's drawings. &
 The child loses their own drawing and is left with a version they did not
 draw, which can upset a child who wants the work to stay theirs (BR-005).
 Loss: L4 (data); L2 (well-being). &
-Data integrity &
+Data integrity; Psycho\-logical/\allowbreak{}well-being &
 (a)~Eliminate: keep the original strokes of every refinement with the
 drawing, also after it is saved and reopened. (b)~Mitigate: make every
 edit, refinement and restore one undoable change, and let an undone change
@@ -736,7 +737,7 @@ The drawing is no longer what the child drew, and the child may no longer
 see it as their own; a refined guided attempt would make its record show
 strokes the child did not draw (BR-004). Loss: L4 (data); L2
 (well-being); L5 (misleading record). &
-Data integrity &
+Data integrity; Psycho\-logical/\allowbreak{}well-being &
 (a)~Mitigate: change only the paths of existing strokes and keep every
 refined stroke within \texttt{REFINE\_TOLERANCE}; apply a result whole or
 not at all, and leave the drawing unchanged when refinement fails or its
@@ -830,7 +831,7 @@ its mitigations are analysed in H-RAY-006. &
 One child's history holds another child's work or duplicate attempts, so
 counts and summaries mislead the adult; a child may see another child's
 drawings. Loss: L4 (data); L5 (misleading information); L3 (privacy). &
-Data integrity &
+Data integrity; Privacy/\allowbreak{}security &
 (a)~Mitigate: save each attempt record exactly once, under the lesson
 record of the lesson in which it was made, also after a retry and with two
 sessions at once; never change a saved record. (b)~Mitigate: keep an
@@ -855,7 +856,7 @@ for example while the connection is lost. &
 The child's work is lost; a child who wanted to finish the drawing or show
 it to someone is disappointed or upset. Loss: L4 (data); L2
 (well-being). &
-Data integrity &
+Data integrity; Psycho\-logical/\allowbreak{}well-being &
 (a)~Mitigate: save every creative drawing, with the originals of its
 refinements, to the active learner with no action from the child, and
 reopen it exactly as last saved. (b)~Mitigate: save the changes made while
@@ -938,12 +939,13 @@ interrupted-only and later-starting-stage histories. &
 
 Table~\ref{tab:fmea-coverage} checks the FMEA against every pair of a
 component and a category of harm. A hazard ID in plain type is a row of
-Table~\ref{tab:fmea-ray}, Table~\ref{tab:fmea-ahm} or
-Table~\ref{tab:fmea-muh} placed under that component; an ID in parentheses
-is a row placed under another component whose causes lie partly in this
-one. The Component cell of an H-RAY or H-AHM row names the functions it
-concerns in its author's words, so this table assigns each of those rows to
-a component of the System Boundaries and Components section. Each ID
+Table~\ref{tab:fmea-ray}, Table~\ref{tab:fmea-ahm}, Table~\ref{tab:fmea-mou}
+or Table~\ref{tab:fmea-muh} placed under that component; an ID in
+parentheses is a row placed under another component whose causes lie
+partly in this one. The Component cell of an H-RAY, H-AHM or H-MOU row
+names the functions it concerns in its author's words, so this table
+assigns each of those rows to a component of the System Boundaries and
+Components section. Each ID
 appears in the column of its row's category; a row whose Category cell
 names two categories appears in both. A dash marks a pair for which no row
 records a failure mode.
@@ -968,49 +970,32 @@ records a failure mode.
 \textbf{Privacy/\allowbreak{}security} & \textbf{Data integrity} &
 \textbf{Avail\-ability} \\
 \midrule
-% PENDING: C1 Physical and Psychological/well-being await H-MOU (#115:
-% sensory overload, feedback).
-C1 Touch and stylus canvas & --- & --- & --- & H-RAY-002, H-AHM-001,
-H-AHM-002, H-AHM-003, (H-MUH-001) & H-RAY-002 \\
+C1 Touch and stylus canvas & H-MOU-001 & H-MOU-001, H-MOU-003,
+(H-MOU-002), (H-MUH-001) & --- & H-RAY-002, H-AHM-001, H-AHM-002,
+H-AHM-003, (H-MUH-001) & H-RAY-002 \\
 \addlinespace
-% PENDING: C2 Psychological/well-being also awaits H-MOU (#115: discouraging
-% or dependence-forming feedback); C2 Availability: no H-AHM row has that
-% category (#81 expected a wrong completion or assessment); Ahmed to confirm.
-C2 Lesson and assessment logic & --- & H-RAY-004, H-RAY-005, (H-RAY-001),
-(H-RAY-007) & --- & H-AHM-004, H-AHM-005, (H-AHM-001), (H-AHM-002),
-(H-AHM-003), (H-AHM-007) & --- \\
+C2 Lesson and assessment logic & --- & H-RAY-004, H-RAY-005, H-MOU-002,
+H-MOU-004, (H-RAY-001), (H-RAY-007) & --- & H-AHM-004, H-AHM-005,
+(H-AHM-001), (H-AHM-002), (H-AHM-003), (H-AHM-007) & --- \\
 \addlinespace
-% PENDING: C3 Data integrity: no H-AHM row has that category (#81 expected
-% a suggestion applied without an adult; H-AHM-006 is Psychological/
-% well-being); Ahmed to confirm.
 C3 Guidance-\allowbreak{}suggestion logic & --- & H-AHM-006 & (H-RAY-006) &
 --- & --- \\
 \addlinespace
-% PENDING: C4 Privacy/security and Availability await H-SHA (#82: private
-% data sent to outside services; provider outage or bad output; misplaced
-% trust in generated output).
-C4 Creative refinement with an external model & --- & H-MUH-006 & --- &
-H-MUH-001, H-MUH-002, (H-MUH-003) & --- \\
+C4 Creative refinement with an external model & --- & H-MOU-006,
+H-MUH-001, H-MUH-002, H-MUH-006 & --- & H-MUH-001, H-MUH-002, (H-MUH-003)
+& --- \\
 \addlinespace
-% PENDING: C5 Privacy/security and Data integrity also await H-SHA (#82:
-% lost or corrupted saves, or saves falsely reported as successful).
-C5 Attempt storage and history & --- & (H-RAY-003), (H-RAY-005) &
-(H-RAY-006) & H-MUH-003, H-MUH-004, H-MUH-005, H-MUH-007, (H-RAY-002) &
-(H-RAY-002) \\
+C5 Attempt storage and history & --- & H-MUH-005, (H-RAY-003),
+(H-RAY-005), (H-MOU-005) & H-MUH-004, (H-RAY-006) & H-MUH-003, H-MUH-004,
+H-MUH-005, H-MUH-007, (H-RAY-002), (H-MOU-005) & (H-RAY-002) \\
 \addlinespace
-% PENDING: C6 Psychological/well-being also awaits H-MOU (#115: progress
-% views that mislead about independence or suggest a diagnosis); C6
-% Privacy/security awaits H-SHA (#82: unauthorised access or
-% cross-account disclosure).
-C6 Adult access and summaries & --- & H-RAY-001, H-RAY-003 & --- &
-H-MUH-008, (H-MUH-003), (H-MUH-004) & --- \\
+C6 Adult access and summaries & --- & H-RAY-001, H-RAY-003, H-MOU-005 &
+(H-MUH-004) & H-MOU-005, H-MUH-008, (H-MUH-003), (H-MUH-004) & --- \\
 \addlinespace
-% PENDING: C7 Privacy/security, Data integrity and Availability await H-SHA
-% (#82: unauthorised access; lost or corrupted saves; outages).
 C7 Hosting and authentication & --- & --- & --- & --- & --- \\
 \addlinespace
-C8 Learner profiles and adult-set values & --- & H-RAY-007 & H-RAY-006 &
-H-AHM-007, (H-MUH-004) & --- \\
+C8 Learner profiles and adult-set values & --- & H-RAY-007 & H-RAY-006,
+(H-MUH-004) & H-AHM-007, (H-MUH-004) & --- \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1018,13 +1003,15 @@ H-AHM-007, (H-MUH-004) & --- \\
 Several pairs were examined and no credible failure mode was found in
 them:
 \begin{itemize}
-  \item \emph{Physical:} \progname{} controls no equipment, so its only
-  path to bodily harm is practice that does not end or that restarts at
-  once. That path lies in the lesson and assessment logic (C2), where
-  H-RAY-004 and H-RAY-005 end each lesson at its limit and show restarts
-  to the adult. The guidance-suggestion logic (C3), creative refinement
-  (C4), storage (C5), summaries (C6), hosting and authentication (C7) and
-  learner profiles (C8) neither lengthen practice nor act on the child.
+  \item \emph{Physical:} \progname{} controls no equipment, so it has two
+  paths to bodily harm. Content that flashes on a child-facing screen can
+  trigger a seizure; the canvas (C1) presents every child-facing screen and
+  its feedback, so \mbox{H-MOU-001} is placed there. Practice that does not end or
+  that restarts at once lies in the lesson and assessment logic (C2), where
+  H-RAY-004 and H-RAY-005 end each lesson at its limit and show restarts to
+  the adult. The guidance-suggestion logic (C3), creative refinement (C4),
+  storage (C5), summaries (C6), hosting and authentication (C7) and learner
+  profiles (C8) neither present child-facing content nor lengthen practice.
   \item \emph{Psychological/well-being:} the child never signs in, so a
   failure of hosting or authentication (C7) reaches only the adult, as
   lost availability.

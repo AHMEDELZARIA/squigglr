@@ -129,6 +129,8 @@ requirement structure (\#131).\\
 16 October 2026 & Muhammad Huzaifah & Wrote Sections 20, 22, 23, 24 and 26: New Problems, Migration to the New Product, Costs, User Documentation and Training, and Ideas for Solution (\#125).\\
 17 October 2026 & Moustafa Moustafa & Added my reflection responses to the appendix and my generative AI use disclosure (\#117).\\
 17 October 2026 & Muhammad Huzaifah & Wrote Section 7, Business Data Model and Data Dictionary, with the data model figure, the data constraints and the data dictionary (\#121).\\
+17 October 2026 & Shamil Canbolat & Added sections 13-17, the remainder of section 12, and my AI use disclosure (\#82). \\
+18 October 2026 & Shamil Canbolat & Added section 28 and my reflection questions and performed final QA review (\#82). \\
 \end{longtable}
 
 ~\\
@@ -5494,8 +5496,8 @@ difficulties in particular.}
 first visible stroke render in each lesson stage is within \texttt{FEEDBACK\_LATENCY\_MAX}.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{\goalref{1}, \goalref{2}; \srcref{005.05};}
-  \reqtraces{\reqref{FR-LRN-007}; \ucref{003}; \ucref{006}}
+  \reqsources{\goalref{1}; \goalref{2}}
+  \reqtraces{\reqref{FR-LRN-007}; \ucref{003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-PERF-002}{AI refinement response latency}
@@ -5510,7 +5512,7 @@ refined result display is within \texttt{REFINE\_LATENCY\_MAX} seconds and the
 canvas accepts new input without any blocking or error during that period.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{\goalref{4}; \srcref{009.01}}
+  \reqsources{\goalref{4}}
   \reqtraces{\ucref{007}; NFR-UX-011}
 \end{srsrequirement}
 
@@ -5524,8 +5526,8 @@ summary is within \texttt{SUMMARY\_LOAD\_MAX} seconds for ten
 consecutive attempts.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{\goalref{5}, \goalref{6}; \srcref{005.02}}
-  \reqtraces{\ucref{009}; \ucref{010}}
+  \reqsources{\goalref{5}; \goalref{6}}
+  \reqtraces{\ucref{009}}
 \end{srsrequirement}
 
 \subsection{Safety-Critical Requirements}
@@ -5780,7 +5782,7 @@ compared to the original item.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\goalref{4};}
-  \reqtraces{\reqref{NFR-PERF-005}}
+  \reqtraces{}
 \end{srsrequirement}
 
 \subsection{Robustness or Fault-Tolerance Requirements}
@@ -5797,8 +5799,8 @@ attempt may upset a child.
 cut during a mock attempt three times consecutively.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{\goalref{5}; \srcref{005.02}}
-  \reqtraces{\reqref{SAF-RAY-003}; \ucref{003}; \ucref{006}}
+  \reqsources{\goalref{5}}
+  \reqtraces{SAF-RAY-003; \ucref{003}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-PERF-007}{Refinement provider fallback}
@@ -5831,8 +5833,8 @@ instead shows a clearly visible failure notification to the adult identifying
 the unsaved record.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{\goalref{5}; \srcref{005.02}}
-  \reqtraces{\reqref{SAF-SHA-003}; \ucref{009}; \ucref{010}}
+  \reqsources{\goalref{5}}
+  \reqtraces{SAF-SHA-003; \ucref{009}}
 \end{srsrequirement}
 
 \subsection{Capacity Requirements}
@@ -5877,7 +5879,7 @@ removed from the supported list and OI-09 updated accordingly.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\goalref{1}; \goalref{2}; \goalref{3}}
-  \reqtraces{\reqref{NFR-OPS-002}}
+  \reqtraces{}
 \end{srsrequirement}
 
 \section{Operational and Environmental Requirements}
@@ -5903,8 +5905,8 @@ scheme. Verify that navigating to the \texttt{http://} URL either redirects to
 HTTPS or is blocked.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{\goalref{5}; \goalref{6};}
-  \reqtraces{ASM-005; ASM-013; CON-001}
+  \reqsources{}
+  \reqtraces{}
 \end{srsrequirement}
 
 \subsection{Requirements for Interfacing with Adjacent Systems}
@@ -5931,8 +5933,8 @@ descriptions of adjacent systems leaves the requirements open to substitutes.}
   unavailability protocol is described in \reqref{NFR-PERF-007})}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{\goalref{5}; \goalref{6}; \srcref{003}; \srcref{004}}
-  \reqtraces{ASM-005; ASM-013; \reqref{NFR-PERF-007}; \ucref{001}; \ucref{005}}
+  \reqsources{}
+  \reqtraces{ASM-005; \reqref{NFR-PERF-007}; \ucref{001}}
 \end{srsrequirement}
 
 \subsection{Productization Requirements}
@@ -5990,7 +5992,7 @@ of a stage behaviour written by a team member familiar with the codebase and tak
 less than \texttt{LOCATE\_TIME\_MAX} minutes to find the corresponding module.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{\srcref{008}}
+  \reqsources{}
   \reqtraces{\reqref{FR-LRN-007}; \reqref{FR-LRN-008}}
 \end{srsrequirement}
 
@@ -6047,7 +6049,7 @@ via direct server requests. Pass when every such request is rejected and
 account A's own data is unchanged.}
   \reqpriority{Must}
   \reqphase{PH-2}
-  \reqsources{\goalref{5}; \goalref{6}; \srcref{004}}
+  \reqsources{\goalref{5}; \goalref{6}}
   \reqtraces{SAF-SHA-001; BR-001; \ucref{009}; \ucref{010}}
 \end{srsrequirement}
 
@@ -6080,7 +6082,7 @@ fails consecutively three times with an appropriate error message logged.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{5}; \goalref{6}}
-  \reqtraces{SAF-AHM-001; SAF-AHM-002; SAF-SHA-003; FR-LRN-013}
+  \reqtraces{}
 \end{srsrequirement}
 
 \subsection{Privacy Requirements}
@@ -6097,7 +6099,7 @@ accountability, consent, and access obligations under PIPEDA~\cite{pipeda}.}
 a username that does not prompt for their real name.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{\goalref{5}; \goalref{6}; \srcref{004}}
+  \reqsources{}
   \reqtraces{BR-001; NFR-SEC-001}
 \end{srsrequirement}
 
@@ -6122,7 +6124,7 @@ and that a mock adult account is denied access to the audit log through request.
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{}
-  \reqtraces{SAF-SHA-001; NFR-SEC-001; NFR-SEC-007}
+  \reqtraces{SAF-SHA-001}
 \end{srsrequirement}
 
 \subsection{Immunity Requirements}
@@ -6137,7 +6139,7 @@ and cross-site scripting (XSS).}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{}
-  \reqtraces{SAF-AHM-001; NFR-SEC-001; NFR-SEC-002}
+  \reqtraces{}
 \end{srsrequirement}
 
 
@@ -8086,8 +8088,6 @@ NFR Traceability \\
 \addlinespace
 \reqref{FR-LRN-001}; \reqref{FR-LRN-002} &
 \reqref{NFR-MAINT-001} & NFR Traceability \\
-\addlinespace
-\reqref{FR-LRN-013} & \reqref{NFR-SEC-003} & NFR Traceability \\
 \end{longtable}}
 
 \subsection{Hazards to mitigating requirements}

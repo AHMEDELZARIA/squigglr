@@ -184,7 +184,8 @@ kept, in its original order.
   Privacy/security, Data integrity or Availability. Each team member's
   rows form a subsection with a table of their own, so each hazard ID
   carries its writer's prefix: Table~\ref{tab:fmea-ray} (H-RAY),
-  Table~\ref{tab:fmea-ahm} (H-AHM) and the H-MUH table.
+  Table~\ref{tab:fmea-ahm} (H-AHM), Table~\ref{tab:fmea-mou} (H-MOU) and
+  the H-MUH table.
   True duplicates are combined by reference to one row. A coverage table
   then checks every component of Table~\ref{tab:components} against every
   category, across all the tables. Each recommended action begins with
@@ -266,11 +267,16 @@ L1 & Physical harm & Bodily harm to a child that \progname{}'s own
 behaviour contributes to. \progname{} controls no equipment, and an adult
 nearby stays responsible for the child's physical safety and time on the
 device (ASM-002). The analysis therefore considers only what \progname{}
-does, such as practice that does not end or restarts at once and keeps a
-child on the device far longer than the adult intended. &
-A child practising alone restarts a lesson each time it ends at its
-attempt limit and keeps drawing for much longer than planned. &
-ASM-002; G.3; HA checklist (addictiveness) \\
+does: content on a child-facing screen that flashes and can trigger a
+seizure in rare cases (H-MOU-001), and practice that does not end or
+restarts at once and keeps a child on the device far longer than the adult
+intended. &
+Feedback on a child-facing screen flashes several times a second in front
+of a child who is prone to seizures; or a child practising alone restarts
+a lesson each time it ends at its attempt limit and keeps drawing for much
+longer than planned. &
+ASM-002; G.3; WCAG 2.2 criterion 2.3.1 \citep{wcag22}; HA checklist
+(addictiveness) \\
 \addlinespace
 L2 & Psycho\-logical harm and well-being & Distress, frustration,
 agitation, or loss of confidence or of ownership of the work, caused by

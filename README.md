@@ -1,4 +1,4 @@
-# Project Name
+# Squigglr
 
 Developer Names: Ahmed Elzaria, Rayan Nasrallah, Moustafa Moustafa, Muhammad Huzaifah, Shamil Canbolat
 

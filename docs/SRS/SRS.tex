@@ -14,6 +14,8 @@
 \usepackage{float}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
+\usepackage[numbers]{natbib}
+\usepackage{xurl}
 \usepackage{hyperref}
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
@@ -121,7 +123,12 @@ requirement structure (\#131).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
 16 October 2026 & Moustafa Moustafa & Added safety-critical requirements SAF-MOU-001 to SAF-MOU-003 and linked NFR-UX requirements to hazards H-MOU-001 to H-MOU-006 (\#115).\\
+16 October 2026 & Muhammad Huzaifah & Wrote Section 9.3, Creative Drawing Requirements, with FR-CRT-001 to FR-CRT-030 (\#122).\\
+16 October 2026 & Muhammad Huzaifah & Wrote the Attempt Record (FR-REC) and Progress Summary (FR-PRG) Requirements in Sections 9.4 and 9.5 (\#123).\\
+16 October 2026 & Muhammad Huzaifah & Wrote Section 19, Off-the-Shelf Solutions, with the product comparison, candidate components and the bibliography (\#124).\\
+16 October 2026 & Muhammad Huzaifah & Wrote Sections 20, 22, 23, 24 and 26: New Problems, Migration to the New Product, Costs, User Documentation and Training, and Ideas for Solution (\#125).\\
 17 October 2026 & Moustafa Moustafa & Added my reflection responses to the appendix and my generative AI use disclosure (\#117).\\
+17 October 2026 & Muhammad Huzaifah & Wrote Section 7, Business Data Model and Data Dictionary, with the data model figure, the data constraints and the data dictionary (\#121).\\
 \end{longtable}
 
 ~\\
@@ -1007,39 +1014,120 @@ the practice record. & \hyperref[sec:business-rules]{BR-002, BR-004}\\
 predefined observations and outcome of an attempt; guided records are
 not replaced by refined shapes.
 & \hyperref[sec:business-rules]{BR-004}\\
+\textbf{Lesson record} & The record kept each time a learner starts a
+lesson: the lesson, the starting stage, the furthest stage reached, the
+successful attempts at each stage and how the lesson ended.
+& \hyperref[sec:fr-records]{Section 9.4}\\
+\textbf{Interrupted attempt} & An attempt that an adult stops, by ending
+the session or switching learner, after at least one stroke and before its
+outcome is decided; its attempt record has no outcome.
+& \hyperref[sec:fr-records]{Section 9.4}\\
+\textbf{Unfinished lesson} & A lesson that stops before its last stage is
+passed and before it reaches an attempt limit; its lesson record is marked
+as unfinished. & \hyperref[sec:fr-records]{Section 9.4}\\
+\textbf{Progress summary} & The view in which a supporting adult reviews
+one learner's practice over time and opens the attempt records behind it.
+& \hyperref[sec:fr-progress]{Section 9.5}\\
+\textbf{Recurring difficulty} & A predefined difficulty observed in at
+least \texttt{RECUR\_MIN} of a learner's attempts at the same stage of the
+same lesson. & \hyperref[sec:fr-progress]{Section 9.5}\\
+\textbf{Attempt made with or without a guide} & An attempt made at the
+tracing or endpoint stage is made with a guide; an attempt at the stage
+with no guide is made without one.
+& \hyperref[sec:fr-progress]{Section 9.5}\\
 \textbf{Creative refinement} & Automatic, minimal adjustment of
 the child's strokes in the creative space only. The drawing remains
 editable, and the original can be restored, or refinement turned off,
 by the child or, if needed, by a supporting adult.
 & \hyperref[sec:business-rules]{BR-005}\\
+\textbf{Creative space} & The part of Squigglr where a child draws freely,
+beside the guided lessons. Refinement happens only here.
+& \hyperref[sec:fr-creative]{Section 9.3}\\
+\textbf{Creative drawing} & One drawing in the creative space, made of
+strokes; each stroke has a path, a colour and a width.
+& \hyperref[sec:fr-creative]{Section 9.3}\\
+\textbf{Refined drawing} & The result of one refinement, which adjusts the
+paths of the child's own strokes. & \hyperref[sec:fr-creative]{Section 9.3}\\
+\textbf{Original (of a refinement)} & The creative drawing exactly as it was
+immediately before that refinement was applied: the same strokes in the
+same order, with the same points, colours and widths.
+& \hyperref[sec:fr-creative]{Section 9.3}\\
+\textbf{Supported set} & The agreed set of shapes and simple objects that
+Squigglr refines; its contents are open issue OI-03.
+& \hyperref[sec:open-issues]{OI-03}\\
 \textbf{Supporting adult} & A parent, guardian, caregiver, educator or
 learning-support staff member who configures activities and reviews
 records, as permitted by the account rules.
 & \hyperref[sec:stakeholders]{Section 2}\\
+\textbf{Lesson choice} & The lesson and starting stage that a supporting
+adult has chosen for a learner.
+& \hyperref[sec:data-dictionary]{Section 7.2}\\
+\textbf{Learner settings} & The values that tailor practice to one
+learner: the adult-set values, the audio setting, the accessibility
+settings and the refinement setting.
+& \hyperref[sec:data-dictionary]{Section 7.2}\\
+\textbf{Team-set values} & The ranges and fixed values that the team
+sets for every learner (BR-009).
+& \hyperref[sec:constants]{Section 4.2}\\
 \textbf{Fit criterion} & An observable or measurable acceptance check
 used to verify whether a requirement or constraint is met.
 & \hyperref[sec:constraints]{Section 3}\\
+\textbf{Open-weight model} & A trained model whose weights are published, so
+that a team can run it on its own hardware.
+& \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{Vision-language model} & A model that takes both images and text as
+input.
+& \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{Zero data retention} & An arrangement, which the provider must
+approve, under which the provider does not keep the data sent to it.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{ADHD} & Attention-deficit/hyperactivity disorder.
 & \hyperref[sec:purpose]{Section 1}\\
 \textbf{AI} & Artificial intelligence.
 & \hyperref[sec:business-rules]{BR-007}\\
+\textbf{API} & Application programming interface; a defined way for one
+program to request a service from another.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{ASM} & Assumption identifier; \texttt{ASM-\#\#\#}.
 & \hyperref[sec:assumptions]{Section 5.3}\\
 \textbf{BR} & Business rule identifier; \texttt{BR-\#\#\#}.
 & \hyperref[sec:business-rules]{Section 5.2}\\
+\textbf{BSD} & Berkeley Software Distribution; a software licence that allows
+reuse if the copyright notice is kept.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}.
 & \hyperref[sec:facts]{Section 5.1}\\
 \textbf{BUC} & Business use case.
 & \hyperref[sec:purpose]{Document roadmap}\\
+\textbf{CC BY} & Creative Commons Attribution; a licence that allows copying
+and reuse with credit to the creator.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{CON} & Mandated constraint identifier; \texttt{CON-\#\#\#}.
 & \hyperref[sec:constraints]{Section 3}\\
 \textbf{FR} & Functional requirement.
 & \hyperref[sec:functional]{Section 9}\\
+\textbf{GPL} & GNU General Public License; its conditions also apply to code
+copied from a program released under it.
+& \hyperref[sec:ots-products]{Section 19.1}\\
+\textbf{GPU} & Graphics processing unit.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
 & \hyperref[sec:changes]{Section 27.1}\\
+\textbf{DevOps} & Development and Operations.
+& \hyperref[sec:costs]{Section 23}\\
+\textbf{GB} & Gigabyte.
+& \hyperref[sec:costs]{Section 23}\\
+\textbf{MB} & Megabyte.
+& \hyperref[sec:new-problems]{Section 20}\\
 \textbf{HA} & Hazard Analysis, a separate document identifying failures,
 losses, mitigation measures and related requirements.
 & \hyperref[sec:introduction]{Introduction}\\
+\textbf{JSON} & JavaScript Object Notation; a text format for structured
+data.
+& \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{MIT} & Massachusetts Institute of Technology licence; a software
+licence that allows reuse if the copyright notice is kept.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{NFR} & Nonfunctional requirement; a required quality or constraint
 on system performance or operation.
 & \hyperref[sec:performance]{Section 12}\\
@@ -1068,10 +1156,15 @@ Numbered source statements use \texttt{SRC-\#\#\#.\#\#}.
 & \hyperref[sec:constants]{Section 4.2}\\
 \textbf{UC} & Product use case identifier; \texttt{UC-\#\#\#}.
 & \hyperref[sec:product-scope]{Section 8}\\
+\textbf{UI/UX} & User interface and user experience.
+& \hyperref[sec:user-docs]{Section 24}\\
 \textbf{ULC} & Unlikely change identifier; \texttt{ULC-\#\#\#}.
 & \hyperref[sec:changes]{Section 27.2}\\
 \textbf{V\&V} & Verification and validation.
 & \hyperref[sec:constraints]{Schedule}\\
+\textbf{W3C} & World Wide Web Consortium, which publishes web standards such
+as Pointer Events.
+& \hyperref[sec:ots-components]{Section 19.2}\\
 \textbf{WCAG} & Web Content Accessibility Guidelines; selected criteria
 may inform project accessibility requirements, without a claim of
 complete conformance (\srcref{008}).
@@ -1172,6 +1265,12 @@ for progress summary understandability checks.
 progress summary review tasks completed successfully by adults.
 \emph{Unit:} proportion. \emph{Value:} team-defined; TBD.
 \emph{Trace:} G.6.\\
+\addlinespace
+\texttt{RECUR\_MIN} & Minimum number of a learner's attempts, at the same
+stage of the same lesson within a progress summary's period, in which one
+predefined difficulty must be observed for the summary to list it as
+recurring. \emph{Unit:} attempts (integer $\geq 2$).
+\emph{Value:} team-defined; TBD. \emph{Trace:} G.6, FR-PRG-004.\\
 \addlinespace
 \texttt{AGE\_RANGE} & Intended lower and upper ages of
 learners served by Squigglr.
@@ -1876,10 +1975,530 @@ event; the maintenance requirements cover it.
 \end{description}
 
 \section{Business Data Model and Data Dictionary}
+\label{sec:data-model}
+
+This section defines the business data that Squigglr creates, uses and
+keeps: what a supporting adult's account, a learner profile, a lesson,
+a lesson record, an attempt record and a creative drawing are, how they relate, and what
+each term in the requirements means. The model is
+conceptual. Following the Volere template~\cite{robertson2012volere}, it
+records the subject matter the business must remember and the rules that hold between its parts; it
+is not a database design, and it fixes no tables, keys, storage or
+technology. The names defined here are the names the functional
+requirements use, in particular those of
+Sections~\ref{sec:fr-creative}, \ref{sec:fr-records} and
+\ref{sec:fr-progress}, and the product use cases UC-001 to UC-010
+(Table~\ref{tab:puc}) create, read and change this data.
+Subsection~\ref{sec:bdm} gives the model as a diagram and states the data
+constraints. Subsection~\ref{sec:data-dictionary} defines every class,
+attribute and data flow.
+
 \subsection{Business Data Model}
-\lips
+\label{sec:bdm}
+
+Figure~\ref{fig:data-model} shows the seven classes of business data that
+Squigglr keeps and how they relate. A supporting adult's account holds
+learner profiles, and each learner profile has its own learner settings
+(BR-001, BR-008). The team maintains the lessons, each with its four
+stages and their predefined difficulties (BR-009; LC-001 in
+Table~\ref{tab:likelyChanges}). Each time an adult starts a lesson for a
+learner, Squigglr keeps a new lesson record, which holds the attempt
+records and any go-back suggestions of that lesson (G.3, G.5). The
+creative space keeps creative drawings, each with its strokes and
+refinements (G.4, BR-005). A progress summary is not a class: Squigglr
+derives it from one learner's lesson and attempt records whenever an adult
+opens it (G.6), so Table~\ref{tab:data-dictionary} defines it as a data
+flow. That table also gives the attributes of each class and how many of
+one class relate to another.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=4.6cm, y=-2cm,
+  cls/.style={draw, rectangle, minimum width=3.2cm, text width=3.05cm,
+    minimum height=1cm, align=center, font=\small},
+  rel/.style={thick},
+  lbl/.style={font=\scriptsize, fill=white, inner sep=1.5pt}]
+\node[cls] (acc) at (1,0) {Supporting\\adult's account};
+\node[cls] (lp) at (1,1) {Learner profile};
+\node[cls] (ls) at (2,1) {Learner settings};
+\node[cls] (cd) at (0,2) {Creative drawing};
+\node[cls] (lr) at (1,2) {Lesson record};
+\node[cls] (les) at (2,2) {Lesson};
+\node[cls] (ar) at (1,3) {Attempt record};
+\draw[rel] (acc) -- node[lbl] {holds} (lp);
+\draw[rel] (lp) -- node[lbl] {has} (ls);
+\draw[rel] (lp) -- node[lbl] {has} (lr);
+\draw[rel] (lp) -| node[lbl, pos=0.25] {has} (cd);
+\draw[rel] (lr) -- node[lbl] {is for} (les);
+\draw[rel] (lr) -- node[lbl] {holds} (ar);
+\end{tikzpicture}
+\caption{Business data model of Squigglr. Each box is a class of business
+data, defined with its attributes in Table~\ref{tab:data-dictionary}. Each
+line is a relationship between two classes. Its label reads from the box
+nearer the top of the figure to the other box, or, for two boxes side by
+side, from the left box to the right one.}
+\label{fig:data-model}
+\end{figure}
+
+The model carries the following data constraints. None is new; each
+restates as a property of the data a rule or goal stated elsewhere, and
+each can be checked by inspecting saved data prepared by adults.
+\begin{itemize}
+  \item A learner profile holds only the child's first name and a
+  username that does not identify the child (BR-001).
+  \item Every adult-set value lies within its team-set range,
+  \texttt{ATTEMPT\_LIMIT} is larger than \texttt{DIFFICULTY\_STREAK},
+  and \texttt{ATTEMPT\_LIMIT\_MAX} is at least \texttt{ATTEMPT\_LIMIT}; a
+  value the adult does not choose is the middle of its range (BR-008).
+  \item Within one lesson record, the evaluable attempts at one stage
+  never exceed \texttt{ATTEMPT\_LIMIT\_MAX} (BR-002). An interrupted
+  attempt, or one whose input is invalid or too ambiguous to evaluate,
+  is not an evaluable attempt and is not counted (FR-LRN-009,
+  FR-LRN-010).
+  \item The actual strokes of an attempt record are the strokes the child
+  drew; they are never replaced by a corrected, ideal or refined shape
+  (BR-004, BR-005).
+  \item Every observed difficulty of an attempt record is a predefined
+  difficulty of that attempt's stage, and a later correction adds a mark
+  without removing the difficulty (G.5, BR-007).
+  \item A refinement keeps every refined stroke within
+  \texttt{REFINE\_TOLERANCE} of the original stroke, and it changes
+  neither the number nor the order, colours and widths of the strokes
+  (G.4, BR-005; FR-CRT-011, FR-CRT-012).
+  \item The original strokes of a refinement never change, so a restore
+  returns them exactly (G.4, BR-005).
+  \item A creative drawing is never an attempt record and never counts in
+  a lesson record or a progress summary (BR-004; FR-CRT-028).
+\end{itemize}
+
 \subsection{Data Dictionary}
-\lips
+\label{sec:data-dictionary}
+
+Table~\ref{tab:data-dictionary} defines every class of
+Figure~\ref{fig:data-model}, every attribute of a class and every data
+flow that enters or leaves the work. For a class, the Unit, domain or
+constraint column also states how it relates to the other classes. Three
+flows share the name of the data they carry:
+F5 is the refined drawing, F7 the lesson choice and
+F10 the go-back suggestion. Entries are sorted by type and then
+by name. The Meaning column uses the composition notation of the Volere
+template: ``A = B + C'' means that A is made of B and C; ``\{B\}'' means
+any number of B; ``[B \textbar{} C]'' means exactly one of B or C; and
+``(B)'' means that B may be absent. Units and domains are stated at the
+business level, and every bound uses a named constant rather than a
+number; most are in Table~\ref{tab:goalconst}. The Used by column lists
+the goals, business rules (Section~\ref{sec:business-rules}), use cases
+and requirements that use each entry; F1 to F12 are the data flows of
+Table~\ref{tab:work-flows}. Older names
+from earlier documents are given in the Meaning column where they help a
+reader.
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.13\textwidth}
+  >{\raggedright\arraybackslash}p{0.29\textwidth}
+  >{\raggedright\arraybackslash}p{0.105\textwidth}
+  >{\raggedright\arraybackslash}p{0.21\textwidth}
+  >{\raggedright\arraybackslash\exhyphenpenalty=10000}%
+    p{0.185\textwidth}@{}}
+\caption{Data dictionary}\label{tab:data-dictionary}\\
+\toprule
+\textbf{Name} & \textbf{Meaning} & \textbf{Type} &
+\textbf{Unit, domain or constraint} & \textbf{Used by} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Name} & \textbf{Meaning} & \textbf{Type} &
+\textbf{Unit, domain or constraint} & \textbf{Used by} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Attempt record & The record of one attempt, which is one try at one
+drawing stage of a lesson. Attempt record = Stage + Actual strokes +
+\{Observed difficulty\} + [Outcome \textbar{} Interrupted mark] + (Stage
+result) + Attempt end time + Adult-set values in use. & Class &
+One for each attempt that ends with an outcome, or that an adult
+interrupts after at least one stroke; belongs to exactly one lesson
+record. An interrupted attempt does not count towards an attempt limit.
+& G.5; UC-008; FR-LRN-009; FR-REC-001 to FR-REC-009; FR-PRG-006 \\
+\addlinespace
+Creative drawing & One drawing in the creative space. Creative drawing =
+\{Stroke\} + \{Refinement\} + Refined state. & Class &
+Belongs to the learner profile that was the active learner when it was
+drawn; never an attempt record. & G.4; BR-005; UC-006, UC-007;
+FR-CRT-001 to FR-CRT-030 \\
+\addlinespace
+Learner profile & One child known to an account (called a child's
+profile in UC-001 and F6). Learner profile = First name + Username. &
+Class &
+Holds nothing else about the child; has exactly one learner settings and
+any number of lesson records and creative drawings; only the adult who
+holds the account creates, views and manages it. & BR-001; ASM-008;
+UC-001; F6; FR-REC-006; FR-CRT-023 \\
+\addlinespace
+Learner settings & The values that tailor practice to one learner.
+Learner settings = Adult-set values + Audio setting + Accessibility
+settings + Refinement setting. & Class &
+Exactly one for each learner profile; changed by the adult who holds the
+account, except that the child can turn refinement off in the creative
+space (BUC-005). & BR-008; ASM-015; UC-001, UC-007, UC-010; F2, F6,
+F9; NFR-UX-010, NFR-UX-011 \\
+\addlinespace
+Lesson & A catalogue item, such as drawing a square, that teaches one
+line, shape or simple drawing through stages that give gradually less
+help (called an activity in earlier documents). Lesson = Lesson name +
+\{Stage + \{Predefined difficulty\}\}. & Class &
+Exactly four stages, in the order given under Stage; maintained by the
+team; any number of lesson records are for it. & G.1; ASM-010; BR-009;
+LC-001; FR-LRN-001; UC-002, UC-003; F12 \\
+\addlinespace
+Lesson record & The record of one start of a lesson by a learner, up to
+the lesson's end. Lesson record = Lesson + Starting stage + Furthest
+stage reached + Successful attempts per stage + Extension count + Lesson
+ending + \{Attempt record\} + \{Go-back suggestion\}. & Class &
+Belongs to exactly one learner profile and is for exactly one lesson; a
+new lesson record each time the learner starts the lesson; unchanged
+after the lesson ends, except by deletion. & G.5; BR-002; UC-003;
+FR-REC-006 to FR-REC-010; FR-PRG-002; SAF-RAY-006 \\
+\addlinespace
+Supporting adult's account & The account of a parent, guardian,
+caregiver, educator or learning-support staff member who uses Squigglr
+with one or more children. Supporting adult's account = \{Learner
+profile\}. & Class &
+Held by one adult, who alone sees and manages its learner profiles and
+their records; how the adult is identified is left to the Access
+Requirements. & BR-001; ASM-009; ULC-002 \\
+\addlinespace
+Accessi\-bility settings & The accessibility options chosen for a
+learner. & Attribute &
+Content to be set by the Accessibility Requirements. & UC-010; F9 \\
+\addlinespace
+Active learner & The learner profile that an adult has selected for the
+current session, to which attempts, suggestions and creative drawings
+are saved. & Attribute &
+One learner profile of the account in use. & ASM-008; FR-CRT-023,
+FR-CRT-026; SAF-RAY-007 \\
+\addlinespace
+Actual strokes & The strokes the child drew in an attempt. Actual
+strokes = \{Stroke\}. & Attribute &
+In the order drawn, as captured; never replaced by a corrected, ideal
+or refined shape. & BR-004; ULC-005; FR-LRN-007; FR-REC-002; FR-CRT-027 \\
+\addlinespace
+Adult-set values & The six values a supporting adult chooses for each
+child (Table~\ref{tab:goalconst}). Adult-set values =
+\texttt{STAGE\_PASS} + \texttt{DIFFICULTY\_STREAK} +
+\texttt{ATTEMPT\_LIMIT} + \texttt{IMPROVE\_WINDOW} +
+\texttt{ATTEMPT\_EXTENSION} + \texttt{ATTEMPT\_LIMIT\_MAX}. & Attribute &
+Each within its team-set range, by default its middle;
+\texttt{ATTEMPT\_\allowbreak LIMIT} larger than
+\texttt{DIFFICULTY\_\allowbreak STREAK};
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} at least
+\texttt{ATTEMPT\_\allowbreak LIMIT}. \texttt{STAGE\_PASS} is a result in
+points out of 100; the others are counts of attempts. & G.2, G.3; BR-008;
+FR-LRN-017; UC-001, UC-010; F6, F9; SAF-RAY-008 \\
+\addlinespace
+Adult-set values in use & The learner's adult-set values at the time an
+attempt was made. & Attribute &
+As for adult-set values; a later change to the learner settings does
+not alter them. & ASM-006; LC-007; FR-REC-004; FR-PRG-006 \\
+\addlinespace
+Attempt end time & When an attempt ended. & Attribute &
+Date and time. & FR-REC-001; FR-PRG-002, FR-PRG-011 \\
+\addlinespace
+Audio setting & Whether feedback to the learner includes audio. &
+Attribute & On or muted. & ASM-015; UC-010; F4, F9; NFR-UX-010 \\
+\addlinespace
+Colour & The colour of a stroke in a creative drawing. & Attribute &
+One of the colours Squigglr offers; unchanged by refinement. &
+FR-CRT-005, FR-CRT-011 \\
+\addlinespace
+Correction mark & Whether the child corrected an observed difficulty
+later in the same attempt (called a change during the attempt in
+earlier documents). & Attribute &
+Corrected or not corrected; a correction never removes the observed
+difficulty. & G.5; FR-REC-003; FR-PRG-004 \\
+\addlinespace
+Extension count & The number of times the attempt limit of a lesson
+record was extended because the child was improving. & Attribute &
+Count of extensions, at most one at each stage; evaluable attempts at
+one stage never exceed
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002;
+FR-LRN-020; SAF-RAY-006 \\
+\addlinespace
+First name & The child's first name, as the adult enters it. &
+Attribute & First name only; no surname or other detail. & BR-001;
+F6 \\
+\addlinespace
+Furthest stage reached & The latest stage of the lesson that the learner
+reached in a lesson record. & Attribute &
+A stage of the lesson. & G.5; BR-002; FR-REC-006; FR-PRG-002 \\
+\addlinespace
+Go-back suggestion & A suggestion that the learner go back to an earlier
+stage, which an adult accepts or declines (called a difficulty suggestion
+in FR-LRN-019). Go-back suggestion = Suggested stage + Suggestion
+status. & Attribute &
+Part of exactly one lesson record; made only after
+\texttt{DIFFICULTY\_\allowbreak STREAK} failed attempts in a row at one
+stage, and not while the child is improving; changes the stage only if an
+adult accepts it; a declined or ignored suggestion is made again only
+after another full streak. & G.3; BR-003; CON-007; UC-005; F8, F10;
+FR-LRN-019; FR-REC-010; SAF-RAY-001, SAF-RAY-007 \\
+\addlinespace
+Interrupted mark & Marks an attempt that an adult stopped, by ending the
+session or switching learner, after at least one stroke and before its
+outcome was decided. & Attribute &
+Set or not set; an interrupted attempt has no outcome. & ASM-008,
+ASM-015; FR-REC-005; FR-PRG-009 \\
+\addlinespace
+Latest attempt time & The attempt end time of the most recent attempt
+that a progress summary includes. & Attribute &
+Date and time. & FR-PRG-011 \\
+\addlinespace
+Lesson ending & How the lesson of a lesson record ended. & Attribute &
+In progress; every stage passed; ended at
+\texttt{ATTEMPT\_\allowbreak LIMIT}; ended when a granted extension ran
+out or \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} was
+reached; or unfinished, when an adult stopped it early. & BR-002;
+FR-LRN-021; FR-REC-007; FR-PRG-002; SAF-RAY-005, SAF-RAY-006 \\
+\addlinespace
+Lesson name & The name of a lesson in the catalogue, such as drawing a
+square. & Attribute &
+Names one lesson of the catalogue. & G.1; LC-001 \\
+\addlinespace
+Observed difficulty & A predefined difficulty that Squigglr observed in
+an attempt. Observed difficulty = Predefined difficulty + Correction
+mark. & Attribute &
+A predefined difficulty of the attempt's stage, listed at most once in
+each attempt record. & G.5; BR-007; FR-REC-003; FR-PRG-004; F4 \\
+\addlinespace
+Original strokes & The strokes of a creative drawing exactly as they
+were immediately before a refinement: the same strokes in the same
+order, with the same points, colours and widths. For the first
+refinement of a drawing, they are the child's own strokes. Original
+strokes = \{Stroke\}. & Attribute &
+At least one stroke; never changed, so that a restore returns them
+exactly. & G.4; BR-005; FR-CRT-017 to FR-CRT-019, FR-CRT-023 \\
+\addlinespace
+Outcome & Whether an attempt passed: its drawing is complete and its
+result meets the \texttt{STAGE\_PASS} in use (passed, also called
+successful), or it does not (not passed, also called unsuccessful or
+failed). & Attribute &
+Passed or not passed; absent for an interrupted attempt. & G.2; BR-002;
+FR-LRN-013; FR-REC-001; F4 \\
+\addlinespace
+Path & The points of a stroke, in the order drawn. Path =
+\{Point\}. & Attribute &
+At least one point. & ASM-004; FR-LRN-007; SAF-AHM-002; FR-REC-002; FR-CRT-011, FR-CRT-012 \\
+\addlinespace
+Point & One position on the drawing area that a stroke passes
+through. & Attribute &
+Position on the drawing area, in the same unit of distance as
+\texttt{REFINE\_\allowbreak TOLERANCE}; the unit is TBD and will be fixed
+with the value of that constant. & ASM-004; FR-CRT-012 \\
+\addlinespace
+Practice-only statement & The statement on every progress summary that
+it describes practice only and is not an assessment or
+diagnosis. & Attribute &
+Fixed text, shown on every summary. & BR-006; SAF-RAY-004 \\
+\addlinespace
+Predefined difficulty & A problem that the team defines in advance and
+that Squigglr can observe in an attempt, such as a missed part of an
+outline (called an observation in earlier documents). & Attribute &
+Defined by the team for one or more stages; never generated for a
+particular child. & G.5; BR-007; FR-REC-003; FR-PRG-004 \\
+\addlinespace
+Recurring difficulty & A predefined difficulty that a progress summary
+lists because it keeps occurring. Recurring difficulty = Predefined
+difficulty + Stage + Lesson + count of attempts + count
+corrected. & Attribute &
+Observed in at least \texttt{RECUR\_MIN} attempts at the same stage of
+the same lesson; \texttt{RECUR\_MIN} is a team-set count, TBD, to be
+fixed with the other team-set values (OI-05). & G.6; FR-PRG-004 \\
+\addlinespace
+Refined drawing & A creative drawing while a refinement of it is in
+effect: the strokes the refinement produced, as the child may later
+edit them. & Attribute &
+Same number, order, colours and widths of strokes as its original
+strokes; every refined stroke within
+\texttt{REFINE\_\allowbreak TOLERANCE} of its original stroke; stays
+editable. & G.4; BR-005; FR-CRT-011 to FR-CRT-013; F5 \\
+\addlinespace
+Refined state & Whether a creative drawing holds a refinement that has
+not been undone or restored. & Attribute &
+Refined or not refined. & FR-CRT-016 \\
+\addlinespace
+Refinement & One automatic, minimal adjustment of the strokes of a
+creative drawing, made when the child finishes the drawing. Refinement =
+Original strokes + Refinement status. & Attribute &
+Part of exactly one creative drawing and concerns one supported item;
+applied whole or not at all; only in the creative space, never to a
+guided lesson. & G.4; BR-005; UC-007; FR-CRT-010 to FR-CRT-021 \\
+\addlinespace
+Refinement setting & Whether automatic refinement is on for a learner in
+the creative space. & Attribute &
+On or off. & BR-005; UC-007, UC-010; F2, F9; FR-CRT-030; NFR-UX-011 \\
+\addlinespace
+Refinement status & Where one refinement stands. & Attribute &
+In effect, undone or restored. & FR-CRT-007, FR-CRT-017 \\
+\addlinespace
+Stage & One of the four steps of a lesson, which give gradually less
+help (also called a guidance level in Table~\ref{tab:glossary}).
+Attempts at the second and third stages are made with a guide and at the
+fourth without one (FR-LRN-012 calls them assisted and independent). &
+Attribute &
+Demonstration; tracing a full outline; drawing between endpoints only;
+or drawing with no guide, in that order. Attempts are made only at the
+three drawing stages, not at the demonstration. & G.1, G.2, G.6; BR-002;
+FR-LRN-002, FR-LRN-003, FR-LRN-012; FR-PRG-003; \texttt{STAGE\_PASS} \\
+\addlinespace
+Stage result & The result of an evaluable attempt on the normalized scale
+of Table~\ref{tab:goalconst}, where higher results indicate closer
+agreement with the stage's fixed criteria. & Attribute &
+Points out of 100; absent for an interrupted attempt. & BR-002; ASM-006;
+LC-008; FR-LRN-013, FR-LRN-020; FR-REC-001 \\
+\addlinespace
+Starting stage & The stage at which a learner starts a lesson. &
+Attribute &
+A stage of the lesson, chosen by an adult. & BR-003; UC-004;
+FR-LRN-016; FR-REC-006; FR-PRG-010 \\
+\addlinespace
+Stroke & One continuous line drawn with the stylus. Stroke = Path +
+(Colour + Width). & Attribute &
+Belongs to exactly one attempt record, creative drawing or refinement;
+colour and width are kept for strokes in creative drawings. & CON-003;
+ASM-004; BR-004; FR-REC-002; FR-CRT-001; F1 \\
+\addlinespace
+Successful attempts per stage & For each stage of a lesson record, the
+number of attempts that passed. Successful attempts per stage =
+\{Stage + count of attempts\}. & Attribute &
+Count of attempts. & G.5; BR-002; FR-REC-006; FR-PRG-002 \\
+\addlinespace
+Suggested stage & The stage a go-back suggestion proposes. & Attribute &
+An earlier stage of the same lesson than the one at which the failed
+attempts were made; on acceptance the adult chooses the earlier stage. &
+BR-003; UC-005; FR-LRN-019 \\
+\addlinespace
+Suggestion status & Where a go-back suggestion stands. & Attribute &
+Pending, accepted, declined or ignored; only an adult accepts or
+declines, and a declined or ignored suggestion changes nothing. & G.3;
+BR-003; UC-005; F8; FR-LRN-019; FR-REC-010 \\
+\addlinespace
+Supported item & A shape or simple object in the agreed supported set,
+which Squigglr refines. & Attribute &
+The set is agreed by the team (OI-03); drawings of other items are not
+refined. & G.4; FR-CRT-015 \\
+\addlinespace
+Username & A name for the learner that the adult chooses, so that
+learners under one account can be told apart. & Attribute &
+Must not identify the child. & BR-001; ASM-008; F6 \\
+\addlinespace
+Width & The width of a stroke in a creative drawing. & Attribute &
+Unchanged by refinement. & FR-CRT-011 \\
+\addlinespace
+Attempt record view & What the adult sees for one attempt record. Attempt
+record view = every value of the attempt record, with the actual strokes
+as recorded. & Data flow &
+Shown only to the adult who holds the account. & ULC-002; UC-009,
+UC-010; FR-PRG-006; F11 \\
+\addlinespace
+Catalogue update & What the team adds or changes. Catalogue update =
+\{Lesson\} + \{Supported item\} + (Team-set values). & Data flow &
+Made from adult-made drawings only. & BR-009; LC-001, LC-002; F12 \\
+\addlinespace
+Child navigation & How a child moves through Squigglr. Child
+navigation = [Open a lesson \textbar{} Restart \textbar{} Move back and
+forth \textbar{} Leave]. & Data flow &
+Never changes the lesson choice or the starting stage. & FACT-007;
+BR-003 \\
+\addlinespace
+Editing action & A change the child makes to the open creative drawing.
+Editing action = [Select \textbar{} Move \textbar{} Resize \textbar{}
+Recolour \textbar{} Erase \textbar{} Undo \textbar{} Redo] + Part. Part
+= \{Stroke\}, the strokes the child selects. & Data flow &
+Acts only on the open creative drawing. & G.4; FR-CRT-002 to
+FR-CRT-008 \\
+\addlinespace
+Feedback & What Squigglr tells the child about an attempt. Feedback =
+\{Observed difficulty\} + Outcome. & Data flow &
+Drawn only from predefined difficulties, never generated advice; spoken
+only when the audio setting is on. & G.1; BR-007; ASM-015; FR-LRN-014; F4 \\
+\addlinespace
+Finish mark & The child's mark that a creative drawing is done. & Data
+flow &
+Starts exactly one refinement. & UC-007; FR-CRT-010 \\
+\addlinespace
+Learner profile details & What an adult enters to add a child. Learner
+profile details = First name + Username + (Adult-set values). & Data
+flow &
+From the adult who holds the account only; an adult-set value not
+entered takes the middle of its range. & BR-001, BR-008; UC-001; F6 \\
+\addlinespace
+Learner selection & An adult's choice of the active learner on a
+device. Learner selection = Learner profile. & Data flow &
+One learner profile of the account in use. & ASM-008; SAF-RAY-007 \\
+\addlinespace
+Lesson choice & The lesson and starting stage that an adult chooses for
+a learner; starting the lesson begins a new lesson record. Lesson choice
+= Lesson + Starting stage. & Data flow &
+Made only by an adult; the starting stage is a stage of the chosen
+lesson. & BR-003; CON-007; FR-LRN-016; UC-002 to UC-004; F7;
+SAF-RAY-001 \\
+\addlinespace
+Progress summary & A view of one learner's practice over time.
+Progress summary = Learner profile + \{Lesson record\} + counts of
+attempts made with a guide + counts of attempts made without a guide +
+\{Recurring difficulty\} + Latest attempt time + Practice-only
+statement. & Data flow &
+Derived only from one learner's records, with no data of its own; no
+overall score; the two kinds of attempt are never added together. &
+G.6; BR-006; UC-009; FR-PRG-001 to FR-PRG-012; F11 \\
+\addlinespace
+Refinement off request & A child's request, in the creative space, to
+turn refinement off. & Data flow &
+Made in the creative space only; never reaches a guided lesson. & BR-005;
+UC-007; F2; FR-CRT-030 \\
+\addlinespace
+Refinement result & The adjusted strokes returned for one refinement by
+the service that refines drawings (LC-004). Refinement result =
+\{Path\}, one for each stroke of the drawing. & Data flow &
+Applied whole only if it meets FR-CRT-011 and FR-CRT-012; otherwise the
+drawing is left unchanged. & LC-004; FR-CRT-020, FR-CRT-021 \\
+\addlinespace
+Restore request & A request to restore the original strokes of a
+creative drawing. & Data flow &
+From the child for the open drawing, or from the adult who holds the
+account for any saved drawing. & BR-005; F2, F9; FR-CRT-017 to
+FR-CRT-019 \\
+\addlinespace
+Settings change & An adult's change to a learner's settings. Settings
+change = (Adult-set values) + (Audio setting) + (Accessibility
+settings) + (Refinement setting). & Data flow &
+From the adult who holds the account only; values outside their ranges
+are refused. & BR-008; UC-010; F9; SAF-RAY-008 \\
+\addlinespace
+Stage guide & What Squigglr shows the child at a stage. Stage guide =
+[Demonstration \textbar{} Full outline \textbar{} Endpoints]. & Data
+flow &
+Set by the stage; none at the stage with no guide. & G.1; F3 \\
+\addlinespace
+Strokes drawn & The strokes a child draws for an attempt or in the
+creative space. Strokes drawn = \{Stroke\}. & Data flow &
+Positions and order of points as the browser reports them. & CON-003;
+ASM-004; FR-LRN-007; SAF-AHM-001; F1 \\
+\addlinespace
+Suggestion response & An adult's answer to a go-back suggestion.
+Suggestion response = [Accept \textbar{} Decline]. & Data flow &
+From an adult only. & BR-003; UC-005; F8; FR-LRN-018; FR-REC-010; SAF-RAY-001 \\
+\addlinespace
+Summary view choice & What an adult asks a progress summary to show.
+Summary view choice = \{Lesson\} + Date range + \{Recorded
+value\}. & Data flow &
+Changes only what is shown, never the records; until the adult chooses,
+the summary covers all records. & ASM-006; LC-007; FR-PRG-007 \\
+\end{longtable}
+}
 
 \section{The Scope of the Product}
 \label{sec:product-scope}
@@ -3252,15 +3871,1102 @@ Table~\ref{tab:goalconst}.
 
 \subsection{Creative Drawing Requirements}
 \label{sec:fr-creative}
-\lips
+
+This subsection gives the requirements for the creative space, where a
+child draws freely beside the structured practice of the guided lessons.
+Creative drawing gives room for self-expression, and keeping the drawing
+editable keeps the child in control of the work (G.4; SRC-001). The
+requirements make G.4 and BR-005 precise: when the child finishes a
+drawing, Squigglr refines it automatically and minimally by adjusting the
+child's own strokes, the refined drawing stays editable, and the child, or
+the adult if the child cannot, can restore the original or turn
+refinement off. Nothing in this
+subsection applies to guided lessons, whose records keep the child's
+actual strokes (BR-004). The requirements serve two product use cases
+(UCs): UC-006, in which the child creates and edits artwork, and UC-007,
+in which Squigglr refines artwork and the original can be restored. The
+team checks every fit criterion on prepared, adult-made drawings, never
+with children (CON-005, ASM-014).
+
+The following terms have a fixed meaning in this subsection. A
+\emph{creative drawing} is one drawing in the creative space, made of
+strokes; each stroke has a path, a colour and a width. A \emph{part} is
+one or more strokes that the child selects. A \emph{change} is one stroke
+drawn, one editing action, one applied refinement or one restore. The
+child \emph{finishes} a drawing by marking it as done; there is no
+separate control for asking for refinement. A \emph{refinement} is one
+automatic adjustment of the drawing's strokes, and its result is the
+\emph{refined drawing}. The \emph{original} of a refinement is the
+drawing exactly as it was immediately before that refinement was applied:
+the same strokes in the same order, with the same points, colours and
+widths. The \emph{supported set} is the agreed set of shapes and simple
+objects that Squigglr refines (G.4); its contents are open issue OI-03
+(Table~\ref{tab:openIssues}). \texttt{REFINE\_TOLERANCE} is defined in
+Table~\ref{tab:goalconst}.
+
+The first group covers what the child can do to a creative drawing,
+whether or not it has been refined. These are the editing actions that
+the Problem Statement lists as inputs (SRC-001) and that G.4
+measurement (b) requires for refined parts.
+
+\begin{srsrequirement}{FR-CRT-001}{Draw strokes}
+  \reqshall{Squigglr shall add each stroke the child draws with the stylus in the
+creative space to the open creative drawing as a new stroke.}
+  \reqrationale{Drawing strokes is the basic input of the creative
+space (SRC-001), and the stylus is the main input (CON-003).}
+  \reqfit{After an adult tester draws a prepared sequence of
+strokes, the drawing holds one new stroke for each stroke drawn, in the
+order drawn; each follows the points the browser reported for it
+(ASM-004) and can be selected
+(\reqref{FR-CRT-002}).}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; CON-003; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-002}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-002}{Select a part}
+  \reqshall{Squigglr shall let the child select one or more strokes of the open
+creative drawing as the part to edit.}
+  \reqrationale{Moving, resizing, recolouring and erasing act on a
+chosen part of the drawing; the Problem Statement calls them editing
+actions on drawing elements (SRC-001). No source names selection, but
+every editing action needs it.}
+  \reqfit{On a prepared drawing of at least two strokes, the
+tester selects one stroke and then a group of strokes; each time, the
+selected strokes are visibly marked, and the next editing action changes
+exactly the selected strokes.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-003} to \reqref{FR-CRT-006}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-003}{Move a part}
+  \reqshall{Squigglr shall let the child move a selected part to another place on the
+canvas.}
+  \reqrationale{Moving is one of the editing actions of G.4
+measurement (b) and the Problem Statement (SRC-001).}
+  \reqfit{After the tester moves a selected part of a
+prepared drawing, every point of the part has moved by the same offset,
+in the direction of the movement, and no other stroke has changed.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-004}{Resize a part}
+  \reqshall{Squigglr shall let the child make a selected part larger or smaller.}
+  \reqrationale{Resizing is one of the editing actions of G.4
+measurement (b) and the Problem Statement (SRC-001). Keeping the part's
+proportions keeps its shape as the child drew it.}
+  \reqfit{After the tester resizes a selected part of a
+prepared drawing, the part is a scaled copy of itself: the distance of
+each of its points from the centre of the part's bounding box is
+multiplied by the same factor, greater than one when enlarged and less
+than one when shrunk, and no other stroke has changed.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-005}{Recolour a part}
+  \reqshall{Squigglr shall let the child change the colour of a selected part to
+another colour that Squigglr offers.}
+  \reqrationale{Recolouring is one of the editing actions of G.4
+measurement (b) and the Problem Statement (SRC-001).}
+  \reqfit{After the tester recolours a selected part of a
+prepared drawing, every selected stroke has the chosen colour, its points
+are unchanged, and no other stroke has changed.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-006}{Erase a part}
+  \reqshall{Squigglr shall let the child erase a selected part.}
+  \reqrationale{Erasing is one of the editing actions of G.4
+measurement (b) and the Problem Statement (SRC-001).}
+  \reqfit{After the tester erases a selected part of a
+prepared drawing, the selected strokes are no longer in the drawing and
+no other stroke has changed; undoing the erase
+(\reqref{FR-CRT-007}) brings them back exactly.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-002}, \reqref{FR-CRT-007}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-007}{Undo a change}
+  \reqshall{Squigglr shall let the child undo the changes to the open creative
+drawing one at a time, most recent first, back to the drawing as it was
+when the child opened it.}
+  \reqrationale{G.4 measurement (b) requires that refined parts can be
+undone, and the Problem Statement lists undoing among the editing actions
+(SRC-001). A child who cannot read needs a way back from any mistake,
+including an unwanted refinement or restore, without calling an adult
+(SRC-005, \intref{P1}{34:13}). Because an applied refinement and a restore
+each count as one change, one undo reverses either completely. Changes
+made before the drawing was last opened cannot be undone, but the
+original stays restorable (\reqref{FR-CRT-024}).}
+  \reqfit{The tester makes a prepared sequence of changes to
+a prepared drawing, including strokes, each editing action, one
+refinement and one restore; after each undo the drawing is exactly as it
+was before the corresponding change, and after the last undo it is
+exactly as it was when opened.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; \srcref{001}; \srcref{005}, \intref{P1}{34:13}}
+  \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-008}, \reqref{FR-CRT-017}; H-MUH-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-008}{Redo an undone change}
+  \reqshall{Squigglr shall let the child redo undone changes one at a time until the
+child makes a new change.}
+  \reqrationale{Without redo, an accidental undo would lose part of the
+child's work. No source names redo; it is the usual partner of undo.}
+  \reqfit{After the tester undoes a prepared sequence of
+changes (\reqref{FR-CRT-007}), each redo returns the drawing
+exactly to the state before the matching undo; after any new change, no
+redo is available.}
+  \reqpriority{Could}
+  \reqphase{PH-3}
+  \reqsources{G.4; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-007}; H-MUH-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-009}{Start a new drawing}
+  \reqshall{Squigglr shall let the child start a new, empty creative drawing.}
+  \reqrationale{A child may want to draw something else; the learner
+persona PER-1 wants to finish a picture and show it to his family. The
+earlier drawing is kept
+(\reqref{FR-CRT-023}). No source names this action.}
+  \reqfit{With a saved drawing open, the tester starts a new
+drawing; the canvas is empty, and the earlier drawing can be reopened
+unchanged (\reqref{FR-CRT-024}).}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.4; \srcref{001}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-023}, \reqref{FR-CRT-024}}
+\end{srsrequirement}
+
+The second group makes ``automatic'' and ``minimal'' in BR-005 testable,
+and lets refinement be turned off (UC-007, UC-010).
+Unless a fit criterion says otherwise, it is checked on prepared,
+adult-made drawings of each item in the supported set.
+
+\begin{srsrequirement}{FR-CRT-010}{Refine a finished drawing}
+  \reqshall{Squigglr shall refine the open creative drawing automatically each time
+the child finishes it while refinement is turned on, and at no other time.}
+  \reqrationale{Refinement is automatic and needs no action from the
+child (BR-005), and UC-007 starts when the child finishes a drawing.
+Refining only then means that strokes never move while the child is
+still drawing, which could confuse a child or take the drawing out of
+their hands. Both questionnaire respondents suggested that refinement
+be optional or adjustable (SRC-009.01), so \reqref{FR-CRT-030} lets it be
+turned off.}
+  \reqfit{With refinement turned on, finishing each prepared drawing
+starts exactly one refinement; drawing, editing, undoing, restoring and leaving the creative
+space without finishing start none.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; \srcref{001}; \srcref{005}, \intref{Moustafa}{6:03}
+(as presented by the team)}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-011}, \reqref{FR-CRT-012},
+\reqref{FR-CRT-014}, \reqref{FR-CRT-015}, \reqref{FR-CRT-030}; H-MUH-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-011}{Change only stroke paths}
+  \reqshall{Squigglr shall change only the path of each existing stroke when it
+refines a creative drawing.}
+  \reqrationale{Refinement must be minimal and the work must remain the
+child's own (BR-005). The team presented refinement to the specialists as
+tidying the child's lines and curves, not swapping in a different picture
+(SRC-005, \intref{Moustafa}{6:03}); the interview specialists did not
+comment on it (FACT-013), but the questionnaire respondents asked that
+refinement stay subtle and support the child's own drawing rather than
+replace or correct it (SRC-009.01). Adding, removing or replacing strokes,
+or changing their colours or widths, would make the drawing less the
+child's own.}
+  \reqfit{For each prepared drawing, the refined drawing has
+the same number of strokes as its original, in the same order, and each
+refined stroke has the colour and width of the corresponding original
+stroke.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; \srcref{005}, \intref{Moustafa}{6:03} (as
+presented by the team); \hyperref[src:009.01]{SRC-009.01}}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-012}, \reqref{FR-CRT-020}; H-MUH-002}
+\end{srsrequirement}
+
+\begin{sloppypar}
+\begin{srsrequirement}{FR-CRT-012}{Stay within the refinement tolerance}
+  \reqshall{Squigglr shall keep every refined stroke within
+\texttt{REFINE\_\allowbreak TOLERANCE} of the corresponding original stroke.}
+  \reqrationale{This makes G.4 measurement (a) precise. The check runs
+both ways, so a refinement that shortens a stroke or drops part of it
+also fails: points of the original would then lie far from the refined
+stroke. The team sets \texttt{REFINE\_\allowbreak TOLERANCE} with adult-made
+drawings (BR-009).}
+  \reqfit{For each prepared drawing, every point of each
+refined stroke lies within \texttt{REFINE\_\allowbreak TOLERANCE} of the
+corresponding original stroke, and every point of each original stroke
+lies within \texttt{REFINE\_\allowbreak TOLERANCE} of the corresponding refined
+stroke.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; BR-009; ASM-014}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-011}, \reqref{FR-CRT-020}; H-MUH-002, H-MUH-006}
+\end{srsrequirement}
+\end{sloppypar}
+
+\begin{srsrequirement}{FR-CRT-013}{Keep the refined drawing editable}
+  \reqshall{Squigglr shall let the child edit each stroke of a refined drawing with
+the same actions, and with the same results, as a stroke the child
+drew.}
+  \reqrationale{G.4 measurement (b) requires that refined parts can be
+moved, resized, recoloured, erased and undone. A refined drawing returned
+only as a picture could not be edited, which the Development Plan already
+rules out (SRC-002).}
+  \reqfit{For each prepared refined drawing, each of
+\reqref{FR-CRT-002} to \reqref{FR-CRT-007}
+applied to refined strokes meets its own fit criterion.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; \srcref{001}; \srcref{002}}
+  \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-002} to \reqref{FR-CRT-007}; H-MUH-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-014}{Do not refine a stroke twice}
+  \reqshall{Squigglr shall not refine again a stroke that an earlier refinement
+changed, unless the child has edited that stroke since.}
+  \reqrationale{Each refinement stays within \texttt{REFINE\_\allowbreak TOLERANCE}
+of its own input, so refining the same strokes every time the child
+finishes would let the drawing drift further and further from what the
+child drew. A child may finish the same drawing many times. No source
+states this case.}
+  \reqfit{Finishing a refined drawing again without any
+change leaves it exactly as it was; after the tester edits one refined
+stroke and draws one new stroke, finishing again changes no stroke other
+than those two.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-005}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-010}, \reqref{FR-CRT-012}; H-MUH-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-015}{Leave unsupported drawings unchanged}
+  \reqshall{Squigglr shall leave a finished creative drawing unchanged if it has no
+strokes or is not a drawing of an item in the supported set.}
+  \reqrationale{G.4 commits to refining drawings of items in the agreed
+supported set only, and the Development Plan keeps refinement of
+arbitrary drawings out of the proof of concept (SRC-002). The team
+presented a version that would still tidy the lines of a drawing it could
+not identify (SRC-005, \intref{Moustafa}{6:03}); until the supported set
+is agreed (OI-03), leaving such drawings as the child made them is the
+choice that protects the child's work.}
+  \reqfit{Finishing an empty canvas, and finishing each
+drawing in a prepared set of adult-made drawings of items outside the
+supported set, leaves each drawing exactly as it was and editable.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-005; \srcref{002}}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-010}; H-MUH-002, H-MUH-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-016}{Show whether a drawing is refined}
+  \reqshall{Squigglr shall show, while a creative drawing is open, whether it holds a
+refinement that has not been undone or restored.}
+  \reqrationale{The child and the supporting adult need to tell a
+refined drawing from the child's original; otherwise an adult cannot see
+what Squigglr changed, and the child cannot see that restoring is
+possible. How the state is shown to a child who cannot read is a
+usability matter.}
+  \reqfit{For prepared drawings in each of these states (never
+refined; refined; refined then edited; refined then restored; refinement
+undone; refinement failed), what Squigglr shows matches the state in
+every case.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-005}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-017}; H-MUH-003, H-MUH-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-030}{Turn refinement off}
+  \reqshall{Squigglr shall let the child, and the supporting adult, turn
+automatic refinement off and on for a learner profile.}
+  \reqrationale{UC-007, UC-010 and the data flows F2 and F9 let refinement be
+turned off, and both questionnaire respondents suggested that refinement be
+optional or adjustable (SRC-009.01). Whether children value automatic
+refinement is not verified (ASM-011); a child who does not accept refined
+drawings as their own needs a way to keep drawings unrefined (G.4).}
+  \reqfit{After the tester, once as the child in the creative space and
+once as the adult in the learner's settings, turns refinement off,
+finishing a prepared drawing of the supported set leaves its strokes
+exactly as drawn; after refinement is turned on again, finishing the
+drawing refines it.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-005; ASM-011; \hyperref[src:009.01]{SRC-009.01}}
+  \reqtraces{\ucref{007}; \ucref{010}; \reqref{FR-CRT-010}; H-MUH-006}
+\end{srsrequirement}
+
+The third group covers restoring the original. BR-005 lets the child, or
+the adult if the child cannot, restore it. \reqref{FR-CRT-017} defines what a
+restore returns, and \reqref{FR-CRT-018} and
+\reqref{FR-CRT-019} say who can restore.
+
+\begin{srsrequirement}{FR-CRT-017}{Restore the exact original}
+  \reqshall{Squigglr shall return a creative drawing, on restore, exactly to the
+original of its most recent refinement that has not been undone or
+restored.}
+  \reqrationale{This makes G.4 measurement (c) precise. After one
+refinement, a restore returns the child's drawing as it was before
+refinement. After several, each restore steps back one refinement, so no
+earlier version of the child's work is lost. A restore also removes edits
+made after that refinement; because a restore is one change, the child
+can undo it (\reqref{FR-CRT-007}) to get the refined and
+edited drawing back.}
+  \reqfit{For each prepared drawing: (a) after one refinement
+and a restore, the drawing equals its original stroke for stroke and
+point for point, in the same colours and widths; (b) after a refinement,
+an edit, a restore and an undo, the drawing equals the refined and edited
+drawing exactly; (c) after a refinement, new strokes, a second
+refinement and two restores, the drawing equals the original of the
+second refinement after the first restore and the original of the first
+refinement after the second; (d) no restore is offered when no
+refinement remains that has not been undone or restored.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; \srcref{001}}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-007}, \reqref{FR-CRT-018},
+\reqref{FR-CRT-019}; H-MUH-001, H-MUH-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-018}{Child restores the original}
+  \reqshall{Squigglr shall let the child restore the original of the open creative
+drawing.}
+  \reqrationale{BR-005 lets the child restore the original, which keeps
+the child in control of the work (G.4). The team presented this to the
+specialists as part of the creative space (SRC-005,
+\intref{Moustafa}{6:03}). A child who cannot read must be able to find
+the control, which is a usability matter.}
+  \reqfit{From the child's view of each prepared refined
+drawing, the tester restores the original with one action, and the result
+meets \reqref{FR-CRT-017}.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; \srcref{001}; \srcref{005}, \intref{Moustafa}{6:03}
+(as presented by the team)}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-017}; H-MUH-001, H-MUH-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-019}{Adult restores the original}
+  \reqshall{Squigglr shall let the supporting adult, after passing the adult check of
+SAF-RAY-001, restore the original of any creative drawing saved under a
+learner profile in that adult's account.}
+  \reqrationale{BR-005 lets the adult restore the original for a child
+who cannot, and BR-001 limits a learner's work to the adult who holds the
+account. The adult may need to do this when the child is not using the
+drawing, for example after a session. The adult check keeps a child from
+reaching this adult action by tapping icons (SAF-RAY-001).}
+  \reqfit{The tester, signed in as the adult of a prepared
+account and after passing the adult check of SAF-RAY-001, restores the
+original of a saved refined drawing; reopening the
+drawing under its learner profile shows a result that meets
+\reqref{FR-CRT-017}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-001; BR-005}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-017}, \reqref{FR-CRT-023},
+SAF-RAY-001; H-MUH-001}
+\end{srsrequirement}
+
+The fourth group covers failure and interruption. A refinement may fail,
+return an unusable result, or finish after the child has moved on, for
+example when the connection is slow or lost (ASM-005). How quickly
+refinement must respond, and how Squigglr copes when refinement is
+unavailable, belong to the performance requirements
+(Section~\ref{sec:performance}).
+
+\begin{srsrequirement}{FR-CRT-020}{Leave the drawing unchanged when refinement fails}
+  \reqshall{Squigglr shall make no change to a creative drawing when its refinement
+fails or the refinement result violates
+\reqref{FR-CRT-011} or \reqref{FR-CRT-012}.}
+  \reqrationale{This restates G.4 measurement (d) for automatic
+refinement, which the child never requests (BR-005). A partly applied or
+invalid result could change the drawing more than minimally, so it is
+applied whole or not at all. The Development Plan also requires that an
+invalid result leave the drawing unchanged (SRC-002). The drawing stays
+editable, and finishing it again starts a new refinement
+(\reqref{FR-CRT-010}).}
+  \reqfit{For each prepared drawing and each of these
+simulated cases (lost connection; an error during refinement; no result
+within the time limit of the speed requirements; a result that adds a
+stroke; a result with a point outside \texttt{REFINE\_\allowbreak TOLERANCE}; a
+malformed result), the drawing afterwards equals the drawing as finished,
+can be edited (\reqref{FR-CRT-002} to
+\reqref{FR-CRT-007}) and, from PH-2, when
+\reqref{FR-CRT-016} applies, is shown as not refined.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.4; BR-005; ASM-005; \srcref{002}}
+  \reqtraces{\ucref{007}; \reqref{FR-CRT-011}, \reqref{FR-CRT-012}; H-MUH-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-021}{Discard an out-of-date result}
+  \reqshall{Squigglr shall discard a refinement result if the drawing has been
+changed or closed since that refinement started.}
+  \reqrationale{A result computed from an older version of the drawing
+would remove the child's newer strokes, or change a drawing the child
+has left. Discarding it keeps the drawing as the child made it; the child
+can finish again. No source states this case.}
+  \reqfit{For each prepared drawing, with the result delayed
+by the test set-up: (a) if the tester draws a stroke before the result
+arrives, the drawing afterwards is the finished drawing plus that stroke,
+unrefined; (b) if the tester leaves the creative space before the result
+arrives, reopening the drawing shows it exactly as left, unrefined.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-005; ASM-005}
+  \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-022}, \reqref{FR-CRT-024}; H-MUH-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-022}{Keep drawing while refinement runs}
+  \reqshall{Squigglr shall let the child keep drawing and editing while a refinement
+is in progress.}
+  \reqrationale{A child kept waiting may lose focus (PER-1), and
+children should be able to use Squigglr without constant adult help
+(SRC-005, \intref{P1}{34:13}). No source states this case.}
+  \reqfit{With the result delayed by the test set-up, the
+tester draws a stroke and moves a part before the result arrives; both
+changes meet \reqref{FR-CRT-001} and
+\reqref{FR-CRT-003}, and
+\reqref{FR-CRT-021} then applies.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.4; \srcref{005}, \intref{P1}{34:13}}
+  \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-021}}
+\end{srsrequirement}
+
+The fifth group covers saving and reopening. UC-006 ends with the drawing
+saved and still editable. One account can hold several learner profiles
+and a device may be shared by several children (BR-001; SRC-004), so each
+creative drawing belongs to one learner profile.
+
+\begin{srsrequirement}{FR-CRT-023}{Save to the active learner}
+  \reqshall{Squigglr shall save each creative drawing, with the originals of its
+refinements, to the learner profile that was active when the child drew
+it, without any action from the child.}
+  \reqrationale{A child who cannot read may leave without saving.
+Restoring after reopening needs the originals
+(\reqref{FR-CRT-024}). Saving to the wrong learner would
+show one child's work as another's (BR-001).}
+  \reqfit{For two learner profiles in one prepared account,
+the tester draws, refines and edits a drawing under each and leaves the
+creative space with its own controls; reopening each learner's creative
+space shows that learner's drawing exactly as left, and not the other
+learner's.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-001; BR-005}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-024}, \reqref{FR-CRT-026}; H-MUH-003, H-MUH-004, H-MUH-005}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-024}{Reopen a drawing as it was left}
+  \reqshall{Squigglr shall reopen a saved creative drawing exactly as it was last
+saved, with every stroke editable and every refinement that has not been
+undone or restored still restorable.}
+  \reqrationale{UC-006 requires the drawing to stay editable, and
+BR-005 requires the original to stay restorable; neither ends when the
+child leaves the creative space.}
+  \reqfit{For prepared drawings saved in each state listed in
+\reqref{FR-CRT-016}, reopening gives the same strokes and
+the same refined state, every stroke can be edited
+(\reqref{FR-CRT-013}), and a restore meets
+\reqref{FR-CRT-017}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; BR-005}
+  \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-017}, \reqref{FR-CRT-023}; H-MUH-001, H-MUH-005}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-025}{Keep changes through a lost connection}
+  \reqshall{Squigglr shall save, once the connection returns, every change the child
+made to an open creative drawing while the connection was lost.}
+  \reqrationale{The connection may drop during normal use, and offline
+use is out of scope (ASM-005), so this covers a drawing that stays open
+until the connection returns. Reporting a save that fails is a
+robustness requirement.}
+  \reqfit{With a prepared drawing open, the test set-up cuts
+the connection; the tester draws strokes and edits a part, the connection
+is restored, and the tester leaves the creative space; reopening the
+drawing shows every change.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{G.4; ASM-005}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-023}; H-MUH-005}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-029}{Show unsaved changes}
+  \reqshall{Squigglr shall show, while a creative drawing is open, whether every change
+to it has been saved.}
+  \reqrationale{Offline use is out of scope (ASM-005), so changes made
+while the connection is lost are kept only while the page stays open
+(\reqref{FR-CRT-025}); an adult who can see that changes are
+not yet saved can keep the page open until they are. How the state is
+shown to a child who cannot read is a usability requirement.}
+  \reqfit{With a prepared drawing open, the tester edits it
+with the connection cut; the display shows unsaved changes; after the
+connection returns and the save completes, it shows that all changes are
+saved.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{G.4; ASM-005; CA-003}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-023}, \reqref{FR-CRT-025}; H-MUH-005}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-026}{Show only the active learner's drawings}
+  \reqshall{Squigglr shall show in the creative space only the creative drawings
+saved under the active learner profile.}
+  \reqrationale{Several children may use one device and one account
+(SRC-004; BR-001); showing another child's drawing would expose their work
+and let it be changed by someone else. An adult selects the active
+learner (ASM-008).}
+  \reqfit{With drawings saved under two learner profiles of
+one prepared account, the creative space of each learner shows only that
+learner's drawings.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{BR-001; ASM-008; \srcref{004}}
+  \reqtraces{\ucref{006}; \reqref{FR-CRT-023}; H-MUH-004}
+\end{srsrequirement}
+
+The last group keeps the creative space apart from the guided-lesson
+records that adults rely on (BR-004; ULC-005 in
+Table~\ref{tab:unlikelyChanges}).
+
+\begin{srsrequirement}{FR-CRT-027}{No refinement in guided lessons}
+  \reqshall{Squigglr shall not refine any stroke drawn in a guided lesson.}
+  \reqrationale{BR-005 limits refinement to the creative space, and a
+guided-lesson record keeps the child's actual strokes (BR-004). A refined
+stroke in a lesson would show adults work the child did not do. How the
+record keeps those strokes is specified in
+Section~\ref{sec:fr-records}.}
+  \reqfit{For prepared attempts at each drawing stage
+(full-outline tracing, endpoint-only guidance and independent drawing) of
+each catalogue lesson, no refinement starts, and the strokes shown during and
+after each attempt are point for point the strokes drawn.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; G.5; BR-004; BR-005; \srcref{005},
+\intref{Moustafa}{6:03} (as presented by the team)}
+  \reqtraces{\ucref{003}, \ucref{007}; \reqref{FR-CRT-010}; H-MUH-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-CRT-028}{Creative drawings are not attempts}
+  \reqshall{Squigglr shall not count a creative drawing as an attempt.}
+  \reqrationale{Attempt records and progress summaries describe guided
+practice (G.5, G.6). A refined creative drawing counted as an attempt
+would make assisted work look like the child's own.}
+  \reqfit{For a prepared learner profile with saved attempts,
+drawing, refining and restoring prepared creative drawings leaves every
+attempt record, lesson record and progress summary of that learner
+exactly as before.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.4; G.5; G.6; BR-004}
+  \reqtraces{\ucref{006}, \ucref{008}, \ucref{009}; \reqref{FR-CRT-023}; H-MUH-003}
+\end{srsrequirement}
+
 
 \subsection{Attempt Record Requirements}
 \label{sec:fr-records}
-\lips
+
+This subsection specifies what Squigglr keeps about guided practice, so
+that a supporting adult can see how a child practised and not only what
+the final drawing looks like (G.5). The requirements serve use cases
+UC-008 (record an attempt) and UC-003 (practise a guided lesson). An
+\emph{attempt} is one try at one stage of a lesson. A stage (also
+called a guidance level in Table~\ref{tab:glossary}) is one of the stages of decreasing
+help listed in the Goals of the Project subsection; attempts are made at
+the drawing stages: tracing a full outline, drawing between endpoints
+only, and drawing with no guide. Squigglr keeps an \emph{attempt record}
+for each attempt and a \emph{lesson record} each time a learner starts a
+lesson. Creative drawings are not attempts (FR-CRT-028); the Creative
+Drawing Requirements subsection covers them.
+
+Three safety requirements in the Safety-Critical Requirements subsection
+already govern records, and the requirements below do not repeat them.
+SAF-RAY-003 keeps each completed attempt on the device until the server
+confirms that it is saved, and tells the adult which attempts were not
+saved. SAF-RAY-006 records each lesson that ends at an attempt limit,
+either \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, records
+each improvement extension, and keeps earlier attempts when a lesson is
+restarted. SAF-RAY-007 saves every attempt to the active learner only.
+The specialist interview did not cover how records are kept, shared or
+deleted (FACT-013), so the requirements below rest on the Problem
+Statement and the business rules. Who may view, share or delete records
+is decided in the Security Requirements section (Open Issue OI-02,
+Table~\ref{tab:openIssues}). How a lesson moves between stages, and when
+an attempt ends, belong to the Learning Activity Requirements. Phases
+are the delivery phases PH-1, PH-2 and PH-3 defined, with their dates,
+in the Introduction.
+
+\begin{srsrequirement}{FR-REC-001}{Attempt record}
+  \reqshall{Squigglr shall keep, for each attempt that ends with an outcome, an
+attempt record holding the lesson, the stage, the attempt's result, the
+outcome (whether the attempt passed its stage, FR-LRN-013) and the date
+and time the attempt ended.}
+  \reqrationale{A finished drawing does not show how much guidance the
+child had (SRC-001). The stage tells the adult whether the attempt was
+made with a guide or without one, and the date and time place the
+attempt in the learner's history for progress summaries (G.6). The
+learner is fixed by SAF-RAY-007. The result is kept because the
+improvement rule compares the results of recent attempts (BR-002,
+FR-LRN-020), and the adult sees each attempt's result (ASM-006).}
+  \reqfit{For a set of prepared, adult-made attempts with
+known lessons, stages, results and outcomes, including at least one
+passing and
+one failing attempt at each drawing stage, every saved attempt record
+shows exactly the known lesson, stage, result and outcome, and the
+records are in
+the order the attempts ended.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2, G.5; BR-002; \srcref{001}; \srcref{002} (PoC plan, adaptive
+guidance experiment)}
+  \reqtraces{\ucref{003}, \ucref{008}; SAF-RAY-007,
+FR-LRN-013, FR-LRN-020, FR-PRG-002, FR-PRG-003; H-MUH-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-002}{Actual strokes}
+  \reqshall{Squigglr shall keep in each attempt record the strokes the child drew in
+the attempt, in the order drawn, as they were captured.}
+  \reqrationale{Adults judge progress from the records, and a record
+that shows a corrected or ideal shape would mislead them (BR-004). This
+principle was presented to the domain specialists in the interview
+(SRC-005, \intref{Moustafa}{6:03}). Duplicate or unmappable input is
+handled by SAF-AHM-001 and SAF-AHM-002, so the strokes kept are those the
+child drew. Refinement never reaches guided-lesson strokes (BR-005;
+FR-CRT-027).}
+  \reqfit{For prepared, adult-made attempts whose strokes are
+captured by the test harness as drawn, every saved attempt record holds
+the same strokes, point for point and in the same order, and no attempt
+record holds a stroke that was not drawn in that attempt.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-004; ASM-004; \srcref{001}; \srcref{005},
+\intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{003}, \ucref{008}; FR-LRN-007,
+SAF-AHM-001, SAF-AHM-002, FR-PRG-006; H-MUH-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-003}{Difficulties and corrections}
+  \reqshall{Squigglr shall keep in each attempt record every predefined difficulty
+observed during the attempt, each marked as corrected or not corrected
+within that attempt.}
+  \reqrationale{Feedback lets the child go back and complete a missed
+part within the same attempt (BR-007). If the correction erased the
+difficulty, the record would hide what the child found hard; G.5
+requires that no difficulty is lost after a correction. The team
+presented records that keep both the miss and its later completion
+(SRC-005, \intref{Moustafa}{6:03}).}
+  \reqfit{For prepared attempts with known predefined
+difficulties, some corrected within the attempt and some not, every
+saved attempt record lists every known difficulty once, with the correct
+mark, and lists no other difficulty.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.5; BR-007; \srcref{001}; \srcref{002} (PoC plan, adaptive
+guidance experiment); \srcref{005}, \intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{003}, \ucref{008}; FR-PRG-004,
+FR-PRG-006; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-004}{Adult-set values in use}
+  \reqshall{Squigglr shall keep in each attempt record the value of each adult-set
+value that was in use for the learner when the attempt was made.}
+  \reqrationale{The adult-set values are the six values of BR-008
+listed in Table~\ref{tab:goalconst}, and the outcome of an attempt depends on the
+\texttt{STAGE\_\allowbreak PASS} in use, and the adult may change the values at any
+time (BR-008). Keeping the values with each attempt means a later change
+does not alter what an earlier record means, and lets the adult see every
+value Squigglr records (ASM-006, LC-007). SAF-RAY-008 shows the values
+currently in use; this requirement keeps those in use for each
+attempt.}
+  \reqfit{For prepared attempts made before and after an
+adult changes each adult-set value, each
+attempt record holds the values in use when that attempt was made.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-008; ASM-006; LC-007; \srcref{008}}
+  \reqtraces{\ucref{008}, \ucref{010}; SAF-RAY-008,
+FR-PRG-006; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-005}{Interrupted attempt}
+  \reqshall{Squigglr shall keep an attempt that an adult stops in Squigglr, by
+ending the session or switching learner, after at least one stroke but
+before its outcome is decided, as an attempt record marked as
+interrupted, holding the strokes and predefined difficulties up to that
+point and no outcome.}
+  \reqrationale{An adult may stop a session (ASM-015) or switch
+learners on a shared device (ASM-008) in the middle of an attempt. The
+strokes drawn are still practice the adult may want to see, but the
+attempt has no outcome, so it must not appear as passed or failed.
+An interrupted attempt does not consume an evaluable attempt from the
+stage limit (FR-LRN-009). An attempt cut off by closing
+the page or losing the connection may not reach Squigglr; completed
+attempts are protected by SAF-RAY-003.}
+  \reqfit{For prepared attempts stopped by an adult action
+after one or more strokes, every saved attempt record is marked as
+interrupted, holds the strokes drawn and has no outcome; an attempt
+stopped before any stroke leaves no attempt record.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.5; ASM-008, ASM-015; CA-003, CA-004}
+  \reqtraces{\ucref{003}, \ucref{008}; FR-LRN-009,
+FR-PRG-009; H-MUH-004}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-006}{Lesson record}
+  \reqshall{Squigglr shall keep, each time a learner starts a lesson, a lesson record
+holding the lesson, the starting stage, the furthest stage reached, the
+number of successful attempts at each stage and how the lesson ended.}
+  \reqrationale{Caregivers and educators need to see how far the child
+got in each lesson and how many attempts succeeded at each stage
+(Table~\ref{tab:userNeeds}; BR-002). The starting stage shows whether a
+stage was reached by passing or chosen by an adult (BR-003). A new record
+each time the lesson starts keeps a restart from hiding earlier results
+(SAF-RAY-006).}
+  \reqfit{For prepared sequences of attempts in which a
+lesson is started at the first drawing stage and again at a later stage
+chosen by an adult, each lesson record shows the known starting stage,
+furthest stage, count of successful attempts at each stage and ending.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-002, BR-003; \srcref{001}}
+  \reqtraces{\ucref{003}, \ucref{004}, \ucref{008}; SAF-RAY-006, FR-PRG-002, FR-PRG-010; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-007}{Unfinished lesson}
+  \reqshall{Squigglr shall keep the lesson record of a lesson that stops before its
+last stage is passed and before it reaches an attempt limit, marked as
+unfinished, with the furthest stage reached and the successful attempts
+at each stage up to that point.}
+  \reqrationale{BR-002 saves progress when a lesson ends at
+\texttt{ATTEMPT\_\allowbreak LIMIT}, and SAF-RAY-006 records those endings. A lesson
+an adult stops early (ASM-015) would otherwise leave no record of the
+stages already passed.}
+  \reqfit{For prepared lessons stopped by an adult after
+known successful attempts, each lesson record is marked as unfinished and
+shows the known furthest stage and counts; for prepared lessons whose
+last stage is passed, no lesson record is marked as unfinished.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-002; ASM-015}
+  \reqtraces{\ucref{003}, \ucref{008}; SAF-RAY-006,
+FR-PRG-002; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-008}{Each attempt saved once}
+  \reqshall{Squigglr shall save each attempt record exactly once, under the lesson
+record of the lesson in which the attempt was made.}
+  \reqrationale{A save that is retried after the connection drops
+(CA-003, SAF-RAY-003) could store an attempt twice or under another
+lesson, and two sessions open for the same learner could mix their
+attempts. Either would change the counts an adult relies on.}
+  \reqfit{For prepared attempts saved with the connection cut
+and restored during each save, and for prepared attempts made for one
+learner in two sessions open at the same time, every attempt appears in
+exactly one attempt record, under the lesson record in which it was made,
+and the counts in each lesson record equal the known counts.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; ASM-005; CA-003, CA-004}
+  \reqtraces{\ucref{008}; SAF-RAY-003, SAF-RAY-007; H-MUH-004, H-RAY-002, H-RAY-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-009}{Saved records unchanged}
+  \reqshall{Squigglr shall keep the contents of every saved attempt record, and of
+every lesson record whose lesson has ended, unchanged except by
+deletion.}
+  \reqrationale{Later events, such as an adult changing an adult-set
+value, a starting stage or the lesson catalogue (LC-001, LC-002), must
+not rewrite what an earlier record says, or an attempt made with a guide
+could later appear to have been made without one. Deletion is decided
+with the privacy requirements (OI-02).}
+  \reqfit{For a prepared history, after the adult changes
+every adult-set value, the starting stage of a lesson and the learner's
+other settings, and after a lesson is added to or removed from the
+catalogue, every saved attempt record and every lesson record of an ended
+lesson is identical to its contents before those changes.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-004, BR-008; LC-001, LC-002}
+  \reqtraces{\ucref{008}, \ucref{010}; FR-REC-004; H-MUH-003, H-MUH-004, H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-010}{Suggestion responses}
+  \reqshall{Squigglr shall keep in the lesson record each suggestion to go
+back a stage that it offers and the response of the adult to it.}
+  \reqrationale{A go-back suggestion changes the stage only when an adult
+accepts it (BR-003). Keeping the suggestion and the response shows an
+adult why a later attempt was made at an earlier stage, and keeps a
+declined suggestion visible (SAF-RAY-001).}
+  \reqfit{For prepared sequences of attempts in which suggestions are
+accepted, declined and not yet answered, every lesson record lists each
+suggestion once, with the known response, and lists no other suggestion.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.3; BR-003}
+  \reqtraces{\ucref{005}; \ucref{008}; FR-LRN-019; SAF-RAY-001, SAF-RAY-007}
+\end{srsrequirement}
 
 \subsection{Progress Summary Requirements}
 \label{sec:fr-progress}
-\lips
+
+This subsection specifies the progress summary: the view in which a
+supporting adult reviews a learner's practice over time and opens the
+attempt records behind it (G.6). The requirements serve use cases UC-009
+(review progress) and UC-010 (review history and change settings). A
+progress summary is built only from the attempt and lesson records of the
+Attempt Record Requirements (Section~\ref{sec:fr-records}). It is meant for
+an adult such as PER-2, who reviews a child's history once a week to see
+which stages he reached and what keeps going wrong, and PER-3, who works
+with several learners a day. Attempts \emph{made with a guide} are those
+at the tracing and endpoint stages; attempts \emph{made without a guide}
+are those at the stage with no guide. FR-LRN-012 calls these attempts
+assisted and independent.
+
+The requirements below leave three matters to other requirements.
+SAF-RAY-004 forbids diagnostic labels, judgements of the child's
+abilities and comparisons with other children in any record or summary,
+and requires each summary to state that it describes practice only.
+SAF-RAY-006 shows how many times each lesson ended at a limit or was
+extended. Access to summaries is limited to the account-holding adult
+(BR-001, ULC-002) by the Security Requirements section, which also
+decides whether summaries can be shared or exported (OI-02).
+
+\begin{srsrequirement}{FR-PRG-001}{One learner per summary}
+  \reqshall{Squigglr shall show in each progress summary only the records of the one
+learner profile that the summary names.}
+  \reqrationale{One account can hold several learner profiles (BR-001),
+and an educator must never show one learner's records to another
+(PER-3). Naming the learner lets the adult check whose records are
+shown.}
+  \reqfit{For a prepared account with at least three learner
+profiles, each with a known history, every summary names one learner and
+contains every record of that learner and no record of another.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-001; ASM-008; \srcref{004}}
+  \reqtraces{\ucref{009}, \ucref{010}; SAF-RAY-007; H-MUH-004, H-RAY-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-002}{Progress over time by lesson}
+  \reqshall{Squigglr shall show, for each lesson in a progress summary, the learner's
+lesson records in the order they were started, each with its starting
+stage, furthest stage reached, successful attempts at each stage and how
+the lesson ended.}
+  \reqrationale{Caregivers and educators need the furthest stage and
+the successful attempts at each stage (Table~\ref{tab:userNeeds}), and
+the order shows change over time (G.6). How the lesson ended (every
+stage passed, ended at a limit, or unfinished) keeps an unfinished
+lesson from looking like a lesson the child could not pass.}
+  \reqfit{For prepared histories showing improvement, a lesson
+ended at \texttt{ATTEMPT\_\allowbreak LIMIT} and an unfinished lesson, every summary
+lists the lesson records in start order with the known values and
+endings.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-002; \srcref{001}}
+  \reqtraces{\ucref{009}; FR-REC-001, FR-REC-006,
+FR-REC-007, SAF-RAY-006; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-003}{With and without a guide kept apart}
+  \reqshall{Squigglr shall show attempts made without a guide separately from
+attempts made with a guide in every part of a progress summary that
+counts or lists attempts.}
+  \reqrationale{The adults need to see changes in independent drawing,
+which a combined figure would hide (SRC-001; G.6). Assisted work that
+appears independent could lead an adult to move a child on too soon.}
+  \reqfit{For prepared histories with known numbers of
+attempts made with and without a guide, every count or list in the
+summary shows the two kinds separately and correctly, and no figure adds
+them together; at least \texttt{ADULT\_\allowbreak REVIEWERS} adult reviewers state
+which attempts were made without a guide, with at least
+\texttt{REVIEW\_\allowbreak PASS\_\allowbreak RATE} of their tasks succeeding.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.2, G.6; \srcref{001}}
+  \reqtraces{\ucref{009}; FR-REC-001, FR-LRN-012; H-MUH-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-004}{Recurring difficulties}
+  \reqshall{Squigglr shall list in each progress summary every predefined difficulty
+observed in at least \texttt{RECUR\_\allowbreak MIN} of the learner's attempts at the
+same stage of the same lesson, with the number of those attempts and the
+number in which the child corrected it.}
+  \reqrationale{Adults want to know what keeps going wrong (PER-2), and
+the Problem Statement promises summaries that show recurring
+difficulties (SRC-001). A fixed count makes ``recurring'' testable. The
+constant \texttt{RECUR\_\allowbreak MIN} is defined in Table~\ref{tab:goalconst}.
+Counting corrections shows difficulties that are being
+resolved as well as those that keep coming up (SRC-005,
+\intref{Moustafa}{6:03}).}
+  \reqfit{For a prepared history in which one predefined
+difficulty occurs in exactly \texttt{RECUR\_\allowbreak MIN} attempts at one stage
+and another in one attempt fewer, the summary lists the first, with the
+known counts, and not the second.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-007; \srcref{001}; \srcref{005},
+\intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{009}; FR-REC-003; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-005}{Open the attempts behind the summary}
+  \reqshall{Squigglr shall let the adult open, from each figure or item in a
+progress summary, the attempt records from which it was computed.}
+  \reqrationale{Adults need to inspect the attempts behind a summary
+(G.6), and seeing the drawings lets them judge for themselves rather than
+rely on a number.}
+  \reqfit{For prepared histories, every figure or item opens
+exactly the attempt records it was computed from; at least
+\texttt{ADULT\_\allowbreak REVIEWERS} adult reviewers locate the attempts behind given
+items, with at least \texttt{REVIEW\_\allowbreak PASS\_\allowbreak RATE} of their tasks
+succeeding.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; \srcref{001}}
+  \reqtraces{\ucref{009}; FR-PRG-006; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-006}{Attempt record view}
+  \reqshall{Squigglr shall show, for each attempt record the adult opens, every value
+kept in it under FR-REC-001 to FR-REC-005, with the strokes drawn as
+recorded.}
+  \reqrationale{Squigglr shows the adult every value it records
+(ASM-006), and the strokes show what the child actually drew
+(BR-004).}
+  \reqfit{For each prepared attempt record, the view shows
+its lesson, stage, outcome or interrupted mark, date and time,
+predefined difficulties with their correction marks, adult-set values in
+use, and strokes identical to those recorded.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5, G.6; BR-004; ASM-006}
+  \reqtraces{\ucref{009}, \ucref{010}; FR-REC-001 to
+FR-REC-005; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-007}{Adult chooses the view}
+  \reqshall{Squigglr shall let the adult choose which lessons, dates and recorded
+values a progress summary shows.}
+  \reqrationale{Which values each adult wants to see will differ and
+change (LC-007), and the specialists advised that useful progress
+measures be chosen with occupational therapists or educators
+(\hyperref[src:005.03]{SRC-005.03}), so the adult chooses rather than the team (ASM-006).
+Until the adult chooses, the summary covers all of the learner's
+records.}
+  \reqfit{For a prepared history, each choice of lessons,
+dates and values changes only what the summary shows: the records are
+unchanged, and attempts made with and without a guide stay separate.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{G.6; ASM-006; LC-007; \hyperref[src:005.03]{SRC-005.03}}
+  \reqtraces{\ucref{009}; FR-PRG-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-008}{Empty history}
+  \reqshall{Squigglr shall show, when the learner has no saved attempt record in the
+chosen lessons and dates, a progress summary that states that no
+practice is recorded and shows no stage, count or difficulty.}
+  \reqrationale{A new learner has no history, and zeros or empty
+stages could be read as failure.}
+  \reqfit{For a new learner profile, and for a learner whose
+records all lie outside the chosen dates, the summary states that no
+practice is recorded and shows no stage, count or difficulty.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-006}
+  \reqtraces{\ucref{009}; FR-PRG-007; H-MUH-008, H-RAY-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-009}{Interrupted attempts shown apart}
+  \reqshall{Squigglr shall show interrupted attempts in a progress summary
+separately from successful and unsuccessful attempts.}
+  \reqrationale{An interrupted attempt has no outcome (FR-REC-005);
+counting it as failed would understate the child's practice, and
+counting it as passed would overstate it.}
+  \reqfit{For a prepared learner whose only attempts are
+interrupted, the summary shows them as interrupted and shows no
+successful or unsuccessful attempt and no stage passed; adding prepared
+interrupted attempts to any history leaves its successful and
+unsuccessful counts unchanged.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.6; ASM-015}
+  \reqtraces{\ucref{009}; FR-REC-005; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-010}{Stages not attempted}
+  \reqshall{Squigglr shall mark each stage of a lesson that the learner has not
+attempted, including a stage before an adult-chosen starting stage, as
+not attempted, distinct from a stage attempted without success.}
+  \reqrationale{An adult may start the child at a later stage (BR-003),
+and a learner with a short history has attempted only some stages. A
+stage left blank or shown as zero successes could be read as a stage the
+child could not draw.}
+  \reqfit{For a prepared history with a lesson started at a
+later stage and one stage attempted only without success, the summary
+marks the skipped stages as not attempted and shows the attempted stage
+with zero successful attempts.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-003; \srcref{001}}
+  \reqtraces{\ucref{004}, \ucref{009}; FR-REC-006; H-MUH-003, H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-011}{Latest attempt included}
+  \reqshall{Squigglr shall state on each progress summary the date and time of the
+most recent attempt it includes.}
+  \reqrationale{Attempts still held on the child's device
+(SAF-RAY-003) are not in a summary that an adult opens on another
+device. The date of the latest attempt lets the adult notice recent
+practice that is missing.}
+  \reqfit{For a prepared history with attempts saved and
+attempts held back by a cut connection, the summary shows the date and
+time of the latest saved attempt and includes none of the held-back
+attempts.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.6; ASM-005; CA-003}
+  \reqtraces{\ucref{009}; SAF-RAY-003; H-MUH-008, H-RAY-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-012}{No overall score}
+  \reqshall{Squigglr shall show no figure in a progress summary that combines the
+results of more than one stage into a single score, grade or rating.}
+  \reqrationale{The needs of caregivers and educators exclude a single
+overall score (Table~\ref{tab:userNeeds}; PER-2), and the team cannot
+judge a child's abilities (BR-006; SRC-008). Results per stage and per
+lesson answer the adults' questions without a score.}
+  \reqfit{Inspection of the summaries for prepared histories
+finds no score, grade, rating or percentage computed from attempts at
+more than one stage.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-006; \srcref{001}, \srcref{008}; \srcref{005},
+\intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{009}; SAF-RAY-004; H-RAY-003}
+\end{srsrequirement}
 
 \section{Look and Feel Requirements}
 \label{sec:look-feel}
@@ -4631,26 +6337,926 @@ CON-001, CON-003 & Shamil Canbolat & Nov.\ 2, 2026 (V\&V Plan) \\
 \end{longtable}
 }
 
-\section{Off-the-shelf Solutions}
+\section{Off-the-Shelf Solutions}
+\label{sec:ots}
+
+This section surveys the products and components that already exist and
+records how closely each matches Squigglr's goals. The survey gives the
+comparison promised in the User Business subsection and answers two
+peer-review issues (SRC-007): what existing handwriting, tracing and
+motor-skill apps do and what gap remains
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/69}{\#69}), and
+which existing models the team might use for refinement
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/74}{\#74}). As the
+Volere template intends, the survey shows that alternatives were considered
+and how closely they match the needs; it is not a feasibility study
+\citep{robertson2012volere}. Nothing here is a requirement or a
+design decision. Every product, library and model named is a candidate the
+team may evaluate, and the Development Plan leaves the choice of model open
+until the proof-of-concept work (SRC-002).
+
+The findings are preliminary desk research, done on Oct.\ 15, 2026. The
+team searched the web, Apple's App Store and Google Play for handwriting
+apps, letter and shape tracing apps (including web-based ones), children's
+drawing apps, and fine-motor or occupational therapy practice apps, then
+read each candidate's own store listing, website or documentation. Every
+statement about a product comes from those sources, cited below. No
+product was installed or tested, and no child took part (CON-005), so a
+missing feature means only that the sources read do not describe it.
+Prices are United States prices on that date, given only where the vendor
+states them. The specialist interview did not cover existing apps
+(FACT-013); the follow-up questionnaire (SRC-009) covered refinement in the
+creative space and letter activities.
+
+Table~\ref{tab:ots-dimensions} lists the dimensions used to compare
+products. Each comes from a goal, constraint or business rule, so the
+comparison measures fit to this project, not general quality. The
+Reusable Components subsection adds the Development Plan's criteria for
+choosing a refinement approach. The data a product collects about a child
+(BR-001) is not a dimension: vendors describe their data handling in
+different terms, and Squigglr's own privacy requirements are still open
+(OI-02). The privacy terms of candidate refinement services are compared
+in the Reusable Components subsection instead.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Dimensions used to compare existing products with Squigglr}
+\label{tab:ots-dimensions}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X%
+>{\raggedright\arraybackslash}p{0.2\textwidth}@{}}
+\toprule
+\textbf{Dim.} & \textbf{What Squigglr needs} & \textbf{Source} \\
+\midrule
+D1 & Graded guidance with a stylus: each lesson on a line, shape or simple
+drawing moves through stages that give less help, from a demonstration to
+drawing with no guide. & G.1, G.2, CON-003 \\
+D2 & Adult control: the adult chooses the lesson and the starting stage,
+and the child goes back a stage only if an adult accepts. & G.3, CON-007,
+BR-003 \\
+D3 & Records of the process: each attempt keeps the child's actual
+strokes, the stage (the guide used), every predefined difficulty, later
+corrections and the outcome. & G.5, BR-004 \\
+D4 & Adult summaries without judgement: attempts made with a guide are
+shown apart from attempts made without one, with no score, diagnostic
+label or comparison with other children. & G.6, BR-006 \\
+D5 & Runs in a web browser with no installation. & CON-001, CON-002 \\
+D6 & Minimal, editable refinement: in a creative space the child's own
+strokes are adjusted within \texttt{REFINE\_TOLERANCE}, stay editable,
+and the original can be restored. & G.4, BR-005 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \subsection{Ready-Made Products}
-\lips
+\label{sec:ots-products}
+The survey kept twelve products in five groups. Together they cover the
+kinds of product that the search found a supporting adult might use
+instead of Squigglr, plus the drawing-assistance features closest to
+refinement. Each product is
+described below from its vendor's sources, and Table~\ref{tab:ots-matrix}
+scores it against the dimensions of Table~\ref{tab:ots-dimensions}.
+
+\paragraph{Handwriting and tracing apps.}
+Kaligo, by Learn \& Go, is a handwriting and literacy app for tablets that
+recommends a stylus, with a web portal for teachers
+\citep{LearnAndGo2026Kaligo,LearnAndGo2026Requirements}. Teachers assign
+and create lessons, set the difficulty and visual guidance for each
+student, view each completed exercise as a replay or screenshot, and
+follow class progress. The vendor also offers a screening use in which
+artificial intelligence (AI) assesses handwriting and fine motor skills to
+identify students who need support \citep{LearnAndGo2026Teachers}, and the
+App Store listing describes a learning experience that adapts to each
+child's pace \citep{LearnAndGo2026Kaligo}. The app is installed from an
+app store, and an internet connection is needed to synchronise lessons and
+results \citep{LearnAndGo2026Requirements}. The download is free; school
+prices are not stated on the pages read.
+
+Wet-Dry-Try, from Learning Without Tears, is an iPad app based on the
+Handwriting Without Tears curriculum. Children practise capitals, numbers
+and lowercase letters in step-by-step sequences in a developmental order,
+a virtual coach gives spoken feedback on errors, up to three children can
+share one device, and the settings offer three sensitivity levels
+\citep{LearningWithoutTears2026WetDryTryApp}. A classroom licence costs
+US\$3.99 per student per year \citep{LearningWithoutTears2026WetDryTry}.
+
+LetterSchool takes each letter, number or geometric shape through three
+games that give less help each time: tap the dots in order, trace the
+path, then write it from memory; earning a star unlocks the next game
+\citep{LetterSchool2026HowWhy,LetterSchool2026Play}. A ``Golden'' level
+displays the child's exact writing so that adults can track progress, and
+progress is stored for up to three players on one device. On Android the
+first five letters, numbers and shapes are free, and the rest is a
+one-time purchase
+\citep{LetterSchool2026Play}.
+
+Writing Wizard, by L'Escapadou, traces letters, numbers, words and, for
+toddlers, shapes. Adults set the letter size, the difficulty and whether
+the model is shown; a five-star mode asks the child to trace an item five
+times, each harder than the last; and reports let adults replay and export
+what the child traced \citep{Abel2026WritingWizard}. Installed versions
+exist for iPad, iPhone, Android, Kindle Fire and Windows
+\citep{LEscapadou2026WritingWizard}, and the school edition costs
+US\$13.99 on the App Store \citep{Abel2026WritingWizard}.
+
+\paragraph{Fine-motor and occupational therapy practice apps.}
+Dexteria, by BinaryLabs, is an iPhone and iPad app for practising fine
+motor skills and handwriting readiness. Dexteria creates performance and
+usage reports that can be emailed, its companion app compares performance
+with reference ranges and produces reports for school documentation, and
+the vendor states that it is not a medical device; the app costs US\$6.99
+\citep{BinaryLabs2026Dexteria}. Dynamilis, by School Rebound, is an iPad
+app for children aged five to twelve. Dynamilis analyses handwriting
+written with an Apple Pencil or Logitech Crayon, gives a handwriting
+profile and recommends a specialist when the score falls below a
+threshold, offers personalised practice activities, and has a replay mode
+for its analysis; a subscription costs US\$14.99 a month or US\$89.99 a
+year \citep{SchoolRebound2026Dynamilis}.
+
+\paragraph{Web-based tracing tools.}
+Tracing Town's Tracing Playground runs in the browser with no account or
+download and accepts touch, stylus or mouse. A start dot, an arrow and
+numbered strokes guide each stroke of a shape or letter, the page says in
+words when the finger leaves the path, nothing is timed or scored, and
+nothing is recorded or sent from the device
+\citep{TracingTown2026Playground}.
+
+\paragraph{Children's drawing apps.}
+The Crayola Create and Play app, which also has an online version, offers
+drawing, colouring and educational activities for children aged three to
+eight, by subscription after a free trial; the vendor states that it has
+no rules, points or time limits \citep{Crayola2026CreateAndPlay}. Tux
+Paint is a free, open-source drawing program released under version~2 of
+the GNU General Public License (GPL), installed on Windows, macOS, Linux,
+Android and other systems \citep{TuxPaint2026Download}.
+
+\paragraph{Drawing-assistance features.}
+Google's AutoDraw is a free web tool that guesses what the user is drawing
+and suggests drawings made by artists \citep{Motzenbecker2017AutoDraw};
+choosing a suggestion replaces the user's sketch
+\citep{Lardinois2017AutoDraw}. Smart Script, part of iPadOS~18, smooths
+and straightens text handwritten with an Apple Pencil while keeping the
+look of the writer's own handwriting \citep{Apple2024SmartScript}.
+QuickShape, in the Procreate drawing app, snaps a held stroke into a
+perfect line, arc, ellipse, triangle or quadrilateral that can then be
+edited through its nodes \citep{Procreate2026QuickShape}.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Existing products scored against the comparison dimensions}
+\label{tab:ots-matrix}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}%
+>{\raggedright\arraybackslash}Xcccccc@{}}
+\toprule
+\textbf{Product} & \textbf{Delivery} & \textbf{D1} & \textbf{D2} &
+\textbf{D3} & \textbf{D4} & \textbf{D5} & \textbf{D6} \\
+\midrule
+Kaligo & Tablet app; teacher web portal & Part & Part & Part & No & No
+& -- \\
+Wet-Dry-Try & iPad app & Part & Part & -- & -- & No & -- \\
+LetterSchool & Tablet and phone app & Yes & -- & Part & -- & No & -- \\
+Writing Wizard & Installed app & Part & Part & Part & -- & No & -- \\
+Dexteria & iPhone and iPad app & -- & -- & Part & No & No & -- \\
+Dynamilis & iPad app & -- & -- & Part & No & No & -- \\
+Tracing Playground & Web page & Part & -- & No & No & Yes & -- \\
+Crayola Create and Play & App and online version & -- & -- & -- & -- &
+Part & -- \\
+Tux Paint & Installed program & -- & -- & -- & -- & No & -- \\
+AutoDraw & Web tool & -- & -- & -- & -- & Yes & No \\
+Smart Script & iPadOS feature & -- & -- & -- & -- & No & Part \\
+QuickShape & Drawing-app feature & -- & -- & -- & -- & -- & Part \\
+\bottomrule
+\end{tabularx}
+
+\smallskip
+\begin{minipage}{\textwidth}
+\raggedright
+Yes: the sources describe the feature. Part: they describe a weaker or
+different form, explained in the text. No: they describe the opposite,
+such as an installed app, a score or no records at all. --: the sources
+read do not describe it, which does not show that the product lacks it.
+\end{minipage}
+\end{table}
+
+The ``Part'' marks in Table~\ref{tab:ots-matrix} have these reasons. For
+D1, Kaligo lets teachers adjust visual guidance but describes no fixed
+sequence of stages, Wet-Dry-Try's step-by-step sequences cover only
+letters and numbers, Writing Wizard's five-star mode is mainly for letters
+and words, and Tracing Playground has a single guided level. For D2,
+Kaligo, Wet-Dry-Try and Writing Wizard let adults set difficulty,
+guidance or sensitivity, but none describes an adult choosing the
+starting point within a graded sequence, and Kaligo also adapts on its
+own. For D3, the products that keep anything keep a replay, a screenshot
+or the final writing (Kaligo, Writing Wizard, Dynamilis, LetterSchool) or
+usage reports (Dexteria). For D5, Crayola Create and Play has an online
+version beside its app. For D6, Smart Script refines handwritten text, not
+drawings, and QuickShape replaces a stroke with a perfect form, which is
+more than a minimal change.
+
+\paragraph{Gap.}
+No surveyed product combines the six dimensions, and three gaps stand out.
+First, records of the process (G.5): none of the sources read describes a
+record of which guide the child used, which predefined difficulties
+occurred and which were later corrected (D3). Second, adult summaries
+without judgement (G.6): the products that analyse a child's work for
+adults screen skills (Kaligo), compare with reference ranges (Dexteria) or
+score handwriting against a threshold (Dynamilis), all of which BR-006
+rules out, and none is described as separating attempts made with a guide
+from attempts made without one (D4). Third, refinement that keeps the
+drawing the child's own (G.4): the drawing-assistance features replace the
+sketch with an artist's drawing (AutoDraw) or a perfect shape
+(QuickShape), or refine handwritten text rather than drawings (Smart
+Script), and none of the children's products describes refinement at all
+(D6). Graded guidance (G.1, G.2) does exist, most closely in LetterSchool,
+but in installed apps centred on letters and numbers; the one browser-based
+tracing tool records nothing (D3, D5). Squigglr's differentiable value is
+therefore the combination: graded drawing practice in a browser, records
+that show the process behind each drawing, and adult summaries that report
+that process without judging the child. Each part exists somewhere; no
+product found offers them together. Whether supporting adults value this
+combination is not yet confirmed: the needs come from SRC-001 and SRC-005,
+and the value of refinement rests on ASM-011, which the specialists'
+questionnaire answers (SRC-009.01) support but do not establish.
+
+\paragraph{Products that must not be used.}
+No stakeholder has ruled out a product. Two observations follow from the
+business rules; they are not decisions. A product whose adult reports
+screen, score or compare children (Kaligo's screening, Dexteria's
+reference ranges, Dynamilis's profile) conflicts with BR-006, so it could
+not be offered to adults as Squigglr's records. A product that replaces
+the child's drawing (AutoDraw) conflicts with BR-005. Services excluded by
+their own terms are noted in the Reusable Components subsection.
+
 \subsection{Reusable Components}
-\lips
+\label{sec:ots-components}
+This subsection lists candidate building blocks: first approaches to
+refining a creative drawing, then supporting libraries and services.
+They are candidates, not mandates. The team chooses among them after the
+proof-of-concept experiments, and this specification requires none of
+them. The Development Plan names four criteria for choosing a refinement
+approach: drawing preservation, output validity, response time and cost
+(SRC-002). Three more come from this document. Refinement must stay
+minimal, with every refined point within \texttt{REFINE\_TOLERANCE} of the
+original strokes (G.4, BR-005). The provider may change, so it should sit
+behind one interface that takes stroke coordinates and returns adjusted
+coordinates at the same scale (LC-004). The child's drawings should reach
+as few outside parties as possible, in line with the supervisor's advice
+to collect no information about children (SRC-004) while the privacy
+requirements are still open (OI-02). Response times and request costs are
+not known yet; the proof-of-concept experiment on model-based enhancement
+will record them (SRC-002). Costs that are known appear in the Costs
+section. Table~\ref{tab:ots-components} summarises the candidates.
+
+\paragraph{Does refinement need AI?}
+The supervisor asked whether the corrections need AI at all (SRC-004,
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/21}{\#21}). The
+sources suggest that refinement as G.4 measures it does not. Geometric
+smoothing and simplification adjust the child's own path within a stated
+maximum error, need no training, and run in the browser, so the drawing
+need not leave the device \citep{PaperJS2026Path,Agafonkin2013SimplifyJS}.
+These methods do not know what a drawing depicts, so an adjustment that
+depends on the item drawn needs recognition, and published methods
+recognise strokes or infer geometric relations without a trained model
+\citep{WobbrockEtAl2007,IgarashiEtAl1997}. A pretrained model adds the
+ability to interpret a whole drawing, at the price of sending the drawing
+to a service or hosting a model, slower responses, fees, and validating
+every instruction before it is applied (SRC-002). The Development Plan
+already tries geometric refinement first, describes it as geometric
+processing rather than AI, and keeps it as the fallback if model work is
+deferred (SRC-002).
+
+\paragraph{Geometric refinement.}
+The Paper.js library, which the Development Plan expects to use, smooths
+paths by several methods, one of which (the centripetal Catmull--Rom
+spline) guarantees no self-intersections. Its \texttt{simplify} method
+fits as few curves as possible through a path's points within an allowed
+maximum error, and is documented for point data from a mouse or touch
+device \citep{PaperJS2026Path}. Paper.js is released under the
+Massachusetts Institute of Technology (MIT) License
+\citep{PaperJS2020License}. Simplify.js reduces the points of a line with
+the Douglas--Peucker and radial-distance algorithms under a tolerance, and
+is released under a Berkeley Software Distribution (BSD) licence
+\citep{Agafonkin2013SimplifyJS}. A tolerance bounds the fitting error, but
+whether every refined point stays within \texttt{REFINE\_TOLERANCE} of the
+original strokes, as G.4 measures, still has to be checked on prepared
+drawings.
+
+\paragraph{Published stroke methods.}
+Interactive beautification \citep{IgarashiEtAl1997} infers geometric
+relations such as perpendicularity, congruence and symmetry between a new
+stroke and existing ones, tidies one stroke at a time, and offers several
+candidate results when the intent is ambiguous. Candidates could let the
+child or the adult choose, but snapping to exact geometry may move points
+further than \texttt{REFINE\_TOLERANCE} allows. The \$1 recogniser
+\citep{WobbrockEtAl2007} matches a single stroke against stored templates
+in about 100 lines of code, and in its authors' study exceeded 97\%
+accuracy with one loaded template. A matcher of this kind could tell
+whether a drawing is one of the agreed supported items (G.4) without
+training or an outside service; drawings made of several strokes would
+need more than this method offers.
+
+\paragraph{Pretrained models.}
+The Development Plan plans an existing pretrained model that accepts a
+drawing preview and returns structured drawing instructions, which
+Squigglr validates before applying; no model has been selected and no
+custom training is planned (SRC-002). The candidates found fall into three
+kinds.
+\begin{itemize}
+  \item \emph{Hosted multimodal models}, reached through an application
+  programming interface (API). The OpenAI API accepts images as input
+  \citep{OpenAI2026DataControls}, and its Structured Outputs feature makes
+  responses follow a JavaScript Object Notation (JSON) schema supplied by
+  the developer \citep{OpenAI2026StructuredOutputs}, which suits
+  instructions that must be validated. The Anthropic API also accepts
+  images \citep{Anthropic2026Vision}. Their privacy terms differ. OpenAI
+  does not train on API data by default and keeps abuse-monitoring logs
+  for up to 30 days unless the customer is approved for zero data
+  retention \citep{OpenAI2026DataControls}; its guidance says developers
+  should not process personal data of children under 13 without first
+  setting up zero data retention \citep{OpenAI2026Under18}. Anthropic may
+  not train models on customer content \citep{Anthropic2025CommercialTerms},
+  deletes API inputs and outputs within 30 days except in listed cases
+  such as enforcing its usage policy \citep{Anthropic2026Retention}, and
+  asks organisations whose products minors use to add safety measures,
+  follow child-privacy law and disclose that users are interacting with
+  AI \citep{Anthropic2026Minors}. Both charge by usage; fees are not
+  estimated here.
+  \item \emph{Open-weight vision-language models} that the team could host
+  itself, such as Qwen2.5-VL-7B-Instruct. Its model card lists the Apache
+  License 2.0 and describes locating objects with bounding boxes or points
+  and giving stable JSON output for coordinates \citep{Qwen2026VL7B}.
+  Self-hosting keeps drawings away from outside providers but needs a
+  machine with a graphics processing unit (GPU), which the team would run
+  and pay for; the model card's examples load the model onto one.
+  \item \emph{Stroke-based generative models}, such as Sketch-RNN, which
+  generates vector drawings and was released with trained models and
+  code in Google's Magenta project \citep{Eck2017SketchRNN} under the
+  Apache License 2.0 \citep{Magenta2016License}. The model's training
+  data is the Quick, Draw! dataset of 50 million drawings in 345
+  categories, stored as timestamped strokes and licensed under Creative
+  Commons Attribution 4.0 (CC BY 4.0) \citep{Google2017QuickDraw}.
+  Output in strokes stays editable, but the model generates drawings
+  rather than adjusting the child's, so its fit with BR-005 is doubtful.
+\end{itemize}
+
+\paragraph{Supporting libraries and services.}
+The Development Plan expects Paper.js with Pointer Events for drawing
+input, Supabase for records and adult authentication, and Vercel for
+hosting (SRC-002). Pointer Events is a World Wide Web Consortium (W3C)
+Recommendation for hardware-independent input from a mouse, pen or
+touchscreen \citep{W3C2026PointerEvents}; which devices and browsers
+Squigglr supports is still open (OI-09). Supabase provides a Postgres
+database, authentication and file storage, is open source under the Apache
+License 2.0, and can be self-hosted \citep{Supabase2026GitHub}; the
+self-hosting option bears on data isolation between institutions (OI-06,
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}). Vercel's
+Hobby plan is free but limited to non-commercial personal use, and when a
+usage limit is exceeded the feature usually stays unavailable until 30
+days have passed \citep{Vercel2026Hobby}.
+
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.27\textwidth}%
+>{\raggedright\arraybackslash}p{0.16\textwidth}%
+>{\raggedright\arraybackslash}p{0.26\textwidth}@{}}
+\caption{Candidate components, not mandates}\label{tab:ots-components}\\
+\toprule
+\textbf{Candidate} & \textbf{What it offers} & \textbf{Licence or cost} &
+\textbf{Main concern for Squigglr} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Candidate} & \textbf{What it offers} & \textbf{Licence or cost} &
+\textbf{Main concern for Squigglr} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\multicolumn{4}{@{}l}{\emph{Refinement: geometric, no AI}} \\
+Paper.js smoothing and simplification & Smoothing; curve fitting within a
+maximum error; editable paths & MIT; free & Error bound must be checked
+against \texttt{REFINE\_TOLERANCE}; no recognition \\
+Simplify.js & Point reduction under a tolerance & BSD; free & Reduces
+points only; no smoothing \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Refinement: published stroke methods}} \\
+Interactive beautification & Inferred geometric relations; several
+candidates per stroke & Paper; no library & Snapping may exceed
+\texttt{REFINE\_TOLERANCE} \\
+\$1 recogniser & Template matching of single strokes, no training & Paper
+with pseudocode & Single strokes only \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Refinement: pretrained models}} \\
+OpenAI API & Image input; output that follows a supplied schema &
+Usage-based fees & Logs kept up to 30 days by default; children's data
+guidance \\
+Anthropic API & Image input & Usage-based fees & Data deleted within 30
+days, with exceptions; safeguards for minors \\
+Qwen2.5-VL-7B-Instruct & Object location; JSON coordinates & Apache 2.0;
+hosting cost & GPU hosting run by the team \\
+Sketch-RNN with Quick, Draw! & Generation of vector drawings & Apache 2.0;
+data CC BY 4.0 & Generates rather than adjusts (BR-005) \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Supporting libraries and services}} \\
+Pointer Events & Pen, touch and mouse input & Open web standard & Device
+support still open (OI-09) \\
+Supabase & Database, authentication and storage; self-hosting &
+Apache 2.0; hosted plans & Access policies need configuration and testing
+(SRC-002) \\
+Vercel & Hosting and preview deployments & Hobby plan free; paid plans &
+Hobby is non-commercial only and pauses at its limits \\
+\end{longtable}
+}
+
+\paragraph{Services that should not be used.}
+Two observations follow from the sources; they are not decisions. The
+Gemini API's terms forbid using it in a website or app that is directed
+towards, or likely to be accessed by, people under 18, so Squigglr could
+not use it as a refinement provider under those terms. The same terms let
+Google use content sent to the free tier to improve its products, with
+human review \citep{Google2026GeminiTerms}; any free tier with such terms
+would expose
+children's drawings in a way the supervisor's advice (SRC-004) and the
+open privacy issue (OI-02) argue against. A service that returns only a
+bitmap image does not meet the need for editable strokes (SRC-002).
+
 \subsection{Products That Can Be Copied}
-\lips
+\label{sec:ots-copy}
+Volere asks this question of every project and warns that copying relies
+on the base being of good quality \citep{robertson2012volere}. The
+team has not evaluated the quality of any base listed here and found no
+published specification of any surveyed product that could be reused.
+The answer therefore has three parts: code and data that may legally be
+copied, interaction patterns worth imitating, and patterns to avoid.
+
+\paragraph{Code and data whose licences allow copying.}
+Paper.js and Simplify.js allow reuse as long as their copyright notices
+are kept \citep{PaperJS2020License,Agafonkin2013SimplifyJS}, and the
+Magenta code is under the Apache License 2.0 \citep{Magenta2016License}.
+Tux Paint's source code may be copied under the GPL version~2
+\citep{TuxPaint2026Download}, whose conditions would then apply to the
+copied code; Tux Paint is built as an installed program, not a website.
+The Quick, Draw! drawings may be copied under the CC BY 4.0 licence, but
+they were contributed by players
+of a public game, the dataset records no player ages, and the drawings
+may still contain inappropriate content \citep{Google2017QuickDraw}. They
+therefore cannot serve as the adult-made drawings from which Squigglr's
+ranges are set (BR-009, ASM-014).
+
+\paragraph{Interaction patterns worth imitating.}
+Ideas, not code, are the most useful things to copy.
+\begin{itemize}
+  \item LetterSchool's tap, trace and write sequence gives the same item
+  with less help each time \citep{LetterSchool2026HowWhy}, as Squigglr's
+  stages do (G.1, G.2).
+  \item Tracing Playground marks the start with a dot, shows direction
+  with an arrow, numbers the strokes, says in words when the finger leaves
+  the path, has no timer or score, and follows the device's reduced-motion
+  setting \citep{TracingTown2026Playground}; these suit children who may
+  not read (FACT-007).
+  \item Writing Wizard's and Kaligo's replays of what the child traced
+  \citep{Abel2026WritingWizard,LearnAndGo2026Teachers} show adults the
+  actual strokes behind a result (G.5, BR-004).
+  \item QuickShape keeps a corrected shape editable
+  \citep{Procreate2026QuickShape}, and Smart Script keeps the look of the
+  writer's own hand \citep{Apple2024SmartScript}; both match the intent
+  of BR-005.
+\end{itemize}
+
+\paragraph{Patterns to avoid.}
+Skill screening, scores against a threshold and comparison with reference
+ranges conflict with BR-006, and replacing the child's drawing with an
+artist's conflicts with BR-005. No surveyed product can be copied whole,
+because none combines the dimensions in Table~\ref{tab:ots-dimensions}.
 
 \section{New Problems}
+\label{sec:new-problems}
+This section records the problems that introducing Squigglr may create:
+in the places where it is used, for the systems it runs alongside, for its
+users, in the environment it is built for, and later in its life. Each
+problem is stated as a cause and its effect, followed by the precaution
+this specification already takes or the open item that will decide it.
+Links point to business rules (BR) and assumptions (ASM) in
+Section~\ref{sec:facts-assumptions}, open issues (OI) in
+Table~\ref{tab:openIssues} and likely changes (LC) in
+Table~\ref{tab:likelyChanges}. Critical assumptions (CA) and hazard
+identifiers (H-RAY, H-AHM, H-MUH) from the Hazard Analysis, and the safety
+requirements (SAF-RAY, SAF-AHM) in Safety-Critical Requirements, are given
+as plain text.
+Nothing in this section is a requirement; each precaution names where the
+related requirement or decision is, or will be, recorded.
+
 \subsection{Effects on the Current Environment}
-\lips
+Squigglr will be used at home, in classrooms and in places such as
+rehabilitation centres (Anticipated Workplace Environment).
+Table~\ref{tab:new-problems-environment} lists how it changes the work of
+the adults and children in those places. The Volere template also asks
+what the product must not do there; the last row answers that.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: effects on the current environment}
+\label{tab:new-problems-environment}\\
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+More work for supporting adults &
+Squigglr gives adults new tasks: creating a learner profile, choosing six
+adult-set values, with example drawings to help with
+\texttt{STAGE\_PASS} (BR-008), choosing lessons and starting stages,
+answering go-back suggestions (BR-003) and reviewing records. An educator
+with a short slot per learner (PER-3) or a
+parent who reviews once a week (PER-2) may leave defaults in place or let
+suggestions wait. &
+Each value defaults to the middle of its range (BR-008); a declined or
+ignored suggestion changes nothing (G.3); the user documentation in
+Section~\ref{sec:user-docs} explains each task. Links: ASM-016, CA-006;
+SAF-RAY-001, SAF-RAY-008; H-RAY-001, H-RAY-007. \\
+\addlinespace
+Shared and centrally managed school devices &
+One school device may be used by several children (SRC-004), and
+educators cannot install software on managed devices (PER-3). A session
+left open, or a learner not switched, can show one child's records to
+another child or save attempts to the wrong learner profile. &
+An adult selects the right learner (ASM-008); how a shared device is
+signed in and left after a session is OI-01; SAF-RAY-007 identifies the
+active learner. Hazards: H-RAY-006, H-MUH-004. \\
+\addlinespace
+Practice moves onto a screen &
+Practice with Squigglr is time on a device. Squigglr cannot see how long a
+child has used the device, or whether the child is distressed or
+uncomfortable (ASM-002), so long or repeated sessions can go unnoticed
+when no adult is watching. &
+The adult stays responsible for the child's time on the device (ASM-002)
+and can stop a session or mute audio (ASM-015); a lesson ends at
+\texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX} when extended
+(G.3). Hazards: H-RAY-004, H-RAY-005. \\
+\addlinespace
+Relationship with professional support &
+Occupational therapists and educators may already support the child.
+Squigglr keeps practice records, but the specialists advised deciding with
+such professionals which measures help an adult
+(SRC-005, \intref{P2}{31:42}). An adult could treat Squigglr as a
+substitute for that support. &
+Squigglr makes no claim that its practice improves any skill (BR-006;
+FACT-001, FACT-002); the user documentation states that Squigglr offers
+practice, not therapy or assessment. \\
+\addlinespace
+What Squigglr must not do &
+Squigglr must not take over decisions that belong to the adults around the
+child. Squigglr never selects another lesson, skips a stage or moves a
+child back a stage without an adult's authorization (CON-007, BR-003),
+never gives a child personalized AI-generated feedback in a guided
+activity (BR-007), never replaces a child's strokes in a guided-lesson
+record (BR-004), and never lets refinement act outside the creative space
+(BR-005). Breaking
+any of these would override an adult's judgement or mislead the adults who
+rely on the records. &
+These are business rules and unlikely changes (ULC-003 to ULC-005,
+Table~\ref{tab:unlikelyChanges}). Hazards: H-MUH-002 (refinement reaching
+a guided-lesson record), H-MUH-003 (assisted work shown as
+independent). \\
+\end{longtable}
+}
+
 \subsection{Effects on the Installed Systems}
-\lips
+Squigglr installs nothing on the user's device (CON-002) and replaces no
+existing system (Implementation Environment of the Current System). The
+systems it must coexist with are the browsers, devices and networks that
+homes and schools already use, and the outside services Squigglr itself
+depends on. Table~\ref{tab:new-problems-installed} lists the conflicts
+that can arise with each.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: effects on the installed systems}
+\label{tab:new-problems-installed}\\
+\toprule
+\textbf{System} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{System} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Browsers and devices already in use &
+Squigglr runs in whatever browser the adult's or school's device has
+(CON-001). Squigglr depends on that browser reporting stylus strokes in
+enough detail (ASM-004), on devices the team does not control (CA-002),
+and on browser updates not changing how input is reported. Strokes may
+then be captured wrongly, or not at all, on some devices. &
+The supported device and browser combinations are OI-09; SAF-RAY-002 shows
+a notice on an unsupported device; drawing input can be read through one
+input module (LC-003). Hazard: H-RAY-002. \\
+\addlinespace
+Browser storage on a shared device &
+Keeping each completed attempt on the device until the server confirms
+that it is saved (SAF-RAY-003) means practice data may sit in the browser
+of a shared or school device. The next user of the device could see or
+overwrite another child's unsaved attempts, or the data could stay on the
+device after the session ends. &
+How a shared device is left after a session is OI-01; who may see records
+is part of the privacy requirements (OI-02). Hazards: H-RAY-006,
+H-MUH-004. \\
+\addlinespace
+School networks and content filters &
+A managed school network may block the Squigglr website or the outside
+services it calls (ASM-013). Lessons then fail to load in class, or saves
+and refinement fail. &
+The documentation for school administrators lists what must be allowed
+(Table~\ref{tab:user-docs}); a failed refinement leaves the drawing
+unchanged (G.4); unsaved attempts are kept and reported (SAF-RAY-003). \\
+\addlinespace
+New outside services &
+Squigglr adds services that homes and schools did not depend on before: a
+hosting service, an authentication service for adult accounts and,
+possibly, an outside model for refinement (SRC-002). An outage, price
+change or change of terms at any of them affects every user at once, and a
+drawing sent to an outside model leaves the team's control. &
+The interfaces are specified in Requirements for Interfacing with Adjacent
+Systems and the data sent outside in Privacy Requirements; the refinement
+provider can sit behind one interface (LC-004); costs are in
+Section~\ref{sec:costs}. \\
+\end{longtable}
+}
+
 \subsection{Potential User Problems}
-\lips
+Squigglr has no existing users, so this subsection lists adverse reactions
+its intended users may have, drawn from the personas (PER-1 to PER-3) and
+the assumptions in Section~\ref{sec:assumptions}.
+Table~\ref{tab:new-problems-users} gives each reaction and the precaution
+taken.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: potential user problems}
+\label{tab:new-problems-users}\\
+\toprule
+\textbf{Problem (user)} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Problem (user)} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Frustration from repetition (child) &
+Failing the same stage again and again, or restarting a lesson at once
+after it ends, can agitate a child who dislikes repeated tasks (PER-1).
+The child may become distressed or refuse the activity later. &
+A lesson ends at \texttt{ATTEMPT\_LIMIT} (G.3, BR-002), and the adult
+sets the limits for each child (BR-008). Hazards: H-RAY-004,
+H-RAY-005. \\
+\addlinespace
+Reaction to sensory feedback (child) &
+Sounds, colours or animation used as feedback may upset some children,
+who react to sensory feedback in different ways (ASM-015). &
+Audio can be turned off (SRC-005, \intref{P2}{37:39}); feedback is to be
+designed with educators and occupational therapists (LC-005) and is
+covered by the Usability and Humanity Requirements. \\
+\addlinespace
+Refinement that does not feel like the child's own (child) &
+Refinement is automatic (BR-005), so the drawing changes without the child
+asking. Whether children value this, and whether they still see the result
+as theirs, is unverified (ASM-011, FACT-013). A child may be upset by the
+change or not know how to get the original back. &
+Refinement is minimal, within \texttt{REFINE\_TOLERANCE}, and the result
+stays editable; the child, or an adult, can restore the original or turn
+refinement off (BR-005, G.4, UC-007, UC-010). The scope of G.4 is OI-03. Hazards: H-MUH-001, H-MUH-002,
+H-MUH-006. \\
+\addlinespace
+Summaries read as a diagnosis (adult) &
+Adults reading records are not assumed to have training in visual-motor
+development (CA-005), and fewer attempts may be read as better skill. An
+adult may draw a wrong conclusion about the child and pass it on. &
+No record or summary gives a diagnosis, judgement or comparison (BR-006,
+SAF-RAY-004); the documentation explains how to read a summary
+(Table~\ref{tab:user-docs}). Hazard: H-RAY-003. \\
+\addlinespace
+Over-trust in default values (adult) &
+An adult may keep the default values, or pick values from the example
+drawings, without knowing whether they suit the child (CA-006, ASM-016).
+The child may be held at a stage too long or moved on too soon, and the
+records may then mislead the adult. &
+Example drawings show each end of the \texttt{STAGE\_PASS} range
+(BR-008); the values in use are shown with the records (ASM-006); the
+ranges are OI-05. Hazard: H-RAY-007. \\
+\addlinespace
+Worry about the child's data (adult) &
+Parents want their child's data kept private (PER-2), and how records are
+shared or deleted is not yet decided (OI-02, FACT-013). Adults may refuse
+to use Squigglr, or share records more widely than they intend. &
+A learner profile holds only a first name and a non-identifying username
+(BR-001); privacy requirements follow from OI-02; a privacy notice is
+part of the user documentation (Table~\ref{tab:user-docs}). \\
+\end{longtable}
+}
+
 \subsection{Limitations in the Anticipated Implementation Environment That May
 Inhibit the New Product}
-\lips
+Table~\ref{tab:new-problems-limits} lists the limits of the environment
+that Squigglr is built for and used in that may stop it from working as
+specified. Several are the implementation risks the Development Plan's
+Proof of Concept (POC) is designed to test (SRC-002).
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: limitations in the implementation environment}
+\label{tab:new-problems-limits}\\
+\toprule
+\textbf{Limitation} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Limitation} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Stylus input in the browser &
+Whether supported browsers report stylus strokes in enough detail is
+untested (ASM-004). Stage checks and records could be wrong; if browser
+input proves unreliable, an installed app may be needed, which would change
+CON-001 (ULC-001). &
+A POC experiment draws on a target tablet and on a second device and
+browser combination and records any input failures (SRC-002); the
+supported combinations are OI-09. Hazards: H-AHM-001, H-AHM-003; safety
+requirement SAF-AHM-002. \\
+\addlinespace
+Devices without a stylus &
+Not every home or school may have a touchscreen device with a stylus
+(ASM-003). Children then draw with a finger, for which the stage checks
+and ranges are not tuned. &
+Finger input is a stretch goal (LC-006); SAF-RAY-002 tells the adult when
+a device is not supported. \\
+\addlinespace
+Online use only &
+Squigglr needs a network connection to load lessons and to save and view
+records, and offline use is out of scope (ASM-005); a connection may be
+lost at any time (CA-003). Attempts may be lost, and an adult may decide
+from incomplete records. &
+SAF-RAY-003 keeps unsaved attempts and reports them; network loss is
+covered by the Robustness or Fault-Tolerance Requirements. Hazards:
+H-RAY-002, H-MUH-005, H-MUH-008. \\
+\addlinespace
+Limits of free service plans &
+The planned hosting service (Vercel) and database and authentication
+service (Supabase) (SRC-002) have free plans with usage limits. The
+hosting free plan is for personal, non-commercial use and has one
+developer seat \citep{Vercel2026Pricing}. The database free plan includes
+a 500\,MB database and pauses a project after one week of inactivity
+\citep{Supabase2026Pricing}. A limit reached, or a project paused during a
+break, makes Squigglr unavailable or stops saves. &
+The Development Plan requires service limits and costs to be monitored
+(SRC-002); the plan choice and its cost are in Section~\ref{sec:costs};
+the budget is OI-07. \\
+\addlinespace
+Refinement model not yet chosen &
+No model has been selected. A pretrained model may return invalid drawing
+instructions, misread the drawing or change it too much, and its response
+time and request cost are unknown (SRC-002). &
+A POC experiment records valid and invalid outputs, response times and
+estimated request costs, and checks that a rejected instruction leaves the
+drawing unchanged; geometric refinement can be used while model work is
+deferred (SRC-002). Links: LC-004, OI-03; hazard H-MUH-002. \\
+\addlinespace
+No testing with children &
+No study with children may run (CON-006), so value ranges and
+\texttt{REFINE\_TOLERANCE} are set from adult-made drawings (BR-009,
+ASM-014). They may not match how children draw. &
+The adult chooses each value for the child within a range (BR-008);
+ASM-014 is marked relevant to safety and is an input to the Hazard
+Analysis. \\
+\addlinespace
+Course schedule and effort &
+The course fixes the deadlines (CON-004), and the team plans around about
+ten hours per member per week (SRC-002). Not every planned feature may be
+ready for each release. &
+The POC plan allows narrowing the supported drawing set, simplifying the
+guidance rules or using geometric refinement only (SRC-002); the phases
+are set in Planning of the Development Phases. \\
+\end{longtable}
+}
+
 \subsection{Follow-Up Problems}
-\lips
+Follow-up problems are situations that Squigglr may create later and that
+the team may not be able to handle. Table~\ref{tab:new-problems-follow-up}
+lists them with the precaution or the open item that covers each.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.39\textwidth}%
+>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\caption{New problems: follow-up problems}
+\label{tab:new-problems-follow-up}\\
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Problem} & \textbf{Cause and effect} &
+\textbf{Precaution and links} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Demand for stretch features &
+Adults or schools may ask for finger input, camera finger tracing or
+letter activities, which are stretch goals (SRC-001; FACT-006; ASM-010).
+The team may face pressure to add features the schedule cannot support,
+or to add them without the checks the core features have. &
+Deferred features are kept in the Waiting Room section; new input types
+can be added through one input module (LC-003, LC-006). \\
+\addlinespace
+A growing lesson catalogue &
+Lessons may be added or reordered, for example to add letters after shapes
+(LC-001, SRC-009.04). Each new lesson needs its stages, predefined difficulties
+and adult-made example drawings for \texttt{STAGE\_PASS} (BR-008,
+BR-009), so content work grows with every lesson. &
+Lessons and their stages can be stored as data, so adding or reordering a
+lesson changes no code (LC-001). \\
+\addlinespace
+Growing stored data &
+Every attempt keeps the child's actual strokes (BR-004) and every recorded
+value (LC-007), and each creative drawing keeps its original strokes
+(BR-005). Storage grows with use and could reach the database free plan's
+500\,MB limit \citep{Supabase2026Pricing}, after which saves could
+fail. &
+Capacity is covered by the Capacity Requirements; storage use is monitored
+(SRC-002); failed saves are reported (SAF-RAY-003); how long records are
+kept follows from OI-02. \\
+\addlinespace
+Use by institutions &
+Schools or centres may adopt Squigglr; a peer reviewer asked how their
+records would be kept apart
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}), and an
+educator may manage many learners (ASM-012). One shared store of records
+may not meet an institution's expectations. &
+OI-06 decides whether separate institutions are supported in this project
+and, if so, the access and privacy requirements that keep their records
+apart. \\
+\addlinespace
+Maintenance after the course &
+Who maintains Squigglr after the project ends is not decided (Maintenance
+Users and Service Technicians). Hosting accounts, provider access and
+lesson content may lapse while adults' accounts and children's practice
+records stay stored with no one responsible for them. &
+Who maintains Squigglr after the project ends is an open item (Maintenance
+Users and Service Technicians), and how stored records are deleted is part
+of OI-02. \\
+\addlinespace
+Changes by outside providers &
+Providers may change prices, limits or terms; one vendor states that its
+pricing may change \citep{Supabase2026Pricing}. A refinement provider may
+change or withdraw a model (LC-004). Costs may then rise above the course
+limit, or refinement may stop working. &
+The refinement provider can sit behind one interface (LC-004), with
+geometric refinement as a fallback (SRC-002); the budget is OI-07. \\
+\addlinespace
+Pressure to evaluate children &
+If Squigglr is presented as an educational tool rather than as practice,
+adults or schools may expect it to evaluate children. The supervisor
+advised that any evaluation would need strong justification, because the
+team cannot judge a child's abilities (SRC-008). &
+Squigglr gives no diagnosis, judgement or comparison (BR-006, ULC-004). \\
+\addlinespace
+Laws that may apply after wider use &
+Wider use, for example by schools or outside the course, may bring legal
+obligations about records of children that the project has not had to
+meet. &
+Which laws and standards apply is decided in the Legal Requirements
+section; this section assumes none. \\
+\end{longtable}
+}
 
 \section{Tasks}
 \label{sec:tasks}
@@ -4797,18 +7403,267 @@ changes, its entry in this table and, for requirements with a
 \texttt{Phase} field, its individual specification are updated together.
 
 \section{Migration to the New Product}
+\label{sec:migration}
+This section asks what must be converted or carried over before Squigglr
+can be used. Squigglr is a new product (Implementation Environment of the
+Current System), so both subsections find nothing to migrate. Each gives
+its reason and the condition that would change the answer.
+
 \subsection{Requirements for Migration to the New Product}
-\lips
+Not applicable. There is no existing product to convert, decommission or
+run in parallel, because Squigglr is new and replaces no system. Getting
+started is part of the product, not a migration task: an adult creates a
+learner profile and chooses the adult-set values (UC-001, BR-001,
+BR-008), and these steps are covered by the use cases and by the
+user documentation in Section~\ref{sec:user-docs}. Between the releases
+set in Planning of the Development Phases, Squigglr holds only prepared or
+adult-made data (CON-005, BR-009, ASM-014). Because every release is
+tested again in full (SRC-008), that data can be created again for each
+release instead of being converted. If adults keep real records in one
+release and a later release changes how records are stored, for example to
+show new values (LC-007) or to measure improvement differently (LC-008),
+migrating those records would become a requirement here.
+
 \subsection{Data That Has to be Modified or Translated for the New System}
-\lips
+Not applicable. No data held elsewhere is imported into Squigglr: no use
+case from UC-001 to UC-010 enters children's earlier drawings or adults'
+own notes. Every attempt record, lesson record and creative drawing is
+created inside Squigglr as the child practises (G.4, G.5), so nothing has
+to be translated into a new format.
 
 \section{Costs}
-\lips
+\label{sec:costs}
+This section lists the costs of building and running Squigglr that are
+known from a source, and names the costs that are not yet known, with who
+will settle each and when. No figure here is an estimate by the team.
+Table~\ref{tab:costs} gives each item. Amounts are copied as the sources
+state them; vendor amounts are list prices before tax on the date the page
+was accessed and may change.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}%
+>{\raggedright\arraybackslash}p{0.17\textwidth}%
+>{\raggedright\arraybackslash}p{0.36\textwidth}%
+>{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
+\caption{Known and unknown costs}\label{tab:costs}\\
+\toprule
+\textbf{Item} & \textbf{Cost or limit} & \textbf{Basis and source} &
+\textbf{Status} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Item} & \textbf{Cost or limit} & \textbf{Basis and source} &
+\textbf{Status} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Course spending limit & At most \$500 per team &
+Spending on equipment, supplies or digital services by a team should not
+exceed this amount, and receipts are kept \citep{Smith2026Outline}. &
+Limit set by the course. \\
+\addlinespace
+Expense reimbursement & Up to \$150 per group &
+The department reimburses approved expenses; each needs the written
+approval of the administrative TA \citep{Smith2026Outline}. Tokens for
+AI services are not eligible \citep{Smith2026L02}. &
+Limit set by the course. \\
+\addlinespace
+Expo poster & Printing up to \$60 per group covered &
+Covered by the department \citep{Smith2026Outline}. &
+Known; no cost to the team within the limit. \\
+\addlinespace
+Hosting (Vercel) & Free plan: \$0 per month. Paid plan: \$20 per month
+per developer seat &
+Planned host (SRC-002). The free plan is for personal, non-commercial use,
+has one developer seat and monthly limits, such as 100\,GB of data
+transfer; the paid plan includes \$20 of usage credit
+\citep{Vercel2026Pricing}. &
+Plan TBD: Development and Operations (DevOps) Lead (Shamil Canbolat),
+after OI-07, before the POC demonstration window. \\
+\addlinespace
+Database and adult accounts (Supabase) & Free plan: \$0 per month. Paid
+plan: from \$25 per month &
+Planned database and authentication service (SRC-002). The free plan
+includes a 500\,MB database and 50{,}000 monthly active users, pauses a
+project after one week of inactivity and allows two active projects; the
+paid plan includes 8\,GB of disk per project and has a spend cap on by
+default \citep{Supabase2026Pricing}. &
+Plan TBD: as for hosting. \\
+\addlinespace
+Refinement model requests & Unknown &
+No model has been selected; a POC experiment records estimated request
+costs (SRC-002). Tokens are not reimbursable \citep{Smith2026L02}.
+Geometric refinement uses no outside model (SRC-002). &
+TBD from POC evidence: Testing Lead (Muhammad Huzaifah) coordinates the
+evaluation (SRC-002), by the POC demonstration window. \\
+\addlinespace
+Devices for development and testing & Unknown &
+The POC needs a target tablet with a compatible stylus and a second device
+and browser combination (SRC-002). Whether team members already own
+suitable devices is not recorded. &
+TBD with the supported devices (OI-09): Shamil Canbolat, Nov.\ 2, 2026. \\
+\addlinespace
+Devices and network for users & Not a project cost &
+Homes and schools use their own touchscreen device with a stylus and their
+own network (ASM-003, ASM-005); no sale or purchase of Squigglr is
+planned (Customer). &
+Known. \\
+\addlinespace
+Team effort & About ten hours per member per week &
+Planning average for each of the five members, including scheduled course
+activities (SRC-002). This is a planning assumption, not measured
+effort. &
+Known as a plan; effort per phase belongs in the Tasks section. \\
+\end{longtable}
+}
+
+The total monetary cost is TBD, which matches Budget Constraints. With
+both free plans and geometric refinement only, the known service costs are
+\$0, subject to the free plans' limits and terms; device costs are still
+unknown. Any paid plan or model requests must fit within the \$500 course
+limit, of which at most \$150 can be reimbursed. Whether any budget is
+available is OI-07 (Shamil Canbolat, Oct.\ 17, 2026). The Volere template
+suggests estimating cost from counts of use cases and requirements
+\citep{robertson2012volere}; those counts are not final while the
+requirements are being written, so no such estimate is given here.
+
 \section{User Documentation and Training}
+\label{sec:user-docs}
+This section describes the user documentation and training Squigglr needs,
+not the documents themselves. Following the Volere template
+\citep{robertson2012volere}, each item is derived from the use cases
+(UC-001 to UC-010) and the business rules and assumptions the adult must
+understand to carry them out.
+
 \subsection{User Documentation Requirements}
-\lips
+Table~\ref{tab:user-docs} lists the documentation supporting adults need.
+Every use case from UC-001 to UC-010 is covered by at least one item.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth}%
+>{\raggedright\arraybackslash}p{0.41\textwidth}%
+>{\raggedright\arraybackslash}p{0.19\textwidth}%
+>{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\caption{User documentation items}\label{tab:user-docs}\\
+\toprule
+\textbf{Item} & \textbf{Purpose and contents} &
+\textbf{Use cases and sources} & \textbf{Audience} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Item} & \textbf{Purpose and contents} &
+\textbf{Use cases and sources} & \textbf{Audience} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Getting started &
+Create a learner profile that holds only a first name and
+a non-identifying username. Choose each adult-set value: what it means,
+its range, the example drawings for \texttt{STAGE\_PASS}, and that a value
+not chosen is set to the middle of its range, which may not suit the
+child. Change the values later. &
+UC-001, UC-010; BR-001, BR-008; ASM-016 &
+Supporting adults \\
+\addlinespace
+Lessons and stages &
+The lesson catalogue; the stages from demonstration to drawing with no
+guide; choosing a lesson and a starting stage; what happens when a lesson
+ends at \texttt{ATTEMPT\_LIMIT} or is extended while the child
+improves. &
+UC-002, UC-003, UC-004; G.1 to G.3; BR-002, BR-003 &
+Supporting adults \\
+\addlinespace
+Go-back suggestions &
+What a suggestion means, that nothing changes unless an adult accepts it,
+and how to see the attempts behind it before deciding. &
+UC-005; BR-003; CON-007 &
+Supporting adults \\
+\addlinespace
+Reading records and summaries &
+What each attempt and lesson record holds; how attempts made with a guide
+are told apart from those made without one; how to open the attempts
+behind a summary; the values in use for each attempt; and that records
+describe practice only and are not a diagnosis or a measure of ability,
+including when shared with others. &
+UC-008, UC-009, UC-010; G.5, G.6; BR-006; ASM-006; CA-005; SAF-RAY-004 &
+Supporting adults, and those they share records with \\
+\addlinespace
+Creative space and refinement &
+That refinement happens automatically and changes the drawing only a
+little; which items are supported; how the child or an adult restores the
+original or turns refinement off or on; that refinement never reaches
+guided-lesson records; and what, if anything, is sent to an outside
+service. &
+UC-006, UC-007, UC-010; G.4; BR-004, BR-005; OI-03 &
+Supporting adults \\
+\addlinespace
+Safe use and shared devices &
+Selecting the right learner on a shared device and leaving the device
+after a session; muting audio and stopping a session; the adult's
+responsibility for the child's safety and time on the device; supported
+devices and browsers; the need for a network connection, and what happens
+to attempts that could not be saved. &
+ASM-002, ASM-005, ASM-008, ASM-015; OI-01, OI-09; SAF-RAY-003 &
+Supporting adults \\
+\addlinespace
+Privacy notice &
+What Squigglr stores about the adult and each child, who can see it, and
+how records are shared and deleted. &
+BR-001; ASM-009; OI-02 &
+Supporting adults \\
+\addlinespace
+Notes for school administrators &
+The web address and the outside services a managed network must allow,
+and confirmation that nothing is installed. &
+CON-002; ASM-013 &
+School administrators \\
+\end{longtable}
+}
+
+Each item appears as help inside the adult views, where the task is done,
+and is collected in a written User Guide, which the course template
+provides as a separate document. As the Volere template advises, the
+guide uses the terms defined in this specification and turns the use case
+scenarios into its step-by-step instructions. The guide is written in the
+interface language (ASM-007). Developer documents, such as the design
+documents, are not user documentation and are not listed.
+
+Children receive no written documentation, because many cannot read
+(ASM-007). Instead, each lesson starts with a demonstration (G.1), and
+children move through Squigglr using images and icons rather than text
+(FACT-007; SRC-005, \intref{P1}{34:13}). How quickly children and adults
+must be able to learn Squigglr is specified in Learning Requirements and
+is not repeated here.
+
+The user interface and user experience (UI/UX) Lead coordinates the
+documentation, as the lead for user flows
+and usability (SRC-002). Each item is first written for the release that
+delivers the use cases it covers, and is updated whenever those use cases,
+the lesson catalogue (LC-001) or the adult-set values (LC-002) change.
+Who keeps it current after the project ends follows the maintenance
+decision in Table~\ref{tab:new-problems-follow-up}. No documentation
+requirement is stated here: the behaviour the documentation explains is
+already specified by the use cases and business rules, the practice-only
+statement is SAF-RAY-004, and learnability is in Learning Requirements, so
+a separate requirement would repeat them.
+
 \subsection{Training Requirements}
-\lips
+No training sessions are planned for any user. Supporting adults are
+assumed to be everyday web users (Hands-On Users of the Project), and the
+documentation in Table~\ref{tab:user-docs}, shown where each task is done,
+is meant to let them set up and use Squigglr without help. Whether it is
+enough is checked, not assumed: the adult-reviewer tasks in the G.6
+measurement and the planned usability sessions with adult reviewers
+(SRC-001) test whether adults can complete their tasks with only this
+help. Children receive no training beyond the demonstration that starts
+each lesson (G.1). The adult introduces Squigglr to the child, and the
+getting-started item suggests how to begin a first session, for example by
+choosing an early stage and checking the audio setting. If schools adopt
+Squigglr and an educator manages many learners (ASM-012), a short
+walkthrough for educators may be needed; it is not planned in this
+project.
 
 \section{Waiting Room}
 \label{sec:waiting-room}
@@ -4873,7 +7728,108 @@ BR-003, BR-006 and BR-007, respectively; they are not implicitly
 promised as future features.
 
 \section{Ideas for Solution}
-\lips
+\label{sec:solution-ideas}
+This section is non-normative: it records ideas for how the team might
+build Squigglr, so that they are not lost and are not mistaken for
+requirements; none of them binds the design. Ready-made products and
+components that could be reused are in the Off-the-Shelf Solutions
+section; this section is about how the team might put the product
+together. Table~\ref{tab:solution-ideas} gives each idea with its
+trade-off and source.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.26\textwidth}%
+>{\raggedright\arraybackslash}p{0.44\textwidth}%
+>{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\caption{Ideas for solution (non-normative)}\label{tab:solution-ideas}\\
+\toprule
+\textbf{Idea} & \textbf{Trade-off} & \textbf{Source} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Idea} & \textbf{Trade-off} & \textbf{Source} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\emph{Geometric refinement first.} Smooth and simplify the child's own
+paths, and try a pretrained model only for changes that geometry cannot
+make. &
+No outside service, request cost or data leaving Squigglr, and results are
+predictable. Geometry can only tidy strokes, not interpret a drawing, and
+the supervisor's question of whether AI is needed (SRC-004) stays open
+until POC evidence exists. &
+SRC-002 (Drawing Assessment and Enhancement; POC experiments); SRC-004 \\
+\addlinespace
+\emph{Check model output before applying it.} Treat each model response
+as untrusted: apply it only if every operation is from a known set, refers
+to the current drawing and keeps every point within
+\texttt{REFINE\_TOLERANCE}; otherwise leave the drawing unchanged. &
+Adds checking logic and rejects some useful responses, but makes the G.4
+check that a failed refinement leaves the drawing unchanged simple to
+test. &
+SRC-002; G.4; H-MUH-002 \\
+\addlinespace
+\emph{Keep the original strokes apart.} Store the child's original
+strokes separately from the refined drawing, so that restoring switches
+back to them rather than undoing each change. &
+More stored data per creative drawing (Growing stored data,
+Table~\ref{tab:new-problems-follow-up}); restoring is exact however many
+edits followed. &
+SRC-002; BR-005; H-MUH-001, H-MUH-003 \\
+\addlinespace
+\emph{One refinement interface.} Put every refinement method behind one
+interface that takes stroke coordinates and returns adjusted coordinates
+at the same scale. &
+A provider or a geometric method can be swapped in one module. An
+interface that returns only adjusted coordinates cannot express adding a
+shape, which the Development Plan lists as a candidate model instruction;
+adding content would also go beyond minimal refinement (BR-005). &
+LC-004; SRC-002 \\
+\addlinespace
+\emph{Lessons and feedback as content.} Store lessons, stages, predefined
+difficulties, example drawings and feedback wording as data that the
+lesson logic reads. &
+Adding a lesson or rewording feedback changes no code, but the data needs
+its own checks so that no lesson is released without its difficulties or
+example drawings. &
+LC-001, LC-005; BR-008, BR-009 \\
+\addlinespace
+\emph{One input module.} Turn browser pointer events into strokes in one
+place, so that the rest of Squigglr sees only strokes. &
+A new device or finger input affects one module, but that module must be
+tested on each supported device, because emulation cannot replace stylus
+testing (SRC-002). &
+LC-003, LC-006; SRC-002 \\
+\addlinespace
+\emph{Local queue for unsaved attempts.} Hold each completed attempt in
+the browser until the server confirms the save, then delete the local
+copy. &
+Keeps attempts through a lost connection (CA-003), but copies left on a
+shared device can be seen by the next user (H-RAY-006), so when they are
+cleared must be settled with OI-01. &
+SAF-RAY-003; CA-003; OI-01 \\
+\addlinespace
+\emph{Spending controls.} Use the vendors' own controls: the database
+service turns a spend cap on by default on its paid plan
+\citep{Supabase2026Pricing}, and the hosting service gives each new team a
+usage budget with notifications and can pause all projects when it is
+reached \citep{Vercel2026Pricing}. &
+Keeps spending within the course limit (Section~\ref{sec:costs}), but a
+reached cap can pause the service, which is the availability problem in
+Table~\ref{tab:new-problems-limits}. &
+Vendor pages; OI-07 \\
+\addlinespace
+\emph{Model on university computing.} Run a pretrained model on the
+department's graphics processing unit (GPU) cluster, which the course
+outline says is available for large language model computing, instead of
+a paid outside service. &
+No per-request fee, and drawings stay with the university. The team would
+run the model itself, and whether a public website may call the cluster,
+and for how long after the course, is unknown. &
+\citep{Smith2026Outline}; SRC-002 (no custom model training planned) \\
+\end{longtable}
+}
 
 \section{Likely and Unlikely Changes}
 \label{sec:changes}

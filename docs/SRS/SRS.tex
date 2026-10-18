@@ -123,6 +123,7 @@ requirement structure (\#131).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
 16 October 2026 & Moustafa Moustafa & Added safety-critical requirements SAF-MOU-001 to SAF-MOU-003 and linked NFR-UX requirements to hazards H-MOU-001 to H-MOU-006 (\#115).\\
 16 October 2026 & Muhammad Huzaifah & Wrote Section 9.3, Creative Drawing Requirements, with FR-CRT-001 to FR-CRT-030 (\#122).\\
+16 October 2026 & Muhammad Huzaifah & Wrote the Attempt Record (FR-REC) and Progress Summary (FR-PRG) Requirements in Sections 9.4 and 9.5 (\#123).\\
 16 October 2026 & Muhammad Huzaifah & Wrote Section 19, Off-the-Shelf Solutions, with the product comparison, candidate components and the bibliography (\#124).\\
 17 October 2026 & Moustafa Moustafa & Added my reflection responses to the appendix and my generative AI use disclosure (\#117).\\
 17 October 2026 & Muhammad Huzaifah & Wrote Section 7, Business Data Model and Data Dictionary, with the data model figure, the data constraints and the data dictionary (\#121).\\
@@ -1011,6 +1012,27 @@ the practice record. & \hyperref[sec:business-rules]{BR-002, BR-004}\\
 predefined observations and outcome of an attempt; guided records are
 not replaced by refined shapes.
 & \hyperref[sec:business-rules]{BR-004}\\
+\textbf{Lesson record} & The record kept each time a learner starts a
+lesson: the lesson, the starting stage, the furthest stage reached, the
+successful attempts at each stage and how the lesson ended.
+& \hyperref[sec:fr-records]{Section 9.4}\\
+\textbf{Interrupted attempt} & An attempt that an adult stops, by ending
+the session or switching learner, after at least one stroke and before its
+outcome is decided; its attempt record has no outcome.
+& \hyperref[sec:fr-records]{Section 9.4}\\
+\textbf{Unfinished lesson} & A lesson that stops before its last stage is
+passed and before it reaches an attempt limit; its lesson record is marked
+as unfinished. & \hyperref[sec:fr-records]{Section 9.4}\\
+\textbf{Progress summary} & The view in which a supporting adult reviews
+one learner's practice over time and opens the attempt records behind it.
+& \hyperref[sec:fr-progress]{Section 9.5}\\
+\textbf{Recurring difficulty} & A predefined difficulty observed in at
+least \texttt{RECUR\_MIN} of a learner's attempts at the same stage of the
+same lesson. & \hyperref[sec:fr-progress]{Section 9.5}\\
+\textbf{Attempt made with or without a guide} & An attempt made at the
+tracing or endpoint stage is made with a guide; an attempt at the stage
+with no guide is made without one.
+& \hyperref[sec:fr-progress]{Section 9.5}\\
 \textbf{Creative refinement} & Automatic, minimal adjustment of
 the child's strokes in the creative space only. The drawing remains
 editable, and the original can be restored, or refinement turned off,
@@ -1233,6 +1255,12 @@ for progress-summary understandability checks.
 progress-summary review tasks completed successfully by adults.
 \emph{Unit:} proportion. \emph{Value:} team-defined; TBD.
 \emph{Trace:} G.6.\\
+\addlinespace
+\texttt{RECUR\_MIN} & Minimum number of a learner's attempts, at the same
+stage of the same lesson within a progress summary's period, in which one
+predefined difficulty must be observed for the summary to list it as
+recurring. \emph{Unit:} attempts (integer $\geq 2$).
+\emph{Value:} team-defined; TBD. \emph{Trace:} G.6, FR-PRG-004.\\
 \addlinespace
 \texttt{AGE\_RANGE} & Intended lower and upper ages of
 learners served by Squigglr.
@@ -4403,11 +4431,488 @@ exactly as before.}
 
 \subsection{Attempt Record Requirements}
 \label{sec:fr-records}
-\lips
+
+This subsection specifies what Squigglr keeps about guided practice, so
+that a supporting adult can see how a child practised and not only what
+the final drawing looks like (G.5). The requirements serve use cases
+UC-008 (record an attempt) and UC-003 (practise a guided lesson). An
+\emph{attempt} is one try at one stage of a lesson. A stage (also
+called a guidance level in Table~\ref{tab:glossary}) is one of the stages of decreasing
+help listed in the Goals of the Project subsection; attempts are made at
+the drawing stages: tracing a full outline, drawing between endpoints
+only, and drawing with no guide. Squigglr keeps an \emph{attempt record}
+for each attempt and a \emph{lesson record} each time a learner starts a
+lesson. Creative drawings are not attempts (FR-CRT-028); the Creative
+Drawing Requirements subsection covers them.
+
+Three safety requirements in the Safety-Critical Requirements subsection
+already govern records, and the requirements below do not repeat them.
+SAF-RAY-003 keeps each completed attempt on the device until the server
+confirms that it is saved, and tells the adult which attempts were not
+saved. SAF-RAY-006 records each lesson that ends at an attempt limit,
+either \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, records
+each improvement extension, and keeps earlier attempts when a lesson is
+restarted. SAF-RAY-007 saves every attempt to the active learner only.
+The specialist interview did not cover how records are kept, shared or
+deleted (FACT-013), so the requirements below rest on the Problem
+Statement and the business rules. Who may view, share or delete records
+is decided in the Security Requirements section (Open Issue OI-02,
+Table~\ref{tab:openIssues}). How a lesson moves between stages, and when
+an attempt ends, belong to the Learning Activity Requirements. Phases
+are the delivery phases PH-1, PH-2 and PH-3 defined, with their dates,
+in the Introduction.
+
+\begin{srsrequirement}{FR-REC-001}{Attempt record}
+  \reqshall{Squigglr shall keep, for each attempt that ends with an outcome, an
+attempt record holding the lesson, the stage, the attempt's result, the
+outcome (whether the attempt passed its stage, FR-LRN-013) and the date
+and time the attempt ended.}
+  \reqrationale{A finished drawing does not show how much guidance the
+child had (SRC-001). The stage tells the adult whether the attempt was
+made with a guide or without one, and the date and time place the
+attempt in the learner's history for progress summaries (G.6). The
+learner is fixed by SAF-RAY-007. The result is kept because the
+improvement rule compares the results of recent attempts (BR-002,
+FR-LRN-020), and the adult sees each attempt's result (ASM-006).}
+  \reqfit{For a set of prepared, adult-made attempts with
+known lessons, stages, results and outcomes, including at least one
+passing and
+one failing attempt at each drawing stage, every saved attempt record
+shows exactly the known lesson, stage, result and outcome, and the
+records are in
+the order the attempts ended.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.2, G.5; BR-002; \srcref{001}; \srcref{002} (PoC plan, adaptive
+guidance experiment)}
+  \reqtraces{\ucref{003}, \ucref{008}; SAF-RAY-007,
+FR-LRN-013, FR-LRN-020, FR-PRG-002, FR-PRG-003; H-MUH-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-002}{Actual strokes}
+  \reqshall{Squigglr shall keep in each attempt record the strokes the child drew in
+the attempt, in the order drawn, as they were captured.}
+  \reqrationale{Adults judge progress from the records, and a record
+that shows a corrected or ideal shape would mislead them (BR-004). This
+principle was presented to the domain specialists in the interview
+(SRC-005, \intref{Moustafa}{6:03}). Duplicate or unmappable input is
+handled by SAF-AHM-001 and SAF-AHM-002, so the strokes kept are those the
+child drew. Refinement never reaches guided-lesson strokes (BR-005;
+FR-CRT-027).}
+  \reqfit{For prepared, adult-made attempts whose strokes are
+captured by the test harness as drawn, every saved attempt record holds
+the same strokes, point for point and in the same order, and no attempt
+record holds a stroke that was not drawn in that attempt.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-004; ASM-004; \srcref{001}; \srcref{005},
+\intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{003}, \ucref{008}; FR-LRN-007,
+SAF-AHM-001, SAF-AHM-002, FR-PRG-006; H-MUH-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-003}{Difficulties and corrections}
+  \reqshall{Squigglr shall keep in each attempt record every predefined difficulty
+observed during the attempt, each marked as corrected or not corrected
+within that attempt.}
+  \reqrationale{Feedback lets the child go back and complete a missed
+part within the same attempt (BR-007). If the correction erased the
+difficulty, the record would hide what the child found hard; G.5
+requires that no difficulty is lost after a correction. The team
+presented records that keep both the miss and its later completion
+(SRC-005, \intref{Moustafa}{6:03}).}
+  \reqfit{For prepared attempts with known predefined
+difficulties, some corrected within the attempt and some not, every
+saved attempt record lists every known difficulty once, with the correct
+mark, and lists no other difficulty.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{G.5; BR-007; \srcref{001}; \srcref{002} (PoC plan, adaptive
+guidance experiment); \srcref{005}, \intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{003}, \ucref{008}; FR-PRG-004,
+FR-PRG-006; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-004}{Adult-set values in use}
+  \reqshall{Squigglr shall keep in each attempt record the value of each adult-set
+value that was in use for the learner when the attempt was made.}
+  \reqrationale{The adult-set values are the six values of BR-008
+listed in Table~\ref{tab:goalconst}, and the outcome of an attempt depends on the
+\texttt{STAGE\_\allowbreak PASS} in use, and the adult may change the values at any
+time (BR-008). Keeping the values with each attempt means a later change
+does not alter what an earlier record means, and lets the adult see every
+value Squigglr records (ASM-006, LC-007). SAF-RAY-008 shows the values
+currently in use; this requirement keeps those in use for each
+attempt.}
+  \reqfit{For prepared attempts made before and after an
+adult changes each adult-set value, each
+attempt record holds the values in use when that attempt was made.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-008; ASM-006; LC-007; \srcref{008}}
+  \reqtraces{\ucref{008}, \ucref{010}; SAF-RAY-008,
+FR-PRG-006; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-005}{Interrupted attempt}
+  \reqshall{Squigglr shall keep an attempt that an adult stops in Squigglr, by
+ending the session or switching learner, after at least one stroke but
+before its outcome is decided, as an attempt record marked as
+interrupted, holding the strokes and predefined difficulties up to that
+point and no outcome.}
+  \reqrationale{An adult may stop a session (ASM-015) or switch
+learners on a shared device (ASM-008) in the middle of an attempt. The
+strokes drawn are still practice the adult may want to see, but the
+attempt has no outcome, so it must not appear as passed or failed.
+An interrupted attempt does not consume an evaluable attempt from the
+stage limit (FR-LRN-009). An attempt cut off by closing
+the page or losing the connection may not reach Squigglr; completed
+attempts are protected by SAF-RAY-003.}
+  \reqfit{For prepared attempts stopped by an adult action
+after one or more strokes, every saved attempt record is marked as
+interrupted, holds the strokes drawn and has no outcome; an attempt
+stopped before any stroke leaves no attempt record.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.5; ASM-008, ASM-015; CA-003, CA-004}
+  \reqtraces{\ucref{003}, \ucref{008}; FR-LRN-009,
+FR-PRG-009; H-MUH-004}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-006}{Lesson record}
+  \reqshall{Squigglr shall keep, each time a learner starts a lesson, a lesson record
+holding the lesson, the starting stage, the furthest stage reached, the
+number of successful attempts at each stage and how the lesson ended.}
+  \reqrationale{Caregivers and educators need to see how far the child
+got in each lesson and how many attempts succeeded at each stage
+(Table~\ref{tab:userNeeds}; BR-002). The starting stage shows whether a
+stage was reached by passing or chosen by an adult (BR-003). A new record
+each time the lesson starts keeps a restart from hiding earlier results
+(SAF-RAY-006).}
+  \reqfit{For prepared sequences of attempts in which a
+lesson is started at the first drawing stage and again at a later stage
+chosen by an adult, each lesson record shows the known starting stage,
+furthest stage, count of successful attempts at each stage and ending.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-002, BR-003; \srcref{001}}
+  \reqtraces{\ucref{003}, \ucref{004}, \ucref{008}; SAF-RAY-006, FR-PRG-002, FR-PRG-010; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-007}{Unfinished lesson}
+  \reqshall{Squigglr shall keep the lesson record of a lesson that stops before its
+last stage is passed and before it reaches an attempt limit, marked as
+unfinished, with the furthest stage reached and the successful attempts
+at each stage up to that point.}
+  \reqrationale{BR-002 saves progress when a lesson ends at
+\texttt{ATTEMPT\_\allowbreak LIMIT}, and SAF-RAY-006 records those endings. A lesson
+an adult stops early (ASM-015) would otherwise leave no record of the
+stages already passed.}
+  \reqfit{For prepared lessons stopped by an adult after
+known successful attempts, each lesson record is marked as unfinished and
+shows the known furthest stage and counts; for prepared lessons whose
+last stage is passed, no lesson record is marked as unfinished.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-002; ASM-015}
+  \reqtraces{\ucref{003}, \ucref{008}; SAF-RAY-006,
+FR-PRG-002; H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-008}{Each attempt saved once}
+  \reqshall{Squigglr shall save each attempt record exactly once, under the lesson
+record of the lesson in which the attempt was made.}
+  \reqrationale{A save that is retried after the connection drops
+(CA-003, SAF-RAY-003) could store an attempt twice or under another
+lesson, and two sessions open for the same learner could mix their
+attempts. Either would change the counts an adult relies on.}
+  \reqfit{For prepared attempts saved with the connection cut
+and restored during each save, and for prepared attempts made for one
+learner in two sessions open at the same time, every attempt appears in
+exactly one attempt record, under the lesson record in which it was made,
+and the counts in each lesson record equal the known counts.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; ASM-005; CA-003, CA-004}
+  \reqtraces{\ucref{008}; SAF-RAY-003, SAF-RAY-007; H-MUH-004, H-RAY-002, H-RAY-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-009}{Saved records unchanged}
+  \reqshall{Squigglr shall keep the contents of every saved attempt record, and of
+every lesson record whose lesson has ended, unchanged except by
+deletion.}
+  \reqrationale{Later events, such as an adult changing an adult-set
+value, a starting stage or the lesson catalogue (LC-001, LC-002), must
+not rewrite what an earlier record says, or an attempt made with a guide
+could later appear to have been made without one. Deletion is decided
+with the privacy requirements (OI-02).}
+  \reqfit{For a prepared history, after the adult changes
+every adult-set value, the starting stage of a lesson and the learner's
+other settings, and after a lesson is added to or removed from the
+catalogue, every saved attempt record and every lesson record of an ended
+lesson is identical to its contents before those changes.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5; BR-004, BR-008; LC-001, LC-002}
+  \reqtraces{\ucref{008}, \ucref{010}; FR-REC-004; H-MUH-003, H-MUH-004, H-MUH-007}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-REC-010}{Suggestion responses}
+  \reqshall{Squigglr shall keep in the lesson record each suggestion to go
+back a stage that it offers and the response of the adult to it.}
+  \reqrationale{A go-back suggestion changes the stage only when an adult
+accepts it (BR-003). Keeping the suggestion and the response shows an
+adult why a later attempt was made at an earlier stage, and keeps a
+declined suggestion visible (SAF-RAY-001).}
+  \reqfit{For prepared sequences of attempts in which suggestions are
+accepted, declined and not yet answered, every lesson record lists each
+suggestion once, with the known response, and lists no other suggestion.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.3; BR-003}
+  \reqtraces{\ucref{005}; \ucref{008}; FR-LRN-019; SAF-RAY-001, SAF-RAY-007}
+\end{srsrequirement}
 
 \subsection{Progress Summary Requirements}
 \label{sec:fr-progress}
-\lips
+
+This subsection specifies the progress summary: the view in which a
+supporting adult reviews a learner's practice over time and opens the
+attempt records behind it (G.6). The requirements serve use cases UC-009
+(review progress) and UC-010 (review history and change settings). A
+progress summary is built only from the attempt and lesson records of the
+Attempt Record Requirements (Section~\ref{sec:fr-records}). It is meant for
+an adult such as PER-2, who reviews a child's history once a week to see
+which stages he reached and what keeps going wrong, and PER-3, who works
+with several learners a day. Attempts \emph{made with a guide} are those
+at the tracing and endpoint stages; attempts \emph{made without a guide}
+are those at the stage with no guide. FR-LRN-012 calls these attempts
+assisted and independent.
+
+The requirements below leave three matters to other requirements.
+SAF-RAY-004 forbids diagnostic labels, judgements of the child's
+abilities and comparisons with other children in any record or summary,
+and requires each summary to state that it describes practice only.
+SAF-RAY-006 shows how many times each lesson ended at a limit or was
+extended. Access to summaries is limited to the account-holding adult
+(BR-001, ULC-002) by the Security Requirements section, which also
+decides whether summaries can be shared or exported (OI-02).
+
+\begin{srsrequirement}{FR-PRG-001}{One learner per summary}
+  \reqshall{Squigglr shall show in each progress summary only the records of the one
+learner profile that the summary names.}
+  \reqrationale{One account can hold several learner profiles (BR-001),
+and an educator must never show one learner's records to another
+(PER-3). Naming the learner lets the adult check whose records are
+shown.}
+  \reqfit{For a prepared account with at least three learner
+profiles, each with a known history, every summary names one learner and
+contains every record of that learner and no record of another.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-001; ASM-008; \srcref{004}}
+  \reqtraces{\ucref{009}, \ucref{010}; SAF-RAY-007; H-MUH-004, H-RAY-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-002}{Progress over time by lesson}
+  \reqshall{Squigglr shall show, for each lesson in a progress summary, the learner's
+lesson records in the order they were started, each with its starting
+stage, furthest stage reached, successful attempts at each stage and how
+the lesson ended.}
+  \reqrationale{Caregivers and educators need the furthest stage and
+the successful attempts at each stage (Table~\ref{tab:userNeeds}), and
+the order shows change over time (G.6). How the lesson ended (every
+stage passed, ended at a limit, or unfinished) keeps an unfinished
+lesson from looking like a lesson the child could not pass.}
+  \reqfit{For prepared histories showing improvement, a lesson
+ended at \texttt{ATTEMPT\_\allowbreak LIMIT} and an unfinished lesson, every summary
+lists the lesson records in start order with the known values and
+endings.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-002; \srcref{001}}
+  \reqtraces{\ucref{009}; FR-REC-001, FR-REC-006,
+FR-REC-007, SAF-RAY-006; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-003}{With and without a guide kept apart}
+  \reqshall{Squigglr shall show attempts made without a guide separately from
+attempts made with a guide in every part of a progress summary that
+counts or lists attempts.}
+  \reqrationale{The adults need to see changes in independent drawing,
+which a combined figure would hide (SRC-001; G.6). Assisted work that
+appears independent could lead an adult to move a child on too soon.}
+  \reqfit{For prepared histories with known numbers of
+attempts made with and without a guide, every count or list in the
+summary shows the two kinds separately and correctly, and no figure adds
+them together; at least \texttt{ADULT\_\allowbreak REVIEWERS} adult reviewers state
+which attempts were made without a guide, with at least
+\texttt{REVIEW\_\allowbreak PASS\_\allowbreak RATE} of their tasks succeeding.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.2, G.6; \srcref{001}}
+  \reqtraces{\ucref{009}; FR-REC-001, FR-LRN-012; H-MUH-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-004}{Recurring difficulties}
+  \reqshall{Squigglr shall list in each progress summary every predefined difficulty
+observed in at least \texttt{RECUR\_\allowbreak MIN} of the learner's attempts at the
+same stage of the same lesson, with the number of those attempts and the
+number in which the child corrected it.}
+  \reqrationale{Adults want to know what keeps going wrong (PER-2), and
+the Problem Statement promises summaries that show recurring
+difficulties (SRC-001). A fixed count makes ``recurring'' testable. The
+constant \texttt{RECUR\_\allowbreak MIN} is defined in Table~\ref{tab:goalconst}.
+Counting corrections shows difficulties that are being
+resolved as well as those that keep coming up (SRC-005,
+\intref{Moustafa}{6:03}).}
+  \reqfit{For a prepared history in which one predefined
+difficulty occurs in exactly \texttt{RECUR\_\allowbreak MIN} attempts at one stage
+and another in one attempt fewer, the summary lists the first, with the
+known counts, and not the second.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-007; \srcref{001}; \srcref{005},
+\intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{009}; FR-REC-003; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-005}{Open the attempts behind the summary}
+  \reqshall{Squigglr shall let the adult open, from each figure or item in a
+progress summary, the attempt records from which it was computed.}
+  \reqrationale{Adults need to inspect the attempts behind a summary
+(G.6), and seeing the drawings lets them judge for themselves rather than
+rely on a number.}
+  \reqfit{For prepared histories, every figure or item opens
+exactly the attempt records it was computed from; at least
+\texttt{ADULT\_\allowbreak REVIEWERS} adult reviewers locate the attempts behind given
+items, with at least \texttt{REVIEW\_\allowbreak PASS\_\allowbreak RATE} of their tasks
+succeeding.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; \srcref{001}}
+  \reqtraces{\ucref{009}; FR-PRG-006; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-006}{Attempt record view}
+  \reqshall{Squigglr shall show, for each attempt record the adult opens, every value
+kept in it under FR-REC-001 to FR-REC-005, with the strokes drawn as
+recorded.}
+  \reqrationale{Squigglr shows the adult every value it records
+(ASM-006), and the strokes show what the child actually drew
+(BR-004).}
+  \reqfit{For each prepared attempt record, the view shows
+its lesson, stage, outcome or interrupted mark, date and time,
+predefined difficulties with their correction marks, adult-set values in
+use, and strokes identical to those recorded.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.5, G.6; BR-004; ASM-006}
+  \reqtraces{\ucref{009}, \ucref{010}; FR-REC-001 to
+FR-REC-005; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-007}{Adult chooses the view}
+  \reqshall{Squigglr shall let the adult choose which lessons, dates and recorded
+values a progress summary shows.}
+  \reqrationale{Which values each adult wants to see will differ and
+change (LC-007), and the specialists advised that useful progress
+measures be chosen with occupational therapists or educators
+(\hyperref[src:005.03]{SRC-005.03}), so the adult chooses rather than the team (ASM-006).
+Until the adult chooses, the summary covers all of the learner's
+records.}
+  \reqfit{For a prepared history, each choice of lessons,
+dates and values changes only what the summary shows: the records are
+unchanged, and attempts made with and without a guide stay separate.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{G.6; ASM-006; LC-007; \hyperref[src:005.03]{SRC-005.03}}
+  \reqtraces{\ucref{009}; FR-PRG-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-008}{Empty history}
+  \reqshall{Squigglr shall show, when the learner has no saved attempt record in the
+chosen lessons and dates, a progress summary that states that no
+practice is recorded and shows no stage, count or difficulty.}
+  \reqrationale{A new learner has no history, and zeros or empty
+stages could be read as failure.}
+  \reqfit{For a new learner profile, and for a learner whose
+records all lie outside the chosen dates, the summary states that no
+practice is recorded and shows no stage, count or difficulty.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-006}
+  \reqtraces{\ucref{009}; FR-PRG-007; H-MUH-008, H-RAY-003}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-009}{Interrupted attempts shown apart}
+  \reqshall{Squigglr shall show interrupted attempts in a progress summary
+separately from successful and unsuccessful attempts.}
+  \reqrationale{An interrupted attempt has no outcome (FR-REC-005);
+counting it as failed would understate the child's practice, and
+counting it as passed would overstate it.}
+  \reqfit{For a prepared learner whose only attempts are
+interrupted, the summary shows them as interrupted and shows no
+successful or unsuccessful attempt and no stage passed; adding prepared
+interrupted attempts to any history leaves its successful and
+unsuccessful counts unchanged.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.6; ASM-015}
+  \reqtraces{\ucref{009}; FR-REC-005; H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-010}{Stages not attempted}
+  \reqshall{Squigglr shall mark each stage of a lesson that the learner has not
+attempted, including a stage before an adult-chosen starting stage, as
+not attempted, distinct from a stage attempted without success.}
+  \reqrationale{An adult may start the child at a later stage (BR-003),
+and a learner with a short history has attempted only some stages. A
+stage left blank or shown as zero successes could be read as a stage the
+child could not draw.}
+  \reqfit{For a prepared history with a lesson started at a
+later stage and one stage attempted only without success, the summary
+marks the skipped stages as not attempted and shows the attempted stage
+with zero successful attempts.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-003; \srcref{001}}
+  \reqtraces{\ucref{004}, \ucref{009}; FR-REC-006; H-MUH-003, H-MUH-008}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-011}{Latest attempt included}
+  \reqshall{Squigglr shall state on each progress summary the date and time of the
+most recent attempt it includes.}
+  \reqrationale{Attempts still held on the child's device
+(SAF-RAY-003) are not in a summary that an adult opens on another
+device. The date of the latest attempt lets the adult notice recent
+practice that is missing.}
+  \reqfit{For a prepared history with attempts saved and
+attempts held back by a cut connection, the summary shows the date and
+time of the latest saved attempt and includes none of the held-back
+attempts.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{G.6; ASM-005; CA-003}
+  \reqtraces{\ucref{009}; SAF-RAY-003; H-MUH-008, H-RAY-002}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-PRG-012}{No overall score}
+  \reqshall{Squigglr shall show no figure in a progress summary that combines the
+results of more than one stage into a single score, grade or rating.}
+  \reqrationale{The needs of caregivers and educators exclude a single
+overall score (Table~\ref{tab:userNeeds}; PER-2), and the team cannot
+judge a child's abilities (BR-006; SRC-008). Results per stage and per
+lesson answer the adults' questions without a score.}
+  \reqfit{Inspection of the summaries for prepared histories
+finds no score, grade, rating or percentage computed from attempts at
+more than one stage.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{G.6; BR-006; \srcref{001}, \srcref{008}; \srcref{005},
+\intref{Moustafa}{6:03}}
+  \reqtraces{\ucref{009}; SAF-RAY-004; H-RAY-003}
+\end{srsrequirement}
 
 \section{Look and Feel Requirements}
 \label{sec:look-feel}

@@ -568,9 +568,9 @@ G.4, BR-005, NFR-UX-011 \\
 
 This section lists the safety and security requirements derived from the
 hazard analysis (HA). A requirement is HA-derived when its ID appears in
-the Mitigating requirement IDs column of any of the three per-author FMEA
-tables (H-RAY, H-AHM and H-MUH) in the Failure Mode and Effect Analysis
-section, so that it carries out the recommended action of at least one
+the Mitigating requirement IDs column of any of the four per-author FMEA
+tables (H-RAY, H-AHM, H-MOU and H-MUH) in the Failure Mode and Effect
+Analysis section, so that it carries out the recommended action of at least one
 hazard. As the teaching assistant (TA) advised
 (SRC-006), each requirement is written once, in the SRS, together with its
 rationale, fit criterion, priority,
@@ -578,11 +578,12 @@ phase and sources. This section therefore adds no requirement of its own:
 Table~\ref{tab:safety-reqs} repeats the statement of each HA-derived
 requirement exactly as the SRS states it.
 
-The table has two groups. Functional requirements come first, in the order
-of the SRS subsections that hold them: the Learning Activity, Creative
-Drawing, Attempt Record and Progress Summary requirements.
-Safety-critical requirements follow (SAF-RAY and SAF-AHM); the SRS keeps
-them in its Safety-Critical Requirements subsection because
+The table has three groups. Functional requirements come first, in the
+order of the SRS subsections that hold them: the Learning Activity,
+Creative Drawing, Attempt Record and Progress Summary requirements. The
+look and feel and usability requirements (NFR-UX) follow, in ID order.
+Safety-critical requirements come last (SAF-RAY, SAF-AHM and SAF-MOU); the
+SRS keeps them in its Safety-Critical Requirements subsection because
 they do not fit another section. For each requirement, the table gives
 its ID, with the short title the SRS gives it where there is one, its
 statement, the hazards whose FMEA rows cite it, and the SRS subsection that
@@ -592,13 +593,14 @@ names the table by its caption. Names in monospaced capitals, such as \texttt{ST
 symbolic constants that the SRS defines in its table ``Central symbolic
 constants register''.
 
-Some rows of the H-RAY table also cite goals (G.2, G.3, G.5 and G.6) or
-constraints (CON-001, CON-002, CON-003 and CON-007) among their
-mitigations. A goal states what \progname{} is for, and a constraint is
-imposed on the project from outside, so neither is a requirement and
-neither is repeated here. Every row that cites a goal or a constraint also
-cites at least one safety-critical requirement of
-Table~\ref{tab:safety-reqs}.
+Some rows of the H-RAY and H-MOU tables also cite goals (G.2 to G.6),
+business rules (BR-004 and BR-005) or constraints (CON-001, CON-002,
+CON-003 and CON-007) among their mitigations. A goal states what
+\progname{} is for, a business rule governs who may do what with
+\progname{} whatever its design, and a constraint is imposed on the project
+from outside, so none of them is a requirement and none is repeated here.
+Every row that cites a goal, a business rule or a constraint also cites at
+least one requirement of Table~\ref{tab:safety-reqs}.
 
 {\footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -653,6 +655,11 @@ every evaluable drawing attempt as complete or incomplete relative to the
 selected lesson and guidance stage. & H-AHM-004, H-AHM-005 & Learning Activity
 \\
 \addlinespace
+FR-LRN-012\newline\emph{Guidance classification} & Squigglr shall classify each
+evaluated attempt as assisted when performed with outline or endpoint guidance
+and independent when performed without those guides. & H-MOU-005 & Learning
+Activity \\
+\addlinespace
 FR-LRN-013\newline\emph{Pass classification} & Squigglr shall report an
 evaluable attempt as passing its stage only when the drawing is classified as
 complete and its result meets the current learner's \texttt{STAGE\_\allowbreak
@@ -661,7 +668,7 @@ PASS} criterion. & H-AHM-004, H-AHM-005 & Learning Activity \\
 FR-LRN-014\newline\emph{Predefined difficulty feedback} & Squigglr shall present
 only pre-approved, stage-relevant feedback observations for evaluated attempts,
 including applicable missed tracing portions, incomplete lines or shapes and
-incorrect endpoints. & H-AHM-005 & Learning Activity \\
+incorrect endpoints. & H-AHM-005, H-MOU-004 & Learning Activity \\
 \addlinespace
 FR-LRN-016\newline\emph{Adult lesson and starting-stage selection} & Squigglr
 shall use the lesson and starting guidance stage selected by the supporting
@@ -710,11 +717,17 @@ extension is exhausted, or the allowed total-attempt count reaches
 stage reached available for the lesson record. & H-AHM-007 & Learning Activity
 \\
 \addlinespace
+FR-LRN-022\newline\emph{No learner evaluation or diagnosis} & Squigglr shall
+express lesson feedback and completion results as properties of the drawing
+attempt rather than as assessments, diagnoses or comparisons of children. &
+H-MOU-002 & Learning Activity \\
+\addlinespace
 FR-LRN-023\newline\emph{Automatic within-lesson advancement} & Squigglr shall
 automatically advance from full-outline tracing to endpoint-only guidance, and
 from endpoint-only guidance to independent drawing, upon a passing attempt at
 the active stage; a passing independent drawing attempt completes the current
-lesson without starting a different lesson. & H-AHM-004 & Learning Activity \\
+lesson without starting a different lesson. & H-AHM-004, H-MOU-004 & Learning
+Activity \\
 \addlinespace
 FR-CRT-007\newline\emph{Undo a change} & Squigglr shall let the child undo the
 changes to the open creative drawing one at a time, most recent first, back to
@@ -903,6 +916,69 @@ progress summary the date and time of the most recent attempt it includes. &
 H-MUH-008 & Progress Summary \\
 \addlinespace
 \midrule
+\multicolumn{4}{@{}l}{\textbf{Look and feel and usability requirements}} \\*
+\addlinespace
+NFR-UX-001\newline\emph{Calm, uncluttered child screens} & Each child-facing
+screen shall offer the child no more than
+\texttt{CHILD\_\allowbreak CONTROLS\_\allowbreak MAX} controls and shall show
+no decorative animation or flashing while the child is drawing. & H-MOU-001 &
+Appearance \\
+\addlinespace
+NFR-UX-002\newline\emph{Images and icons instead of text} & Every control on a
+child-facing screen shall be identified by an image or icon, and no task on a
+child-facing screen shall require the child to read. & H-MOU-003 & Appearance \\
+\addlinespace
+NFR-UX-004\newline\emph{Feedback that never marks the drawing as wrong} &
+Feedback on an attempt, including a missed part or a non-passing attempt, shall
+use encouraging styling, shall not use error styling such as warning colours,
+crosses, alarm sounds or ``wrong'' symbols, and shall not show a missed part by
+colour alone. & H-MOU-002, H-MOU-003 & Style \\
+\addlinespace
+NFR-UX-006\newline\emph{Appealing but calm style} & Child-facing screens shall
+have a style that adult reviewers judge both appealing to children and calm. &
+H-MOU-001 & Style \\
+\addlinespace
+NFR-UX-007\newline\emph{Style reviewed with educators or therapists} & The
+colours, images and feedback style of child-facing screens shall be reviewed by
+at least \texttt{UX\_\allowbreak REVIEWERS} adults, including at least one
+educator or occupational therapist, and each change they request shall be made
+or recorded with a reason. & H-MOU-001, H-MOU-002 & Style \\
+\addlinespace
+NFR-UX-010\newline\emph{Audio setting for each child} & The supporting adult
+shall be able to turn audio feedback on or off for each child, and the choice
+shall apply to every child-facing screen for that child. & H-MOU-001 &
+Person\-alization and Inter\-nation\-alization \\
+\addlinespace
+NFR-UX-011\newline\emph{Refinement setting for each child} & The supporting
+adult shall be able to turn creative-space refinement on or off for each child;
+while it is off, the child's strokes shall be kept exactly as drawn. & H-MOU-006
+& Person\-alization and Inter\-nation\-alization \\
+\addlinespace
+NFR-UX-015\newline\emph{Short, encouraging messages to the child} & Every
+message to the child, including feedback on an attempt and the end of a lesson,
+shall be encouraging, shall describe the drawing rather than the child, and
+shall be at most \texttt{FEEDBACK\_\allowbreak WORDS\_\allowbreak MAX} words
+when spoken. & H-MOU-002, H-MOU-003 & Under\-stand\-ability and Politeness \\
+\addlinespace
+NFR-UX-016\newline\emph{Effort acknowledged} & The feedback on every evaluable
+attempt, including one that does not pass, shall acknowledge the child's effort
+before it shows what to change. & H-MOU-002 & Under\-stand\-ability and Politeness
+\\
+\addlinespace
+NFR-UX-017\newline\emph{Plain wording in adult views} & Adult views shall use
+plain language, shall explain each glossary term where it first appears in a
+view, and shall not use diagnostic, clinical or ranking words. & H-MOU-005 &
+Under\-stand\-ability and Politeness \\
+\addlinespace
+NFR-UX-021\newline\emph{Feedback not by sound alone} & Every message to the
+child shall be shown on screen and, unless audio is turned off, also played as
+sound; no message shall rely on sound alone. & H-MOU-003 & Accessibility \\
+\addlinespace
+NFR-UX-022\newline\emph{Control of audio} & Any sound that plays automatically
+for more than 3 seconds shall have a control to pause or stop it. & H-MOU-001 &
+Accessibility \\
+\addlinespace
+\midrule
 \multicolumn{4}{@{}l}{\textbf{Safety-critical requirements}} \\*
 \addlinespace
 SAF-RAY-001 & Squigglr shall allow lesson choice, starting-stage choice, learner
@@ -923,7 +999,7 @@ be saved. & H-RAY-002 & Safety-Critical \\
 SAF-RAY-004 & No record, summary or export shall show a diagnostic label, a
 judgement of the child's abilities or a comparison with other children, and
 every summary and export shall state that it describes practice only and is not
-an assessment or diagnosis. & H-RAY-003 & Safety-Critical \\
+an assessment or diagnosis. & H-RAY-003, H-MOU-005 & Safety-Critical \\
 \addlinespace
 SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or at
 \texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from the child,
@@ -957,12 +1033,25 @@ SAF-AHM-002 & Squigglr shall preserve the relative positions and order of stylus
 points within the active drawing surface when the canvas size or supported
 device orientation changes, and shall reject input whose coordinates cannot be
 mapped reliably to that surface. & H-AHM-003 & Safety-Critical \\
+\addlinespace
+SAF-MOU-001 & In guided lessons, feedback on a missed part shall show the child
+where the part is missing without drawing it for them. & H-MOU-004 &
+Safety-Critical \\
+\addlinespace
+SAF-MOU-002 & Records and progress summaries shall keep attempts made with a
+guide separate from attempts made without one, shall not include creative-space
+drawings, and shall not present the number of attempts as a measure of the
+child's skill. & H-MOU-005 & Safety-Critical \\
+\addlinespace
+SAF-MOU-003 & No content on any child-facing screen shall flash more than three
+times in any one-second period. & H-MOU-001 & Safety-Critical \\
 \end{longtable}
 }
 
-In total, 65 requirements are HA-derived: 14 Learning Activity, 22
+In total, 82 requirements are HA-derived: 16 Learning Activity, 22
 Creative Drawing, nine Attempt Record and ten Progress Summary
-requirements, and ten safety-critical requirements. Every row of the three
+requirements, five Look and Feel and seven Usability and Humanity
+requirements, and 13 safety-critical requirements. Every row of the four
 FMEA tables cites at least one of them. The Roadmap section that follows
 states the phase in which each is planned.
 
@@ -984,11 +1073,12 @@ The PoC experiments use team-created drawings and prepared attempts
 requirements planned for PH-2 protect the people who use the product as a
 whole.
 
-A functional requirement's phase is the one in its Phase field in the SRS.
-The safety-critical requirements have no Phase field, so for each of them
-Table~\ref{tab:roadmap} gives the phase of the functions it protects and
-the reason. The table gives one reason for each group of requirements that
-share a purpose, and names the hazards each group mitigates.
+The phase of a functional, look and feel or usability requirement is the
+one in its Phase field in the SRS. The safety-critical requirements have no
+Phase field, so for each of them Table~\ref{tab:roadmap} gives the phase of
+the functions it protects and the reason. The table gives one reason for
+each group of requirements that share a purpose, and names the hazards each
+group mitigates.
 
 {\footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -1055,7 +1145,13 @@ unsuccessful attempts and demonstrates reduced assistance following success
 (FR-LRN-011, FR-LRN-013), that the lesson and starting stage the adult chose
 are used (FR-LRN-016) and that a passing attempt advances within the lesson
 without a further adult action (FR-LRN-023) (H-AHM-004, H-AHM-005,
-H-AHM-007). \\
+H-AHM-007, H-MOU-004). \\
+\addlinespace
+PH-1 (Nov.~23, 2026) & FR-LRN-022, NFR-UX-004, NFR-UX-015 &
+These requirements set the wording and styling of every message to the
+child: it describes the drawing rather than the child, never marks the
+drawing as wrong and stays short. Their phase is the one in their Phase
+field in the SRS (H-MOU-002, H-MOU-003). \\
 \midrule
 PH-2 (Feb.~1, 2027) & FR-CRT-014, FR-CRT-015, FR-CRT-016, FR-CRT-019,
 FR-CRT-021 &
@@ -1075,12 +1171,13 @@ stored records. The PoC does not need a complete application (SRC-002), so
 these requirements are planned for Rev~0 (H-MUH-001, H-MUH-002, H-MUH-003,
 H-MUH-004, H-MUH-005). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & FR-CRT-030 &
-Refinement is turned off for a learner profile, so this requirement needs
+PH-2 (Feb.~1, 2027) & FR-CRT-030, NFR-UX-011 &
+Refinement is turned off for a learner profile, so these requirements need
 the learner profiles and settings planned for Rev~0, like the requirements
 that keep creative drawings to one learner. Until then, every refinement
 stays within \texttt{REFINE\_TOLERANCE} and can be undone or restored
-(FR-CRT-007, FR-CRT-012, FR-CRT-017, FR-CRT-018, PH-1) (H-MUH-006). \\
+(FR-CRT-007, FR-CRT-012, FR-CRT-017, FR-CRT-018, PH-1) (H-MUH-006,
+H-MOU-006). \\
 \addlinespace
 PH-2 (Feb.~1, 2027) & FR-REC-002, FR-REC-004 to FR-REC-009 &
 Complete attempt and lesson records, each saved once and unchanged after
@@ -1113,9 +1210,12 @@ Keeping each completed attempt on the device until the server confirms
 the save protects the stored records, which are planned for Rev~0. The
 requirement is planned with FR-REC-008 and FR-PRG-011 (H-RAY-002). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-004 &
-The requirement applies to every record view and progress summary, which
-are planned for Rev~0 with the Progress Summary requirements (H-RAY-003). \\
+PH-2 (Feb.~1, 2027) & SAF-RAY-004, SAF-MOU-002, FR-LRN-012, NFR-UX-017 &
+These requirements apply to every record view and progress summary, which
+are planned for Rev~0 with the Progress Summary requirements. SAF-MOU-002
+keeps apart the assisted and independent attempts that FR-LRN-012
+classifies; FR-LRN-012 and NFR-UX-017 have this phase in their Phase field
+in the SRS (H-RAY-003, H-MOU-005). \\
 \addlinespace
 PH-2 (Feb.~1, 2027) & SAF-RAY-005, SAF-RAY-006 &
 Ending a lesson at its limit, and recording lessons that reach the limit
@@ -1145,7 +1245,22 @@ discretionary changes, the difficulty suggestion, the improvement extension
 and the end of a lesson at its attempt limit belong to the complete lesson
 flow. Their phase is the one in their Phase field in the SRS, and it matches
 that of SAF-RAY-005, SAF-RAY-006 and SAF-RAY-008, which protect the same
-functions (H-AHM-005, H-AHM-006, H-AHM-007). \\
+functions (H-AHM-005, H-AHM-006, H-AHM-007, H-MOU-004). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & SAF-MOU-001, NFR-UX-016 &
+Feedback on a missed part, and feedback that acknowledges the child's
+effort, are part of the feedback observations of FR-LRN-014. SAF-MOU-001 is
+planned with FR-LRN-014, and NFR-UX-016 has this phase in its Phase field
+in the SRS (H-MOU-002, H-MOU-004). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & NFR-UX-001, NFR-UX-002, NFR-UX-010, NFR-UX-021,
+NFR-UX-022, SAF-MOU-003 &
+Child-facing screens and audio feedback are complete only in the product as
+a whole, which Rev~0 demonstrates; the PoC experiments use team-created
+drawings and prepared attempts (SRC-002). The phase of each NFR-UX
+requirement is the one in its Phase field in the SRS. SAF-MOU-003 is
+planned with NFR-UX-001, which bans flashing while the child draws
+(H-MOU-001, H-MOU-003). \\
 \midrule
 PH-3 (Mar.~15, 2027) & FR-CRT-008 &
 Redo (priority Could) only recovers a change undone by mistake. Until PH-3,
@@ -1166,10 +1281,18 @@ Showing whether every change has been saved (priority Should) lets an adult
 keep the page open until a change made while the connection was lost has
 been saved, because offline use is out of scope (ASM-005) and such changes
 are kept only while the page stays open (FR-CRT-025) (H-MUH-005). \\
+\addlinespace
+PH-3 (Mar.~15, 2027) & NFR-UX-006, NFR-UX-007 &
+Review of the style by adults, including an educator or occupational
+therapist (priority Should), needs the finished child-facing screens. Their
+phase is the one in their Phase field in the SRS. Until PH-3, child-facing
+screens offer few controls and show no flashing or animation while the
+child draws (NFR-UX-001, SAF-MOU-003, PH-2), and feedback never marks a
+drawing as wrong (NFR-UX-004, PH-1) (H-MOU-001, H-MOU-002). \\
 \end{longtable}
 }
 
-No HA-derived requirement is planned for Future: every row of the three
+No HA-derived requirement is planned for Future: every row of the four
 FMEA tables has its mitigating requirements planned within the capstone.
 Four of
 the items left outside the scope of this analysis, as the Scope and

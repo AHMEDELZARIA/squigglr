@@ -46,7 +46,11 @@
 CA-006 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#140).\\
 15 October 2026 & Ahmed Elzaria & Added drawing-input and guided-lesson FMEA hazards H-AHM-001 to H-AHM-007 (part of \#135).\\
+16 October 2026 & Moustafa Moustafa & Added sensory, feedback, progress-view
+and refinement hazards H-MOU-001 to H-MOU-006 (\#115).\\
 16 October 2026 & Muhammad Huzaifah & Listed the HA-derived requirements with their hazards in Section 6 and planned their phases in the Section 7 roadmap (\#128).\\
+17 October 2026 & Moustafa Moustafa & Added my reflection responses to the
+appendix and my generative AI use disclosure (\#117).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -428,6 +432,134 @@ midpoint defaults only for unset values. Document/Test: switch learner
 profiles and change settings; test boundaries, invalid combinations and
 the exact saved-versus-default choice. & FR-LRN-016, FR-LRN-017,
 FR-LRN-019, FR-LRN-021 \\
+\end{longtable}
+}
+\end{landscape}
+
+\subsection{Sensory Load, Feedback, Progress Views and Refinement (H-MOU)}
+\label{sec:fmea-mou}
+Table~\ref{tab:fmea-mou} covers hazards from how Squigglr looks, sounds
+and speaks to the child, how its progress views describe the child to
+adults, and how it changes the child's creative drawings. These hazards
+arise even when input, saving and lesson logic work correctly. H-AHM-005
+covers feedback mapped to the wrong observation, H-RAY-003 records read as
+a diagnosis, and H-RAY-004 frustration from repeated failure; the rows below
+do not repeat them. Mitigating requirements trace to the usability
+requirements (NFR-UX-\#\#\#) and to safety requirements SAF-MOU-001 to
+SAF-MOU-003 in the SRS, Safety-Critical Requirements.
+
+\begin{landscape}
+{\footnotesize
+\setlength{\tabcolsep}{2pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{1.85cm}
+  >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{2.4cm}
+  >{\raggedright\arraybackslash}p{2.3cm}
+  >{\raggedright\arraybackslash}p{2.6cm}
+  >{\raggedright\arraybackslash}p{1.9cm}
+  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{2.0cm}@{}}
+\caption{FMEA: sensory load, feedback, progress views and refinement}
+\label{tab:fmea-mou}\\
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\mbox{H-MOU-001} & Child-facing screens; audio feedback & Screens or
+feedback present more sound, colour, movement or flashing than the child
+can manage. & Decorative animation, repeated or loud sounds, bright
+colours or many controls; children react differently to sensory input
+(SRC-009.05; FACT-003); no adult may be watching (CA-001). & The child
+becomes overwhelmed or distressed and stops practising; rapid flashing can
+also trigger seizures in rare cases. Loss: well-being; physical safety;
+the practice benefit. & Psychological/ well-being; Physical &
+Eliminate: no flashing on any child-facing screen, and no animation while
+the child draws. Mitigate:
+let an adult turn audio off for each child, let long sounds be paused, and
+keep a calm style reviewed by adults including an educator or occupational
+therapist. Document/Test: inspect every child-facing screen against the
+calm-screen checklist. &
+SAF-MOU-003, NFR-UX-001, NFR-UX-006, NFR-UX-007, NFR-UX-010,
+NFR-UX-022 \\
+\addlinespace
+\mbox{H-MOU-002} & Feedback wording and style & Feedback tells the child
+that the drawing is wrong or bad, or uses error styling, after a missed
+part or a non-passing attempt. & Messages written around errors; warning
+colours, crosses or alarm sounds; wording not yet reviewed with educators
+or therapists (FACT-012). & The child feels they failed, loses confidence
+and avoids drawing (SRC-009.02). Loss: well-being; motivation to
+practise. & Psychological/ well-being &
+Eliminate: no error styling and none of the words ``wrong'', ``bad'',
+``fail'' or ``mistake'' in any message to the child. Mitigate: acknowledge
+effort before showing what to change, and review wording with an educator
+or occupational therapist. Document/Test: check every approved message
+against the word list. &
+NFR-UX-004, NFR-UX-007, NFR-UX-015, NFR-UX-016, FR-LRN-022 \\
+\addlinespace
+\mbox{H-MOU-003} & Feedback presentation & The child cannot tell what the
+feedback means or what to do next. & Feedback that needs reading, long
+messages, sound-only cues while audio is off, or a missed part shown only
+by colour to a child who does not see that colour. & The child repeats the
+same difficulty, gives up or needs an adult, and evaluable attempts are
+used up. Loss: the practice benefit; well-being. &
+Psychological/ well-being &
+Mitigate: show every message on screen and never by sound alone; keep
+messages short; use images instead of text; mark missed parts by more than
+colour. Document/Test: review all feedback with audio off and with colour
+hidden. &
+NFR-UX-002, NFR-UX-004, NFR-UX-015, NFR-UX-021 \\
+\addlinespace
+\mbox{H-MOU-004} & Feedback; guidance stages & The child comes to rely on
+Squigglr's help and does not practise drawing on their own. & Feedback
+completes the missed part for the child instead of pointing to it; prompts
+at every attempt; guidance that never fades. & The child does not move
+towards independent drawing, which is the aim of the practice (G.2). Loss:
+the practice benefit. & Psychological/ well-being &
+Eliminate: in guided lessons, never draw a missed part for the child.
+Mitigate: point to the missed part and let the child draw it; fade guidance
+automatically on a pass; keep the child's actual strokes. Document/Test:
+check that no feedback adds strokes to an attempt. &
+SAF-MOU-001, FR-LRN-014, FR-LRN-023, BR-004 \\
+\addlinespace
+\mbox{H-MOU-005} & Progress summaries; attempt records & A progress view
+makes the child look more or less independent than they were. & Assisted
+attempts shown as independent; refined creative drawings mixed into
+lesson records; fewer attempts presented as better skill (SRC-005,
+Moustafa, 6:03). & An adult moves the child on too early or holds them back,
+or overrates their progress. Loss: suitable support decisions; the child's
+well-being. & Data integrity; Psychological/ well-being &
+Eliminate: never include creative-space drawings in lesson records or
+summaries. Mitigate: show assisted and independent attempts separately and
+never present the number of attempts as a measure of skill; use plain,
+non-clinical wording. Document/Test: check summaries of prepared histories
+with known assisted and independent attempts. &
+SAF-MOU-002, G.6, FR-LRN-012, BR-005, SAF-RAY-004, NFR-UX-017 \\
+\addlinespace
+\mbox{H-MOU-006} & Creative-space refinement & Refinement changes the
+drawing too much: points move further than intended, or parts are added
+or removed. & \texttt{REFINE\_\allowbreak TOLERANCE} too large or not
+enforced; the
+refinement service returns a different drawing; the child cannot find how
+to restore the original (CA-001). & The child no longer sees the drawing as
+their own and is upset; work changed unexpectedly is a source of
+frustration (SRC-009.01; SRC-009.02). Loss: well-being; trust in the
+creative space. & Psychological/ well-being &
+Mitigate: limit every change to \texttt{REFINE\_TOLERANCE}; let the child
+or the adult restore the original or turn refinement off; let the adult
+turn refinement off for each child. Document/Test: run the G.4
+measurement on prepared adult-made drawings. &
+G.4, BR-005, NFR-UX-011 \\
 \end{longtable}
 }
 \end{landscape}
@@ -1120,6 +1252,47 @@ AI-assisted passage against my intended meaning and checked each cited
 statement against the original transcript, questionnaire, or meeting notes
 to confirm that it says what we claim it says.
 
+\textbf{Ahmed:} I used OpenAI's ChatGPT (GPT-6) while writing my
+parts of the Hazard Analysis, particularly the H-AHM failure modes,
+their effects and mitigations, and the links to the SRS. All of the
+ideas behind my contributions are my own, and the project decisions
+were made through discussion with my teammates. I used AI to help
+put those ideas into words, improve grammar and sentence structure,
+and keep the technical descriptions clear and consistent. It also
+helped me express the analysis in the LaTeX table format and refine
+wording where my hazards overlapped with a teammate's work. Our team 
+also used AI to help divide the workload fairly and evenly among members, 
+taking into account the scope and complexity of each task. I personally used it 
+to help write clear and descriptive pull request descriptions that accurately 
+summarized the changes I made, making them easier for my teammates to review.
+
+I reviewed the AI-assisted wording before including it, checked that
+the failure modes and mitigations reflected what I intended, and
+compared the requirement references with the SRS. The final choices
+about what to include and how to address each risk were mine and the
+team's, not the model's.
+
+\textbf{Moustafa:} I used Anthropic's Claude Opus 5.5, accessed through
+Claude Code, alternating between medium and high effort depending on the
+task. Because the document was so large, I relied on it heavily to save
+time on project management. Connected to the GitHub CLI, it split my
+assignment into ten sub-issues so I could track my work in smaller pieces,
+checked which tasks I still had left, and made my commits and pull
+requests. For writing, I decided what each part should say and gave it my
+ideas, sometimes after brainstorming with it. It then wrote a first draft
+and the \LaTeX{} for it, which I refined until it said exactly what I
+intended. In this document, that covered the H-MOU rows of the FMEA and
+their links to the SRS. I also used it for review: as teammates merged
+their sections, I had it read the document again to check that my
+additions stayed consistent with the rest and contradicted nothing, and it
+helped me review my teammates' pull requests. GitHub Copilot also gave a
+light automated review on a few of my pull requests.
+
+All ideas in my sections are my own. I reviewed every AI-drafted passage
+against my intended meaning before including it, and I decided which
+flagged inconsistencies and review comments were valid and how to resolve
+them.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -1148,6 +1321,35 @@ recorded these sources, business rules and assumptions, we could trace each
 hazard and critical assumption back to a specific statement, which also made
 the mitigations easier to justify.
 
+\textbf{Ahmed:} What went well for me was having the learning activity
+requirements written in enough detail that I could actually think
+through how they might fail. I had been working on the guided-lesson
+flow in the SRS, so I already knew the steps from drawing a stroke to
+classifying an attempt, showing feedback and deciding whether the
+learner advances. Looking at each of those steps made it much easier
+to come up with specific hazards instead of just listing general
+problems that any website could have.
+
+It also helped that we were working on the SRS and Hazard Analysis at
+the same time. When I identified a failure mode, I could check whether
+an existing requirement already addressed it and point to that
+requirement directly. For duplicate stylus events and incorrect
+coordinate mapping, I could see that we needed two more explicit
+safeguards in the SRS. I think that connection between the two
+documents was the strongest part of my work, because the hazards led
+to concrete requirements that we can eventually test.
+
+\textbf{Moustafa:} What went well was how much this deliverable changed the
+way I think about what we're building. When I think of developing a drawing
+app for kids, the last thing that comes to mind is hazards and safety. But
+going through my rows made me realize how many gaps we could have had if we
+hadn't thought about this. For example, I never would have guessed a
+drawing app could cause physical harm, but rapid flashing can trigger
+seizures in people with photosensitive epilepsy, which is why WCAG limits
+flashing to three times a second. That became H-MOU-001 and SAF-MOU-003. I
+think thinking in terms of hazards early on is going to be really useful
+for my career in general, not just for this project.
+
 \item What pain points did you experience during this deliverable, and how
 did you resolve them?
 
@@ -1168,6 +1370,37 @@ the affected hazards, critical assumptions and mitigations so they matched the
 SRS. It was time-consuming, but it showed me how closely the hazard analysis
 depends on the requirements, and that it has to be reviewed again whenever the
 SRS changes.
+
+\textbf{Ahmed:} The hardest part was deciding where one hazard ended
+and another began. A mistake in the drawing input can lead to a wrong
+classification, which can then lead to incorrect feedback or an
+inappropriate stage change. At first it was tempting to describe all
+of those consequences in every row. I had to keep going back and
+asking what the actual failure mode was, what caused it, and which
+requirement would prevent or reduce it.
+
+There was also some overlap with the hazards being written by other
+team members. In particular, my initial feedback hazard was too close
+to the work on confusing or discouraging feedback. After reviewing
+that feedback, I narrowed my row to a technical problem: the system
+choosing the wrong pre-approved message for the classification it
+produced. This left the wording, tone and sensory aspects to the
+other hazard owner. Another challenge was keeping the references
+aligned as the SRS changed. Whenever we clarified a lesson rule or
+added a safety requirement, I had to check the FMEA again rather than
+assuming the old wording still worked. It took extra revisions, but
+the result was more precise and easier to review.
+
+\textbf{Moustafa:} The main pain point was that some of my hazards depended
+on requirements nobody had written yet. For example, the hazards about
+refinement changing a drawing too much and progress views misleading adults
+belong with Muhammad's creative-drawing and progress-summary requirements,
+which weren't written when I was doing my rows. I couldn't just leave the
+mitigation column empty, so where a goal or business rule already covered
+the hazard, I traced to that, and where nothing did, I wrote my own safety
+requirements, SAF-MOU-001 and SAF-MOU-002. It also meant my rows came in
+late, because I needed my own usability sections done first so the hazards
+had something to point to.
 
 \item Which of your listed risks had your team thought of before this
 deliverable, and which did you think of while doing this deliverable? For
@@ -1207,6 +1440,52 @@ Squigglr. This showed me that the hazard analysis cannot be done well in
 isolation; it depends on knowing the requirements and on hearing from people
 who understand the users.
 
+\textbf{Ahmed:} Before we started this deliverable, I had already
+thought about the possibility of drawing input being incomplete and
+of an incorrect attempt being allowed to pass. Those were concerns
+that came up naturally while defining how a guided lesson should
+evaluate strokes and move a learner to the next stage. They became
+H-AHM-001 and H-AHM-004 once I described their causes, effects and
+mitigations more systematically.
+
+The FMEA made me consider several less obvious failures. For
+H-AHM-002, I started thinking about what happens when input events are
+reported more than once. Two overlapping strokes might be perfectly
+intentional, but one event being duplicated by the software is a
+different problem, and simply deleting repeated-looking lines would
+not solve it. H-AHM-003 came from looking at how the canvas changes
+size: even if the stylus reports valid points, a scaling or
+coordinate-mapping mistake could shift the drawing before it is
+scored. Those cases led to the new input-integrity safety requirements.
+
+I also looked beyond the drawing itself. H-AHM-005 came from asking
+whether a correct classification could still produce the wrong
+feedback if the message lookup used the wrong stage or identifier.
+H-AHM-006 came from tracing the failure streak, improvement rule and
+adult-approval step together; an error there could suggest a stage
+change at the wrong time or apply one without permission. Finally,
+H-AHM-007 came from considering what happens when a learner's saved
+settings are changed or profiles are switched. That exercise showed
+me that a lot of meaningful risks are not obvious until you follow
+the data and decisions across the entire workflow.
+
+\textbf{Moustafa:} Most of my risks were things we had already thought
+about before this deliverable, because we planned against them in the
+presentation we gave the specialists on October 1. We had already decided
+that feedback would highlight the unfinished part of a drawing instead of
+failing the attempt or finishing it for the child, that there would be no
+scores and fewer attempts wouldn't mean better skill, and that refinement
+would only tidy the child's own drawing, with the original always
+restorable. Those became H-MOU-002, H-MOU-004, H-MOU-005 and H-MOU-006. The
+other two came up while doing this deliverable. Sensory overload
+(H-MOU-001) came from the questionnaire, where one specialist warned about
+excessive visual or auditory stimuli, and the flashing part came from WCAG
+while I was writing the accessibility requirements. Confusing feedback
+(H-MOU-003) came from the same work: once I let adults mute audio and said
+feedback can't rely on colour alone, I started asking what happens to a
+child who gets sound-only or colour-only feedback, or feedback they need
+to read.
+
 \item Other than the risk of physical harm (some projects may not have any
 appreciable risks of this form), list at least 2 other types of risk in
 software products. Why are they important to consider?
@@ -1230,6 +1509,42 @@ means avoiding repeated failure without a break and making sure progress
 summaries are never read as a diagnosis. These risks are important to consider
 because they are easy to overlook when there is no obvious physical danger, yet
 they can cause real harm to users and to the people who rely on the software.
+
+\textbf{Ahmed:} One important type is data integrity risk. Software
+can appear to work while quietly saving or interpreting the wrong
+information. That matters for Squigglr because a drawing could be
+captured incorrectly, marked as passing when it should not, or saved
+under the wrong result. Adults rely on those records to understand
+what happened during practice, so an inaccurate record is not just a
+technical bug; it can influence their next decision.
+
+Another type is privacy and security risk. A system may expose one
+person's information to someone who should not have access to it, or
+mix records between different users. Squigglr may be used on shared
+devices, and its records concern children, so we need to think about
+who can see each learner's history and how the active learner is
+identified. Psychological or well-being risks also matter. Incorrect
+feedback, repeated failures or unexpected progression can confuse or
+frustrate a child even if there is no physical injury. These examples
+reminded me that software safety is about more than preventing a crash
+or a hardware failure. It also means making sure people can trust
+what the system tells them and that it behaves in a way appropriate
+for its users.
+
+
+\textbf{Moustafa:} Two other types of risk are accessibility risk and legal
+or compliance risk. Accessibility risk is when some people simply can't use
+the software, and it's easy to miss because teams usually test on people
+like themselves. For Squigglr, a child who can't read yet, is colour-blind
+or has trouble with fine motor control could fail to use the app without
+anyone noticing, which is the opposite of what we're building it for.
+That's what most of my usability and accessibility requirements are there
+to prevent. Legal and compliance risk is when software breaks a law or
+regulation, which can get it pulled or fined even if it works fine. One of
+our specialists pointed out that WCAG is adopted as law in many countries,
+and Squigglr keeps records about children, so we have to think about both
+accessibility and privacy rules before we can put it in front of real
+families or schools.
 
 \end{enumerate}
 

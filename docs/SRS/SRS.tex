@@ -5014,7 +5014,224 @@ that takes months (SRC-005, \intref{P2}{22:56}). \\
 
 \section{Traceability}
 \label{sec:traceability}
-\lips
+
+This section provides three traceability views of the requirements links:
+sources through product use cases to requirements
+(Section~\ref{sec:goal-uc-req}), functional-to-nonfunctional
+links (Section~\ref{sec:fr-nfr}), and hazards to their mitigating
+requirements (Section~\ref{sec:hazard-req}). Entries are based on the
+requirements' own \emph{Sources}, \emph{Traceability} and \emph{Hazards}
+fields and on the corresponding Product Use Case and FMEA tables. Discussion 
+of similar behaviour does not imply a requirements link.
+
+\subsection{Goal/source to use case to requirement}
+\label{sec:goal-uc-req}
+
+Table~\ref{tab:goal-uc-req} follows each product use case's stated project
+goals and sources to requirements whose own \emph{Sources} field names at
+least one of those goals and whose \emph{Traceability} field names that use
+case.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}
+>{\raggedright\arraybackslash}p{0.15\textwidth}
+>{\raggedright\arraybackslash}p{0.56\textwidth}@{}}
+\caption{Goal/source to product use case to requirement}
+\label{tab:goal-uc-req}\\
+\toprule
+\textbf{Goal and source in use case} & \textbf{Use case} &
+\textbf{Requirements with matching Sources and Traceability fields} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Goal and source in use case} & \textbf{Use case} &
+\textbf{Requirements with matching Sources and Traceability fields} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+G.3; SRC-008 & \ucref{001} &
+\reqref{FR-LRN-017}; \reqref{NFR-UX-003}; \reqref{NFR-UX-009};
+\reqref{NFR-UX-014} \\
+\addlinespace
+G.1, G.3; SRC-005.01 & \ucref{002} &
+\reqref{FR-LRN-001}; \reqref{FR-LRN-016}; \reqref{NFR-UX-003};
+\reqref{NFR-UX-009}; \reqref{NFR-UX-014} \\
+\addlinespace
+G.1--G.3; SRC-005.01 & \ucref{003} &
+\reqref{FR-LRN-002}--\reqref{FR-LRN-015};
+\reqref{FR-LRN-020}--\reqref{FR-LRN-023};
+\reqref{NFR-UX-001}; \reqref{NFR-UX-002}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-008}; \reqref{NFR-UX-013}; \reqref{NFR-UX-015};
+\reqref{NFR-PERF-001} \\
+\addlinespace
+G.3; SRC-005.01 & \ucref{004} &
+\reqref{FR-LRN-016}; \reqref{FR-LRN-018}; \reqref{FR-LRN-023} \\
+\addlinespace
+G.3; SRC-005.01 & \ucref{005} &
+\reqref{FR-LRN-018}; \reqref{FR-LRN-019}; \reqref{NFR-UX-008};
+\reqref{NFR-UX-014} \\
+\addlinespace
+G.4; SRC-009.01 & \ucref{006} & -- \\
+\addlinespace
+G.4; SRC-009.01 & \ucref{007} &
+\reqref{NFR-UX-011}; \reqref{NFR-PERF-002} \\
+\addlinespace
+G.5; SRC-001 & \ucref{008} &
+\reqref{FR-LRN-007}; \reqref{FR-LRN-009}; \reqref{FR-LRN-021} \\
+\addlinespace
+G.6; SRC-005.02 & \ucref{009} &
+\reqref{FR-LRN-012}; \reqref{NFR-UX-003}; \reqref{NFR-UX-014};
+\reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
+\addlinespace
+G.3, G.6; SRC-008, SRC-009.01 & \ucref{010} &
+\reqref{FR-LRN-017}; \reqref{NFR-UX-003}; \reqref{NFR-UX-014};
+\reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
+\end{longtable}}
+
+\subsection{Functional to nonfunctional requirements}
+\label{sec:fr-nfr}
+
+Table~\ref{tab:fr-nfr} records cross-type references in a
+requirement's \emph{Traceability} field. One-way references
+should not be mistaken for a reciprocal links.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}
+>{\raggedright\arraybackslash}p{0.31\textwidth}
+>{\raggedright\arraybackslash}p{0.31\textwidth}@{}}
+\caption{Direct functional-to-nonfunctional requirement links}
+\label{tab:fr-nfr}\\
+\toprule
+\textbf{Functional requirement} & \textbf{Nonfunctional requirement} &
+\textbf{Declared by} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Functional requirement} & \textbf{Nonfunctional requirement} &
+\textbf{Declared by} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\reqref{FR-LRN-003} & \reqref{NFR-UX-013} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-007} & \reqref{NFR-PERF-001}; \reqref{NFR-PERF-004};
+\reqref{NFR-MAINT-002} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-008} & \reqref{NFR-PERF-004}; \reqref{NFR-MAINT-002} &
+NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-014} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015};
+\reqref{NFR-UX-016} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-022} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015} &
+NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-001}; \reqref{FR-LRN-002} &
+\reqref{NFR-MAINT-001} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-013} & \reqref{NFR-SEC-003} & NFR Traceability \\
+\end{longtable}}
+
+\subsection{Hazards to mitigating requirements}
+\label{sec:hazard-req}
+
+Table~\ref{tab:hazard-req} transcribes requirement IDs from the
+Hazard Analysis FMEA's \emph{Mitigating requirement IDs} column. The final
+column lists only requirements whose own \emph{Hazards} or
+\emph{Traceability} field names that hazard; a dash indicates a mitigation
+link that the SRS does not currently declare back to the hazard.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.13\textwidth}
+>{\raggedright\arraybackslash}p{0.48\textwidth}
+>{\raggedright\arraybackslash}p{0.31\textwidth}@{}}
+\caption{Hazards and requirement links}
+\label{tab:hazard-req}\\
+\toprule
+\textbf{Hazard} & \textbf{FMEA mitigating requirements} &
+\textbf{Requirements that declare this hazard in the SRS} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard} & \textbf{FMEA mitigating requirements} &
+\textbf{Requirements that declare this hazard in the SRS} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+H-RAY-001 & SAF-RAY-001 & SAF-RAY-001 \\
+\addlinespace
+H-RAY-002 & SAF-RAY-002; SAF-RAY-003 & SAF-RAY-002; SAF-RAY-003 \\
+\addlinespace
+H-RAY-003 & SAF-RAY-004 & SAF-RAY-004 \\
+\addlinespace
+H-RAY-004 & SAF-RAY-005 & SAF-RAY-005 \\
+\addlinespace
+H-RAY-005 & SAF-RAY-006 & SAF-RAY-006 \\
+\addlinespace
+H-RAY-006 & SAF-RAY-001; SAF-RAY-007 & SAF-RAY-001; SAF-RAY-007 \\
+\addlinespace
+H-RAY-007 & SAF-RAY-008 & SAF-RAY-008 \\
+\addlinespace
+H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010} &
+\reqref{FR-LRN-010} \\
+\addlinespace
+H-AHM-002 & \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 &
+SAF-AHM-001 \\
+\addlinespace
+H-AHM-003 & \reqref{FR-LRN-007}; \reqref{FR-LRN-010}; SAF-AHM-002 &
+\reqref{FR-LRN-010}; SAF-AHM-002 \\
+\addlinespace
+H-AHM-004 & \reqref{FR-LRN-011}; \reqref{FR-LRN-013};
+\reqref{FR-LRN-023} & \reqref{FR-LRN-013} \\
+\addlinespace
+H-AHM-005 & \reqref{FR-LRN-011}; \reqref{FR-LRN-013};
+\reqref{FR-LRN-014} & \reqref{FR-LRN-014}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-015} \\
+\addlinespace
+H-AHM-006 & \reqref{FR-LRN-009}; \reqref{FR-LRN-018}--
+\reqref{FR-LRN-020} & \reqref{FR-LRN-018} \\
+\addlinespace
+H-AHM-007 & \reqref{FR-LRN-016}; \reqref{FR-LRN-017};
+\reqref{FR-LRN-019}; \reqref{FR-LRN-021} & \reqref{FR-LRN-017} \\
+\addlinespace
+H-SHA-001 & SAF-SHA-001 & SAF-SHA-001 \\
+\addlinespace
+H-SHA-002 & SAF-SHA-002 & SAF-SHA-002 \\
+\addlinespace
+H-SHA-003 & SAF-SHA-003 & SAF-SHA-003 \\
+\addlinespace
+H-SHA-004 & SAF-SHA-004 & SAF-SHA-004 \\
+\addlinespace
+H-SHA-005 & SAF-SHA-005 & SAF-SHA-005 \\
+\addlinespace
+H-MOU-001 & SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
+\reqref{NFR-UX-007}; \reqref{NFR-UX-010}; \reqref{NFR-UX-022} &
+SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
+\reqref{NFR-UX-007}; \reqref{NFR-UX-010}; \reqref{NFR-UX-022} \\
+\addlinespace
+H-MOU-002 & \reqref{NFR-UX-004}; \reqref{NFR-UX-007};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-016}; \reqref{FR-LRN-022} &
+\reqref{NFR-UX-004}; \reqref{NFR-UX-007};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-016} \\
+\addlinespace
+H-MOU-003 & \reqref{NFR-UX-002}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-021} &
+\reqref{NFR-UX-002}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-015}; \reqref{NFR-UX-021} \\
+\addlinespace
+H-MOU-004 & SAF-MOU-001; \reqref{FR-LRN-014};
+\reqref{FR-LRN-023} & SAF-MOU-001 \\
+\addlinespace
+H-MOU-005 & SAF-MOU-002; \reqref{FR-LRN-012};
+\reqref{NFR-UX-017}; SAF-RAY-004 &
+SAF-MOU-002; \reqref{NFR-UX-017} \\
+\addlinespace
+H-MOU-006 & \reqref{NFR-UX-011} & \reqref{NFR-UX-011} \\
+\end{longtable}}
+
 
 \clearpage
 \bibliographystyle{plain}
@@ -5363,7 +5580,8 @@ text with rewording, paraphrasing, or by completely rewriting. For short standal
 sentences I may have kept them as they are. When rewriting, I removed sections based 
 on false assumptions and made sure it was consistent with the rest of the 
 document. None of the text for the reflection questions is AI-generated. 
-I also used AI to make citations for compliance documents in References.bib.
+I also used AI to make citations for compliance documents in References.bib
+and generate a starting table for the traceability section.
 All decisions in my sections are my own and I reviewed all AI-assisted 
 passages.
 

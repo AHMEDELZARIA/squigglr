@@ -1217,6 +1217,43 @@ criterion 2.5.5. \emph{Trace:} NFR-UX-018.\\
 \addlinespace
 \texttt{INTERFACE\_LANGUAGE} & Language of all text in adult views.
 \emph{Value:} TBD. \emph{Trace:} ASM-007, NFR-UX-012.\\
+\addlinespace
+\texttt{IDLE\_TIMEOUT} & Duration of user inactivity after which
+Squigglr ends the session and logs out the user.
+\emph{Unit:} minutes. \emph{Value:} team-defined; TBD.
+\emph{Trace:} SAF-SHA-001.\\
+\addlinespace
+\texttt{FAILED\_SAVES} & Number of consecutive failed save attempts
+used in the fit-criterion sample for save-failure notification tests.
+\emph{Unit:} save attempts (count). \emph{Value:} team-defined; TBD.
+\emph{Trace:} SAF-SHA-003.\\
+\addlinespace
+\texttt{FEEDBACK\_LATENCY\_MAX} & Maximum allowed time between
+the completion of a stylus stroke and visual acknowledgement of that 
+stroke during a lesson.
+\emph{Unit:} milliseconds. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-PERF-001.\\
+\addlinespace
+\texttt{REFINE\_LATENCY\_MAX} & Maximum allowed time between system's
+AI refinement request and visual acknowledgement of that request
+strokes (or falling back to unrefined strokes).
+\emph{Unit:} seconds. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-PERF-002.\\
+\addlinespace
+\texttt{SUMMARY\_LOAD\_MAX} & Maximum allowed time for an
+adult's progress summary page to become fully visible after request.
+\emph{Unit:} seconds. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-PERF-003.\\
+\addlinespace
+\texttt{LOCATE\_TIME\_MAX} & Maximum time a team member unfamiliar with
+the codebase should need to locate the module responsible for a given
+stage behaviour.
+\emph{Unit:} minutes. \emph{Value:} TBD; pending VnV Plan
+threshold verification.
+\emph{Trace:} NFR-MAINT-002.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -3731,7 +3768,53 @@ all text is visible and every function still works.}
 \section{Performance Requirements}
 \label{sec:performance}
 \subsection{Speed and Latency Requirements}
-\lips
+\label{sec:speed}
+
+\begin{srsrequirement}{NFR-PERF-001}{Stroke feedback latency}
+  \reqshall{Squigglr shall display visual acknowledgement of a inputted
+stroke within \texttt{FEEDBACK\_LATENCY\_MAX} milliseconds of the
+stroke's final input point being received.}
+  \reqrationale{Delay between stroke input and visual stroke generation
+create a poor experience in general and confuse children with learning
+difficulties in particular.}
+  \reqfit{Pass when the time passed from the final input point to the 
+first visible stroke render in each lesson stage is within \texttt{FEEDBACK\_LATENCY\_MAX}.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{1}, \goalref{2}; \srcref{005.05};}
+  \reqtraces{\reqref{FR-LRN-007}; \ucref{003}; \ucref{006}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-002}{AI refinement response latency}
+  \reqshall{Squigglr shall display the AI refined result within 
+\texttt{REFINE\_LATENCY\_MAX} seconds of the final input point being
+received on a drawing that includes AI refinement and the canvas remains
+open for interaction during that time.}
+  \reqrationale{Long, unresponsive pauses break engagement and may be 
+interpreted as an error (G.4).}
+  \reqfit{Pass when the time passed from the final input point to the 
+refined result display is within \texttt{REFINE\_LATENCY\_MAX} seconds and the
+canvas accepts new input without any blocking or error during that period.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4}; \srcref{009.01}}
+  \reqtraces{\ucref{007}; NFR-UX-011}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-003}{Progress summary page load}
+  \reqshall{Squigglr shall display the summary page within
+\texttt{SUMMARY\_LOAD\_MAX} seconds of an adult request.}
+  \reqrationale{Adults reviewing records expect performance similar 
+to everyday web tools (G.6);}
+  \reqfit{Passes when time from request to fully visible
+summary is within \texttt{SUMMARY\_LOAD\_MAX} seconds for ten
+consecutive attempts.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{5}, \goalref{6}; \srcref{005.02}}
+  \reqtraces{\ucref{009}; \ucref{010}}
+\end{srsrequirement}
+
 \subsection{Safety-Critical Requirements}
 This subsection holds safety requirements that come from the Hazard Analysis
 and do not fit another section. Each lists the hazards it mitigates.
@@ -3877,12 +3960,10 @@ with a verification ping after each save.\\
 \emph{Rationale:} G.5 requires complete, meaningful activity records;
 Adults want to know which sessions contributed to their child's progress
 report in detail.\\
-\emph{Fit criterion:} for \texttt{CORRECT\_FAILED\_SAVES} (99\%) of 
-\texttt{TOTAL\_FAILED\_SAVES} (TBD) failed save requests, Squigglr 
-does not report the attempt as saved and notifies the adult. For 
-\texttt{CORRECT\_FAILED\_SAVES} of \texttt{TOTAL\_FAILED\_SAVES} 
-successful saves, Squigglr does not record a failed save or notify
-the adult.\\
+\emph{Fit criterion:} for 99\% of \texttt{FAILED\_SAVES} (TBD) 
+failed save requests, Squigglr does not report the attempt as saved and 
+notifies the adult. For 99\% of \texttt{FAILED\_SAVES} successful saves, 
+Squigglr does not record a failed save or notify the adult.\\
 \emph{Hazards:} H-SHA-003.
 
 \item[SAF-SHA-004] Squigglr shall default to pre-prepared fallback content

@@ -1120,7 +1120,7 @@ each configurable range (OI-05; CON-005--006).
 \endhead
 \bottomrule
 \endlastfoot
-\texttt{STAGE\_PASS} & Minimum stage-result threshold for a
+\texttt{STAGE\_PASS} & Minimum stage result threshold for a
 complete attempt to pass a drawing stage. \emph{Unit:} points out of 100.
 \emph{Range:} 70--90. \emph{Default:} 80.
 \emph{Trace:} G.2, BR-002, BR-008, OI-05.\\
@@ -1142,7 +1142,7 @@ comparison window used by the improvement rule.
 \emph{Default:} 2. \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{IMPROVE\_MARGIN} & Minimum increase in average
-stage-result points across consecutive comparison windows that qualifies
+stage result points across consecutive comparison windows that qualifies
 as improvement. \emph{Unit:} points out of 100.
 \emph{Value:} 5 points (fixed by the team).
 \emph{Trace:} G.3, BR-002, OI-05.\\
@@ -1254,6 +1254,13 @@ stage behaviour.
 \emph{Unit:} minutes. \emph{Value:} TBD; pending VnV Plan
 threshold verification.
 \emph{Trace:} NFR-MAINT-002.\\
+\addlinespace
+\texttt{CONCURRENT\_CAPACITY} & Maximum number of simultaneous active
+users the system shall support without degrading response times below
+the thresholds in Section~\ref{sec:speed}.
+\emph{Unit:} concurrent sessions (count). \emph{Value:} TBD; to be
+set in the VnV Plan.
+\emph{Trace:} NFR-PERF-009.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -3010,7 +3017,7 @@ $q\in Q$ is the session status, $n_f\in\mathbb{N}_0$ counts non-passing
 evaluable attempts at this stage, $n_a\in\mathbb{N}_0$ counts finalized,
 evaluable attempts at this stage, $k\in\mathbb{N}_0$ is the consecutive
 non-passing streak, and $H=(r_1,\ldots,r_m)$ is the ordered list of
-stage-result values. The flag $s\in\{0,1\}$ indicates a pending
+stage result values. The flag $s\in\{0,1\}$ indicates a pending
 suggestion; $z\in\{0,1\}$ indicates whether the single stage extension
 has been granted; $x\in\mathbb{N}_0$ counts evaluable attempts consumed
 \emph{after} that grant, with $0\le x\le e_p$ and $x=0$ when $z=0$.
@@ -3036,7 +3043,7 @@ interpret the strokes is available, and let
 $\operatorname{Complete}_{\ell,l}(X)$ mean that every required part of
 the drawing is present according to the lesson's fixed stage criteria.
 These functions use the fixed completeness criteria of the selected lesson
-and stage. Stage-result values use the normalized 0--100 scale specified in
+and stage. Stage result values use the normalized 0--100 scale specified in
 Table~\ref{tab:goalconst}; the actual scoring function is defined for
 each lesson's drawing criteria rather than as an assessment of a learner.
 Define
@@ -3502,7 +3509,7 @@ first profile and audio feedback plays for the second.}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-011}{Refinement setting for each child}
-  \reqshall{The supporting adult shall be able to turn creative-space
+  \reqshall{The supporting adult shall be able to turn creative space
 refinement on or off for each child; while it is off, the child's strokes
 shall be kept exactly as drawn.}
   \reqrationale{Both questionnaire respondents suggested that refinement
@@ -4004,7 +4011,7 @@ stroke to the attempt.\\
 
 \item[SAF-MOU-002] Records and progress summaries shall keep attempts
 made with a guide separate from attempts made without one,
-shall not include creative-space drawings, and shall not present the
+shall not include creative space drawings, and shall not present the
 number of attempts as a measure of the child's skill.\\
 \emph{Rationale:} a summary that blurs assisted and independent attempts,
 counts refined drawings as practice or treats fewer attempts as better
@@ -4012,9 +4019,9 @@ skill can lead an adult to move the child on too early or hold them back
 (H-MOU-005; SRC-005, \intref{Moustafa}{6:03}). Refinement must never reach
 the records adults rely on (BR-005).\\
 \emph{Fit criterion:} for prepared histories with known assisted,
-independent and creative-space work, check every summary and record. Pass
+independent and creative space work, check every summary and record. Pass
 when assisted and independent attempts are shown separately, no
-creative-space drawing appears, and no view ranks or rates the child by
+creative space drawing appears, and no view ranks or rates the child by
 the number of attempts.\\
 \emph{Related SRS requirements:} G.6, FR-LRN-012, SAF-RAY-004,
 NFR-UX-017.\\
@@ -4036,11 +4043,44 @@ flashes.\\
 
 \end{description}
 \subsection{Precision or Accuracy Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-PERF-004}{Stage result scoring accuracy}
+  \reqshall{Squigglr shall compute a deterministic stage result 
+score for all attempts: the same strokes and stage criteria shall
+produce the same evaluation.}
+  \reqrationale{Adults use stage results to monitor a child's progress
+(G.5, G.6). Non-deterministic may create arbitrary or difficult to
+interpret scoring not suitable for progress tracking. Deterministic
+scoring is also easier to implement and non-deterministic scoring has
+no clear benefits.}
+  \reqfit{Pass when identical programmed strokes (done with an app like
+like selenium) on the same stage ten times produce identical scores}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{2}; \goalref{5}; \goalref{6}}
+  \reqtraces{\reqref{FR-LRN-007}; \reqref{FR-LRN-008}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-005}{Creative refinement proximity}
+  \reqshall{Squiqqlr shall keep every point of a refined stroke
+within \texttt{REFINE\_TOLERANCE} of the child's corresponding
+original stroke.}
+  \reqrationale{Refinement is intended to keep the child's drawing
+recognisably as their own work (G.4, BR-005). Deviation too far from 
+the original would mean replacement rather than refinement.}
+  \reqfit{Pass when every item in the supported creative space set
+does not exceed the distance scale of \texttt{REFINE\_TOLERANCE} 
+compared to the original item.}
+  \reqpriority{Should}
+  \reqphase{PH-2}
+  \reqsources{\goalref{4};}
+  \reqtraces{\reqref{NFR-PERF-005}}
+\end{srsrequirement}
+
 \subsection{Robustness or Fault-Tolerance Requirements}
 \label{sec:robustness}
 
-\begin{srsrequirement}{NFR-PERF-004}{Attempt preservation on network loss}
+\begin{srsrequirement}{NFR-PERF-006}{Attempt preservation on network loss}
   \reqshall{Squigglr shall retain any completed attempt on the device if 
 connection is lost during the attempt or after the latest attempt until 
 the server confirms it is saved (after connection is restored).}
@@ -4055,7 +4095,7 @@ cut during a mock attempt three times consecutively.}
   \reqtraces{\reqref{SAF-RAY-003}; \ucref{003}; \ucref{006}}
 \end{srsrequirement}
 
-\begin{srsrequirement}{NFR-PERF-005}{Refinement provider fallback}
+\begin{srsrequirement}{NFR-PERF-007}{Refinement provider fallback}
   \reqshall{Squigglr shall display the child's original unrefined 
 strokes when the AI refinement service is unavailable or returns 
 misformatted or inappropriate output.}
@@ -4072,7 +4112,7 @@ making the mock service unavailable.}
   \reqtraces{\reqref{SAF-SHA-004}; \ucref{003}; \ucref{006}}
 \end{srsrequirement}
 
-\begin{srsrequirement}{NFR-PERF-006}{Save failure transparency}
+\begin{srsrequirement}{NFR-PERF-008}{Save failure transparency}
   \reqshall{Squigglr shall not report a successful save if a 
 save operation fails and shall instead display a visible notification 
 to the adult describing which record was not saved.}
@@ -4088,12 +4128,51 @@ the unsaved record.}
   \reqsources{\goalref{5}; \srcref{005.02}}
   \reqtraces{\reqref{SAF-SHA-003}; \ucref{009}; \ucref{010}}
 \end{srsrequirement}
+
 \subsection{Capacity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-PERF-009}{Concurrent session capacity}
+  \reqshall{Squigglr shall support a concurrent session target of 
+\texttt{CONCURRENT\_CAPACITY} (TBD) simultaneous active users without 
+degrading response times below the thresholds stated in 
+Section~\ref{sec:speed} (NFR-PERF-001, NFR-PERF-002, and NFR-PERF-003).}
+  \reqrationale{The anticipated system deployment is to a small number 
+of schools or households. The exact session target is deferred to
+the VnV Plan.}
+  \reqfit{To be defined in the VnV Plan; pass when the system sustains
+the latency thresholds outlined in Section~\ref{sec:speed} under the 
+agreed concurrent load without error or failure.}
+  \reqpriority{Should}
+  \reqphase{PH-3}
+  \reqsources{\goalref{1}; \goalref{5}}
+  \reqtraces{\reqref{NFR-PERF-001}; \reqref{NFR-PERF-002}; \reqref{NFR-PERF-003}}
+\end{srsrequirement}
+
 \subsection{Scalability or Extensibility Requirements}
-\lips
+
+Adding or removing lessons from the Squigglr lesson catalogue requires
+no change to the lesson execution logic or any other module's source
+code. Lesson content is stored as data and read at runtime
+(LC-001, Section~\ref{sec:changes}). This is a design-level decision; no
+standalone NFR is required here because the constraint is already
+captured by \reqref{NFR-MAINT-001}.
+
 \subsection{Longevity Requirements}
-\lips
+
+\begin{srsrequirement}{NFR-PERF-010}{Operational lifetime through capstone}
+  \reqshall{Squigglr shall remain fully functional on the supported
+browsers and devices (OI-09) through PH-3, the end of the capstone project period.}
+  \reqrationale{After final evaluation and the exposition, post capstone 
+maintenance is outside the project scope.}
+  \reqfit{Pass when Squigglr can be launched and all features exercised
+on the supported browsers and devices as listed in OI-09 at the PH-3
+milestone; any browser or device that fails this check shall be
+removed from the supported list and OI-09 updated accordingly.}
+  \reqpriority{Must}
+  \reqphase{PH-3}
+  \reqsources{\goalref{1}; \goalref{2}; \goalref{3}}
+  \reqtraces{\reqref{NFR-OPS-001}}
+\end{srsrequirement}
 
 \section{Operational and Environmental Requirements}
 \subsection{Expected Physical Environment}
@@ -4489,7 +4568,7 @@ the committed product. & Future \\
 \end{longtable}
 }
 
-Creative-space refinement remains within goal G.4 unless the team
+Creative space refinement remains within goal G.4 unless the team
 formally changes that goal (OI-03); it is not moved into the waiting
 room here. Automatic selection of new lessons, diagnostic assessment,
 and AI-generated personalized advice are excluded by CON-007 and

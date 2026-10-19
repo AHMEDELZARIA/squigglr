@@ -27,6 +27,13 @@
 }
 
 \newcommand{\lips}{\textit{Insert your content here.}}
+\let\textttwithbreaks\texttt
+\renewcommand{\texttt}[1]{%
+  \begingroup
+  \renewcommand{\_}{\textunderscore\allowbreak}%
+  \textttwithbreaks{#1}%
+  \endgroup
+}
 % Link directly to the corresponding de-identified interview transcript turn.
 % The InterviewTranscript.text appendix supplies the int:<speaker>-<timestamp> labels.
 \newcommand{\intlink}[3]{\hyperref[int:#1-#2]{#3}}
@@ -246,7 +253,7 @@ with how they move. Children rely on it when drawing, copying shapes and
 learning to write (SRC-001). Kindergarten and primary school learners need
 chances to practise these skills at a suitable level and to complete
 activities with less help over time. Older children who need continued
-support, including some children with autism, attention-deficit/%
+support, including some children with autism, attention-deficit/\allowbreak%
 hyperactivity disorder (ADHD) or other developmental or learning
 differences, share this need. A diagnosis alone does not determine the
 support a child requires (SRC-001).
@@ -980,6 +987,9 @@ the project.\\
 
 \section{Naming Conventions and Terminology}
 \label{sec:terminology}
+This section defines the vocabulary, identifiers and constants used
+throughout the specification.
+
 \subsection{Glossary and Acronyms}
 \label{sec:glossary}
 Table~\ref{tab:glossary} defines the terms and abbreviations used in
@@ -1098,36 +1108,68 @@ program to request a service from another.
 \textbf{BSD} & Berkeley Software Distribution; a software licence that allows
 reuse if the copyright notice is kept.
 & \hyperref[sec:ots-components]{Section 19.2}\\
-\textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}.
-& \hyperref[sec:facts]{Section 5.1}\\
 \textbf{BUC} & Business use case.
 & \hyperref[sec:purpose]{Document roadmap}\\
 \textbf{CC BY} & Creative Commons Attribution; a licence that allows copying
 and reuse with credit to the creator.
 & \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{CI} & Continuous integration; automated checks run as changes are
+integrated into the project.
+& Section 14\\
+\textbf{CLI} & Command-line interface.
+& AI-use disclosure\\
 \textbf{CON} & Mandated constraint identifier; \texttt{CON-\#\#\#}.
 & \hyperref[sec:constraints]{Section 3}\\
+\textbf{COPPA} & Children's Online Privacy Protection Act (United States).
+& Section 17\\
+\textbf{CSS} & Cascading Style Sheets, a language for describing the
+presentation of web pages.
+& Section 10\\
+\textbf{EARS} & Easy Approach to Requirements Syntax.
+& Team reflection\\
+\textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}.
+& \hyperref[sec:facts]{Section 5.1}\\
+\textbf{FIPPA} & Freedom of Information and Protection of Privacy Act
+(Ontario).
+& Section 17\\
 \textbf{FR} & Functional requirement.
 & \hyperref[sec:functional]{Section 9}\\
+\textbf{GB} & Gigabyte.
+& \hyperref[sec:costs]{Section 23}\\
+\textbf{GDPR} & General Data Protection Regulation (European Union).
+& Section 17\\
+\textbf{GNU} & GNU's Not Unix, the name of a free software project.
+& \hyperref[sec:ots-products]{Section 19.1}\\
 \textbf{GPL} & GNU General Public License; its conditions also apply to code
 copied from a program released under it.
 & \hyperref[sec:ots-products]{Section 19.1}\\
 \textbf{GPU} & Graphics processing unit.
 & \hyperref[sec:ots-components]{Section 19.2}\\
-\textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
-& \hyperref[sec:changes]{Section 27.1}\\
-\textbf{DevOps} & Development and Operations.
-& \hyperref[sec:costs]{Section 23}\\
-\textbf{GB} & Gigabyte.
-& \hyperref[sec:costs]{Section 23}\\
-\textbf{MB} & Megabyte.
-& \hyperref[sec:new-problems]{Section 20}\\
 \textbf{HA} & Hazard Analysis, a separate document identifying failures,
 losses, mitigation measures and related requirements.
 & \hyperref[sec:introduction]{Introduction}\\
+\textbf{HCI} & Human-computer interaction.
+& Team reflection\\
+\textbf{HTTPS} & Hypertext Transfer Protocol Secure, the encrypted form of
+HTTP used for network communication.
+& Section 13\\
+\textbf{IDE} & Integrated development environment.
+& AI-use disclosure\\
 \textbf{JSON} & JavaScript Object Notation; a text format for structured
 data.
 & \hyperref[sec:ots-components]{Section 19.2}\\
+\textbf{LC} & Likely change identifier; \texttt{LC-\#\#\#}.
+& \hyperref[sec:changes]{Section 27.1}\\
+\textbf{LLM} & Large language model.
+& AI-use disclosure\\
+\textbf{MB} & Megabyte.
+& \hyperref[sec:new-problems]{Section 20}\\
+\textbf{MG} & Module Guide, a high-level description of a system's modules
+and their relationships.
+& Module Guide document\\
+\textbf{MIS} & Module Interface Specification, a detailed description of
+module interfaces and contracts.
+& Module Interface Specification document\\
 \textbf{MIT} & Massachusetts Institute of Technology licence; a software
 licence that allows reuse if the copyright notice is kept.
 & \hyperref[sec:ots-components]{Section 19.2}\\
@@ -1136,11 +1178,18 @@ on system performance or operation.
 & \hyperref[sec:performance]{Section 12}\\
 \textbf{OI} & Open issue identifier; \texttt{OI-\#\#}.
 & \hyperref[sec:open-issues]{Section 18}\\
+\textbf{PDF} & Portable Document Format.
+& Team reflection\\
 \textbf{PER} & Fictional persona identifier; \texttt{PER-\#}.
 & \hyperref[sec:stakeholders]{Section 2.5}\\
 \textbf{P1--P3} & Anonymized identifiers for the three domain specialists
 interviewed as part of requirements elicitation; not delivery phases.
 & \hyperref[sec:src-interview]{Appendix A: Interview statements}\\
+\textbf{PII} & Personally identifiable information.
+& Section 15\\
+\textbf{PIPEDA} & Personal Information Protection and Electronic Documents
+Act (Canada).
+& Section 17\\
 \textbf{POC / PoC} & Proof of concept; the planned capstone
 feasibility demonstration, not a production release.
 & \hyperref[sec:constraints]{Schedule}\\
@@ -1148,6 +1197,14 @@ feasibility demonstration, not a production release.
 & \hyperref[sec:purpose]{Section 1}\\
 \textbf{PUC} & Product use case.
 & \hyperref[sec:product-scope]{Section 8}\\
+\textbf{QA} & Quality assurance.
+& Team reflection\\
+\textbf{SFWRENG} & Software Engineering, the course subject code used by
+McMaster University's Faculty of Engineering.
+& Team reflection\\
+\textbf{SQL} & Structured Query Language, used to query and manage
+relational databases.
+& Section 15\\
 \textbf{SRS} & Software Requirements Specification, this document.
 & \hyperref[sec:introduction]{Introduction}\\
 \textbf{SRC} & Requirement source identifier; \texttt{SRC-\#\#\#}.
@@ -1163,8 +1220,13 @@ Numbered source statements use \texttt{SRC-\#\#\#.\#\#}.
 & \hyperref[sec:user-docs]{Section 24}\\
 \textbf{ULC} & Unlikely change identifier; \texttt{ULC-\#\#\#}.
 & \hyperref[sec:changes]{Section 27.2}\\
+\textbf{URL} & Uniform Resource Locator, the address of a resource on a
+network.
+& Section 13\\
 \textbf{V\&V} & Verification and validation.
 & \hyperref[sec:constraints]{Schedule}\\
+\textbf{VS} & Visual Studio Code (VS Code), a source-code editor.
+& AI-use disclosure\\
 \textbf{W3C} & World Wide Web Consortium, which publishes web standards such
 as Pointer Events.
 & \hyperref[sec:ots-components]{Section 19.2}\\
@@ -1172,6 +1234,9 @@ as Pointer Events.
 may inform project accessibility requirements, without a claim of
 complete conformance (\srcref{008}).
 & \hyperref[sec:open-issues]{OI-08}\\
+\textbf{XSS} & Cross-site scripting, an attack that injects malicious
+scripts into web content.
+& Section 15\\
 \end{longtable}}
 
 \subsection{Symbolic Constants}
@@ -5482,6 +5547,10 @@ all text is visible and every function still works.}
 
 \section{Performance Requirements}
 \label{sec:performance}
+This section specifies performance and related quality requirements,
+including speed, safety, precision, robustness, capacity, scalability
+and longevity.
+
 \subsection{Speed and Latency Requirements}
 \label{sec:speed}
 
@@ -5855,6 +5924,9 @@ removed from the supported list and OI-09 updated accordingly.}
 \end{srsrequirement}
 
 \section{Operational and Environmental Requirements}
+This section describes the environments, external systems, productization
+and release conditions under which Squigglr must operate.
+
 \subsection{Expected Physical Environment}
 
 Squigglr is meant for use on a touchscreen tablet or laptop (CON-003).
@@ -5933,6 +6005,9 @@ Squigglr has no installation package. A release is a deployment to the
 hosting platform (Vercel) triggered by merging to the production branch.
 
 \section{Maintainability and Support Requirements}
+This section sets requirements for maintaining, supporting and adapting
+Squigglr and its lesson catalogue.
+
 \subsection{Maintenance Requirements}
 
 \begin{srsrequirement}{NFR-MAINT-001}{Lesson catalogue update without code change}
@@ -6007,6 +6082,9 @@ changes) in \reqref{NFR-MAINT-001} and LC-004 in \reqref{NFR-OPS-002} No standal
 NFR is required here. 
 
 \section{Security Requirements}
+This section specifies requirements for access control, data integrity,
+privacy, security auditing and protection against input-based attacks.
+
 \subsection{Access Requirements}
 
 \begin{srsrequirement}{NFR-SEC-001}{Adult account data access}
@@ -6118,6 +6196,8 @@ and cross-site scripting (XSS).}
 
 
 \section{Cultural Requirements}
+This section requires review of symbols and imagery for cultural
+associations that could negatively affect users.
 
 \begin{srsrequirement}{NFR-CULT-001}{Cultural Sensitivity of Symbols and Imagery}
   \reqshall{Squigglr shall contain no symbols or imagery that carry a known negative 
@@ -6136,6 +6216,8 @@ raised by the style review are addressed and approved by the reviewers.}
 
 
 \section{Compliance Requirements}
+This section identifies legal and standards obligations that apply to
+Squigglr, including conditions relevant to adoption.
 
 \subsection{Legal Requirements}
 \begin{srsrequirement}{NFR-COMP-001}{PIPEDA}
@@ -7260,7 +7342,7 @@ for real learner use.
 
 Table~\ref{tab:requirement-phases} lists every currently specified SRS
 requirement, including the safety requirements derived from the Hazard
-Analysis. The functional-requirement priorities and phases agree with
+Analysis. The functional requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
 are classified here as \emph{Must} and assigned to the phase containing
 the behaviour they protect. The 143 identified requirements in this SRS are scheduled in PH-1
@@ -9201,7 +9283,12 @@ requirements are met. For Shamil, reading relevant research and
 following up with adult stakeholders through interviews or
 questionnaires would help check our assumptions. These approaches
 let us learn efficiently while still checking that what we build works
-as intended.
+as intended. All of these approaches fit the work that each person
+was assigned: Ahmed can identify otherwise hidden user flows by walkthroughs
+with adults; Rayan can verify that data access works properly with prototypes;
+Moustafa can compare stylus functions for different devices; Huzaifah can
+prove that requirements are met reliably; and Shamil can assess the teams
+current assumptions against research.
 
 \end{enumerate}
 

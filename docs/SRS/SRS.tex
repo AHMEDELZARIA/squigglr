@@ -131,6 +131,7 @@ requirement structure (\#131).\\
 17 October 2026 & Muhammad Huzaifah & Wrote Section 7, Business Data Model and Data Dictionary, with the data model figure, the data constraints and the data dictionary (\#121).\\
 17 October 2026 & Shamil Canbolat & Added sections 13-17, the remainder of section 12, and my AI use disclosure (\#82). \\
 18 October 2026 & Shamil Canbolat & Added section 28 and my reflection questions and performed final QA review (\#82). \\
+18 October 2026 & Muhammad Huzaifah & Added my reflection responses to the appendix and my generative AI use disclosure.\\
 \end{longtable}
 
 ~\\
@@ -8837,6 +8838,21 @@ against my intended meaning before including it, and I decided which
 flagged inconsistencies and review comments were valid and how to resolve
 them.
 
+\textbf{Huzaifah:} I used Anthropic's Claude Opus 5.5 at high effort through
+the omp coding agent, along with Claude Sonnet 5.5 (high) helper agents that
+rebased and reviewed my branches. GitHub Copilot also left an automated
+review on one of my pull requests. I used AI in three ways. For planning, it
+helped me split my assignment into eight smaller sub-issues and build a set
+of notes and a guide for each one from the course lectures, rubrics,
+checklists and example documents. For review, I followed the method from our
+September 23 guest lecture: it checked my sections in three passes, one as a
+critic, one looking for missing cases and one checking the course rules. It
+also compared my sections with the work my teammates had already merged. For
+Git, it managed my branches and commits, merged main into my branches, fixed
+merge conflicts and wrote my pull request descriptions. In this document,
+this covered Sections 7, 9.3 to 9.5, 19, 20, 22 to 24 and 26. All decisions
+in my sections are my own.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -8905,6 +8921,15 @@ when it came time to write my sections, it felt more like organizing than
 coming up with things from scratch. For most requirements I could just ask
 myself what the specialists, Dr.~Anand or the TA had said, and put it
 there with the source.
+
+\textbf{Huzaifah:} What went well for me was Section 19, Off-the-Shelf
+Solutions, because it settled questions that were still open. In peer
+review, issue \#69 asked what gap Squigglr fills that existing apps do not,
+and issue \#74 asked which existing models we could use for refinement. Our
+supervisor had also asked whether refinement needs AI at all. Comparing
+existing products and components let me answer all three in one place: no
+product we found covers everything Squigglr aims to do, and simple geometric
+smoothing can handle refinement first, with AI kept as an option.
 
 \item What pain points did you experience during this deliverable, and how did
 you resolve them?
@@ -8982,6 +9007,14 @@ a document this size by hand was really tedious, so we used AI to review
 it and flag inconsistencies, and then we decided together which version was
 right.
 
+\textbf{Huzaifah:} My main pain point was merge conflicts. I worked on eight
+sub-issues at the same time, each on its own branch, and every one of them
+added a row to the revision history, while some also added entries to the
+shared references file. Each time one pull request was merged, the others
+conflicted on those same lines. I resolved this by merging main into each
+remaining branch and keeping every row from both sides, so that no one's
+changes were lost.
+
 \item How many of your requirements were inspired by speaking to your
 client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
 
@@ -9051,6 +9084,16 @@ icons, instead of treating WCAG as a constraint, which shaped the whole
 accessibility section, and our TA's comment about defining jargon became
 the plain-wording requirement for adult views. The two that don't cite
 anyone, SAF-MOU-001 and SAF-MOU-003, came out of our hazard analysis.
+
+\textbf{Huzaifah:} I wrote 52 requirements: 30 creative drawing requirements
+(FR-CRT-001 to FR-CRT-030), 10 attempt record requirements (FR-REC-001 to
+FR-REC-010) and 12 progress summary requirements (FR-PRG-001 to FR-PRG-012).
+Of these, 16 directly cite something our stakeholders or their proxies told
+us: 12 cite the specialist interview, 3 cite the follow-up questionnaire and
+4 cite our meetings with our supervisor, with some citing more than one. The
+other 36 do not cite a conversation directly, but all 52 build on a goal,
+constraint or business rule in the SRS, many of which came from those same
+conversations.
 
 \item Which of the courses you have taken, or are currently taking, will help
 your team to be successful with your capstone project.
@@ -9124,6 +9167,15 @@ worked with business use cases and wrote use cases with a main flow and
 alternative flows, which is exactly what I did for the business use cases
 and product use cases here. We did the same thing in 3RA3. 3A04 will also
 help when we plan the architecture for the design document.
+
+\textbf{Huzaifah:} Three courses help the most. SFWRENG 3RA3, Software
+Requirements, taught me to write requirements with clear fit criteria and to
+check that each one can be tested, which I did for every requirement in my
+sections. SFWRENG 4HC3, Human-Computer Interaction, keeps me focused on who
+the users are, the children and the adults who support them, and how they
+will actually use the interface. SFWRENG 3A04, Software Design III: Large
+System Design, covered use cases and system architecture, which will help
+when we move from requirements to the design document.
 
 \item What knowledge and skills will the team collectively need to acquire to
 successfully complete this capstone project? Examples of possible knowledge

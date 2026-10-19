@@ -57,6 +57,7 @@ and out-of-scope items, and the system boundary and components
 16 October 2026 & Muhammad Huzaifah & Listed the HA-derived requirements with their hazards in Section 6 and planned their phases in the Section 7 roadmap (\#128).\\
 17 October 2026 & Moustafa Moustafa & Added my reflection responses to the
 appendix and my generative AI use disclosure (\#117).\\
+18 October 2026 & Muhammad Huzaifah & Added my reflection responses to the appendix and my generative AI use disclosure.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2599,6 +2600,23 @@ against my intended meaning before including it, and I decided which
 flagged inconsistencies and review comments were valid and how to resolve
 them.
 
+\textbf{Huzaifah:} I used Anthropic's Claude Opus 5.5 at high effort through
+the omp coding agent, along with Claude Sonnet 5.5 (high) helper agents that
+rebased and reviewed my branches. GitHub Copilot also left an automated
+review on one of my pull requests. I used AI in three ways. For planning, it
+helped me split my assignment into eight smaller sub-issues and build a set
+of notes and a guide for each one from the course lectures, rubrics,
+checklists and example documents. For review, I followed the method from our
+September 23 guest lecture: it checked my sections in three passes, one as a
+critic, one looking for missing cases and one checking the course rules. It
+also compared my sections with the work my teammates had already merged. For
+Git, it managed my branches and commits, merged main into my branches, fixed
+merge conflicts and wrote my pull request descriptions. In this document,
+this covered the front matter, Sections 1 to 3, the FMEA method, my H-MUH
+rows and the coverage table in Section 5, and Sections 6 and 7.
+
+All decisions in my sections are my own.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -2671,6 +2689,15 @@ flashing to three times a second. That became H-MOU-001 and SAF-MOU-003. I
 think thinking in terms of hazards early on is going to be really useful
 for my career in general, not just for this project.
 
+\textbf{Huzaifah:} What went well was writing my SRS requirements and my
+hazards at the same time. I wrote both the creative drawing, attempt record
+and progress summary requirements and the hazards for those parts, so every
+H-MUH hazard could point to a requirement I had written. When a hazard showed
+a gap, I added the missing requirement straight away: FR-CRT-029 shows
+whether every change to a creative drawing has been saved, and FR-CRT-030
+lets refinement be turned off. Working on both together kept the two
+documents consistent with each other.
+
 \item What pain points did you experience during this deliverable, and how
 did you resolve them?
 
@@ -2736,6 +2763,14 @@ the hazard, I traced to that, and where nothing did, I wrote my own safety
 requirements, SAF-MOU-001 and SAF-MOU-002. It also meant my rows came in
 late, because I needed my own usability sections done first so the hazards
 had something to point to.
+
+\textbf{Huzaifah:} My main pain point was that some of my hazards overlapped
+with my teammates' hazards. For example, H-MUH-004, where work is saved
+under the wrong attempt or child, covers some of the same ground as Rayan's
+H-RAY-006, where the wrong learner is active on a shared device. Writing the
+same cause twice would have given two sets of mitigations to keep in sync.
+I resolved this by linking to the existing hazard instead of copying it, so
+each cause is analysed in only one place.
 
 \item Which of your listed risks had your team thought of before this
 deliverable, and which did you think of while doing this deliverable? For
@@ -2832,6 +2867,24 @@ feedback can't rely on colour alone, I started asking what happens to a
 child who gets sound-only or colour-only feedback, or feedback they need
 to read.
 
+\textbf{Huzaifah:} Three of my risks were ones the team had thought of
+before this deliverable. We had already planned that refinement would only
+tidy the child's own drawing and that the original could always be
+restored, which is where a restore that is not exact (H-MUH-001) and a
+refinement that changes the drawing wrongly (H-MUH-002) come from. Losing a
+drawing that was not saved (H-MUH-005) was also expected, since the team
+already knew that attempts could be lost in a browser.
+
+The other five came up while doing the hazard analysis: records that no
+longer show which work was the child's own (H-MUH-003), work saved under
+the wrong attempt or child (H-MUH-004), a child who does not accept a
+refined drawing as their own (H-MUH-006), records that do not match what
+actually happened (H-MUH-007), and summaries that disagree with the records
+(H-MUH-008). They came from the FMEA method, which asks four questions of
+every function: is it not done, done wrong, done at the wrong time, or done
+when it should not be? H-MUH-006 came from also checking the refinement
+component against the risks of AI.
+
 \item Other than the risk of physical harm (some projects may not have any
 appreciable risks of this form), list at least 2 other types of risk in
 software products. Why are they important to consider?
@@ -2899,6 +2952,18 @@ our specialists pointed out that WCAG is adopted as law in many countries,
 and Squigglr keeps records about children, so we have to think about both
 accessibility and privacy rules before we can put it in front of real
 families or schools.
+
+\textbf{Huzaifah:} Two other types of risk are data integrity and
+over-reliance on AI. Data integrity risk is when software saves or shows
+information that is wrong or incomplete, even though nothing visibly
+breaks. It matters because people make decisions based on what software
+shows them. In Squigglr, an adult could choose a child's next lesson from a
+record or summary that does not match what happened (H-MUH-007,
+H-MUH-008). Over-reliance on AI is when people trust an AI's output without
+checking it, even when it is wrong or changes too much. It matters because
+AI output can look convincing while being incorrect, which is why
+refinement in Squigglr only makes small changes, stays editable and can
+always be undone.
 
 \end{enumerate}
 

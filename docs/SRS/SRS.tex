@@ -118,7 +118,7 @@ requirement structure (\#131).\\
 16 October 2026 & Ahmed Elzaria & Added the requirement-to-phase allocation and deferred-feature register in Sections 21 and 25 (\#133).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
-16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-004 for security, data integrity and AI-assisted refinement (\#82)\\
+16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-003 for security, data integrity and AI-assisted refinement (\#82)\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
@@ -5687,18 +5687,6 @@ notifies the adult. For 99\% of \texttt{FAILED\_SAVES} successful saves,
 Squigglr does not record a failed save or notify the adult.\\
 \emph{Hazards:} H-SHA-003.
 
-\item[SAF-SHA-004]\phantomsection\label{req:SAF-SHA-004} Squigglr shall default to pre-prepared fallback text content
-when the AI refinement tool is unavailable, returns an error or returns misformatted
-content, after which it will send a diagnostic alert to the server and inform 
-the adult of the error.\\
-\emph{Rationale:} An unhandled provider error interrupting a child's drawing
-session would violate G.4, and failing to catch the error creates confusion
-for the child with unpredictable text outputs.\\
-\emph{Fit criterion:} fallback content replaces the provided content when
-purposefully incorrectly formatted content is received and when a mock 
-server fails to provide a response; the adult user is informed in both cases.\\
-\emph{Hazards:} H-SHA-004.
-
 \item[SAF-MOU-001] In guided lessons, feedback on a missed part shall show
 the child where the part is missing without drawing it for them.\\
 \emph{Rationale:} the aim of practice is drawing with gradually less help
@@ -5788,14 +5776,14 @@ misformatted or inappropriate output.}
   \reqrationale{Ignoring AI refinement in the rare cases where
 the output is missing or unusable creates a smoother experience
 for the child and prioritizes avoiding interruptions to acquiring
-full refinement coverage. Complements \reqref{SAF-SHA-004}.}
+full refinement coverage.}
   \reqfit{Pass when the child's original strokes are kept ten times
 consecutively after intentionally returning misformatted outputs or 
 making the mock service unavailable.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{4}; \srcref{009.01}}
-  \reqtraces{\reqref{SAF-SHA-004}; \ucref{003}; \ucref{006}}
+  \reqtraces{\ucref{003}; \ucref{006}}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-PERF-007}{Save failure transparency}
@@ -7282,7 +7270,7 @@ requirement, including the safety requirements derived from the Hazard
 Analysis. The functional-requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
 are classified here as \emph{Must} and assigned to the phase containing
-the behaviour they protect. The 143 identified requirements in this SRS are scheduled in PH-1
+the behaviour they protect. The 142 identified requirements in this SRS are scheduled in PH-1
 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7561,8 +7549,6 @@ Section~\ref{sec:waiting-room}.
 \texttt{SAF-SHA-002} & Prevent PII transmission to third parties & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-SHA-003} & Verify saves and report save failures & Must & PH-2 \\
-\addlinespace
-\texttt{SAF-SHA-004} & Fallback when AI refinement fails & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-MOU-001} & Show missed parts without drawing them & Must & PH-2 \\
 \addlinespace
@@ -8420,8 +8406,6 @@ H-SHA-002 & SAF-SHA-002 & SAF-SHA-002 \\
 \addlinespace
 H-SHA-003 & SAF-SHA-003 & SAF-SHA-003 \\
 \addlinespace
-H-SHA-004 & SAF-SHA-004 & SAF-SHA-004 \\
-\addlinespace
 H-MOU-001 & SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
 \reqref{NFR-UX-007}; \reqref{NFR-UX-010}; \reqref{NFR-UX-022} &
 SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
@@ -9040,10 +9024,10 @@ to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering
 judgement about failure cases and edge conditions.
 
-\textbf{Shamil:} I contributed nine performance, four safety-critical, 
+\textbf{Shamil:} I contributed nine performance, three safety-critical, 
 three operational and environmental, four maintainability and support, 
 six security, two cultural, and two compliance requirements for a total
-of 30 requirements. I did not personally consult any clients or proxies
+of 29 requirements. I did not personally consult any clients or proxies
 to generate my requirements, but some of my requirements are traceable
 from other sections that were solicited from stakeholders. For example,
 \reqref{NFR-OPS-003} (no installation required) is based on constraints

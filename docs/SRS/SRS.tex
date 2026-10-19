@@ -266,7 +266,7 @@ drawing's final result is kept without the process behind it: the guidance
 used, the difficulties met and the corrections made. Squigglr's value is
 in keeping that process visible to supporting adults while children
 practise with gradually less support. The comparison with existing products
-appears in the off-the-shelf Solutions section of this document.
+appears in the Off-the-Shelf Solutions section of this document.
 
 \subsection{Goals of the Project}
 
@@ -891,12 +891,12 @@ run alongside; it is a new product.
 \subsection{Partner or Collaborative Applications}
 Not applicable. No stakeholder requires Squigglr to work with a specific
 partner application. Candidate integrations, if any, belong in the
-off-the-shelf Solutions section.
+Off-the-Shelf Solutions section.
 
-\subsection{Off-the-shelf Software}
+\subsection{Off-the-Shelf Software}
 Not applicable. No stakeholder mandates any specific off-the-shelf
 software. Candidate libraries and services are discussed in the
-off-the-shelf Solutions section, not here.
+Off-the-Shelf Solutions section, not here.
 
 \subsection{Anticipated Workplace Environment}
 Squigglr will be used at home, in classrooms and in other places where
@@ -959,7 +959,7 @@ The supervisor and the university set rules that protect children.
 children for requirements or evaluation.\\
 \emph{Rationale:} The users are children, and the supervisor directed that
 no information about them be collected. Requirements come from adults and
-personas, and every check uses prepared or attempts made by adults. This
+personas, and every check uses attempts made by adults. This
 constraint covers the project's work; how Squigglr itself protects the
 practice records it keeps is a privacy requirement, not this constraint.\\
 \emph{Imposed by:} supervisor.\\
@@ -1200,7 +1200,7 @@ The supervisor's 14 October guidance (\srcref{008}) requires
 adult-configurable ranges, midpoint defaults and example drawings
 illustrating both ends of the \texttt{STAGE\_PASS} range. The chosen
 values and the drawing-to-score interpretation are checked using
-prepared or examples made by adults at the lower and upper boundaries of
+examples made by adults at the lower and upper boundaries of
 each configurable range (OI-05; CON-005--006).
 
 {\small\setlength{\tabcolsep}{5pt}
@@ -1751,7 +1751,7 @@ therapy programmes run by occupational therapists (SRC-005,
 \intref{P1}{32:42}). Structured programmes exist that grade the same
 activity into easier and harder levels (SRC-001), and many drawing
 applications are available for children (SRC-005, \intref{P2}{35:36}). The
-comparison with existing products is in the off-the-shelf Solutions
+comparison with existing products is in the Off-the-Shelf Solutions
 section.
 
 The adults who support a child follow progress mainly through what the
@@ -2411,7 +2411,7 @@ Catalogue update & What the team adds or changes. Catalogue update =
 Made from adult-made drawings only. & BR-009; LC-001, LC-002; F12 \\
 \addlinespace
 Child navigation & How a child moves through Squigglr. Child
-navigation = [Open a lesson \textbar{} Restart \textbar{} Move back and
+navigation = [Restart \textbar{} Move back and
 forth \textbar{} Leave]. & Data flow &
 Never changes the lesson choice or the starting stage. & FACT-007;
 BR-003 \\
@@ -3083,7 +3083,7 @@ guided lesson record (BR-004, BR-005).}
   saved (\mbox{SAF-RAY-003}).
 \end{description}
 \reqfield{Postconditions}{The record matches what the child drew and
-holds no score, diagnosis or comparison (\mbox{SAF-RAY-004}).}
+holds no overall score, diagnosis or comparison (\mbox{SAF-RAY-004}).}
 \reqfield{Requirements}{FR-REC TBD (\#83);
 \mbox{\reqref{FR-LRN-009}}--\mbox{\reqref{FR-LRN-012}}; \mbox{SAF-RAY-003},
 \mbox{SAF-RAY-004}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-007}; \mbox{SAF-AHM-001}.}
@@ -3321,7 +3321,7 @@ stage attempt counters are unchanged.}
 \begin{srsrequirement}{FR-LRN-010}{Invalid and ambiguous input}
   \reqshall{Squigglr shall withhold passing status from an attempt whose required stylus
 input is missing, invalid or too ambiguous to evaluate against the stage
-criteria, and shall not count such input toward the stage's evaluable-attempt
+criteria, and shall not count such input toward the stage's evaluable attempt
 or unsuccessful attempt limits.}
   \reqrationale{Unreliable acquisition must not silently turn a malformed drawing into a
 successful result (ASM-004).}
@@ -4411,14 +4411,14 @@ learner's drawings.}
   \reqtraces{\ucref{006}; \reqref{FR-CRT-023}; H-MUH-004}
 \end{srsrequirement}
 
-The last group keeps the creative space apart from the guided-lesson
+The last group keeps the creative space apart from the guided lesson
 records that adults rely on (BR-004; ULC-005 in
 Table~\ref{tab:unlikelyChanges}).
 
 \begin{srsrequirement}{FR-CRT-027}{No refinement in guided lessons}
   \reqshall{Squigglr shall not refine any stroke drawn in a guided lesson.}
   \reqrationale{BR-005 limits refinement to the creative space, and a
-guided-lesson record keeps the child's actual strokes (BR-004). A refined
+guided lesson record keeps the child's actual strokes (BR-004). A refined
 stroke in a lesson would show adults work the child did not do. How the
 record keeps those strokes is specified in
 Section~\ref{sec:fr-records}.}
@@ -4553,7 +4553,7 @@ that shows a corrected or ideal shape would mislead them (BR-004). This
 principle was presented to the domain specialists in the interview
 (SRC-005, \intref{Moustafa}{6:03}). Duplicate or unmappable input is
 handled by SAF-AHM-001 and SAF-AHM-002, so the strokes kept are those the
-child drew. Refinement never reaches guided-lesson strokes (BR-005;
+child drew. Refinement never reaches guided lesson strokes (BR-005;
 FR-CRT-027).}
   \reqfit{For prepared, adult-made attempts whose strokes are
 captured by the test harness as drawn, every saved attempt record holds
@@ -5419,7 +5419,7 @@ names its action.}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-UX-021}{Feedback not by sound alone}
-  \reqshall{Every message to the child shall be shown on screen in symbols (NFR-UX-012) and, unless
+  \reqshall{Every message to the child shall be shown on screen and, unless
 audio is turned off, also played as sound; no message shall rely on sound
 alone.}
   \reqrationale{Offering more than one modality is encouraged in
@@ -5502,12 +5502,12 @@ first visible stroke render in each lesson stage is within \texttt{FEEDBACK\_LAT
 
 \begin{srsrequirement}{NFR-PERF-002}{AI refinement response latency}
   \reqshall{Squigglr shall display the AI refined result within 
-\texttt{REFINE\_LATENCY\_MAX} seconds of the final input point being
-received on a drawing that includes AI refinement and the canvas remains
+\texttt{REFINE\_LATENCY\_MAX} seconds of the drawing being finished 
+when AI refinement is included and the canvas remains
 open for interaction during that time.}
   \reqrationale{Long, unresponsive pauses break engagement and may be 
 interpreted as an error (G.4).}
-  \reqfit{Pass when the time passed from the final input point to the 
+  \reqfit{Pass when the time passed from the drawing being finished to the 
 refined result display is within \texttt{REFINE\_LATENCY\_MAX} seconds and the
 canvas accepts new input without any blocking or error during that period.}
   \reqpriority{Should}
@@ -5534,7 +5534,7 @@ consecutive attempts.}
 This subsection holds safety requirements that come from the Hazard Analysis
 and do not fit another section. Each lists the hazards it mitigates.
 
-% NOTE: phanton sections are used below because we did not use the srsrequirement
+% NOTE: phantom sections are used below because we did not use the srsrequirement
 % tags like we did for the other requirements. Phantom sections allow you to
 % jump to that point when its linked to somewhere else without actually being
 % a section. If you change it to use srsrequirement tags, then remove the phantom 
@@ -5682,8 +5682,8 @@ and inform adult users when a save fails.\\
 Adults want to know which sessions contributed to their child's progress
 report in detail.\\
 \emph{Fit criterion:} for 99\% of \texttt{FAILED\_SAVES} (TBD) 
-failed save requests, Squigglr does not report the attempt as saved and 
-notifies the adult. For 99\% of \texttt{FAILED\_SAVES} successful saves, 
+mock failed save requests, Squigglr does not report the attempt as saved and 
+notifies the adult. For 99\% of \texttt{FAILED\_SAVES} mock successful saves, 
 Squigglr does not record a failed save or notify the adult.\\
 \emph{Hazards:} H-SHA-003.
 
@@ -5854,7 +5854,7 @@ removed from the supported list and OI-09 updated accordingly.}
 Squigglr is meant for use on a touchscreen tablet or laptop (CON-003).
 A stylus is required for interaction with motor practice features. Finger 
 input is a stretch goal (LC-006). Expected settings include the domicile,
-classroom, and therapy centres where children draw (FACT-009) often with 
+classroom, and therapy centres where children draw often with 
 an adult nearby. The device is expected to be placed on a flat surface or 
 held in the user's hands.
 
@@ -6396,8 +6396,8 @@ follow class progress. The vendor also offers a screening use in which
 artificial intelligence (AI) assesses handwriting and fine motor skills to
 identify students who need support \citep{LearnAndGo2026Teachers}, and the
 App Store listing describes a learning experience that adapts to each
-child's pace \citep{LearnAndGo2026Kaligo}. The app is installed from an
-app store, and an internet connection is needed to synchronise lessons and
+child's pace \citep{LearnAndGo2026Kaligo}. The app is installed from the
+App Store, and an internet connection is needed to synchronise lessons and
 results \citep{LearnAndGo2026Requirements}. The download is free; school
 prices are not stated on the pages read.
 
@@ -6889,14 +6889,14 @@ Squigglr must not take over decisions that belong to the adults around the
 child. Squigglr never selects another lesson, skips a stage or moves a
 child back a stage without an adult's authorization (CON-007, BR-003),
 never gives a child personalized AI-generated feedback in a guided
-activity (BR-007), never replaces a child's strokes in a guided-lesson
+activity (BR-007), never replaces a child's strokes in a guided lesson
 record (BR-004), and never lets refinement act outside the creative space
 (BR-005). Breaking
 any of these would override an adult's judgement or mislead the adults who
 rely on the records. &
 These are business rules and unlikely changes (ULC-003 to ULC-005,
 Table~\ref{tab:unlikelyChanges}). Hazards: H-MUH-002 (refinement reaching
-a guided-lesson record), H-MUH-003 (assisted work shown as
+a guided lesson record), H-MUH-003 (assisted work shown as
 independent). \\
 \end{longtable}
 }
@@ -7843,7 +7843,7 @@ Creative space and refinement &
 That refinement happens automatically and changes the drawing only a
 little; which items are supported; how the child or an adult restores the
 original or turns refinement off or on; that refinement never reaches
-guided-lesson records; and what, if anything, is sent to an outside
+guided lesson records; and what, if anything, is sent to an outside
 service. &
 UC-006, UC-007, UC-010; G.4; BR-004, BR-005; OI-03 &
 Supporting adults \\
@@ -8769,7 +8769,7 @@ and the parts of the document written by other team members. AI was a
 writing and formatting aid; the final content and decisions remained
 my responsibility and the team's.
 
-\textbf{Shamil:} For the SRS I used the Kiro IDE which uses automatically 
+\textbf{Shamil:} For the SRS I used the Kiro IDE which automatically 
 selects an optimal LLM for consistency among multiple versions of Claude,
 along with VS Code Copilot which uses ChatGPT 6 Luna. I used the chatbot 
 to generate a skeletons of my sections with starting text based on analysis 
@@ -8890,7 +8890,7 @@ coming up with things from scratch. For most requirements I could just ask
 myself what the specialists, Dr.~Anand or the TA had said, and put it
 there with the source.
 
-\textbf{Huzaifah:} What went well for me was Section 19, Off-the-Shelf
+\textbf{Huzaifah:} What went well for me was Section 19, off-the-shelf
 Solutions, because it settled questions that were still open. In peer
 review, issue \#69 asked what gap Squigglr fills that existing apps do not,
 and issue \#74 asked which existing models we could use for refinement. Our

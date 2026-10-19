@@ -2180,6 +2180,18 @@ points within the active drawing surface when the canvas size or supported
 device orientation changes, and shall reject input whose coordinates cannot be
 mapped reliably to that surface. & H-AHM-003 & Safety-Critical \\
 \addlinespace
+SAF-SHA-001 & Squigglr shall authenticate data at every endpoint where it is 
+accessed. & H-SHA-001 & Safety-Critical \\
+\addlinespace
+SAF-SHA-002 & Squigglr shall confirm that all essential third-party services
+do not transmit PII through their public interface. & H-SHA-002 & Safety-Critical \\
+\addlinespace
+SAF-SHA-003 & Squigglr shall send a verification ping after each save
+and inform adult users when a save fails. & H-SHA-003 & Safety-Critical \\
+\addlinespace
+SAF-SHA-004 & Squigglr shall logout the user after 
+an extended period of inactivity. & H-SHA-001 & Safety-Critical \\
+\addlinespace
 SAF-MOU-001 & In guided lessons, feedback on a missed part shall show the child
 where the part is missing without drawing it for them. & H-MOU-004 &
 Safety-Critical \\

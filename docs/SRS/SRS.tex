@@ -118,7 +118,7 @@ requirement structure (\#131).\\
 16 October 2026 & Ahmed Elzaria & Added the requirement-to-phase allocation and deferred-feature register in Sections 21 and 25 (\#133).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
-16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-003 for security, data integrity and AI-assisted refinement (\#82)\\
+16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-004 for security, data integrity and AI-assisted refinement (\#82)\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
@@ -1323,7 +1323,7 @@ criterion 2.5.5. \emph{Trace:} NFR-UX-018.\\
 \texttt{IDLE\_TIMEOUT} & Duration of user inactivity after which
 Squigglr ends the session and logs out the user.
 \emph{Unit:} minutes. \emph{Value:} team-defined; TBD.
-\emph{Trace:} SAF-SHA-001.\\
+\emph{Trace:} SAF-SHA-004.\\
 \addlinespace
 \texttt{FAILED\_SAVES} & Number of consecutive failed save attempts
 used in the fit criterion sample for save failure notification tests.
@@ -5654,17 +5654,13 @@ attempt.\\
 \emph{Related SRS requirements:} FR-LRN-007, FR-LRN-010.\\
 \emph{Hazards:} H-AHM-003.
 
-\item[SAF-SHA-001]\phantomsection\label{req:SAF-SHA-001} Squigglr shall authenticate data at every endpoint where 
-it is accessed, encrypt user data, and end the session 
-and logout after extended user inactivity. (\texttt{IDLE\_TIMEOUT}, TBD).\\
-\emph{Rationale:} personal data, especially that of children's, is confidential. 
-unauthorized access to a user account or isolated user information violates
-privacy and undermines user trust. Squigglr is a website with no installation
+\item[SAF-SHA-001]\phantomsection\label{req:SAF-SHA-001} Squigglr shall authenticate data 
+at every endpoint where it is accessed.\\
+\emph{Rationale:} Squigglr is a website with no installation
 (CON-001, CON-002) so access must be authenticated at server endpoints.\\
 \emph{Fit criterion:} with mock accounts, while logged in to one account,
-attempts to access a wide range of datatypes from another account using 
-server commands are rejected; mock account is logged out after \texttt{IDLE\_TIMEOUT}
-and attempts to access that accounts information are rejected. \\
+attempt to access a wide range of datatypes from another account using 
+server commands; passes when attempts to access that accounts information are rejected. \\
 \emph{Hazards:} H-SHA-001.
 
 \item[SAF-SHA-002]\phantomsection\label{req:SAF-SHA-002} Squigglr shall confirm that all essential third-party services
@@ -5686,6 +5682,15 @@ mock failed save requests, Squigglr does not report the attempt as saved and
 notifies the adult. For 99\% of \texttt{FAILED\_SAVES} mock successful saves, 
 Squigglr does not record a failed save or notify the adult.\\
 \emph{Hazards:} H-SHA-003.
+
+\item[SAF-SHA-004]\phantomsection\label{req:SAF-SHA-004} Squigglr shall logout the user after 
+an extended period of inactivity. (\texttt{IDLE\_TIMEOUT}, TBD).\\
+\emph{Rationale:} Personal data, especially that of children's, is confidential. 
+unauthorized access to a user account or isolated user information violates
+privacy and undermines user trust; Logging out an account after a period of
+inactivity is a standard safety feature. \\
+\emph{Fit criterion:} passes when mock account is logged out after \texttt{IDLE\_TIMEOUT}. \\
+\emph{Hazards:} H-SHA-001.
 
 \item[SAF-MOU-001] In guided lessons, feedback on a missed part shall show
 the child where the part is missing without drawing it for them.\\
@@ -6033,7 +6038,7 @@ Pass when the request is rejected three times consecutively.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{5}; \goalref{6}}
-  \reqtraces{\reqref{SAF-SHA-001}; \reqref{NFR-SEC-001}; OI-01}
+  \reqtraces{\reqref{NFR-SEC-001}; OI-01}
 \end{srsrequirement}
 
 \subsection{Integrity Requirements}
@@ -6114,21 +6119,7 @@ and cross-site scripting (XSS).}
 
 \section{Cultural Requirements}
 
-\begin{srsrequirement}{NFR-CULT-001}{Interface Language of Adult Views}
-  \reqshall{All text in adult views shall be in \texttt{INTERFACE\_LANGUAGE}.}
-  \reqrationale{Required by \reqref{NFR-UX-012} and assumes that every adult
-who uses Squigglr understands that language (ASM-007). Child-facing screens 
-contain no text as all controls are identified by images or icons (\reqref{NFR-UX-002}), 
-so child screens carry no cultural localisation.}
-  \reqfit{Confirm that every text string in the adult view is in 
-\texttt{INTERFACE\_LANGUAGE}.}
-  \reqpriority{Must}
-  \reqphase{PH-2}
-  \reqsources{ASM-007}
-  \reqtraces{\reqref{NFR-UX-012}; \reqref{NFR-UX-002};}
-\end{srsrequirement}
-
-\begin{srsrequirement}{NFR-CULT-002}{Cultural Sensitivity of Symbols and Imagery}
+\begin{srsrequirement}{NFR-CULT-001}{Cultural Sensitivity of Symbols and Imagery}
   \reqshall{Squigglr shall contain no symbols or imagery that carry a known negative 
 cultural meaning in communities likely to use Squigglr.}
   \reqrationale{The style review required by \reqref{NFR-UX-007} should assess
@@ -7272,7 +7263,7 @@ requirement, including the safety requirements derived from the Hazard
 Analysis. The functional-requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
 are classified here as \emph{Must} and assigned to the phase containing
-the behaviour they protect. The 142 identified requirements in this SRS are scheduled in PH-1
+the behaviour they protect. The 143 identified requirements in this SRS are scheduled in PH-1
 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7546,11 +7537,13 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \texttt{SAF-AHM-002} & Drawing-coordinate integrity & Must & PH-1 \\
 \addlinespace
-\texttt{SAF-SHA-001} & Authentication, encryption and session timeout & Must & PH-2 \\
+\texttt{SAF-SHA-001} & Authentication & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-SHA-002} & Prevent PII transmission to third parties & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-SHA-003} & Verify saves and report save failures & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-SHA-004} & Session timeout & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-MOU-001} & Show missed parts without drawing them & Must & PH-2 \\
 \addlinespace
@@ -7631,9 +7624,7 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Cultural Requirements (Section 16)}}\\
 \addlinespace
-\reqref{NFR-CULT-001} & Interface language of adult views & Must & PH-2 \\
-\addlinespace
-\reqref{NFR-CULT-002} & Cultural sensitivity of symbols and imagery & Must & PH-3 \\
+\reqref{NFR-CULT-001} & Cultural sensitivity of symbols and imagery & Must & PH-3 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Legal Requirements (Section 17.1)}}\\
 \addlinespace
@@ -9026,10 +9017,10 @@ to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering
 judgement about failure cases and edge conditions.
 
-\textbf{Shamil:} I contributed nine performance, three safety-critical, 
+\textbf{Shamil:} I contributed nine performance, four safety-critical, 
 three operational and environmental, four maintainability and support, 
 six security, two cultural, and two compliance requirements for a total
-of 29 requirements. I did not personally consult any clients or proxies
+of 30 requirements. I did not personally consult any clients or proxies
 to generate my requirements, but some of my requirements are traceable
 from other sections that were solicited from stakeholders. For example,
 \reqref{NFR-OPS-003} (no installation required) is based on constraints
@@ -9037,9 +9028,7 @@ chosen after speaking with clients/proxies. Including the one just
 mentioned, five of my requirements are based on such sections.  
 \reqref{NFR-SEC-001} and \reqref{NFR-SEC-004} cite \srcref{004}, which is
 a supervisor meeting (our supervisor is also a client). 
-\reqref{NFR-CULT-001} and \reqref{NFR-CULT-002} draw on
-\reqref{NFR-UX-002}, \reqref{NFR-UX-012} and \reqref{NFR-UX-007},
-respectively, all of which were solicited UX requirements.
+\reqref{NFR-CULT-001} draws on \reqref{NFR-UX-007} which was a solicited UX requirement.
 
 \textbf{Moustafa:} I wrote 27 requirements: 24 look-and-feel and usability
 requirements (NFR-UX-001 to NFR-UX-024) and three safety requirements

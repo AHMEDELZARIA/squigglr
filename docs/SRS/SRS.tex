@@ -118,7 +118,7 @@ requirement structure (\#131).\\
 16 October 2026 & Ahmed Elzaria & Added the requirement-to-phase allocation and deferred-feature register in Sections 21 and 25 (\#133).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 8.3, Individual Product Use Cases (\#111).\\
 16 October 2026 & Moustafa Moustafa & Showed the specialists' disagreement on input in SRC-005.04 and added SRC-005.13 (\#112).\\
-16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-005 for security, data integrity and AI-assisted refinement (\#82)\\
+16 October 2026 & Shamil Canbolat & Added safety-critical requirements SAF-SHA-001 to SAF-SHA-004 for security, data integrity and AI-assisted refinement (\#82)\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 10, Look and Feel Requirements, with NFR-UX-001 to NFR-UX-007, three constants and the WCAG 2.2 reference; added the supervisor's WCAG advice to SRC-008 (\#113).\\
 16 October 2026 & Rayan Nasrallah & Let refinement be turned off in G.4, BR-005, ULC-005, the stakeholder needs and the glossary, following the questionnaire (SRC-009.01).\\
 16 October 2026 & Moustafa Moustafa & Wrote Section 11, Usability and Humanity Requirements, with NFR-UX-008 to NFR-UX-024 and five constants, and updated OI-08 (\#114).\\
@@ -1473,7 +1473,7 @@ an identifier of the form BR-\#\#\#, a rationale and its sources.
 \item[BR-001] Only the adult who holds an account, a parent or an
 educator, may create, view and manage the learner profiles under it and
 their records. One account can hold several learner profiles. A learner
-profile holds only the child's username that does not
+profile holds only the child's first name and username that does not
 identify the child; no other information about the child is collected.\\
 \emph{Rationale:} practice records describe a child's difficulties and
 are personal information. Keeping each profile to a first name and a
@@ -5699,18 +5699,6 @@ purposefully incorrectly formatted content is received and when a mock
 server fails to provide a response; the adult user is informed in both cases.\\
 \emph{Hazards:} H-SHA-004.
 
-\item[SAF-SHA-005]\phantomsection\label{req:SAF-SHA-005} Squigglr shall allow users to report inappropriate AI
-generated content through a form; human reviewers shall use catalogued
-confirmed incorrect output to potentially update API guardrails and 
-permissiveness.\\
-\emph{Rationale:} Raw provider output may be inaccurate or inappropriate;
-content moderation must adapt to new, unforeseen inputs as the application
-grows its user base.\\
-\emph{Fit criterion:} deliberate attempts to recreate inappropriate output 
-by imitating report diagnostics of a manufactured inappropriate output case 
-do not yield similarly inappropriate results after content moderation update.\\
-\emph{Hazards:} H-SHA-005
-
 \item[SAF-MOU-001] In guided lessons, feedback on a missed part shall show
 the child where the part is missing without drawing it for them.\\
 \emph{Rationale:} the aim of practice is drawing with gradually less help
@@ -6079,7 +6067,7 @@ fails consecutively three times with an appropriate error message logged.}
 
 \begin{srsrequirement}{NFR-SEC-004}{Minimal personal data collection}
   \reqshall{Squigglr shall not store any child-identifying information
-beyond a non-identifying username.}
+beyond the child's first name and non-identifying username.}
   \reqrationale{Personal information about children is not necessary for
 Squigglr to function
 and minimizing collected data limits security risks. The supervising
@@ -6087,7 +6075,7 @@ adult's contact details are collected at account registration if identifying
 information is needed; this supports Squigglr's
 accountability, consent, and access obligations under PIPEDA~\cite{pipeda}.}
   \reqfit{Passes if there is no field during child registration beyond
-a username that does not prompt for their real name.}
+a first name and non-identifying username.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{}
@@ -7294,7 +7282,7 @@ requirement, including the safety requirements derived from the Hazard
 Analysis. The functional-requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements
 are classified here as \emph{Must} and assigned to the phase containing
-the behaviour they protect. The 144 identified requirements in this SRS are scheduled in PH-1
+the behaviour they protect. The 143 identified requirements in this SRS are scheduled in PH-1
 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7575,8 +7563,6 @@ Section~\ref{sec:waiting-room}.
 \texttt{SAF-SHA-003} & Verify saves and report save failures & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-SHA-004} & Fallback when AI refinement fails & Must & PH-2 \\
-\addlinespace
-\texttt{SAF-SHA-005} & Report inappropriate AI-generated content & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-MOU-001} & Show missed parts without drawing them & Must & PH-2 \\
 \addlinespace
@@ -8436,8 +8422,6 @@ H-SHA-003 & SAF-SHA-003 & SAF-SHA-003 \\
 \addlinespace
 H-SHA-004 & SAF-SHA-004 & SAF-SHA-004 \\
 \addlinespace
-H-SHA-005 & SAF-SHA-005 & SAF-SHA-005 \\
-\addlinespace
 H-MOU-001 & SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
 \reqref{NFR-UX-007}; \reqref{NFR-UX-010}; \reqref{NFR-UX-022} &
 SAF-MOU-003; \reqref{NFR-UX-001}; \reqref{NFR-UX-006};
@@ -9056,10 +9040,10 @@ to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering
 judgement about failure cases and edge conditions.
 
-\textbf{Shamil:} I contributed nine performance, five safety-critical, 
+\textbf{Shamil:} I contributed nine performance, four safety-critical, 
 three operational and environmental, four maintainability and support, 
 six security, two cultural, and two compliance requirements for a total
-of 31 requirements. I did not personally consult any clients or proxies
+of 30 requirements. I did not personally consult any clients or proxies
 to generate my requirements, but some of my requirements are traceable
 from other sections that were solicited from stakeholders. For example,
 \reqref{NFR-OPS-003} (no installation required) is based on constraints
@@ -9143,11 +9127,11 @@ Identifying mitigation and elimination strategies for the
 hazards went well for me because I have previously taken classes on requirements 
 and testing. I was able to select proper testing methods like integration testing 
 or identify which of my original testing ideas were not fit for the project. For
-instances where the AI refinement provider returned inaccurate or inappropriate
-content (H-SHA-005), I considered fuzz testing to assess the durability and coverage of the
-API guardrails. After realizing that this would require human confirmation regardless,
-I decided to just have a human tester recreate the problematic outputs after
-modifying the guardrails. Similarly, I recognized that grey-box testing was suited 
+instances where the AI refinement provider returned incorrect content, I considered 
+fuzz testing to assess the durability and coverage of the API guardrails. After 
+realizing that this would require human confirmation regardless, I decided to just 
+have a human tester recreate the problematic outputs after modifying the guardrails. 
+Similarly, I recognized that grey-box testing was suited 
 for the case in which confidential user data is mistakenly shared with a non-essential
 third-party service (H-SHA-002). Testers can run different scenarios and observe the
 public-facing API to see if the target content is being shared or not. The requirements

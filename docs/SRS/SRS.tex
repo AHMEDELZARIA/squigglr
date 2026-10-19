@@ -103,12 +103,12 @@
 14 October 2026 & Rayan Nasrallah & Wrote Section 5, Relevant Facts and Assumptions, with business rules (\#88).\\
 14 October 2026 & Rayan Nasrallah & Made child-dependent thresholds adult-configurable, added the improvement rule and SRC-008 (\#102).\\
 14 October 2026 & Rayan Nasrallah & Wrote Section 18, Open Issues, and Section 27, Likely and Unlikely Changes (\#90).\\
+14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
+14 October 2026 & Moustafa Moustafa & Wrote Section 8.2, Product Use Case Table (\#108).\\
 15 October 2026 & Rayan Nasrallah & Added the specialist questionnaire responses as SRC-009, with an appendix.\\
 15 October 2026 & Ahmed Elzaria & Completed SRS front matter and conventions,
 introduced the glossary and constants register, and prepared the shared
 requirement structure (\#131).\\
-14 October 2026 & Rayan Nasrallah & Added safety-critical requirements SAF-RAY-001 to SAF-RAY-008 to Section 12.2 (\#91).\\
-14 October 2026 & Moustafa Moustafa & Wrote Section 8.2, Product Use Case Table (\#108).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the appendix and my generative AI use disclosure (\#139).\\
 15 October 2026 & Ahmed Elzaria & Specified guided learning activities and formal lesson behaviour; clarified pass-based advancement within adult-selected lessons (\#132).\\
 15 October 2026 & Ahmed Elzaria & Added safety-critical requirements SAF-AHM-001 and SAF-AHM-002 for drawing-input integrity (\#135).\\
@@ -5717,8 +5717,9 @@ the number of attempts.\\
 NFR-UX-017.\\
 \emph{Hazards:} H-MOU-005.
 
-\item[SAF-MOU-003] No content on any child-facing screen shall flash more
-than three times in any one-second period.\\
+\item[SAF-MOU-003]\phantomsection\label{req:SAF-MOU-003} No content on 
+any child-facing screen shall flash more than three times in any one-second 
+period.\\
 \emph{Rationale:} flashing can trigger seizures in rare cases, the only
 physical harm in the hazard analysis (H-MOU-001). NFR-UX-001 bans flashing
 while the child is drawing, but feedback, the lesson-end message and screen
@@ -5813,13 +5814,13 @@ Section~\ref{sec:speed} (NFR-PERF-001, NFR-PERF-002, and NFR-PERF-003).}
   \reqrationale{The anticipated system deployment is to a small number 
 of schools or households. The exact session target is deferred to
 the VnV Plan.}
-  \reqfit{To be defined in the VnV Plan; pass when the system sustains
+  \reqfit{Pass when the system sustains
 the latency thresholds outlined in Section~\ref{sec:speed} under the 
 agreed concurrent load without error or failure.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\goalref{1}; \goalref{5}}
-  \reqtraces{\reqref{FR-PERF-001}; \reqref{FR-PERF-002}; \reqref{FR-PERF-003}}
+  \reqtraces{\reqref{NFR-PERF-001}; \reqref{NFR-PERF-002}; \reqref{NFR-PERF-003}}
 \end{srsrequirement}
 
 \subsection{Scalability or Extensibility Requirements}
@@ -6058,15 +6059,15 @@ fails consecutively three times with an appropriate error message logged.}
 beyond the child's first name and non-identifying username.}
   \reqrationale{Personal information about children is not necessary for
 Squigglr to function
-and minimizing collected data limits security risks. The supervising
-adult's contact details are collected at account registration if identifying
-information is needed; this supports Squigglr's
+and minimizing collected data limits security risks. If identifying information 
+was needed, it would make sense to collect the adult's information rather
+than the child; this supports Squigglr's
 accountability, consent, and access obligations under PIPEDA~\cite{pipeda}.}
   \reqfit{Passes if there is no field during child registration beyond
 a first name and non-identifying username.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{}
+  \reqsources{\srcref{SRC-004}}
   \reqtraces{BR-001; \reqref{NFR-SEC-001}}
 \end{srsrequirement}
 
@@ -6078,7 +6079,7 @@ which is sufficient for a single-instance capstone project like Squigglr.
 \subsection{Audit Requirements}
 
 \begin{srsrequirement}{NFR-SEC-005}{Server-side logging of authentication events}
-  \reqshall{Squigglr shall record every failed login session-timeout event 
+  \reqshall{Squigglr shall record every failed login and session timeout event 
 in a server-side audit log; the log entries shall not
 be accessible to adult users through any application interface.}
   \reqrationale{Audit logs are useful for security as they provide diagnostics
@@ -6100,6 +6101,7 @@ and that a mock adult account is denied access to the audit log through request.
   \reqshall{Squigglr shall sanitise all text inputs supplied by a user
 to prevent injection attacks, including but not limited to SQL injection 
 and cross-site scripting (XSS).}
+  \reqrationale{Sanitizing user inputs protects against injection attacks.}
   \reqfit{Passes if a pre-prepared set of SQL injections and XSS probe strings 
   are sanitized through every text submission field in the application and API
   text submission endpoint.}
@@ -6152,7 +6154,7 @@ PIPEDA~\cite{pipeda}.}
 hosted for Canadian schools that collects personal information in the 
 course of commercial-like activity.}
   \reqfit{Confirm that Squigglr's collection and handling of personal 
-information complies with PIPEDA obligations.}
+information complies with PIPEDA obligations with a review team.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{}
@@ -6164,7 +6166,7 @@ information complies with PIPEDA obligations.}
 of Information and Protection of Privacy Act (FIPPA) before adoption
 by any school boards.}
   \reqrationale{Applicability is TBD, adoption by school board is out of the scope of the project.}
-  \reqfit{Before any Ontario school board adoption, confirm that Squigglr is compliant with FIPPA.}
+  \reqfit{Before any Ontario school board adoption, confirm that Squigglr is compliant with FIPPA with a review team.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{}
@@ -6184,8 +6186,8 @@ criteria~\cite{wcag22} encompassed by \reqref{NFR-UX-001},
 \reqref{NFR-UX-004}, \reqref{NFR-UX-005}, and \reqref{NFR-UX-018}--\reqref{NFR-UX-023}.}
   \reqrationale{The selected criteria follow the specialist 
   recommendation (SRC-005), supervisor advice (SRC-008), and OI-08. 
-  Full WCAG conformance is a stretch goal (Section~25).}
-  \reqfit{Confirm that Squigglr is compliant with the listed WCAG 2.2 success criteria.}
+  Full WCAG conformance is a stretch goal Section~\ref{sec:waiting-room}.}
+  \reqfit{Confirm that Squigglr is compliant with the listed WCAG 2.2 success criteria with a review team.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{}
@@ -7530,19 +7532,19 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \texttt{SAF-RAY-003} & Preservation of unsaved attempts & Must & PH-2 \\
 \addlinespace
-\texttt{SAF-RAY-004} & Non-diagnostic summaries and exports & Must & PH-3 \\
+\texttt{SAF-RAY-004} & Non-diagnostic summaries and exports & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-005} & Automatic lesson termination & Must & PH-2 \\
 \addlinespace
-\texttt{SAF-RAY-006} & Restart and extension history & Must & PH-3 \\
+\texttt{SAF-RAY-006} & Restart and extension history & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-007} & Active-learner identification and isolation & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-008} & Adult-setting bounds and authorization & Must & PH-2 \\
 \addlinespace
-\texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-2 \\
+\texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-1 \\
 \addlinespace
-\texttt{SAF-AHM-002} & Drawing-coordinate integrity & Must & PH-2 \\
+\texttt{SAF-AHM-002} & Drawing-coordinate integrity & Must & PH-1 \\
 \addlinespace
 \texttt{SAF-SHA-001} & Authentication, encryption and session timeout & Must & PH-2 \\
 \addlinespace
@@ -9105,22 +9107,15 @@ system should advance, retry, suggest an earlier stage or end the
 lesson. These courses helped me move from describing a feature to
 specifying behaviour that somebody can actually verify.
 
-\textbf{Shamil:} 
-
-Identifying mitigation and elimination strategies for the
-hazards went well for me because I have previously taken classes on requirements 
-and testing. I was able to select proper testing methods like integration testing 
-or identify which of my original testing ideas were not fit for the project. For
-instances where the AI refinement provider returned incorrect content, I considered 
-fuzz testing to assess the durability and coverage of the API guardrails. After 
-realizing that this would require human confirmation regardless, I decided to just 
-have a human tester recreate the problematic outputs after modifying the guardrails. 
-Similarly, I recognized that grey-box testing was suited 
-for the case in which confidential user data is mistakenly shared with a non-essential
-third-party service (H-SHA-002). Testers can run different scenarios and observe the
-public-facing API to see if the target content is being shared or not. The requirements
-course also covered testing in relation to requirements, so I was able to connect
-the safety requirements to specific hazards without issue.
+\textbf{Shamil:} My software requirements course SFWRENG 3RA3 and
+my software testing course 3S03 will help most in being successful for
+the capstone project. For the requirements course, we also had a SRS
+project that we had to complete by the end of the semester. I gained
+experience in using PDF version control, Github issues and collaboration,
+using a template, and writing many identical or similar requirements 
+sections. The testing course taught me the different classifications 
+of testing techniques that I had to consider while choosing mitigation
+strategies and fit criteria.
 
 \textbf{Moustafa:} Two courses help me the most. The first is SFWRENG 4HC3,
 Human-Computer Interaction. A lot of what it teaches feels obvious at first,
@@ -9197,7 +9192,7 @@ then building prototypes and asking adults to walk through the flows.
 For Rayan and Moustafa, this was in the form of interviews and questionnaires 
 with domain specialists. They interviewed three specialists on October 1,
 2026, because a live conversation let them ask follow-up questions and explore
-unexpected topics, such as who should control a child's progression. the written 
+unexpected topics, such as who should control a child's progression. The written 
 questionnaire, answered between October 2 and 4, 2026, covered the topics the 
 interview did not reach, such as refinement in the creative space and letter 
 activities. Using both worked well together: the interview showed the team what

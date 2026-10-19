@@ -5830,52 +5830,18 @@ consecutive runs.}
 \subsection{Robustness or Fault-Tolerance Requirements}
 \label{sec:robustness}
 
-\begin{srsrequirement}{NFR-PERF-005}{Attempt preservation on network loss}
-  \reqshall{Squigglr shall retain any completed attempt on the device if 
-connection is lost during the attempt or after the latest attempt until 
-the server confirms it is saved (after connection is restored).}
-  \reqrationale{G.5 requires complete practice records; losing their current 
-attempt may upset a child.}
-  \reqfit{Pass when attempts are saved after connection is intentionally
-cut during a mock attempt three times consecutively.}
+\begin{srsrequirement}{NFR-PERF-005}{Submit attempt on network loss and reconnection}
+  \reqshall{Squigglr shall submit each completed attempt not yet confirmed
+saved by the server but saved locally local so it can be submitted after reconnection.}
+  \reqrationale{A network interruption may outlast the application session;
+Squigglr can automatically submit the finished work for evaluation without
+asking the child to repeat it or submit it manually.}
+  \reqfit{Pass when an attempt completed offline is successfully submitted after
+connectivity is restored three consecutive times.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{5}}
-  \reqtraces{\reqref{SAF-RAY-003}; \ucref{003}}
-\end{srsrequirement}
-
-\begin{srsrequirement}{NFR-PERF-006}{Refinement provider fallback}
-  \reqshall{Squigglr shall display the child's original unrefined 
-strokes when the AI refinement service is unavailable or returns 
-misformatted or inappropriate output.}
-  \reqrationale{Ignoring AI refinement in the rare cases where
-the output is missing or unusable creates a smoother experience
-for the child and prioritizes avoiding interruptions to acquiring
-full refinement coverage.}
-  \reqfit{Pass when the child's original strokes are kept ten times
-consecutively after intentionally returning misformatted outputs or 
-making the mock service unavailable.}
-  \reqpriority{Must}
-  \reqphase{PH-2}
-  \reqsources{\goalref{4}; \srcref{009.01}}
-  \reqtraces{\ucref{003}; \ucref{006}}
-\end{srsrequirement}
-
-\begin{srsrequirement}{NFR-PERF-007}{Save failure transparency}
-  \reqshall{Squigglr shall not report a successful save if a 
-save operation fails and shall instead display a visible notification 
-to the adult describing which record was not saved.}
-  \reqrationale{G.5 requires complete and meaningful practice records.
-Silently losing a save and reporting success would inform the adult 
-based on a record that does not reflect the child's actual practice. 
-Complements \reqref{SAF-SHA-003}.}
-  \reqfit{Pass when Squigglr does not display a success confirmation and 
-instead shows a clearly visible failure notification to the adult identifying
-the unsaved record.}
-  \reqpriority{Must}
-  \reqphase{PH-2}
-  \reqsources{\goalref{5}}
-  \reqtraces{\reqref{SAF-SHA-003}; \ucref{009}}
+  \reqtraces{\reqref{FR-REC-009} \reqref{SAF-RAY-003}; \ucref{003}}
 \end{srsrequirement}
 
 \subsection{Capacity Requirements}
@@ -5974,11 +5940,11 @@ HTTPS or is blocked.}
 descriptions of adjacent systems leaves the requirements open to substitutes.}
   \reqfit{Confirm that the error message displays for a mock outage of the 
   authentication and hosting services. (For AI refinement, provider 
-  unavailability protocol is described in \reqref{NFR-PERF-006})}
+  unavailability protocol is described in \reqref{FR-CRT-020})}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{}
-  \reqtraces{ASM-005; \reqref{NFR-PERF-006}; \ucref{001}}
+  \reqtraces{ASM-005; \reqref{FR-CRT-020}; \ucref{001}}
 \end{srsrequirement}
 
 \subsection{Productization Requirements}
@@ -6121,18 +6087,19 @@ Pass when the request is rejected three times consecutively.}
 
 \subsection{Integrity Requirements}
 
-\begin{srsrequirement}{NFR-SEC-003}{Immutability of confirmed attempt records}
-  \reqshall{Squigglr shall not allow an attempt record that has been confirmed 
-saved by the server to be modifiable by any subsequent client request.}
-  \reqrationale{Immutability on attempt records ensures adult trust in the
-accuracy of their child's records (G.5). The option to delete account information
-on request is standard, but changing existing records threatens non-repudiation.}
-  \reqfit{Pass when a modification request on an already confirmed saved record
-fails consecutively three times with an appropriate error message logged.}
-  \reqpriority{Must}
+\begin{srsrequirement}{NFR-SEC-003}{Audit for saved record modification}
+  \reqshall{Squigglr shall create a security audit event for
+each rejected request to modify saved records without storing the record's 
+contents in the event.}
+  \reqrationale{Saved records must remain unchanged; this
+requirement adds detection of attempted tampering while keeping child record
+contents out of security events.}
+  \reqfit{Pass when three modification attempts against a confirmed saved
+record are rejected, creating an audit, three consecutive times.}
+  \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\goalref{5}; \goalref{6}}
-  \reqtraces{}
+  \reqtraces{\reqref{SAF-RAY-003}}
 \end{srsrequirement}
 
 \subsection{Privacy Requirements}
@@ -7638,11 +7605,7 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Robustness or Fault-Tolerance Requirements (Section 12.4)}}\\
 \addlinespace
-\reqref{NFR-PERF-005} & Attempt preservation on network loss & Must & PH-2 \\
-\addlinespace
-\reqref{NFR-PERF-006} & Refinement provider fallback & Must & PH-2 \\
-\addlinespace
-\reqref{NFR-PERF-007} & Save failure transparency & Must & PH-2 \\
+\reqref{NFR-PERF-005} & Submit attempt on network loss and reconnection & Must & PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Capacity Requirements (Section 12.5)}}\\
 \addlinespace
@@ -7690,7 +7653,7 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Integrity Requirements (Section 15.2)}}\\
 \addlinespace
-\reqref{NFR-SEC-003} & Immutability of confirmed attempt records & Must & PH-2 \\
+\reqref{NFR-SEC-003} & Audit for saved record modification & Should & PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Privacy Requirements (Section 15.3)}}\\
 \addlinespace

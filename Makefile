@@ -34,10 +34,14 @@ all: $(patsubst %.tex, %.pdf, $(wildcard **/*.tex))
 	cd $(dir $<) && $(PANDOC_CMD) $(notdir $<) -o $(notdir $@)
 
 # Rule for compiling .tex to .pdf
+# The fourth pdflatex pass lets the table of contents settle: in long documents
+# such as the SRS, resolved references and citations move page breaks after the
+# third pass, which left stale page numbers in the contents.
 %.pdf: %.tex
 	@echo "Compiling $< to $@"
 	$(call COMPILE_TEX,$<)
 	$(call COMPILE_BIBTEX,$<)
+	$(call COMPILE_TEX,$<)
 	$(call COMPILE_TEX,$<)
 	$(call COMPILE_TEX,$<)
 

@@ -12,6 +12,7 @@
 \usepackage{tabularx}
 \usepackage{enumitem}
 \usepackage{float}
+\usepackage{needspace}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 \usepackage[numbers]{natbib}
@@ -180,6 +181,19 @@ appendix and my generative AI use disclosure.\\
 requirement SAF-SHA-006 and restored NFR-CULT-002, so no identifier is reused;
 removed vendor names from requirements; fixed SAF-SHA-003, the sources table
 layout, UC-005, child navigation and reflection answers 5 and 6 (\#82).\\
+19 October 2026 & Muhammad Huzaifah & Final audit: aligned SAF-RAY-005,
+SAF-RAY-006 and the lesson-end summaries with the extension rule; kept each
+stage's attempt counts across stage changes; fixed the suggestion and history
+rules of the formal specification; let NFR-UX-017 allow the SAF-RAY-004
+statement; regenerated the Section 28 traceability tables and the UC-008 and
+UC-009 requirement lists; completed the product input table.\\
+19 October 2026 & Muhammad Huzaifah & Final audit: changed NFR-COMP-002 from
+FIPPA to MFIPPA, which covers school boards; corrected the PIPEDA rationale, the
+SRC-005.02 statement and the requirement counts in Shamil's reflection.\\
+19 October 2026 & Muhammad Huzaifah & Final audit: fixed the NFR-COMP-001
+margin overflow, the Open Issues column widths and a heading left alone at a
+page break; the build now runs a fourth pass so the contents page numbers are
+correct.\\
 \end{longtable}
 
 ~\\
@@ -1109,8 +1123,6 @@ presentation of web pages. & Section 10\\
 \textbf{EARS} & Easy Approach to Requirements Syntax. & Team reflection\\
 \textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}. &
 \hyperref[sec:facts]{Section 5.1}\\
-\textbf{FIPPA} & Freedom of Information and Protection of Privacy Act (Ontario).
-& Section 17\\
 \textbf{FR} & Functional requirement. & \hyperref[sec:functional]{Section 9}\\
 \textbf{GB} & Gigabyte. & \hyperref[sec:costs]{Section 23}\\
 \textbf{GDPR} & General Data Protection Regulation (European Union). & Section
@@ -1135,6 +1147,8 @@ used for network communication. & Section 13\\
 \hyperref[sec:changes]{Section 27.1}\\
 \textbf{LLM} & Large language model. & AI-use disclosure\\
 \textbf{MB} & Megabyte. & \hyperref[sec:new-problems]{Section 20}\\
+\textbf{MFIPPA} & Municipal Freedom of Information and Protection of Privacy
+Act (Ontario), which covers school boards. & Section 17\\
 \textbf{MG} & Module Guide, a high-level description of a system's modules and
 their relationships. & Module Guide document\\
 \textbf{MIS} & Module Interface Specification, a detailed description of module
@@ -1919,10 +1933,10 @@ Product use cases: \ucref{002}, \ucref{004}.
 \item[BUC-003 Practise a guided lesson (BE-003)] The adult starts the lesson.
 The child watches the demonstration and draws an attempt at each stage. The work
 checks each attempt against the stage's criteria, gives feedback, and moves the
-child on or offers a retry. The lesson ends when the child finishes it or
-reaches \texttt{ATTEMPT\_LIMIT}, or \texttt{ATTEMPT\_LIMIT\_MAX} when extended,
-and every attempt is recorded (BR-002). Product use cases: \ucref{003},
-\ucref{008}.
+child on or offers a retry. The lesson ends when the child finishes it, reaches
+\texttt{ATTEMPT\_LIMIT} or, when extended, uses up the extension or reaches
+\texttt{ATTEMPT\_LIMIT\_MAX}, and every attempt is recorded (BR-002). Product
+use cases: \ucref{003}, \ucref{008}.
 \item[BUC-004 Respond to repeated difficulty (BE-004)] The work suggests going
 back a stage. The adult decides whether to accept; a declined or ignored
 suggestion changes nothing (BR-003). Product use case: \ucref{005}.
@@ -2470,8 +2484,17 @@ attempt limits (\mbox{\reqref{FR-LRN-009}}). Missing, invalid or ambiguous input
 is not passed and is not counted (\mbox{\reqref{FR-LRN-010}}). \\
 \addlinespace
 Strokes and edits in the creative space: draw, move, resize, recolour, erase,
-undo & Child & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-008} & To be
-stated with the FR-CRT requirements. \\
+undo & Child & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-008} & An edit
+that cannot be applied leaves the drawing as it was (\ucref{006}, failure flow
+2a); undo goes back no further than the drawing as it was when the child opened
+it (\mbox{\reqref{FR-CRT-007}}). \\
+\addlinespace
+The child's mark that a creative drawing is finished & Child & \ucref{007} &
+\mbox{\reqref{FR-CRT-010}}, \mbox{\reqref{FR-CRT-015}},
+\mbox{\reqref{FR-CRT-020}} & An empty drawing, or a drawing of an item outside
+the supported set, is left unchanged (\mbox{\reqref{FR-CRT-015}}); a failed
+refinement leaves the drawing as finished (\mbox{\reqref{FR-CRT-020}}). Without
+the mark, no refinement starts (\mbox{\reqref{FR-CRT-010}}). \\
 \addlinespace
 Request to turn refinement off or restore the original drawing & Child or
 supporting adult & \ucref{007}, \ucref{010} &
@@ -2480,9 +2503,9 @@ refinement leaves the drawing unchanged (\goalref{4}). \\
 \addlinespace
 Decision on a suggestion to go back a stage & Supporting adult & \ucref{005} &
 \mbox{\reqref{FR-LRN-018}}, \mbox{\reqref{FR-LRN-019}}, SAF-RAY-001 & A declined
-or ignored suggestion changes nothing, and the suggestion stays pending without
-blocking practice until an adult decides (SAF-RAY-001; BR-003). Only an adult
-can accept it. \\
+suggestion changes nothing; an ignored (unanswered) suggestion stays pending
+without blocking practice until an adult decides (SAF-RAY-001; BR-003). Only an
+adult can accept it. \\
 \addlinespace
 Changes to a child's settings: accessibility, audio, whether refinement is on &
 Supporting adult & \ucref{010} & NFR-UX-010, NFR-UX-011 & A setting changes only
@@ -2493,6 +2516,11 @@ Request to view a child's history, attempts or progress summaries & Supporting
 adult & \ucref{009}, \ucref{010} & BR-001; NFR-SEC-001 & A request from anyone
 other than the adult who holds the account is refused, and nothing is shown
 (BR-001). \\
+\addlinespace
+Choice of the lessons, dates and recorded values a progress summary shows &
+Supporting adult & \ucref{009} & \mbox{\reqref{FR-PRG-007}},
+\mbox{\reqref{FR-PRG-008}} & A choice that matches no saved attempt record gives
+a summary stating that no practice is recorded (\mbox{\reqref{FR-PRG-008}}). \\
 \addlinespace
 Lesson catalogue, ranges of the adult-set values and fixed values & Squigglr
 team & -- & \mbox{\reqref{FR-LRN-001}}, BR-009 & Not entered by users; set and
@@ -2538,7 +2566,7 @@ Suggestion to go back a stage, or an extension while the child improves &
 Supporting adult & \ucref{005} & \mbox{\reqref{FR-LRN-019}},
 \mbox{\reqref{FR-LRN-020}} \\
 \addlinespace
-End of a lesson at \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, with
+End of a lesson at \texttt{ATTEMPT\_LIMIT} or at the end of an extension, with
 progress saved & Child; supporting adult & \ucref{003} &
 \mbox{\reqref{FR-LRN-021}}, SAF-RAY-005, SAF-RAY-006 \\
 \addlinespace
@@ -2609,9 +2637,10 @@ for a child. & The chosen lesson is ready for the adult to start. & \goalref{1},
 \phantomsection\label{uc:003}%
 UC-003 & \emph{Child:} practise a guided lesson & An adult starts a lesson for
 the child. & The child moves to the next stage after an attempt meets
-\texttt{STAGE\_PASS}, or retries; the lesson ends when the child finishes it or
-reaches \texttt{ATTEMPT\_LIMIT}, or \texttt{ATTEMPT\_LIMIT\_MAX} when extended
-(BR-002), and the furthest stage reached is saved. & \goalref{1}, \goalref{2},
+\texttt{STAGE\_PASS}, or retries; the lesson ends when the child finishes it,
+reaches \texttt{ATTEMPT\_LIMIT} or, when extended, uses up the extension or
+reaches \texttt{ATTEMPT\_LIMIT\_MAX} (BR-002), and the furthest stage reached is
+saved. & \goalref{1}, \goalref{2},
 \goalref{3} \\
 \addlinespace
 \phantomsection\label{uc:004}%
@@ -2843,8 +2872,10 @@ without improving.} \reqfield{Trigger}{Squigglr suggests going back a stage
   \item Squigglr shows the suggestion and keeps it pending without blocking
   practice (\mbox{SAF-RAY-001}).
   \item The adult completes the adult check and accepts.
-  \item Squigglr moves the lesson back to the earlier stage the adult chose,
-  with the stage's counts at zero (Section~\ref{sec:fr-formal}).
+  \item Squigglr moves the lesson back to the earlier stage the adult chose.
+  That stage keeps its attempt counts from earlier in the lesson, so the
+  per-stage limit and single extension of BR-002 still hold
+  (Section~\ref{sec:fr-formal}).
 \end{enumerate}
 \noindent\textit{Alternative flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
@@ -2954,8 +2985,7 @@ record (BR-004, BR-005).}
 \end{description}
 \reqfield{Postconditions}{The record matches what the child drew and holds no
 overall score, diagnosis or comparison (\mbox{SAF-RAY-004}).}
-\reqfield{Requirements}{\reqref{FR-REC-001},
-\reqref{FR-REC-005}--\reqref{FR-REC-008};
+\reqfield{Requirements}{\reqref{FR-REC-001}--\reqref{FR-REC-010};
 \mbox{\reqref{FR-LRN-009}}--\mbox{\reqref{FR-LRN-012}}; \mbox{SAF-RAY-003},
 \mbox{SAF-RAY-004}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-007}; \mbox{SAF-AHM-001}.}
 \reqfield{Sources}{\goalref{5}; \mbox{SRC-001}.}
@@ -2988,9 +3018,11 @@ overall score, diagnosis or comparison (\mbox{SAF-RAY-004}).}
   (\mbox{SAF-RAY-003}).
 \end{description}
 \reqfield{Postconditions}{The adult has seen the child's progress; nothing is
-changed.} \reqfield{Requirements}{\reqref{FR-PRG-008};
+changed.} \reqfield{Requirements}{\reqref{FR-PRG-001}--\reqref{FR-PRG-012};
 \mbox{\reqref{FR-LRN-022}}; \mbox{SAF-RAY-003}, \mbox{SAF-RAY-004},
-\mbox{SAF-RAY-006}, \mbox{SAF-RAY-008}; BR-001, BR-006.}
+\mbox{SAF-RAY-006}, \mbox{SAF-RAY-008}; \mbox{\reqref{NFR-UX-003}},
+\mbox{\reqref{NFR-UX-014}}, \mbox{\reqref{NFR-UX-017}};
+\mbox{\reqref{NFR-PERF-003}}; \mbox{\reqref{NFR-SEC-001}}; BR-001, BR-006.}
 \reqfield{Sources}{\goalref{6}; \mbox{SRC-005.02}.}
 
 \subsubsection{UC-010: Review history and change settings}
@@ -3499,9 +3531,12 @@ whether the single stage extension has been granted; $x\in\mathbb{N}_0$ counts
 evaluable attempts consumed \emph{after} that grant, with $0\le x\le e_p$ and
 $x=0$ when $z=0$. Finally, $f\in L$ is the furthest stage reached in the lesson.
 On a stage change (either normal pass-based progression or an authorized adult
-adjustment), the stage-specific counts, streak, history, pending suggestion and
-extension state reset to zero or empty; $f$ retains the furthest stage reached
-so far. \emph{No child ability estimate} is part of this state (BR-006).
+adjustment), the streak, history and pending suggestion reset to zero or empty.
+The counts $n_f,n_a$ and the extension state $z,x$ are kept for each drawing
+stage of the lesson record, and the symbols denote those of the active stage, so
+a stage entered again in the same lesson keeps its earlier counts and cannot be
+extended a second time (BR-002); $f$ retains the furthest stage reached so far.
+\emph{No child ability estimate} is part of this state (BR-006).
 
 \paragraph{Drawing input and attempt classification.}
 An attempt is a finite ordered list of stylus strokes $X=(x_1,\ldots,x_j)$,
@@ -3588,9 +3623,12 @@ q=\textsf{active}\land s=0\land l\in\{E,I\}\land k\ge d_p
 \]
 The rule applies to drawing levels $E$ and $I$; $T$ has no preceding drawing
 level. A suggestion changes $q$ to $\textsf{suggested}$ and $s$ to $1$, but
-\emph{does not change $l$}. Declining or ignoring a suggestion resets the streak
+\emph{does not change $l$}, and the child keeps practising while it is pending
+(SAF-RAY-001). An adult declining a suggestion clears it and resets the streak
 counter $k$ to zero, preventing an immediate re-offer; a new suggestion requires
-another $d_p$ consecutive failures.
+another $d_p$ consecutive failures. A suggestion that no adult answers is
+ignored: it stays pending, changes nothing and prevents a second suggestion
+(BR-003, SAF-RAY-001).
 
 \paragraph{State-transition rules.}
 Table~\ref{tab:lrn-transitions} gives the level-changing and stage-stopping
@@ -3634,26 +3672,35 @@ after viewing the example & Set $l=T$ within the same lesson; initialize
 drawing-stage counters. This does not start another lesson or require new adult
 authorization.\\
 \addlinespace
-Finalize evaluable attempt & $l\in A$, $q=\textsf{active}$ & Classify
-$C_{\ell,l}(X)$ and $G(l)$; report pass/fail using the stage threshold;
-increment $n_a$ and, for non-pass, $n_f,k$. If $z=1$, increment $x$ for this
-additional evaluable attempt. On pass, record the result and apply the
-prescribed forward-stage or lesson-end transition below.\\
+Finalize evaluable attempt & $l\in A$, $q\in\{\textsf{active},
+\textsf{suggested}\}$ & Classify $C_{\ell,l}(X)$ and $G(l)$; report pass/fail
+using the stage threshold; append $v_{\ell,l}(X)$ to $H$; increment $n_a$ and,
+for non-pass, $n_f,k$. If $z=1$, increment $x$ for this additional evaluable
+attempt. The limit, extension and suggestion rules below use the updated $H$
+and counts. On pass, record the result and apply the prescribed forward-stage
+or lesson-end transition below.\\
 \addlinespace
 Interrupted or invalid input & Missing finalization or
 $C_{\ell,l}(X)=\textsf{invalid}$ & Do not pass or change level. Neither $n_a$
-nor $n_f$ is incremented, and no successful stage transition is permitted.\\
+nor $n_f$ is incremented, $H$ is unchanged, and no successful stage transition
+is permitted.\\
 \addlinespace
 Offer suggestion & $\operatorname{SuggestBack}(\sigma)$ & Set $s=1$,
 $q=\textsf{suggested}$; leave $\ell,l$ unchanged.\\
 \addlinespace
-Ignore or decline suggestion & $s=1$ & Clear $s$, reset $k=0$, return $q$ to
-$\textsf{active}$; leave $\ell,l$ unchanged and retain the attempt history $H$
-and cumulative stage counts.\\
+Adult declines suggestion & $s=1$ and an authorized adult declines & Clear $s$,
+reset $k=0$, return $q$ to $\textsf{active}$; leave $\ell,l$ unchanged and
+retain the attempt history $H$ and cumulative stage counts.\\
+\addlinespace
+Suggestion not answered & $s=1$ and no adult response & Keep $s=1$ and
+$q=\textsf{suggested}$; leave $\ell,l$ unchanged. Attempts continue to be
+finalized and counted.\\
 \addlinespace
 Adult accepts suggestion & $s=1$ and an authorized adult chooses a preceding
-level & Activate the chosen earlier level, clear $s$, reset stage counts; retain
-the lesson's furthest stage reached.\\
+level & Activate the chosen earlier level with the counts and extension state
+kept for it in this lesson record (zero if not yet practised); clear $s$, reset
+$k$ and $H$, and return $q$ to $\textsf{active}$; retain the lesson's furthest
+stage reached.\\
 \addlinespace
 End at limit & The finalized attempt did not pass and either $z=0\land n_f\ge
 b_p\land (\neg\operatorname{Improving}(H,p)\lor n_a\ge h_p)$, or $z=1\land(x\ge
@@ -3668,8 +3715,9 @@ this extension or offer a conflicting return suggestion.\\
 \addlinespace
 Passing a nonfinal drawing stage & $\operatorname{Pass}(X,l,p)$ and
 $l\in\{T,E\}$ & Save the passed attempt at its original stage; automatically set
-$l'=\operatorname{Next}(l)$ without adult action. Reset stage-specific counters
-and update $f$; leave $\ell$ unchanged.\\
+$l'=\operatorname{Next}(l)$ without adult action, with the counts and extension
+state kept for $l'$ in this lesson record (zero on first entry). Reset $k$ and
+$H$, clear any pending suggestion and update $f$; leave $\ell$ unchanged.\\
 \addlinespace
 Passing the final drawing stage & $\operatorname{Pass}(X,I,p)$ & Save the passed
 independent attempt, set $q'=\textsf{ended}$ and $f'=I$; complete the current
@@ -5032,15 +5080,17 @@ acknowledgement from the approved feedback list.}
 
 \begin{srsrequirement}{NFR-UX-017}{Plain wording in adult views}
   \reqshall{Adult views shall use plain language, shall explain each glossary
-term where it first appears in a view, and shall not use diagnostic, clinical or
-ranking words.} \reqrationale{The TA asked that terms such as ``guidance level''
-be defined rather than left as jargon (\srcref{006}). Records describe practice
-only and are not an assessment (BR-006, SAF-RAY-004), and adults are not assumed
+term where it first appears in a view, and shall not describe the child in
+diagnostic, clinical or ranking terms.} \reqrationale{The TA asked that terms
+such as ``guidance level'' be defined rather than left as jargon
+(\srcref{006}). Records describe practice only and are not an assessment
+(BR-006, SAF-RAY-004), and adults are not assumed
 to have clinical training (Section~\ref{sec:stakeholders}).} \reqfit{Inspect
 every adult view against the glossary (Section~\ref{sec:glossary}) and the words
 ``diagnosis'', ``disorder'', ``delay'', ``score'', ``rank'' and ``below
 average''. Pass when every glossary term used is explained in the view and none
-of the listed words appears.}
+of the listed words describes the child; the statement that a summary is not an
+assessment or diagnosis, required by \reqref{SAF-RAY-004}, is allowed.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{BR-006; \srcref{006}} \reqtraces{\reqref{SAF-RAY-004};
@@ -5252,20 +5302,21 @@ describes practice only and is not an assessment or diagnosis.\\
 of the excluded content and finds the statement present.\\
 \emph{Hazards:} H-RAY-003, H-MOU-005.
 \item[SAF-RAY-005]\phantomsection\label{req:SAF-RAY-005} Squigglr shall end a
-lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX} when
-extended, without any action from the child, and shall keep the progress saved
-up to that point.\\
+lesson at \texttt{ATTEMPT\_LIMIT} or, when an improvement extension was granted,
+when the extension is used up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached,
+whichever comes first, without any action from the child, and shall keep the
+progress saved up to that point.\\
 \emph{Rationale:} the child is not expected to exit a lesson, and no adult may
 be watching (CA-001), so repeated failure must end on its own (G.3).\\
-\emph{Fit criterion:} in prepared sequences of failed attempts, each lesson ends
-at the limit in use with no child input, and the saved record matches the
-attempts made.\\
+\emph{Fit criterion:} in prepared sequences of failed attempts, with and without
+an improvement extension, and including settings in which the extension is used
+up before \texttt{ATTEMPT\_LIMIT\_MAX}, each lesson ends at the limit in use
+with no child input, and the saved record matches the attempts made.\\
 \emph{Hazards:} H-RAY-004.
 \item[SAF-RAY-006]\phantomsection\label{req:SAF-RAY-006} Squigglr shall record
-each lesson that ends at \texttt{ATTEMPT\_LIMIT} or
-\texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement extension, show the adult how
-many times these happened for each lesson, and keep earlier attempts when a
-lesson is restarted.\\
+each lesson that ends at one of the limits of SAF-RAY-005, and each improvement
+extension, show the adult how many times these happened for each lesson, and
+keep earlier attempts when a lesson is restarted.\\
 \emph{Rationale:} a restart could otherwise hide repeated failure from the
 adult.\\
 \emph{Fit criterion:} in prepared sequences that reach the limit and then
@@ -5766,28 +5817,34 @@ This section identifies legal and standards obligations that apply to Squigglr,
 including conditions relevant to adoption.
 
 \subsection{Legal Requirements}
+\begin{sloppypar}
 \begin{srsrequirement}{NFR-COMP-001}{PIPEDA}
   \reqshall{Squigglr shall comply with applicable obligations under
-PIPEDA~\cite{pipeda}.} \reqrationale{PIPEDA applies because Squigglr is a
-Canadian project hosted for Canadian schools that collects personal information
-in the course of commercial-like activity.} \reqfit{A review of every
-personal-information field Squigglr collects, and of every place it is stored or
-sent, against each of the ten PIPEDA fair information principles records each
-principle as met or not applicable, with none unmet.}
+PIPEDA~\cite{pipeda}.} \reqrationale{PIPEDA applies to organizations that
+collect, use or disclose personal information in the course of commercial
+activities. Squigglr has no sale or purchase planned
+(Section~\ref{sec:stakeholders}), so PIPEDA may not apply during the capstone,
+but it would apply if Squigglr were later offered commercially. Its ten fair
+information principles are the privacy baseline either way.} \reqfit{A review
+of every personal-information field Squigglr collects, and of every place it is
+stored or sent, against each of the ten PIPEDA fair information principles
+records each principle as met or not applicable, with none unmet.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\cite{pipeda}} \reqtraces{PIPEDA~\cite{pipeda}}
 \end{srsrequirement}
+\end{sloppypar}
 
-\begin{srsrequirement}{NFR-COMP-002}{Ontario FIPPA Applicability}
-  \reqshall{Squigglr shall be compliant with the Ontario Freedom of Information
-and Protection of Privacy Act (FIPPA) before adoption by any school boards.}
-  \reqrationale{FIPPA governs how Ontario public institutions, including school
-  boards, collect, keep and disclose personal information. Adoption by a school
-  board is outside this project, so the requirement is checked before the end of
-  the project, ready for any later adoption.}
+\begin{srsrequirement}{NFR-COMP-002}{Ontario MFIPPA Applicability}
+  \reqshall{Squigglr shall be compliant with the Ontario Municipal Freedom of
+Information and Protection of Privacy Act (MFIPPA)~\cite{mfippa} before
+adoption by any school boards.}
+  \reqrationale{MFIPPA governs how Ontario school boards and other municipal
+  institutions collect, keep, use and disclose personal information. Adoption by
+  a school board is outside this project, so the requirement is checked before
+  the end of the project, ready for any later adoption.}
   \reqfit{A review of Squigglr's collection, retention and disclosure of
-  personal information against FIPPA Part III records no unmet obligation.}
+  personal information against MFIPPA Part II records no unmet obligation.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\srcref{002}} \reqtraces{\reqref{NFR-SEC-001}; OI-06}
@@ -5827,9 +5884,9 @@ submission.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.07\textwidth}%
->{\raggedright\arraybackslash}p{0.47\textwidth}%
+>{\raggedright\arraybackslash}p{0.41\textwidth}%
 >{\raggedright\arraybackslash}p{0.13\textwidth}%
->{\raggedright\arraybackslash}p{0.12\textwidth}%
+>{\raggedright\arraybackslash}p{0.15\textwidth}%
 >{\raggedright\arraybackslash}p{0.11\textwidth}@{}} \caption{Open
 issues}\label{tab:openIssues}\\
 \toprule
@@ -6451,8 +6508,9 @@ Squigglr cannot see how long a child has used the device, or whether the child
 is distressed or uncomfortable (ASM-002), so long or repeated sessions can go
 unnoticed when no adult is watching. & The adult stays responsible for the
 child's time on the device (ASM-002) and can stop a session or mute audio
-(ASM-015); a lesson ends at \texttt{ATTEMPT\_LIMIT}, or at
-\texttt{ATTEMPT\_LIMIT\_MAX} when extended (G.3). Hazards: H-RAY-004, H-RAY-005.
+(ASM-015); a lesson ends at \texttt{ATTEMPT\_LIMIT} or, when extended, when the
+extension is used up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached (G.3). Hazards:
+H-RAY-004, H-RAY-005.
 \\
 \addlinespace
 Relationship with professional support & Occupational therapists and educators
@@ -7186,7 +7244,7 @@ PH-3 \\
 \addlinespace
 \reqref{NFR-COMP-001} & PIPEDA & Must & PH-3 \\
 \addlinespace
-\reqref{NFR-COMP-002} & Ontario FIPPA applicability & Must & PH-3 \\
+\reqref{NFR-COMP-002} & Ontario MFIPPA applicability & Must & PH-3 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Standards Compliance Requirements (Section
 17.2)}}\\
@@ -7653,6 +7711,8 @@ asks whether the child is improving. \\
 \end{longtable}
 }
 
+% Keep the heading with the caption, header and first row of its table.
+\needspace{12\baselineskip}
 \subsection{Unlikely Changes}
 
 {\small
@@ -7753,33 +7813,39 @@ G.3; SRC-008 & \ucref{001} & \reqref{FR-LRN-017}; \reqref{NFR-UX-003};
 G.1, G.3; SRC-005.01 & \ucref{002} & \reqref{FR-LRN-001}; \reqref{FR-LRN-016};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-009}; \reqref{NFR-UX-014} \\
 \addlinespace
-G.1--G.3; SRC-005.01 & \ucref{003} & \reqref{FR-LRN-002}--\reqref{FR-LRN-015};
-\reqref{FR-LRN-020}--\reqref{FR-LRN-023}; \reqref{NFR-UX-001};
-\reqref{NFR-UX-002}; \reqref{NFR-UX-004}; \reqref{NFR-UX-008};
-\reqref{NFR-UX-013}; \reqref{NFR-UX-015}; \reqref{NFR-PERF-001} \\
+G.1--G.3; SRC-005.01 & \ucref{003} & \reqref{FR-LRN-002}--\reqref{FR-LRN-011};
+\reqref{FR-LRN-013}--\reqref{FR-LRN-015};
+\reqref{FR-LRN-020}--\reqref{FR-LRN-023}; \reqref{FR-REC-001};
+\reqref{NFR-UX-001}; \reqref{NFR-UX-002}; \reqref{NFR-UX-004};
+\reqref{NFR-UX-008}; \reqref{NFR-UX-013}; \reqref{NFR-UX-015};
+\reqref{NFR-PERF-001} \\
 \addlinespace
 G.3; SRC-005.01 & \ucref{004} & \reqref{FR-LRN-016}; \reqref{FR-LRN-018};
 \reqref{FR-LRN-023} \\
 \addlinespace
 G.3; SRC-005.01 & \ucref{005} & \reqref{FR-LRN-018}; \reqref{FR-LRN-019};
-\reqref{NFR-UX-008}; \reqref{NFR-UX-014} \\
+\reqref{FR-REC-010}; \reqref{NFR-UX-008}; \reqref{NFR-UX-014} \\
 \addlinespace
-G.4; SRC-009.01 & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-030} \\
+G.4; SRC-009.01 & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-009};
+\reqref{FR-CRT-013}; \reqref{FR-CRT-021}--\reqref{FR-CRT-025};
+\reqref{FR-CRT-028}; \reqref{FR-CRT-029} \\
 \addlinespace
-G.4; SRC-009.01 & \ucref{007} & \reqref{NFR-UX-011}; \reqref{NFR-PERF-002};
-\reqref{FR-CRT-010}; \reqref{FR-CRT-030} \\
+G.4; SRC-009.01 & \ucref{007} & \reqref{FR-CRT-007};
+\reqref{FR-CRT-010}--\reqref{FR-CRT-022}; \reqref{FR-CRT-024};
+\reqref{FR-CRT-027}; \reqref{FR-CRT-030}; \reqref{NFR-UX-011};
+\reqref{NFR-PERF-002} \\
 \addlinespace
-G.5; SRC-001 & \ucref{008} & \reqref{FR-REC-001}--\reqref{FR-REC-010};
-\reqref{FR-PRG-006}; \reqref{FR-LRN-007}; \reqref{FR-LRN-009};
-\reqref{FR-LRN-021} \\
+G.5; SRC-001 & \ucref{008} & \reqref{FR-LRN-007}; \reqref{FR-LRN-009};
+\reqref{FR-LRN-021}; \reqref{FR-CRT-028};
+\reqref{FR-REC-001}--\reqref{FR-REC-009} \\
 \addlinespace
-G.6; SRC-005.02 & \ucref{009} & \reqref{FR-PRG-001}--\reqref{FR-PRG-012};
-\reqref{NFR-UX-003}; \reqref{NFR-UX-014}; \reqref{NFR-PERF-003};
-\reqref{NFR-SEC-001} \\
+G.6; SRC-005.02 & \ucref{009} & \reqref{FR-LRN-012}; \reqref{FR-CRT-028};
+\reqref{FR-PRG-001}--\reqref{FR-PRG-012}; \reqref{NFR-UX-003};
+\reqref{NFR-UX-014}; \reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
 \addlinespace
 G.3, G.6; SRC-008, SRC-009.01 & \ucref{010} & \reqref{FR-LRN-017};
-\reqref{NFR-UX-003}; \reqref{NFR-UX-014}; \reqref{NFR-PERF-003};
-\reqref{NFR-SEC-001} \\
+\reqref{FR-PRG-001}; \reqref{FR-PRG-006}; \reqref{NFR-UX-003};
+\reqref{NFR-UX-014}; \reqref{NFR-SEC-001} \\
 \end{longtable}}
 
 \subsection{Functional to nonfunctional requirements}
@@ -7807,6 +7873,9 @@ reciprocal links.
 \endhead
 \bottomrule
 \endlastfoot
+\reqref{FR-LRN-001}; \reqref{FR-LRN-002} & \reqref{NFR-MAINT-001} & NFR
+Traceability \\
+\addlinespace
 \reqref{FR-LRN-003} & \reqref{NFR-UX-013} & NFR Traceability \\
 \addlinespace
 \reqref{FR-LRN-007} & \reqref{NFR-PERF-001}; \reqref{NFR-PERF-004};
@@ -7818,20 +7887,16 @@ Traceability \\
 \reqref{FR-LRN-014} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015};
 \reqref{NFR-UX-016} & NFR Traceability \\
 \addlinespace
+\reqref{FR-LRN-015}; \reqref{FR-LRN-023} & \reqref{NFR-UX-008} & NFR
+Traceability \\
+\addlinespace
 \reqref{FR-LRN-022} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015} & NFR
 Traceability \\
 \addlinespace
-\reqref{FR-LRN-001}; \reqref{FR-LRN-002} & \reqref{NFR-MAINT-001} & NFR
+\reqref{FR-CRT-020} & \reqref{NFR-OPS-002} & NFR Traceability \\
+\addlinespace
+\reqref{FR-REC-009} & \reqref{NFR-PERF-005}; \reqref{NFR-SEC-003} & NFR
 Traceability \\
-\addlinespace
-\reqref{FR-CRT-010} & \reqref{NFR-PERF-002}; \reqref{NFR-UX-011} & NFR
-Traceability \\
-\addlinespace
-\reqref{FR-REC-006}; \reqref{FR-PRG-002} & \reqref{NFR-UX-017};
-\reqref{NFR-PERF-003} & NFR Traceability \\
-\addlinespace
-\reqref{FR-PRG-004}; \reqref{FR-PRG-005}; \reqref{FR-PRG-006} &
-\reqref{NFR-SEC-001}; \reqref{NFR-UX-003} & NFR Traceability \\
 \end{longtable}}
 
 \subsection{Hazards to mitigating requirements}
@@ -8118,8 +8183,9 @@ frame. An adult who knows the child (a parent or educator) should choose the
 level. The team agreed to leave progression to the supervising adult.
 \item[{\phantomsection%
   \label{src:005.02}SRC-005.02 (\intref{P2}{29:18})}] In a past project, a
-teacher personalized each child's activities through a separate adult interface
-that also showed progress.
+teacher personalized each child's activities through a separate adult
+interface. P2 suggested letting the teacher or caregiver change the activity
+and giving them a view of the child's progress.
 \item[{\phantomsection%
   \label{src:005.03}SRC-005.03 (\intref{P2}{31:42})}] Which progress measures
 help an adult should be decided with occupational therapists or educational
@@ -8624,10 +8690,10 @@ that talking to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering judgement about
 failure cases and edge conditions.
 
-\textbf{Shamil:} I contributed nine performance, four safety-critical, three
+\textbf{Shamil:} I contributed seven performance, four safety-critical, three
 operational and environmental, four maintainability and support, six security,
-two cultural, and two compliance requirements for a total of 30 requirements. I
-did not personally consult any clients or proxies to generate my requirements,
+one cultural, and three compliance requirements for a total of 28 requirements.
+I did not personally consult any clients or proxies to generate my requirements,
 but some of my requirements are traceable from other sections that were
 solicited from stakeholders. For example, \reqref{NFR-OPS-003} (no installation
 required) is based on constraints chosen after speaking with clients/proxies.

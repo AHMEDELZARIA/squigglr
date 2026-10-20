@@ -1390,6 +1390,16 @@ Squigglr ends the session and logs out the user.
 \emph{Unit:} minutes. \emph{Value:} team-defined; TBD.
 \emph{Trace:} SAF-SHA-004.\\
 \addlinespace
+\texttt{ADULT\_CHECK} & Whether a supporting adult must confirm an
+adult-only action before it can be carried out.
+\emph{Unit:} Boolean. \emph{Value:} required for adult-only actions.
+\emph{Trace:} SAF-RAY-001, SAF-RAY-008.\\
+\addlinespace
+\texttt{SUPPORTED\_DEVICES} & Supported browser and device combinations on
+which Squigglr is expected to function properly.
+\emph{Unit:} device/browser set. \emph{Value:} team-defined list; TBD.
+\emph{Trace:} SAF-RAY-002, H-RAY-002.\\
+\addlinespace
 \texttt{FAILED\_SAVES} & Number of consecutive failed save attempts
 used in the fit criterion sample for save failure notification tests.
 \emph{Unit:} save attempts (count). \emph{Value:} team-defined; TBD.
@@ -2659,7 +2669,7 @@ NFR-UX-011); changes need the adult check (SAF-RAY-008). \\
 \addlinespace
 Request to view a child's history, attempts or progress summaries &
 Supporting adult & \ucref{009}, \ucref{010} &
-BR-001; NFR-SEC TBD (\#82) &
+BR-001; NFR-SEC-001 &
 A request from anyone other than the adult who holds the account is
 refused, and nothing is shown (BR-001). \\
 \addlinespace
@@ -3221,7 +3231,7 @@ the child has a profile (\ucref{001}).}
 \reqfield{Postconditions}{The changes are saved, and every adult-set
 value is within its range.}
 \reqfield{Requirements}{\mbox{\reqref{FR-LRN-017}}; \mbox{SAF-RAY-008};
-NFR-UX-010, NFR-UX-011; NFR-SEC TBD (\#82); BR-001, BR-008.}
+NFR-UX-010, NFR-UX-011; NFR-SEC-001; NFR-SEC-003; NFR-SEC-005; BR-001, BR-008.}
 \reqfield{Sources}{\goalref{3}, \goalref{6}; \mbox{SRC-008}, \mbox{SRC-009.01}.}
 \endgroup
 
@@ -6853,8 +6863,8 @@ Links point to business rules (BR) and assumptions (ASM) in
 Section~\ref{sec:facts-assumptions}, open issues (OI) in
 Table~\ref{tab:openIssues} and likely changes (LC) in
 Table~\ref{tab:likelyChanges}. Critical assumptions (CA) and hazard
-identifiers (H-RAY, H-AHM, H-MUH) from the Hazard Analysis, and the safety
-requirements (SAF-RAY, SAF-AHM) in Safety-Critical Requirements, are given
+identifiers (H-RAY, H-AHM, H-SHA, H-MOU, H-MUH) from the Hazard Analysis, and the safety
+requirements (SAF-RAY, SAF-AHM, SAF-SHA, SAF-MOU, SAF-MUH) in Safety-Critical Requirements, are given
 as plain text.
 Nothing in this section is a requirement; each precaution names where the
 related requirement or decision is, or will be, recorded.
@@ -8315,17 +8325,20 @@ G.3; SRC-005.01 & \ucref{005} &
 \reqref{FR-LRN-018}; \reqref{FR-LRN-019}; \reqref{NFR-UX-008};
 \reqref{NFR-UX-014} \\
 \addlinespace
-G.4; SRC-009.01 & \ucref{006} & -- \\
+G.4; SRC-009.01 & \ucref{006} &
+\reqref{FR-CRT-001}--\reqref{FR-CRT-030} \\
 \addlinespace
 G.4; SRC-009.01 & \ucref{007} &
-\reqref{NFR-UX-011}; \reqref{NFR-PERF-002} \\
+\reqref{NFR-UX-011}; \reqref{NFR-PERF-002}; \reqref{FR-CRT-010};
+\reqref{FR-CRT-030} \\
 \addlinespace
 G.5; SRC-001 & \ucref{008} &
+\reqref{FR-REC-001}--\reqref{FR-REC-010}; \reqref{FR-PRG-006};
 \reqref{FR-LRN-007}; \reqref{FR-LRN-009}; \reqref{FR-LRN-021} \\
 \addlinespace
 G.6; SRC-005.02 & \ucref{009} &
-\reqref{FR-LRN-012}; \reqref{NFR-UX-003}; \reqref{NFR-UX-014};
-\reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
+\reqref{FR-PRG-001}--\reqref{FR-PRG-012}; \reqref{NFR-UX-003};
+\reqref{NFR-UX-014}; \reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
 \addlinespace
 G.3, G.6; SRC-008, SRC-009.01 & \ucref{010} &
 \reqref{FR-LRN-017}; \reqref{NFR-UX-003}; \reqref{NFR-UX-014};
@@ -8373,6 +8386,12 @@ NFR Traceability \\
 \addlinespace
 \reqref{FR-LRN-001}; \reqref{FR-LRN-002} &
 \reqref{NFR-MAINT-001} & NFR Traceability \\
+\addlinespace
+\reqref{FR-CRT-010} & \reqref{NFR-PERF-002}; \reqref{NFR-UX-011} & NFR Traceability \\
+\addlinespace
+\reqref{FR-REC-006}; \reqref{FR-PRG-002} & \reqref{NFR-UX-017}; \reqref{NFR-PERF-003} & NFR Traceability \\
+\addlinespace
+\reqref{FR-PRG-004}; \reqref{FR-PRG-005}; \reqref{FR-PRG-006} & \reqref{NFR-SEC-001}; \reqref{NFR-UX-003} & NFR Traceability \\
 \end{longtable}}
 
 \subsection{Hazards to mitigating requirements}

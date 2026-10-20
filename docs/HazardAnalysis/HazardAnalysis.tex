@@ -188,8 +188,8 @@ kept, in its original order.
   Privacy/security, Data integrity or Availability. Each team member's
   rows form a subsection with a table of their own, so each hazard ID
   carries its writer's prefix: Table~\ref{tab:fmea-ray} (H-RAY),
-  Table~\ref{tab:fmea-ahm} (H-AHM), Table~\ref{tab:fmea-mou} (H-MOU) and
-  the H-MUH table.
+  Table~\ref{tab:fmea-ahm} (H-AHM), Table~\ref{tab:fmea-sha} (H-SHA), 
+  Table~\ref{tab:fmea-mou} (H-MOU) and the Table~\ref{tab:fmea-mou} (H-MUH) table.
   True duplicates are combined by reference to one row. A coverage table
   then checks every component of Table~\ref{tab:components} against every
   category, across all the tables. Each recommended action begins with
@@ -763,10 +763,10 @@ different points (SRC-005, P1, 20:27).\\
 This section applies Failure Mode and Effect Analysis (FMEA) to the
 components of \progname{}. Subsection~\ref{sec:fmea-method} states how the
 analysis was carried out. Each team member's rows are in a table of their
-own: Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM),
-Table~\ref{tab:fmea-mou} (H-MOU) and Table~\ref{tab:fmea-muh} (H-MUH).
-Table~\ref{tab:fmea-coverage} places every row of the four tables under a
-component and checks that every
+own: Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM), 
+Table~\ref{tab:fmea-sha}, Table~\ref{tab:fmea-mou} (H-MOU) and 
+Table~\ref{tab:fmea-muh} (H-MUH). Table~\ref{tab:fmea-coverage} places 
+every row of the four tables under a component and checks that every
 component has been examined for every category of harm. Each row ends with
 the requirements of the Software Requirements Specification (SRS) that
 mitigate it; the Safety and Security Requirements section lists the
@@ -1676,7 +1676,7 @@ H-MUH-005, H-MUH-007, (H-RAY-002), (H-MOU-005) & (H-RAY-002) \\
 C6 Adult access and summaries & --- & H-RAY-001, H-RAY-003, H-MOU-005 &
 (H-MUH-004) & H-MOU-005, H-MUH-008, (H-MUH-003), (H-MUH-004) & --- \\
 \addlinespace
-C7 Hosting and authentication & --- & --- & --- & --- & --- \\
+C7 Hosting and authentication & H-RAY-002, (H-MUH-004), (H-MOU-005) & --- & H-SHA-001, H-SHA-002 & H-SHA-001, H-SHA-002, H-SHA-003 & H-RAY-002, H-SHA-001, H-SHA-002, H-SHA-003 \\
 \addlinespace
 C8 Learner profiles and adult-set values & --- & H-RAY-007 & H-RAY-006,
 (H-MUH-004) & H-AHM-007, (H-MUH-004) & --- \\
@@ -1693,9 +1693,12 @@ them:
   its feedback, so \mbox{H-MOU-001} is placed there. Practice that does not end or
   that restarts at once lies in the lesson and assessment logic (C2), where
   H-RAY-004 and H-RAY-005 end each lesson at its limit and show restarts to
-  the adult. The guidance-suggestion logic (C3), creative refinement (C4),
-  storage (C5), summaries (C6), hosting and authentication (C7) and learner
-  profiles (C8) neither present child-facing content nor lengthen practice.
+  the adult. A shared device or unvalidated sign-in can also misroute a child's
+  work to the wrong account (C7, C8), adding a physical access path through the
+  same environmental conditions, while the guidance-suggestion logic (C3),
+  creative refinement (C4), storage (C5), summaries (C6), hosting and
+  authentication (C7) and learner profiles (C8) neither present child-facing
+  content nor lengthen practice.
   \item \emph{Psychological/well-being:} the child never signs in, so a
   failure of hosting or authentication (C7) reaches only the adult, as
   lost availability.
@@ -1715,7 +1718,7 @@ them:
 This section lists the safety and security requirements derived from the
 hazard analysis (HA). A requirement is HA-derived when its ID appears in
 the Mitigating requirement IDs column of any of the four per-author FMEA
-tables (H-RAY, H-AHM, H-MOU and H-MUH) in the Failure Mode and Effect
+tables (H-RAY, H-AHM, H-MOU, H-SHA, and H-MUH) in the Failure Mode and Effect
 Analysis section, so that it carries out the recommended action of at least one
 hazard. As the teaching assistant (TA) advised
 (SRC-006), each requirement is written once, in the SRS, together with its
@@ -1728,7 +1731,8 @@ The table has three groups. Functional requirements come first, in the
 order of the SRS subsections that hold them: the Learning Activity,
 Creative Drawing, Attempt Record and Progress Summary requirements. The
 look and feel and usability requirements (NFR-UX) follow, in ID order.
-Safety-critical requirements come last (SAF-RAY, SAF-AHM and SAF-MOU); the
+Safety-critical requirements come last (SAF-RAY, SAF-AHM, SAF-SHA, SAF-MOU, 
+and SAF-MUH); the
 SRS keeps them in its Safety-Critical Requirements subsection because
 they do not fit another section. For each requirement, the table gives
 its ID, with the short title the SRS gives it where there is one, its
@@ -2350,14 +2354,14 @@ planned with them (G.6). These requirements keep each summary to one
 learner and consistent with the records behind it (H-MUH-003, H-MUH-004,
 H-MUH-008). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-001, SAF-RAY-007 &
+PH-2 (Feb.~1, 2027) & SAF-RAY-001, SAF-RAY-007, SAF-SHA-001, SAF-SHA-004 &
 Adult-only actions, learner switching and an active learner exist only
 once the product has adult accounts and several learner profiles, which
 the PoC does not need. Both are planned with the requirements that keep
 drawings and summaries to one learner (FR-CRT-023, FR-CRT-026,
 FR-PRG-001) (H-RAY-001, H-RAY-006). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-002 &
+PH-2 (Feb.~1, 2027) & SAF-RAY-002, SAF-SHA-002, SAF-SHA-003 &
 The device check needs the list of supported devices and browsers
 (\texttt{SUPPORTED\_DEVICES}), which the team sets by Nov.~2, 2026
 (OI-09). The first PoC experiment records the hardware and browser

@@ -8219,35 +8219,113 @@ rehabilitation; avoid restricting it to one condition too early.
 \section{Appendix --- Generative AI Use Disclosure}
 \label{app:ai-use}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
+This appendix describes how generative AI tools assisted the team in
+preparing and reviewing this document. The ideas and project decisions in
+this SRS came from the team's own discussions, the specialist
+interview and follow-up questionnaire, and our meetings with our supervisor
+and teaching assistant. AI tools helped us carry out and express that work;
+they did not make decisions for us. Each member's own use is described in
+the Individual Disclosures at the end of this appendix. The team remains
+responsible for the content of the final document.
 
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+The team used the following tools while preparing this SRS:
+
+\begin{itemize}
+  \item \textbf{Anthropic's Claude Opus 5.5}, accessed through Claude Code
+  at medium and high effort (Rayan, Moustafa) and through the omp coding
+  agent at high effort (Huzaifah);
+  \item \textbf{Anthropic's Claude Sonnet 5.5} at high effort, run as
+  helper agents that rebased and reviewed branches (Huzaifah);
+  \item \textbf{OpenAI's ChatGPT (GPT-6)} (Ahmed);
+  \item \textbf{the Kiro IDE}, which automatically selects among several
+  versions of Anthropic's Claude, and \textbf{VS Code Copilot} using
+  ChatGPT 6 Luna (Shamil);
+  \item \textbf{GitHub Copilot code review}, which the team uses to provide
+  automated reviews on pull requests to the project repository.
+\end{itemize}
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+The uses below materially contributed to this document. The sections each
+member wrote are listed in the revision history and in the Individual
+Disclosures.
 
-\wss{For each of the uses, identify which parts of the document were affected.}
+\begin{itemize}
+  \item \textbf{Wording and formatting.} Members worked out their ideas and
+  decisions first, and then used AI to help express them clearly and
+  consistently: improving grammar, sentence structure, clarity and flow,
+  and helping with \LaTeX{} formatting. Some members also used AI-generated
+  starting text for brainstorming the layout of a section, then wrote the
+  content in their own words or reworded and rewrote the generated text.
+  This use affected the sections that each member wrote throughout the
+  document.
 
-\wss{You do not need to report every interaction, but you should disclose the
-uses that materially contributed to your work}
+  \item \textbf{Organizing requirement sources.} AI helped sort through the
+  specialist interview transcript, questionnaire responses and meeting notes,
+  and locate the specific statements, with their timestamps, that support
+  the points the team wanted to make. This mainly affected the stakeholder
+  citations in Sections 1, 2 and 5 and Appendix --- Requirement Sources
+  (Section 29).
+
+  \item \textbf{References and tables.} AI helped format citations for the
+  compliance documents in the references and generate the table in the
+  Traceability section (Section 28).
+
+  \item \textbf{Planning the work.} AI helped divide the SRS workload fairly
+  and evenly among members based on the scope and complexity of each task.
+  Some members also used it to split their assignments into smaller GitHub
+  sub-issues and to prepare notes and guides for each one from the course
+  lectures, rubrics, checklists and example documents.
+
+  \item \textbf{Reviewing for consistency.} As sections were merged, members
+  used AI to re-read the document and check that their additions agreed with
+  the rest of the SRS, the course rules and the work teammates had already
+  merged. It flagged missing cases and contradictions. One member followed
+  the three-pass review method from our September 23 guest lecture: one pass
+  as a critic, one looking for missing cases and one checking the course
+  rules.
+
+  \item \textbf{Pull request reviews.} The team uses GitHub Copilot for
+  automated reviews on pull requests, and Copilot left review comments on
+  several of the pull requests for this SRS. Members also used Claude
+  through Claude Code to help review teammates' pull requests by checking
+  the changes against our decisions and the rest of the document. In every
+  case, the reviewing member decided which comments were valid, which to
+  post, and how to resolve them.
+
+  \item \textbf{Repository management.} Through Claude Code and the omp
+  agent, AI helped manage branches, commits and merges, resolve merge
+  conflicts, and write pull request descriptions.
+\end{itemize}
+
+This team-level part of the appendix was drafted with Claude Code from the
+Individual Disclosures below, and the team reviewed it.
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.} \end{itemize}}
+Every AI-assisted passage was reviewed by its author against their intended
+meaning and the decisions the team had agreed on before it was included.
+Any suggested wording that introduced commitments or assumptions the team
+had not agreed on was removed or rewritten, so the document reflects only
+what the team decided.
+
+Statements attributed to stakeholders were checked against the original
+interview transcript, questionnaire responses or meeting notes to confirm
+that each cited statement and timestamp says what the SRS claims.
+Citations and references that AI formatted or suggested were checked
+against the source documents.
+
+Review comments from GitHub Copilot, and findings from AI-assisted reviews,
+were treated as suggestions. The reviewing member judged whether each one
+was valid before acting on it. Teammates also reviewed each other's pull
+requests before merging, and members checked their sections against the
+parts already merged so that the document stayed consistent.
+
+\textbf{The team is responsible for the accuracy, completeness,
+consistency, and appropriateness of this document, regardless of whether
+material was written by a team member or with the help of an AI system.}
 
 \subsection*{Individual Disclosures}
 

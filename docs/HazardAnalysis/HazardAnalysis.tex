@@ -76,6 +76,10 @@ their hazards in Section 6 and planned their phases in the Section 7 roadmap
 appendix and my generative AI use disclosure (\#117).\\
 18 October 2026 & Muhammad Huzaifah & Added my reflection responses to the
 appendix and my generative AI use disclosure.\\
+18 October 2026 & Muhammad Huzaifah & Added my reflection responses to the 
+appendix and my generative AI use disclosure.\\
+19 October 2026 & Muhammad Huzaifah & Summarized the team's generative AI
+use in the general sections of the AI use disclosure appendix.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2309,35 +2313,83 @@ those safety requirements are Future work:
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
+This appendix summarizes how the team used generative AI tools while
+preparing and reviewing this document. Each member's own account follows
+under Individual Disclosures.
 
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+\begin{itemize}
+  \item Anthropic's Claude Opus 5.5: used by Rayan through Claude Code at
+    medium effort, by Moustafa through Claude Code at medium and high
+    effort, and by Huzaifah through the omp coding agent at high effort.
+  \item Anthropic's Claude Sonnet 5.5 at high effort: used by Huzaifah as
+    helper agents that rebased and reviewed his branches.
+  \item OpenAI's ChatGPT (GPT-6): used by Ahmed.
+  \item Kiro IDE: used by Shamil; it automatically chooses among several
+    versions of Claude and other models.
+  \item GitHub Copilot code review, in its Lite and Balanced modes: used by
+    the team for extra automated reviews on a subset of pull requests.
+\end{itemize}
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+Members came up with the ideas and made the decisions in their own sections,
+then used AI to help put them into words. Rayan used it to turn his notes
+into draft wording, and both Rayan and Ahmed used it to improve grammar,
+sentence structure and clarity. Moustafa gave it his ideas, sometimes after
+brainstorming with it, and refined its first drafts until they said exactly
+what he meant. Shamil used it to generate a skeleton of his FMEA table with
+starting text for brainstorming; he wrote most of the content in his own
+words, kept short column entries that were only simple classifiers, and
+reworded or rewrote any other generated text he kept. AI also helped
+with the \LaTeX{} formatting, including the FMEA tables. In this document,
+this covered the critical assumptions in Section~\ref{sec:assumptions} and
+the H-RAY, H-AHM, H-SHA and H-MOU rows of Section~\ref{sec:fmea}, with their
+links to the SRS.
 
-\wss{For each of the uses, identify which parts of the document were affected.}
+Rayan also used AI to sort through the interview transcript, questionnaire
+answers and meeting notes, and to pull out the statements, with their
+timestamps, that support the document. Given how long this material is,
+this would have been very hard to do by hand.
 
-\wss{You do not need to report every interaction, but you should disclose the
-uses that materially contributed to your work}
+For planning, the team used AI to help divide the workload evenly among
+members, based on the scope and difficulty of each task. Moustafa and
+Huzaifah used it to split their assignments into smaller sub-issues, ten and
+eight respectively, and Moustafa used it to check which tasks he still had
+left. Huzaifah also used it to build notes and a guide for each sub-issue
+from the course lectures, rubrics, checklists and example documents.
+
+For review, Moustafa and Huzaifah had AI check that their sections stayed
+consistent with the rest of the document as teammates merged their work.
+Huzaifah followed the method from the September 23 guest lecture, with
+three passes: one as a critic, one looking for missing cases and one
+checking the course rules. Rayan and Moustafa also used it to help review
+teammates' pull requests by checking the changes against the team's
+decisions and the rest of the document, and Rayan decided which of the
+resulting comments to post. GitHub Copilot gave extra automated reviews on
+a subset of the team's pull requests.
+
+For repository work, Claude Code and the omp coding agent managed branches,
+commits, merges and pull requests for Rayan, Moustafa and Huzaifah,
+including fixing merge conflicts. Ahmed and Huzaifah also used AI to write
+their pull request descriptions.
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.} \end{itemize}}
+Members reviewed AI-assisted passages against what they meant before
+including them, and removed or rewrote generated text that rested on false
+assumptions or did not fit the rest of the document. Statements cited from
+the interview, questionnaire and meeting notes were checked against the
+original material to confirm that they say what the document claims.
+Requirement references in the FMEA rows were compared with the SRS. Members
+decided which AI-flagged inconsistencies and review comments were valid and
+how to resolve them. None of Shamil's reflection answers is AI-generated.
+
+The ideas and project decisions in each section belong to its author and
+the team, not to any AI tool. The team is responsible for the accuracy,
+completeness, consistency and appropriateness of this document, regardless
+of whether a person or an AI tool wrote any part of it.
 
 \subsection*{Individual Disclosures}
 

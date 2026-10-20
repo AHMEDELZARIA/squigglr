@@ -88,6 +88,9 @@ use in the general sections of the AI use disclosure appendix.\\
 19 October 2026 & Moustafa Moustafa & Final QA: combined three duplicate
 hazard rows by reference, renumbered the session-timeout requirement
 SAF-SHA-006, and corrected the HA-derived totals and L1 (\#82).\\
+19 October 2026 & Muhammad Huzaifah & Final audit: aligned SAF-RAY-005,
+SAF-RAY-006 and H-RAY-004 with the extension rule of the SRS, matched NFR-UX-017
+to the SRS, and added FR-PRG-012 to the roadmap.\\
 \end{longtable}
 
 ~\newpage
@@ -873,10 +876,11 @@ repeats; \texttt{ATTEMPT\_LIMIT} may be too high for a given child (CA-006); an
 improvement extension lengthens the lesson; no adult may be watching (CA-001). &
 The child becomes distressed, stops practising or refuses the activity later.
 Loss: well-being; the practice benefit. & Psychological/ well-being & Mitigate:
-end the lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX}
-when extended, and save progress (G.3); let audio feedback be muted (SRC-005,
-P2, 37:39). Document/Test: test that each lesson ends at \texttt{ATTEMPT\_LIMIT}
-and that no extended lesson passes \texttt{ATTEMPT\_LIMIT\_MAX}. & G.3,
+end the lesson at \texttt{ATTEMPT\_LIMIT} or, when extended, when the extension
+is used up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached, and save progress (G.3);
+let audio feedback be muted (SRC-005, P2, 37:39). Document/Test: test that each
+lesson ends at \texttt{ATTEMPT\_LIMIT} or when its extension is used up, and
+that no extended lesson passes \texttt{ATTEMPT\_LIMIT\_MAX}. & G.3,
 SAF-RAY-005 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
@@ -1976,7 +1980,8 @@ Politeness \\
 \addlinespace
 NFR-UX-017\newline\emph{Plain wording in adult views} & Adult views shall use
 plain language, shall explain each glossary term where it first appears in a
-view, and shall not use diagnostic, clinical or ranking words. & H-MOU-005 &
+view, and shall not describe the child in diagnostic, clinical or ranking terms.
+& H-MOU-005 &
 Under\-stand\-ability and Politeness \\
 \addlinespace
 NFR-UX-021\newline\emph{Feedback not by sound alone} & Every message to the
@@ -2010,15 +2015,17 @@ judgement of the child's abilities or a comparison with other children, and
 every summary and export shall state that it describes practice only and is not
 an assessment or diagnosis. & H-RAY-003, H-MOU-005 & Safety-Critical \\
 \addlinespace
-SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or at
-\texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from the child,
-and shall keep the progress saved up to that point. & H-RAY-004 &
+SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT} or, when an
+improvement extension was granted, when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes first, without any
+action from the child, and shall keep the progress saved up to that point. &
+H-RAY-004 &
 Safety-Critical \\
 \addlinespace
-SAF-RAY-006 & Squigglr shall record each lesson that ends at
-\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement
-extension, show the adult how many times these happened for each lesson, and
-keep earlier attempts when a lesson is restarted. & H-RAY-005 & Safety-Critical
+SAF-RAY-006 & Squigglr shall record each lesson that ends at one of the limits
+of SAF-RAY-005, and each improvement extension, show the adult how many times
+these happened for each lesson, and keep earlier attempts when a lesson is
+restarted. & H-RAY-005 & Safety-Critical
 \\
 \addlinespace
 SAF-RAY-007 & Squigglr shall identify the active learner on every practice
@@ -2196,10 +2203,11 @@ soon as adults rely on the records (G.5). The values kept by FR-REC-004 have
 ranges that the SRS table ``Central symbolic constants register'' defines; their
 verification is due Nov.~2, 2026 (OI-05) (H-MUH-003, H-MUH-004, H-MUH-007). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & FR-PRG-001 to FR-PRG-006, FR-PRG-008 to FR-PRG-011 &
+PH-2 (Feb.~1, 2027) & FR-PRG-001 to FR-PRG-006, FR-PRG-008 to FR-PRG-012 &
 Progress summaries are built from the complete records, so they are planned with
 them (G.6). These requirements keep each summary to one learner and consistent
-with the records behind it (H-MUH-003, H-MUH-004, H-MUH-008). \\
+with the records behind it, and show no single overall score (H-MUH-003,
+H-MUH-004, H-MUH-008, H-RAY-003). \\
 \addlinespace
 PH-2 (Feb.~1, 2027) & SAF-RAY-001, SAF-RAY-007, SAF-SHA-001, SAF-SHA-006 &
 Adult-only actions, learner switching and an active learner exist only once the

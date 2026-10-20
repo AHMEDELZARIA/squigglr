@@ -5,6 +5,7 @@
 \usepackage{array}
 \usepackage{longtable}
 \usepackage{pdflscape}
+\usepackage{eso-pic}
 \usepackage[round]{natbib}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
@@ -16,6 +17,22 @@
     citecolor=green,        % color of links to bibliography
     filecolor=magenta,      % color of file links
     urlcolor=cyan           % color of external links
+}
+
+\newenvironment{fmealandscape}{
+    \begin{landscape}
+    \pagestyle{empty}
+    \AddToShipoutPictureFG{
+        \AtPageLowerLeft{
+            \put(\LenToUnit{\dimexpr\paperwidth-1.5cm\relax},
+                 \LenToUnit{.5\paperheight}){
+                \makebox(0,0)[c]{\rotatebox{90}{\thepage}}
+            }
+        }
+    }
+}{
+    \end{landscape}
+    \ClearShipoutPictureFG
 }
 
 \title{Hazard Analysis\\\progname}
@@ -857,7 +874,7 @@ Mitigating requirements trace to the goals (G.\#) and constraints
 (CON-\#\#\#) in the SRS, or to safety requirements SAF-RAY-\#\#\# in the SRS,
 Safety-Critical Requirements.
 
-\begin{landscape}
+\begin{fmealandscape}
 {\footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{@{}
@@ -986,7 +1003,7 @@ are refused and that the default is the midpoint. &
 G.2, G.3, SAF-RAY-008 \\
 \end{longtable}
 }
-\end{landscape}
+\end{fmealandscape}
 
 \subsection{Drawing Input and Guided Lesson Decisions (H-AHM)}
 \label{sec:fmea-ahm}
@@ -999,7 +1016,7 @@ Squigglr does not make clinical assessments (BR-006). Recommended actions
 are traced to the learning-activity requirements in the SRS. Two additional
 safeguards, SAF-AHM-001 and SAF-AHM-002, are specified in the SRS
 Safety-Critical Requirements section.
-\begin{landscape}
+\begin{fmealandscape}
 {\footnotesize
 \setlength{\tabcolsep}{2pt}
 \begin{longtable}{@{}
@@ -1121,7 +1138,7 @@ the exact saved-versus-default choice. & FR-LRN-016, FR-LRN-017,
 FR-LRN-019, FR-LRN-021 \\
 \end{longtable}
 }
-\end{landscape}
+\end{fmealandscape}
 
 \subsection{Security, Saving and AI-Assisted Refinement (H-SHA)}
 \label{sec:fmea-sha}
@@ -1131,7 +1148,7 @@ practice records, and the external AI refinement provider. Effects are assessed
 based on privacy, data integrity, and the trustworthiness of content shown to children 
 and adults.
 
-\begin{landscape}
+\begin{fmealandscape}
 {\footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{@{}
@@ -1193,6 +1210,9 @@ Mitigate: confirm a save with a silent verification ping that informs the adult
 if the save did not really save; Document/Test: run integration testing wherein
 saves are accompanied by simulated errors and verify that it is reported. &
 G.3, SAF-SHA-003 \\
+\end{longtable}
+}
+\end{fmealandscape}
 
 \subsection{Sensory Load, Feedback, Progress Views and Refinement (H-MOU)}
 \label{sec:fmea-mou}
@@ -1205,12 +1225,7 @@ a diagnosis, and H-RAY-004 frustration from repeated failure; the rows below
 do not repeat them. Mitigating requirements trace to the usability
 requirements (NFR-UX-\#\#\#) and to safety requirements SAF-MOU-001 to
 SAF-MOU-003 in the SRS, Safety-Critical Requirements.
-
-\end{longtable}
-}
-\end{landscape}
-
-\begin{landscape}
+\begin{fmealandscape}
 {\footnotesize
 \setlength{\tabcolsep}{2pt}
 \begin{longtable}{@{}
@@ -1325,7 +1340,7 @@ measurement on prepared adult-made drawings. &
 G.4, BR-005, NFR-UX-011 \\
 \end{longtable}
 }
-\end{landscape}
+\end{fmealandscape}
 
 \subsection{Creative Drawing, Attempt Records and Summaries
 (H-MUH)}\label{sec:fmea-muh}
@@ -1341,7 +1356,7 @@ requirements for that cause carry the same label, so that every cause
 traces to the requirements that mitigate it. Table~\ref{tab:fmea-coverage}
 places the rows of all four tables under the components.
 
-\begin{landscape}
+\begin{fmealandscape}
 {\scriptsize
 \setlength{\tabcolsep}{3pt}
 \exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
@@ -1616,7 +1631,7 @@ interrupted-only and later starting stage histories. &
 (d)~FR-PRG-005, FR-PRG-006 \\
 \end{longtable}
 }
-\end{landscape}
+\end{fmealandscape}
 
 \subsection{Coverage of Components and Categories}
 \label{sec:fmea-coverage}

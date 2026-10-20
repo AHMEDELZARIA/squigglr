@@ -12,6 +12,7 @@
 \usepackage{tabularx}
 \usepackage{enumitem}
 \usepackage{float}
+\usepackage{needspace}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 \usepackage[numbers]{natbib}
@@ -189,6 +190,10 @@ UC-009 requirement lists; completed the product input table.\\
 19 October 2026 & Muhammad Huzaifah & Final audit: changed NFR-COMP-002 from
 FIPPA to MFIPPA, which covers school boards; corrected the PIPEDA rationale, the
 SRC-005.02 statement and the requirement counts in Shamil's reflection.\\
+19 October 2026 & Muhammad Huzaifah & Final audit: fixed the NFR-COMP-001
+margin overflow, the Open Issues column widths and a heading left alone at a
+page break; the build now runs a fourth pass so the contents page numbers are
+correct.\\
 \end{longtable}
 
 ~\\
@@ -5812,6 +5817,7 @@ This section identifies legal and standards obligations that apply to Squigglr,
 including conditions relevant to adoption.
 
 \subsection{Legal Requirements}
+\begin{sloppypar}
 \begin{srsrequirement}{NFR-COMP-001}{PIPEDA}
   \reqshall{Squigglr shall comply with applicable obligations under
 PIPEDA~\cite{pipeda}.} \reqrationale{PIPEDA applies to organizations that
@@ -5827,6 +5833,7 @@ records each principle as met or not applicable, with none unmet.}
   \reqphase{PH-3}
   \reqsources{\cite{pipeda}} \reqtraces{PIPEDA~\cite{pipeda}}
 \end{srsrequirement}
+\end{sloppypar}
 
 \begin{srsrequirement}{NFR-COMP-002}{Ontario MFIPPA Applicability}
   \reqshall{Squigglr shall be compliant with the Ontario Municipal Freedom of
@@ -5877,9 +5884,9 @@ submission.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.07\textwidth}%
->{\raggedright\arraybackslash}p{0.47\textwidth}%
+>{\raggedright\arraybackslash}p{0.41\textwidth}%
 >{\raggedright\arraybackslash}p{0.13\textwidth}%
->{\raggedright\arraybackslash}p{0.12\textwidth}%
+>{\raggedright\arraybackslash}p{0.15\textwidth}%
 >{\raggedright\arraybackslash}p{0.11\textwidth}@{}} \caption{Open
 issues}\label{tab:openIssues}\\
 \toprule
@@ -7704,6 +7711,8 @@ asks whether the child is improving. \\
 \end{longtable}
 }
 
+% Keep the heading with the caption, header and first row of its table.
+\needspace{12\baselineskip}
 \subsection{Unlikely Changes}
 
 {\small

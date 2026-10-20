@@ -47,12 +47,19 @@
 
 \pagenumbering{roman}
 
-\begin{table}[hp]
-\caption{Revision History} \label{TblRevisionHistory}
-\begin{tabularx}{\textwidth}{llX}
+\begin{longtable}{@{}p{2.5cm}p{3.5cm}%
+  >{\raggedright\arraybackslash}p{\dimexpr\textwidth-6cm-4\tabcolsep\relax}@{}}
+\caption{Revision History} \label{TblRevisionHistory}\\
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
+\endfirsthead
+\toprule
+\textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
 14 October 2026 & Rayan Nasrallah & Added critical assumptions CA-001 to CA-006
 and hazards H-RAY-001 to H-RAY-007 (\#91).\\
 15 October 2026 & Rayan Nasrallah & Added my reflection responses to the
@@ -76,17 +83,12 @@ their hazards in Section 6 and planned their phases in the Section 7 roadmap
 appendix and my generative AI use disclosure (\#117).\\
 18 October 2026 & Muhammad Huzaifah & Added my reflection responses to the
 appendix and my generative AI use disclosure.\\
-18 October 2026 & Muhammad Huzaifah & Added my reflection responses to the 
-appendix and my generative AI use disclosure.\\
 19 October 2026 & Muhammad Huzaifah & Summarized the team's generative AI
 use in the general sections of the AI use disclosure appendix.\\
-19 October 2026 & Moustafa Moustafa & Final QA: combined H-SHA-003, H-MOU-005
-and H-MOU-006 by reference with H-RAY-002, H-MUH-003 and H-MUH-002; renumbered
-the session-timeout requirement SAF-SHA-006; corrected the HA-derived totals and
-L1 (\#82).\\
-\bottomrule
-\end{tabularx}
-\end{table}
+19 October 2026 & Moustafa Moustafa & Final QA: combined three duplicate
+hazard rows by reference, renumbered the session-timeout requirement
+SAF-SHA-006, and corrected the HA-derived totals and L1 (\#82).\\
+\end{longtable}
 
 ~\newpage
 

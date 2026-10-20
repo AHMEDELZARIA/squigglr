@@ -783,7 +783,7 @@ analysis was carried out. Each team member's rows are in a table of their
 own: Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM), 
 Table~\ref{tab:fmea-sha}, Table~\ref{tab:fmea-mou} (H-MOU) and 
 Table~\ref{tab:fmea-muh} (H-MUH). Table~\ref{tab:fmea-coverage} places 
-every row of the four tables under a component and checks that every
+every row of the five tables under a component and checks that every
 component has been examined for every category of harm. Each row ends with
 the requirements of the Software Requirements Specification (SRS) that
 mitigate it; the Safety and Security Requirements section lists the
@@ -928,7 +928,8 @@ Mitigate: before a lesson starts, check the device and browser against
 \texttt{SUPPORTED\_DEVICES} and show the adult a notice when they do not
 match; keep each attempt until the server confirms it is saved, and tell
 the adult when an attempt could not be saved. &
-CON-001, CON-002, CON-003, G.5, SAF-RAY-002, SAF-RAY-003 \\
+CON-001, CON-002, CON-003, G.5, SAF-RAY-002, SAF-RAY-003, FR-REC-008,
+FR-PRG-011 \\
 \addlinespace
 H-RAY-003 & Attempt records; progress summaries & Practice records are
 used as clinical or diagnostic evidence, or as a measure of the child's
@@ -942,7 +943,7 @@ Eliminate: show no diagnostic labels, judgements of the child's abilities
 or comparisons with other children in any record or summary. Mitigate: state on every summary and
 export that the records describe practice only and are not an assessment.
 &
-G.5, G.6, SAF-RAY-004 \\
+G.5, G.6, SAF-RAY-004, FR-PRG-008, FR-PRG-012 \\
 \addlinespace
 H-RAY-004 & Lesson flow; feedback & Repeated failed attempts at one stage
 continue until the child becomes frustrated or agitated. & Failure
@@ -982,7 +983,7 @@ Mitigate: show which learner is active on every practice screen in a way
 a child who cannot read can recognize; require an adult action to switch
 learners; show the attempts behind a suggestion when the adult reviews it.
 &
-G.5, SAF-RAY-001, SAF-RAY-007 \\
+G.5, SAF-RAY-001, SAF-RAY-007, FR-REC-008, FR-PRG-001 \\
 \addlinespace
 H-RAY-007 & Child profile settings; lesson flow & A stage check or lesson
 limit uses a value that does not suit the child: \texttt{STAGE\_PASS} too
@@ -1107,7 +1108,8 @@ the approved catalogue using the evaluated result and correct lesson and
 stage identifiers; when no matching observation exists, do not present
 an unrelated correction. Document/Test: check the mapped message for
 every predefined classification and each drawing stage; test missing and
-mismatched identifiers. & FR-LRN-011, FR-LRN-013, FR-LRN-014 \\
+mismatched identifiers. & FR-LRN-011, FR-LRN-013, FR-LRN-014,
+NFR-UX-004, NFR-UX-015 \\
 \addlinespace
 \mbox{H-AHM-006} & Failure-streak and suggestion logic; adult decision &
 Squigglr recommends moving backward at the wrong time, or changes
@@ -1183,7 +1185,7 @@ H-SHA-001 & Authentication; account management
 The child's privacy is violated as the unauthorized user can read or write over
 personal data. Loss: privacy and trust in the system. & Privacy/security &
 Mitigate: implement authentication at every endpoint the data is accessed at;
-encrypt user data with one-way hash; end session and logout after an extended
+end session and logout after an extended
 inactivity; Document/Test: test that attempts to access other accounts' data
 under the hood is rejected by the server &
 SAF-SHA-001 \\
@@ -1209,7 +1211,7 @@ adult trust in the application. & Data integrity &
 Mitigate: confirm a save with a silent verification ping that informs the adult
 if the save did not really save; Document/Test: run integration testing wherein
 saves are accompanied by simulated errors and verify that it is reported. &
-G.3, SAF-SHA-003 \\
+G.5, SAF-SHA-003 \\
 \end{longtable}
 }
 \end{fmealandscape}
@@ -1354,7 +1356,7 @@ creative drawing (FR-CRT), attempt record (FR-REC) and progress summary
 labelled (a), (b) and so on, and the recommended action and mitigating
 requirements for that cause carry the same label, so that every cause
 traces to the requirements that mitigate it. Table~\ref{tab:fmea-coverage}
-places the rows of all four tables under the components.
+places the rows of all five tables under the components.
 
 \begin{fmealandscape}
 {\scriptsize
@@ -1691,7 +1693,8 @@ H-MUH-005, H-MUH-007, (H-RAY-002), (H-MOU-005) & (H-RAY-002) \\
 C6 Adult access and summaries & --- & H-RAY-001, H-RAY-003, H-MOU-005 &
 (H-MUH-004) & H-MOU-005, H-MUH-008, (H-MUH-003), (H-MUH-004) & --- \\
 \addlinespace
-C7 Hosting and authentication & H-RAY-002, (H-MUH-004), (H-MOU-005) & --- & H-SHA-001, H-SHA-002 & H-SHA-001, H-SHA-002, H-SHA-003 & H-RAY-002, H-SHA-001, H-SHA-002, H-SHA-003 \\
+C7 Hosting and authentication & --- & --- & H-SHA-001, H-SHA-002 &
+H-SHA-003, (H-RAY-002) & (H-RAY-002) \\
 \addlinespace
 C8 Learner profiles and adult-set values & --- & H-RAY-007 & H-RAY-006,
 (H-MUH-004) & H-AHM-007, (H-MUH-004) & --- \\
@@ -1702,15 +1705,13 @@ C8 Learner profiles and adult-set values & --- & H-RAY-007 & H-RAY-006,
 Several pairs were examined and no credible failure mode was found in
 them:
 \begin{itemize}
-  \item \emph{Physical:} \progname{} controls no equipment, so it has two
-  paths to bodily harm. Content that flashes on a child-facing screen can
-  trigger a seizure; the canvas (C1) presents every child-facing screen and
-  its feedback, so \mbox{H-MOU-001} is placed there. Practice that does not end or
-  that restarts at once lies in the lesson and assessment logic (C2), where
-  H-RAY-004 and H-RAY-005 end each lesson at its limit and show restarts to
-  the adult. A shared device or unvalidated sign-in can also misroute a child's
-  work to the wrong account (C7, C8), adding a physical access path through the
-  same environmental conditions, while the guidance-suggestion logic (C3),
+  \item \emph{Physical:} \progname{} controls no equipment, and content
+  that flashes on a child-facing screen is its only path to bodily harm;
+  it could trigger a seizure. The canvas (C1) presents every child-facing
+  screen and its feedback, so \mbox{H-MOU-001} is placed there. Practice
+  that does not end or that restarts at once is a psychological/well-being
+  hazard, not a physical path to bodily harm; H-RAY-004 and H-RAY-005
+  address it in the lesson and assessment logic (C2). The guidance-suggestion logic (C3),
   creative refinement (C4), storage (C5), summaries (C6), hosting and
   authentication (C7) and learner profiles (C8) neither present child-facing
   content nor lengthen practice.
@@ -1732,7 +1733,7 @@ them:
 
 This section lists the safety and security requirements derived from the
 hazard analysis (HA). A requirement is HA-derived when its ID appears in
-the Mitigating requirement IDs column of any of the four per-author FMEA
+the Mitigating requirement IDs column of any of the five per-author FMEA
 tables (H-RAY, H-AHM, H-MOU, H-SHA, and H-MUH) in the Failure Mode and Effect
 Analysis section, so that it carries out the recommended action of at least one
 hazard. As the teaching assistant (TA) advised
@@ -2025,7 +2026,7 @@ Attempt Record \\
 \addlinespace
 FR-REC-008\newline\emph{Each attempt saved once} & Squigglr shall save each
 attempt record exactly once, under the lesson record of the lesson in which the
-attempt was made. & H-MUH-004 & Attempt Record \\
+attempt was made. & H-MUH-004, H-RAY-002, H-RAY-006 & Attempt Record \\
 \addlinespace
 FR-REC-009\newline\emph{Saved records unchanged} & Squigglr shall keep the
 contents of every saved attempt record, and of every lesson record whose lesson
@@ -2034,7 +2035,7 @@ Attempt Record \\
 \addlinespace
 FR-PRG-001\newline\emph{One learner per summary} & Squigglr shall show in each
 progress summary only the records of the one learner profile that the summary
-names. & H-MUH-004 & Progress Summary \\
+names. & H-MUH-004, H-RAY-006 & Progress Summary \\
 \addlinespace
 FR-PRG-002\newline\emph{Progress over time by lesson} & Squigglr shall show, for
 each lesson in a progress summary, the learner's lesson records in the order
@@ -2065,7 +2066,7 @@ FR-REC-005, with the strokes drawn as recorded. & H-MUH-008 & Progress Summary
 FR-PRG-008\newline\emph{Empty history} & Squigglr shall show, when the learner
 has no saved attempt record in the chosen lessons and dates, a progress summary
 that states that no practice is recorded and shows no stage, count or
-difficulty. & H-MUH-008 & Progress Summary \\
+difficulty. & H-MUH-008, H-RAY-003 & Progress Summary \\
 \addlinespace
 FR-PRG-009\newline\emph{Interrupted attempts shown apart} & Squigglr shall show
 interrupted attempts in a progress summary separately from successful and
@@ -2078,7 +2079,11 @@ without success. & H-MUH-003, H-MUH-008 & Progress Summary \\
 \addlinespace
 FR-PRG-011\newline\emph{Latest attempt included} & Squigglr shall state on each
 progress summary the date and time of the most recent attempt it includes. &
-H-MUH-008 & Progress Summary \\
+H-MUH-008, H-RAY-002 & Progress Summary \\
+\addlinespace
+FR-PRG-012\newline\emph{No overall score} & Squigglr shall show no figure in a
+progress summary that combines the results of more than one stage into a single
+score, grade or rating. & H-RAY-003 & Progress Summary \\
 \addlinespace
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Look and feel and usability requirements}} \\*
@@ -2097,7 +2102,7 @@ NFR-UX-004\newline\emph{Feedback that never marks the drawing as wrong} &
 Feedback on an attempt, including a missed part or a non-passing attempt, shall
 use encouraging styling, shall not use error styling such as warning colours,
 crosses, alarm sounds or ``wrong'' symbols, and shall not show a missed part by
-colour alone. & H-MOU-002, H-MOU-003 & Style \\
+colour alone. & H-AHM-005, H-MOU-002, H-MOU-003 & Style \\
 \addlinespace
 NFR-UX-006\newline\emph{Appealing but calm style} & Child-facing screens shall
 have a style that adult reviewers judge both appealing to children and calm. &
@@ -2123,7 +2128,8 @@ NFR-UX-015\newline\emph{Short, encouraging messages to the child} & Every
 message to the child, including feedback on an attempt and the end of a lesson,
 shall be encouraging, shall describe the drawing rather than the child, and
 shall be at most \texttt{FEEDBACK\_\allowbreak WORDS\_\allowbreak MAX} words
-when spoken. & H-MOU-002, H-MOU-003 & Under\-stand\-ability and Politeness \\
+when spoken. & H-AHM-005, H-MOU-002, H-MOU-003 &
+Under\-stand\-ability and Politeness \\
 \addlinespace
 NFR-UX-016\newline\emph{Effort acknowledged} & The feedback on every evaluable
 attempt, including one that does not pass, shall acknowledge the child's effort
@@ -2225,7 +2231,7 @@ times in any one-second period. & H-MOU-001 & Safety-Critical \\
 \end{longtable}
 }
 
-In total, 82 requirements are HA-derived: 16 Learning Activity, 22
+In total, 87 requirements are HA-derived: 16 Learning Activity, 22
 Creative Drawing, nine Attempt Record and ten Progress Summary
 requirements, five Look and Feel and seven Usability and Humanity
 requirements, and 13 safety-critical requirements. Every row of the four

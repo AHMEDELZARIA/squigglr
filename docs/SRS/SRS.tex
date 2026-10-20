@@ -176,6 +176,10 @@ section 12, and my AI use disclosure (\#82). \\
 and performed final QA review (\#82). \\
 18 October 2026 & Muhammad Huzaifah & Added my reflection responses to the
 appendix and my generative AI use disclosure.\\
+19 October 2026 & Moustafa Moustafa & Final QA: renumbered the session-timeout
+requirement SAF-SHA-006 and restored NFR-CULT-002, so no identifier is reused;
+removed vendor names from requirements; fixed SAF-SHA-003, the sources table
+layout, UC-005, child navigation and reflection answers 5 and 6 (\#82).\\
 \end{longtable}
 
 ~\\
@@ -1319,7 +1323,7 @@ child-facing screen. \emph{Unit:} CSS pixels. \emph{Value:} 44 by 44, from WCAG
 \addlinespace
 \texttt{IDLE\_TIMEOUT} & Duration of user inactivity after which Squigglr ends
 the session and logs out the user. \emph{Unit:} minutes. \emph{Value:}
-team-defined; TBD. \emph{Trace:} SAF-SHA-004.\\
+team-defined; TBD. \emph{Trace:} SAF-SHA-006.\\
 \addlinespace
 \texttt{ADULT\_CHECK} & Whether a supporting adult must confirm an adult-only
 action before it can be carried out. \emph{Unit:} Boolean. \emph{Value:}
@@ -1624,7 +1628,7 @@ interface. The interface language is TBD. Children do not need to read to use
 the child views.\\
 \emph{Rationale:} adult tasks such as reviewing records need text, while child
 navigation uses images and icons (FACT-007).\\
-\emph{Depends on it:} G.6, \reqref{NFR-UX-012} and \reqref{NFR-CULT-001}.\\
+\emph{Depends on it:} G.6 and \reqref{NFR-UX-012}.\\
 \emph{If false:} adults may misread records or settings.
 \item[ASM-008] On a shared device, an adult makes sure the right child is
 selected before a session and that another child cannot open the previous
@@ -2324,9 +2328,11 @@ Catalogue update & What the team adds or changes. Catalogue update = \{Lesson\}
 + \{Supported item\} + (Team-set values). & Data flow & Made from adult-made
 drawings only. & BR-009; LC-001, LC-002; F12 \\
 \addlinespace
-Child navigation & How a child moves through Squigglr. Child navigation =
-[Restart \textbar{} Move back and forth \textbar{} Leave]. & Data flow & Never
-changes the lesson choice or the starting stage. & FACT-007; BR-003 \\
+Child navigation & How a child moves through Squigglr outside a guided lesson.
+Child navigation = [Open the creative space \textbar{} Leave the creative
+space]. & Data flow & Within a guided lesson the child does not navigate (G.1);
+never starts, restarts or changes a lesson, the lesson choice or the starting
+stage. & G.1; FACT-007; BR-003; UC-006 \\
 \addlinespace
 Editing action & A change the child makes to the open creative drawing. Editing
 action = [Select \textbar{} Move \textbar{} Resize \textbar{} Recolour
@@ -2420,8 +2426,7 @@ and outputs in the Problem Statement and Goals (SRC-001) and the data flows in
 Table~\ref{tab:work-flows}. Each row names the use cases (Table~\ref{tab:puc})
 and requirements that handle it. For each input, the last column states what
 Squigglr does when the input is invalid or missing, so that every possible input
-has a defined response. An identifier marked TBD names a requirement group that
-is not written yet; the owner's issue is given.
+has a defined response.
 
 {\footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -2665,8 +2670,7 @@ and sources it depends on. Alternative flows are other normal paths; failure
 flows handle the invalid or missing inputs in Table~\ref{tab:product-inputs}.
 Both are numbered by the main flow step where they branch, so ``3a'' branches at
 step 3. The lesson behaviour in \ucref{003} and \ucref{005} is specified
-formally in Section~\ref{sec:fr-formal}. An identifier marked TBD names a
-requirement group that is not written yet; the owner's issue is given.
+formally in Section~\ref{sec:fr-formal}.
 
 \subsubsection{UC-001: Create a child's profile}
 \label{puc:001}
@@ -2839,8 +2843,8 @@ without improving.} \reqfield{Trigger}{Squigglr suggests going back a stage
   \item Squigglr shows the suggestion and keeps it pending without blocking
   practice (\mbox{SAF-RAY-001}).
   \item The adult completes the adult check and accepts.
-  \item Squigglr moves the lesson back one stage, with the stage's counts at
-  zero (Section~\ref{sec:fr-formal}).
+  \item Squigglr moves the lesson back to the earlier stage the adult chose,
+  with the stage's counts at zero (Section~\ref{sec:fr-formal}).
 \end{enumerate}
 \noindent\textit{Alternative flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
@@ -5173,7 +5177,7 @@ stage is within \texttt{FEEDBACK\_LATENCY\_MAX}.}
 \end{srsrequirement}
 
 \begin{srsrequirement}{NFR-PERF-002}{AI refinement response latency}
-  \reqshall{Squigglr shall display the AI refined result within
+  \reqshall{Squigglr shall display the refined result within
 \texttt{REFINE\_LATENCY\_MAX} seconds of the drawing being finished when AI
 refinement is included and the canvas remains open for interaction during that
 time.} \reqrationale{Long, unresponsive pauses break engagement and may be
@@ -5341,22 +5345,22 @@ dependencies (CON-001) which may transmit user data incongruously.\\
 no PII data transmitted to a non-approved destination.\\
 \emph{Hazards:} H-SHA-002.
 
-\item[SAF-SHA-003]\phantomsection\label{req:SAF-SHA-003} Squigglr shall send a
-verification ping after each save and inform adult users when a save fails.\\
+\item[SAF-SHA-003]\phantomsection\label{req:SAF-SHA-003} Squigglr shall report a
+save as successful only after the server confirms it, and shall inform the adult
+when a save fails.\\
 \emph{Rationale:} G.5 requires complete, meaningful activity records; Adults
 want to know which sessions contributed to their child's progress report in
 detail.\\
-\emph{Fit criterion:} for 99\% of \texttt{FAILED\_SAVES} (TBD) mock failed save
-requests, Squigglr does not report the attempt as saved and notifies the adult.
-For 99\% of \texttt{FAILED\_SAVES} mock successful saves, Squigglr does not
-record a failed save or notify the adult.\\
+\emph{Fit criterion:} for each of \texttt{FAILED\_SAVES} (TBD) mock failed save
+requests, Squigglr does not report the attempt as saved and notifies the adult;
+for each of \texttt{FAILED\_SAVES} mock successful saves, Squigglr reports no
+failed save and does not notify the adult.\\
 \emph{Hazards:} H-SHA-003.
 
-\item[SAF-SHA-004]\phantomsection\label{req:SAF-SHA-004} Squigglr shall logout
-the user after an extended period of inactivity. (\texttt{IDLE\_TIMEOUT},
-TBD).\\
+\item[SAF-SHA-006]\phantomsection\label{req:SAF-SHA-006} Squigglr shall log out
+the user after \texttt{IDLE\_TIMEOUT} (TBD) of inactivity.\\
 \emph{Rationale:} Personal data, especially that of children's, is confidential.
-unauthorized access to a user account or isolated user information violates
+Unauthorized access to a user account or isolated user information violates
 privacy and undermines user trust; Logging out an account after a period of
 inactivity is a standard safety feature. \\
 \emph{Fit criterion:} passes when mock account is logged out after
@@ -5415,7 +5419,7 @@ progress (G.5, G.6). Nondeterministic scoring may produce arbitrary or
 difficult-to- interpret results that are unsuitable for progress tracking.
 Deterministic scoring is also easier to implement and non-deterministic scoring
 has no clear benefits.} \reqfit{Pass when identical programmed strokes on the
-same stage, generated with a tool like Selenium, produce identical scores for
+same stage, replayed by an automated test script, produce identical scores for
 ten consecutive runs.}
   \reqpriority{Must}
   \reqphase{PH-2}
@@ -5518,17 +5522,18 @@ HTTPS or is blocked.}
   \item[Authentication and session provider.] Squigglr shall delegate account
   creation, login, and session management to a third-party authentication
   provider.
-  \item[AI refinement service.] Squigglr shall send the child's raw stroke data
-  (without child PII \reqref{SAF-SHA-002}) to a third-party AI model for visual
-  refinement when visual refinement is active and shall receive refined stroke
-  data in return.
-  \item[Hosting and content-delivery network (Supabase / Vercel).] Squigglr
-  shall be served from Vercel for the front end and Supabase for the back end.
-  For authentication and hosting, Squigglr shall display an error message in the
+  \item[Refinement service.] When refinement is on, Squigglr shall send the
+  child's stroke data, without child PII (\reqref{SAF-SHA-002}), to the service
+    that refines creative drawings and shall receive refined stroke data in
+  return.
+  \item[Hosting and data storage service.] Squigglr shall be served, and its
+  records kept, by a managed hosting and data storage service. For
+  authentication and hosting, Squigglr shall display an error message in the
   event of provider unavailability until the availability returns.
-  \end{description}} \reqrationale{The choice of Supabase and Vercel is
-  arbitrary and abstract descriptions of adjacent systems leaves the
-  requirements open to substitutes.} \reqfit{Confirm that the error message
+  \end{description}} \reqrationale{The adjacent systems are described by their
+  role, not by vendor, so that a provider can be replaced without changing the
+  requirements (LC-004). The candidate providers are compared in the
+  Off-the-Shelf Solutions section.} \reqfit{Confirm that the error message
   displays for a mock outage of the authentication and hosting services. (For AI
   refinement, provider unavailability protocol is described in
   \reqref{FR-CRT-020})}
@@ -5557,7 +5562,7 @@ HTTPS or is blocked.}
 \subsection{Release Requirements}
 
 Squigglr has no installation package. A release is a deployment to the hosting
-platform (Vercel) triggered by merging to the production branch.
+service, triggered by merging to the production branch.
 
 \section{Maintainability and Support Requirements}
 This section sets requirements for maintaining, supporting and adapting Squigglr
@@ -5678,7 +5683,7 @@ confirmed saved record are rejected, creating an audit, three consecutive
 times.}
   \reqpriority{Should}
   \reqphase{PH-2}
-  \reqsources{\goalref{5}; \goalref{6}} \reqtraces{\reqref{SAF-RAY-003}}
+  \reqsources{\goalref{5}; \goalref{6}} \reqtraces{\reqref{FR-REC-009}}
 \end{srsrequirement}
 
 \subsection{Privacy Requirements}
@@ -5694,7 +5699,7 @@ under PIPEDA~\cite{pipeda}.} \reqfit{Passes if there is no field during child
 registration beyond a first name and non-identifying username.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{\srcref{SRC-004}} \reqtraces{BR-001; \reqref{NFR-SEC-001}}
+  \reqsources{\srcref{004}} \reqtraces{BR-001; \reqref{NFR-SEC-001}}
 \end{srsrequirement}
 
 \emph{Note:} Institutional self-hosting or per-institution data partitioning is
@@ -5740,7 +5745,7 @@ cross-site scripting (XSS).}
 This section requires review of symbols and imagery for cultural associations
 that could negatively affect users.
 
-\begin{srsrequirement}{NFR-CULT-001}{Cultural Sensitivity of Symbols and Imagery}
+\begin{srsrequirement}{NFR-CULT-002}{Cultural Sensitivity of Symbols and Imagery}
   \reqshall{Squigglr shall contain no symbols or imagery that carry a known
 negative cultural meaning in communities likely to use Squigglr.}
 \reqrationale{The style review required by \reqref{NFR-UX-007} should assess
@@ -5765,9 +5770,10 @@ including conditions relevant to adoption.
   \reqshall{Squigglr shall comply with applicable obligations under
 PIPEDA~\cite{pipeda}.} \reqrationale{PIPEDA applies because Squigglr is a
 Canadian project hosted for Canadian schools that collects personal information
-in the course of commercial-like activity.} \reqfit{Confirm that Squigglr's
-collection and handling of personal information complies with PIPEDA obligations
-with a review team.}
+in the course of commercial-like activity.} \reqfit{A review of every
+personal-information field Squigglr collects, and of every place it is stored or
+sent, against each of the ten PIPEDA fair information principles records each
+principle as met or not applicable, with none unmet.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\cite{pipeda}} \reqtraces{PIPEDA~\cite{pipeda}}
@@ -5776,10 +5782,12 @@ with a review team.}
 \begin{srsrequirement}{NFR-COMP-002}{Ontario FIPPA Applicability}
   \reqshall{Squigglr shall be compliant with the Ontario Freedom of Information
 and Protection of Privacy Act (FIPPA) before adoption by any school boards.}
-  \reqrationale{Applicability is TBD, adoption by school board is out of the 
-  scope of the project.}
-  \reqfit{Before any Ontario school board adoption, confirm that Squigglr is 
-  compliant with FIPPA with a review team.}
+  \reqrationale{FIPPA governs how Ontario public institutions, including school
+  boards, collect, keep and disclose personal information. Adoption by a school
+  board is outside this project, so the requirement is checked before the end of
+  the project, ready for any later adoption.}
+  \reqfit{A review of Squigglr's collection, retention and disclosure of
+  personal information against FIPPA Part III records no unmet obligation.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\srcref{002}} \reqtraces{\reqref{NFR-SEC-001}; OI-06}
@@ -5842,7 +5850,7 @@ account holds several learner profiles, and an adult switches between them
 (BR-001). Still needed: whether an adult signs in on each shared device, and how
 a device is left when a session ends. & G.5, G.6, CON-001, CON-002;
 \reqref{NFR-SEC-001}, \reqref{NFR-SEC-002}, \reqref{SAF-RAY-007},
-\reqref{SAF-SHA-001}, \reqref{SAF-SHA-004} & Shamil Canbolat & Oct.\ 17, 2026 \\
+\reqref{SAF-SHA-001}, \reqref{SAF-SHA-006} & Shamil Canbolat & Oct.\ 17, 2026 \\
 \addlinespace
 OI-02 & \emph{Privacy of practice records.} The supervisor's advice to collect
 no information about children (SRC-004,
@@ -6392,7 +6400,7 @@ and assumptions (ASM) in Section~\ref{sec:facts-assumptions}, open issues (OI)
 in Table~\ref{tab:openIssues} and likely changes (LC) in
 Table~\ref{tab:likelyChanges}. Critical assumptions (CA) and hazard identifiers
 (H-RAY, H-AHM, H-SHA, H-MOU, H-MUH) from the Hazard Analysis, and the safety
-requirements (SAF-RAY, SAF-AHM, SAF-SHA, SAF-MOU, SAF-MUH) in Safety-Critical
+requirements (SAF-RAY, SAF-AHM, SAF-SHA, SAF-MOU) in Safety-Critical
 Requirements, are given as plain text. Nothing in this section is a requirement;
 each precaution names where the related requirement or decision is, or will be,
 recorded.
@@ -7085,7 +7093,7 @@ PH-2 \\
 \addlinespace
 \texttt{SAF-SHA-003} & Verify saves and report save failures & Must & PH-2 \\
 \addlinespace
-\texttt{SAF-SHA-004} & Session timeout & Must & PH-2 \\
+\texttt{SAF-SHA-006} & Session timeout & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-MOU-001} & Show missed parts without drawing them & Must & PH-2 \\
 \addlinespace
@@ -7171,7 +7179,7 @@ PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Cultural Requirements (Section 16)}}\\
 \addlinespace
-\reqref{NFR-CULT-001} & Cultural sensitivity of symbols and imagery & Must &
+\reqref{NFR-CULT-002} & Cultural sensitivity of symbols and imagery & Must &
 PH-3 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Legal Requirements (Section 17.1)}}\\
@@ -7894,7 +7902,7 @@ H-AHM-007 & \reqref{FR-LRN-016}; \reqref{FR-LRN-017}; \reqref{FR-LRN-019};
 \reqref{FR-LRN-021} & \reqref{FR-LRN-016}; \reqref{FR-LRN-017};
 \reqref{FR-LRN-019}; \reqref{FR-LRN-021} \\
 \addlinespace
-H-SHA-001 & SAF-SHA-001 & SAF-SHA-001 \\
+H-SHA-001 & SAF-SHA-001; SAF-SHA-006 & SAF-SHA-001; SAF-SHA-006 \\
 \addlinespace
 H-SHA-002 & SAF-SHA-002 & SAF-SHA-002 \\
 \addlinespace
@@ -8008,19 +8016,27 @@ specialists advised doing so (SRC-005.03, SRC-005.06), and until then the
 requirements that depend on their views rest on the expert statements below and
 are open to change.
 
-\begin{table}[H]
-\centering
-\caption{Requirement sources: project documents and meetings}
-\label{tab:src-docs}
-\footnotesize
-\begin{tabularx}{\textwidth}{@{}
+{\footnotesize
+\begin{longtable}{@{}
   >{\raggedright\arraybackslash}p{1.3cm} >{\raggedright\arraybackslash}p{1.9cm}
-  >{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}X
-  >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+  >{\raggedright\arraybackslash}p{1.4cm}
+  >{\raggedright\arraybackslash}p{\dimexpr(\textwidth-4.6cm-10\tabcolsep)/3\relax}
+  >{\raggedright\arraybackslash}p{\dimexpr(\textwidth-4.6cm-10\tabcolsep)/3\relax}
+  >{\raggedright\arraybackslash}p{\dimexpr(\textwidth-4.6cm-10\tabcolsep)/3\relax}@{}}
+\caption{Requirement sources: project documents and meetings}
+\label{tab:src-docs}\\
 \toprule
 \textbf{ID} & \textbf{Type} & \textbf{Date} & \textbf{Reference} &
 \textbf{Summary} & \textbf{Limitations} \\
 \midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Date} & \textbf{Reference} &
+\textbf{Summary} & \textbf{Limitations} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
 \phantomsection\label{src:001}SRC-001 & Project document & -- &
 \texttt{docs/\allowbreak Problem\allowbreak Statement\allowbreak And\allowbreak
 Goals/\allowbreak Problem\allowbreak Statement.tex} & Problem, stakeholders,
@@ -8046,9 +8062,8 @@ by the team; plans, not user needs. \\
   of the range. Take specific WCAG ideas, such as large icons, as non-functional
   requirements rather than treating WCAG as a constraint. & Advice from the
   client, not observed user data. \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\end{longtable}
+}
 
 \begin{table}[H]
 \centering
@@ -8619,7 +8634,7 @@ required) is based on constraints chosen after speaking with clients/proxies.
 Including the one just mentioned, five of my requirements are based on such
 sections.  
 \reqref{NFR-SEC-001} and \reqref{NFR-SEC-004} cite \srcref{004}, which is a
-supervisor meeting (our supervisor is also a client). \reqref{NFR-CULT-001}
+supervisor meeting (our supervisor is also a client). \reqref{NFR-CULT-002}
 draws on \reqref{NFR-UX-007} which was a solicited UX requirement.
 
 \textbf{Moustafa:} I wrote 27 requirements: 24 look-and-feel and usability
@@ -8731,14 +8746,19 @@ requirements. Rayan's backend work will require reliable data modelling and
 access control, especially since one adult account may have several learner
 profiles and practice histories. Moustafa will need strong experience with
 browser drawing input and responsive canvas behaviour, because the accuracy of
-stylus events affects both evaluation and saved records.
+stylus events affects both evaluation and saved records, and will need to learn
+to build and check the accessibility criteria of Sections 10 and 11, such as
+contrast, touch target sizes and text alternatives.
 
 Huzaifah will need a good verification and testing approach, including ways to
 reproduce edge cases such as interrupted strokes, threshold boundaries and
 failed saves. Shamil's role will benefit from strong stakeholder communication
 and documentation skills so that decisions, questions and feedback do not get
 lost between meetings. As a team, we also need more domain knowledge about early
-visual-motor practice and accessible interfaces. None of us should assume that
+visual-motor practice and accessible interfaces, and we need to get good at
+testing without children: no study with children is possible (CON-006), so our
+reviews with adults and prepared drawings must still tell us something useful.
+None of us should assume that
 something which seems intuitive to us will necessarily work well for the
 children or adults who would use Squigglr.
 
@@ -8774,10 +8794,18 @@ the gaps it left.
 The second approach matters because something that looks clear on paper may
 still be confusing when somebody tries to use it. For Rayan's data and
 access-control work, official documentation and small integration prototypes can
-complement each other; Ahmed prioritized testing the multi-learner and saving
-flows early. For Moustafa's stylus and canvas work, browser input documentation
+complement each other, and the team will test the multi-learner and saving flows
+early. For Moustafa's stylus and canvas work, browser input documentation
 is a starting point, but trying the same prepared strokes on different
-touchscreen sizes will reveal problems that documentation cannot. For Huzaifah,
+touchscreen sizes will reveal problems that documentation cannot. For
+accessibility, Moustafa can learn the tools that check the WCAG 2.2 success
+criteria we selected, or study how existing children's apps handle icons and
+touch targets; he will start with the criteria and their checking tools, because
+our requirements are written against them. For testing without children, the
+team can learn from how other projects ran reviews with adults, or ask the
+specialists how they evaluate apps when children cannot take part; we will ask
+the specialists, who have done this before and offered to help guide a pilot
+(SRC-005). For Huzaifah,
 studying testing methods and building repeatable synthetic test cases provide
 both the theory and evidence that our requirements are met. For Shamil, reading
 relevant research and following up with adult stakeholders through interviews or
@@ -8787,7 +8815,7 @@ these approaches fit the work that each person was assigned: Ahmed can identify
 otherwise hidden user flows by walkthroughs with adults; Rayan can verify that
 data access works properly with prototypes; Moustafa can compare stylus
 functions for different devices; Huzaifah can prove that requirements are met
-reliably; and Shamil can assess the teams current assumptions against research.
+reliably; and Shamil can assess the team's current assumptions against research.
 
 \end{enumerate}
 

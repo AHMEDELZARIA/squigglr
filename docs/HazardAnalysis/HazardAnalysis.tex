@@ -80,6 +80,10 @@ appendix and my generative AI use disclosure.\\
 appendix and my generative AI use disclosure.\\
 19 October 2026 & Muhammad Huzaifah & Summarized the team's generative AI
 use in the general sections of the AI use disclosure appendix.\\
+19 October 2026 & Moustafa Moustafa & Final QA: combined H-SHA-003, H-MOU-005
+and H-MOU-006 by reference with H-RAY-002, H-MUH-003 and H-MUH-002; renumbered
+the session-timeout requirement SAF-SHA-006; corrected the HA-derived totals and
+L1 (\#82).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -281,13 +285,10 @@ contributes to. \progname{} controls no equipment, and an adult nearby stays
 responsible for the child's physical safety and time on the device (ASM-002).
 The analysis therefore considers only what \progname{} does: content on a
 child-facing screen that flashes and can trigger a seizure in rare cases
-(H-MOU-001), and practice that does not end or restarts at once and keeps a
-child on the device far longer than the adult intended. & Feedback on a
-child-facing screen flashes several times a second in front of a child who is
-prone to seizures; or a child practising alone restarts a lesson each time it
-ends at its attempt limit and keeps drawing for much longer than planned. &
-ASM-002; G.3; WCAG 2.2 criterion 2.3.1 \citep{wcag22}; HA checklist
-(addictiveness) \\
+(H-MOU-001). Practice that does not end is treated as psychological harm (L2;
+H-RAY-004, H-RAY-005). & Feedback on a child-facing screen flashes several
+times a second in front of a child who is prone to seizures. & ASM-002; WCAG
+2.2 criterion 2.3.1 \citep{wcag22} \\
 \addlinespace
 L2 & Psycho\-logical harm and well-being & Distress, frustration, agitation, or
 loss of confidence or of ownership of the work, caused by what \progname{} shows
@@ -1082,7 +1083,8 @@ violated as the unauthorized user can read or write over personal data. Loss:
 privacy and trust in the system. & Privacy/security & Mitigate: implement
 authentication at every endpoint the data is accessed at; end session and logout
 after an extended inactivity; Document/Test: test that attempts to access other
-accounts' data under the hood is rejected by the server & SAF-SHA-001 \\
+accounts' data under the hood is rejected by the server & SAF-SHA-001,
+SAF-SHA-006 \\
 \addlinespace
 H-SHA-002 & Data transmission; third-party integrations & Private learner data
 is sent to a third-party service (other than ones approved for functionality) &
@@ -1097,13 +1099,16 @@ PII. & SAF-SHA-002 \\
 \addlinespace
 H-SHA-003 & Attempt persistence; save confirmation & A practice attempt is lost
 without the user being informed, or the system reports a false successful save.
-& Network error after rendering of success response; network error without
-notification & Adult believes child's progress is being tracked with complete
+& Combined with H-RAY-002: a lost connection loses the attempt without notice;
+that cause and its mitigations are analysed in H-RAY-002. Own cause: a success
+message is shown before the server confirms the save. & Adult believes child's
+progress is being tracked with complete
 records when records are missing in reality. Loss: misleading progress
-reporting; adult trust in the application. & Data integrity & Mitigate: confirm
-a save with a silent verification ping that informs the adult if the save did
-not really save; Document/Test: run integration testing wherein saves are
-accompanied by simulated errors and verify that it is reported. & G.5,
+reporting; adult trust in the application. & Data integrity & Mitigate: report
+a save as successful only after the server confirms it, and tell the adult when
+a save fails. Document/Test: run integration tests in which saves fail after the
+request is sent, and verify that no success is shown and the adult is told. &
+G.5,
 SAF-SHA-003 \\
 \end{longtable}
 }
@@ -1196,29 +1201,33 @@ strokes. Document/Test: check that no feedback adds strokes to an attempt. &
 SAF-MOU-001, FR-LRN-014, FR-LRN-023, BR-004 \\
 \addlinespace
 \mbox{H-MOU-005} & Progress summaries; attempt records & A progress view makes
-the child look more or less independent than they were. & Assisted attempts
-shown as independent; refined creative drawings mixed into lesson records; fewer
-attempts presented as better skill (SRC-005, Moustafa, 6:03). & An adult moves
+the child look more or less independent than they were. & Combined with
+H-MUH-003: assisted attempts shown as independent, and creative drawings counted
+with lesson records; those causes and their mitigations are analysed in
+H-MUH-003. Own cause: fewer attempts presented as better skill (SRC-005,
+Moustafa, 6:03). & An adult moves
 the child on too early or holds them back, or overrates their progress. Loss:
 suitable support decisions; the child's well-being. & Data integrity;
-Psychological/ well-being & Eliminate: never include creative space drawings in
-lesson records or summaries. Mitigate: show assisted and independent attempts
-separately and never present the number of attempts as a measure of skill; use
-plain, non-clinical wording. Document/Test: check summaries of prepared
-histories with known assisted and independent attempts. & SAF-MOU-002, G.6,
+Psychological/ well-being & Mitigate: never present the number of attempts as a
+measure of skill, and use plain, non-clinical wording. Document/Test: check that
+no summary of a prepared history ranks or rates the child by the number of
+attempts. & SAF-MOU-002, G.6,
 FR-LRN-012, BR-005, SAF-RAY-004, NFR-UX-017 \\
 \addlinespace
 \mbox{H-MOU-006} & Creative space refinement & Refinement changes the drawing
 too much: points move further than intended, or parts are added or removed. &
-\texttt{REFINE\_\allowbreak TOLERANCE} too large or not enforced; the refinement
-service returns a different drawing; the child cannot find how to restore the
-original (CA-001). & The child no longer sees the drawing as their own and is
+Combined with H-MUH-002: \texttt{REFINE\_\allowbreak TOLERANCE} not enforced, or
+the refinement service returns a different drawing; those causes and their
+mitigations are analysed in H-MUH-002. Own cause: the child cannot find how to
+restore the original or turn refinement off (CA-001). & The child no longer sees
+the drawing as their own and is
 upset; work changed unexpectedly is a source of frustration (SRC-009.01;
 SRC-009.02). Loss: well-being; trust in the creative space. & Psychological/
-well-being & Mitigate: limit every change to \texttt{REFINE\_TOLERANCE}; let the
-child or the adult restore the original or turn refinement off; let the adult
-turn refinement off for each child. Document/Test: run the G.4 measurement on
-prepared adult-made drawings. & G.4, BR-005, NFR-UX-011 \\
+well-being & Mitigate: let the child or the adult restore the original or turn
+refinement off, and let the adult turn refinement off for each child.
+Document/Test: with all on-screen text hidden, check that adult reviewers can
+find the restore and refinement-off controls on prepared refined drawings. &
+G.4, BR-005, NFR-UX-011 \\
 \end{longtable}
 }
 \end{fmealandscape}
@@ -1580,7 +1589,7 @@ The table has three groups. Functional requirements come first, in the order of
 the SRS subsections that hold them: the Learning Activity, Creative Drawing,
 Attempt Record and Progress Summary requirements. The look and feel and
 usability requirements (NFR-UX) follow, in ID order. Safety-critical
-requirements come last (SAF-RAY, SAF-AHM, SAF-SHA, SAF-MOU, and SAF-MUH); the
+requirements come last (SAF-RAY, SAF-AHM, SAF-SHA and SAF-MOU); the
 SRS keeps them in its Safety-Critical Requirements subsection because they do
 not fit another section. For each requirement, the table gives its ID, with the
 short title the SRS gives it where there is one, its statement, the hazards
@@ -2039,11 +2048,12 @@ SAF-SHA-002 & Squigglr shall confirm that all essential third-party services do
 not transmit PII through their public interface. & H-SHA-002 & Safety-Critical
 \\
 \addlinespace
-SAF-SHA-003 & Squigglr shall send a verification ping after each save and inform
-adult users when a save fails. & H-SHA-003 & Safety-Critical \\
+SAF-SHA-003 & Squigglr shall report a save as successful only after the server
+confirms it, and shall inform the
+adult when a save fails. & H-SHA-003 & Safety-Critical \\
 \addlinespace
-SAF-SHA-004 & Squigglr shall logout the user after an extended period of
-inactivity. & H-SHA-001 & Safety-Critical \\
+SAF-SHA-006 & Squigglr shall log out the user after \texttt{IDLE\_TIMEOUT}
+(TBD) of inactivity. & H-SHA-001 & Safety-Critical \\
 \addlinespace
 SAF-MOU-001 & In guided lessons, feedback on a missed part shall show the child
 where the part is missing without drawing it for them. & H-MOU-004 &
@@ -2060,9 +2070,9 @@ times in any one-second period. & H-MOU-001 & Safety-Critical \\
 }
 
 In total, 87 requirements are HA-derived: 16 Learning Activity, 22 Creative
-Drawing, nine Attempt Record and ten Progress Summary requirements, five Look
-and Feel and seven Usability and Humanity requirements, and 13 safety-critical
-requirements. Every row of the four FMEA tables cites at least one of them. The
+Drawing, nine Attempt Record and 11 Progress Summary requirements, five Look
+and Feel and seven Usability and Humanity requirements, and 17 safety-critical
+requirements. Every row of the five FMEA tables cites at least one of them. The
 Roadmap section that follows states the phase in which each is planned.
 
 \section{Roadmap}\label{sec:roadmap}
@@ -2189,10 +2199,11 @@ Progress summaries are built from the complete records, so they are planned with
 them (G.6). These requirements keep each summary to one learner and consistent
 with the records behind it (H-MUH-003, H-MUH-004, H-MUH-008). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-001, SAF-RAY-007, SAF-SHA-001, SAF-SHA-004 &
+PH-2 (Feb.~1, 2027) & SAF-RAY-001, SAF-RAY-007, SAF-SHA-001, SAF-SHA-006 &
 Adult-only actions, learner switching and an active learner exist only once the
 product has adult accounts and several learner profiles, which the PoC does not
-need. Both are planned with the requirements that keep drawings and summaries to
+need; SAF-SHA-001 and SAF-SHA-006 protect those accounts (H-SHA-001). All four
+are planned with the requirements that keep drawings and summaries to
 one learner (FR-CRT-023, FR-CRT-026, FR-PRG-001) (H-RAY-001, H-RAY-006). \\
 \addlinespace
 PH-2 (Feb.~1, 2027) & SAF-RAY-002, SAF-SHA-002, SAF-SHA-003 & The device check
@@ -2283,7 +2294,7 @@ H-MOU-002). \\
 \end{longtable}
 }
 
-No HA-derived requirement is planned for Future: every row of the four FMEA
+No HA-derived requirement is planned for Future: every row of the five FMEA
 tables has its mitigating requirements planned within the capstone. Four of the
 items left outside the scope of this analysis, as the Scope and Purpose of
 Hazard Analysis section explains, are features that may be added later. Each
@@ -2479,8 +2490,6 @@ in Section 5, and Sections 6 and 7. All decisions in my sections are my own.
 \newpage{}
 
 \section{Appendix --- Reflection}
-
-\wss{Not required for CAS 741}
 
 \input{../Reflection.text}
 

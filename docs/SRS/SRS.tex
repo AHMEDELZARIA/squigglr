@@ -186,6 +186,9 @@ stage's attempt counts across stage changes; fixed the suggestion and history
 rules of the formal specification; let NFR-UX-017 allow the SAF-RAY-004
 statement; regenerated the Section 28 traceability tables and the UC-008 and
 UC-009 requirement lists; completed the product input table.\\
+19 October 2026 & Muhammad Huzaifah & Final audit: changed NFR-COMP-002 from
+FIPPA to MFIPPA, which covers school boards; corrected the PIPEDA rationale, the
+SRC-005.02 statement and the requirement counts in Shamil's reflection.\\
 \end{longtable}
 
 ~\\
@@ -1115,8 +1118,6 @@ presentation of web pages. & Section 10\\
 \textbf{EARS} & Easy Approach to Requirements Syntax. & Team reflection\\
 \textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}. &
 \hyperref[sec:facts]{Section 5.1}\\
-\textbf{FIPPA} & Freedom of Information and Protection of Privacy Act (Ontario).
-& Section 17\\
 \textbf{FR} & Functional requirement. & \hyperref[sec:functional]{Section 9}\\
 \textbf{GB} & Gigabyte. & \hyperref[sec:costs]{Section 23}\\
 \textbf{GDPR} & General Data Protection Regulation (European Union). & Section
@@ -1141,6 +1142,8 @@ used for network communication. & Section 13\\
 \hyperref[sec:changes]{Section 27.1}\\
 \textbf{LLM} & Large language model. & AI-use disclosure\\
 \textbf{MB} & Megabyte. & \hyperref[sec:new-problems]{Section 20}\\
+\textbf{MFIPPA} & Municipal Freedom of Information and Protection of Privacy
+Act (Ontario), which covers school boards. & Section 17\\
 \textbf{MG} & Module Guide, a high-level description of a system's modules and
 their relationships. & Module Guide document\\
 \textbf{MIS} & Module Interface Specification, a detailed description of module
@@ -5811,26 +5814,30 @@ including conditions relevant to adoption.
 \subsection{Legal Requirements}
 \begin{srsrequirement}{NFR-COMP-001}{PIPEDA}
   \reqshall{Squigglr shall comply with applicable obligations under
-PIPEDA~\cite{pipeda}.} \reqrationale{PIPEDA applies because Squigglr is a
-Canadian project hosted for Canadian schools that collects personal information
-in the course of commercial-like activity.} \reqfit{A review of every
-personal-information field Squigglr collects, and of every place it is stored or
-sent, against each of the ten PIPEDA fair information principles records each
-principle as met or not applicable, with none unmet.}
+PIPEDA~\cite{pipeda}.} \reqrationale{PIPEDA applies to organizations that
+collect, use or disclose personal information in the course of commercial
+activities. Squigglr has no sale or purchase planned
+(Section~\ref{sec:stakeholders}), so PIPEDA may not apply during the capstone,
+but it would apply if Squigglr were later offered commercially. Its ten fair
+information principles are the privacy baseline either way.} \reqfit{A review
+of every personal-information field Squigglr collects, and of every place it is
+stored or sent, against each of the ten PIPEDA fair information principles
+records each principle as met or not applicable, with none unmet.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\cite{pipeda}} \reqtraces{PIPEDA~\cite{pipeda}}
 \end{srsrequirement}
 
-\begin{srsrequirement}{NFR-COMP-002}{Ontario FIPPA Applicability}
-  \reqshall{Squigglr shall be compliant with the Ontario Freedom of Information
-and Protection of Privacy Act (FIPPA) before adoption by any school boards.}
-  \reqrationale{FIPPA governs how Ontario public institutions, including school
-  boards, collect, keep and disclose personal information. Adoption by a school
-  board is outside this project, so the requirement is checked before the end of
-  the project, ready for any later adoption.}
+\begin{srsrequirement}{NFR-COMP-002}{Ontario MFIPPA Applicability}
+  \reqshall{Squigglr shall be compliant with the Ontario Municipal Freedom of
+Information and Protection of Privacy Act (MFIPPA)~\cite{mfippa} before
+adoption by any school boards.}
+  \reqrationale{MFIPPA governs how Ontario school boards and other municipal
+  institutions collect, keep, use and disclose personal information. Adoption by
+  a school board is outside this project, so the requirement is checked before
+  the end of the project, ready for any later adoption.}
   \reqfit{A review of Squigglr's collection, retention and disclosure of
-  personal information against FIPPA Part III records no unmet obligation.}
+  personal information against MFIPPA Part II records no unmet obligation.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\srcref{002}} \reqtraces{\reqref{NFR-SEC-001}; OI-06}
@@ -7230,7 +7237,7 @@ PH-3 \\
 \addlinespace
 \reqref{NFR-COMP-001} & PIPEDA & Must & PH-3 \\
 \addlinespace
-\reqref{NFR-COMP-002} & Ontario FIPPA applicability & Must & PH-3 \\
+\reqref{NFR-COMP-002} & Ontario MFIPPA applicability & Must & PH-3 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Standards Compliance Requirements (Section
 17.2)}}\\
@@ -8167,8 +8174,9 @@ frame. An adult who knows the child (a parent or educator) should choose the
 level. The team agreed to leave progression to the supervising adult.
 \item[{\phantomsection%
   \label{src:005.02}SRC-005.02 (\intref{P2}{29:18})}] In a past project, a
-teacher personalized each child's activities through a separate adult interface
-that also showed progress.
+teacher personalized each child's activities through a separate adult
+interface. P2 suggested letting the teacher or caregiver change the activity
+and giving them a view of the child's progress.
 \item[{\phantomsection%
   \label{src:005.03}SRC-005.03 (\intref{P2}{31:42})}] Which progress measures
 help an adult should be decided with occupational therapists or educational
@@ -8673,10 +8681,10 @@ that talking to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering judgement about
 failure cases and edge conditions.
 
-\textbf{Shamil:} I contributed nine performance, four safety-critical, three
+\textbf{Shamil:} I contributed seven performance, four safety-critical, three
 operational and environmental, four maintainability and support, six security,
-two cultural, and two compliance requirements for a total of 30 requirements. I
-did not personally consult any clients or proxies to generate my requirements,
+one cultural, and three compliance requirements for a total of 28 requirements.
+I did not personally consult any clients or proxies to generate my requirements,
 but some of my requirements are traceable from other sections that were
 solicited from stakeholders. For example, \reqref{NFR-OPS-003} (no installation
 required) is based on constraints chosen after speaking with clients/proxies.

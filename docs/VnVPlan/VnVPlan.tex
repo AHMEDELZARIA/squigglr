@@ -309,35 +309,231 @@ format for the tests given below.}
 How will they be done?  In cases like code (or document) walkthroughs, who will
 be involved? Be specific.}
 
-\subsubsection{Area of Testing1}
-		
-\paragraph{Title for Test}
+\subsubsection{Performance}
+\label{sec:perf-tests}
+
+These tests cover the performance requirements in SRS Section~12
+(NFR-PERF-001 to NFR-PERF-005, NFR-PERF-008 and NFR-PERF-009). Timing
+thresholds are written as symbolic constants. The SRS leaves their values to
+this plan, so each constant in the Symbolic Parameters appendix states how its
+value is set and when.
+
+\paragraph{Test environment.} Squigglr is a web app, so in principle it runs on
+any device with a modern browser, and on any network. Testing every device and
+every connection is not realistic for a team of five, and it is not needed to
+show that the requirements are met. The team will instead run the timing tests
+on one tablet, an iPad with a stylus, which is the device the app is designed
+around (SRS ASM-003). The tests run in a controlled setting: the iPad is
+charged, Low Power Mode is off, every other app and browser tab is closed,
+automatic updates are paused, and the iPad uses the same Wi-Fi network for
+every run. Keeping these conditions the same means that a change in a measured
+time comes from a change in Squigglr, not from the device or the network.
+Automatic tests that do not need a physical stylus run in Playwright on a team
+laptop under the same rules.
+
+\paragraph{Why each test is repeated.} Even in a controlled setting, one
+measurement can be slow by chance, for example when the browser collects
+garbage. Each timing test is therefore repeated \texttt{PERF\_RUNS} times, and
+the VnV Report gives the minimum, median, 95th percentile and maximum of the
+measured times next to the threshold. A test passes only when the 95th
+percentile and the maximum are both within the threshold. This way a single
+slow run is still visible, but one unlucky run does not decide the result.
+
+\paragraph{Limits.} Because the tests use one device and one network, they show
+that Squigglr meets its timing requirements on the device it is designed for.
+They do not show how it performs on older devices or slower networks. Other
+browsers and devices are checked for correct operation, not speed, in
+T-PERF-007.
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{T-PERF-001: Stroke feedback latency\\}
 
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+Purpose: A child should see each stroke appear as they draw it; a visible delay makes drawing feel broken and can frustrate a child who is still building fine motor control.
 
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
+Type: Dynamic, automatic (Playwright) and manual (physical stylus).
+
+Initial State: a guided lesson is open at each stage type (demonstration,
+tracing, reduced guidance and independent drawing) with no earlier
+attempts; no other tabs are open.
+
+Input: the prepared stroke files \texttt{line.json}, \texttt{circle.json}
+and \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, replayed as pointer events by
+Playwright, \texttt{PERF\_RUNS} times each; then \texttt{PERF\_RUNS}
+strokes drawn by hand with the stylus on the iPad.
+
+Output: for every stroke, the time from the last pointer event to the first
+frame that shows the stroke is at most \texttt{FEEDBACK\_LATENCY\_MAX}.
+
+Test Case Derivation: NFR-PERF-001 requires visual acknowledgement within
+\texttt{FEEDBACK\_LATENCY\_MAX} of the final input point. Multi-stroke
+shapes are included because they create the most rendering work per
+attempt. The replayed strokes give exactly the same input on every run, so
+they are the main measurement. A person cannot draw the same stroke twice,
+so the hand-drawn strokes are not meant to be identical: only the time to
+show each stroke is measured, not how accurate it is. They are there
+because replayed events skip the real stylus input path on the iPad, which
+could add its own delay.
+
+How test will be performed: the replay script stamps
+\texttt{performance.now()} at the last pointer event and in the next
+\texttt{requestAnimationFrame} callback after the stroke is drawn. For the
+manual runs, the iPad is connected to a Mac and the same interval is read
+from a Safari Web Inspector timeline recording. Times are summarized as
+described above.
+
+\item{T-PERF-002: Refinement latency and canvas responsiveness\\}
+
+Purpose: Refinement runs on an outside service that can be slow, so this checks that the refined drawing arrives in time and that the child can keep drawing while it waits.
+
+Type: Dynamic, automatic.
+
+Initial State: the creative space is open with refinement on and the
+refinement service reachable.
+
+Input: the prepared drawings \texttt{house.json} and \texttt{sun.json}
+are replayed and finished, \texttt{PERF\_RUNS} times each; during the wait,
+a further stroke is replayed every 200~ms.
+
+Output: the refined result appears within \texttt{REFINE\_LATENCY\_MAX} of finishing, and every stroke replayed during the wait is drawn
+and saved without an error.
+
+Test Case Derivation: NFR-PERF-002 requires both the time limit and an
+unblocked canvas while the refinement is pending.
+
+How test will be performed: the script records the time from the finish
+action to the first frame showing the refined result, and checks the
+canvas contents after each extra stroke.
+
+\item{T-PERF-003: Progress summary load time\\}
+
+Purpose: A parent or educator with a long history of saved attempts should not be left waiting for the progress summary to load.
+
+Type: Dynamic, automatic.
+
+Initial State: an adult account with one child profile whose history
+holds \texttt{HISTORY\_SIZE\_LARGE} attempts across three lessons, logged
+in, with the browser cache cleared.
+
+Input: the adult opens the progress summary ten consecutive times.
+
+Output: each time, the summary is fully visible within
+\texttt{SUMMARY\_LOAD\_MAX}.
+
+Test Case Derivation: the fit criterion of NFR-PERF-003 names ten
+consecutive requests. A large history is used because load time grows with
+the number of records.
+
+How test will be performed: Playwright measures from the click to the
+moment the last chart element is visible. The test is repeated with
+histories of 10 attempts and \texttt{HISTORY\_SIZE\_LARGE} attempts, and
+the two sets of times are reported together to show how load time grows
+with history size.
+
+\item{T-PERF-004: Deterministic stage result\\}
+
+Purpose: The adult relies on pass and fail results to choose the next level, so the same drawing must always get the same result.
+
+Type: Dynamic, automatic (unit test in Vitest).
+
+Initial State: the stage evaluation module is loaded with the criteria
+for each prepared stage.
+
+Input: the prepared stroke files from T-PERF-001, plus
+\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json}, a drawing just outside
+\texttt{STAGE\_PASS}, each evaluated ten consecutive times.
+
+Output: all ten results for each input are identical, including the
+pass or fail decision.
+
+Test Case Derivation: NFR-PERF-004 requires the same strokes and criteria to
+give the same result. The near miss checks that a borderline result does not
+change between runs.
+
+How test will be performed: a Vitest test calls the evaluation function
+directly and compares every result with the first. A second run in
+Playwright replays the same strokes through the user interface, to confirm
+that input handling does not change the result.
+
+\item{T-PERF-005: Submitting attempts after reconnection\\}
+
+Purpose: Home and school Wi-Fi can drop; a child's work done while offline must still reach the server once the connection returns, without being lost or saved twice.
+
+Type: Dynamic, automatic.
+
+Initial State: a guided lesson is open; the network is online.
+
+Input: the network is set offline in Playwright; the prepared attempt
+\texttt{circle.json} is completed; the network is restored. This is done
+three consecutive times, then repeated with three attempts completed
+while offline.
+
+Output: after each reconnection, every attempt completed offline is saved
+on the server exactly once, in the order made, and none is lost or
+duplicated.
+
+Test Case Derivation: NFR-PERF-005 names three consecutive runs. The
+three-attempt case checks the order of a queue and catches duplicates.
+
+How test will be performed: after each run, the script reads the child's
+attempt records through the test database and compares them with the
+attempts made. This test is shared with SAF-RAY-003 and SAF-SHA-003
+(safety-critical tests below).
+
+\item{T-PERF-006: Concurrent session capacity\\}
+
+Purpose: Several classrooms or households may use Squigglr at once; this checks that the speed limits still hold under that load.
+
+Type: Dynamic, automatic (load test).
+
+Initial State: the preview deployment, with \texttt{CONCURRENT\_CAPACITY}
+test adult accounts and one child profile each.
+
+Input: a load script runs \texttt{CONCURRENT\_CAPACITY} simulated sessions
+at once; each replays a lesson of ten attempts and then opens the progress
+summary.
+
+Output: no request fails, and the measurements of T-PERF-001 to T-PERF-003,
+taken in one extra session during the load, stay within their thresholds.
+
+Test Case Derivation: NFR-PERF-008 requires the speed limits to hold under
+the agreed load.
+
+How test will be performed: the load script runs simulated sessions in
+Playwright; one further session takes the timing measurements. The run
+is repeated at a quarter, half and all of \texttt{CONCURRENT\_CAPACITY},
+and the times are plotted against the number of sessions in the VnV Report.
+
+\item{T-PERF-007: Squigglr keeps working until the end of the capstone\\}
+
+Purpose: Squigglr must keep working on the supported devices and browsers at
+least until the end of the capstone, the final demo on 15 March 2027 (PH-3 in
+the SRS). Browsers update often, and an update can break a feature without
+any change to our code, so this checks every feature at each milestone.
+
+Type: Dynamic, manual.
+
+Initial State: the release build at each milestone: the proof-of-concept
+demo (PH-1, 23 November 2026), Rev~0 (PH-2, 1 February 2027) and the final
+demo (PH-3, 15 March 2027).
+
+Input: on the iPad and on each other combination in
+\texttt{SUPPORTED\_DEVICES} that the team has access to, a team member
+follows the checklist of every feature: create an account and a child
+profile, run one guided lesson to the end, draw in the creative space,
+restore an original, and open the progress summary.
+
+Output: every checklist item works on every combination. Any combination
+that fails is removed from \texttt{SUPPORTED\_DEVICES}, and OI-09 is
+updated.
+
+Test Case Derivation: the fit criterion of NFR-PERF-009.
+
+How test will be performed: a team member runs the checklist by hand at
+each milestone. Running it at the two earlier milestones, not only at the
+final demo, means a browser update that breaks a feature is found while there
+is still time to fix it. The results are kept as a table of device by feature
+in the VnV Report.
 
 \end{enumerate}
 

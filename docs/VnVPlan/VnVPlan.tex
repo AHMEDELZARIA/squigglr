@@ -2,6 +2,7 @@
 
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{longtable}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
@@ -189,21 +190,85 @@ walkthrough.  There is also a possibility of using the final presentation (in
 CAS741) for a partial usability survey.}
 
 \subsection{Automated Testing and Verification Tools}
+\label{sec:tools}
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+This section names the tools that check the code automatically. They follow
+the expected technology and coding standard in the \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/DevelopmentPlan/DevelopmentPlan.tex}{Development Plan}. They are planned, not yet installed; the DevOps Lead (Shamil
+Canbolat) sets them up when the application scaffold exists, and the Testing
+Lead (Muhammad Huzaifah) chooses which tests run where. Table~\ref{tab:tools}
+lists each tool, what it checks and when it runs.
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.5\textwidth}@{}}
+\caption{Automated testing and verification tools}
+\label{tab:tools}\\
+\toprule
+\textbf{Purpose} & \textbf{Tool} & \textbf{How and when it is used}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Purpose} & \textbf{Tool} & \textbf{How and when it is used}\\
+\midrule
+\endhead
+Language & TypeScript, strict mode & Next.js front end and server
+code. \texttt{tsc --noEmit} runs locally and on every PR; any type error
+fails the check.\\
+\addlinespace
+Coding standard and linter & ESLint with the Next.js Core Web Vitals and
+TypeScript ESLint configurations & The coding standard in the Development
+Plan. Runs on every PR; any error fails the check. Used as evidence for
+NFR-MAINT-004.\\
+\addlinespace
+Formatter & Prettier (check mode) & Runs on every PR; any unformatted file
+fails the check (NFR-MAINT-004).\\
+\addlinespace
+Unit and component tests & Vitest with React Testing Library & Unit tests
+for logic such as stroke evaluation and save handling, and component tests
+for screens. Runs locally before review and on every PR; any failing test
+fails the check.\\
+\addlinespace
+Code coverage & \texttt{@vitest/\allowbreak coverage-v8} & Produces a statement and
+branch coverage report on every PR (see below).\\
+\addlinespace
+End-to-end tests & Playwright, on Chromium, WebKit and Firefox & Complete
+user flows, including the automated tests in the nonfunctional system tests
+(for example network loss and repeated failed attempts). Runs on every PR
+once a flow exists. Emulation does not replace physical stylus testing, so
+stylus tests are also run by hand on the target tablet.\\
+\addlinespace
+Continuous integration & GitHub Actions & Runs all checks above on PRs to
+\texttt{development} and \texttt{main} and after each merge. A PR cannot be
+merged while a required check fails. The existing
+\texttt{latex-pages.yml} workflow continues to build the documents.\\
+\addlinespace
+Performance measurement & Chrome DevTools (Performance panel) and the
+browser Performance API (\texttt{performance.now()}) & Measures stroke
+latency, refinement time and page load for the performance tests.
+Timings logged by Playwright scripts make the measurements repeatable.\\
+\addlinespace
+Network inspection & Chrome DevTools (Network panel) & Records requests for
+the HTTPS and third-party data tests (NFR-OPS-001, SAF-SHA-002).\\
+\bottomrule
+\end{longtable}}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
+\paragraph{Code coverage.} The coverage report is attached to every PR as a
+GitHub Actions artifact, and the change in coverage is noted in the PR
+review. The team does not set a fixed coverage target, because high coverage
+alone does not show that tests are good (Development Plan). Instead, reviewers
+check that new or changed logic has tests, and that modules tied to a
+safety-critical requirement (the safety-critical tests below), such as
+attempt saving, stroke evaluation and access checks, have every branch
+covered. Full branch coverage of these modules is a goal, not a guarantee:
+some branches (for example, a server failure in the middle of a request) may be
+hard to reach in a test. The actual coverage is reported honestly in the VnV
+Report as a summary table of statement and branch coverage per module, and any
+safety-critical branch left uncovered is listed with the reason and the test or
+inspection that covers it instead.
+
+\paragraph{Limits of the tools.} Passing these checks shows that the code
+builds, follows the coding standard and passes its tests. It does not show
+that the tests are complete, so the code inspections planned under Implementation
+Verification remain necessary.
 
 \subsection{Software Validation}
 

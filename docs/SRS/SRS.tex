@@ -249,7 +249,9 @@ are written in monospaced capitals (for example, \texttt{STAGE\_PASS}) and
 defined once in Section~\ref{sec:constants}. A value marked \emph{TBD} is not an
 approved threshold; unresolved values appear in the constants register, and are
 also linked to an open issue in Section~\ref{sec:open-issues} where such an
-issue exists. Diagrams, if used, must include a legend identifying their symbols
+issue exists. Performance and maintainability values marked TBD are not unknowns: the
+VnV Plan states how each will be set by repeated measurement once the system
+can be tested. Diagrams, if used, must include a legend identifying their symbols
 and arrow meanings. Section~\ref{sec:fr-formal} defines the state-machine
 notation used to specify guided lesson behaviour.
 
@@ -1339,28 +1341,30 @@ attempts (count). \emph{Value:} team-defined; TBD. \emph{Trace:} SAF-SHA-003.\\
 \addlinespace
 \texttt{FEEDBACK\_LATENCY\_MAX} & Maximum allowed time between the completion of
 a stylus stroke and visual acknowledgement of that stroke during a lesson.
-\emph{Unit:} milliseconds. \emph{Value:} TBD; pending VnV Plan threshold
-verification. \emph{Trace:} NFR-PERF-001.\\
+\emph{Unit:} milliseconds. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-001.\\
 \addlinespace
 \texttt{REFINE\_LATENCY\_MAX} & Maximum allowed time between system's AI
 refinement request and visual acknowledgement of that request strokes (or
-falling back to unrefined strokes). \emph{Unit:} seconds. \emph{Value:} TBD;
-pending VnV Plan threshold verification. \emph{Trace:} NFR-PERF-002.\\
+falling back to unrefined strokes). \emph{Unit:} seconds. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-002.\\
 \addlinespace
 \texttt{SUMMARY\_LOAD\_MAX} & Maximum allowed time for an adult's progress
 summary page to become fully visible after request. \emph{Unit:} seconds.
-\emph{Value:} TBD; pending VnV Plan threshold verification. \emph{Trace:}
+\emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:}
 NFR-PERF-003.\\
 \addlinespace
 \texttt{LOCATE\_TIME\_MAX} & Maximum time a team member unfamiliar with the
 codebase should need to locate the module responsible for a given stage
-behaviour. \emph{Unit:} minutes. \emph{Value:} TBD; pending VnV Plan threshold
-verification. \emph{Trace:} NFR-MAINT-002.\\
+behaviour. \emph{Unit:} minutes. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-MAINT-002.\\
 \addlinespace
 \texttt{CONCURRENT\_CAPACITY} & Maximum number of simultaneous active users the
 system shall support without degrading response times below the thresholds in
 Section~\ref{sec:speed}. \emph{Unit:} concurrent sessions (count). \emph{Value:}
-TBD; to be set in the VnV Plan. \emph{Trace:} NFR-PERF-008.\\
+TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-008.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -5448,7 +5452,7 @@ restored three consecutive times.}
 
 \begin{srsrequirement}{NFR-PERF-008}{Concurrent session capacity}
   \reqshall{Squigglr shall support a concurrent session target of
-\texttt{CONCURRENT\_CAPACITY} (TBD) simultaneous active users without degrading
+\texttt{CONCURRENT\_CAPACITY} (TBD; set by measurement in the VnV Plan) simultaneous active users without degrading
 response times below the thresholds stated in Section~\ref{sec:speed}
 (NFR-PERF-001, NFR-PERF-002, and NFR-PERF-003).} \reqrationale{The anticipated
 system deployment is to a small number of schools or households. The exact

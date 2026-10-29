@@ -5232,10 +5232,16 @@ an adult acts.\\
 \item[SAF-RAY-002]\phantomsection\label{req:SAF-RAY-002} Before a lesson starts,
 Squigglr shall check the device and browser against \texttt{SUPPORTED\_DEVICES}
 (TBD) and, if they do not match, show an adult-readable notice that results may
-be unreliable.\\
-\emph{Rationale:} the team does not control the device (CON-001--CON-003).\\
+be unreliable. When the first stroke of a lesson is drawn with a finger rather
+than a stylus, Squigglr shall show the adult the same kind of notice.\\
+\emph{Rationale:} the team does not control the device (CON-001--CON-003). A
+browser cannot tell whether a stylus is connected before it is used; it can
+only report the input type (pen, finger or mouse) of each stroke as it is
+drawn, so stylus use is checked at the first stroke (ASM-003).\\
 \emph{Fit criterion:} on each prepared unsupported combination the notice
-appears before the first attempt; on supported ones it does not.\\
+appears before the first attempt; on supported ones it does not. When the
+first stroke is drawn with a finger, the notice appears; when it is drawn with
+a stylus, it does not.\\
 \emph{Hazards:} H-RAY-002.
 \item[SAF-RAY-003]\phantomsection\label{req:SAF-RAY-003} Squigglr shall keep
 each completed attempt on the device until the server confirms it is saved, and

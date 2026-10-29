@@ -4289,7 +4289,7 @@ each completed attempt on the device until the server confirms that it is saved,
 and tells the adult which attempts were not saved. SAF-RAY-006 records each
 lesson that ends at an attempt limit, either \texttt{ATTEMPT\_LIMIT} or
 \texttt{ATTEMPT\_LIMIT\_MAX}, records each improvement extension, and keeps
-earlier attempts when a lesson is restarted. SAF-RAY-007 saves every attempt to
+earlier attempts when the same lesson is started again. SAF-RAY-007 saves every attempt to
 the active learner only. The specialist interview did not cover how records are
 kept, shared or deleted (FACT-013), so the requirements below rest on the
 Problem Statement and the business rules. Who may view, share or delete records
@@ -4412,7 +4412,7 @@ number of successful attempts at each stage and how the lesson ended.}
 lesson and how many attempts succeeded at each stage (Table~\ref{tab:userNeeds};
 BR-002). The starting stage shows whether a stage was reached by passing or
 chosen by an adult (BR-003). A new record each time the lesson starts keeps a
-restart from hiding earlier results (SAF-RAY-006).} \reqfit{For prepared
+repeated lesson from hiding earlier results (SAF-RAY-006).} \reqfit{For prepared
 sequences of attempts in which a lesson is started at the first drawing stage
 and again at a later stage chosen by an adult, each lesson record shows the
 known starting stage, furthest stage, count of successful attempts at each stage
@@ -5274,12 +5274,13 @@ attempts made.\\
 \item[SAF-RAY-006]\phantomsection\label{req:SAF-RAY-006} Squigglr shall record
 each lesson that ends at \texttt{ATTEMPT\_LIMIT} or
 \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement extension, show the adult how
-many times these happened for each lesson, and keep earlier attempts when a
-lesson is restarted.\\
-\emph{Rationale:} a restart could otherwise hide repeated failure from the
+many times these happened for each lesson, and keep earlier attempts when the
+same lesson is started again.\\
+\emph{Rationale:} each run of a lesson is a new lesson record (FR-REC-006);
+starting the lesson again could otherwise hide repeated failure from the
 adult.\\
-\emph{Fit criterion:} in prepared sequences that reach the limit and then
-restart, the count and all earlier attempts appear in the adult view.\\
+\emph{Fit criterion:} in prepared sequences that reach the limit and are then
+started again, the count and all earlier attempts appear in the adult view.\\
 \emph{Hazards:} H-RAY-005.
 \item[SAF-RAY-007]\phantomsection\label{req:SAF-RAY-007} Squigglr shall identify
 the active learner on every practice screen in a form a child who cannot read
@@ -6571,7 +6572,7 @@ links} \\
 \bottomrule
 \endlastfoot
 Frustration from repetition (child) & Failing the same stage again and again, or
-restarting a lesson at once after it ends, can agitate a child who dislikes
+starting the same lesson again at once after it ends, can agitate a child who dislikes
 repeated tasks (PER-1). The child may become distressed or refuse the activity
 later. & A lesson ends at \texttt{ATTEMPT\_LIMIT} (G.3, BR-002), and the adult
 sets the limits for each child (BR-008). Hazards: H-RAY-004, H-RAY-005. \\
@@ -7085,7 +7086,7 @@ PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-005} & Automatic lesson termination & Must & PH-2 \\
 \addlinespace
-\texttt{SAF-RAY-006} & Restart and extension history & Must & PH-2 \\
+\texttt{SAF-RAY-006} & Limit-ending and extension history & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-007} & Active-learner identification and isolation & Must & PH-2
 \\

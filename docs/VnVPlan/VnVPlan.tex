@@ -349,7 +349,7 @@ T-PERF-007.
 
 \item{T-PERF-001: Stroke feedback latency\\}
 
-Purpose: A child should see each stroke appear as they draw it; a visible delay makes drawing feel broken and can frustrate a child who is still building fine motor control.
+Purpose: a child should see each stroke appear as they draw it; a visible delay makes drawing feel broken and can frustrate a child who is still building fine motor control.
 
 Type: Dynamic, automatic (Playwright) and manual (physical stylus).
 
@@ -384,7 +384,7 @@ described above.
 
 \item{T-PERF-002: Refinement latency and canvas responsiveness\\}
 
-Purpose: Refinement runs on an outside service that can be slow, so this checks that the refined drawing arrives in time and that the child can keep drawing while it waits.
+Purpose: refinement runs on an outside service that can be slow, so this checks that the refined drawing arrives in time and that the child can keep drawing while it waits.
 
 Type: Dynamic, automatic.
 
@@ -407,7 +407,7 @@ canvas contents after each extra stroke.
 
 \item{T-PERF-003: Progress summary load time\\}
 
-Purpose: A parent or educator with a long history of saved attempts should not be left waiting for the progress summary to load.
+Purpose: a parent or educator with a long history of saved attempts should not be left waiting for the progress summary to load.
 
 Type: Dynamic, automatic.
 
@@ -432,7 +432,7 @@ with history size.
 
 \item{T-PERF-004: Deterministic stage result\\}
 
-Purpose: The adult relies on pass and fail results to choose the next level, so the same drawing must always get the same result.
+Purpose: the adult relies on pass and fail results to choose the next level, so the same drawing must always get the same result.
 
 Type: Dynamic, automatic (unit test in Vitest).
 
@@ -457,7 +457,7 @@ that input handling does not change the result.
 
 \item{T-PERF-005: Submitting attempts after reconnection\\}
 
-Purpose: Home and school Wi-Fi can drop; a child's work done while offline must still reach the server once the connection returns, without being lost or saved twice.
+Purpose: home and school Wi-Fi can drop; a child's work done while offline must still reach the server once the connection returns, without being lost or saved twice.
 
 Type: Dynamic, automatic.
 
@@ -482,7 +482,7 @@ attempts made. This test is shared with SAF-RAY-003 and SAF-SHA-003
 
 \item{T-PERF-006: Concurrent session capacity\\}
 
-Purpose: Several classrooms or households may use Squigglr at once; this checks that the speed limits still hold under that load.
+Purpose: several classrooms or households may use Squigglr at once; this checks that the speed limits still hold under that load.
 
 Type: Dynamic, automatic (load test).
 
@@ -506,7 +506,7 @@ and the times are plotted against the number of sessions in the VnV Report.
 
 \item{T-PERF-007: Squigglr keeps working until the end of the capstone\\}
 
-Purpose: Squigglr must keep working on the supported devices and browsers at
+Purpose: squigglr must keep working on the supported devices and browsers at
 least until the end of the capstone, the final demo on 15 March 2027 (PH-3 in
 the SRS). Browsers update often, and an update can break a feature without
 any change to our code, so this checks every feature at each milestone.

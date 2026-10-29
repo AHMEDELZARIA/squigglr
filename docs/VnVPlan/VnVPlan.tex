@@ -241,9 +241,11 @@ Continuous integration & GitHub Actions & Runs all checks above on PRs to
 merged while a required check fails. The existing
 \texttt{latex-pages.yml} workflow continues to build the documents.\\
 \addlinespace
-Performance measurement & Chrome DevTools (Performance panel) and the
-browser Performance API (\texttt{performance.now()}) & Measures stroke
-latency, refinement time and page load for the performance tests.
+Performance measurement & Safari Web Inspector (Timelines), Chrome
+DevTools (Performance panel) and the browser Performance API
+(\texttt{performance.now()}) & Measures stroke latency, refinement time and
+page load for the performance tests. Safari Web Inspector, run on a Mac, reads
+timings from the test iPad; Chrome DevTools is used for runs on a laptop.
 Timings logged by Playwright scripts make the measurements repeatable.\\
 \addlinespace
 Network inspection & Chrome DevTools (Network panel) & Records requests for

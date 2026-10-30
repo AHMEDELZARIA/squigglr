@@ -91,6 +91,9 @@ SAF-SHA-006, and corrected the HA-derived totals and L1 (\#82).\\
 29 October 2026 & Rayan Nasrallah & Added SAF-RAY-009, replaced first names
 with an identifier and an avatar, and changed ``restarted'' to ``started
 again'' (\#224).\\
+30 October 2026 & Rayan Nasrallah & Addressed peer review: said who starts a
+lesson again in H-RAY-005; added the \texttt{ATTEMPT\_LIMIT\_MAX} check to
+H-RAY-007 and CA-006 (\#182, \#183).\\
 \end{longtable}
 
 ~\newpage
@@ -703,8 +706,8 @@ needs (SRC-005, Moustafa, 6:03). Squigglr makes no diagnosis or treatment claims
 \emph{Hazards affected:} H-RAY-003.
 
 \item[CA-006] The supporting adult chooses the adult-set values, such as
-\texttt{STAGE\_PASS}, \texttt{DIFFICULTY\_STREAK} and \texttt{ATTEMPT\_LIMIT},
-for each child within a range the team sets (SRC-008). The ranges are not found
+\texttt{STAGE\_PASS}, \texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT} and
+\texttt{ATTEMPT\_LIMIT\_MAX}, for each child within a range the team sets (SRC-008). The ranges are not found
 from child testing, and the value an adult picks, or the default, may not suit
 their child.\\
 \emph{Rationale:} no information is gathered from children and no study with
@@ -884,7 +887,9 @@ SAF-RAY-005 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
 \texttt{ATTEMPT\_LIMIT}, the same lesson is started again at once and the repetition continues. &
-No adult may be watching (CA-001); starting the lesson again begins a new count of attempts. &
+The adult starts the same lesson again, which only the adult can do after
+the adult check (CA-001, SAF-RAY-001); no adult may be watching (CA-001);
+starting the lesson again begins a new count of attempts. &
 The limit does not stop the repetition, and the adult cannot see how often it
 happened. Loss: well-being; misleading records. & Psychological/ well-being &
 Mitigate: record each lesson that ended at \texttt{ATTEMPT\_LIMIT} and show the
@@ -914,11 +919,15 @@ default that does not suit the child (CA-006); a value is saved outside its
 range; a child changes a setting. & A child cannot pass a stage they can draw,
 or passes one they cannot, and the records mislead the adult. Loss: well-being;
 misleading records. & Psychological/ well-being & Mitigate: accept only values
-within the team-set range, and only an \texttt{ATTEMPT\_LIMIT} larger than
-\texttt{DIFFICULTY\_STREAK}; show example drawings of each end of the
+within the team-set range, only an \texttt{ATTEMPT\_LIMIT} larger than
+\texttt{DIFFICULTY\_STREAK}, and only an \texttt{ATTEMPT\_LIMIT\_MAX} at least
+\texttt{ATTEMPT\_LIMIT}; show example drawings of each end of the
 \texttt{STAGE\_PASS} range; place settings behind the adult check; show the
 values in use next to the child's records. Document/Test: test that out-of-range
-and invalid values are refused and that the default is the midpoint. & G.2, G.3,
+values, an \texttt{ATTEMPT\_LIMIT} not larger than \texttt{DIFFICULTY\_STREAK}
+and an \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} are refused,
+that the default is the midpoint, and that each \texttt{STAGE\_PASS} example
+drawing gets the result it shows when the check scores it. & G.2, G.3,
 SAF-RAY-008 \\
 \end{longtable}
 }

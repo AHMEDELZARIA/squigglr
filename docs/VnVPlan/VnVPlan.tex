@@ -540,17 +540,248 @@ assignee, and what closes it. An issue closes when the fix is merged or when
 we record why we are not changing the plan.
 
 \subsection{Implementation Verification}
+\label{sec:impl-verification}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+The implementation is checked in two ways: by running it and by reading
+it. Running it covers:
+\begin{itemize}
+\item the system tests in this plan: the functional tests (T-LRN, T-CRT,
+T-REC and T-PRG) and the nonfunctional tests (T-UX, T-PERF, T-SAF, T-OPS,
+T-MAINT, T-SEC, T-CULT and T-COMP), traced to the requirements in
+Section~\ref{sec:trace};
+\item the unit tests for each module, chosen as described in
+Section~\ref{sec:unit-tests} once the MIS is done (the design documentation
+is due on 18 January 2027);
+\item the automated checks in Section~\ref{sec:tools}, which run these
+tests on every PR.
+\end{itemize}
+Reading it uses the techniques in Table~\ref{tab:static-verif}. Dynamic
+tests only show behaviour on the inputs they choose. Reading finds paths
+that no test reaches, and checks what no test can, such as naming,
+hard-coded constants and the mapping to the MG and MIS. The safety
+inspection (SI, Section~\ref{sec:safety-tests}) covers the code tied to the
+safety-critical requirements and is not repeated here.
 
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth}%
+>{\raggedright\arraybackslash}p{0.25\textwidth}%
+>{\raggedright\arraybackslash}p{0.18\textwidth}%
+>{\raggedright\arraybackslash}p{0.16\textwidth}%
+>{\raggedright\arraybackslash}p{0.13\textwidth}@{}}
+\caption{Static verification of the implementation}
+\label{tab:static-verif}\\
+\toprule
+\textbf{Technique} & \textbf{Who} & \textbf{When} & \textbf{What is read} &
+\textbf{Checklist}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Technique} & \textbf{Who} & \textbf{When} & \textbf{What is read} &
+\textbf{Checklist}\\
+\midrule
+\endhead
+PR code review & One teammate other than the author, normally the one who
+checks the author's work in Table~\ref{tab:vnvTeam}. Database schema and
+access-policy changes are reviewed by the Backend Lead (Rayan Nasrallah)
+together with a teammate (Development Plan). & Every PR, before merge. &
+The changed code. & Items marked PR in Table~\ref{tab:code-checklist}.\\
+\addlinespace
+Code walkthrough & The author presents, and the rest of the team follows and
+asks questions. The Testing Lead (Muhammad Huzaifah) chooses the code and
+the scenario. The notetaker (Moustafa Moustafa) records findings in the
+meeting issue. & 45 minutes of the Sunday 10:00 team review on 15 November
+2026, 6 December 2026, 24 January 2027, 21 February 2027 and 7 March 2027.
+& At most two modules, the ones changed most since the last walkthrough,
+followed along one scenario. & Items marked W.\\
+\addlinespace
+Code inspection (INS-LRN, INS-EVAL, INS-REC) & The Testing Lead moderates.
+Two inspectors who did not write the code read it. The author answers
+questions. & Completed by 20 November 2026 (PH-1), 29 January 2027 (PH-2)
+and 12 March 2027 (PH-3). & The lesson rules; stroke capture and
+evaluation; record saving. & Items marked I, plus A1 to A9.\\
+\addlinespace
+Safety inspection (SI) & Rayan runs it and Huzaifah records. & Before Rev~0
+and Rev~1. & The code tied to the SAF requirements. & The SI steps in
+Section~\ref{sec:safety-tests}.\\
+\bottomrule
+\end{longtable}}
 
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+Table~\ref{tab:code-checklist} shows how reviewers apply each item of the
+team's
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/Code-Checklist.tex}{Code
+Checklist} to Squigglr. The ``Used in'' column names the techniques that
+check the item: PR review (PR), walkthrough (W) and inspection (I).
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.04\textwidth}%
+>{\raggedright\arraybackslash}p{0.23\textwidth}%
+>{\raggedright\arraybackslash}p{0.11\textwidth}%
+>{\raggedright\arraybackslash}p{0.51\textwidth}@{}}
+\caption{Code Checklist items and how reviewers apply them}
+\label{tab:code-checklist}\\
+\toprule
+\textbf{\#} & \textbf{Item} & \textbf{Used in} &
+\textbf{What the reviewer checks in Squigglr}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{\#} & \textbf{Item} & \textbf{Used in} &
+\textbf{What the reviewer checks in Squigglr}\\
+\midrule
+\endhead
+1 & Identifier names are consistent & PR, W, I & Names match the SRS and
+MIS. The stage names are demonstration, tracing, endpoints and independent.
+Constants are named exactly as in SRS Section~4.2 (for example
+\texttt{STAGE\_PASS}). Record fields are named as in SRS Section~7.2.\\
+\addlinespace
+2 & Identifier names are meaningful & PR, W, I & A short name such as
+\texttt{nf} is allowed only with a comment citing the SRS Section~9.2
+symbol.\\
+\addlinespace
+3 & Source code in the src folder & PR & Application code is under
+\texttt{src/}; tests and fixtures are kept out of it.\\
+\addlinespace
+4 & Comments on ``what'' not ``how'' & PR, I & Each exported function of
+the lesson rules, evaluation and record code states what it guarantees and
+cites its SRS requirement (for example ``FR-LRN-021'').\\
+\addlinespace
+5 & Avoid hard-coded constants & PR, I & No literal value of an SRS
+constant, such as 80, 8 or 5. Values come from the learner's settings, or
+from one constants module that uses the SRS names.\\
+\addlinespace
+6 & Consistent indentation & PR & The Prettier check passes; this item is
+not checked by hand.\\
+\addlinespace
+7 & Explicit identification of coding standard & PR, once & The ESLint and
+Prettier configuration files are committed, and the README links the
+Development Plan coding standard.\\
+\addlinespace
+8 & Code standard is followed & PR, I & ESLint and \texttt{tsc} pass. The
+reviewer checks what the tools cannot: \texttt{camelCase} and
+\texttt{PascalCase}, and a justification next to every \texttt{any} or lint
+suppression.\\
+\addlinespace
+9 & Parameters in the same order for all functions & PR, I & Learner,
+lesson, stage, attempt, in that order, everywhere.\\
+\addlinespace
+10 & Descriptive file names & PR & Each file is named after what it does.\\
+\addlinespace
+11 & Mapping to the module guide is clear & W, I, from Rev~0 & Each
+inspected file belongs to one MG module, and the mapping is kept in the
+repository.\\
+\addlinespace
+12 & Mapping between MIS symbols and code symbols & I, from Rev~0 & Each MIS
+access program of the inspected module has a function of the same name,
+with the same inputs and outputs.\\
+\addlinespace
+13 & Understandable to someone new to the project & W & Someone who did not
+write the code can explain the scenario's path after the walkthrough.\\
+\addlinespace
+14 & Esoteric language features avoided & PR, W & A simpler construct is
+used wherever one would do.\\
+\addlinespace
+15 & Incomplete code flagged & PR, I & Incomplete code is marked
+\texttt{TODO(\#issue)} with an open issue, and no \texttt{TODO} remains in
+inspected code at a milestone.\\
+\bottomrule
+\end{longtable}}
+
+\paragraph{Items added for the inspections.} The Code Checklist asks for
+more items, so the inspections add these:
+\begin{itemize}
+\item[A1] (INS-LRN) Each row of the SRS Section~9.2 transition table maps
+to one identifiable code path. After a finished attempt, the rules are
+checked in the SRS order: pass, end at limit, extension, suggestion.
+\item[A2] (INS-LRN) Apart from pass-based advancement and the step from the
+demonstration to practice, only an adult action that passed the adult check
+changes the lesson or the stage (I1, I2 and SRS CON-007).
+\item[A3] (INS-LRN, INS-EVAL) An interrupted, unfinished or invalid attempt
+cannot reach the pass branch or change a count (I3, FR-LRN-009 and
+FR-LRN-010).
+\item[A4] (INS-LRN) On every path, the evaluable attempts at a stage never
+exceed \texttt{ATTEMPT\_LIMIT\_MAX}, the extension attempts used never
+exceed \texttt{ATTEMPT\_EXTENSION}, and the extension is granted at most
+once (I5).
+\item[A5] (INS-EVAL) Evaluation and saving use the strokes as captured,
+with no smoothing or refinement, and the lesson code imports nothing from
+the refinement code (I4, SRS BR-004 and BR-005).
+\item[A6] (INS-EVAL) Feedback and completion text come only from the lesson
+catalogue data, never from code literals or a model (FR-LRN-014,
+FR-LRN-022 and NFR-MAINT-001).
+\item[A7] (INS-REC) An attempt record copies the adult-set values in use
+instead of pointing at the current settings (FR-REC-004), and no code path
+updates a saved attempt record or an ended lesson record (FR-REC-009).
+\item[A8] (INS-REC) A retried save cannot create a second record, and each
+attempt is saved under the lesson record it was made in (FR-REC-008).
+\item[A9] (all) Every branch of the inspected files is reached by a test in
+this plan or a unit test, or the gap is listed from the coverage report
+(Section~\ref{sec:tools}).
+\end{itemize}
+
+\paragraph{What each inspection covers.}
+\begin{itemize}
+\item INS-LRN: the lesson rules (FR-LRN-015, FR-LRN-016, FR-LRN-018 to
+FR-LRN-021 and FR-LRN-023; SRS Section~9.2).
+\item INS-EVAL: stroke capture, finishing an attempt, classification, the
+pass decision and the choice of feedback (FR-LRN-007 to FR-LRN-014,
+FR-LRN-022 and FR-REC-002).
+\item INS-REC: creating and saving attempt and lesson records (FR-REC-001
+to FR-REC-010).
+\end{itemize}
+PH-1 inspects INS-EVAL and INS-LRN for the PH-1 code. INS-REC starts in
+PH-2, when the other eight FR-REC requirements are built; in PH-1,
+FR-REC-001 and FR-REC-003 rely on PR review and on T-REC-001 and T-REC-003.
+PH-2 inspects all three in full, with items 11 and 12 now that the MG and
+MIS exist. PH-3 inspects only the code changed since the commit of the PH-2
+inspection.
+
+\paragraph{Inspection procedure.}
+\begin{enumerate}
+\item \emph{Planning} (moderator, two working days before the meeting): open
+an issue labelled \texttt{review}. The issue names the files and commit,
+the SRS requirements, the two inspectors and the checklist items. The
+inspectors are chosen from people who did not write the files, according
+to the commit history. For INS-REC, one of them is the Backend Lead unless
+he wrote the code. If the Testing Lead wrote any of the files, the
+milestone QA coordinator moderates instead.
+\item \emph{Preparation} (each inspector alone, at most one hour): check the
+code against every item, and list each finding in the issue with its file,
+line and item.
+\item \emph{Meeting} (at most one hour; moderator, inspectors and author):
+go through the findings and mark each one major or minor. A finding is
+major if it could change a pass decision, a count, a stage, a saved record
+or what the child or adult sees, or if it breaks one of A1 to A8. Every
+other finding is minor. The author answers questions but does not argue
+findings.
+\item \emph{Rework} (author): each major finding becomes its own issue
+labelled \texttt{bug}, linked from the inspection issue and fixed by a PR.
+Each minor finding is fixed, or closed with a reason.
+\item \emph{Follow-up} (moderator): check every major fix. If there were
+three or more major findings, inspect the changed code again before the
+milestone.
+\end{enumerate}
+The inspection passes when no major finding is open on its date. When a
+file is in both an inspection and the safety inspection at the same
+milestone, the team holds one meeting: the SI steps first, then A1 to A9.
+
+\paragraph{Walkthrough procedure.} The author shares the code on screen and
+follows one scenario from input to saved result, for example a failing
+attempt from the stylus events, through evaluation and the lesson rules,
+to the saved attempt record. Listeners say where they cannot follow (item
+13), and findings become GitHub issues. The walkthroughs on 6 December 2026
+and 21 February 2027 prepare for the course code-review interviews on 9
+December 2026 and 23 February 2027 (Development Plan). Findings from those
+interviews are recorded the same way. From 24 January 2027, walkthroughs
+also check items 11 and 12.
+
+\paragraph{Feasibility and reporting.} An inspection takes about seven
+person-hours: two hours of preparation for the two inspectors, a one-hour
+meeting for four people, and one hour of planning and follow-up. The eight
+inspections (two in PH-1, three in PH-2 and three smaller ones in PH-3)
+take about 50 person-hours, or about ten for each member over the year.
+Walkthroughs use time in the existing weekly meeting. The VnV Report lists
+each inspection and walkthrough with its date, commit, participants,
+findings by checklist item and severity, and status.
 
 \subsection{Automated Testing and Verification Tools}
 \label{sec:tools}

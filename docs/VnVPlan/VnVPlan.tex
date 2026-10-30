@@ -537,7 +537,7 @@ pipeline is set up, and repeats this whenever the lint rules change.
 
 These tests cover SRS Section~15 (NFR-SEC-001 to NFR-SEC-006). They use
 test accounts only. A child profile holds only a unique identifier generated
-and an avatar chosen by the adult (SRS BR-001,
+by Squigglr and an avatar chosen by the adult or the child (SRS BR-001,
 NFR-SEC-004).
 
 \begin{enumerate}
@@ -703,6 +703,9 @@ the review is repeated for new images before Rev~1.
 
 \subsubsection{Compliance}
 \label{sec:comp-tests}
+
+These reviews cover SRS Section~17 (NFR-COMP-001 and NFR-COMP-002): the
+Canadian and Ontario privacy laws that apply to Squigglr.
 
 \begin{enumerate}
 
@@ -979,9 +982,11 @@ example, ``within \texttt{FEEDBACK\_LATENCY\_MAX}'').
 \endhead
 \texttt{FEEDBACK\_LATENCY\_MAX} & Milliseconds. Set at the end of PH-1 from
 the target-tablet experiment in the Development Plan, run on the test iPad:
-the median stroke
-latency of the first working build, checked by the team for whether drawing
-feels immediate. Recorded in the SRS constants table (NFR-PERF-001).\\
+the team measures the stroke latency of the first
+working build, checks whether drawing feels immediate, and sets the
+limit as the highest latency it accepts plus a margin, so that ordinary
+strokes of an accepted build do not fail. After that the limit is fixed
+and does not follow later builds. Recorded in the SRS constants table (NFR-PERF-001).\\
 \addlinespace
 \texttt{REFINE\_LATENCY\_MAX} & Seconds. Set in PH-2 from the measured
 response time of the chosen refinement service (NFR-PERF-002).\\
@@ -1011,8 +1016,8 @@ history. Proposed value: 500, well above a term of daily practice.\\
 \end{longtable}}
 
 \paragraph{Prepared test data.} The nonfunctional tests use stroke files
-recorded once on the test iPad and stored in the repository under
-\texttt{tests/fixtures/}: \texttt{line.json}, \texttt{circle.json},
+that will be recorded once on the test iPad, before the first test run
+in PH-1, and stored in the repository under \texttt{tests/fixtures/}: \texttt{line.json}, \texttt{circle.json},
 \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, \texttt{circle-\allowbreak{}near-\allowbreak{}miss.json},
 \texttt{circle-\allowbreak{}fail.json}, \texttt{square-\allowbreak{}missing-\allowbreak{}side.json},
 \texttt{overlap-\allowbreak{}2-\allowbreak{}strokes.json}, \texttt{house.json} and \texttt{sun.json},

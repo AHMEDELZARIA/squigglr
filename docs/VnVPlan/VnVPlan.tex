@@ -90,28 +90,100 @@ This document ... \wss{provide an introductory blurb and roadmap of the
 \section{General Information}
 
 \subsection{Summary}
+\label{sec:summary}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
+Squigglr is a website that helps children practise drawing on a touchscreen
+with a stylus, and helps the adults supporting them see how that practice is
+going. This plan covers its four main parts:
+
+\begin{itemize}
+  \item \textbf{Guided lessons.} An adult picks a lesson, like drawing a
+    square, and the child works through stages that give less and less help:
+    a demonstration, tracing a full outline, drawing between endpoints, then
+    drawing with no guide. Squigglr moves to the next stage when an attempt
+    passes. Squigglr can suggest going back a stage, but only an adult can make
+    that change.
+  \item \textbf{Creative drawing.} The child draws freely, and Squigglr can
+    tidy up the drawing by adjusting the child's own strokes. The result stays
+    editable and the original can always be restored.
+  \item \textbf{Attempt records.} Each attempt keeps the stage, the
+    difficulties the child ran into and the corrections they made, not just
+    the final drawing.
+  \item \textbf{Progress summaries.} Adults see how a child is doing over time,
+    with attempts made with and without a guide kept separate.
+\end{itemize}
+
+The full requirements are in the SRS.
 
 \subsection{Objectives}
+\label{sec:objectives}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
+Our main objective is to build confidence that Squigglr is safe for children,
+is actually what they and the adults supporting them need, and behaves
+correctly. In order of priority:
 
-\wss{You should also list the objectives that are out of scope.  You don't have 
-the resources to do everything, so what will you be leaving out.  For instance, 
-if you are not going to verify the quality of usability, state this.  It is also 
-worthwhile to justify why the objectives are left out.}
+\begin{enumerate}
+  \item \textbf{Keep children safe and protect their well-being.} Squigglr is
+    used by young children, some with autism, attention-deficit/hyperactivity
+    disorder (ADHD) or other learning needs, so a failure that frustrates or
+    upsets a child matters more than most bugs. Every safety-critical
+    requirement (SRS Section~12.2) gets a test and a second, independent check
+    in the safety inspection (Section~\ref{sec:safety-tests}).
+  \item \textbf{Validate that we are building the right thing.} Our teaching
+    assistant (TA), Chris, pointed out that for this project, validation and
+    usability matter more than verification. Correctly built lessons that the
+    specialists disagree with, or summaries adults can't understand, are still
+    a failure. We validate with the supervisor, the specialists we interviewed
+    and adult usability sessions (see the Software Validation section).
+  \item \textbf{Show that Squigglr is usable and accessible.} Adults need to
+    set up lessons and read summaries quickly, and the child's screens need to
+    be easy to follow. We check this in usability sessions and against
+    selected Web Content Accessibility Guidelines (WCAG) 2.2 success criteria.
+  \item \textbf{Make sure lessons and records behave correctly.} Stage
+    changes, pass and fail decisions, attempt limits and adult control are the
+    core of the product, and an adult who sees a wrong record or summary could
+    make a bad decision for the child. We test these at the minimum, default
+    and maximum of every value the adult can set, and against the formal
+    specification in SRS Section~9.2.
+  \item \textbf{Protect children's data.} We keep records about children, so
+    we check that a child is identified only by an identifier and an avatar,
+    that no personal information is sent to the refinement service, and that
+    only the right adults can see a child's records.
+\end{enumerate}
 
-\wss{The objectives are important because they highlight that you are aware of 
-limitations in your resources for verification and validation.  You can't do everything, 
-so what are you going to prioritize?  As an example, if your system depends on an 
-external library, you can explicitly state that you will assume that external library 
-has already been verified by its implementation team.}
+Some values are still to be determined (TBD) in the SRS, such as the performance limits and
+\texttt{REFINE\_TOLERANCE}. For each one, this plan says how and when we will
+set it instead of leaving a placeholder (see the Symbolic Parameters
+appendix).
+
+With five people and one academic year, we are leaving these out:
+
+\begin{itemize}
+  \item \textbf{Testing with children.} No information is gathered from or
+    about children and no study involves them (SRS CON-005 and CON-006), so every test and session uses adults or
+    prepared attempts. This means the child's experience is judged by adults
+    and the specialists rather than by children, which we accept as a limit
+    of this plan.
+  \item \textbf{Whether Squigglr improves children's drawing skills.} Showing
+    that would take a long study with children, and Squigglr makes no such
+    claim. We only check that the lessons work as specified and that the
+    specialists think they make sense.
+  \item \textbf{Third-party services and libraries.} We assume the
+    authentication provider, the hosting and data storage service, the
+    refinement model, the browsers and libraries like our testing frameworks
+    are verified by the teams that make them. We only test how Squigglr uses
+    them: what it sends, what it does with the result, and how it behaves when
+    one is down. For example, we check that a refined drawing stays within
+    \texttt{REFINE\_TOLERANCE}, not how good the model's output looks.
+  \item \textbf{Waiting Room features} (SRS Section~25), such as letter
+    tracing, finger drawing and offline use, since they are not part of the
+    product we are building. This includes full WCAG conformance; we only
+    check the selected success criteria.
+  \item \textbf{Every device and browser.} We test on the test iPad with a
+    stylus, on the browsers in our end-to-end tests (Section~\ref{sec:tools}),
+    and on the other \texttt{SUPPORTED\_DEVICES} combinations we have access
+    to (T-PERF-007), not on every touchscreen device.
+\end{itemize}
 
 \subsection{Custom Documents}
 

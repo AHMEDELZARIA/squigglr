@@ -2308,31 +2308,30 @@ flow, and to help with \LaTeX{} formatting. Through Claude Code, it also
 helped manage the repository (branches, commits and merges). I reviewed every
 AI-assisted passage before including it.
 
-\textbf{Huzaifah:} I used Anthropic's Claude Opus 5.5 at high effort
-through the omp coding agent, with helper agents that read the SRS, the
-Hazard Analysis and the Development Plan and returned summaries with line
-numbers. I used them while preparing my sections of this document: the
-guided lesson and attempt record tests, Implementation Verification, the
-functional traceability table, the functional symbolic parameters and my
-reflection. I made the testing decisions myself, including which cases to
-leave out where the SRS does not yet agree with itself, how unanswered
-suggestions are recorded, running the rule tests against the lesson rules
-module with a model-based test, and how the work was split into pull
-requests. I used AI to find every requirement, use case, data dictionary
-entry and hazard my tests depend on; to draft test cases from my
-decisions; to work out the expected output of each attempt sequence from
-the formal specification; to turn my notes into draft wording and
-\LaTeX{}; and, through omp, to manage issues, branches and commits and to
-draft the pull request descriptions. To check the expected outputs, a
-short script, written with AI help, applies the rules of SRS Section~9.2;
-the script reproduced the outputs of T-LRN-008, T-LRN-010, T-LRN-013,
-T-LRN-016 to T-LRN-018, T-LRN-020, T-REC-006, T-REC-007 and T-REC-010. A
-separate AI review agent then recomputed every attempt sequence table on
-its own and checked each test against its requirement's fit criterion and
-against the other sections of this plan; its findings were fixed, with AI
-help, before the pull requests. A second script confirmed that every
-FR-LRN and FR-REC requirement appears in the traceability table. I
-reviewed every AI-assisted passage before including it.
+\textbf{Huzaifah:} I used Anthropic's Claude Opus 5.5 at high and extra-high
+effort through the omp coding agent, along with OpenAI's GPT-6.1 Sol (medium)
+helper agents that read the SRS, the Hazard Analysis and the Development Plan
+and returned summaries with line numbers, and a Claude Opus 5.5 (high) helper
+agent that reviewed my branches. I used AI in four ways. For planning, it
+helped me split my assignment (issue \#196) into four smaller sub-issues and
+build a plan for them from the issue, our TA's rule for parameterized tests,
+the rubric, the VnV, Code and Writing checklists, the SRS, the Hazard
+Analysis and the Development Plan. For writing, I decided what each test
+checks and which cases to leave out where the SRS does not yet agree with
+itself; the model turned these decisions into draft test cases and \LaTeX{},
+and worked out the expected output of each attempt sequence from SRS
+Section~9.2. For review, the review agent checked my sections in three ways:
+against the sections my teammates had already merged, against the SRS and
+our requirements, and for correctness, recomputing every attempt sequence on
+its own. Two scripts, written with AI help, also checked my work: one applies
+the rules of SRS Section~9.2 to the sequence tables, and one confirms that
+every FR-LRN and FR-REC requirement is in the traceability table. For Git, it
+managed my branches and commits, rebased my branches onto \texttt{main},
+fixed merge conflicts, and wrote and opened my pull requests. In this
+document, this covered Section~3.5, the guided lesson and attempt record
+tests in Section~4.1, the functional traceability table in Section~4.3, the
+functional symbolic parameters and test data in Section~6.1, and my
+reflection answers. All decisions in my sections are my own.
 
 \newpage{}
 

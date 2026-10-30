@@ -1985,7 +1985,8 @@ and P stand for \texttt{circle-\allowbreak{}fail.json},
 \texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} and
 \texttt{circle.json}, and the notation for adult responses is that of the
 guided lesson tests. An unanswered suggestion is recorded as pending while
-the lesson runs, and as ignored once the lesson ends without an answer.
+the lesson runs, and as ignored once the lesson ends, or the stage changes,
+without an answer.
 
 \begin{enumerate}
 
@@ -2058,10 +2059,11 @@ Type: Dynamic, automatic. Covers FR-REC-002.
 
 Initial State: learner A; the drawing area is \texttt{TEST\_CANVAS}.
 
-Input: the cases vary the lesson, the stage and the attempt. ``Exactly''
-means the same number of strokes, the same order and boundaries, and each
-point's x and y within 0.01 CSS pixels, with the same pressure and time
-offset. The cases are in Table~\ref{tab:t-rec-002}.
+Input: the cases vary the lesson, the stage and the attempt; the learner,
+the drawing area and the defaults stay fixed. ``Exactly'' means the same
+number of strokes, the same order and boundaries, and each point's x and y
+within 0.01 CSS pixels, with the same pressure and time offset. The cases
+are in Table~\ref{tab:t-rec-002}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2112,9 +2114,9 @@ Initial State: learner A with the square lesson at E (the circle lesson at
 T for case (d)).
 
 Input: the cases vary the difficulties in the attempt and whether the child
-corrects them. The difficulty names are the catalogue's predefined
-difficulties for the square lesson at E. The cases are in
-Table~\ref{tab:t-rec-003}.
+corrects them; the learner and the defaults stay fixed. The difficulty
+names are the catalogue's predefined difficulties for the square lesson at
+E. The cases are in Table~\ref{tab:t-rec-003}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2150,7 +2152,8 @@ listed once, and no others) and the SRS Section~7.2 data dictionary (an
 observed difficulty appears at most once in an attempt record, and a
 correction adds a mark without removing the difficulty). (c) mixes both
 marks in one attempt. (e) tries to make one difficulty appear twice. The
-cases follow H-MUH-007 (a), ``correction overwrites difficulty''.
+cases follow H-MUH-007 (a), where ``a later correction replaces the record
+of the difficulty it corrected''.
 
 How test will be performed: Playwright, pausing the replay until the
 feedback appears, then a database read.
@@ -2219,10 +2222,11 @@ The SRS does not say whether a change applies to a lesson already running,
 so in (i) the record must agree with the outcome it produced (H-AHM-007,
 stale setting). (j) is H-AHM-007, wrong learner. (g) and (h) use the ends of
 the \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} ranges,
-which are set for the test of SAF-RAY-009.
+which are set for the test of SAF-RAY-009; the minimums and maximums in (j)
+include them too.
 
-How test will be performed: Playwright and a database read. (g) and (h) are
-first run once those ranges are set.
+How test will be performed: Playwright and a database read. (g), (h) and
+(j) are first run once those ranges are set.
 
 \item{T-REC-005: Interrupted attempt record\\}
 
@@ -2235,7 +2239,8 @@ Initial State: learners A and B; A in the square lesson at the stage in
 each case's row.
 
 Input: the cases vary the number of strokes before the interruption and how
-the adult interrupts. The cases are in Table~\ref{tab:t-rec-005}.
+the adult interrupts; the square lesson and the defaults stay fixed. The
+cases are in Table~\ref{tab:t-rec-005}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2285,7 +2290,8 @@ Initial State: learner A with no lesson records. Each case is a new start
 of the circle lesson.
 
 Input: the cases vary the start stage and the sequence, written as results;
-end to end, 40 is replayed as F, 85 as P and 50 as N. The cases are in
+learner A, the circle lesson and the defaults stay fixed. End to end, 40 is
+replayed as F, 85 as P and 50 as N. The cases are in
 Table~\ref{tab:t-rec-006}.
 
 \begin{table}[htbp]
@@ -2340,8 +2346,9 @@ Type: Dynamic, automatic. Covers FR-REC-007.
 
 Initial State: learners A and B; A starts the circle lesson at T.
 
-Input: the cases vary how far A gets and how the lesson stops. The cases
-are in Table~\ref{tab:t-rec-007}.
+Input: the cases vary how far A gets and how the lesson stops; the circle
+lesson, the start at T and the defaults stay fixed. The cases are in
+Table~\ref{tab:t-rec-007}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2372,8 +2379,8 @@ Table~\ref{tab:t-rec-007}; the test passes when every case gives it.
 Test Case Derivation: the fit criterion: lessons stopped by an adult after
 known successes are unfinished, and a lesson whose last stage is passed is
 not. In (e), limit endings have their own label (SRS Section~7.2). (c) is
-the lesson change of T-LRN-015 (f). The cases follow H-MUH-007 (c),
-``progress saved only at limit''.
+the lesson change of T-LRN-015 (f). The cases follow H-MUH-007 (c), where
+``a lesson's progress is saved only when the lesson ends at its limit''.
 
 How test will be performed: Playwright and a database read.
 
@@ -2387,7 +2394,8 @@ Type: Dynamic, automatic. Covers FR-REC-008.
 Initial State: learner A with no records.
 
 Input: the cases vary how the save is disturbed and how many sessions are
-open. The cases are in Table~\ref{tab:t-rec-008}.
+open; learner A and the defaults stay fixed. The cases are in
+Table~\ref{tab:t-rec-008}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2439,11 +2447,14 @@ earlier record says.
 Type: Dynamic, automatic. Covers FR-REC-009.
 
 Initial State: \texttt{history-\allowbreak{}seed.json} is loaded for
-learner A. The file holds four lesson records with 20 attempt records in
+learner A, whose eight adult-set values are at the minimums of their
+ranges. The file holds three lesson records with 19 attempt records in
 total: (1) circle, every stage passed; (2) square, ended at
-\texttt{ATTEMPT\_LIMIT}; (3) line, unfinished; (4) circle, in progress at
-E. A SHA-256 hash of the canonical JSON of every attempt record and of
-records (1) to (3) is stored.
+\texttt{ATTEMPT\_LIMIT}; (3) line, unfinished. Then, in a second browser
+context, the adult starts the circle lesson for A at E with the adult
+check, and A makes one attempt with F. This lesson stays open through step
+(f) and is record (4). A SHA-256 hash of the canonical JSON of every
+attempt record (20 in total) and of records (1) to (3) is stored.
 
 Input: the steps run in order, each followed by a comparison with the
 stored hashes. The steps are in Table~\ref{tab:t-rec-009}.
@@ -2457,8 +2468,8 @@ stored hashes. The steps are in Table~\ref{tab:t-rec-009}.
 \toprule
 \textbf{Step} & \textbf{Change} & \textbf{Expected output}\\
 \midrule
-a & The adult changes every adult-set value to the other end of its range
-& Every stored hash matches\\
+a & The adult changes every adult-set value to the maximum of its range &
+Every stored hash matches\\
 b & The adult changes the circle lesson's starting stage to E & Every
 stored hash matches\\
 c & The adult turns audio off and refinement off & Every stored hash
@@ -2469,9 +2480,9 @@ catalogue & Every stored hash matches\\
 f & The line lesson is removed from the catalogue & Every stored hash
 matches; record (3) and its attempts are still shown with the lesson's
 name\\
-g & Learner A continues record (4) with F, then P & Every stored hash
-matches; record (4) has two more attempts, and its earlier attempts are
-unchanged\\
+g & In the second context, A continues record (4) with F, then P & Every
+stored hash matches; record (4) has two more attempts, and its earlier
+attempts are unchanged\\
 h & A direct request, as the adult, to change the outcome of attempt record
 1 to passed & Refused; every stored hash matches\\
 \bottomrule
@@ -2484,12 +2495,16 @@ Table~\ref{tab:t-rec-009}; the test passes when every step gives it.
 Test Case Derivation: the fit criterion changes every adult-set value, a
 starting stage and the other settings (SRS UC-010), and adds a lesson to
 and removes a lesson from the catalogue. (e) is a catalogue edit (SRS
-LC-001 and LC-002) that could re-score old attempts. In (g), the record of
-a lesson that has not ended may still grow. (h) tries the direct route; its
-audit event is tested by T-SEC-003. The steps follow H-MUH-007 (d).
+LC-001) that could re-score old attempts. In (g), the record of a lesson
+that has not ended may still grow. Record (4) holds one failure before
+(g), so (g) gives no suggestion at either end of the
+\texttt{DIFFICULTY\_STREAK} range. (h) tries the direct route; its audit
+event is tested by T-SEC-003. The steps follow H-MUH-007 (d).
 
 How test will be performed: a Playwright script runs the steps and
-recomputes the hashes from the database.
+recomputes the hashes from the database. Until the
+\texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} ranges are
+set, those two values keep their defaults in the seed and in (a).
 
 \item{T-REC-010: Suggestions and responses\\}
 
@@ -2503,7 +2518,9 @@ Initial State: learners A and B; A in the circle lesson at E with
 \texttt{DIFFICULTY\_STREAK} = 3.
 
 Input: the cases vary the adult's response to each suggestion and how the
-lesson continues. The cases are in Table~\ref{tab:t-rec-010}.
+lesson continues; the circle lesson and \texttt{DIFFICULTY\_STREAK} 3 stay
+fixed, and every case except (g) starts at E. The cases are in
+Table~\ref{tab:t-rec-010}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2540,11 +2557,11 @@ that status, and no others.
 Test Case Derivation: the fit criterion asks for suggestions that are
 accepted, declined and not yet answered, each listed once. The statuses
 come from the SRS Section~7.2 data dictionary (pending, accepted, declined
-or ignored). A pending suggestion becomes ignored when the lesson ends
-unanswered, which is the team's reading of ``ignored''. In (f), only an
-adult can accept (SAF-RAY-001). In (g), T has no earlier stage. In (h),
-suggestions belong to their learner (SAF-RAY-007), and switching ends A's
-lesson as unfinished (T-REC-007).
+or ignored). A pending suggestion becomes ignored when the lesson ends, or
+the stage changes, without an answer, which is the team's reading of
+``ignored''. In (f), only an adult can accept (SAF-RAY-001). In (g), T has
+no earlier stage. In (h), suggestions belong to their learner
+(SAF-RAY-007), and switching ends A's lesson as unfinished (T-REC-007).
 
 How test will be performed: Playwright and a database read.
 
@@ -3903,7 +3920,7 @@ FR-REC-006 & T-REC-006, T-SAF-006, INS-REC\\
 FR-REC-007 & T-REC-007, T-LRN-015 (f), INS-REC\\
 FR-REC-008 & T-REC-008, T-PERF-005, T-SAF-003, INS-REC\\
 FR-REC-009 & T-REC-009, T-SEC-003, INS-REC\\
-FR-REC-010 & T-REC-010, T-SAF-001, INS-REC\\
+FR-REC-010 & T-REC-010, T-SAF-007, INS-REC\\
 \bottomrule
 \end{longtable}}
 
@@ -4207,8 +4224,8 @@ fourth side), \texttt{square-\allowbreak{}endpoint-\allowbreak{}and-%
 \allowbreak{}side.json} (the square at E with one side missing and one side
 ending away from its corner, a pause until the endpoint feedback appears,
 then that side redrawn to the corner) and
-\texttt{history-\allowbreak{}seed.json} (the T-REC-009 history: four lesson
-records and 20 attempt records, loaded into the test database).
+\texttt{history-\allowbreak{}seed.json} (the T-REC-009 history: three
+lesson records and 19 attempt records, loaded into the test database).
 
 \subsection{Usability Survey Questions?}
 

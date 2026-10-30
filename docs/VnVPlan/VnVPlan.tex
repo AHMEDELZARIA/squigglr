@@ -697,15 +697,20 @@ each step.
 These tests cover the 23 guided lesson requirements in SRS Section~9.1
 (FR-LRN-001 to FR-LRN-023) and the rules and invariants of the formal
 specification in SRS Section~9.2. The lesson flow is summarized with the
-safety-critical tests (Section~\ref{sec:safety-tests}). FR-LRN-001 to
-FR-LRN-007, FR-LRN-010, FR-LRN-011, FR-LRN-013, FR-LRN-015, FR-LRN-016,
-FR-LRN-022 and FR-LRN-023 are due in PH-1, and the rest in PH-2. Each test
-first runs in the phase of the requirements it covers, then in CI on every
-PR. The tests try to cause the failures in Hazard Analysis rows H-AHM-001
-to H-AHM-007: lost or doubled strokes, an incomplete drawing that passes,
-the wrong feedback, a suggestion at the wrong time, and a stale or wrong
-learner's setting. Every drawing is made by an adult team member, and no
-child takes part (SRS CON-005 and CON-006).
+safety-critical tests (Section~\ref{sec:safety-tests}). That summary follows
+SRS UC-005, where the child keeps practising while a suggestion waits. In
+SRS Section~9.2, an attempt can only be finished while no suggestion is
+pending, so in these tests an adult answers every suggestion before the
+next attempt (T-LRN-016). FR-LRN-001 to FR-LRN-007, FR-LRN-010, FR-LRN-011,
+FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022 and FR-LRN-023 are due in
+PH-1, and the rest in PH-2. Each test first runs in the phase of the
+requirements it covers. After that, its automatic parts run in CI on every
+PR, and its manual parts run at the milestones the test names. The tests
+try to cause the failures in Hazard Analysis rows H-AHM-001 to H-AHM-007:
+lost or doubled strokes, an incomplete drawing that passes, the wrong
+feedback, a suggestion at the wrong time, and a stale or wrong learner's
+setting. Every drawing is made by an adult team member, and no child takes
+part (SRS CON-005 and CON-006).
 
 \paragraph{Conventions.} The tests below share these conventions.
 \begin{itemize}
@@ -799,8 +804,11 @@ Input: the cases vary the adult's starting choice and the child's actions;
 the lesson rules and the defaults stay fixed. Each case is run for the
 line, circle and square lessons. ``Good drawing'' means \texttt{line.json},
 \texttt{circle.json} or
-\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, according to the
-lesson. The cases are in Table~\ref{tab:t-lrn-002}.
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, and ``failing
+drawing'' means \texttt{line-\allowbreak{}short.json},
+\texttt{circle-\allowbreak{}fail.json} or
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, according to
+the lesson. The cases are in Table~\ref{tab:t-lrn-002}.
 
 \begin{table}[htbp]
 \centering\small
@@ -820,9 +828,9 @@ c & Start at I, with the adult check & Practice begins & I is the first
 drawing stage shown\\
 d & Default start & Good drawing, three times & The stages appear as D, T,
 E, I, then the lesson is completed\\
-e & Start at E & The child draws, finishes, retries, taps the avatar and
-taps the stage indicator & The lesson and the starting stage (E) are
-unchanged, on the screen and in the lesson record\\
+e & Start at E & The child makes a failing drawing, finishes it, retries,
+taps the avatar and taps the stage indicator & The lesson is unchanged, the
+stage shown is still E, and the lesson record's starting stage is E\\
 f & A starts at E, B at T, same lesson & The adult switches A, then B, then
 A & Each learner starts at their own stage\\
 \bottomrule
@@ -854,8 +862,9 @@ Type: Dynamic, automatic. Covers FR-LRN-003.
 Initial State: learner A with no lesson records; each catalogue lesson
 started with the default start.
 
-Input: the cases vary what happens during and after the demonstration. The
-cases are in Table~\ref{tab:t-lrn-003}.
+Input: the cases vary what happens during and after the demonstration; the
+learner and the defaults stay fixed. The cases are in
+Table~\ref{tab:t-lrn-003}.
 
 \begin{table}[htbp]
 \centering\small
@@ -947,8 +956,8 @@ Type: Dynamic, automatic. Covers FR-LRN-007.
 Initial State: the circle lesson at T (the square lesson for case (b)); the
 drawing area is \texttt{TEST\_CANVAS}.
 
-Input: the cases vary the replayed file. The cases are in
-Table~\ref{tab:t-lrn-005}.
+Input: the cases vary the replayed file; the stage (T), the drawing area
+and the defaults stay fixed. The cases are in Table~\ref{tab:t-lrn-005}.
 
 \begin{table}[htbp]
 \centering\small
@@ -999,8 +1008,9 @@ Type: Dynamic, automatic. Covers FR-LRN-008.
 
 Initial State: the square lesson at T, with zero attempts.
 
-Input: the cases vary the number of strokes and the pauses between them.
-The cases are in Table~\ref{tab:t-lrn-006}.
+Input: the cases vary the number of strokes and the pauses between them;
+the square lesson, the stage (T) and the defaults stay fixed. The cases are
+in Table~\ref{tab:t-lrn-006}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1030,8 +1040,8 @@ Table~\ref{tab:t-lrn-006}; the test passes when every case gives it.
 
 Test Case Derivation: the fit criterion (``one attempt is evaluated against
 the complete figure, not two''). In SRS Section~9.2, a lift closes a
-stroke, not the attempt. (c) is the ``stylus lift mistaken for attempt
-end'' of H-AHM-001.
+stroke, not the attempt. (c) is the H-AHM-001 cause in which ``a stylus
+lift is mistaken for the end of an attempt''.
 
 How test will be performed: Playwright counts the attempt records and the
 evaluation results.
@@ -1046,8 +1056,9 @@ Type: Dynamic, automatic. Covers FR-LRN-009.
 Initial State: learner A at T of the circle lesson (the square lesson for
 cases (b) and (c)), with zero attempts; learner B also exists.
 
-Input: the cases vary how and when the attempt is interrupted. The cases
-are in Table~\ref{tab:t-lrn-007}.
+Input: the cases vary how and when the attempt is interrupted; the stage
+(T) and the defaults stay fixed. The cases are in
+Table~\ref{tab:t-lrn-007}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1096,8 +1107,9 @@ Type: Dynamic, automatic. Covers FR-LRN-010.
 
 Initial State: the circle lesson at T, with zero attempts.
 
-Input: the cases vary the kind of unreadable input and what comes around
-it. The cases are in Table~\ref{tab:t-lrn-008}.
+Input: the cases vary the kind of unreadable input, what comes around it
+and \texttt{ATTEMPT\_LIMIT}; the circle lesson, the stage (T) and the other
+settings stay fixed. The cases are in Table~\ref{tab:t-lrn-008}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1106,20 +1118,20 @@ it. The cases are in Table~\ref{tab:t-lrn-008}.
 \begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Case} & \textbf{Settings} & \textbf{Input} &
+\textbf{Case} & \textbf{\texttt{ATTEMPT\_LIMIT}} & \textbf{Input} &
 \textbf{Expected output}\\
 \midrule
-a & Defaults & \texttt{empty.json} (the finishing action with no strokes) &
+a & 8 & \texttt{empty.json} (the finishing action with no strokes) &
 Not passed; a status that is neither pass nor fail is shown; counts
 unchanged\\
-b & Defaults & \texttt{nan-\allowbreak{}points.json} (one point in ten has
+b & 8 & \texttt{nan-\allowbreak{}points.json} (one point in ten has
 no coordinates) & As (a)\\
-c & Defaults & \texttt{order-\allowbreak{}unknown.json} (two strokes with
+c & 8 & \texttt{order-\allowbreak{}unknown.json} (two strokes with
 identical times) & As (a)\\
-d & \texttt{ATTEMPT\_LIMIT} 6 & $5 \times 40$, then the inputs of (a), (b)
+d & 6 & $5 \times 40$, then the inputs of (a), (b)
 and (c), then 40 & The lesson continues through (a) to (c) and ends only
 after the final 40, the sixth evaluable attempt\\
-e & Defaults & The input of (b), then \texttt{circle.json} &
+e & 8 & The input of (b), then \texttt{circle.json} &
 \texttt{circle.json} is the first evaluable attempt (count 1) and passes\\
 \bottomrule
 \end{tabularx}
@@ -1180,9 +1192,10 @@ Table~\ref{tab:t-lrn-009}; the test passes when every case gives it.
 
 Test Case Derivation: the fit criterion asks for complete examples and
 examples with a missing side, segment or required endpoint. (b) is the
-high-scoring incomplete example of H-AHM-004: three accurate sides can
-score well, so its result is recorded and must not change the class. (f)
-is the fit criterion's ``adult-made'' examples.
+high-scoring incomplete example of H-AHM-004: its three accurate sides
+score at least \texttt{CAL\_INCOMPLETE\_MIN}, so its result is recorded
+and must not change the class. (f) is the fit criterion's ``adult-made''
+examples.
 
 How test will be performed: Vitest calls the evaluation function for each
 file, lesson and stage. Playwright replays (a) to (e) at each stage. (f) is
@@ -1286,9 +1299,11 @@ requires $C = \mathrm{complete}$ and $v \ge \theta_p$, which gives (a) to
 (c). These are the fit criterion's ``below, at and above the
 adult-selected threshold'', at both ends of the range and at the default.
 (d) and (e) follow invariant I3 and H-AHM-004. (f) follows FR-LRN-010. (g)
-to (i) follow from the calibration bands (\texttt{CAL\_PASS\_MIN} is 90 and
-\texttt{CAL\_NEAR\_MISS} is 70 to 79). (h) and (i) show that the learner's
-own value is used.
+to (i) follow from the calibration bands: \texttt{CAL\_PASS\_MIN} is 90,
+and \texttt{CAL\_NEAR\_MISS} is 70 to 79 with the near miss classified
+complete. (h) and (i) show that the learner's own value is used. In (j),
+the drawing scores at least \texttt{CAL\_INCOMPLETE\_MIN} (70), so only its
+incomplete class can stop the pass.
 
 How test will be performed: Vitest runs (a) to (f) against the lesson
 rules. Playwright runs (g) to (j).
@@ -1304,7 +1319,8 @@ Initial State: the catalogue's approved feedback list for each lesson and
 stage.
 
 Input: the cases vary the lesson, the stage and the difficulty in the
-drawing. The cases are in Table~\ref{tab:t-lrn-012}.
+drawing; the settings stay at their defaults, and each file ends with the
+finishing action. The cases are in Table~\ref{tab:t-lrn-012}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1344,9 +1360,10 @@ Table~\ref{tab:t-lrn-012}; the test passes when every case gives it.
 
 Test Case Derivation: the fit criterion asks for one prepared matching
 drawing for each category, and for no free-generated advice. (a) to (d)
-cover the three categories FR-LRN-014 names. (f) is the ``wrong lesson or
-stage lookup'' of H-AHM-005. (e) checks that a good drawing gets no
-difficulty. SAF-MOU-001 (feedback does not draw) is tested by T-SAF-014.
+cover the three categories FR-LRN-014 names. (f) is the H-AHM-005 cause in
+which ``the feedback lookup uses the wrong lesson or guidance stage''. (e)
+checks that a good drawing gets no difficulty. SAF-MOU-001 (feedback does
+not draw) is tested by T-SAF-014.
 
 How test will be performed: Playwright reads the feedback text and compares
 it with the catalogue file. The network log is checked for requests to the
@@ -1361,7 +1378,8 @@ Type: Dynamic, automatic. Covers FR-LRN-015.
 
 Initial State: the circle lesson at T with \texttt{ATTEMPT\_LIMIT} = 6.
 
-Input: the cases vary the number and kind of non-passing attempts. The
+Input: the cases vary the number and kind of non-passing attempts; the
+circle lesson, the stage (T) and \texttt{ATTEMPT\_LIMIT} 6 stay fixed. The
 cases are in Table~\ref{tab:t-lrn-013}.
 
 \begin{table}[htbp]
@@ -1469,7 +1487,8 @@ boundary. (j) is the closest pair that the ranges allow for
 that inequality cannot fail. (k) follows ``Attempt count settings shall be
 integers'' (SRS Section~4.2). (l) checks that ``selected values are used'',
 and H-AHM-007 (another learner's threshold); this works because
-\texttt{CAL\_NEAR\_MISS} lies between 70 and 90. T-SAF-008 covers the
+\texttt{CAL\_NEAR\_MISS} lies between 70 and 90 and the near miss is
+classified complete. T-SAF-008 covers the
 adult check on changes, so that check is not repeated here.
 
 How test will be performed: a Vitest test of the validation function runs
@@ -1487,8 +1506,8 @@ Initial State: unless a case says otherwise, learner A in the circle lesson
 at E with \texttt{DIFFICULTY\_STREAK} = 3, just after $3 \times 40$, so a
 suggestion is pending. Each case starts from this state.
 
-Input: the cases vary who acts and through which path. The cases are in
-Table~\ref{tab:t-lrn-015}.
+Input: the cases vary who acts and through which path; the starting state
+and the settings stay fixed. The cases are in Table~\ref{tab:t-lrn-015}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1615,8 +1634,8 @@ streak (FR-LRN-019 and SRS UC-005 step~2a). At the 10th failure, ``End at
 limit'' takes priority.
 \item (l) is the main flow of SRS UC-005; the furthest stage is kept.
 \item (m) is SRS UC-005 step~2b.
-\item (n) follows FR-LRN-009, FR-LRN-010 and the ``invalid input counted as
-failure'' of H-AHM-006.
+\item (n) follows FR-LRN-009, FR-LRN-010 and the H-AHM-006 cause in which
+``invalid input is counted as failure''.
 \item (o): a pass changes the stage and clears the streak.
 \end{itemize}
 In every case, the adult answers a suggestion before the next attempt,
@@ -1625,7 +1644,7 @@ suggestion blocks practice.
 
 How test will be performed: Vitest runs every case. Playwright repeats (b)
 with three \texttt{circle-\allowbreak{}fail.json}. Playwright also runs,
-with \texttt{DIFFICULTY\_STREAK} 3 and \texttt{IMPROVE\_WINDOW} 1,
+at E with \texttt{DIFFICULTY\_STREAK} 3 and \texttt{IMPROVE\_WINDOW} 1,
 \texttt{circle-\allowbreak{}fail.json} twice and then
 \texttt{circle-\allowbreak{}near-\allowbreak{}miss.json}, which gives no
 suggestion because the improvement is at least 10, then one more
@@ -1687,6 +1706,8 @@ k & 8, 2, 10, 3 & $5 \times 40$, $5 \times 50$ & Extension after the 8th;
 ends after the 10th\\
 l & 8, 2, 10, 1 & $7 \times 40$, $3 \times 45$ & Extension after the 8th;
 ends after the 10th\\
+m & 8, 1, 9, 2 & $6 \times 40$, 50, 50, 50 & Extension after the 8th;
+ends after the 9th\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1698,10 +1719,10 @@ Test Case Derivation: the rules are ``Extend at base limit'' and ``End at
 limit'' in SRS Section~9.2.
 \begin{itemize}
 \item At the base limit, the improvement check compares the last
-\texttt{IMPROVE\_WINDOW} results with the window before: $+10$ in (a),
-$+5$ in (c) (exactly \texttt{IMPROVE\_MARGIN}, so it qualifies), $+4$ in
-(d), $\mathrm{mean}(50, 50, 50) - \mathrm{mean}(40, 40, 40) = +10$ in (k)
-and $45 - 40 = +5$ in (l).
+\texttt{IMPROVE\_WINDOW} results with the window before: $+10$ in (a) and
+(m), $+5$ in (c) (exactly \texttt{IMPROVE\_MARGIN}, so it qualifies), $+4$
+in (d), $\mathrm{mean}(50, 50, 50) - \mathrm{mean}(40, 40, 40) = +10$ in
+(k) and $45 - 40 = +5$ in (l).
 \item After a grant, each evaluable attempt uses one extra attempt, and the
 lesson ends when the extra attempts run out or the total reaches
 \texttt{ATTEMPT\_LIMIT\_MAX}.
@@ -1713,8 +1734,10 @@ already equals the maximum (the guard needs fewer evaluable attempts than
 the maximum).
 \item (i): a pass takes priority.
 \item (j): invalid and interrupted input do not use up the extension.
-\item (h) and (f) are at the minimum and maximum ends of the ranges, for
-the fit criterion's margin boundary, limit and no regrant.
+\item (h) uses the minimum \texttt{ATTEMPT\_LIMIT} and
+\texttt{ATTEMPT\_LIMIT\_MAX}, (m) the minimum \texttt{ATTEMPT\_EXTENSION},
+and (f) the maximum of all three, for the fit criterion's margin boundary,
+limit and no regrant.
 \end{itemize}
 
 How test will be performed: Vitest runs every case. Playwright repeats (a)
@@ -3274,7 +3297,7 @@ FR-LRN-005 & T-LRN-004 (b), T-LRN-010 (b)\\
 FR-LRN-006 & T-LRN-004 (c), T-LRN-010 (c)\\
 FR-LRN-007 & T-LRN-005, T-SAF-009, T-SAF-010, INS-EVAL\\
 FR-LRN-008 & T-LRN-006, T-SAF-009, INS-EVAL\\
-FR-LRN-009 & T-LRN-007, T-LRN-021, INS-LRN\\
+FR-LRN-009 & T-LRN-007, T-LRN-021, INS-EVAL, INS-LRN\\
 FR-LRN-010 & T-LRN-008, T-LRN-021, T-SAF-010, INS-EVAL\\
 FR-LRN-011 & T-LRN-009, T-LRN-011 (d), INS-EVAL\\
 FR-LRN-012 & T-LRN-010, T-SAF-015, INS-EVAL\\
@@ -3532,20 +3555,25 @@ set; if that minimum is 2 seconds or less, half of it is used instead.\\
 \texttt{circle-\allowbreak{}fail.json} must score at most this at every
 drawing stage of the circle lesson.\\
 \addlinespace
-\texttt{CAL\_NEAR\_MISS} & 70 to 79 points: the range
-\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} must score in at
-every drawing stage.\\
+\texttt{CAL\_NEAR\_MISS} & 70 to 79 points:
+\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} must score in this
+range, and be classified complete, at every drawing stage.\\
 \addlinespace
 \texttt{CAL\_PASS\_MIN} & 90 points: \texttt{line.json},
 \texttt{circle.json} and
 \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} must each score at
 least this at every drawing stage of their lesson.\\
 \addlinespace
+\texttt{CAL\_INCOMPLETE\_MIN} & 70 points:
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json} must score at
+least this, and be classified incomplete, at every drawing stage of the
+square lesson.\\
+\addlinespace
 \texttt{MODEL\_RUNS} & 1,000 random sequences per run of T-LRN-021.\\
 \addlinespace
-\texttt{SEQ\_LEN\_MAX} & 60 events, enough to reach
-\texttt{ATTEMPT\_LIMIT\_MAX} (12) at all three drawing stages with
-suggestions.\\
+\texttt{SEQ\_LEN\_MAX} & 60 events, enough to come close to the limit at T
+and E, then reach \texttt{ATTEMPT\_LIMIT\_MAX} (12) at I, with every
+suggestion answered.\\
 \addlinespace
 \texttt{MODEL\_SEED} & A fixed integer stored in the test file and printed
 with every result; replaced once per milestone, and recorded in the VnV

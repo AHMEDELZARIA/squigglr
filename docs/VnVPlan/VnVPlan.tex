@@ -2308,6 +2308,27 @@ flow, and to help with \LaTeX{} formatting. Through Claude Code, it also
 helped manage the repository (branches, commits and merges). I reviewed every
 AI-assisted passage before including it.
 
+\textbf{Huzaifah:} I used Anthropic's Claude Opus 5.5 at high effort
+through the omp coding agent, with helper agents that read the SRS, the
+Hazard Analysis and the Development Plan and returned summaries with line
+numbers. I used them while preparing my sections of this document: the
+guided lesson and attempt record tests, Implementation Verification, the
+functional traceability table, the functional symbolic parameters and my
+reflection. I made the testing decisions myself, including which cases to
+leave out where the SRS does not yet agree with itself, how unanswered
+suggestions are recorded, running the rule tests against the lesson rules
+module with a model-based test, and how the work was split into pull
+requests. I used AI to find every requirement, use case, data dictionary
+entry and hazard my tests depend on; to draft test cases from my
+decisions; to work out the expected output of each attempt sequence from
+the formal specification; to turn my notes into draft wording and
+\LaTeX{}; and, through omp, to manage issues, branches and pull requests.
+I checked every expected output by recomputing the counts and improvement
+windows by hand against SRS Section~9.2, checked each test against its
+requirement's fit criterion, confirmed with a script that every FR-LRN and
+FR-REC requirement appears in the traceability table, and built and read
+the PDF. I reviewed every AI-assisted passage before including it.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -2419,6 +2440,20 @@ VoiceOver on the iPad for NFR-UX-020, and finishing the adult tasks with only a
 keyboard for NFR-UX-023.
 \end{itemize}
 
+\textbf{Huzaifah:} For my part of the plan (the guided lesson and attempt
+record tests and the code inspections), I need two skills I do not yet
+have:
+\begin{itemize}
+\item \emph{Model-based testing.} T-LRN-021 needs a reference model of the
+lesson rules in SRS Section~9.2, and properties that fast-check can check
+over thousands of attempt sequences. I have written example-based unit
+tests, but never a model precise enough to serve as the expected output.
+\item \emph{Running code inspections.} As moderator of INS-LRN, INS-EVAL and
+INS-REC, I have to plan each inspection, keep the meeting to an hour, sort
+findings into major and minor, and follow up on fixes. So far I have only
+reviewed pull requests on my own.
+\end{itemize}
+
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
@@ -2456,6 +2491,25 @@ through before the first review at Rev~0. After that I will do hands-on passes
 on the first frontend screens I review, because a checker can tell me a control
 has a label, but not whether the label makes sense to someone who can't see the
 icon.
+
+\textbf{Huzaifah:}
+\begin{itemize}
+\item \emph{Model-based testing.} There are two approaches: work through
+the fast-check documentation on model-based testing, or read the chapters
+on state-machine models in Utting and Legeard's \emph{Practical Model-Based
+Testing}. I will start with the documentation and model the suggestion rule
+as soon as the first version of the lesson rules exists. A small model of
+our own code shows quickly where my model and the SRS differ. I will turn
+to the book if modelling all of Section~9.2 gets hard.
+\item \emph{Code inspections.} There are two approaches: read the
+inspection procedure in IEEE Standard 1028 for software reviews, or learn
+by doing a trial inspection. I will do both, in that order. I will read the
+roles and steps in IEEE 1028, then run a 30-minute trial inspection of one
+small PoC file with one teammate, using the checklist in Implementation
+Verification, in the week before the first inspection on 20 November 2026.
+The trial shows whether the checklist and the one-hour limit work before
+real inspections depend on them.
+\end{itemize}
 
 \end{enumerate}
 

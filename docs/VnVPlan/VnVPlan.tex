@@ -169,13 +169,123 @@ issue tracker?}
 \wss{Create a checklists?}
 
 \subsection{Verification and Validation Plan Verification}
+\label{sec:plan-verification}
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
+Each review in Table~\ref{tab:planReviews} checks this plan in a different way,
+and nobody reviews a part they wrote.
 
-\wss{The review will include reviews by your classmates}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.33\textwidth}@{}}
+\caption{Reviews of this plan}
+\label{tab:planReviews}\\
+\toprule
+\textbf{Review} & \textbf{Who} & \textbf{When} & \textbf{What it checks} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Review} & \textbf{Who} & \textbf{When} & \textbf{What it checks} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Pull request review & The teammate who checks the author's work (see the
+Verification and Validation Team section) & Every PR into \texttt{main},
+before it merges & The changed sections, using the review questions below.
+A PR needs one approval from someone other than its author. \\
+\addlinespace
+TA review & Chris, our TA & Informal meeting on October~28, 2026, and the
+marked submission & Our questions on how to write the plan, then whether the
+submitted plan is specific and feasible. His October~28 answers are listed
+below. \\
+\addlinespace
+Supervisor review & Dr.\ Anand & Supervisor meeting on October~28, 2026, where
+we discussed validation (\#201), then our weekly meetings after that & A high-level
+summary of how we will validate Squigglr, to check we are validating what
+matters to him. \\
+\addlinespace
+Peer review & The peer teams assigned by the course & After submission, due
+November~5, 2026 & The whole plan, read by people outside the project. We ask
+them to use the VnV checklist. \\
+\addlinespace
+Mutation check & Each member, on sections they did not write & Final QA
+(November~1--2, 2026) and before Rev~1 & Whether our tests would actually
+catch realistic bugs (see below). \\
+\addlinespace
+Final QA & Moustafa; Shamil checks Moustafa's own sections & November~1--2, 2026 & The whole plan against the VnV
+and Writing checklists and the rubric (see below). \\
+\addlinespace
+Running the plan & The owner of each test & Rev~0 and Rev~1 & Any test we
+cannot run exactly as written is a defect in this plan. \\
+\end{longtable}
+}
 
-\wss{Create a checklists?}
+\paragraph{TA feedback from October~28.} In an informal meeting, we asked
+Chris how to handle a few parts of the plan. His answers became rules for the
+whole plan:
+\begin{itemize}
+  \item A value can stay TBD, but we have to say how it will be decided. Every
+    TBD constant in the Symbolic Parameters appendix has to say how and when it
+    is set, and Final QA checks this.
+  \item There is no minimum number of tests per safety requirement, but we
+    have to justify the number we pick. The safety tests explain why one test
+    plus the safety inspection is enough (Section~\ref{sec:safety-tests}).
+  \item One parameterized test with a table of cases counts as one test, as
+    long as it is easy to follow. Each case gets a label and its own expected
+    output, so it can be cited on its own.
+  \item Full branch coverage is a good goal for safety-critical modules, and
+    matters less for the user interface (Section~\ref{sec:tools}).
+  \item For this project, validation and usability matter more than
+    verification.
+\end{itemize}
+
+\paragraph{Review questions.} Every reviewer, in a PR review or in Final QA,
+asks these about each test they check:
+\begin{enumerate}
+  \item Could someone else run it without asking the author? The input is
+    specific and the expected output is explicit.
+  \item Does it trace to a requirement, and is it in the traceability table
+    (Section~\ref{sec:trace})?
+  \item Does it use symbolic constants instead of magic numbers, and does each
+    constant have a value or a method in the Symbolic Parameters appendix?
+  \item Does it try to break Squigglr, with boundary values, invalid input and
+    failures, instead of only showing the normal case?
+  \item For a review or inspection: does it say who does it, when, and with
+    which checklist?
+  \item Can we actually do it with our team, devices and schedule?
+\end{enumerate}
+
+\paragraph{Mutation check.} Mutation testing makes a small change to a program
+and checks that some test fails. We apply the same idea to the plan. Each
+member takes five requirements whose tests they did not write, including at
+least two safety requirements. For each one, they write down a small,
+realistic bug, such as a lesson ending one attempt after
+\texttt{ATTEMPT\_LIMIT} instead of at it, or a refined point landing just
+outside \texttt{REFINE\_TOLERANCE}. Then they find the test that would fail
+because of it. If no test would fail, or the test's input does not include
+that case, they open an issue for the test's owner. The check passes when
+every bug is caught by at least one test. Each member needs about an hour for
+this.
+
+\paragraph{Final QA.} As QA coordinator for this milestone, Moustafa:
+\begin{enumerate}
+  \item checks that every SRS requirement ID appears in the traceability
+    table, with a script that compares the IDs in the SRS with the ones in
+    this plan;
+  \item checks that every TBD constant has a method, that no template comments
+    are left, and that the PDF builds with no errors or undefined references;
+  \item goes through the VnV and Writing checklists and the rubric, one item
+    at a time;
+  \item sends fixes in someone else's section to them as PR comments.
+\end{enumerate}
+
+\paragraph{Tracking findings.} Small fixes the team finds, like wording, go in
+PR comments. Everything else, and all feedback from the TA and peer teams,
+becomes a GitHub issue with the \texttt{review} label, one
+assignee, and what closes it. An issue closes when the fix is merged or when
+we record why we are not changing the plan.
 
 \subsection{Implementation Verification}
 

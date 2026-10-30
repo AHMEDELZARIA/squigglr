@@ -1967,6 +1967,589 @@ and each seed and its result are recorded in the VnV Report.
 
 ...
 
+\subsubsection{Attempt Records}
+\label{sec:rec-tests}
+
+These tests cover the ten attempt record requirements in SRS Section~9.4
+(FR-REC-001 to FR-REC-010). FR-REC-001 and FR-REC-003 are due in PH-1, and
+the rest in PH-2. Each test runs end to end in Playwright. The attempt and
+lesson records are read from the test database after each run, as in
+T-PERF-005. The tests try to cause the failures in Hazard Analysis rows
+H-MUH-003, H-MUH-004 and H-MUH-007: a record that hides guidance or
+corrections, an attempt saved twice or under the wrong lesson, and a record
+that changes later. Three safety requirements on records are tested with
+the safety-critical tests and not repeated here: SAF-RAY-003 (T-SAF-003),
+SAF-RAY-006 (T-SAF-006) and SAF-RAY-007 (T-SAF-007). Unless a case says
+otherwise, learner A uses the circle lesson with the default values. F, N
+and P stand for \texttt{circle-\allowbreak{}fail.json},
+\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} and
+\texttt{circle.json}, and the notation for adult responses is that of the
+guided lesson tests. An unanswered suggestion is recorded as pending while
+the lesson runs, and as ignored once the lesson ends without an answer.
+
+\begin{enumerate}
+
+\item{T-REC-001: Attempt record contents\\}
+
+Purpose: each record must show which lesson and stage the attempt was at,
+its result, whether it passed and when it ended. The adult reads progress
+from these records.
+
+Type: Dynamic, automatic. Covers FR-REC-001.
+
+Initial State: learner A with no records; a controlled clock at
+\texttt{CLOCK\_START}.
+
+Input: ten attempts, each finished \texttt{ATTEMPT\_GAP} after the one
+before, except attempt 10, which is finished 0.5 seconds after attempt 9.
+The lesson, stage and file vary; the learner and settings stay fixed.
+$r(x)$ is the result the evaluation function returns for file $x$ at that
+stage; the test computes it by calling the function directly. The attempts
+are in Table~\ref{tab:t-rec-001}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-001 (FR-REC-001)}
+\label{tab:t-rec-001}
+\begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{\#} & \textbf{Lesson, stage} & \textbf{File} &
+\textbf{Expected record}\\
+\midrule
+1 & Circle, T & F & Circle, T, $r(\mathrm{F})$, not passed,
+\texttt{CLOCK\_START} + 1~min\\
+2 & Circle, T & P & Circle, T, $r(\mathrm{P})$, passed, + 2~min\\
+3 & Circle, E & F & Circle, E, $r(\mathrm{F})$, not passed, + 3~min\\
+4 & Circle, E & P & Circle, E, $r(\mathrm{P})$, passed, + 4~min\\
+5 & Circle, I & F & Circle, I, $r(\mathrm{F})$, not passed, + 5~min\\
+6 & Circle, I & P & Circle, I, $r(\mathrm{P})$, passed, + 6~min\\
+7 & Square, T & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}
+& Square, T, its result, not passed, + 7~min\\
+8 & Square, T & \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} &
+Square, T, its result, passed, + 8~min\\
+9 & Circle, T (new lesson) & F & Circle, T, $r(\mathrm{F})$, not passed,
++ 9~min\\
+10 & Circle, T & F & Circle, T, $r(\mathrm{F})$, not passed, + 9~min
+0.5~s\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: exactly ten records, all under learner A, in the order of
+Table~\ref{tab:t-rec-001}, each holding exactly the fields in its row.
+
+Test Case Derivation: the fit criterion asks for known lessons, stages,
+results and outcomes, with one pass and one fail at each drawing stage, in
+the order the attempts ended. The outcomes follow from calibration
+($r(\mathrm{F}) \le 60$ and $r(\mathrm{P}) \ge 90$, against
+\texttt{STAGE\_PASS} 80). The controlled clock makes the times exact.
+Attempts 9 and 10 check the order when times are close.
+
+How test will be performed: Playwright with a controlled clock, then a
+database read.
+
+\item{T-REC-002: Strokes kept as drawn\\}
+
+Purpose: the record must hold the child's own strokes, not a corrected or
+ideal shape, so the adult sees what the child really drew.
+
+Type: Dynamic, automatic. Covers FR-REC-002.
+
+Initial State: learner A; the drawing area is \texttt{TEST\_CANVAS}.
+
+Input: the cases vary the lesson, the stage and the attempt. ``Exactly''
+means the same number of strokes, the same order and boundaries, and each
+point's x and y within 0.01 CSS pixels, with the same pressure and time
+offset. The cases are in Table~\ref{tab:t-rec-002}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-002 (FR-REC-002)}
+\label{tab:t-rec-002}
+\begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Lesson, stage} & \textbf{Attempt} &
+\textbf{Expected strokes in the record}\\
+\midrule
+a & Line, T & \texttt{line.json} & Exactly the file's stroke\\
+b & Square, T & \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} &
+Exactly the file's four strokes\\
+c & Circle, T & \texttt{overlap-\allowbreak{}2-\allowbreak{}strokes.json} &
+Exactly the file's two strokes, separate\\
+d & Circle, I & N & Exactly the file's stroke, unchanged\\
+e & Square, E & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json},
+finished after the missing-side feedback is shown & Exactly the file's
+three strokes; nothing added for the missing side\\
+f & Circle, T & F, then P & Record 1 holds only the stroke of F; record 2
+holds only the stroke of P\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-002}; the test passes when every case gives it. No
+record holds an outline, endpoint marks, feedback marks or refined points.
+
+Test Case Derivation: the fit criterion (point for point, and nothing that
+was not drawn), with SRS BR-004 and BR-005. (d) is a near miss, the drawing
+most tempting to ``tidy''. In (e), the feedback of SAF-MOU-001 must not
+enter the record. (f) checks that no stroke leaks between attempts.
+
+How test will be performed: Playwright replays each file and compares the
+stored points with the file. Inspection item A5 of INS-EVAL checks the code
+path.
+
+\item{T-REC-003: Difficulties and corrections\\}
+
+Purpose: a correction must not hide the difficulty, so the adult can see
+what the child found hard.
+
+Type: Dynamic, automatic. Covers FR-REC-003.
+
+Initial State: learner A with the square lesson at E (the circle lesson at
+T for case (d)).
+
+Input: the cases vary the difficulties in the attempt and whether the child
+corrects them. The difficulty names are the catalogue's predefined
+difficulties for the square lesson at E. The cases are in
+Table~\ref{tab:t-rec-003}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-003 (FR-REC-003)}
+\label{tab:t-rec-003}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Attempt} &
+\textbf{Expected difficulties in the record}\\
+\midrule
+a & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, finished
+with no correction & Missing side, not corrected\\
+b & \texttt{square-\allowbreak{}missing-\allowbreak{}side-\allowbreak{}%
+corrected.json} & Missing side, corrected\\
+c & \texttt{square-\allowbreak{}endpoint-\allowbreak{}and-\allowbreak{}%
+side.json} & Incorrect endpoint, corrected; missing side, not corrected\\
+d & \texttt{circle.json} at T & None\\
+e & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json} with two
+pauses of \texttt{STROKE\_PAUSE}, so the feedback shows twice, then
+finished & Missing side, not corrected, listed once\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-003}; the test passes when every case gives it. Each
+record lists exactly the difficulties in its row, each once, with the mark
+shown, and no others.
+
+Test Case Derivation: the fit criterion (corrected and not corrected, each
+listed once, and no others) and the SRS Section~7.2 data dictionary (an
+observed difficulty appears at most once in an attempt record, and a
+correction adds a mark without removing the difficulty). (c) mixes both
+marks in one attempt. (e) tries to make one difficulty appear twice. The
+cases follow H-MUH-007 (a), ``correction overwrites difficulty''.
+
+How test will be performed: Playwright, pausing the replay until the
+feedback appears, then a database read.
+
+\item{T-REC-004: Adult-set values in use\\}
+
+Purpose: each record must keep the values used when the attempt was made,
+so a later change cannot alter what an earlier record means.
+
+Type: Dynamic, automatic. Covers FR-REC-004.
+
+Initial State: learner A with all eight adult-set values at their defaults.
+
+Input: in cases (a) to (h), the adult starts the circle lesson at I and
+replays P, which completes the lesson in one attempt (record 1). The adult
+then changes the one value in the row, with the adult check, and repeats
+the same steps (record 2). The other seven values stay at their defaults.
+Cases (i) and (j) test a change during a lesson and two learners. The
+cases are in Table~\ref{tab:t-rec-004}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-004 (FR-REC-004)}
+\label{tab:t-rec-004}
+\begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Value changed} & \textbf{Record 1 holds} &
+\textbf{Record 2 holds}\\
+\midrule
+a & \texttt{STAGE\_PASS} & 80 & 70\\
+b & \texttt{DIFFICULTY\_STREAK} & 4 & 3\\
+c & \texttt{ATTEMPT\_LIMIT} & 8 & 6\\
+d & \texttt{IMPROVE\_WINDOW} & 2 & 1\\
+e & \texttt{ATTEMPT\_EXTENSION} & 2 & 1\\
+f & \texttt{ATTEMPT\_LIMIT\_MAX} & 10 & 8\\
+g & \texttt{LESSON\_IDLE\_PROMPT} & Its default & The minimum of its
+range\\
+h & \texttt{LESSON\_IDLE\_END} & Its default & The maximum of its range\\
+\bottomrule
+\end{tabularx}
+
+\medskip
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Input} & \textbf{Expected output}\\
+\midrule
+i & \texttt{STAGE\_PASS} is changed from 80 to 70 during a lesson at T,
+then one N attempt & The record holds 70 with passed, or 80 with not
+passed; any other pairing fails\\
+j & A at all minimums and B at all maximums, alternating on one device,
+one F each & Each record holds its own learner's eight values\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-004}; the test passes when every case gives it. In
+(a) to (h), each record also holds the defaults for the other seven values,
+and record 1 is unchanged after the change.
+
+Test Case Derivation: the fit criterion asks for records before and after a
+change to each adult-set value; the eight values are those of SRS BR-008.
+The SRS does not say whether a change applies to a lesson already running,
+so in (i) the record must agree with the outcome it produced (H-AHM-007,
+stale setting). (j) is H-AHM-007, wrong learner. (g) and (h) use the ends of
+the \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} ranges,
+which are set for the test of SAF-RAY-009.
+
+How test will be performed: Playwright and a database read. (g) and (h) are
+first run once those ranges are set.
+
+\item{T-REC-005: Interrupted attempt record\\}
+
+Purpose: practice that the adult cuts off must still be visible, but never
+as a pass or a fail.
+
+Type: Dynamic, automatic. Covers FR-REC-005.
+
+Initial State: learners A and B; A in the square lesson at the stage in
+each case's row.
+
+Input: the cases vary the number of strokes before the interruption and how
+the adult interrupts. The cases are in Table~\ref{tab:t-rec-005}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-005 (FR-REC-005)}
+\label{tab:t-rec-005}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Actions} & \textbf{Expected records}\\
+\midrule
+a & At T, the first two strokes of
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}; the adult ends
+the session & One record for A: interrupted, the file's first two strokes,
+no outcome and no result\\
+b & At E, the three strokes of
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json}; wait for the
+missing-side feedback; the adult switches to B & One record for A:
+interrupted, three strokes, missing side not corrected, no outcome; nothing
+for B\\
+c & At T, one stroke of
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}; the adult ends
+the session & One interrupted record with one stroke\\
+d & At T, the adult ends the session before any stroke & No attempt
+record\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-005}; the test passes when every case gives it.
+
+Test Case Derivation: the fit criterion: one or more strokes give an
+interrupted record with the strokes and no outcome, and no stroke gives no
+record. (c) is the one-stroke boundary and (d) is zero strokes. The cases
+follow H-MUH-004 (b).
+
+How test will be performed: Playwright and a database read.
+
+\item{T-REC-006: Lesson record\\}
+
+Purpose: the adult needs to see how far the child got in each lesson, how
+many attempts succeeded at each stage and how the lesson ended.
+
+Type: Dynamic, automatic. Covers FR-REC-006.
+
+Initial State: learner A with no lesson records. Each case is a new start
+of the circle lesson.
+
+Input: the cases vary the start stage and the sequence, written as results;
+end to end, 40 is replayed as F, 85 as P and 50 as N. The cases are in
+Table~\ref{tab:t-rec-006}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-006 (FR-REC-006)}
+\label{tab:t-rec-006}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}p{2cm}
+  >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Start} & \textbf{Sequence} &
+\textbf{Expected lesson record}\\
+\midrule
+a & T & 40, 85, 85, 40, 85 & Start T; furthest I; successes T~1, E~1,
+I~1; ending ``every stage passed''; extension count 0; five attempts\\
+b & The adult starts at E & $4 \times 40$ [D], $4 \times 40$ & Start E;
+furthest E; successes all 0; ending ``ended at
+\texttt{ATTEMPT\_LIMIT}''; eight attempts\\
+c & T & 85, then at E $4 \times 40$ [A$\to$T], then 85, 85, 85 & Start T;
+furthest I; successes T~2, E~1, I~1; ending ``every stage passed''; eight
+attempts\\
+d & T & $6 \times 40$, $4 \times 50$ & Start T; furthest T; successes all
+0; ending ``ended when a granted extension ran out or
+\texttt{ATTEMPT\_LIMIT\_MAX} was reached''; extension count 1; ten
+attempts\\
+e & T, after (b) & 85, 85, 85 & A second record (start T, furthest I,
+every stage passed); the record from (b) is unchanged\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-006}; the test passes when every case gives it.
+
+Test Case Derivation: the fit criterion asks for a start at the first
+drawing stage and a later start chosen by the adult. The ending labels are
+the lesson endings of the SRS Section~7.2 data dictionary. The counts
+follow the stage rules tested in T-LRN-016 to T-LRN-020. In (c), the child
+passes T twice, so T has two successes. In (d), the extension ends at
+$8 + 2 = 10$. (e) checks that each start makes a new record (SAF-RAY-006).
+Lessons that end through inactivity are left out, because the SRS
+Section~7.2 list of lesson endings has no label for them yet; T-SAF-017
+covers inactivity.
+
+How test will be performed: Playwright and a database read.
+
+\item{T-REC-007: Unfinished lesson\\}
+
+Purpose: a lesson the adult stops early must still record the stages the
+child already passed.
+
+Type: Dynamic, automatic. Covers FR-REC-007.
+
+Initial State: learners A and B; A starts the circle lesson at T.
+
+Input: the cases vary how far A gets and how the lesson stops. The cases
+are in Table~\ref{tab:t-rec-007}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-007 (FR-REC-007)}
+\label{tab:t-rec-007}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Sequence and adult action} &
+\textbf{Expected lesson record}\\
+\midrule
+a & 85, 40, 40; the adult stops the lesson & Ending ``unfinished'';
+furthest E; successes T~1, E~0\\
+b & 85, 85; the adult switches to B & Ending ``unfinished''; furthest I;
+successes T~1, E~1\\
+c & 40; the adult starts the square lesson & Circle record ``unfinished'';
+furthest T; successes 0; square record in progress\\
+d & 85, 85, 85 & Ending ``every stage passed'', not unfinished\\
+e & $8 \times 40$ & Ending ``ended at \texttt{ATTEMPT\_LIMIT}'', not
+unfinished\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-007}; the test passes when every case gives it.
+
+Test Case Derivation: the fit criterion: lessons stopped by an adult after
+known successes are unfinished, and a lesson whose last stage is passed is
+not. In (e), limit endings have their own label (SRS Section~7.2). (c) is
+the lesson change of T-LRN-015 (f). The cases follow H-MUH-007 (c),
+``progress saved only at limit''.
+
+How test will be performed: Playwright and a database read.
+
+\item{T-REC-008: Each attempt saved exactly once\\}
+
+Purpose: a retried save or a second open session must not store an attempt
+twice or under another lesson, because the adult relies on the counts.
+
+Type: Dynamic, automatic. Covers FR-REC-008.
+
+Initial State: learner A with no records.
+
+Input: the cases vary how the save is disturbed and how many sessions are
+open. The cases are in Table~\ref{tab:t-rec-008}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-008 (FR-REC-008)}
+\label{tab:t-rec-008}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Setup} & \textbf{Expected records}\\
+\midrule
+a & Circle lesson at T: F, F, F, F, P. For each attempt, the first save
+request is cut off and the network comes back after
+\texttt{RETRY\_DELAY} & Five attempt records, one per attempt, under this
+lesson record; one success at T\\
+b & Circle lesson at T: F, F, F. The server stores each save, but the
+response is cut off, so the browser saves again & Three attempt records; no
+duplicates\\
+c & Two sessions (two browser contexts, same adult), both for A: the circle
+lesson in one and the square lesson in the other; attempts alternate F and
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, three each &
+The circle record has three attempts and the square record three; none
+under the other\\
+d & Two sessions, both start the circle lesson for A; F three times in
+each, alternating & Two circle lesson records with three attempts each\\
+e & The finishing action sent twice within 100~ms & One attempt record\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-008}; the test passes when every case gives it. No two
+attempt records hold the same strokes from the same moment.
+
+Test Case Derivation: the fit criterion cuts and restores the connection
+during each save, and opens two sessions at once. (b) is the case most
+likely to duplicate: the server saved, but the browser cannot know it. (e)
+is a double tap. The cases follow H-MUH-004 (a) and H-RAY-002. Offline
+attempts saved on reconnection are tested by T-PERF-005 and T-SAF-003.
+
+How test will be performed: Playwright request routing. For (b), the
+request reaches the server through \texttt{route.fetch()}, then the route
+is aborted. A database read follows.
+
+\item{T-REC-009: Saved records do not change\\}
+
+Purpose: later changes to settings or lessons must never rewrite what an
+earlier record says.
+
+Type: Dynamic, automatic. Covers FR-REC-009.
+
+Initial State: \texttt{history-\allowbreak{}seed.json} is loaded for
+learner A. The file holds four lesson records with 20 attempt records in
+total: (1) circle, every stage passed; (2) square, ended at
+\texttt{ATTEMPT\_LIMIT}; (3) line, unfinished; (4) circle, in progress at
+E. A SHA-256 hash of the canonical JSON of every attempt record and of
+records (1) to (3) is stored.
+
+Input: the steps run in order, each followed by a comparison with the
+stored hashes. The steps are in Table~\ref{tab:t-rec-009}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-009 (FR-REC-009)}
+\label{tab:t-rec-009}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Step} & \textbf{Change} & \textbf{Expected output}\\
+\midrule
+a & The adult changes every adult-set value to the other end of its range
+& Every stored hash matches\\
+b & The adult changes the circle lesson's starting stage to E & Every
+stored hash matches\\
+c & The adult turns audio off and refinement off & Every stored hash
+matches\\
+d & A new lesson is added to the catalogue & Every stored hash matches\\
+e & The outline and feedback text of the circle lesson are edited in the
+catalogue & Every stored hash matches\\
+f & The line lesson is removed from the catalogue & Every stored hash
+matches; record (3) and its attempts are still shown with the lesson's
+name\\
+g & Learner A continues record (4) with F, then P & Every stored hash
+matches; record (4) has two more attempts, and its earlier attempts are
+unchanged\\
+h & A direct request, as the adult, to change the outcome of attempt record
+1 to passed & Refused; every stored hash matches\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each step is in its row of
+Table~\ref{tab:t-rec-009}; the test passes when every step gives it.
+
+Test Case Derivation: the fit criterion changes every adult-set value, a
+starting stage and the other settings (SRS UC-010), and adds a lesson to
+and removes a lesson from the catalogue. (e) is a catalogue edit (SRS
+LC-001 and LC-002) that could re-score old attempts. In (g), the record of
+a lesson that has not ended may still grow. (h) tries the direct route; its
+audit event is tested by T-SEC-003. The steps follow H-MUH-007 (d).
+
+How test will be performed: a Playwright script runs the steps and
+recomputes the hashes from the database.
+
+\item{T-REC-010: Suggestions and responses\\}
+
+Purpose: the record must show each go-back suggestion and what the adult
+did with it, so the adult can see why a later attempt was at an earlier
+stage.
+
+Type: Dynamic, automatic. Covers FR-REC-010.
+
+Initial State: learners A and B; A in the circle lesson at E with
+\texttt{DIFFICULTY\_STREAK} = 3.
+
+Input: the cases vary the adult's response to each suggestion and how the
+lesson continues. The cases are in Table~\ref{tab:t-rec-010}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-REC-010 (FR-REC-010)}
+\label{tab:t-rec-010}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Sequence} &
+\textbf{Expected suggestions in A's lesson record}\\
+\midrule
+a & $3 \times \mathrm{F}$ [A$\to$T] & One: stage T, accepted\\
+b & $3 \times \mathrm{F}$ [D] & One: declined\\
+c & $3 \times \mathrm{F}$ [D], $3 \times \mathrm{F}$ [D] & Two, in order,
+both declined\\
+d & $3 \times \mathrm{F}$; the record is read while the lesson runs and
+nobody answers & One: pending\\
+e & $3 \times \mathrm{F}$; the adult stops the lesson without answering &
+One: ignored\\
+f & $3 \times \mathrm{F}$; the child taps accept (the adult check is not
+completed); then the adult declines & One: declined, never accepted\\
+g & At T, $7 \times \mathrm{F}$ & None\\
+h & $3 \times \mathrm{F}$; the adult switches to B; B makes one attempt &
+A's record: one, ignored; B's record: none\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-010}; the test passes when every case gives it. Each
+lesson record lists exactly the suggestions in its row, each once, with
+that status, and no others.
+
+Test Case Derivation: the fit criterion asks for suggestions that are
+accepted, declined and not yet answered, each listed once. The statuses
+come from the SRS Section~7.2 data dictionary (pending, accepted, declined
+or ignored). A pending suggestion becomes ignored when the lesson ends
+unanswered, which is the team's reading of ``ignored''. In (f), only an
+adult can accept (SAF-RAY-001). In (g), T has no earlier stage. In (h),
+suggestions belong to their learner (SAF-RAY-007), and switching ends A's
+lesson as unfinished (T-REC-007).
+
+How test will be performed: Playwright and a database read.
+
+\end{enumerate}
+
 \subsection{Tests for Nonfunctional Requirements}
 \label{sec:nfr-tests}
 
@@ -3290,13 +3873,13 @@ a requirement are listed as a second approach.
 \endhead
 FR-LRN-001 & T-LRN-001, T-MAINT-001\\
 FR-LRN-002 & T-LRN-002, T-LRN-020\\
-FR-LRN-003 & T-LRN-003\\
+FR-LRN-003 & T-LRN-003, T-REC-006 (a)\\
 FR-LRN-004 & T-LRN-004 (a), T-LRN-010 (a)\\
 FR-LRN-005 & T-LRN-004 (b), T-LRN-010 (b)\\
 FR-LRN-006 & T-LRN-004 (c), T-LRN-010 (c)\\
-FR-LRN-007 & T-LRN-005, T-SAF-009, T-SAF-010, INS-EVAL\\
+FR-LRN-007 & T-LRN-005, T-REC-002, T-SAF-009, T-SAF-010, INS-EVAL\\
 FR-LRN-008 & T-LRN-006, T-SAF-009, INS-EVAL\\
-FR-LRN-009 & T-LRN-007, T-LRN-021, INS-EVAL, INS-LRN\\
+FR-LRN-009 & T-LRN-007, T-LRN-021, T-REC-005, INS-EVAL, INS-LRN\\
 FR-LRN-010 & T-LRN-008, T-LRN-021, T-SAF-010, INS-EVAL\\
 FR-LRN-011 & T-LRN-009, T-LRN-011 (d), INS-EVAL\\
 FR-LRN-012 & T-LRN-010, T-SAF-015, INS-EVAL\\
@@ -3311,6 +3894,16 @@ FR-LRN-020 & T-LRN-017, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-021 & T-LRN-018, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-022 & T-LRN-019 (inspection and automatic), INS-EVAL\\
 FR-LRN-023 & T-LRN-020, T-LRN-021, INS-LRN\\
+FR-REC-001 & T-REC-001, INS-REC\\
+FR-REC-002 & T-REC-002, T-LRN-005, INS-EVAL\\
+FR-REC-003 & T-REC-003, INS-REC\\
+FR-REC-004 & T-REC-004, T-LRN-014 (l), INS-REC\\
+FR-REC-005 & T-REC-005, T-LRN-007 (b), T-LRN-007 (c), INS-REC\\
+FR-REC-006 & T-REC-006, T-SAF-006, INS-REC\\
+FR-REC-007 & T-REC-007, T-LRN-015 (f), INS-REC\\
+FR-REC-008 & T-REC-008, T-PERF-005, T-SAF-003, INS-REC\\
+FR-REC-009 & T-REC-009, T-SEC-003, INS-REC\\
+FR-REC-010 & T-REC-010, T-SAF-001, INS-REC\\
 \bottomrule
 \end{longtable}}
 
@@ -3577,6 +4170,15 @@ suggestion answered.\\
 \texttt{MODEL\_SEED} & A fixed integer stored in the test file and printed
 with every result; replaced once per milestone, and recorded in the VnV
 Report.\\
+\addlinespace
+\texttt{CLOCK\_START} & 16 November 2026, 10:00:00 America/Toronto: the
+controlled-clock start for the attempt record tests.\\
+\addlinespace
+\texttt{ATTEMPT\_GAP} & 60 seconds between finished attempts in
+T-REC-001.\\
+\addlinespace
+\texttt{RETRY\_DELAY} & 2 seconds of lost connection before the network is
+restored in T-REC-008.\\
 \bottomrule
 \end{longtable}}
 
@@ -3597,7 +4199,16 @@ stylus, before the first run of the tests that use it (PH-1 or PH-2); no
 child takes part. The Testing Lead checks the calibration (the
 \texttt{CAL\_*} constants) after recording, and again in CI whenever the
 evaluation function changes. A file that falls outside its band is recorded
-again; this is not a test failure.
+again; this is not a test failure. The attempt record tests also use
+\texttt{square-\allowbreak{}missing-\allowbreak{}side-\allowbreak{}%
+corrected.json} (\texttt{square-\allowbreak{}missing-\allowbreak{}%
+side.json}, a pause until the missing-side feedback appears, then the
+fourth side), \texttt{square-\allowbreak{}endpoint-\allowbreak{}and-%
+\allowbreak{}side.json} (the square at E with one side missing and one side
+ending away from its corner, a pause until the endpoint feedback appears,
+then that side redrawn to the corner) and
+\texttt{history-\allowbreak{}seed.json} (the T-REC-009 history: four lesson
+records and 20 attempt records, loaded into the test database).
 
 \subsection{Usability Survey Questions?}
 

@@ -185,6 +185,10 @@ the VnV Plan; added a first-stroke stylus check to SAF-RAY-002; added
 SAF-RAY-009 for idle lessons; replaced children's first names and usernames
 with an identifier and an avatar; changed ``restarted'' to ``started again'';
 changed FIPPA to MFIPPA (\#224).\\
+30 October 2026 & Rayan Nasrallah & Addressed peer review: clarified that
+keeping work through a lost connection is in scope (ASM-005); said which parts
+of FACT-007 the team accepted; explained the \texttt{ATTEMPT\_LIMIT} check and
+what \texttt{ATTEMPT\_LIMIT\_MAX} counts (\#184, \#185, \#190).\\
 \end{longtable}
 
 ~\\
@@ -1256,7 +1260,8 @@ may suggest returning to an earlier stage. \emph{Unit:} failed attempts.
 \addlinespace
 \texttt{ATTEMPT\_LIMIT} & Number of unsuccessful attempts that triggers the
 lesson ending or extension decision. \emph{Unit:} failed attempts. \emph{Range:}
-6--10. \emph{Default:} 8; must exceed \texttt{DIFFICULTY\_STREAK}. \emph{Trace:}
+6--10. \emph{Default:} 8; must exceed \texttt{DIFFICULTY\_STREAK}. With the
+current ranges this always holds; the check stays in case the ranges change. \emph{Trace:}
 G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{IMPROVE\_WINDOW} & Number of evaluable attempts in each comparison
@@ -1273,7 +1278,9 @@ recent results satisfy the improvement criterion. \emph{Unit:} attempts.
 \emph{Range:} 1--3. \emph{Default:} 2. \emph{Trace:} G.3, BR-002, OI-05.\\
 \addlinespace
 \texttt{ATTEMPT\_LIMIT\_MAX} & Maximum number of evaluable attempts at a stage,
-including extensions. \emph{Unit:} attempts. \emph{Range:} 8--12.
+including extensions. Because a pass moves the child to the next stage, at most
+one of these is a pass and it is always the last; a maximum of 10 allows 9
+failed attempts and a pass, or 10 failed attempts. \emph{Unit:} attempts. \emph{Range:} 8--12.
 \emph{Default:} 10; must be at least \texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3,
 BR-002, OI-05.\\
 \addlinespace
@@ -1441,8 +1448,11 @@ after the touchscreen activities when time is limited (SRC-005,
 navigate games through images and icons, and that a child should be able to
 enter a lesson, practise, restart and move back and forth without constant adult
 help, while adults handle setup (SRC-005, \intref{P1}{34:13}).\\
-\emph{Relevance:} G.1 and the usability requirements; requirement IDs to be
-linked when written.
+\emph{Relevance:} G.1 and the usability requirements. The team accepted
+navigation through images and icons and practice without constant adult help.
+It did not accept the child restarting a lesson or moving between stages: within
+a lesson Squigglr moves between stages, and the adult chooses and starts lessons
+(CON-007, BR-003).
 \item[FACT-008] A study that involves children requires ethics approval; meeting
 adult experts for feedback, without involving children, does not (SRC-004;
 SRC-005, \intref{P2}{22:56}; \intref{P1}{33:00}).\\
@@ -1629,8 +1639,10 @@ would mislead the adult. The team may then need to deliver Squigglr as an
 installed app, if input there is more reliable, which would change CON-001.
 Relevant to safety.
 \item[ASM-005] A network connection is available during normal use, for loading
-activities and for saving and viewing records. Offline use is out of the initial
-scope.\\
+activities and for saving and viewing records. Keeping work through a
+temporary loss of connection is in scope (SAF-RAY-003, NFR-PERF-005,
+FR-CRT-025); starting or running lessons with no connection is out of the
+initial scope.\\
 \emph{Rationale:} stated in the Problem Statement (SRC-001); school and home
 networks have not been checked.\\
 \emph{Depends on it:} G.5, G.6, CON-001.\\
@@ -7545,9 +7557,10 @@ stretch goal, rather than a claim for the capstone release (OI-08;
 \srcref{005}). & Future \\
 \addlinespace
 Offline lesson use and synchronization & The initial scope assumes network
-access for lessons and records (ASM-005). Full offline operation and later
-synchronization would extend this scope; the existing safety requirement to
-preserve unsaved attempts (SAF-RAY-003) remains part of the committed product. &
+access for lessons and records (ASM-005). Starting or running lessons with no
+connection, and synchronizing them later, would extend this scope. Keeping work
+through a temporary loss of connection (SAF-RAY-003, NFR-PERF-005, FR-CRT-025)
+is part of the committed product. &
 Future \\
 \end{longtable}
 }

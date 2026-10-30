@@ -17,6 +17,7 @@
 \input{../Common.text}
 
 \begin{document}
+\setlength{\emergencystretch}{3em}
 
 \title{System Verification and Validation Plan for \progname{}} 
 \author{\authname}
@@ -1157,10 +1158,478 @@ not flash.
 
 \end{enumerate}
 
-\subsection{Traceability Between Test Cases and Requirements}
+\subsubsection{Operational and Environmental}
+\label{sec:ops-tests}
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+These tests cover SRS Section~13 (NFR-OPS-001 to NFR-OPS-003): how
+Squigglr reaches users through the browser and the outside services it
+depends on.
+
+\begin{enumerate}
+
+\item{T-OPS-001: HTTPS only\\}
+
+Purpose: all data between the browser and the server must be encrypted, so children's records cannot be read in transit.
+
+Type: Dynamic, automatic and manual. Covers NFR-OPS-001.
+
+Initial State: the preview deployment.
+
+Input: in Chrome on a laptop, the tester uses every feature with the DevTools
+Network panel recording, then opens the \texttt{http://} address of each
+page. (DevTools cannot record traffic on the iPad, and the server's
+behaviour does not depend on the device.)
+
+Output: every request uses \texttt{https://}; every \texttt{http://}
+address redirects to HTTPS or is refused.
+
+Test Case Derivation: the fit criterion of NFR-OPS-001.
+
+How test will be performed: the HAR from the normal HTTPS feature run is searched for any \texttt{http://} request; the intentional \texttt{http://} probes are checked separately for a redirect or refusal, and a Playwright test checks the redirects on every release.
+
+\item{T-OPS-002: Error message when a provider is down\\}
+
+Purpose: when an outside service is down, the adult should get a clear message instead of a broken screen.
+
+Type: Dynamic, automatic. Covers NFR-OPS-002.
+
+Initial State: an adult on the login page, and separately an adult in a
+lesson.
+
+Input: requests to the authentication provider, and then to the hosting
+and storage service, are blocked to imitate an outage, and then
+unblocked.
+
+Output: an error message is shown for as long as the provider is
+unavailable, no data is lost, and normal use resumes when it returns.
+Refinement outages are covered by the FR-CRT tests.
+
+Test Case Derivation: the fit criterion of NFR-OPS-002.
+
+How test will be performed: Playwright blocks the provider's domain with
+request routing and checks the page after each step.
+
+\item{T-OPS-003: No installation\\}
+
+Purpose: families and schools should be able to use Squigglr in a browser without installing anything.
+
+Type: Dynamic, manual. Covers NFR-OPS-003.
+
+Initial State: a fresh browser profile, with no extensions, on the iPad and
+on each other combination in \texttt{SUPPORTED\_DEVICES} that the team has
+access to.
+
+Input: the tester opens the address, creates an account and runs a
+lesson.
+
+Output: everything works with no download, plugin, extension or install
+prompt.
+
+Test Case Derivation: the fit criterion of NFR-OPS-003.
+
+How test will be performed: run together with T-PERF-007 and recorded in
+the same table.
+
+\end{enumerate}
+
+\subsubsection{Maintainability and Support}
+\label{sec:maint-tests}
+
+These checks cover SRS Section~14 (NFR-MAINT-001 to NFR-MAINT-004). Most
+are about the code and the process rather than running behaviour, so most
+are reviews or CI checks.
+
+\begin{enumerate}
+
+\item{T-MAINT-001: Lessons are data, not code\\}
+
+Purpose: new lessons should be added without changing code, so the app can
+grow after the capstone.
+
+Type: Static (code review) and dynamic, manual. Covers NFR-MAINT-001.
+
+Initial State: the lesson catalogue at Rev~0.
+
+Input: (a) a reviewer searches the source code for lesson content (shapes,
+stage order, feedback wording); (b) a test lesson for a new shape is added
+as a lesson file, edited and removed.
+
+Output: (a) no lesson content is found in the source code; (b) the new
+lesson appears, changes and disappears in the app with no code change or
+rebuild, and its attempts are scored by the existing scoring.
+
+Example: a lesson file holds the target outline as a list of points, the
+guides for each stage (full outline and endpoints) and the feedback
+messages. One scoring function compares the child's strokes with whatever
+outline it is given (how far the drawn points are from the outline and how
+much of it was covered), so a triangle lesson can be added as a new file in
+the same way as the circle and square lessons.
+
+Test Case Derivation: NFR-MAINT-001. This covers lessons that use the
+existing scoring. A lesson that needs a new kind of scoring, for example
+letters, where stroke order matters, needs new code and is outside this
+test. How maintainers update lessons is still open in the SRS, so the
+add, edit and remove step will follow the SRS wording once it is settled.
+
+How test will be performed: the review is done by a team member who did
+not write the catalogue module.
+
+\item{T-MAINT-002: Finding the module for a lesson behaviour\\}
+
+Purpose: a new developer should be able to find the code behind a lesson
+behaviour quickly, so future fixes are practical.
+
+Type: Static (walkthrough), manual. Covers NFR-MAINT-002.
+
+Initial State: the code and the Module Guide (MG) at Rev~0.
+
+Input: a team member who did not write the lesson logic gets three
+questions, for example ``where is the go-back suggestion triggered?'', and
+uses only the MG and the repository to find the module that answers each.
+
+Output: each module is found within \texttt{LOCATE\_TIME\_MAX}.
+
+Test Case Derivation: the fit criterion of NFR-MAINT-002.
+
+How test will be performed: once, at Rev~0, taking about 15 minutes; any
+question that takes longer becomes an issue to improve the MG or the module
+names.
+
+\item{T-MAINT-003: Every module has a written interface\\}
+
+Purpose: each module should state what it offers, what it takes in and
+what it gives back, so a team member can use another module without
+reading its code.
+
+Type: Static (document review), manual. Covers NFR-MAINT-003.
+
+Initial State: the GitHub issues that create a top-level module, and the
+Module Interface Specification (MIS).
+
+Input: the Testing Lead checks each of those issues.
+
+Output: every issue asks for an interface description (the functions the
+module offers, their inputs and outputs, and what must be true before and
+after each call), and each description matches the MIS.
+
+Example: the issue that creates the scoring module asks for a description
+such as ``score(strokes, target outline) returns a result from 0 to 100'',
+and the MIS describes the same function.
+
+Test Case Derivation: the fit criterion of NFR-MAINT-003, plus the match
+with the MIS that the requirement's title names.
+
+How test will be performed: done as part of the MIS review in the Design
+Verification plan.
+
+\item{T-MAINT-004: CI blocks style violations\\}
+
+Purpose: code that breaks the coding standard should be stopped automatically before it is merged.
+
+Type: Dynamic, automatic. Covers NFR-MAINT-004.
+
+Initial State: the CI pipeline described under Automated Testing and Verification Tools.
+
+Input: two test PRs: one with an ESLint error (an unused variable) and
+one with a Prettier violation (wrong indentation).
+
+Output: CI fails on both and blocks the merge; after the fix, it passes.
+
+Test Case Derivation: the fit criterion of NFR-MAINT-004 names two
+different violations.
+
+How test will be performed: the DevOps Lead opens both PRs once the
+pipeline is set up, and repeats this whenever the lint rules change.
+
+\end{enumerate}
+
+\subsubsection{Security}
+\label{sec:sec-tests}
+
+These tests cover SRS Section~15 (NFR-SEC-001 to NFR-SEC-006). They use
+test accounts only. A child profile holds only a unique identifier generated
+by Squigglr and an avatar chosen by the adult or the child (SRS BR-001,
+NFR-SEC-004).
+
+\begin{enumerate}
+
+\item{T-SEC-001: An adult can only reach their own children\\}
+
+Purpose: an adult must only ever reach their own children's profiles and records.
+
+Type: Dynamic, automatic. Covers NFR-SEC-001, with T-SAF-011.
+
+Initial State: accounts A and B, each with one child profile and
+attempts.
+
+Input: as A, read and modify B's child profile and attempt records
+through direct server requests, using B's record IDs.
+
+Output: every request is refused, and A's own data is unchanged.
+
+Test Case Derivation: the fit criterion of NFR-SEC-001.
+
+How test will be performed: a script sends the requests with A's session;
+the access policies in the database are also reviewed in the safety
+inspection.
+
+\item{T-SEC-002: Logout ends the session\\}
+
+Purpose: after logging out, nobody using the same device can continue the session.
+
+Type: Dynamic, automatic. Covers NFR-SEC-002.
+
+Initial State: an adult is logged in and the session token is copied.
+
+Input: the adult logs out; the copied token is then used for an
+authenticated request, three times.
+
+Output: all three requests are refused.
+
+Test Case Derivation: the fit criterion of NFR-SEC-002.
+
+How test will be performed: Playwright reads the token before logging out
+and sends the requests with it afterwards.
+
+\item{T-SEC-003: Audit event for a blocked change to a saved record\\}
+
+Purpose: saved attempts are the record the adult relies on; any blocked attempt to change one must be logged.
+
+Type: Dynamic, automatic. Covers NFR-SEC-003.
+
+Initial State: a saved attempt record.
+
+Input: three requests to change the record, repeated three times.
+
+Output: every request is refused, each creates an audit event, and no
+event contains the record's contents.
+
+Example: a request to change a saved attempt's result from fail to pass is
+refused, and the audit event records the time, the account and the record's
+identifier, but not the drawing or the result.
+
+Test Case Derivation: the fit criterion of NFR-SEC-003.
+
+How test will be performed: the script reads the audit log through the
+team's database console and checks each event.
+
+\item{T-SEC-004: Minimal personal data\\}
+
+Purpose: collecting less personal data lowers the harm if data is ever exposed.
+
+Type: Static (inspection), manual. Covers NFR-SEC-004.
+
+Initial State: the screen for adding a child and the database schema.
+
+Input: a reviewer lists every field on the screen for adding a child and
+every column of the child profile in the schema.
+
+Output: the only thing entered is the choice of avatar, and the
+only child profile columns are the identifier, the avatar and the
+adult-set values; there is no name, birth date, photo or other
+child-identifying field.
+
+Example: a field asking for the child's first name, even an optional one,
+fails the test.
+
+Test Case Derivation: the fit criterion of NFR-SEC-004. The schema is
+included because a field can be stored without being on the screen.
+
+How test will be performed: the review is done with the PIPEDA review in
+T-COMP-001.
+
+\item{T-SEC-005: Login failures and timeouts are logged privately\\}
+
+Purpose: failed logins and timeouts are logged so problems can be found, without exposing private details in the logs.
+
+Type: Dynamic, automatic. Covers NFR-SEC-005.
+
+Initial State: a test adult account.
+
+Input: ten failed logins and ten logouts by inactivity (using the
+controlled clock from T-SAF-013); then a request for the audit log as
+that adult.
+
+Output: all twenty events are in the server-side log with a time stamp,
+and the adult's request is refused.
+
+Test Case Derivation: the fit criterion of NFR-SEC-005.
+
+How test will be performed: Playwright triggers the events and the script
+reads the log through the team's database console.
+
+\item{T-SEC-006: Text inputs are sanitized\\}
+
+Purpose: text typed into the app must not be able to run code or reach the database.
+
+Type: Dynamic, automatic. Covers NFR-SEC-006.
+
+Initial State: every text field and every server endpoint that accepts
+text.
+
+Input: the probe list \texttt{injection-\allowbreak{}probes.txt}, built from the OWASP
+SQL injection and XSS filter-evasion cheat sheets, for example
+\texttt{' OR '1'='1} and \texttt{<script>alert(1)</script>}.
+
+Output: no probe changes a query or runs a script; each is stored or shown
+as plain text or refused.
+
+Test Case Derivation: the fit criterion of NFR-SEC-006.
+
+How test will be performed: Playwright enters each probe in every field
+and checks the page for script execution, and a script sends each probe
+to every text endpoint.
+
+\end{enumerate}
+
+\subsubsection{Cultural}
+\label{sec:cult-tests}
+
+These tests cover SRS Section~16 (NFR-CULT-002): cultural sensitivity of symbols and imagery.
+
+\begin{enumerate}
+
+\item{T-CULT-001: Style review of symbols and imagery\\}
+
+Purpose: symbols and images should be suitable for families from different cultures.
+
+Type: Static (review), manual. Covers NFR-CULT-002 (SRS Section~16).
+
+Initial State: every icon, avatar, image and colour used to mean success or
+failure, at Rev~0.
+
+Input: two team members, and the supervisor at the Rev~0 demonstration,
+review each item against a checklist: hand gestures, animals, colours,
+religious or national symbols, and food.
+
+Output: no item has a known negative meaning in communities likely to use
+Squigglr, or every concern raised is fixed and approved by the reviewers.
+
+Test Case Derivation: the fit criterion of NFR-CULT-002.
+
+How test will be performed: concerns are recorded as GitHub issues and
+the review is repeated for new images before Rev~1.
+
+\end{enumerate}
+
+\subsubsection{Compliance}
+\label{sec:comp-tests}
+
+These reviews cover SRS Section~17 (NFR-COMP-001 and NFR-COMP-002): the
+Canadian and Ontario privacy laws that apply to Squigglr.
+
+\begin{enumerate}
+
+\item{T-COMP-001: PIPEDA review\\}
+
+Purpose: Squigglr collects personal information in Canada, so its handling must meet PIPEDA.
+
+Type: Static (document and code review), manual. Covers NFR-COMP-001.
+
+Initial State: a data inventory listing every personal-information
+field, where it is stored and where it is sent.
+
+Input: the inventory, checked against each of the ten PIPEDA fair
+information principles \citep{pipeda}.
+
+Output: each principle is recorded as met or not applicable, with none
+unmet.
+
+Test Case Derivation: the fit criterion of NFR-COMP-001.
+
+How test will be performed: two team members do the review at Rev~0, so
+any problem can still be fixed, and repeat it at the final demo (PH-3, 15
+March 2027), using the network findings from T-SAF-012 and the field list
+from T-SEC-004.
+
+\item{T-COMP-002: Ontario MFIPPA review\\}
+
+Purpose: Ontario school boards may use Squigglr, so its handling of student data
+must meet MFIPPA, the privacy act that covers school boards.
+
+Type: Static (document review), manual. Covers NFR-COMP-002.
+
+Initial State: the same data inventory, with retention and disclosure
+added.
+
+Input: the inventory, checked against MFIPPA Part~II, which covers the
+collection, use, retention and disclosure of personal information.
+
+Output: no unmet obligation is recorded.
+
+Test Case Derivation: the fit criterion of NFR-COMP-002.
+
+How test will be performed: done with T-COMP-001; any obligation the
+team cannot judge is raised with the supervisor before adoption by a
+school board.
+
+\end{enumerate}
+
+\subsection{Traceability Between Test Cases and Requirements}
+\label{sec:trace}
+
+Table~\ref{tab:trace-nfr} maps each performance, safety-critical,
+operational, maintainability, security, cultural and compliance requirement
+to the tests that cover it. ``SI'' is the safety inspection described with
+the safety-critical tests. Every safety-critical requirement has at
+least two kinds of evidence, and several other requirements are also
+covered by a second test.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.66\textwidth}@{}}
+\caption{Traceability for nonfunctional requirements}
+\label{tab:trace-nfr}\\
+\toprule
+\textbf{Requirement (SRS)} & \textbf{Tests}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Requirement (SRS)} & \textbf{Tests}\\
+\midrule
+\endhead
+NFR-PERF-001 & T-PERF-001, T-PERF-006\\
+NFR-PERF-002 & T-PERF-002, T-PERF-006\\
+NFR-PERF-003 & T-PERF-003, T-PERF-006\\
+NFR-PERF-004 & T-PERF-004 (unit and UI)\\
+NFR-PERF-005 & T-PERF-005, T-SAF-003\\
+NFR-PERF-008 & T-PERF-006\\
+NFR-PERF-009 & T-PERF-007, T-OPS-003\\
+SAF-RAY-001 & T-SAF-001, SI\\
+SAF-RAY-002 & T-SAF-002, SI\\
+SAF-RAY-003 & T-SAF-003, T-PERF-005, SI\\
+SAF-RAY-004 & T-SAF-004, SI\\
+SAF-RAY-005 & T-SAF-005, SI\\
+SAF-RAY-006 & T-SAF-006, SI\\
+SAF-RAY-007 & T-SAF-007, SI\\
+SAF-RAY-008 & T-SAF-008, SI\\
+SAF-RAY-009 & T-SAF-017, SI\\
+SAF-AHM-001 & T-SAF-009, SI\\
+SAF-AHM-002 & T-SAF-010, SI\\
+SAF-SHA-001 & T-SAF-011, T-SEC-001, SI\\
+SAF-SHA-002 & T-SAF-012, T-COMP-001, SI\\
+SAF-SHA-003 & T-SAF-003, SI\\
+SAF-SHA-006 & T-SAF-013, T-SEC-005, SI\\
+SAF-MOU-001 & T-SAF-014, SI\\
+SAF-MOU-002 & T-SAF-015, SI\\
+SAF-MOU-003 & T-SAF-016, SI\\
+NFR-OPS-001 & T-OPS-001\\
+NFR-OPS-002 & T-OPS-002\\
+NFR-OPS-003 & T-OPS-003, T-PERF-007\\
+NFR-MAINT-001 & T-MAINT-001\\
+NFR-MAINT-002 & T-MAINT-002\\
+NFR-MAINT-003 & T-MAINT-003\\
+NFR-MAINT-004 & T-MAINT-004\\
+NFR-SEC-001 & T-SEC-001, T-SAF-011\\
+NFR-SEC-002 & T-SEC-002\\
+NFR-SEC-003 & T-SEC-003\\
+NFR-SEC-004 & T-SEC-004, T-COMP-001\\
+NFR-SEC-005 & T-SEC-005\\
+NFR-SEC-006 & T-SEC-006\\
+NFR-CULT-002 & T-CULT-001\\
+NFR-COMP-001 & T-COMP-001\\
+NFR-COMP-002 & T-COMP-002\\
+\bottomrule
+\end{longtable}}
 
 \section{Unit Test Description}
 
@@ -1301,6 +1770,70 @@ This is where you can place additional information.
 
 The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
 Their values are defined in this section for easy maintenance.
+
+The constants below are used by the nonfunctional tests. The SRS leaves the
+timing thresholds to this plan; their values are set by measurement rather
+than chosen in advance, so each entry says how and when its value is set. Milestones use the SRS
+phase names: PH-1 is the proof-of-concept demo (23 November 2026), PH-2 is
+Rev~0 (1 February 2027) and PH-3 is the final demo (15 March 2027). Each
+constant includes its unit, so the tests name the constant alone (for
+example, ``within \texttt{FEEDBACK\_LATENCY\_MAX}'').
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.66\textwidth}@{}}
+\caption{Symbolic parameters for nonfunctional tests}
+\label{tab:symb-nfr}\\
+\toprule
+\textbf{Constant} & \textbf{Value or how it is set}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Constant} & \textbf{Value or how it is set}\\
+\midrule
+\endhead
+\texttt{FEEDBACK\_LATENCY\_MAX} & Milliseconds. Set at the end of PH-1 from
+the target-tablet experiment in the Development Plan, run on the test iPad:
+the team measures the stroke latency of the first
+working build, checks whether drawing feels immediate, and sets the
+limit as the highest latency it accepts plus a margin, so that ordinary
+strokes of an accepted build do not fail. After that the limit is fixed
+and does not follow later builds. Recorded in the SRS constants table (NFR-PERF-001).\\
+\addlinespace
+\texttt{REFINE\_LATENCY\_MAX} & Seconds. Set in PH-2 from the measured
+response time of the chosen refinement service (NFR-PERF-002).\\
+\addlinespace
+\texttt{SUMMARY\_LOAD\_MAX} & Seconds. Set in PH-2 from the first
+measurement of T-PERF-003 (NFR-PERF-003).\\
+\addlinespace
+\texttt{CONCURRENT\_CAPACITY} & Sessions. Set in PH-2 from the number of
+schools and households expected during the capstone (NFR-PERF-008).\\
+\addlinespace
+\texttt{LOCATE\_TIME\_MAX} & Minutes. Set by the team before the first
+T-MAINT-002 walkthrough (NFR-MAINT-002).\\
+\addlinespace
+\texttt{IDLE\_TIMEOUT}, \texttt{FAILED\_SAVES}, \texttt{SUPPORTED\_DEVICES},
+\texttt{ADULT\_CHECK}, \texttt{STAGE\_PASS}, \texttt{ATTEMPT\_LIMIT},
+\texttt{ATTEMPT\_LIMIT\_MAX}, \texttt{ATTEMPT\_EXTENSION},
+\texttt{DIFFICULTY\_STREAK}, \texttt{LESSON\_IDLE\_PROMPT},
+\texttt{LESSON\_IDLE\_END} & As defined in the
+SRS constants table.\\
+\addlinespace
+\texttt{PERF\_RUNS} & Number of repeated runs per timing test on the test iPad.
+Proposed value: 30, enough to report a stable median and 95th percentile.\\
+\addlinespace
+\texttt{HISTORY\_SIZE\_LARGE} & Number of attempts in the large prepared
+history. Proposed value: 500, well above a term of daily practice.\\
+\bottomrule
+\end{longtable}}
+
+\paragraph{Prepared test data.} The nonfunctional tests use stroke files
+that will be recorded once on the test iPad, before the first test run
+in PH-1, and stored in the repository under \texttt{tests/fixtures/}: \texttt{line.json}, \texttt{circle.json},
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, \texttt{circle-\allowbreak{}near-\allowbreak{}miss.json},
+\texttt{circle-\allowbreak{}fail.json}, \texttt{square-\allowbreak{}missing-\allowbreak{}side.json},
+\texttt{overlap-\allowbreak{}2-\allowbreak{}strokes.json}, \texttt{house.json} and \texttt{sun.json},
+plus the probe list \texttt{injection-\allowbreak{}probes.txt}. Each file holds the
+pointer events (position, pressure, time) for one attempt.
 
 \subsection{Usability Survey Questions?}
 

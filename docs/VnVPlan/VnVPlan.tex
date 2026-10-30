@@ -1353,18 +1353,99 @@ graduate attribute of Lifelong Learning.
 \input{../Reflection.text}
 
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item What knowledge and skills will the team collectively need to acquire to
-  successfully complete the verification and validation of your project?
-  Examples of possible knowledge and skills include dynamic testing knowledge,
-  static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
-  \item For each of the knowledge areas and skills identified in the previous
-  question, what are at least two approaches to acquiring the knowledge or
-  mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
+
+\item What went well while writing this deliverable?
+
+\textbf{Rayan:} Something that really went well was talking to Chris, our
+TA, before my sections were finished. In our meeting on October 28, 2026, I
+asked him about the things I was unsure of: whether thresholds we cannot set
+yet can be decided by measurement, how many tests a safety requirement needs,
+and whether we need a fixed code coverage target. His answers helped me narrow
+down which testing strategies to use and how to run certain tests, and showed
+me what in my first draft was not clear yet, for example that every TBD value
+in the SRS should point to the method in this plan, and that I needed to
+justify why one test plus a safety inspection gives enough confidence.
+
+Our process also went better than last time. In the SRS and Hazard Analysis we
+had many merge conflicts, mostly because everyone added rows to the same
+revision history table. This time I suggested that everyone send their
+revision history entries to Moustafa, who is doing the final quality check,
+and he adds them all at the end. I also split my own part into five
+sub-issues, each on its own branch with its own pull request, so each part
+could be reviewed on its own, and when I tested merging all of them together
+they merged without conflicts.
+
+\item What pain points did you experience during this deliverable, and how did
+you resolve them?
+
+\textbf{Rayan:} The main pain point was that writing the plan kept sending me
+back to the SRS. Every test has to match a requirement, so each time a meeting
+or a test changed how something should work, I had to go back through the SRS,
+change it, and then check that my tests still matched it. The main changes came
+from two meetings:
+\begin{itemize}
+\item \emph{Our supervisor meeting on October 28, 2026.} Dr.~Anand advised
+that we should not collect children's personal details, so a child's profile
+now holds only a generated identifier and an avatar instead of a first name
+and username. This changed the business rules, the data dictionary, a
+use case, a security requirement and the Hazard Analysis, as well as my
+security test.
+\item \emph{Our TA meeting on the same day.} Chris advised that a value left
+as TBD should say how it will be decided, so every TBD performance value in
+the SRS now points to the measurement method in this plan.
+\end{itemize}
+I resolved this by keeping all of these SRS changes in one issue and one pull
+request, separate from my VnV branches, and by re-reading each affected test
+against the updated requirement before marking a branch ready for review.
+
+\item What knowledge and skills will the team collectively need to acquire to
+successfully complete the verification and validation of your project?
+Examples of possible knowledge and skills include dynamic testing knowledge,
+static testing knowledge, specific tool usage, Valgrind etc. You should look to
+identify at least one item for each team member.
+
+\textbf{Rayan:} For my part of the plan (performance, safety-critical,
+security and compliance tests), I need three things I do not yet have:
+\begin{itemize}
+\item \emph{End-to-end test automation with Playwright}, in particular
+simulating network loss, replaying recorded stylus input and controlling
+the clock. Most of my safety tests depend on these, for example
+T-SAF-003, T-SAF-013 and T-SAF-017.
+\item \emph{Security testing of a web back end}: checking access policies in
+the database, reusing session tokens and sending injection probes. As
+Backend Lead, I am responsible for the code these tests target.
+\item \emph{Performance measurement on the iPad}: taking repeatable timings
+in the browser and summarizing them fairly, so that the thresholds the SRS
+leaves open can be set from evidence.
+\end{itemize}
+
+\item For each of the knowledge areas and skills identified in the previous
+question, what are at least two approaches to acquiring the knowledge or
+mastering the skill? Of the identified approaches, which will each team
+member pursue, and why did they make this choice?
+
+\textbf{Rayan:}
+\begin{itemize}
+\item \emph{Playwright.} Two approaches: work through the official
+Playwright documentation and examples on network emulation and clocks, or
+learn from the first tests the Testing Lead writes. I will start with the
+documentation and write T-PERF-005 as a first test as soon as the scaffold
+exists. This is because the network and clock features are exactly what my
+tests need, and writing a real test early shows quickly what I am missing.
+\item \emph{Security testing.} Two approaches: follow the OWASP Web Security
+Testing Guide for the checks that apply to us, or rely on the hosting
+provider's security advice and default settings. I will use the OWASP
+guide, because it gives a checklist we can repeat each release, while
+default settings alone would not show us that our own access rules are
+correct.
+\item \emph{Performance measurement.} Two approaches: learn the browser
+developer tools (Safari Web Inspector for the iPad, Chrome DevTools on a
+laptop), or write timing code with the browser Performance API. I will do
+both, starting with the Performance API in Playwright scripts so the
+measurements can be repeated, and using Safari Web Inspector to understand
+any slow result on the iPad.
+\end{itemize}
+
 \end{enumerate}
 
 \end{document}

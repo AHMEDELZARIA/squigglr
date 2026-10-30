@@ -249,7 +249,9 @@ are written in monospaced capitals (for example, \texttt{STAGE\_PASS}) and
 defined once in Section~\ref{sec:constants}. A value marked \emph{TBD} is not an
 approved threshold; unresolved values appear in the constants register, and are
 also linked to an open issue in Section~\ref{sec:open-issues} where such an
-issue exists. Diagrams, if used, must include a legend identifying their symbols
+issue exists. Performance and maintainability values marked TBD are not unknowns: the
+VnV Plan states how each will be set by repeated measurement once the system
+can be tested. Diagrams, if used, must include a legend identifying their symbols
 and arrow meanings. Section~\ref{sec:fr-formal} defines the state-machine
 notation used to specify guided lesson behaviour.
 
@@ -1109,8 +1111,6 @@ presentation of web pages. & Section 10\\
 \textbf{EARS} & Easy Approach to Requirements Syntax. & Team reflection\\
 \textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}. &
 \hyperref[sec:facts]{Section 5.1}\\
-\textbf{FIPPA} & Freedom of Information and Protection of Privacy Act (Ontario).
-& Section 17\\
 \textbf{FR} & Functional requirement. & \hyperref[sec:functional]{Section 9}\\
 \textbf{GB} & Gigabyte. & \hyperref[sec:costs]{Section 23}\\
 \textbf{GDPR} & General Data Protection Regulation (European Union). & Section
@@ -1135,6 +1135,9 @@ used for network communication. & Section 13\\
 \hyperref[sec:changes]{Section 27.1}\\
 \textbf{LLM} & Large language model. & AI-use disclosure\\
 \textbf{MB} & Megabyte. & \hyperref[sec:new-problems]{Section 20}\\
+\textbf{MFIPPA} & Municipal Freedom of Information and Protection of Privacy
+Act (Ontario).
+& Section 17\\
 \textbf{MG} & Module Guide, a high-level description of a system's modules and
 their relationships. & Module Guide document\\
 \textbf{MIS} & Module Interface Specification, a detailed description of module
@@ -1198,12 +1201,14 @@ into web content. & Section 15\\
 \subsection{Symbolic Constants}
 \label{sec:constants}
 Table~\ref{tab:goalconst} specifies the parameters used in guided lessons,
-creative refinement and progress summary verification. The six
+creative refinement and progress summary verification. The eight
 adult-configurable parameters have an allowed range and a default value for each
 learner profile (BR-008, \srcref{008}). Their defaults are the midpoints of
 their respective ranges. Each configuration shall satisfy
 \texttt{ATTEMPT\_LIMIT} $>$ \texttt{DIFFICULTY\_STREAK} and
-\texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}. Drawing stage
+\texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}, and
+\texttt{LESSON\_IDLE\_PROMPT} $<$ \texttt{LESSON\_IDLE\_END} $<$
+\texttt{IDLE\_TIMEOUT}. Drawing stage
 results are expressed on a normalized scale from 0 to 100; higher results
 indicate closer agreement with the stage's fixed criteria. The result is not a
 measure of the child's ability (BR-006). Attempt count settings shall be
@@ -1266,6 +1271,16 @@ recent results satisfy the improvement criterion. \emph{Unit:} attempts.
 including extensions. \emph{Unit:} attempts. \emph{Range:} 8--12.
 \emph{Default:} 10; must be at least \texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3,
 BR-002, OI-05.\\
+\addlinespace
+\texttt{LESSON\_IDLE\_PROMPT} & Time with no input during a guided lesson after
+which Squigglr shows the child a check-in. \emph{Unit:} seconds. \emph{Range:}
+team-defined; TBD. \emph{Default:} middle of the range; must be less than
+\texttt{LESSON\_IDLE\_END}. \emph{Trace:} BR-008, SAF-RAY-009.\\
+\addlinespace
+\texttt{LESSON\_IDLE\_END} & Time with no input during a guided lesson after
+which Squigglr ends the lesson. \emph{Unit:} seconds. \emph{Range:}
+team-defined; TBD. \emph{Default:} middle of the range; must be less than
+\texttt{IDLE\_TIMEOUT}. \emph{Trace:} BR-008, SAF-RAY-009.\\
 \addlinespace
 \texttt{REFINE\_TOLERANCE} & Maximum permitted distance between refined strokes
 and the child's original strokes in the creative space. \emph{Unit:} distance
@@ -1339,28 +1354,30 @@ attempts (count). \emph{Value:} team-defined; TBD. \emph{Trace:} SAF-SHA-003.\\
 \addlinespace
 \texttt{FEEDBACK\_LATENCY\_MAX} & Maximum allowed time between the completion of
 a stylus stroke and visual acknowledgement of that stroke during a lesson.
-\emph{Unit:} milliseconds. \emph{Value:} TBD; pending VnV Plan threshold
-verification. \emph{Trace:} NFR-PERF-001.\\
+\emph{Unit:} milliseconds. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-001.\\
 \addlinespace
 \texttt{REFINE\_LATENCY\_MAX} & Maximum allowed time between system's AI
 refinement request and visual acknowledgement of that request strokes (or
-falling back to unrefined strokes). \emph{Unit:} seconds. \emph{Value:} TBD;
-pending VnV Plan threshold verification. \emph{Trace:} NFR-PERF-002.\\
+falling back to unrefined strokes). \emph{Unit:} seconds. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-002.\\
 \addlinespace
 \texttt{SUMMARY\_LOAD\_MAX} & Maximum allowed time for an adult's progress
 summary page to become fully visible after request. \emph{Unit:} seconds.
-\emph{Value:} TBD; pending VnV Plan threshold verification. \emph{Trace:}
+\emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:}
 NFR-PERF-003.\\
 \addlinespace
 \texttt{LOCATE\_TIME\_MAX} & Maximum time a team member unfamiliar with the
 codebase should need to locate the module responsible for a given stage
-behaviour. \emph{Unit:} minutes. \emph{Value:} TBD; pending VnV Plan threshold
-verification. \emph{Trace:} NFR-MAINT-002.\\
+behaviour. \emph{Unit:} minutes. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-MAINT-002.\\
 \addlinespace
 \texttt{CONCURRENT\_CAPACITY} & Maximum number of simultaneous active users the
 system shall support without degrading response times below the thresholds in
 Section~\ref{sec:speed}. \emph{Unit:} concurrent sessions (count). \emph{Value:}
-TBD; to be set in the VnV Plan. \emph{Trace:} NFR-PERF-008.\\
+TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-008.\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}
@@ -1464,12 +1481,13 @@ identifier of the form BR-\#\#\#, a rationale and its sources.
 \begin{description}[style=nextline]
 \item[BR-001] Only the adult who holds an account, a parent or an educator, may
 create, view and manage the learner profiles under it and their records. One
-account can hold several learner profiles. A learner profile holds only the
-child's first name and username that does not identify the child; no other
-information about the child is collected.\\
+account can hold several learner profiles. A learner profile holds only a
+unique identifier that Squigglr generates and an avatar, chosen by the adult or,
+with the adult, by the child;
+no name or other information about the child is collected.\\
 \emph{Rationale:} practice records describe a child's difficulties and are
-personal information. Keeping each profile to a first name and a non-identifying
-username lets an adult tell children apart, for example on a shared device,
+personal information. Keeping each profile to an identifier and an avatar lets
+an adult, and a child who cannot read, tell children apart for example on a shared device,
 while collecting as little about them as possible. How records are protected is
 a privacy requirement.\\
 \emph{Source:} SRC-001, SRC-004; G.5, G.6.
@@ -1538,7 +1556,8 @@ release; generated advice to a child cannot.\\
 \emph{Source:} SRC-001; SRC-005, \intref{Moustafa}{6:03}.
 \item[BR-008] The supporting adult sets \texttt{STAGE\_PASS},
 \texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT}, \texttt{IMPROVE\_WINDOW},
-\texttt{ATTEMPT\_EXTENSION} and \texttt{ATTEMPT\_LIMIT\_MAX} for each child.
+\texttt{ATTEMPT\_EXTENSION}, \texttt{ATTEMPT\_LIMIT\_MAX},
+\texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} for each child.
 When an adult creates a child profile, Squigglr asks them to choose each value,
 and for \texttt{STAGE\_PASS} shows example drawings of what its minimum and
 maximum look like. The adult can change the values later. A value the adult does
@@ -1826,8 +1845,8 @@ F3 & The work & Child & Demonstrations and tracing guides for each stage. \\
 F4 & The work & Child & Feedback on an attempt, shown on screen and, unless
 muted, as audio. \\
 F5 & The work & Child & The refined drawing in the creative space. \\
-F6 & Supporting adult & The work & A child's profile details (first name and a
-username) and adult-set values (BR-001, BR-008). \\
+F6 & Supporting adult & The work & A child's profile details (an avatar) and
+adult-set values (BR-001, BR-008). \\
 F7 & Supporting adult & The work & The lesson and starting stage chosen for a
 child, and the start of that lesson (BR-003). \\
 F8 & Supporting adult & The work & A decision on a suggestion to go back a
@@ -2004,8 +2023,8 @@ The model carries the following data constraints. None is new; each restates as
 a property of the data a rule or goal stated elsewhere, and each can be checked
 by inspecting saved data prepared by adults.
 \begin{itemize}
-  \item A learner profile holds only the child's first name and a username that
-  does not identify the child (BR-001).
+  \item A learner profile holds only a unique identifier and an avatar
+  (BR-001).
   \item Every adult-set value lies within its team-set range,
   \texttt{ATTEMPT\_LIMIT} is larger than \texttt{DIFFICULTY\_STREAK}, and
   \texttt{ATTEMPT\_LIMIT\_MAX} is at least \texttt{ATTEMPT\_LIMIT}; a value the
@@ -2086,7 +2105,7 @@ profile that was the active learner when it was drawn; never an attempt record.
 & G.4; BR-005; UC-006, UC-007; FR-CRT-001 to FR-CRT-030 \\
 \addlinespace
 Learner profile & One child known to an account (called a child's profile in
-UC-001 and F6). Learner profile = First name + Username. & Class & Holds nothing
+UC-001 and F6). Learner profile = Profile identifier + Avatar. & Class & Holds nothing
 else about the child; has exactly one learner settings and any number of lesson
 records and creative drawings; only the adult who holds the account creates,
 views and manages it. & BR-001; ASM-008; UC-001; F6; FR-REC-006; FR-CRT-023 \\
@@ -2133,15 +2152,17 @@ Actual strokes & The strokes the child drew in an attempt. Actual strokes =
 corrected, ideal or refined shape. & BR-004; ULC-005; FR-LRN-007; FR-REC-002;
 FR-CRT-027 \\
 \addlinespace
-Adult-set values & The six values a supporting adult chooses for each child
+Adult-set values & The eight values a supporting adult chooses for each child
 (Table~\ref{tab:goalconst}). Adult-set values = \texttt{STAGE\_PASS} +
 \texttt{DIFFICULTY\_STREAK} + \texttt{ATTEMPT\_LIMIT} + \texttt{IMPROVE\_WINDOW}
-+ \texttt{ATTEMPT\_EXTENSION} + \texttt{ATTEMPT\_LIMIT\_MAX}. & Attribute & Each
++ \texttt{ATTEMPT\_EXTENSION} + \texttt{ATTEMPT\_LIMIT\_MAX} +
+\texttt{LESSON\_IDLE\_PROMPT} + \texttt{LESSON\_IDLE\_END}. & Attribute & Each
 within its team-set range, by default its middle; \texttt{ATTEMPT\_\allowbreak
 LIMIT} larger than \texttt{DIFFICULTY\_\allowbreak STREAK};
 \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} at least
 \texttt{ATTEMPT\_\allowbreak LIMIT}. \texttt{STAGE\_PASS} is a result in points
-out of 100; the others are counts of attempts. & G.2, G.3; BR-008; FR-LRN-017;
+out of 100; \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} are
+times in seconds; the others are counts of attempts. & G.2, G.3; BR-008; FR-LRN-017;
 UC-001, UC-010; F6, F9; SAF-RAY-008 \\
 \addlinespace
 Adult-set values in use & The learner's adult-set values at the time an attempt
@@ -2153,6 +2174,12 @@ FR-REC-001; FR-PRG-002, FR-PRG-011 \\
 \addlinespace
 Audio setting & Whether feedback to the learner includes audio. & Attribute & On
 or muted. & ASM-015; UC-010; F4, F9; NFR-UX-010 \\
+\addlinespace
+Avatar & A picture chosen for a learner, by the adult or by the child, so that
+learners under one
+account can be told apart, including by a child who cannot read. & Attribute &
+One of the pictures Squigglr offers; no photo of the child. & BR-001; ASM-008;
+F6; SAF-RAY-007 \\
 \addlinespace
 Colour & The colour of a stroke in a creative drawing. & Attribute & One of the
 colours Squigglr offers; unchanged by refinement. & FR-CRT-005, FR-CRT-011 \\
@@ -2167,9 +2194,6 @@ extended because the child was improving. & Attribute & Count of extensions, at
 most one at each stage; evaluable attempts at one stage never exceed
 \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002; FR-LRN-020;
 SAF-RAY-006 \\
-\addlinespace
-First name & The child's first name, as the adult enters it. & Attribute & First
-name only; no surname or other detail. & BR-001; F6 \\
 \addlinespace
 Furthest stage reached & The latest stage of the lesson that the learner reached
 in a lesson record. & Attribute & A stage of the lesson. & G.5; BR-002;
@@ -2238,6 +2262,10 @@ Squigglr can observe in an attempt, such as a missed part of an outline (called
 an observation in earlier documents). & Attribute & Defined by the team for one
 or more stages; never generated for a particular child. & G.5; BR-007;
 FR-REC-003; FR-PRG-004 \\
+\addlinespace
+Profile identifier & A unique identifier that Squigglr generates for each
+learner profile. & Attribute & Generated by Squigglr; holds no information about
+the child. & BR-001; NFR-SEC-004 \\
 \addlinespace
 Recurring difficulty & A predefined difficulty that a progress summary lists
 because it keeps occurring. Recurring difficulty = Predefined difficulty + Stage
@@ -2312,10 +2340,6 @@ Supported item & A shape or simple object in the agreed supported set, which
 Squigglr refines. & Attribute & The set is agreed by the team (OI-03); drawings
 of other items are not refined. & G.4; FR-CRT-015 \\
 \addlinespace
-Username & A name for the learner that the adult chooses, so that learners under
-one account can be told apart. & Attribute & Must not identify the child. &
-BR-001; ASM-008; F6 \\
-\addlinespace
 Width & The width of a stroke in a creative drawing. & Attribute & Unchanged by
 refinement. & FR-CRT-011 \\
 \addlinespace
@@ -2349,7 +2373,7 @@ Finish mark & The child's mark that a creative drawing is done. & Data flow &
 Starts exactly one refinement. & UC-007; FR-CRT-010 \\
 \addlinespace
 Learner profile details & What an adult enters to add a child. Learner profile
-details = First name + Username + (Adult-set values). & Data flow & From the
+details = Avatar + (Adult-set values). & Data flow & From the
 adult who holds the account only; an adult-set value not entered takes the
 middle of its range. & BR-001, BR-008; UC-001; F6 \\
 \addlinespace
@@ -2679,8 +2703,9 @@ formally in Section~\ref{sec:fr-formal}.
 \reqfield{Trigger}{The adult adds a child to Squigglr.}
 \noindent\textit{Main flow:}
 \begin{enumerate}[nosep, leftmargin=2.2em]
-  \item The adult enters the child's first name and a username that does not
-  identify the child (BR-001).
+  \item The adult, or the child with the adult, chooses an avatar; Squigglr
+  generates the
+  profile's unique identifier (BR-001).
   \item Squigglr asks for each adult-set value, shows its range and, for
   \texttt{STAGE\_PASS}, shows example drawings of the minimum and maximum
   (BR-008).
@@ -2795,6 +2820,11 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
   \item[*a.] At any step, the connection is lost. Each completed attempt is kept
   on the device until the server confirms it is saved, and the adult is told
   which attempts could not be saved (\mbox{SAF-RAY-003}).
+  \item[*b.] At any step, there is no input for \texttt{LESSON\_IDLE\_PROMPT}.
+  Squigglr shows a check-in the child can understand without reading; any touch
+  dismisses it. If there is still no input at \texttt{LESSON\_IDLE\_END}, the
+  lesson ends, the progress so far is saved, and the record shows that it ended
+  for inactivity (\mbox{SAF-RAY-009}).
 \end{description}
 \reqfield{Postconditions}{Every evaluable attempt is recorded, the furthest
 stage reached is saved, and no stage moved back without an adult's acceptance.}
@@ -4285,7 +4315,7 @@ each completed attempt on the device until the server confirms that it is saved,
 and tells the adult which attempts were not saved. SAF-RAY-006 records each
 lesson that ends at an attempt limit, either \texttt{ATTEMPT\_LIMIT} or
 \texttt{ATTEMPT\_LIMIT\_MAX}, records each improvement extension, and keeps
-earlier attempts when a lesson is restarted. SAF-RAY-007 saves every attempt to
+earlier attempts when the same lesson is started again. SAF-RAY-007 saves every attempt to
 the active learner only. The specialist interview did not cover how records are
 kept, shared or deleted (FACT-013), so the requirements below rest on the
 Problem Statement and the business rules. Who may view, share or delete records
@@ -4362,7 +4392,7 @@ H-MUH-007}
 \begin{srsrequirement}{FR-REC-004}{Adult-set values in use}
   \reqshall{Squigglr shall keep in each attempt record the value of each
 adult-set value that was in use for the learner when the attempt was made.}
-\reqrationale{The adult-set values are the six values of BR-008 listed in
+\reqrationale{The adult-set values are the eight values of BR-008 listed in
 Table~\ref{tab:goalconst}, and the outcome of an attempt depends on the
 \texttt{STAGE\_\allowbreak PASS} in use, and the adult may change the values at
 any time (BR-008). Keeping the values with each attempt means a later change
@@ -4408,7 +4438,7 @@ number of successful attempts at each stage and how the lesson ended.}
 lesson and how many attempts succeeded at each stage (Table~\ref{tab:userNeeds};
 BR-002). The starting stage shows whether a stage was reached by passing or
 chosen by an adult (BR-003). A new record each time the lesson starts keeps a
-restart from hiding earlier results (SAF-RAY-006).} \reqfit{For prepared
+repeated lesson from hiding earlier results (SAF-RAY-006).} \reqfit{For prepared
 sequences of attempts in which a lesson is started at the first drawing stage
 and again at a later stage chosen by an adult, each lesson record shows the
 known starting stage, furthest stage, count of successful attempts at each stage
@@ -5228,10 +5258,16 @@ an adult acts.\\
 \item[SAF-RAY-002]\phantomsection\label{req:SAF-RAY-002} Before a lesson starts,
 Squigglr shall check the device and browser against \texttt{SUPPORTED\_DEVICES}
 (TBD) and, if they do not match, show an adult-readable notice that results may
-be unreliable.\\
-\emph{Rationale:} the team does not control the device (CON-001--CON-003).\\
+be unreliable. When the first stroke of a lesson is drawn with a finger rather
+than a stylus, Squigglr shall show the adult the same kind of notice.\\
+\emph{Rationale:} the team does not control the device (CON-001--CON-003). A
+browser cannot tell whether a stylus is connected before it is used; it can
+only report the input type (pen, finger or mouse) of each stroke as it is
+drawn, so stylus use is checked at the first stroke (ASM-003).\\
 \emph{Fit criterion:} on each prepared unsupported combination the notice
-appears before the first attempt; on supported ones it does not.\\
+appears before the first attempt; on supported ones it does not. When the
+first stroke is drawn with a finger, the notice appears; when it is drawn with
+a stylus, it does not.\\
 \emph{Hazards:} H-RAY-002.
 \item[SAF-RAY-003]\phantomsection\label{req:SAF-RAY-003} Squigglr shall keep
 each completed attempt on the device until the server confirms it is saved, and
@@ -5264,12 +5300,13 @@ attempts made.\\
 \item[SAF-RAY-006]\phantomsection\label{req:SAF-RAY-006} Squigglr shall record
 each lesson that ends at \texttt{ATTEMPT\_LIMIT} or
 \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement extension, show the adult how
-many times these happened for each lesson, and keep earlier attempts when a
-lesson is restarted.\\
-\emph{Rationale:} a restart could otherwise hide repeated failure from the
+many times these happened for each lesson, and keep earlier attempts when the
+same lesson is started again.\\
+\emph{Rationale:} each run of a lesson is a new lesson record (FR-REC-006);
+starting the lesson again could otherwise hide repeated failure from the
 adult.\\
-\emph{Fit criterion:} in prepared sequences that reach the limit and then
-restart, the count and all earlier attempts appear in the adult view.\\
+\emph{Fit criterion:} in prepared sequences that reach the limit and are then
+started again, the count and all earlier attempts appear in the adult view.\\
 \emph{Hazards:} H-RAY-005.
 \item[SAF-RAY-007]\phantomsection\label{req:SAF-RAY-007} Squigglr shall identify
 the active learner on every practice screen in a form a child who cannot read
@@ -5295,6 +5332,27 @@ every \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} is refused, an
 unset value equals the midpoint, and no change completes without the adult
 check.\\
 \emph{Hazards:} H-RAY-007.
+
+\item[SAF-RAY-009]\phantomsection\label{req:SAF-RAY-009} During a guided
+lesson, when there is no input for \texttt{LESSON\_IDLE\_PROMPT}, Squigglr shall
+show a check-in that a child who cannot read can understand, without flashing
+(SAF-MOU-003), that any touch dismisses. When there is no input for
+\texttt{LESSON\_IDLE\_END}, Squigglr shall end the lesson, keep the progress
+saved up to that point, and record that the lesson ended for inactivity. Time
+without input shall not count as an attempt or toward
+\texttt{DIFFICULTY\_STREAK} or \texttt{ATTEMPT\_LIMIT}.\\
+\emph{Rationale:} a child may walk away during a lesson, and no adult may be
+watching (CA-001). On a shared device (CA-004), another child could then
+continue under the first child's profile. Ending an idle lesson before
+\texttt{IDLE\_TIMEOUT} logs the adult out (SAF-SHA-006) gives the lesson a
+clear ending in the record. Some children pause often, so the adult sets both
+times for each child (BR-008).\\
+\emph{Fit criterion:} in prepared lessons with no input, the check-in appears at
+\texttt{LESSON\_IDLE\_PROMPT}, a touch dismisses it and the lesson continues,
+and with no further input the lesson ends at \texttt{LESSON\_IDLE\_END} with
+its progress saved and the ending recorded as inactivity; no attempt is counted
+for the idle time.\\
+\emph{Hazards:} H-RAY-006.
 
 \item[SAF-AHM-001]\phantomsection\label{req:SAF-AHM-001} Squigglr shall prevent
 duplicate reports of the same stylus input event from being counted more than
@@ -5448,7 +5506,7 @@ restored three consecutive times.}
 
 \begin{srsrequirement}{NFR-PERF-008}{Concurrent session capacity}
   \reqshall{Squigglr shall support a concurrent session target of
-\texttt{CONCURRENT\_CAPACITY} (TBD) simultaneous active users without degrading
+\texttt{CONCURRENT\_CAPACITY} (TBD; set by measurement in the VnV Plan) simultaneous active users without degrading
 response times below the thresholds stated in Section~\ref{sec:speed}
 (NFR-PERF-001, NFR-PERF-002, and NFR-PERF-003).} \reqrationale{The anticipated
 system deployment is to a small number of schools or households. The exact
@@ -5689,14 +5747,16 @@ times.}
 \subsection{Privacy Requirements}
 
 \begin{srsrequirement}{NFR-SEC-004}{Minimal personal data collection}
-  \reqshall{Squigglr shall not store any child-identifying information beyond
-the child's first name and non-identifying username.} \reqrationale{Personal
+  \reqshall{Squigglr shall not store any child-identifying information: a
+learner profile holds only a unique identifier generated by Squigglr and an
+avatar chosen by the adult or the child.} \reqrationale{Personal
 information about children is not necessary for Squigglr to function and
 minimizing collected data limits security risks. If identifying information was
 needed, it would make sense to collect the adult's information rather than the
 child; this supports Squigglr's accountability, consent, and access obligations
 under PIPEDA~\cite{pipeda}.} \reqfit{Passes if there is no field during child
-registration beyond a first name and non-identifying username.}
+registration other than choosing an avatar, and the stored child profile
+holds only the identifier and the avatar.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\srcref{004}} \reqtraces{BR-001; \reqref{NFR-SEC-001}}
@@ -5779,15 +5839,16 @@ principle as met or not applicable, with none unmet.}
   \reqsources{\cite{pipeda}} \reqtraces{PIPEDA~\cite{pipeda}}
 \end{srsrequirement}
 
-\begin{srsrequirement}{NFR-COMP-002}{Ontario FIPPA Applicability}
+\begin{srsrequirement}{NFR-COMP-002}{Ontario MFIPPA Applicability}
   \reqshall{Squigglr shall be compliant with the Ontario Freedom of Information
-and Protection of Privacy Act (FIPPA) before adoption by any school boards.}
-  \reqrationale{FIPPA governs how Ontario public institutions, including school
+and Protection of Privacy Act (MFIPPA) before adoption by any school
+boards.}
+  \reqrationale{MFIPPA governs how Ontario local institutions, including school
   boards, collect, keep and disclose personal information. Adoption by a school
   board is outside this project, so the requirement is checked before the end of
   the project, ready for any later adoption.}
   \reqfit{A review of Squigglr's collection, retention and disclosure of
-  personal information against FIPPA Part III records no unmet obligation.}
+  personal information against MFIPPA Part II records no unmet obligation.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\srcref{002}} \reqtraces{\reqref{NFR-SEC-001}; OI-06}
@@ -5882,7 +5943,7 @@ rule as clarified, not a new choice between automatic and adult-authorized
 forward progression. & G.3, CON-007 & Shamil Canbolat & Oct.\ 17, 2026 \\
 \addlinespace
 OI-05 & \emph{Verification of learning thresholds.} Section~\ref{sec:constants}
-defines the ranges and defaults for the six adult-configurable values and the
+defines the ranges and defaults for the eight adult-configurable values and the
 fixed \texttt{IMPROVE\_MARGIN}. Verify the selected ranges with adult-made
 drawings, provide examples illustrating the endpoints of the
 \texttt{STAGE\_PASS} range, and confirm that the drawing-evaluation method
@@ -6429,7 +6490,7 @@ product must not do there; the last row answers that.
 \bottomrule
 \endlastfoot
 More work for supporting adults & Squigglr gives adults new tasks: creating a
-learner profile, choosing six adult-set values, with example drawings to help
+learner profile, choosing eight adult-set values, with example drawings to help
 with \texttt{STAGE\_PASS} (BR-008), choosing lessons and starting stages,
 answering go-back suggestions (BR-003) and reviewing records. An educator with a
 short slot per learner (PER-3) or a parent who reviews once a week (PER-2) may
@@ -6561,7 +6622,7 @@ links} \\
 \bottomrule
 \endlastfoot
 Frustration from repetition (child) & Failing the same stage again and again, or
-restarting a lesson at once after it ends, can agitate a child who dislikes
+starting the same lesson again at once after it ends, can agitate a child who dislikes
 repeated tasks (PER-1). The child may become distressed or refuse the activity
 later. & A lesson ends at \texttt{ATTEMPT\_LIMIT} (G.3, BR-002), and the adult
 sets the limits for each child (BR-008). Hazards: H-RAY-004, H-RAY-005. \\
@@ -6598,8 +6659,8 @@ with the records (ASM-006); the ranges are OI-05. Hazard: H-RAY-007. \\
 Worry about the child's data (adult) & Parents want their child's data kept
 private (PER-2), and how records are shared or deleted is not yet decided
 (OI-02, FACT-013). Adults may refuse to use Squigglr, or share records more
-widely than they intend. & A learner profile holds only a first name and a
-non-identifying username (BR-001); privacy requirements follow from OI-02; a
+widely than they intend. & A learner profile holds only an identifier and an
+avatar (BR-001); privacy requirements follow from OI-02; a
 privacy notice is part of the user documentation (Table~\ref{tab:user-docs}). \\
 \end{longtable}
 }
@@ -7075,12 +7136,14 @@ PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-005} & Automatic lesson termination & Must & PH-2 \\
 \addlinespace
-\texttt{SAF-RAY-006} & Restart and extension history & Must & PH-2 \\
+\texttt{SAF-RAY-006} & Limit-ending and extension history & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-007} & Active-learner identification and isolation & Must & PH-2
 \\
 \addlinespace
 \texttt{SAF-RAY-008} & Adult-setting bounds and authorization & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-009} & Lesson inactivity check-in and ending & Should & PH-2 \\
 \addlinespace
 \texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-1 \\
 \addlinespace
@@ -7186,7 +7249,7 @@ PH-3 \\
 \addlinespace
 \reqref{NFR-COMP-001} & PIPEDA & Must & PH-3 \\
 \addlinespace
-\reqref{NFR-COMP-002} & Ontario FIPPA applicability & Must & PH-3 \\
+\reqref{NFR-COMP-002} & Ontario MFIPPA applicability & Must & PH-3 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Standards Compliance Requirements (Section
 17.2)}}\\
@@ -7342,8 +7405,8 @@ items}\label{tab:user-docs}\\
 \endhead
 \bottomrule
 \endlastfoot
-Getting started & Create a learner profile that holds only a first name and a
-non-identifying username. Choose each adult-set value: what it means, its range,
+Getting started & Create a learner profile by choosing an avatar; Squigglr
+stores no name. Choose each adult-set value: what it means, its range,
 the example drawings for \texttt{STAGE\_PASS}, and that a value not chosen is
 set to the middle of its range, which may not suit the child. Change the values
 later. & UC-001, UC-010; BR-001, BR-008; ASM-016 & Supporting adults \\

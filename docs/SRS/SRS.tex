@@ -1111,8 +1111,6 @@ presentation of web pages. & Section 10\\
 \textbf{EARS} & Easy Approach to Requirements Syntax. & Team reflection\\
 \textbf{FACT} & Relevant fact identifier; \texttt{FACT-\#\#\#}. &
 \hyperref[sec:facts]{Section 5.1}\\
-\textbf{FIPPA} & Freedom of Information and Protection of Privacy Act (Ontario).
-& Section 17\\
 \textbf{FR} & Functional requirement. & \hyperref[sec:functional]{Section 9}\\
 \textbf{GB} & Gigabyte. & \hyperref[sec:costs]{Section 23}\\
 \textbf{GDPR} & General Data Protection Regulation (European Union). & Section
@@ -1137,6 +1135,9 @@ used for network communication. & Section 13\\
 \hyperref[sec:changes]{Section 27.1}\\
 \textbf{LLM} & Large language model. & AI-use disclosure\\
 \textbf{MB} & Megabyte. & \hyperref[sec:new-problems]{Section 20}\\
+\textbf{MFIPPA} & Municipal Freedom of Information and Protection of Privacy
+Act (Ontario).
+& Section 17\\
 \textbf{MG} & Module Guide, a high-level description of a system's modules and
 their relationships. & Module Guide document\\
 \textbf{MIS} & Module Interface Specification, a detailed description of module
@@ -1480,12 +1481,12 @@ identifier of the form BR-\#\#\#, a rationale and its sources.
 \begin{description}[style=nextline]
 \item[BR-001] Only the adult who holds an account, a parent or an educator, may
 create, view and manage the learner profiles under it and their records. One
-account can hold several learner profiles. A learner profile holds only the
-child's first name and username that does not identify the child; no other
-information about the child is collected.\\
+account can hold several learner profiles. A learner profile holds only a
+unique identifier that Squigglr generates and an avatar that the adult chooses;
+no name or other information about the child is collected.\\
 \emph{Rationale:} practice records describe a child's difficulties and are
-personal information. Keeping each profile to a first name and a non-identifying
-username lets an adult tell children apart, for example on a shared device,
+personal information. Keeping each profile to an identifier and an avatar lets
+an adult, and a child who cannot read, tell children apart for example on a shared device,
 while collecting as little about them as possible. How records are protected is
 a privacy requirement.\\
 \emph{Source:} SRC-001, SRC-004; G.5, G.6.
@@ -1843,8 +1844,8 @@ F3 & The work & Child & Demonstrations and tracing guides for each stage. \\
 F4 & The work & Child & Feedback on an attempt, shown on screen and, unless
 muted, as audio. \\
 F5 & The work & Child & The refined drawing in the creative space. \\
-F6 & Supporting adult & The work & A child's profile details (first name and a
-username) and adult-set values (BR-001, BR-008). \\
+F6 & Supporting adult & The work & A child's profile details (an avatar) and
+adult-set values (BR-001, BR-008). \\
 F7 & Supporting adult & The work & The lesson and starting stage chosen for a
 child, and the start of that lesson (BR-003). \\
 F8 & Supporting adult & The work & A decision on a suggestion to go back a
@@ -2021,8 +2022,8 @@ The model carries the following data constraints. None is new; each restates as
 a property of the data a rule or goal stated elsewhere, and each can be checked
 by inspecting saved data prepared by adults.
 \begin{itemize}
-  \item A learner profile holds only the child's first name and a username that
-  does not identify the child (BR-001).
+  \item A learner profile holds only a unique identifier and an avatar
+  (BR-001).
   \item Every adult-set value lies within its team-set range,
   \texttt{ATTEMPT\_LIMIT} is larger than \texttt{DIFFICULTY\_STREAK}, and
   \texttt{ATTEMPT\_LIMIT\_MAX} is at least \texttt{ATTEMPT\_LIMIT}; a value the
@@ -2103,7 +2104,7 @@ profile that was the active learner when it was drawn; never an attempt record.
 & G.4; BR-005; UC-006, UC-007; FR-CRT-001 to FR-CRT-030 \\
 \addlinespace
 Learner profile & One child known to an account (called a child's profile in
-UC-001 and F6). Learner profile = First name + Username. & Class & Holds nothing
+UC-001 and F6). Learner profile = Profile identifier + Avatar. & Class & Holds nothing
 else about the child; has exactly one learner settings and any number of lesson
 records and creative drawings; only the adult who holds the account creates,
 views and manages it. & BR-001; ASM-008; UC-001; F6; FR-REC-006; FR-CRT-023 \\
@@ -2173,6 +2174,11 @@ FR-REC-001; FR-PRG-002, FR-PRG-011 \\
 Audio setting & Whether feedback to the learner includes audio. & Attribute & On
 or muted. & ASM-015; UC-010; F4, F9; NFR-UX-010 \\
 \addlinespace
+Avatar & A picture the adult chooses for a learner, so that learners under one
+account can be told apart, including by a child who cannot read. & Attribute &
+One of the pictures Squigglr offers; no photo of the child. & BR-001; ASM-008;
+F6; SAF-RAY-007 \\
+\addlinespace
 Colour & The colour of a stroke in a creative drawing. & Attribute & One of the
 colours Squigglr offers; unchanged by refinement. & FR-CRT-005, FR-CRT-011 \\
 \addlinespace
@@ -2186,9 +2192,6 @@ extended because the child was improving. & Attribute & Count of extensions, at
 most one at each stage; evaluable attempts at one stage never exceed
 \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002; FR-LRN-020;
 SAF-RAY-006 \\
-\addlinespace
-First name & The child's first name, as the adult enters it. & Attribute & First
-name only; no surname or other detail. & BR-001; F6 \\
 \addlinespace
 Furthest stage reached & The latest stage of the lesson that the learner reached
 in a lesson record. & Attribute & A stage of the lesson. & G.5; BR-002;
@@ -2257,6 +2260,10 @@ Squigglr can observe in an attempt, such as a missed part of an outline (called
 an observation in earlier documents). & Attribute & Defined by the team for one
 or more stages; never generated for a particular child. & G.5; BR-007;
 FR-REC-003; FR-PRG-004 \\
+\addlinespace
+Profile identifier & A unique identifier that Squigglr generates for each
+learner profile. & Attribute & Generated by Squigglr; holds no information about
+the child. & BR-001; NFR-SEC-004 \\
 \addlinespace
 Recurring difficulty & A predefined difficulty that a progress summary lists
 because it keeps occurring. Recurring difficulty = Predefined difficulty + Stage
@@ -2331,10 +2338,6 @@ Supported item & A shape or simple object in the agreed supported set, which
 Squigglr refines. & Attribute & The set is agreed by the team (OI-03); drawings
 of other items are not refined. & G.4; FR-CRT-015 \\
 \addlinespace
-Username & A name for the learner that the adult chooses, so that learners under
-one account can be told apart. & Attribute & Must not identify the child. &
-BR-001; ASM-008; F6 \\
-\addlinespace
 Width & The width of a stroke in a creative drawing. & Attribute & Unchanged by
 refinement. & FR-CRT-011 \\
 \addlinespace
@@ -2368,7 +2371,7 @@ Finish mark & The child's mark that a creative drawing is done. & Data flow &
 Starts exactly one refinement. & UC-007; FR-CRT-010 \\
 \addlinespace
 Learner profile details & What an adult enters to add a child. Learner profile
-details = First name + Username + (Adult-set values). & Data flow & From the
+details = Avatar + (Adult-set values). & Data flow & From the
 adult who holds the account only; an adult-set value not entered takes the
 middle of its range. & BR-001, BR-008; UC-001; F6 \\
 \addlinespace
@@ -2698,8 +2701,8 @@ formally in Section~\ref{sec:fr-formal}.
 \reqfield{Trigger}{The adult adds a child to Squigglr.}
 \noindent\textit{Main flow:}
 \begin{enumerate}[nosep, leftmargin=2.2em]
-  \item The adult enters the child's first name and a username that does not
-  identify the child (BR-001).
+  \item The adult chooses an avatar for the child; Squigglr generates the
+  profile's unique identifier (BR-001).
   \item Squigglr asks for each adult-set value, shows its range and, for
   \texttt{STAGE\_PASS}, shows example drawings of the minimum and maximum
   (BR-008).
@@ -5741,14 +5744,16 @@ times.}
 \subsection{Privacy Requirements}
 
 \begin{srsrequirement}{NFR-SEC-004}{Minimal personal data collection}
-  \reqshall{Squigglr shall not store any child-identifying information beyond
-the child's first name and non-identifying username.} \reqrationale{Personal
+  \reqshall{Squigglr shall not store any child-identifying information: a
+learner profile holds only a unique identifier generated by Squigglr and an
+avatar chosen by the adult.} \reqrationale{Personal
 information about children is not necessary for Squigglr to function and
 minimizing collected data limits security risks. If identifying information was
 needed, it would make sense to collect the adult's information rather than the
 child; this supports Squigglr's accountability, consent, and access obligations
 under PIPEDA~\cite{pipeda}.} \reqfit{Passes if there is no field during child
-registration beyond a first name and non-identifying username.}
+registration other than choosing an avatar, and the stored child profile
+holds only the identifier and the avatar.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\srcref{004}} \reqtraces{BR-001; \reqref{NFR-SEC-001}}
@@ -5831,15 +5836,16 @@ principle as met or not applicable, with none unmet.}
   \reqsources{\cite{pipeda}} \reqtraces{PIPEDA~\cite{pipeda}}
 \end{srsrequirement}
 
-\begin{srsrequirement}{NFR-COMP-002}{Ontario FIPPA Applicability}
+\begin{srsrequirement}{NFR-COMP-002}{Ontario MFIPPA Applicability}
   \reqshall{Squigglr shall be compliant with the Ontario Freedom of Information
-and Protection of Privacy Act (FIPPA) before adoption by any school boards.}
-  \reqrationale{FIPPA governs how Ontario public institutions, including school
+and Protection of Privacy Act (MFIPPA) before adoption by any school
+boards.}
+  \reqrationale{MFIPPA governs how Ontario local institutions, including school
   boards, collect, keep and disclose personal information. Adoption by a school
   board is outside this project, so the requirement is checked before the end of
   the project, ready for any later adoption.}
   \reqfit{A review of Squigglr's collection, retention and disclosure of
-  personal information against FIPPA Part III records no unmet obligation.}
+  personal information against MFIPPA Part II records no unmet obligation.}
   \reqpriority{Must}
   \reqphase{PH-3}
   \reqsources{\srcref{002}} \reqtraces{\reqref{NFR-SEC-001}; OI-06}
@@ -6650,8 +6656,8 @@ with the records (ASM-006); the ranges are OI-05. Hazard: H-RAY-007. \\
 Worry about the child's data (adult) & Parents want their child's data kept
 private (PER-2), and how records are shared or deleted is not yet decided
 (OI-02, FACT-013). Adults may refuse to use Squigglr, or share records more
-widely than they intend. & A learner profile holds only a first name and a
-non-identifying username (BR-001); privacy requirements follow from OI-02; a
+widely than they intend. & A learner profile holds only an identifier and an
+avatar (BR-001); privacy requirements follow from OI-02; a
 privacy notice is part of the user documentation (Table~\ref{tab:user-docs}). \\
 \end{longtable}
 }
@@ -7240,7 +7246,7 @@ PH-3 \\
 \addlinespace
 \reqref{NFR-COMP-001} & PIPEDA & Must & PH-3 \\
 \addlinespace
-\reqref{NFR-COMP-002} & Ontario FIPPA applicability & Must & PH-3 \\
+\reqref{NFR-COMP-002} & Ontario MFIPPA applicability & Must & PH-3 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Standards Compliance Requirements (Section
 17.2)}}\\
@@ -7396,8 +7402,8 @@ items}\label{tab:user-docs}\\
 \endhead
 \bottomrule
 \endlastfoot
-Getting started & Create a learner profile that holds only a first name and a
-non-identifying username. Choose each adult-set value: what it means, its range,
+Getting started & Create a learner profile by choosing an avatar; Squigglr
+stores no name. Choose each adult-set value: what it means, its range,
 the example drawings for \texttt{STAGE\_PASS}, and that a value not chosen is
 set to the middle of its range, which may not suit the child. Change the values
 later. & UC-001, UC-010; BR-001, BR-008; ASM-016 & Supporting adults \\

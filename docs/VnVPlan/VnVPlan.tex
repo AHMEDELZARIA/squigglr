@@ -2322,12 +2322,17 @@ requests. I used AI to find every requirement, use case, data dictionary
 entry and hazard my tests depend on; to draft test cases from my
 decisions; to work out the expected output of each attempt sequence from
 the formal specification; to turn my notes into draft wording and
-\LaTeX{}; and, through omp, to manage issues, branches and pull requests.
-I checked every expected output by recomputing the counts and improvement
-windows by hand against SRS Section~9.2, checked each test against its
-requirement's fit criterion, confirmed with a script that every FR-LRN and
-FR-REC requirement appears in the traceability table, and built and read
-the PDF. I reviewed every AI-assisted passage before including it.
+\LaTeX{}; and, through omp, to manage issues, branches and commits and to
+draft the pull request descriptions. To check the expected outputs, a
+short script, written with AI help, applies the rules of SRS Section~9.2;
+the script reproduced the outputs of T-LRN-008, T-LRN-010, T-LRN-013,
+T-LRN-016 to T-LRN-018, T-LRN-020, T-REC-006, T-REC-007 and T-REC-010. A
+separate AI review agent then recomputed every attempt sequence table on
+its own and checked each test against its requirement's fit criterion and
+against the other sections of this plan; its findings were fixed, with AI
+help, before the pull requests. A second script confirmed that every
+FR-LRN and FR-REC requirement appears in the traceability table. I
+reviewed every AI-assisted passage before including it.
 
 \newpage{}
 
@@ -2498,17 +2503,18 @@ icon.
 the fast-check documentation on model-based testing, or read the chapters
 on state-machine models in Utting and Legeard's \emph{Practical Model-Based
 Testing}. I will start with the documentation and model the suggestion rule
-as soon as the first version of the lesson rules exists. A small model of
-our own code shows quickly where my model and the SRS differ. I will turn
-to the book if modelling all of Section~9.2 gets hard.
+as soon as the first version of the lesson rules exists. Modelling one
+rule early, against our first lesson rules code, shows quickly where the
+code and my reading of the SRS differ. I will turn to the book if
+modelling all of Section~9.2 gets hard.
 \item \emph{Code inspections.} There are two approaches: read the
 inspection procedure in IEEE Standard 1028 for software reviews, or learn
 by doing a trial inspection. I will do both, in that order. I will read the
 roles and steps in IEEE 1028, then run a 30-minute trial inspection of one
 small PoC file with one teammate, using the checklist in Implementation
-Verification, in the week before the first inspection on 20 November 2026.
-The trial shows whether the checklist and the one-hour limit work before
-real inspections depend on them.
+Verification, before the PH-1 inspections, which must be completed by
+20 November 2026. The trial shows whether the checklist and the one-hour
+limit work before real inspections depend on them.
 \end{itemize}
 
 \end{enumerate}

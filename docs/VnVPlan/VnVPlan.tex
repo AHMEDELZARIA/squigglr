@@ -192,8 +192,8 @@ and nobody reviews a part they wrote.
 \bottomrule
 \endlastfoot
 Pull request review & The teammate who checks the author's work (see the
-Verification and Validation Team section) & Every PR into \texttt{main},
-before it merges & The changed sections, using the review questions below.
+Verification and Validation Team section) & Every PR, before it merges & The
+changed sections, using the review questions below.
 A PR needs one approval from someone other than its author. \\
 \addlinespace
 TA review & Chris, our TA & Informal meeting on October~28, 2026, and the
@@ -214,8 +214,9 @@ Mutation check & Each member, on sections they did not write & Final QA
 (November~1--2, 2026) and before Rev~1 & Whether our tests would actually
 catch realistic bugs (see below). \\
 \addlinespace
-Final QA & Moustafa; Shamil checks Moustafa's own sections & November~1--2, 2026 & The whole plan against the VnV
-and Writing checklists and the rubric (see below). \\
+Final QA & Moustafa, except Moustafa's own sections, which Shamil checks &
+November~1--2, 2026 & The whole plan against the VnV and Writing checklists and
+the rubric (see below). \\
 \addlinespace
 Running the plan & The owner of each test & Rev~0 and Rev~1 & Any test we
 cannot run exactly as written is a defect in this plan. \\
@@ -246,7 +247,7 @@ asks these about each test they check:
 \begin{enumerate}
   \item Could someone else run it without asking the author? The input is
     specific and the expected output is explicit.
-  \item Does it trace to a requirement, and is it in the traceability table
+  \item Does it trace to a requirement, and is it in the traceability tables
     (Section~\ref{sec:trace})?
   \item Does it use symbolic constants instead of magic numbers, and does each
     constant have a value or a method in the Symbolic Parameters appendix?
@@ -272,7 +273,7 @@ this.
 \paragraph{Final QA.} As QA coordinator for this milestone, Moustafa:
 \begin{enumerate}
   \item checks that every SRS requirement ID appears in the traceability
-    table, with a script that compares the IDs in the SRS with the ones in
+    tables, with a script that compares the IDs in the SRS with the ones in
     this plan;
   \item checks that every TBD constant has a method, that no template comments
     are left, and that the PDF builds with no errors or undefined references;

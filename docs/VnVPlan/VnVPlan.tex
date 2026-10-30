@@ -63,6 +63,8 @@ Symbols, Abbreviations, and Acronyms, and the document roadmap; added Rayan's
 revision history rows to the SRS and Hazard Analysis (\#236).\\
 30 October 2026 & Moustafa Moustafa & Wrote the introductions to Sections 3,
 4, 4.1, 4.2 and 4.3 (\#237).\\
+30 October 2026 & Moustafa Moustafa & Rewrote reflection Questions 1 and 2 as
+team answers and added Moustafa's Questions 3 and 4 (\#242).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -2010,8 +2012,6 @@ AI-assisted passage before including it.
 
 \section{Appendix --- Reflection}
 
-\wss{This section is not required for CAS 741}
-
 The information in this section will be used to evaluate the team members on the
 graduate attribute of Lifelong Learning.
 
@@ -2021,47 +2021,66 @@ graduate attribute of Lifelong Learning.
 
 \item What went well while writing this deliverable?
 
-\textbf{Rayan:} Something that really went well was talking to Chris, our
-TA, before my sections were finished. In our meeting on October 28, 2026, I
-asked him about the things I was unsure of: whether thresholds we cannot set
-yet can be decided by measurement, how many tests a safety requirement needs,
-and whether we need a fixed code coverage target. His answers helped me narrow
-down which testing strategies to use and how to run certain tests, and showed
-me what in my first draft was not clear yet, for example that every TBD value
-in the SRS should point to the method in this plan, and that I needed to
-justify why one test plus a safety inspection gives enough confidence.
+\textbf{Team:} Something that really went well was talking to Chris, our TA,
+and Dr.~Anand, our supervisor, before the plan was finished. In our meeting with
+Chris on October 28, 2026, we asked about the things we were unsure of: whether
+thresholds we cannot set yet can be decided by measurement, how many tests a
+safety requirement needs, whether we need a fixed code coverage target, and
+whether one parameterized test can cover several boundary cases. His answers
+helped us narrow down which testing strategies to use and how to run certain
+tests, and showed us what in our first drafts was not clear yet, for example
+that every TBD value in the SRS should point to the method in this plan, and
+that we needed to justify why one test plus a safety inspection gives enough
+confidence. Chris also told us that validation and usability matter more than
+verification for this project, which is why they come right after safety in our
+objectives. Dr.~Anand told us the same day to go back to the specialists we
+interviewed, or people with similar qualifications, to validate the app.
 
 Our process also went better than last time. In the SRS and Hazard Analysis we
 had many merge conflicts, mostly because everyone added rows to the same
-revision history table. This time I suggested that everyone send their
-revision history entries to Moustafa, who is doing the final quality check,
-and he adds them all at the end. I also split my own part into five
-sub-issues, each on its own branch with its own pull request, so each part
-could be reviewed on its own, and when I tested merging all of them together
-they merged without conflicts.
+revision history table. This time Rayan suggested that everyone send their
+revision history entries to Moustafa, who is doing the final quality check and
+adds them all at the end. We also started from one set of shared notes in all
+five VnV issues, so everyone knew which sections and test IDs they owned from
+the start. Rayan, Huzaifah and Moustafa split their parts into small sub-issues
+so each piece could be reviewed on its own, and Rayan's five branches merged
+together without conflicts when tested.
 
 \item What pain points did you experience during this deliverable, and how did
 you resolve them?
 
-\textbf{Rayan:} The main pain point was that writing the plan kept sending me
+\textbf{Team:} The main pain point was that writing the plan kept sending us
 back to the SRS. Every test has to match a requirement, so each time a meeting
-or a test changed how something should work, I had to go back through the SRS,
-change it, and then check that my tests still matched it. The main changes came
+or a test changed how something should work, we had to go back through the SRS,
+change it, and then check that our tests still matched it. The main changes came
 from two meetings:
 \begin{itemize}
 \item \emph{Our supervisor meeting on October 28, 2026.} Dr.~Anand advised
 that we should not collect children's personal details, so a child's profile
 now holds only a generated identifier and an avatar instead of a first name
 and username. This changed the business rules, the data dictionary, a
-use case, a security requirement and the Hazard Analysis, as well as my
+use case, a security requirement and the Hazard Analysis, as well as the
 security test.
 \item \emph{Our TA meeting on the same day.} Chris advised that a value left
 as TBD should say how it will be decided, so every TBD performance value in
-the SRS now points to the measurement method in this plan.
+the SRS now points to the measurement method in this plan, and the other TBD
+constants get a method in the Symbolic Parameters appendix.
 \end{itemize}
-I resolved this by keeping all of these SRS changes in one issue and one pull
-request, separate from my VnV branches, and by re-reading each affected test
+We resolved this by keeping all of these SRS changes in one issue and one pull
+request, separate from the VnV branches, and by re-reading each affected test
 against the updated requirement before marking a branch ready for review.
+
+Another pain point was that all five of us were writing the same \texttt{.tex}
+file at the same time. Sections on separate branches could not see each other
+until they merged, and some parts depended on others. For example, Moustafa's
+section introductions had to be stacked on top of the front matter pull request.
+We resolved this by writing only in our own sections and rebasing onto
+\texttt{main} as other parts merged.
+
+Our shared notes also told us to use the template's Control field, but Rayan's
+tests, the first ones merged, used Purpose and Type instead. Chris had told us
+we are not bound by the template's format, so we kept Purpose and Type and asked
+everyone to use the same fields.
 
 \item What knowledge and skills will the team collectively need to acquire to
 successfully complete the verification and validation of your project?
@@ -2082,6 +2101,22 @@ Backend Lead, I am responsible for the code these tests target.
 \item \emph{Performance measurement on the iPad}: taking repeatable timings
 in the browser and summarizing them fairly, so that the thresholds the SRS
 leaves open can be set from evidence.
+\end{itemize}
+
+\textbf{Moustafa:} I need to learn how to actually check a screen against WCAG.
+So far I have only used WCAG to write requirements, like NFR-UX-018 to
+NFR-UX-023. Writing ``text needs a 4.5:1 contrast ratio'' is easy, but
+T-COMP-003 has two of us check every screen against those criteria, and I review
+the frontend code, so I should be catching these problems before that review.
+This matters even more for us because we only evaluate with adults (SRS
+CON-005), so no child will be there to show us that a button is too small or
+that an icon makes no sense. The skill has two parts:
+\begin{itemize}
+\item \emph{Using accessibility tools}: a contrast checker for NFR-UX-019 and an
+automated checker for NFR-UX-020, and knowing what these tools miss.
+\item \emph{Checking by hand}: measuring touch targets for NFR-UX-018, using
+VoiceOver on the iPad for NFR-UX-020, and finishing the adult tasks with only a
+keyboard for NFR-UX-023.
 \end{itemize}
 
 \item For each of the knowledge areas and skills identified in the previous
@@ -2110,6 +2145,17 @@ both, starting with the Performance API in Playwright scripts so the
 measurements can be repeated, and using Safari Web Inspector to understand
 any slow result on the iPad.
 \end{itemize}
+
+\textbf{Moustafa:} Two approaches: work through the W3C's WCAG 2.2 pages for the
+criteria we selected and try each check with the tools, or learn by doing
+hands-on passes of our own screens, on the iPad with VoiceOver and on a laptop
+with only the keyboard. I will start with the W3C pages, because T-COMP-003 has
+to record each criterion as met or not, so I need to know exactly what passing
+means. Full WCAG conformance is not required, so the list is short enough to get
+through before the first review at Rev~0. After that I will do hands-on passes
+on the first frontend screens I review, because a checker can tell me a control
+has a label, but not whether the label makes sense to someone who can't see the
+icon.
 
 \end{enumerate}
 

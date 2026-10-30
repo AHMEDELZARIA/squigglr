@@ -29,65 +29,118 @@
 
 \section*{Revision History}
 
-\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
-\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+{\small
+\begin{longtable}{@{}p{3cm}p{3.3cm}
+>{\raggedright\arraybackslash}p{\dimexpr\textwidth-6.3cm-4\tabcolsep\relax}@{}}
+\toprule \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+\endhead
 \bottomrule
-\end{tabularx}
-
-~\\
-\wss{The intention of the VnV plan is to increase confidence in the software.
-However, this does not mean listing every verification and validation technique
-that has ever been devised.  The VnV plan should also be a \textbf{feasible}
-plan. Execution of the plan should be possible with the time and team available.
-If the full plan cannot be completed during the time available, it can either be
-modified to ``fake it'', or a better solution is to add a section describing
-what work has been completed and what work is still planned for the future.}
-
-\wss{The VnV plan is typically started after the requirements stage, but before
-the design stage.  This means that the sections related to unit testing cannot
-initially be completed.  The sections will be filled in after the design stage
-is complete.  the final version of the VnV plan should have all sections filled
-in.}
+\endlastfoot
+29 October 2026 & Rayan Nasrallah & Wrote Section 3.6, Automated Testing and
+Verification Tools (\#222).\\
+29 October 2026 & Rayan Nasrallah & Wrote the performance tests in Section
+4.2, T-PERF-001 to T-PERF-007 (\#223).\\
+29 October 2026 & Rayan Nasrallah & Wrote the safety-critical tests in Section
+4.2, T-SAF-001 to T-SAF-017, and the safety inspection (\#226).\\
+29 October 2026 & Rayan Nasrallah & Wrote the operational, maintainability,
+security, cultural and compliance tests in Section 4.2, the traceability
+table in Section 4.3 and the Symbolic Parameters in Section 6.1 (\#227).\\
+29 October 2026 & Rayan Nasrallah & Added his reflection answers (\#228).\\
+29 October 2026 & Rayan Nasrallah & Added his generative AI use disclosure
+(\#229).\\
+30 October 2026 & Moustafa Moustafa & Wrote Section 3.1, Verification and
+Validation Team (\#232).\\
+30 October 2026 & Moustafa Moustafa & Wrote Sections 2.1 and 2.2, Summary and
+Objectives (\#233).\\
+30 October 2026 & Moustafa Moustafa & Wrote Section 2.4, Relevant
+Documentation, and added bibliography entries for the project documents
+(\#234).\\
+30 October 2026 & Moustafa Moustafa & Wrote Section 3.4, Verification and
+Validation Plan Verification (\#235).\\
+30 October 2026 & Moustafa Moustafa & Wrote the revision history, Section 1,
+Symbols, Abbreviations, and Acronyms, and the document roadmap; added Rayan's
+revision history rows to the SRS and Hazard Analysis (\#236).\\
+\end{longtable}
+}
+\addtocounter{table}{-1}
 
 \newpage
 
 \tableofcontents
 
 \listoftables
-\wss{Remove this section if it isn't needed}
-
-\listoffigures
-\wss{Remove this section if it isn't needed}
 
 \newpage
 
 \section{Symbols, Abbreviations, and Acronyms}
+\label{sec:abbreviations}
 
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
-  \bottomrule
-\end{tabular}\\
+We use the terms and acronyms in the glossary of the Software Requirements
+Specification (SRS Section~4.1) and the symbolic constants in SRS Section~4.2
+without defining them again here.
+Table~\ref{tab:abbreviations} lists only the ones this plan adds. Constants
+that only our tests use are in the Symbolic Parameters appendix.
 
-\wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
-
-\wss{Remove this section if it isn't needed}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}
+  >{\raggedright\arraybackslash}p{0.72\textwidth}@{}}
+\caption{Abbreviations and terms added by this plan}
+\label{tab:abbreviations}\\
+\toprule
+\textbf{Term} & \textbf{Meaning} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Term} & \textbf{Meaning} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+DevOps & Development and Operations: development environments, build
+automation and deployment. \\
+Parameterized test & One test with a table of cases, where each case has a
+label and its own expected output, so it can be cited on its own, for
+example \texttt{T-LRN-005 (c)}. \\
+PH-1, PH-2, PH-3 & The SRS delivery phases: the proof-of-concept demo
+(23 November 2026), Rev~0 (1 February 2027) and the final demo
+(15 March 2027). \\
+PR & Pull request: a proposed change to the repository, reviewed before it
+merges into \texttt{main}. \\
+Rev~0, Rev~1 & The first complete version of the product and documents, and
+the final revised version. \\
+SAF & Prefix of the SRS safety-critical requirements, for example
+\texttt{SAF-RAY-001}. \\
+SI & Safety inspection: the code inspection that gives each safety
+requirement a second, independent check (Section~\ref{sec:safety-tests}). \\
+\texttt{T-<AREA>-\#\#\#} & A system test ID. \texttt{AREA} is the
+requirement group it tests: \texttt{LRN}, \texttt{REC}, \texttt{CRT},
+\texttt{PRG}, \texttt{UX}, \texttt{PERF}, \texttt{SAF}, \texttt{OPS},
+\texttt{MAINT}, \texttt{SEC}, \texttt{CULT} or \texttt{COMP}. \\
+VnV & Verification and validation. \\
+\end{longtable}
+}
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ... \wss{provide an introductory blurb and roadmap of the
-  Verification and Validation plan}
+This document is our plan for verifying and validating Squigglr: how we will
+check that it is built correctly, and that it is the right product for
+children and the adults supporting them. Section~\ref{sec:general} says what
+we are testing and what we are focusing on. Section~\ref{sec:plan} says who
+does what, how we will review the SRS, the design, this plan and the code,
+which tools we use, and how we will validate Squigglr with the supervisor,
+the specialists and adult users. Section~\ref{sec:system-tests} gives the
+system tests for the functional and nonfunctional requirements and traces
+each test to its requirement. Section~\ref{sec:unit-tests} explains how we
+will choose unit tests; the module tests are added once the Module Interface
+Specification (MIS) is done. The
+appendices hold the symbolic parameters, the usability survey questions, our
+generative AI use disclosure and our reflection.
 
 \section{General Information}
+\label{sec:general}
 
 \subsection{Summary}
 
@@ -136,6 +189,7 @@ Repos.csv) if your plan changes as a result of the VnV planning exercise.}
 how they relate to your VnV efforts.}
 
 \section{Plan}
+\label{sec:plan}
 
 \wss{Introduce this section.  You can provide a roadmap of the sections to
   come.}
@@ -294,6 +348,7 @@ as a Rev 0 demo for the supervisor.}
 \wss{This section might reference back to the SRS verification section.}
 
 \section{System Tests}
+\label{sec:system-tests}
 
 \wss{There should be text between all headings, even if it is just a roadmap of
 the contents of the subsections.}
@@ -1661,6 +1716,7 @@ NFR-COMP-005 & T-COMP-003\\
 \end{longtable}}
 
 \section{Unit Test Description}
+\label{sec:unit-tests}
 
 \wss{This section should not be filled in until after the MIS (detailed design
   document) has been completed.}

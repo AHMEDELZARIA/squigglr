@@ -880,14 +880,14 @@ and that no extended lesson passes \texttt{ATTEMPT\_LIMIT\_MAX}. & G.3,
 SAF-RAY-005 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
-\texttt{ATTEMPT\_LIMIT}, it is restarted at once and the repetition continues. &
-No adult may be watching (CA-001); a restart starts a new count of attempts. &
+\texttt{ATTEMPT\_LIMIT}, the same lesson is started again at once and the repetition continues. &
+No adult may be watching (CA-001); starting the lesson again begins a new count of attempts. &
 The limit does not stop the repetition, and the adult cannot see how often it
 happened. Loss: well-being; misleading records. & Psychological/ well-being &
 Mitigate: record each lesson that ended at \texttt{ATTEMPT\_LIMIT} and show the
-adult how many times this happened per lesson; keep earlier attempts when a
-lesson is restarted. Document/Test: test that a restart after the limit keeps
-the earlier record. & G.3, G.5, SAF-RAY-006 \\
+adult how many times this happened per lesson; keep earlier attempts when the
+same lesson is started again. Document/Test: test that starting the lesson
+again after the limit keeps the earlier record. & G.3, G.5, SAF-RAY-006 \\
 \addlinespace
 H-RAY-006 & Learner selection; attempt records & On a shared device, attempts or
 a pending suggestion are saved to, or shown for, the wrong child. & Several
@@ -898,7 +898,8 @@ another's, so an adult accepts a suggestion based on the wrong attempts. Loss:
 privacy; record integrity. & Privacy/ security & Mitigate: show which learner is
 active on every practice screen in a way a child who cannot read can recognize;
 require an adult action to switch learners; show the attempts behind a
-suggestion when the adult reviews it. & G.5, SAF-RAY-001, SAF-RAY-007,
+suggestion when the adult reviews it; end a lesson after a set time with no
+input. & G.5, SAF-RAY-001, SAF-RAY-007, SAF-RAY-009,
 FR-REC-008, FR-PRG-001 \\
 \addlinespace
 H-RAY-007 & Child profile settings; lesson flow & A stage check or lesson limit
@@ -1554,7 +1555,7 @@ Several pairs were examined and no credible failure mode was found in them:
   flashes on a child-facing screen is its only path to bodily harm; it could
   trigger a seizure. The canvas (C1) presents every child-facing screen and its
   feedback, so \mbox{H-MOU-001} is placed there. Practice that does not end or
-  that restarts at once is a psychological/well-being hazard, not a physical
+  that is started again at once is a psychological/well-being hazard, not a physical
   path to bodily harm; H-RAY-004 and H-RAY-005 address it in the lesson and
   assessment logic (C2). The guidance-suggestion logic (C3), creative refinement
   (C4), storage (C5), summaries (C6), hosting and authentication (C7) and
@@ -2018,7 +2019,7 @@ Safety-Critical \\
 SAF-RAY-006 & Squigglr shall record each lesson that ends at
 \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement
 extension, show the adult how many times these happened for each lesson, and
-keep earlier attempts when a lesson is restarted. & H-RAY-005 & Safety-Critical
+keep earlier attempts when the same lesson is started again. & H-RAY-005 & Safety-Critical
 \\
 \addlinespace
 SAF-RAY-007 & Squigglr shall identify the active learner on every practice
@@ -2032,6 +2033,12 @@ SAF-RAY-008 & Squigglr shall save a child's adult-set values (the SRS table
 middle of each range when the adult does not choose; shall allow changes only
 after the adult check; and shall show the values in use alongside the child's
 records. & H-RAY-007 & Safety-Critical \\
+\addlinespace
+SAF-RAY-009 & During a guided lesson, Squigglr shall show a check-in a child
+who cannot read can understand after \texttt{LESSON\_IDLE\_PROMPT} with no
+input, end the lesson after \texttt{LESSON\_IDLE\_END} with no input, keep the
+progress saved and record that it ended for inactivity, without counting the
+idle time as an attempt. & H-RAY-006 & Safety-Critical \\
 \addlinespace
 SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
 event from being counted more than once during evaluation or recording of an
@@ -2071,9 +2078,9 @@ times in any one-second period. & H-MOU-001 & Safety-Critical \\
 \end{longtable}
 }
 
-In total, 87 requirements are HA-derived: 16 Learning Activity, 22 Creative
+In total, 88 requirements are HA-derived: 16 Learning Activity, 22 Creative
 Drawing, nine Attempt Record and 11 Progress Summary requirements, five Look
-and Feel and seven Usability and Humanity requirements, and 17 safety-critical
+and Feel and seven Usability and Humanity requirements, and 18 safety-critical
 requirements. Every row of the five FMEA tables cites at least one of them. The
 Roadmap section that follows states the phase in which each is planned.
 
@@ -2226,8 +2233,9 @@ assisted and independent attempts that FR-LRN-012 classifies; FR-LRN-012 and
 NFR-UX-017 have this phase in their Phase field in the SRS (H-RAY-003,
 H-MOU-005). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-005, SAF-RAY-006 & Ending a lesson at its limit,
-and recording lessons that reach the limit and are restarted, belong to the
+PH-2 (Feb.~1, 2027) & SAF-RAY-005, SAF-RAY-006, SAF-RAY-009 & Ending a lesson
+at its limit or after inactivity, and recording lessons that reach the limit
+and are started again, belong to the
 complete lesson flow and the lesson record. The fourth PoC experiment, as the
 Development Plan describes it, demonstrates changes in assistance rather than
 lesson ends (SRC-002). Both are planned with FR-REC-006 and FR-REC-007, and
@@ -2652,7 +2660,7 @@ handle setup, which led to the assumption that an adult sets up each session.
 Asking what happens if no adult is actually watching led to the risk of a child
 reaching adult-only actions (H-RAY-001), and, together with defining what
 happens after repeated failed attempts, to the risks of a child becoming
-distressed (H-RAY-004) and of a lesson being restarted straight after it ends
+distressed (H-RAY-004) and of a lesson being started again straight after it ends
 (H-RAY-005). The specialists also said Squigglr may be used at home, at school
 or in other settings, which led to the assumption that a device may be shared
 and to the risk of a child's records being saved under the wrong profile

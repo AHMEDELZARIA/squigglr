@@ -1200,12 +1200,14 @@ into web content. & Section 15\\
 \subsection{Symbolic Constants}
 \label{sec:constants}
 Table~\ref{tab:goalconst} specifies the parameters used in guided lessons,
-creative refinement and progress summary verification. The six
+creative refinement and progress summary verification. The eight
 adult-configurable parameters have an allowed range and a default value for each
 learner profile (BR-008, \srcref{008}). Their defaults are the midpoints of
 their respective ranges. Each configuration shall satisfy
 \texttt{ATTEMPT\_LIMIT} $>$ \texttt{DIFFICULTY\_STREAK} and
-\texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}. Drawing stage
+\texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}, and
+\texttt{LESSON\_IDLE\_PROMPT} $<$ \texttt{LESSON\_IDLE\_END} $<$
+\texttt{IDLE\_TIMEOUT}. Drawing stage
 results are expressed on a normalized scale from 0 to 100; higher results
 indicate closer agreement with the stage's fixed criteria. The result is not a
 measure of the child's ability (BR-006). Attempt count settings shall be
@@ -1268,6 +1270,16 @@ recent results satisfy the improvement criterion. \emph{Unit:} attempts.
 including extensions. \emph{Unit:} attempts. \emph{Range:} 8--12.
 \emph{Default:} 10; must be at least \texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3,
 BR-002, OI-05.\\
+\addlinespace
+\texttt{LESSON\_IDLE\_PROMPT} & Time with no input during a guided lesson after
+which Squigglr shows the child a check-in. \emph{Unit:} seconds. \emph{Range:}
+team-defined; TBD. \emph{Default:} middle of the range; must be less than
+\texttt{LESSON\_IDLE\_END}. \emph{Trace:} BR-008, SAF-RAY-009.\\
+\addlinespace
+\texttt{LESSON\_IDLE\_END} & Time with no input during a guided lesson after
+which Squigglr ends the lesson. \emph{Unit:} seconds. \emph{Range:}
+team-defined; TBD. \emph{Default:} middle of the range; must be less than
+\texttt{IDLE\_TIMEOUT}. \emph{Trace:} BR-008, SAF-RAY-009.\\
 \addlinespace
 \texttt{REFINE\_TOLERANCE} & Maximum permitted distance between refined strokes
 and the child's original strokes in the creative space. \emph{Unit:} distance
@@ -1542,7 +1554,8 @@ release; generated advice to a child cannot.\\
 \emph{Source:} SRC-001; SRC-005, \intref{Moustafa}{6:03}.
 \item[BR-008] The supporting adult sets \texttt{STAGE\_PASS},
 \texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT}, \texttt{IMPROVE\_WINDOW},
-\texttt{ATTEMPT\_EXTENSION} and \texttt{ATTEMPT\_LIMIT\_MAX} for each child.
+\texttt{ATTEMPT\_EXTENSION}, \texttt{ATTEMPT\_LIMIT\_MAX},
+\texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} for each child.
 When an adult creates a child profile, Squigglr asks them to choose each value,
 and for \texttt{STAGE\_PASS} shows example drawings of what its minimum and
 maximum look like. The adult can change the values later. A value the adult does
@@ -2137,15 +2150,17 @@ Actual strokes & The strokes the child drew in an attempt. Actual strokes =
 corrected, ideal or refined shape. & BR-004; ULC-005; FR-LRN-007; FR-REC-002;
 FR-CRT-027 \\
 \addlinespace
-Adult-set values & The six values a supporting adult chooses for each child
+Adult-set values & The eight values a supporting adult chooses for each child
 (Table~\ref{tab:goalconst}). Adult-set values = \texttt{STAGE\_PASS} +
 \texttt{DIFFICULTY\_STREAK} + \texttt{ATTEMPT\_LIMIT} + \texttt{IMPROVE\_WINDOW}
-+ \texttt{ATTEMPT\_EXTENSION} + \texttt{ATTEMPT\_LIMIT\_MAX}. & Attribute & Each
++ \texttt{ATTEMPT\_EXTENSION} + \texttt{ATTEMPT\_LIMIT\_MAX} +
+\texttt{LESSON\_IDLE\_PROMPT} + \texttt{LESSON\_IDLE\_END}. & Attribute & Each
 within its team-set range, by default its middle; \texttt{ATTEMPT\_\allowbreak
 LIMIT} larger than \texttt{DIFFICULTY\_\allowbreak STREAK};
 \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} at least
 \texttt{ATTEMPT\_\allowbreak LIMIT}. \texttt{STAGE\_PASS} is a result in points
-out of 100; the others are counts of attempts. & G.2, G.3; BR-008; FR-LRN-017;
+out of 100; \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} are
+times in seconds; the others are counts of attempts. & G.2, G.3; BR-008; FR-LRN-017;
 UC-001, UC-010; F6, F9; SAF-RAY-008 \\
 \addlinespace
 Adult-set values in use & The learner's adult-set values at the time an attempt
@@ -2799,6 +2814,11 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
   \item[*a.] At any step, the connection is lost. Each completed attempt is kept
   on the device until the server confirms it is saved, and the adult is told
   which attempts could not be saved (\mbox{SAF-RAY-003}).
+  \item[*b.] At any step, there is no input for \texttt{LESSON\_IDLE\_PROMPT}.
+  Squigglr shows a check-in the child can understand without reading; any touch
+  dismisses it. If there is still no input at \texttt{LESSON\_IDLE\_END}, the
+  lesson ends, the progress so far is saved, and the record shows that it ended
+  for inactivity (\mbox{SAF-RAY-009}).
 \end{description}
 \reqfield{Postconditions}{Every evaluable attempt is recorded, the furthest
 stage reached is saved, and no stage moved back without an adult's acceptance.}
@@ -4366,7 +4386,7 @@ H-MUH-007}
 \begin{srsrequirement}{FR-REC-004}{Adult-set values in use}
   \reqshall{Squigglr shall keep in each attempt record the value of each
 adult-set value that was in use for the learner when the attempt was made.}
-\reqrationale{The adult-set values are the six values of BR-008 listed in
+\reqrationale{The adult-set values are the eight values of BR-008 listed in
 Table~\ref{tab:goalconst}, and the outcome of an attempt depends on the
 \texttt{STAGE\_\allowbreak PASS} in use, and the adult may change the values at
 any time (BR-008). Keeping the values with each attempt means a later change
@@ -5307,6 +5327,27 @@ unset value equals the midpoint, and no change completes without the adult
 check.\\
 \emph{Hazards:} H-RAY-007.
 
+\item[SAF-RAY-009]\phantomsection\label{req:SAF-RAY-009} During a guided
+lesson, when there is no input for \texttt{LESSON\_IDLE\_PROMPT}, Squigglr shall
+show a check-in that a child who cannot read can understand, without flashing
+(SAF-MOU-003), that any touch dismisses. When there is no input for
+\texttt{LESSON\_IDLE\_END}, Squigglr shall end the lesson, keep the progress
+saved up to that point, and record that the lesson ended for inactivity. Time
+without input shall not count as an attempt or toward
+\texttt{DIFFICULTY\_STREAK} or \texttt{ATTEMPT\_LIMIT}.\\
+\emph{Rationale:} a child may walk away during a lesson, and no adult may be
+watching (CA-001). On a shared device (CA-004), another child could then
+continue under the first child's profile. Ending an idle lesson before
+\texttt{IDLE\_TIMEOUT} logs the adult out (SAF-SHA-006) gives the lesson a
+clear ending in the record. Some children pause often, so the adult sets both
+times for each child (BR-008).\\
+\emph{Fit criterion:} in prepared lessons with no input, the check-in appears at
+\texttt{LESSON\_IDLE\_PROMPT}, a touch dismisses it and the lesson continues,
+and with no further input the lesson ends at \texttt{LESSON\_IDLE\_END} with
+its progress saved and the ending recorded as inactivity; no attempt is counted
+for the idle time.\\
+\emph{Hazards:} H-RAY-006.
+
 \item[SAF-AHM-001]\phantomsection\label{req:SAF-AHM-001} Squigglr shall prevent
 duplicate reports of the same stylus input event from being counted more than
 once during evaluation or recording of an attempt, while preserving legitimate
@@ -5893,7 +5934,7 @@ rule as clarified, not a new choice between automatic and adult-authorized
 forward progression. & G.3, CON-007 & Shamil Canbolat & Oct.\ 17, 2026 \\
 \addlinespace
 OI-05 & \emph{Verification of learning thresholds.} Section~\ref{sec:constants}
-defines the ranges and defaults for the six adult-configurable values and the
+defines the ranges and defaults for the eight adult-configurable values and the
 fixed \texttt{IMPROVE\_MARGIN}. Verify the selected ranges with adult-made
 drawings, provide examples illustrating the endpoints of the
 \texttt{STAGE\_PASS} range, and confirm that the drawing-evaluation method
@@ -6440,7 +6481,7 @@ product must not do there; the last row answers that.
 \bottomrule
 \endlastfoot
 More work for supporting adults & Squigglr gives adults new tasks: creating a
-learner profile, choosing six adult-set values, with example drawings to help
+learner profile, choosing eight adult-set values, with example drawings to help
 with \texttt{STAGE\_PASS} (BR-008), choosing lessons and starting stages,
 answering go-back suggestions (BR-003) and reviewing records. An educator with a
 short slot per learner (PER-3) or a parent who reviews once a week (PER-2) may
@@ -7092,6 +7133,8 @@ PH-2 \\
 \\
 \addlinespace
 \texttt{SAF-RAY-008} & Adult-setting bounds and authorization & Must & PH-2 \\
+\addlinespace
+\texttt{SAF-RAY-009} & Lesson inactivity check-in and ending & Should & PH-2 \\
 \addlinespace
 \texttt{SAF-AHM-001} & Duplicate input-event integrity & Must & PH-1 \\
 \addlinespace

@@ -374,9 +374,7 @@ address redirects to HTTPS or is refused.
 
 Test Case Derivation: the fit criterion of NFR-OPS-001.
 
-How test will be performed: the HAR file from the Network panel is
-searched for any \texttt{http://} request, and a Playwright test checks
-the redirects on every release.
+How test will be performed: the HAR from the normal HTTPS feature run is searched for any \texttt{http://} request; the intentional \texttt{http://} probes are checked separately for a redirect or refusal, and a Playwright test checks the redirects on every release.
 
 \item{T-OPS-002: Error message when a provider is down\\}
 

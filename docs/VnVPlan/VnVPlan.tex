@@ -61,6 +61,8 @@ Validation Plan Verification (\#235).\\
 30 October 2026 & Moustafa Moustafa & Wrote the revision history, Section 1,
 Symbols, Abbreviations, and Acronyms, and the document roadmap; added Rayan's
 revision history rows to the SRS and Hazard Analysis (\#236).\\
+30 October 2026 & Moustafa Moustafa & Wrote the introductions to Sections 3,
+4, 4.1, 4.2 and 4.3 (\#237).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -292,8 +294,12 @@ into our VnV work:
 \section{Plan}
 \label{sec:plan}
 
-\wss{Introduce this section.  You can provide a roadmap of the sections to
-  come.}
+We start with who does what, then cover how we review the SRS, the design
+documents and this plan. After that come the plans for verifying the
+implementation through code walkthroughs, inspections and tests, and the tools
+that run those checks automatically (Section~\ref{sec:tools}). The last part
+is validation: checking with the supervisor, the specialists and adult users
+that Squigglr is the right product.
 
 \subsection{Verification and Validation Team}
 
@@ -650,17 +656,38 @@ as a Rev 0 demo for the supervisor.}
 \section{System Tests}
 \label{sec:system-tests}
 
-\wss{There should be text between all headings, even if it is just a roadmap of
-the contents of the subsections.}
+These tests check Squigglr as a whole against the requirements in the SRS.
+Section~\ref{sec:fr-tests} covers the functional requirements and
+Section~\ref{sec:nfr-tests} the nonfunctional ones, and
+Section~\ref{sec:trace} traces every test back to its requirement. Tests of
+individual modules come later, once the design is done
+(Section~\ref{sec:unit-tests}).
+
+Every test has an ID \texttt{T-<AREA>-\#\#\#}, where \texttt{AREA} is the
+requirement group it tests, and the same fields: Purpose, Type, Initial State,
+Input, Output, Test Case Derivation and How test will be performed. Values the SRS leaves open are
+written as symbolic constants, and the Symbolic Parameters appendix gives each
+value or says how it will be set.
+
+When one rule needs several boundary cases, like a setting at its minimum,
+default and maximum, we write one parameterized test instead of a separate
+test for each case. Its input is a table with one row per case. Each row has a
+letter and its own expected output, and the derivation says why each output is
+right, so a single case can be cited as, for example, \texttt{T-LRN-005 (c)}.
+Our TA, Chris, agreed that this counts as one specific test as long as it is
+easy to follow.
 
 \subsection{Tests for Functional Requirements}
+\label{sec:fr-tests}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
-
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.}
+These tests cover the functional requirements in SRS Section~9, grouped the
+same way the SRS groups them: guided lessons (FR-LRN, SRS Sections~9.1
+and~9.2), creative drawing (FR-CRT, Section~9.3), attempt records (FR-REC,
+Section~9.4) and progress summaries (FR-PRG, Section~9.5). Each test starts
+from prepared input, like a stroke sequence, a drawing or an attempt history,
+so its expected output is known before it runs. The lesson tests use the
+formal specification in SRS Section~9.2 to work out the expected state after
+each step.
 
 \subsubsection{Area of Testing1}
 
@@ -710,27 +737,18 @@ How test will be performed:
 ...
 
 \subsection{Tests for Nonfunctional Requirements}
+\label{sec:nfr-tests}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
-
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
-
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
-
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
-
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
+These tests cover the nonfunctional requirements in SRS Sections~10 to~17,
+with one subsection per group: usability and accessibility, performance,
+safety-critical, operational and environmental, maintainability and support,
+security, cultural, and compliance. Most have a pass condition. Speed tests
+have one too, but one run can be slow by chance, so they repeat each run and
+report the results as tables and plots in the VnV Report. Where a requirement can't be
+tested by running Squigglr, like the wording in a template, we check it with a
+review or an inspection and say who does it, when, and with which checklist.
+The usability tasks and survey questions are in the Usability Survey
+Questions appendix.
 
 \subsubsection{Performance}
 \label{sec:perf-tests}
@@ -1950,6 +1968,12 @@ as a GitHub issue.
 
 \subsection{Traceability Between Test Cases and Requirements}
 \label{sec:trace}
+
+Every functional and nonfunctional requirement in the SRS has at least one test
+or named check, and the most important ones have two. The tables below map each requirement
+to its tests. A letter after a test ID, like \texttt{T-LRN-005 (c)}, points to
+one case of a parameterized test. Waiting Room features (SRS Section~25) are
+not listed, since they are out of scope.
 
 Table~\ref{tab:trace-nfr} maps each performance, safety-critical,
 operational, maintainability, security, cultural and compliance requirement

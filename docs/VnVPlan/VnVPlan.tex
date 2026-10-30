@@ -195,17 +195,46 @@ You can use a pull request to update your CDs (in TeamComposition.csv or
 Repos.csv) if your plan changes as a result of the VnV planning exercise.}
 
 \subsection{Relevant Documentation}
+\label{sec:relevant-docs}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (design documents, like MG, MIS, etc).  You
-  can include these even before they are written, since by the time the project
-  is done, they will be written.  You can create BibTeX entries for your
-  documents and within those entries include a hyperlink to the documents.}
+This plan builds on our other project documents. Here is how each one feeds
+into our VnV work:
 
-\citet{SRS}
-
-\wss{Don't just list the other documents.  You should explain why they are relevant and 
-how they relate to your VnV efforts.}
+\begin{itemize}
+  \item \textbf{Problem Statement and Goals} \citep{PSG}. Defines the problem
+    and the goals Squigglr has to meet. Validation checks Squigglr against
+    this problem, not just against the SRS, so it is what we go back to when
+    the supervisor or the specialists question whether a feature is needed.
+  \item \textbf{Software Requirements Specification (SRS)} \citep{SRS}. The
+    main input to this plan. Every system test traces to an SRS requirement
+    and uses its fit criterion as the pass condition
+    (Section~\ref{sec:trace}). The symbolic constants give the boundary values
+    we test at, and the formal specification in SRS Section~9.2 gives the
+    expected output of the lesson tests.
+  \item \textbf{Hazard Analysis} \citep{HA}. Each hazard lists the requirements
+    that mitigate it, which can be functional, usability or safety-critical
+    (Hazard Analysis Section~6). The safety-critical ones get the safety tests
+    and safety inspection (Section~\ref{sec:safety-tests}), and the rest are
+    covered by their functional and usability tests. The causes of each
+    hazard tell us what failures the tests should try to cause, like
+    repeated failed attempts or a lost connection.
+  \item \textbf{Development Plan} \citep{DevPlan}. Names the language, coding
+    standard, tools and continuous integration (CI) that our automated testing builds on
+    (Section~\ref{sec:tools}), and the lead roles behind some of our VnV
+    roles.
+    Its target-tablet experiment is where the first performance limits come
+    from.
+  \item \textbf{Module Guide (MG)} \citep{MG}. Due in January 2027. Splits
+    Squigglr into modules. The unit tests are organized by these modules, and
+    the traceability between tests and modules checks that each one is
+    covered. Design verification reviews it with the MG checklist.
+  \item \textbf{Module Interface Specification (MIS)} \citep{MIS}. Also due
+    in January 2027. Gives each module's interface, which is what the unit
+    tests call and check against.
+  \item \textbf{VnV Report} \citep{VnVReport}. Where we record the results of
+    running this plan, including the measured values the performance tests
+    report.
+\end{itemize}
 
 \section{Plan}
 

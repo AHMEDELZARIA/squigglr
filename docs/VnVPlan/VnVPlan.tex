@@ -142,9 +142,97 @@ how they relate to your VnV efforts.}
 
 \subsection{Verification and Validation Team}
 
-\wss{Your teammates.  Maybe your supervisor.
-  You should do more than list names.  You should say what each person's role is
-  for the project's verification.  A table is a good way to summarize this information.}
+\label{sec:vnvTeam}
+
+Table~\ref{tab:vnvTeam} shows what each of us is responsible for verifying.
+Some roles come from our Development Plan leads: Huzaifah is Testing Lead,
+Shamil keeps CI running as DevOps Lead, and Ahmed plans the usability sessions
+as User Interface and User Experience (UI/UX) Lead. The rest come from the
+sections and tests each of us owns in this plan, and each of us still tests
+our own code. The teammate in the last column reviews each member's tests and
+pull requests, so nobody signs off on their own work.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}
+  >{\raggedright\arraybackslash}p{0.5\textwidth}
+  >{\raggedright\arraybackslash}p{0.16\textwidth}@{}}
+\caption{Verification and validation roles of the team members}
+\label{tab:vnvTeam}\\
+\toprule
+\textbf{Member and VnV role} & \textbf{Verification responsibilities} &
+\textbf{Checked by} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Member and VnV role} & \textbf{Verification responsibilities} &
+\textbf{Checked by} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Muhammad Huzaifah \newline \emph{Testing Lead and VnV coordinator} &
+Overall test strategy, plus the guided lesson and attempt record tests
+(\texttt{T-LRN}, \texttt{T-REC}). Leads code walkthroughs and the code
+inspections other than the safety inspection, records the safety inspection
+results, decides which tests run in CI, and keeps track of defects and
+coverage gaps. & Rayan \\
+\addlinespace
+Rayan Nasrallah \newline \emph{Safety, performance and security lead} &
+Performance, safety-critical, operational, maintainability, security,
+cultural and compliance tests. Runs the safety inspection, which is the second
+check on every safety requirement (Section~\ref{sec:safety-tests}), and does
+not inspect code he wrote. & Huzaifah \\
+\addlinespace
+Ahmed Elzaria \newline \emph{Design verification lead} &
+Creative drawing and progress summary tests (\texttt{T-CRT},
+\texttt{T-PRG}), the unit test plan and the design document reviews.
+Plans the usability sessions with Shamil. & Moustafa \\
+\addlinespace
+Shamil Canbolat \newline \emph{Requirements and validation lead} &
+Usability and accessibility tests (\texttt{T-UX}), SRS verification and
+software validation. Sets up the sessions with the supervisor and the
+specialists, sets up the automated testing tools, and keeps the CI build and
+test workflow running. & Ahmed \\
+\addlinespace
+Moustafa Moustafa \newline \emph{VnV plan verification and quality assurance
+(QA) coordinator for this milestone} &
+Verifies this plan and does its final review against the VnV and Writing
+checklists. Turns review feedback into GitHub issues, takes notes at
+every review and validation session, and reviews the frontend code. &
+Shamil \\
+\end{longtable}
+}
+
+People outside the team are also involved:
+
+\begin{itemize}
+  \item \textbf{Dr.\ Christopher Anand (supervisor and client).} We give him
+    a high-level update on the requirements, design and progress at our
+    weekly meeting and record his feedback in the meeting issue. Shortly
+    after Rev~0, we demo Squigglr to him so he can tell us whether it is
+    what the project needs. His advice on children's safety and privacy
+    goes straight into our requirements and tests, for example using an
+    avatar instead of the child's name.
+  \item \textbf{Domain specialists P1, P2 and P3.} Dr.\ Anand asked us
+    (October~28 meeting) to go back to the specialists we interviewed for the
+    SRS, or people with similar qualifications. They will try a working version of Squigglr and give
+    feedback on the lesson guidance and feedback wording. They are
+    volunteering their time, so we will keep the session short and work
+    around their schedules.
+  \item \textbf{Teaching assistant and peer teams.} They review the SRS,
+    this plan and the design documents. We track each piece of their
+    feedback as a GitHub issue with one owner.
+  \item \textbf{Adult participants.} They take part in the usability
+    sessions. We only test with adults, never children (SRS CON-005 and CON-006).
+\end{itemize}
+
+Our roles shift over the year. In the Fall, we write this plan and review
+the SRS and design documents. In the Winter, each of us runs the tests for
+our area as it gets built, and Shamil and Ahmed run the usability and
+specialist sessions. Like in the Development Plan, the QA coordinator
+rotates every milestone and is named in that milestone's tracking issue. If
+someone is unavailable or a role gets too heavy, we reassign the work at the
+next team meeting and update Table~\ref{tab:vnvTeam}.
 
 \subsection{SRS Verification}
 

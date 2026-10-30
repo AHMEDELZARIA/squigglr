@@ -421,8 +421,8 @@ Purpose: a child should see each stroke appear as they draw it; a visible delay 
 
 Type: Dynamic, automatic (Playwright) and manual (physical stylus).
 
-Initial State: a guided lesson is open at each stage type (demonstration,
-tracing, reduced guidance and independent drawing) with no earlier
+Initial State: a guided lesson is open at each stage where the child draws
+(tracing, reduced guidance and independent drawing) with no earlier
 attempts; no other tabs are open.
 
 Input: the prepared stroke files \texttt{line.json}, \texttt{circle.json}
@@ -574,7 +574,7 @@ and the times are plotted against the number of sessions in the VnV Report.
 
 \item{T-PERF-007: Squigglr keeps working until the end of the capstone\\}
 
-Purpose: squigglr must keep working on the supported devices and browsers at
+Purpose: Squigglr must keep working on the supported devices and browsers at
 least until the end of the capstone, the final demo on 15 March 2027 (PH-3 in
 the SRS). Browsers update often, and an update can break a feature without
 any change to our code, so this checks every feature at each milestone.
@@ -617,7 +617,7 @@ wording in templates and so is an inspection; T-SAF-016 combines a code
 review with recordings on the iPad. The tests try to break each safeguard, for example by
 having a child tap adult-only controls, cutting the connection during an
 attempt, or switching between children on a shared device. All tests use
-test accounts and prepared data only; no child takes part (SRS CON-005).
+test accounts and prepared data only; no child takes part (SRS CON-006).
 In these tests, ``the adult'' means the parent or educator responsible for
 the child, and ``the adult check'' means the check in \texttt{ADULT\_CHECK}
 (for example a PIN or password) that only the adult can complete.
@@ -633,7 +633,9 @@ test-to-requirement traceability table;
 \item check that no path skips it, for example an adult-only action reachable
 from a URL or a save that reports success before the server responds;
 \item check that a dynamic test exercises each path, and add one if not;
-\item check the Code checklist items on error handling and input validation;
+\item check that errors are handled (every failed request leaves the
+child's record unchanged and the adult is told) and that every input from
+the browser is validated on the server;
 \item record each finding as a GitHub issue labelled \texttt{safety}, and
 re-inspect after the fix.
 \end{enumerate}
@@ -1313,7 +1315,8 @@ module offers, their inputs and outputs, and what must be true before and
 after each call), and each description matches the MIS.
 
 Example: the issue that creates the scoring module asks for a description
-such as ``score(strokes, target outline) returns a result from 0 to 100'',
+such as ``evaluate(strokes, target outline) returns the distance and coverage
+measures and whether the attempt meets STAGE\_PASS'',
 and the MIS describes the same function.
 
 Test Case Derivation: the fit criterion of NFR-MAINT-003, plus the match
@@ -1399,7 +1402,7 @@ Type: Dynamic, automatic. Covers NFR-SEC-003.
 
 Initial State: a saved attempt record.
 
-Input: three requests to change the record, repeated three times.
+Input: three requests to change the record, sent one after another.
 
 Output: every request is refused, each creates an audit event, and no
 event contains the record's contents.
@@ -1515,8 +1518,9 @@ the review is repeated for new images before Rev~1.
 \subsubsection{Compliance}
 \label{sec:comp-tests}
 
-These reviews cover SRS Section~17 (NFR-COMP-001 and NFR-COMP-002): the
-Canadian and Ontario privacy laws that apply to Squigglr.
+These reviews cover SRS Section~17 (NFR-COMP-001, NFR-COMP-002 and NFR-COMP-005): the
+Canadian and Ontario privacy laws that apply to Squigglr, and the selected
+WCAG 2.2 success criteria.
 
 \begin{enumerate}
 
@@ -1562,6 +1566,30 @@ Test Case Derivation: the fit criterion of NFR-COMP-002.
 How test will be performed: done with T-COMP-001; any obligation the
 team cannot judge is raised with the supervisor before adoption by a
 school board.
+
+\item{T-COMP-003: Selected WCAG 2.2 criteria review\\}
+
+Purpose: the WCAG 2.2 criteria the SRS selects make Squigglr usable by
+children and adults with different abilities, so each one must be met.
+
+Type: Static (review) and dynamic, manual. Covers NFR-COMP-005.
+
+Initial State: the release build at the final demo (PH-3), on the iPad.
+
+Input: two team members check every screen against each WCAG 2.2 success
+criterion selected through NFR-UX-001, NFR-UX-004, NFR-UX-005 and
+NFR-UX-018 to NFR-UX-023 \citep{wcag22}.
+
+Output: each selected criterion is recorded as met on every screen, with
+none unmet.
+
+Test Case Derivation: the fit criterion of NFR-COMP-005, which asks for a
+review team. Full WCAG conformance is a stretch goal in the SRS, so only
+the selected criteria are checked.
+
+How test will be performed: the review is first done at Rev~0, so problems
+can still be fixed, and repeated at PH-3; each unmet criterion is recorded
+as a GitHub issue.
 
 \end{enumerate}
 
@@ -1628,6 +1656,7 @@ NFR-SEC-006 & T-SEC-006\\
 NFR-CULT-002 & T-CULT-001\\
 NFR-COMP-001 & T-COMP-001\\
 NFR-COMP-002 & T-COMP-002\\
+NFR-COMP-005 & T-COMP-003\\
 \bottomrule
 \end{longtable}}
 

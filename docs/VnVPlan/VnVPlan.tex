@@ -604,9 +604,558 @@ in the VnV Report.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Safety-Critical Requirements}
+\label{sec:safety-tests}
 
-...
+These tests cover the 18 safety-critical requirements in SRS Section~12.2,
+which come from the \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/HazardAnalysis/HazardAnalysis.tex}{Hazard Analysis}. A failure here could harm a
+child's well-being, privacy or records, so each requirement gets two
+different kinds of evidence: a test below, and the safety inspection
+described next. Every test below is dynamic except T-SAF-004, which checks
+wording in templates and so is an inspection; T-SAF-016 combines a code
+review with recordings on the iPad. The tests try to break each safeguard, for example by
+having a child tap adult-only controls, cutting the connection during an
+attempt, or switching between children on a shared device. All tests use
+test accounts and prepared data only; no child takes part (SRS CON-005).
+In these tests, ``the adult'' means the parent or educator responsible for
+the child, and ``the adult check'' means the check in \texttt{ADULT\_CHECK}
+(for example a PIN or password) that only the adult can complete.
+
+\paragraph{Safety inspection (SI).} Before each revision (Rev~0 and
+Rev~1), the code that implements each requirement below is inspected by two
+team members who did not write it. The Backend Lead (Rayan Nasrallah) runs
+the inspection and the Testing Lead (Muhammad Huzaifah) records the results.
+For each requirement, the inspectors:
+\begin{enumerate}
+\item find every code path that triggers the safeguard, using the
+test-to-requirement traceability table;
+\item check that no path skips it, for example an adult-only action reachable
+from a URL or a save that reports success before the server responds;
+\item check that a dynamic test exercises each path, and add one if not;
+\item check the Code checklist items on error handling and input validation;
+\item record each finding as a GitHub issue labelled \texttt{safety}, and
+re-inspect after the fix.
+\end{enumerate}
+The inspection passes when every requirement has no open \texttt{safety}
+issue. Results are reported in the VnV Report.
+
+\paragraph{Why this is enough.} Testing cannot prove that a safeguard always
+works; it can only raise confidence that it does. One test per
+requirement, each with cases chosen to break the safeguard, plus an
+inspection that looks for paths the test missed, gives two independent
+checks. A second dynamic test is added wherever the inspection finds an
+untested path. The inspection covers only the code tied to these 18
+requirements, because a full review of every module by two people is not
+realistic in the time the team has. The rest of the code is covered by the
+code checklist and the normal PR review.
+
+\paragraph{How a lesson works.} Several of these tests check the limits in a
+guided lesson, so this paragraph summarizes the lesson flow from SRS BR-002,
+UC-002 to UC-005 and the state machine in SRS Section~9.2. The adult picks the
+child and the lesson and completes the adult check. The child then watches a
+demonstration and works through three stages in order: tracing a full
+outline, drawing between endpoints, and drawing with no guide. An attempt
+that meets \texttt{STAGE\_PASS} moves the child to the next stage
+automatically, and a pass at the last stage completes the lesson. Failed
+attempts are counted \emph{per stage}, and the count starts again whenever
+the stage changes:
+\begin{itemize}
+\item after \texttt{DIFFICULTY\_STREAK} failed attempts in a row, Squigglr
+suggests to the adult that the child go back a stage; the stage changes only
+if the adult completes the adult check and accepts, and the child keeps
+practising while the suggestion waits;
+\item after \texttt{ATTEMPT\_LIMIT} failed attempts at one stage, the lesson
+ends automatically, unless the child is improving, in which case the child
+gets up to \texttt{ATTEMPT\_EXTENSION} more attempts, never more than
+\texttt{ATTEMPT\_LIMIT\_MAX} in total at that stage;
+\item after \texttt{LESSON\_IDLE\_PROMPT} with no input, Squigglr shows the
+child a check-in, and after \texttt{LESSON\_IDLE\_END} with no input, the
+lesson ends; time without input never counts as a failed attempt.
+\end{itemize}
+Because \texttt{ATTEMPT\_LIMIT} is always larger than
+\texttt{DIFFICULTY\_STREAK} (SAF-RAY-008), the adult always receives the
+suggestion before the lesson ends: the suggestion is the early warning and
+the limit is the backstop. The adult sets these values for each child within
+ranges set by the team. The examples below use illustrative values
+(\texttt{DIFFICULTY\_STREAK} = 3, \texttt{ATTEMPT\_LIMIT} = 6,
+\texttt{ATTEMPT\_EXTENSION} = 2, \texttt{ATTEMPT\_LIMIT\_MAX} = 8) to show
+the expected behaviour; the tests themselves use the ends of each range.
+
+\begin{enumerate}
+
+\item{T-SAF-001: Adult-only actions need the adult check\\}
+
+Purpose: choosing a lesson, choosing a starting stage, switching child and
+accepting a go-back suggestion belong to the adult, so a child must not be
+able to complete any of them.
+
+Type: Dynamic, manual and automatic. Covers SAF-RAY-001.
+
+Initial State: an adult account with two child profiles; child A is in a
+guided lesson, and a go-back suggestion is waiting for the adult.
+
+Input: on the lesson screen, the tester (acting as the child) taps every
+visible control, taps the screen 50 times at random positions, opens the
+web address of each adult-only action directly, uses the browser's back
+and forward buttons and reloads the page. Each time the adult check
+appears, the tester leaves it or enters a wrong answer. Finally, the tester
+(acting as the adult) completes the adult check and accepts the suggestion.
+
+Output: every adult-only action asks for the adult check, and none completes
+until the check is passed. The suggestion stays waiting and the child can
+keep drawing at the current stage. After the adult passes the check and
+accepts, the child moves back one stage.
+
+Example: child A fails three attempts in a row at the endpoints stage, and a
+go-back suggestion appears. Child A taps ``accept''; Squigglr asks for the
+adult check, which child A cannot complete, so the child stays at the
+endpoints stage and keeps practising. The adult then completes the check and
+accepts, and child A moves back to the tracing stage.
+
+Test Case Derivation: SAF-RAY-001 and its hazards H-RAY-001 and H-RAY-006.
+Random taps imitate a child who cannot read exploring the screen.
+
+How test will be performed: a Playwright script performs the taps, web
+addresses and navigation and checks the lesson state after each one; a
+tester repeats the taps by hand with the stylus on the iPad.
+
+\item{T-SAF-002: Notice on an unsupported device, browser or input\\}
+
+Purpose: drawing results may be unreliable on a device or browser that is not
+in \texttt{SUPPORTED\_DEVICES}, or when the child draws with a finger instead
+of a stylus, so the adult must be told and can decide whether to continue.
+
+Type: Dynamic, automatic and manual. Covers SAF-RAY-002.
+
+Initial State: the adult has chosen a lesson; it has not started.
+
+Input: (a) the lesson is started once with each combination in
+\texttt{SUPPORTED\_DEVICES}, and once with each of three combinations that
+are not in it: an older browser version, a phone-sized screen, and a browser
+without pointer event support; (b) on the iPad, a supported lesson is
+started and the first stroke is drawn with a finger; (c) the same, with the
+first stroke drawn with the stylus.
+
+Output: (a) for each unsupported combination, a notice the adult can read
+appears before the first attempt; for each supported combination, no notice
+appears; (b) the notice appears after the first stroke; (c) no notice
+appears.
+
+Test Case Derivation: the fit criterion of SAF-RAY-002 (H-RAY-002). A
+browser cannot tell whether a stylus is connected before it is used, so
+case (a) checks only what the browser reports (version, screen size and
+pointer event support), and cases (b) and (c) check the input type the
+browser reports for the first stroke (pen or touch).
+
+How test will be performed: for (a), Playwright sets the browser version,
+screen size and pointer event support for each combination and checks for
+the notice; for (b) and (c), a tester draws on the iPad, once with a finger
+and once with the stylus.
+
+\item{T-SAF-003: Attempts kept until the server confirms them\\}
+
+Purpose: an attempt must never look saved when it is not, or the adult would
+make decisions from incomplete records.
+
+Type: Dynamic, automatic. Covers SAF-RAY-003 and SAF-SHA-003.
+
+Initial State: a guided lesson is open and online.
+
+Input: (a) the connection is cut during an attempt; (b) the connection is cut
+after the attempt is finished but before the server confirms the save, and
+the page is then reloaded, and separately closed and reopened, while
+offline; (c) the server returns an error for \texttt{FAILED\_SAVES} saves in
+a row; (d) \texttt{FAILED\_SAVES} saves succeed normally.
+
+Output: in (a) to (c), no attempt is shown as saved before the server
+confirms it, the adult is told which attempts are not saved, and every
+attempt is saved once the connection or server is back; in (d), no failure
+message appears.
+
+Test Case Derivation: SAF-RAY-003 and SAF-SHA-003 (H-RAY-002, H-SHA-003).
+Case (d) checks that the warning does not appear when nothing failed.
+
+How test will be performed: Playwright turns the network off and makes the
+server return errors, then compares the server's records with the attempts
+made.
+
+\item{T-SAF-004: No diagnosis or comparison in summaries and exports\\}
+
+Purpose: Squigglr is a practice tool, not an assessment, so no summary or
+export may label, diagnose or compare a child, and each must say so.
+
+Type: Static (inspection), manual. Covers SAF-RAY-004.
+
+Initial State: the templates for every summary and export at that revision.
+
+Input: one team member who did not write the templates reads each one.
+
+Output: every template states that it describes practice only and is not an
+assessment or diagnosis, and none uses a diagnostic label, judging wording
+(for example ``struggling'', ``behind'' or ``below average'') or a comparison
+with other children.
+
+Test Case Derivation: the fit criterion of SAF-RAY-004 (H-RAY-003), which
+asks for an inspection of every summary and export template. The team does
+not intend to add diagnoses, so the realistic risks are a new template that
+leaves out the required statement and wording that judges the child; a read
+of each template catches both.
+
+How test will be performed: once per revision (Rev~0 and Rev~1), as part of
+the safety inspection; any problem is recorded as a GitHub issue labelled
+\texttt{safety}.
+
+\item{T-SAF-005: Lesson ends automatically at the attempt limit\\}
+
+Purpose: a child must not be left repeating a stage they keep failing, so
+the lesson must end by itself at the limit the adult set.
+
+Type: Dynamic, automatic. Covers SAF-RAY-005.
+
+Initial State: a child profile with \texttt{ATTEMPT\_LIMIT} and
+\texttt{ATTEMPT\_LIMIT\_MAX} at the lowest values in their ranges; the test
+is then repeated with the highest values.
+
+Input: (a) at the tracing stage, the failing attempt
+\texttt{circle-\allowbreak{}fail.json} is replayed until the lesson ends; (b)
+the child passes tracing after a few failures, and the failing attempt is
+replayed at the endpoints stage until the lesson ends; (c) a sequence of
+attempts that improves enough to earn an extension is replayed until the
+lesson ends.
+
+Output: the lesson ends after exactly \texttt{ATTEMPT\_LIMIT} failed
+attempts at one stage, or \texttt{ATTEMPT\_LIMIT\_MAX} when extended, with no
+action from the child; failures at an earlier stage do not count at the new
+stage; and the saved record matches the attempts made, including the
+furthest stage reached.
+
+Example: the sixth failed tracing attempt ends the lesson. In case (b), a
+child who passed tracing after four failures still gets six attempts at the
+endpoints stage. In case (c), an improving child gets attempts 7 and 8, and
+the lesson ends after the eighth failure.
+
+Test Case Derivation: SAF-RAY-005 (H-RAY-004). Testing both ends of the
+ranges follows the supervisor's advice to test at the minimum and maximum
+(SRC-008).
+
+How test will be performed: Playwright counts the attempts and checks that
+no attempt is accepted after the lesson ends.
+
+\item{T-SAF-006: Limit endings are shown to the adult across repeated lessons\\}
+
+Purpose: each time a lesson is done, it is a new lesson record, so the adult
+must see how often the lesson ended at the limit across all of them; doing
+the lesson again must not hide earlier failures.
+
+Type: Dynamic, automatic. Covers SAF-RAY-006.
+
+Initial State: as in T-SAF-005.
+
+Input: the adult starts the lesson and it is run until it ends at the
+limit; the adult then starts the same lesson again, and this is repeated so
+the lesson is done three times. In the third run, an improving sequence
+earns an extension before the lesson ends at the limit.
+
+Output: the adult's view of that lesson shows three lesson records, each
+ending at the limit, one extension, and every attempt from all three
+records.
+
+Example: the adult sees ``ended at the limit: 3 times; extended: once'' and
+all 6 + 6 + 8 = 20 attempts.
+
+Test Case Derivation: SAF-RAY-006 (H-RAY-005).
+
+How test will be performed: the script compares the counts and the list of
+attempts in the adult's view with the runs made.
+
+\item{T-SAF-007: Attempts saved only to the active child\\}
+
+Purpose: on a shared device, one child's attempts must never be saved to
+another child's record.
+
+Type: Dynamic, automatic and manual. Covers SAF-RAY-007.
+
+Initial State: one adult account with three child profiles (A, B and C) on
+one device.
+
+Input: the adult switches between the children in the order A, B, A, C,
+and each child makes two attempts; the connection is cut once during child
+B's turn.
+
+Output: every practice screen shows the active child's avatar, and every
+attempt and suggestion is saved under the child whose avatar was shown when
+it was made.
+
+Test Case Derivation: SAF-RAY-007 (H-RAY-006). The lost connection checks
+that a delayed save still goes to the right child.
+
+How test will be performed: Playwright checks each child's records; a
+tester checks by hand that each avatar can be recognized without reading.
+
+\item{T-SAF-008: Adult-set values stay within their ranges\\}
+
+Purpose: a mistyped or extreme value could give a child an impossible
+lesson, so each value must stay within the range the team set and only the
+adult may change it.
+
+Type: Dynamic, automatic. Covers SAF-RAY-008.
+
+Initial State: a new child profile with no values chosen.
+
+Input: (a) no value is set; (b) each value is set to its minimum, its
+maximum, one below the minimum and one above the maximum; (c)
+\texttt{ATTEMPT\_LIMIT} is set equal to \texttt{DIFFICULTY\_STREAK}, and
+\texttt{ATTEMPT\_LIMIT\_MAX} is set one below \texttt{ATTEMPT\_LIMIT}; (d) a
+change is tried without completing the adult check.
+
+Output: (a) each value is the middle of its range; (b) in-range values are
+saved and out-of-range values are refused; (c) both settings are refused;
+(d) nothing changes. The values in use are shown with the child's records.
+
+Example: if the team-set range for \texttt{ATTEMPT\_LIMIT} were 4 to 10, an
+unset value would be 7, values 4 and 10 would be saved, and 3 and 11 would
+be refused. With \texttt{DIFFICULTY\_STREAK} = 3, an \texttt{ATTEMPT\_LIMIT}
+of 3 is refused, because the lesson would end before the adult received the
+go-back suggestion.
+
+Test Case Derivation: the fit criterion of SAF-RAY-008 (H-RAY-007), using
+boundary values on each side of each range.
+
+How test will be performed: a Vitest test checks the validation function
+with every case, and Playwright repeats cases (b) to (d) through the
+settings screen and through direct server requests.
+
+\item{T-SAF-009: Duplicate input events counted once\\}
+
+Purpose: a stylus event reported twice must not change a drawing's result,
+or a child could pass or fail for no real reason.
+
+Type: Dynamic, automatic. Covers SAF-AHM-001.
+
+Initial State: a guided lesson at the tracing stage.
+
+Input: \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} is replayed
+as recorded, then with every input event sent twice; then
+\texttt{overlap-\allowbreak{}2-\allowbreak{}strokes.json}, two separate
+strokes that cross, is replayed.
+
+Output: the recorded points, classification and pass result are the same
+with and without the duplicates, and both crossing strokes are kept.
+
+Test Case Derivation: the fit criterion of SAF-AHM-001 (H-AHM-002).
+
+How test will be performed: Playwright replays both versions and compares
+the saved records.
+
+\item{T-SAF-010: Drawing kept when the canvas changes size\\}
+
+Purpose: rotating the iPad or resizing the window must not distort a drawing
+or change its result.
+
+Type: Dynamic, automatic. Covers SAF-AHM-002.
+
+Initial State: a guided lesson with an attempt partly drawn.
+
+Input: the window is resized and the iPad is rotated during the attempt;
+then input events with positions outside the canvas, missing positions
+(\texttt{NaN}) and very large values are sent.
+
+Output: the order and relative positions of the points are unchanged, and
+the classification is the same as without resizing; none of the invalid
+points is counted or makes the attempt pass.
+
+Test Case Derivation: the fit criterion of SAF-AHM-002 (H-AHM-003).
+
+How test will be performed: Playwright resizes the drawing area and compares
+the scaled points with the original; a Vitest test sends the invalid values
+to the input handler.
+
+\item{T-SAF-011: Every data request checks the account\\}
+
+Purpose: one family's or school's data must never be reachable from another
+account.
+
+Type: Dynamic, automatic. Covers SAF-SHA-001, with T-SEC-001.
+
+Initial State: two adult accounts, A and B, each with a child profile and
+saved attempts.
+
+Input: logged in as A, the tester sends requests to read, change and delete
+B's child profiles, attempts, settings and summaries to every server
+endpoint, then repeats them with no session and with an expired session.
+
+Output: every request is refused, and none of B's data is returned or
+changed.
+
+Test Case Derivation: the fit criterion of SAF-SHA-001 (H-SHA-001).
+
+How test will be performed: a script lists every endpoint from the code and
+sends each request; the list is checked in the safety inspection, so a new
+endpoint cannot be missed.
+
+\item{T-SAF-012: No personal information sent to outside services\\}
+
+Purpose: children's and adults' personal information must not leak to
+outside services, including the refinement service.
+
+Type: Dynamic, manual. Covers SAF-SHA-002.
+
+Initial State: an account whose adult name and email, and the child
+profile's identifier, are unique marker strings.
+
+Input: the tester uses every feature, including refinement, while recording
+all network traffic.
+
+Output: no request to an outside service contains any marker string, and
+requests go only to approved destinations.
+
+Test Case Derivation: the fit criterion of SAF-SHA-002 (H-SHA-002). Unique
+markers make any leak easy to find.
+
+How test will be performed: the test runs in Chrome on a laptop; the
+DevTools Network panel is exported as a HAR file and searched for the
+markers and for destinations that are not approved.
+
+\item{T-SAF-013: Logout after inactivity\\}
+
+Purpose: an adult who walks away from a shared device must not leave their
+account and their children's data open.
+
+Type: Dynamic, automatic. Covers SAF-SHA-006.
+
+Initial State: an adult is logged in.
+
+Input: (a) no activity for \texttt{IDLE\_TIMEOUT}; (b) activity just before
+\texttt{IDLE\_TIMEOUT}, then no activity.
+
+Output: the adult is logged out after \texttt{IDLE\_TIMEOUT} of
+inactivity and not before, and any later request using that session is
+refused.
+
+Test Case Derivation: SAF-SHA-006 (H-SHA-001). Case (b) checks that
+activity restarts the timer.
+
+How test will be performed: Playwright uses a controlled clock to move time
+forward and checks the session.
+
+\item{T-SAF-014: Feedback does not draw the missing part\\}
+
+Purpose: feedback should show the child what is missing without drawing it
+for them, so the record shows only the child's own work.
+
+Type: Dynamic, automatic. Covers SAF-MOU-001.
+
+Initial State: a guided lesson at each predefined difficulty.
+
+Input: \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, an
+attempt with one side missing.
+
+Output: the feedback shows where the side is missing, and the strokes on
+screen and in the record are the same before and after the feedback.
+
+Test Case Derivation: the fit criterion of SAF-MOU-001 (H-MOU-004).
+
+How test will be performed: Playwright compares the stroke data before and
+after the feedback is shown.
+
+\item{T-SAF-015: Assisted, independent and creative work kept apart\\}
+
+Purpose: the adult must be able to tell what the child drew with an
+on-screen guide from what they drew alone, so progress is not overstated.
+
+Type: Dynamic and static, manual. Covers SAF-MOU-002.
+
+Initial State: a prepared history of one lesson record holding 10 assisted
+attempts, 10 independent attempts, and 5 creative space drawings made
+separately.
+
+Input: every summary and record view is opened.
+
+Output: assisted and independent attempts are counted and shown separately,
+no creative space drawing appears, and no view ranks or rates the child by
+the number of attempts.
+
+Example: a lesson record with 10 successful attempts while tracing and 2
+while drawing alone is summarized as ``10 with a guide, 2 without'', never as
+``12 successful drawings''.
+
+Test Case Derivation: the fit criterion of SAF-MOU-002 (H-MOU-005). The
+assisted or independent label belongs to each attempt, not to the lesson:
+following FR-LRN-012, an attempt is assisted when it is drawn with an
+on-screen guide (the tracing or endpoints stage) and independent when it is
+drawn with no guide. One lesson record normally holds both kinds. Help from
+an adult outside Squigglr, such as guiding the child's hand, is not detected
+or recorded, and this test does not cover it.
+
+How test will be performed: a tester checks each view against the prepared
+history, and a Vitest test of the summary function compares the counts.
+
+\item{T-SAF-016: No more than three flashes per second\\}
+
+Purpose: rapid flashing can trigger seizures, so no child-facing screen may
+flash more than three times in any one second.
+
+Type: Static (code review) and dynamic, manual. Covers SAF-MOU-003.
+
+Initial State: the code for every animation and transition on child-facing
+screens, and Squigglr open on the iPad with a guided lesson ready.
+
+Input: (a) a team member who did not write it reviews every animation and
+transition used on child-facing screens, which are all defined in
+Squigglr's own code and style sheets; (b) on the iPad, the screens that
+animate (all feedback, the lesson-end message, the inactivity check-in and
+the screen transitions) are screen-recorded.
+
+Output: (a) no animation or transition changes brightness or colour more
+than three times in any one second; (b) stepping through each recording
+frame by frame, no one-second window has more than three flashes.
+
+Test Case Derivation: the fit criterion of SAF-MOU-003 and WCAG 2.2
+success criterion 2.3.1 \citep{wcag22}. Because every animation comes from
+our own code, reviewing that code finds a flashing effect before it reaches
+a screen; the recordings then confirm the result on the device, without
+recording every screen.
+
+How test will be performed: once per revision (Rev~0 and Rev~1), as part of
+the safety inspection; any problem is recorded as a GitHub issue labelled
+\texttt{safety}.
+
+\item{T-SAF-017: Check-in and lesson ending after inactivity\\}
+
+Purpose: a child may walk away during a lesson, and on a shared device
+another child could carry on under their profile, so an idle lesson must
+check in with the child and then end, with a clear record for the adult.
+
+Type: Dynamic, automatic and manual. Covers SAF-RAY-009.
+
+Initial State: a guided lesson at the endpoints stage, with
+\texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} at the lowest
+values in their ranges; the test is then repeated with the highest values.
+
+Input: (a) no input for \texttt{LESSON\_IDLE\_PROMPT}, then a touch; (b) no
+input for \texttt{LESSON\_IDLE\_END}; (c) two failed attempts, then no input
+until the lesson ends.
+
+Output: (a) the check-in appears at \texttt{LESSON\_IDLE\_PROMPT}, the touch
+dismisses it, and the lesson continues at the same stage; (b) the check-in
+appears, then the lesson ends at \texttt{LESSON\_IDLE\_END}, the progress is
+saved, and the adult's view shows the lesson ended for inactivity; (c) the
+record shows exactly two failed attempts, so the idle time added none.
+
+Example: with illustrative values of 60 seconds for the check-in and 120
+seconds for the end, a child who stops drawing sees an animated character at 60 seconds; if nobody
+touches the screen, the lesson ends at 120 seconds and the adult sees ``ended:
+no activity''.
+
+Test Case Derivation: the fit criterion of SAF-RAY-009 (H-RAY-006). Case (c)
+checks that inactivity is never counted as failure.
+
+How test will be performed: Playwright uses a controlled clock to move time
+forward and checks the screen and the saved record; a tester checks by hand
+on the iPad that the check-in can be understood without reading and does
+not flash.
+
+\end{enumerate}
 
 \subsection{Traceability Between Test Cases and Requirements}
 

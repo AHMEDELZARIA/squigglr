@@ -412,12 +412,201 @@ issue tracker?}
 \wss{Maybe create an SRS checklist?}
 
 \subsection{Design Verification}
+\label{sec:design-verification}
 
-\wss{Plans for design verification}
+The design is written in two documents: the Module Guide (MG), which splits
+Squigglr into modules, each hiding one secret, and the Module Interface
+Specification (MIS), which gives each module's access programs, state and
+behaviour. Design verification checks three things: that the MG covers every
+SRS requirement and hides every likely change, that each MIS module is
+precise enough to implement and to test from its text alone, and that the
+modules work together on the scenarios that matter most. Ahmed, as design
+verification lead, plans and moderates the reviews. The MG names the author of
+each module, and \textbf{no one signs off on a module they wrote}: if a
+reviewer's items fall on their own module, Ahmed gives those items to another
+reviewer for that module.
 
-\wss{The review will include reviews by your classmates}
+Table~\ref{tab:designReviews} lists the reviews. They follow the course
+schedule in Development Plan Section~8, and the internal reviews use the
+Sunday team review meeting before each deadline.
 
-\wss{Create a checklists?}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.33\textwidth}@{}}
+\caption{Reviews of the design documents}
+\label{tab:designReviews}\\
+\toprule
+\textbf{Review} & \textbf{Who} & \textbf{When} & \textbf{What it checks} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Review} & \textbf{Who} & \textbf{When} & \textbf{What it checks} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Internal MG review & Every member, on the checklist items they own
+(Table~\ref{tab:designChecklist}); Ahmed moderates & Team review on
+November~8, 2026, before the informal Design Revision~$-1$ meeting
+(November~11) & The MG against the MG Checklist, and the traceability check
+below. \\
+\addlinespace
+Informal Design Revision~$-1$ & Chris, our TA & November~11, 2026 & Our
+questions on the module decomposition. Moustafa records the answers in the
+meeting issue, as for the VnV Plan. \\
+\addlinespace
+Internal MIS review & Every member, on their items; Ahmed moderates &
+Team review on November~15, 2026, before Design Revision~$-1$
+(November~16) & The MIS against the MIS Checklist, the task-based inspection
+of scenarios S1 and S2, and the interface check of T-MAINT-003. \\
+\addlinespace
+Peer review & The peer team assigned by the course & November~19, 2026 &
+The MG and MIS, read by people outside the project. We ask them to use the
+MG and MIS Checklists. \\
+\addlinespace
+Supervisor review & Dr.\ Anand & Weekly supervisor meeting after
+November~16, 2026 & A one-page summary of the modules, to check that the
+refinement and record modules match what he expects. \\
+\addlinespace
+Second internal review & Every member, on their items; Ahmed moderates &
+Team review on January~10, 2027, before the informal design review
+(January~12) & Every module changed since Revision~$-1$ against both
+checklists, the traceability check again, and all four scenarios. \\
+\addlinespace
+Informal design review & Chris, our TA & January~12, 2027 & Our remaining
+questions; answers recorded in the meeting issue. \\
+\addlinespace
+Final check & Ahmed and Moustafa & Team review on January~17, 2027, before
+Design Revision~0 (January~18) & Every finding issue is closed or deferred
+with a reason, and the traceability check passes. \\
+\addlinespace
+Peer module implementation & Another team, as set by the course & January~21
+to~25, 2027 & Whether one of our modules can be built from its MIS text alone
+(see below). \\
+\addlinespace
+Unit test design & Huzaifah, with each test author & While writing the unit
+tests in Section~\ref{sec:unit-tests} & Whether each access program's
+expected output can be worked out from the MIS. \\
+\end{longtable}
+}
+
+\paragraph{Who owns which checklist items.} Each member owns a part of the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/MG-Checklist.tex}{MG
+Checklist} and the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/MIS-Checklist.tex}{MIS
+Checklist}, matched to their role, and checks it on every module they did not
+write (Table~\ref{tab:designChecklist}). Splitting the checklists means each
+item gets one careful reader instead of five quick ones.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
+  >{\raggedright\arraybackslash}p{0.37\textwidth}
+  >{\raggedright\arraybackslash}p{0.36\textwidth}@{}}
+\caption{Design checklist items owned by each member}
+\label{tab:designChecklist}\\
+\toprule
+\textbf{Member} & \textbf{MG Checklist} & \textbf{MIS Checklist} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Member} & \textbf{MG Checklist} & \textbf{MIS Checklist} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Ahmed & Module decomposition: one secret per module, secrets are nouns, the
+uses relation is a hierarchy and not a data flow, the three Level~1 groups,
+any control module at the top; MG quality (low coupling, information
+hiding). & MIS quality for each module: consistent, essential, general,
+minimal, high cohesion, right level of abstraction. \\
+\addlinespace
+Shamil & The traceability matrices: every requirement satisfied by a module,
+every module used for a requirement; behaviour-hiding modules related to
+requirements. & MIS completeness: every MG module is in the MIS, every type
+is defined, every template section is present. \\
+\addlinespace
+Huzaifah & Each software-decision module is used by a behaviour-hiding
+module. & MIS semantics: each access program has an output or a state
+transition, outputs and exceptions are written as $out :=$ and $exc :=$,
+state invariants hold initially and after each call, every state and
+environment variable has a type. \\
+\addlinespace
+Rayan & Likely changes: the anticipated changes include every SRS likely
+change, and each likely change maps to one module. & Opaque (information
+hiding) and implementation independent; every safety requirement (SAF-) is
+met by an access program whose semantics a reviewer can point to. \\
+\addlinespace
+Moustafa & The Writing Checklist items, and figures that can be zoomed in. &
+The Writing Checklist items; module classification (records, ADTs with
+\textbf{Template}, abstract objects with an initializer, libraries); notation
+and syntax: exported constants have explicit values, types are not mixed,
+symbols come from the SRS, every argument and local function is used. \\
+\end{longtable}
+}
+
+\paragraph{Traceability check.} The SRS has eight likely changes (LC-001 to
+LC-008, SRS Section~27). Shamil runs a script that lists
+every requirement ID defined in the SRS and every ID in the MG's traceability
+matrix, and reports any requirement with no module and any module with no
+requirement. Rayan checks by reading that each likely change maps to exactly
+one module, or that the MG explains the exception. The check passes when the
+script reports no gaps and every likely change is accounted for. It runs at
+both internal reviews and again at the final check, because requirements may
+change between them.
+
+\paragraph{Task-based inspection.} A checklist looks at one module at a time,
+so it can miss a gap between modules. The reviewers therefore trace prepared
+scenarios through the MIS, writing down each access program called, its
+inputs, the state it changes and its output. A step that no access program
+covers, a type that does not match between caller and callee, an exception
+that no caller handles, or a state invariant that breaks is a finding. The
+scenarios cover the riskiest parts of the product:
+\begin{itemize}
+\item \textbf{S1, guided attempt.} The child draws
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json} at stage E with
+the stylus: stroke capture, evaluation, the missing-side feedback, the lesson
+rules (result, streak and \texttt{ATTEMPT\_LIMIT}) and the saved attempt
+record.
+\item \textbf{S2, refinement and restore.} The child finishes
+\texttt{house.json} in the creative space: the refinement request, the
+\texttt{REFINE\_TOLERANCE} check of the result, applying it as one change,
+then a restore and an undo; and the same with the connection lost.
+\item \textbf{S3, progress summary.} The adult opens learner A's summary
+(T-PRG-002), chooses the circle lesson, and opens the attempts behind a
+recurring difficulty.
+\item \textbf{S4, shared device.} The adult passes the adult check and
+switches learner while an attempt is still waiting to be saved
+(SAF-RAY-003, SAF-RAY-007).
+\end{itemize}
+S1 and S2 are traced at the first internal MIS review, and all four at the
+second. Each takes about 20 minutes, with one member reading the MIS aloud
+and the others checking.
+
+\paragraph{Interface check for T-MAINT-003.} At each internal MIS review,
+Huzaifah, as Testing Lead, compares each GitHub issue that creates a
+top-level module with that module's MIS entry, as T-MAINT-003 requires. An
+issue with no interface description, or one that does not match the MIS, is
+a finding.
+
+\paragraph{Peer module implementation.} In January, another team builds one
+of our modules from its MIS (Development Plan Section~8). This is an outside
+check that the MIS can be implemented from its text. Each question they have
+to ask us, and each place where their module behaves differently from ours,
+is recorded as a finding against the MIS, and their reflection
+(January~25) is read at the next team review.
+
+\paragraph{Recording findings and finishing.} Every finding becomes a GitHub
+issue labelled \texttt{review}, with the module, the checklist item or
+scenario step, and one owner, normally the module's author. Ahmed links it to
+the milestone's design tracking issue. Moustafa turns peer and TA feedback
+into issues in the same way, within a week. A review is complete when every
+module has been checked against every checklist item by someone who did not
+write it, the traceability check passes, and each finding issue is closed by
+a merged PR or deferred with a written reason that Ahmed accepts. The
+filled-in checklists are attached to the tracking issue, and the number of
+findings per review is reported in the VnV Report.
 
 \subsection{Verification and Validation Plan Verification}
 \label{sec:plan-verification}

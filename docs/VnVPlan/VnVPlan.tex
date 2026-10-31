@@ -6303,6 +6303,20 @@ flow, and to help with \LaTeX{} formatting. Through Claude Code, it also
 helped manage the repository (branches, commits and merges). I reviewed every
 AI-assisted passage before including it.
 
+\textbf{Ahmed:} I used Anthropic's Claude Opus 5.5, accessed through Claude
+Code, while preparing my sections of this document: the creative drawing and
+progress summary tests in Section~4.1, their rows in the traceability table,
+their symbolic parameters and test data, Design Verification
+(Section~\ref{sec:design-verification}), the Unit Test Description
+(Section~\ref{sec:unit-tests}) and my reflection answers. All the ideas behind
+these sections are my own: what each test checks, which cases try to break
+Squigglr, how the constants are set, and how the design is reviewed. I used
+the model to turn my notes and decisions into draft wording, and to clean up
+grammar, sentence structure and clarity, along with \LaTeX{} formatting. I
+reviewed every AI-assisted passage against the SRS, the Hazard Analysis and the
+parts of this plan my teammates wrote, and checked the expected outputs of my
+tests myself, before including it. The final content is my responsibility.
+
 \newpage{}
 
 \section{Appendix --- Reflection}
@@ -6414,6 +6428,28 @@ VoiceOver on the iPad for NFR-UX-020, and finishing the adult tasks with only a
 keyboard for NFR-UX-023.
 \end{itemize}
 
+\textbf{Ahmed:} For my part of the plan (the creative drawing and progress
+summary tests, design verification, and the usability sessions with Shamil), I
+need three skills I do not yet have:
+\begin{itemize}
+\item \emph{Property-based testing with fast-check.} T-CRT-015 and T-CRT-022
+only work if the generators produce the inputs that matter, such as a
+refinement result just past \texttt{REFINE\_TOLERANCE} or an undo right after
+a reopen, and if the reference model is simple enough to trust as the
+expected output.
+\item \emph{Faking an outside service in Playwright.} Most refinement tests
+depend on intercepting Squigglr's calls to the refinement service and
+answering with a stub that can shift strokes, hold its answer, fail, or send
+a broken or partial result (T-CRT-013, T-CRT-023 and T-CRT-024). If the stub
+is wrong, every one of those tests is wrong with it.
+\item \emph{Running reviews with other people.} I moderate the design reviews
+in Section~\ref{sec:design-verification}, and with Shamil I run the adult
+sessions where T-PRG-013 is done and where \texttt{REFINE\_TOLERANCE} is
+judged. This means keeping a review focused on findings, and giving reviewers
+a task without hinting at the answer, so a success really means the summary
+is clear.
+\end{itemize}
+
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
@@ -6451,6 +6487,32 @@ through before the first review at Rev~0. After that I will do hands-on passes
 on the first frontend screens I review, because a checker can tell me a control
 has a label, but not whether the label makes sense to someone who can't see the
 icon.
+
+\textbf{Ahmed:}
+\begin{itemize}
+\item \emph{Property-based testing.} Two approaches: work through the
+fast-check documentation and its examples of model-based testing, or start
+from small properties of my own code and grow them. I will start with the
+documentation, then write T-CRT-022's history model for undo and redo first,
+before restore is added. The documentation shows how shrinking and seeds
+work, which T-CRT-015 and T-CRT-022 rely on, and a small model that already
+passes is easier to trust when I add restore and refinement to it.
+\item \emph{Faking a service in Playwright.} Two approaches: read the
+Playwright guide on network interception (\texttt{page.route}), or run a
+local mock server that pretends to be the refinement service. I will use
+\texttt{page.route}, because it lives inside each test, so a test can hold,
+release or break the answer at exactly the step it needs. A mock server would
+need its own set-up and could fall out of step with the tests. I will build
+the shift stub first, as soon as the creative space can send a request.
+\item \emph{Running reviews.} Two approaches: read about inspection roles and
+usability test facilitation (for example the Nielsen Norman Group's guides on
+running usability sessions), or practise on a small scale first. I will do
+both: read about facilitation before the first session, and run a 20-minute
+practice of the S1 walkthrough with the team at the first internal MIS review,
+and a practice of the T-PRG-013 tasks with one teammate before any outside
+reviewer sees them. A practice run shows which tasks or questions give the
+answer away while it is still cheap to fix them.
+\end{itemize}
 
 \end{enumerate}
 

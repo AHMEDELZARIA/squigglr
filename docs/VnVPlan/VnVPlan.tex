@@ -5805,129 +5805,141 @@ FR-PRG-012 & T-PRG-012 (inspection and automatic), T-SAF-004\\
 \section{Unit Test Description}
 \label{sec:unit-tests}
 
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
+The Module Interface Specification (MIS) is due on 18 January 2027, so this
+section gives the rules for choosing unit tests rather than the tests
+themselves. The rules are written so that, once the MIS exists, each
+module's tests follow from its specification, and a reviewer can check that
+none is missing. The module tests and their traceability table are added in
+the VnV Plan revision after the MIS.
 
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
+\paragraph{How unit tests are chosen.} Each module's tests are designed first
+from its MIS (black box), then completed from the code (white box):
+\begin{enumerate}
+\item \textbf{Normal case.} Each access program gets at least one test of its
+usual behaviour, with the expected output or state change worked out from
+its semantics in the MIS.
+\item \textbf{Boundaries.} Each input with a range is tested at its minimum
+and maximum and just outside them. Inputs that are SRS constants, such as
+\texttt{STAGE\_PASS} or \texttt{ATTEMPT\_LIMIT}, are tested at the ends of
+their ranges in SRS Section~4.2, as the system tests are.
+\item \textbf{Errors.} Each exception in the MIS ($exc :=$) gets a test that
+raises it, and a test that a caller handles it.
+\item \textbf{State.} For modules with state (abstract objects and
+templates), the state invariant is checked after every call in every test.
+For the lesson rules, each transition in the table of SRS Section~9.2 gets a
+test, and T-LRN-021 compares the module with a model of that section.
+\item \textbf{Random inputs.} For modules that take shapes or sequences, a
+fast-check property test runs many generated inputs from a fixed seed
+(\texttt{MODEL\_SEED}), as T-LRN-021, T-CRT-015 and T-CRT-022 already do.
+\item \textbf{Coverage.} The coverage report (Section~\ref{sec:tools}) is then
+read for branches that no test reaches, and a test is added for each one, or
+the reason it cannot be reached is written in the test file.
+\end{enumerate}
 
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
+\paragraph{How tests are written and named.} Tests are written in Vitest, as
+named in Section~\ref{sec:tools}, in a file next to the module
+(\texttt{<module>.test.ts}). Each test's name gives the access program, the
+case and the expected result, for example ``\texttt{evaluate -- empty stroke
+list -- returns incomplete}'', and a comment cites the MIS access program
+and the SRS requirement it supports. The tests are given IDs
+\texttt{U-<MODULE>-\#\#\#} for the traceability table. The test code is the
+detailed record of inputs and outputs, so they are not copied into this
+document. Outside services (the database, sign-in and the refinement
+service) are reached only through Squigglr's own wrapper modules, so unit
+tests replace them with fakes.
+
+\paragraph{Who does what.} The author of a module writes its unit tests in
+the same PR as the module. The PR reviewer checks the tests against the rules
+above as part of the PR code review in the Implementation
+Verification section. The Testing Lead (Huzaifah) checks
+that each expected output can be worked out from the MIS, as planned in
+Design Verification (Section~\ref{sec:design-verification}).
 
 \subsection{Unit Testing Scope}
 
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
+\paragraph{Out of scope.} We do not unit test code we did not write, which
+its makers verify (Section~\ref{sec:objectives}):
+\begin{itemize}
+\item the drawing library (Paper.js) and the browser's Pointer Events;
+\item the web framework (Next.js and React);
+\item the hosting and database services (Vercel and Supabase, including
+Supabase Auth);
+\item the refinement model.
+\end{itemize}
+Squigglr reaches each of these through a wrapper module of its own, and the
+wrappers are in scope: their unit tests use a fake of the service and check
+what Squigglr sends and how it handles each answer, including errors and
+timeouts. How the real services behave with Squigglr is checked by the
+system tests, for example T-CRT-014 for the real refinement service and
+T-OPS-002 for an outage.
+
+\paragraph{Priority.} Modules are tested in the order below, which follows
+the harm a defect could do (Hazard Analysis) and the TA's advice on coverage
+(Section~\ref{sec:plan-verification}):
+\begin{enumerate}
+\item \textbf{Safety-critical and lesson logic:} the lesson rules, stroke
+evaluation, attempt and lesson record saving, and the adult check and access
+checks. A defect here can mislead an adult or lose a child's work. Goal:
+every branch covered.
+\item \textbf{Creative drawing logic:} the refinement result check and the
+drawing history (undo, redo and restore). A defect here can change or lose a
+drawing (H-MUH-001, H-MUH-002). Goal: every branch covered.
+\item \textbf{Progress summary computation:} turning records into the
+summary's figures. These are pure functions, cheap to test fully. Goal:
+every statement covered.
+\item \textbf{User interface components:} component tests with React Testing
+Library for each screen's states (empty, loading, error, normal). Most of
+their behaviour is covered by the end-to-end and usability tests, so there
+is no coverage goal.
+\end{enumerate}
+The coverage reached for each module is reported in the VnV Report, as
+Section~\ref{sec:tools} describes.
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
-
-\subsubsection{Module 1}
-
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
-
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-
-\item{...\\}
-    
-\end{enumerate}
-
-\subsubsection{Module 2}
-
-...
+The module tests for the functional requirements are added here once the MIS
+is done, with one subsection per MIS module. Each subsection will name the
+module's access programs and list its tests by ID, with the rule above that
+each one covers. Some unit-level tests are already planned as part of the
+system tests in Section~\ref{sec:fr-tests}, because they check one module
+directly:
+\begin{itemize}
+\item T-LRN-021, the lesson rules against a model of SRS Section~9.2;
+\item T-CRT-015, the refinement result check against random results;
+\item T-CRT-022, the drawing history against a model of undo, redo and
+restore;
+\item the Vitest parts of the guided lesson tests, which call the
+evaluation function and the input handler directly.
+\end{itemize}
+These move into the matching module's subsection, with the same IDs, once
+the module exists.
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
-
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
-
-\subsubsection{Module ?}
-		
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
-\end{enumerate}
-
-\subsubsection{Module ?}
-
-...
+Most nonfunctional requirements are about the whole product and are tested in
+Section~\ref{sec:nfr-tests}. At module level, two kinds of test will be
+added once the MIS is done:
+\begin{itemize}
+\item \textbf{Timing of hot code.} A Vitest benchmark of the evaluation
+function and the refinement result check on the prepared stroke files, so a
+slow module can be found before T-PERF-001 and T-PERF-002 fail on the whole
+system.
+\item \textbf{Wrapper behaviour under failure.} Tests that each wrapper
+module times out, retries or reports an error as SAF-RAY-003 and the
+operational requirements expect, with a fake service that fails on purpose.
+\end{itemize}
 
 \subsection{Traceability Between Test Cases and Modules}
 
-\wss{Provide evidence that all modules have been considered.}
-				
+Once the MIS is done, a table here maps each MIS module to its unit tests and
+to the requirements they support, so every module can be seen to be
+considered. The table is complete when every module has a test file, or a
+written reason it has none (for example, a module that only re-exports
+types), and every access program has at least a normal case. The
+traceability check in Design Verification (Section~\ref{sec:design-verification})
+is extended to list any module with no tests, and it runs at the final check
+before each design revision.
+
 \bibliographystyle{plainnat}
 
 \bibliography{../../refs/References}

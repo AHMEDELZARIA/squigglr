@@ -2331,7 +2331,8 @@ fixed merge conflicts, and wrote and opened my pull requests. In this
 document, this covered Section~3.5, the guided lesson and attempt record
 tests in Section~4.1, the functional traceability table in Section~4.3, the
 functional symbolic parameters and test data in Section~6.1, and my
-reflection answers. All decisions in my sections are my own.
+reflection answers. I reviewed every AI-assisted passage before including it.
+All decisions in my sections are my own.
 
 \newpage{}
 
@@ -2450,8 +2451,9 @@ have:
 \begin{itemize}
 \item \emph{Model-based testing.} T-LRN-021 needs a reference model of the
 lesson rules in SRS Section~9.2, and properties that fast-check can check
-over thousands of attempt sequences. I have written example-based unit
-tests, but never a model precise enough to serve as the expected output.
+over 1,000 random attempt sequences in each run. I have written
+example-based unit tests, but never a model precise enough to serve as the
+expected output.
 \item \emph{Running code inspections.} As moderator of INS-LRN, INS-EVAL and
 INS-REC, I have to plan each inspection, keep the meeting to an hour, sort
 findings into major and minor, and follow up on fixes. So far I have only
@@ -2501,14 +2503,18 @@ icon.
 \item \emph{Model-based testing.} There are two approaches: work through
 the fast-check documentation on model-based testing, or read the chapters
 on state-machine models in Utting and Legeard's \emph{Practical Model-Based
-Testing}. I will start with the documentation and model the suggestion rule
-as soon as the first version of the lesson rules exists. Modelling one
-rule early, against our first lesson rules code, shows quickly where the
-code and my reading of the SRS differ. I will turn to the book if
-modelling all of Section~9.2 gets hard.
+Testing}. I will start with the documentation, because it covers
+fast-check's own model-based testing API, which T-LRN-021 uses directly.
+I will model the suggestion rule as soon as the first version of the lesson
+rules exists. Modelling one rule early, against our first lesson rules code,
+shows quickly where the code and my reading of the SRS differ. Ahmed is
+learning property-based testing with fast-check for his creative drawing
+tests, so we will share what we learn. I will turn to the book if modelling
+all of Section~9.2 gets hard.
 \item \emph{Code inspections.} There are two approaches: read the
-inspection procedure in IEEE Standard 1028 for software reviews, or learn
-by doing a trial inspection. I will do both, in that order. I will read the
+inspection procedure in IEEE Std 1028, the standard for software reviews and
+audits, or learn by doing a trial inspection. I will do both, in that order.
+I will read the
 roles and steps in IEEE 1028, then run a 30-minute trial inspection of one
 small PoC file with one teammate, using the checklist in Implementation
 Verification, before the PH-1 inspections, which must be completed by

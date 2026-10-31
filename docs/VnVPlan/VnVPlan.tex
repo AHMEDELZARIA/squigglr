@@ -2005,8 +2005,10 @@ Input: ten attempts, each finished \texttt{ATTEMPT\_GAP} after the one
 before, except attempt 10, which is finished 0.5 seconds after attempt 9.
 The lesson, stage and file vary; the learner and settings stay fixed.
 $r(x)$ is the result the evaluation function returns for file $x$ at that
-stage; the test computes it by calling the function directly. The attempts
-are in Table~\ref{tab:t-rec-001}.
+stage; the test computes it by calling the function directly. M and S stand
+for \texttt{square-\allowbreak{}missing-\allowbreak{}side.json} and
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}. The attempts are
+in Table~\ref{tab:t-rec-001}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2026,9 +2028,9 @@ are in Table~\ref{tab:t-rec-001}.
 5 & Circle, I & F & Circle, I, $r(\mathrm{F})$, not passed, + 5~min\\
 6 & Circle, I & P & Circle, I, $r(\mathrm{P})$, passed, + 6~min\\
 7 & Square, T & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}
-& Square, T, its result, not passed, + 7~min\\
+& Square, T, $r(\mathrm{M})$, not passed, + 7~min\\
 8 & Square, T & \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} &
-Square, T, its result, passed, + 8~min\\
+Square, T, $r(\mathrm{S})$, passed, + 8~min\\
 9 & Circle, T (new lesson) & F & Circle, T, $r(\mathrm{F})$, not passed,
 + 9~min\\
 10 & Circle, T & F & Circle, T, $r(\mathrm{F})$, not passed, + 9~min
@@ -2037,15 +2039,23 @@ Square, T, its result, passed, + 8~min\\
 \end{tabularx}
 \end{table}
 
-Output: exactly ten records, all under learner A, in the order of
-Table~\ref{tab:t-rec-001}, each holding exactly the fields in its row.
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-001}; the test passes when every case gives it. The
+test database holds exactly ten records, all under learner A, in the order
+of Table~\ref{tab:t-rec-001}, each holding exactly the fields in its row.
 
 Test Case Derivation: the fit criterion asks for known lessons, stages,
 results and outcomes, with one pass and one fail at each drawing stage, in
 the order the attempts ended. The outcomes follow from calibration
 ($r(\mathrm{F}) \le 60$ and $r(\mathrm{P}) \ge 90$, against
-\texttt{STAGE\_PASS} 80). The controlled clock makes the times exact.
-Attempts 9 and 10 check the order when times are close.
+\texttt{STAGE\_PASS} 80). Attempt 7 is not passed because it is incomplete
+(SRS FR-LRN-011), although $r(\mathrm{M})$ is at least
+\texttt{CAL\_INCOMPLETE\_MIN}; attempt 8 passes because
+$r(\mathrm{S}) \ge 90$. Attempts 2, 4 and 8 change the stage when they
+pass, so they try to cause H-MUH-003 (a), where the stage is ``taken from
+the lesson's stage when the save completes rather than when the child
+drew''. The controlled clock makes the times exact. Attempts 9 and 10 check
+the order when times are close.
 
 How test will be performed: Playwright with a controlled clock, then a
 database read.
@@ -2095,9 +2105,11 @@ Table~\ref{tab:t-rec-002}; the test passes when every case gives it. No
 record holds an outline, endpoint marks, feedback marks or refined points.
 
 Test Case Derivation: the fit criterion (point for point, and nothing that
-was not drawn), with SRS BR-004 and BR-005. (d) is a near miss, the drawing
-most tempting to ``tidy''. In (e), the feedback of SAF-MOU-001 must not
-enter the record. (f) checks that no stroke leaks between attempts.
+was not drawn), with SRS BR-004 and BR-005. The cases follow H-MUH-003 (b),
+where ``Strokes are smoothed or corrected before they are saved''. (d) is a
+near miss, the drawing most tempting to ``tidy''. In (e), the feedback of
+SAF-MOU-001 must not enter the record. (f) checks that no stroke leaks
+between attempts.
 
 How test will be performed: Playwright replays each file and compares the
 stored points with the file. Inspection item A5 of INS-EVAL checks the code
@@ -2116,7 +2128,8 @@ T for case (d)).
 Input: the cases vary the difficulties in the attempt and whether the child
 corrects them; the learner and the defaults stay fixed. The difficulty
 names are the catalogue's predefined difficulties for the square lesson at
-E. The cases are in Table~\ref{tab:t-rec-003}.
+E; ``missing side'' is the incomplete-shape observation of T-LRN-012 (b).
+The cases are in Table~\ref{tab:t-rec-003}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2129,15 +2142,16 @@ E. The cases are in Table~\ref{tab:t-rec-003}.
 \textbf{Expected difficulties in the record}\\
 \midrule
 a & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, finished
-with no correction & Missing side, not corrected\\
+with no correction & Missing side (the incomplete-shape observation), not
+corrected\\
 b & \texttt{square-\allowbreak{}missing-\allowbreak{}side-\allowbreak{}%
 corrected.json} & Missing side, corrected\\
 c & \texttt{square-\allowbreak{}endpoint-\allowbreak{}and-\allowbreak{}%
 side.json} & Incorrect endpoint, corrected; missing side, not corrected\\
 d & \texttt{circle.json} at T & None\\
 e & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json} with two
-pauses of \texttt{STROKE\_PAUSE}, so the feedback shows twice, then
-finished & Missing side, not corrected, listed once\\
+pauses, each until the missing-side feedback appears, then finished &
+Missing side, not corrected, listed once\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2166,6 +2180,8 @@ so a later change cannot alter what an earlier record means.
 Type: Dynamic, automatic. Covers FR-REC-004.
 
 Initial State: learner A with all eight adult-set values at their defaults.
+Each of cases (a) to (h) starts from a new learner profile with the
+defaults.
 
 Input: in cases (a) to (h), the adult starts the circle lesson at I and
 replays P, which completes the lesson in one attempt (record 1). The adult
@@ -2218,10 +2234,13 @@ and record 1 is unchanged after the change.
 
 Test Case Derivation: the fit criterion asks for records before and after a
 change to each adult-set value; the eight values are those of SRS BR-008.
-The SRS does not say whether a change applies to a lesson already running,
-so in (i) the record must agree with the outcome it produced (H-AHM-007,
-stale setting). (j) is H-AHM-007, wrong learner. (g) and (h) use the ends of
-the \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} ranges,
+Cases (a) to (h) follow H-MUH-007 (b), where ``Records refer to the
+learner's current adult-set values, which an adult may change at any
+time''. The SRS does not say whether a change applies to a lesson already
+running, so in (i) the record must agree with the outcome it produced
+(H-AHM-007, stale setting). (j) is H-AHM-007, wrong learner. (g) and (h) use
+the ends of the \texttt{LESSON\_IDLE\_PROMPT} and
+\texttt{LESSON\_IDLE\_END} ranges,
 which are set for the test of SAF-RAY-009; the minimums and maximums in (j)
 include them too.
 
@@ -2290,9 +2309,10 @@ Initial State: learner A with no lesson records. Each case is a new start
 of the circle lesson.
 
 Input: the cases vary the start stage and the sequence, written as results;
-learner A, the circle lesson and the defaults stay fixed. End to end, 40 is
-replayed as F, 85 as P and 50 as N. The cases are in
-Table~\ref{tab:t-rec-006}.
+learner A, the circle lesson and the defaults stay fixed. A start at T is
+the default start: the demonstration is watched, and then the attempts
+follow. End to end, 40 is replayed as F, 85 as P and 50 as N. The cases are
+in Table~\ref{tab:t-rec-006}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2304,8 +2324,9 @@ Table~\ref{tab:t-rec-006}.
 \textbf{Case} & \textbf{Start} & \textbf{Sequence} &
 \textbf{Expected lesson record}\\
 \midrule
-a & T & 40, 85, 85, 40, 85 & Start T; furthest I; successes T~1, E~1,
-I~1; ending ``every stage passed''; extension count 0; five attempts\\
+a & T (the default start) & 40, 85, 85, 40, 85 & Start T, the first drawing
+stage, with no attempt at D; furthest I; successes T~1, E~1, I~1; ending
+``every stage passed''; extension count 0; five attempts\\
 b & The adult starts at E & $4 \times 40$ [D], $4 \times 40$ & Start E;
 furthest E; successes all 0; ending ``ended at
 \texttt{ATTEMPT\_LIMIT}''; eight attempts\\
@@ -2326,8 +2347,11 @@ Output: the expected output of each case is in its row of
 Table~\ref{tab:t-rec-006}; the test passes when every case gives it.
 
 Test Case Derivation: the fit criterion asks for a start at the first
-drawing stage and a later start chosen by the adult. The ending labels are
-the lesson endings of the SRS Section~7.2 data dictionary. The counts
+drawing stage and a later start chosen by the adult. In (a), the
+demonstration is watched first, so the start is T and no attempt is at D.
+The ending labels are the lesson endings of the SRS Section~7.2 data
+dictionary. The cases follow H-MUH-007 (c), whose mitigation is to ``keep a
+lesson record for every lesson start''. The counts
 follow the stage rules tested in T-LRN-016 to T-LRN-020. In (c), the child
 passes T twice, so T has two successes. In (d), the extension ends at
 $8 + 2 = 10$. (e) checks that each start makes a new record (SAF-RAY-006).
@@ -2456,8 +2480,10 @@ check, and A makes one attempt with F. This lesson stays open through step
 (f) and is record (4). A SHA-256 hash of the canonical JSON of every
 attempt record (20 in total) and of records (1) to (3) is stored.
 
-Input: the steps run in order, each followed by a comparison with the
-stored hashes. The steps are in Table~\ref{tab:t-rec-009}.
+Input: the steps vary the change; learner A, the seeded records and the
+stored hashes stay fixed. The steps run in order, each followed by a
+comparison with the stored hashes. The steps are in
+Table~\ref{tab:t-rec-009}.
 
 \begin{table}[htbp]
 \centering\small
@@ -2472,10 +2498,11 @@ a & The adult changes every adult-set value to the maximum of its range &
 Every stored hash matches\\
 b & The adult changes the circle lesson's starting stage to E & Every
 stored hash matches\\
-c & The adult turns audio off and refinement off & Every stored hash
+c & The adult turns audio off and refinement off, and changes each
+accessibility setting once the SRS defines them & Every stored hash
 matches\\
 d & A new lesson is added to the catalogue & Every stored hash matches\\
-e & The outline and feedback text of the circle lesson are edited in the
+e & The outline and feedback text of the square lesson are edited in the
 catalogue & Every stored hash matches\\
 f & The line lesson is removed from the catalogue & Every stored hash
 matches; record (3) and its attempts are still shown with the lesson's
@@ -2483,8 +2510,9 @@ name\\
 g & In the second context, A continues record (4) with F, then P & Every
 stored hash matches; record (4) has two more attempts, and its earlier
 attempts are unchanged\\
-h & A direct request, as the adult, to change the outcome of attempt record
-1 to passed & Refused; every stored hash matches\\
+h & A direct request, as the adult, to change the outcome of the first
+attempt record of record (1) to passed & Refused; every stored hash
+matches\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2495,16 +2523,20 @@ Table~\ref{tab:t-rec-009}; the test passes when every step gives it.
 Test Case Derivation: the fit criterion changes every adult-set value, a
 starting stage and the other settings (SRS UC-010), and adds a lesson to
 and removes a lesson from the catalogue. (e) is a catalogue edit (SRS
-LC-001) that could re-score old attempts. In (g), the record of a lesson
-that has not ended may still grow. Record (4) holds one failure before
-(g), so (g) gives no suggestion at either end of the
+LC-001) that could re-score old attempts. The edit is to the square lesson,
+whose record (2) has ended, so it cannot change record (4), a circle
+lesson. In (g), the record of a lesson that has not ended may still grow.
+Record (4) holds one failure before (g), so (g) gives no suggestion at
+either end of the
 \texttt{DIFFICULTY\_STREAK} range. (h) tries the direct route; its audit
 event is tested by T-SEC-003. The steps follow H-MUH-007 (d).
 
 How test will be performed: a Playwright script runs the steps and
 recomputes the hashes from the database. Until the
 \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} ranges are
-set, those two values keep their defaults in the seed and in (a).
+set, those two values keep their defaults in the seed and in (a). Until the
+SRS defines the accessibility settings, (c) changes only audio and
+refinement.
 
 \item{T-REC-010: Suggestions and responses\\}
 
@@ -2543,8 +2575,9 @@ One: ignored\\
 f & $3 \times \mathrm{F}$; the child taps accept (the adult check is not
 completed); then the adult declines & One: declined, never accepted\\
 g & At T, $7 \times \mathrm{F}$ & None\\
-h & $3 \times \mathrm{F}$; the adult switches to B; B makes one attempt &
-A's record: one, ignored; B's record: none\\
+h & $3 \times \mathrm{F}$; the adult switches to B and starts the circle
+lesson for B at T; B makes one attempt & A's record: one, ignored; B's
+record: none\\
 \bottomrule
 \end{tabularx}
 \end{table}

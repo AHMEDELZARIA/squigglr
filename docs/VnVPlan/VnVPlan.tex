@@ -1972,7 +1972,8 @@ FR-CRT-009), saving and reopening it under the right learner (FR-CRT-023 to
 FR-CRT-026), keeping it apart from guided lesson records (FR-CRT-028) and
 showing whether it is saved (FR-CRT-029). They follow use case UC-006 and the
 hazards H-MUH-001, H-MUH-003, H-MUH-004 and H-MUH-005 in the Hazard Analysis.
-Refinement and restoring the original are tested separately.
+Refinement and restoring the original are tested in
+Section~\ref{sec:crt-refine-tests}.
 
 The tests use the words of SRS Section~9.3: a \emph{part} is one or more
 strokes the child selects, and a \emph{change} is one stroke drawn or one
@@ -2221,8 +2222,8 @@ first, back to the drawing as it was opened. FR-CRT-008 redoes until the
 child makes a new change. The sequence uses one change of each kind, so each
 kind is undone and redone once. Case (d) checks FR-CRT-007's rule that
 changes made before the drawing was last opened cannot be undone. The
-refinement and restore steps in FR-CRT-007's fit criterion are tested with
-the refinement tests.
+refinement and restore steps in FR-CRT-007's fit criterion are tested in
+T-CRT-016 (f) and T-CRT-020 (b, e).
 
 How test will be performed: a Playwright script saves each $S_k$ after its
 change, then compares the drawing with the expected $S_k$ after every undo
@@ -2294,8 +2295,8 @@ Test Case Derivation: the fit criteria of FR-CRT-023 (two learners, each
 drawing reopened as left) and FR-CRT-024 (reopened exactly as last saved,
 every stroke editable). Case (b) checks the cause in H-MUH-004 where a
 drawing is saved to the learner active when the save completes, not when it
-was drawn. The refined states in FR-CRT-024's fit criterion are tested with
-the refinement tests.
+was drawn. The refined states in FR-CRT-024's fit criterion are tested in
+T-CRT-027.
 
 How test will be performed: a Playwright script runs each case and reads the
 saved drawings of both learners through the test database. A tester repeats
@@ -2405,6 +2406,644 @@ child's own.
 
 How test will be performed: a Playwright script exports the records and the
 summary through the test database before and after, and compares the two.
+
+\end{enumerate}
+
+\subsubsection{Creative Drawing: Refinement and Restoring the Original}
+\label{sec:crt-refine-tests}
+
+These tests cover the creative drawing requirements in SRS Section~9.3 about
+refinement: refining a finished drawing (FR-CRT-010 to FR-CRT-016), restoring
+the original (FR-CRT-017 to FR-CRT-019), failure and interruption (FR-CRT-020
+to FR-CRT-022), no refinement in guided lessons (FR-CRT-027) and turning
+refinement off (FR-CRT-030). They also test the refinement and restore steps
+of FR-CRT-007 and the refined states of FR-CRT-024, which T-CRT-007 and
+T-CRT-009 leave to this section. They follow UC-007 and BR-005, and try to
+cause the failures in Hazard Analysis rows H-MUH-001, H-MUH-002, H-MUH-003
+and H-MUH-006: a restore that loses work, a refinement that changes more than
+it may or reaches the wrong drawing, a refined drawing that passes as the
+child's own, and a child who cannot get rid of a refinement they do not want.
+Refinement is goal G.4, the riskiest part of the product, so FR-CRT-012,
+FR-CRT-017 and FR-CRT-020 each have a second, independent test. As
+Section~\ref{sec:objectives} says, the tests check what Squigglr does with a
+refinement result, not how good the result looks.
+
+The set-up is the one in Section~\ref{sec:crt-edit-tests}, except that
+refinement is on for learner A. \emph{Finishing} a drawing means using the
+control the child uses to say the drawing is done. The tests also use these
+terms:
+\begin{itemize}
+\item \emph{Supported set.} The SRS leaves the supported set open (OI-03).
+Until it is agreed, these tests use five items: circle, square, triangle,
+house and sun, in \texttt{ref-\allowbreak{}circle.json},
+\texttt{ref-\allowbreak{}square.json},
+\texttt{ref-\allowbreak{}triangle.json}, \texttt{house.json} and
+\texttt{sun.json}. This is the set the tests use, not a scope decision. When
+OI-03 is closed, each agreed item gets a prepared drawing and this list
+follows it; the tests themselves do not change. The drawings of items outside
+the set are \texttt{ref-\allowbreak{}out-\allowbreak{}scribble.json} and
+\texttt{ref-\allowbreak{}out-\allowbreak{}fish.json}. If the fish joins the
+supported set, another item outside it is recorded instead.
+\item \emph{Within the tolerance.} For a point $p$ and a stroke $s$, $d(p,
+s)$ is the shortest distance from $p$ to the line joining the points of $s$
+in order (for a stroke of one point, the distance to that point). A refined
+stroke $r$ is within \texttt{REFINE\_TOLERANCE} of its original $o$ when
+$d(p, o) \le$ \texttt{REFINE\_TOLERANCE} for every point $p$ of $r$, and
+$d(q, r) \le$ \texttt{REFINE\_TOLERANCE} for every point $q$ of $o$. ``Every
+point'' includes points taken every 1~CSS pixel along each segment, so a
+segment that bulges between two good end points also fails. Checking both
+ways is what FR-CRT-012 asks for: it catches a stroke that was shortened or
+partly dropped.
+\item \emph{The refinement stub.} Except in T-CRT-014 and T-CRT-018, which
+use the real refinement service of the test environment, the test set-up
+intercepts Squigglr's calls to the refinement service and answers with a
+stub, so the expected drawing is known before the test runs. The
+\emph{shift stub} returns each stroke it is sent with every point moved
+\texttt{REFINE\_SHIFT} to the right. This is a valid refinement of known
+shape. The stub counts the calls it receives, and can hold its answer for
+\texttt{REFINE\_DELAY} or until the test releases it. For a drawing $D$,
+$R(D)$ is the drawing the shift stub returns. Other answers are given in the
+cases that use them.
+\item \emph{Refined state.} What Squigglr shows about refinement
+(FR-CRT-016) is read from the indicator's accessible name, so the script
+reads what a screen reader would. How a child who cannot read sees it is a
+usability matter, as the SRS says.
+\end{itemize}
+
+As in Section~\ref{sec:crt-edit-tests}, two drawings are \emph{equal} when
+they have the same strokes, in the same order, with the same colours and
+widths, and every coordinate within \texttt{COORD\_TOL}.
+
+\begin{enumerate}
+\item{T-CRT-013: When refinement starts\\}
+
+Purpose: refinement must happen when the child finishes a drawing and at no
+other time, so strokes never move while the child is still drawing.
+
+Type: Dynamic, automatic. Covers FR-CRT-010.
+
+Initial State: the common set-up, with the shift stub and its call count at
+zero.
+
+Input:
+\begin{itemize}
+\item[(a)] Draw each drawing of the supported set in turn and finish it.
+\item[(b)] Draw \texttt{house.json} without finishing it. Then select, move,
+resize, recolour and erase a part, undo twice and redo once.
+\item[(c)] Finish the drawing of (b), restore its original, then undo the
+restore.
+\item[(d)] Draw \texttt{sun.json}, leave the creative space without
+finishing, and reopen the drawing.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] Exactly one call per finish, five in all, and each drawing $D$
+becomes $R(D)$.
+\item[(b)] No call, and the drawing is exactly as edited.
+\item[(c)] Exactly one call, for the finish; the restore and the undo make
+none.
+\item[(d)] No call, and the drawing reopens exactly as left.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-CRT-010 names finishing (one
+refinement) and drawing, editing, undoing, restoring and leaving (none).
+Each case tries an action that a mistaken implementation could tie to
+refinement, such as the end of a stroke, a save or a restore. This is cause
+(c) of H-MUH-002.
+
+How test will be performed: a Playwright script runs each case and reads the
+stub's call count after each action.
+
+\item{T-CRT-014: Refinement of the supported set by the real service\\}
+
+Purpose: the refinement Squigglr really uses must keep the child's strokes,
+colours and widths, and move no point further than \texttt{REFINE\_TOLERANCE}.
+
+Type: Dynamic, automatic. Covers FR-CRT-011 and FR-CRT-012.
+
+Initial State: the common set-up, with the real refinement service of the
+test environment.
+
+Input: each drawing of the supported set is drawn and finished
+\texttt{REFINE\_RUNS} times. Its strokes are given colours and widths in turn
+from those offered, so that a changed colour or width shows.
+
+Output: for every run, the drawing after refinement has the same number of
+strokes as the drawing as finished, in the same order, each with the same
+colour and width; and each stroke is within \texttt{REFINE\_TOLERANCE} of
+its original, both ways. The script also records the runs in which the
+drawing was left unchanged. A supported item left unchanged in all its runs
+is reported as a defect against G.4.
+
+Test Case Derivation: the fit criteria of FR-CRT-011 and FR-CRT-012, on
+prepared drawings of each supported item. Only the real service shows what
+the deployed refinement does, and the team does not train the model, which
+may return excessive changes (H-MUH-002, cause (a)). The model may answer
+differently each time, so each drawing is run more than once. A drawing left
+unchanged meets both requirements, which is why those runs are counted
+separately.
+
+How test will be performed: a Playwright script finishes each drawing, reads
+the saved drawing as in Section~\ref{sec:crt-edit-tests}, and computes the
+distances as defined above. It runs before each milestone and on every PR
+that changes the refinement module or the model, not on every PR, because it
+calls the outside service.
+
+\item{T-CRT-015: Checking refinement results before they are applied\\}
+
+Purpose: a second, independent check of FR-CRT-011, FR-CRT-012 and
+FR-CRT-020, over far more results than the real service or the stubs return.
+
+Type: Dynamic, automatic (Vitest with fast-check). Covers FR-CRT-011,
+FR-CRT-012 and FR-CRT-020.
+
+Initial State: the module that applies refinement results, called directly,
+with no canvas or network; a reference check of the three rules above (same
+strokes, colours and widths, and within \texttt{REFINE\_TOLERANCE} both
+ways), written from this section by a team member who does not write the
+module.
+
+Input: \texttt{CHECK\_RUNS} random pairs of a drawing and a result, from the
+seed \texttt{MODEL\_SEED}.
+\begin{itemize}
+\item Drawings: 1 to 20 strokes of 1 to 200 points, in random colours and
+widths, including strokes of one point.
+\item Results, each made from its drawing: every point moved a random
+distance up to \texttt{REFINE\_TOLERANCE} (valid); every point moved exactly
+\texttt{REFINE\_TOLERANCE} (valid, at the limit); one point moved
+\texttt{REFINE\_TOLERANCE} + 0.5~CSS pixels; a stroke added, removed or two
+strokes swapped; one colour or width changed; the last third of a stroke
+removed; and malformed results (a missing field, a coordinate that is not a
+number or is infinite, a wrong type, an empty answer).
+\end{itemize}
+
+Output: the module applies a result if and only if the reference check
+accepts it. When it applies a result, the drawing equals the result; when it
+does not, the drawing equals the input drawing exactly. No run ends in an
+uncaught error.
+
+Test Case Derivation: T-CRT-014 can only see what the real model happens to
+return. This test gives the module the results a model could return on a bad
+day (H-MUH-002, cause (a)), including results just past the limit and at it.
+0.5~CSS pixels is 50 times \texttt{COORD\_TOL}, so a rejected result cannot
+be blamed on rounding. Removing the last third of a stroke breaks only the
+check from the original to the refined stroke. Random testing is used as in
+T-LRN-021: the seed is fixed, the oracle is the reference check, and each
+failure that fast-check shrinks is added as a case to T-CRT-023.
+
+How test will be performed: \texttt{fc.assert} with the options
+\texttt{seed} = \texttt{MODEL\_SEED} and \texttt{numRuns} =
+\texttt{CHECK\_RUNS}, in CI on every PR that changes the refinement module.
+
+\item{T-CRT-016: Editing a refined drawing\\}
+
+Purpose: a refined drawing must stay the child's to edit, with every stroke
+as editable as one the child drew.
+
+Type: Dynamic, automatic. Covers FR-CRT-013, and the refinement step of
+FR-CRT-007.
+
+Initial State: \texttt{house.json} is drawn and finished with the shift
+stub, so the open drawing is $R(\texttt{house.json})$.
+
+Input: on refined strokes,
+\begin{itemize}
+\item[(a)] the selections of T-CRT-002 (a) and (b);
+\item[(b)] the move of T-CRT-003 (a);
+\item[(c)] the resizes of T-CRT-004 (a) and (b);
+\item[(d)] the recolour of T-CRT-005;
+\item[(e)] the erase and undo of T-CRT-006;
+\item[(f)] after (a) to (e), undo every change, one at a time.
+\end{itemize}
+
+Output: in (a) to (e), each action gives the output of the matching case of
+T-CRT-002 to T-CRT-006, applied to the refined strokes.
+\begin{itemize}
+\item[(f)] Undoing the edits gives $R(\texttt{house.json})$; one more undo
+gives the drawing as finished, unrefined; the undos after that remove the
+strokes one by one, back to the empty canvas the drawing was opened with.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-CRT-013 asks that FR-CRT-002 to
+FR-CRT-007 meet their own fit criteria on refined strokes (G.4 measurement
+(b)). A refined drawing returned as one picture, or with strokes merged,
+would fail (a). Case (f) is the refinement step of FR-CRT-007: an applied
+refinement is one change, so one undo reverses it completely.
+
+How test will be performed: the Playwright scripts of T-CRT-002 to T-CRT-007,
+started from $R(\texttt{house.json})$ instead of their own drawings.
+
+\item{T-CRT-017: No second refinement of the same strokes\\}
+
+Purpose: finishing the same drawing again must not refine it again, or the
+drawing would drift further from what the child drew each time.
+
+Type: Dynamic, automatic. Covers FR-CRT-014.
+
+Initial State: \texttt{house.json} is drawn and finished with the shift
+stub, so the open drawing is $R_1 = R(\texttt{house.json})$.
+
+Input:
+\begin{itemize}
+\item[(a)] Finish again without any change.
+\item[(b)] Finish five more times without any change.
+\item[(c)] Move refined stroke 2, draw one new stroke, and finish.
+\end{itemize}
+
+Output: in (a) and (b), the drawing equals $R_1$ exactly after every finish.
+\begin{itemize}
+\item[(c)] Only stroke 2 and the new stroke differ from the drawing just
+before the finish, each moved \texttt{REFINE\_SHIFT} to the right. Every
+other stroke equals its stroke in $R_1$.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-CRT-014, and cause (c) of
+H-MUH-002. The shift stub moves every stroke it receives, so any second
+refinement would show after one finish, and (b) shows the moves do not add
+up. The test passes whether Squigglr sends only the strokes it may refine or
+sends them all and applies the result only to those strokes.
+
+How test will be performed: a Playwright script compares the drawing after
+each finish with the expected one.
+
+\item{T-CRT-018: Drawings outside the supported set\\}
+
+Purpose: Squigglr must leave a drawing alone when it has nothing to refine,
+so it never turns a drawing into something the child did not draw.
+
+Type: Dynamic, automatic. Covers FR-CRT-015.
+
+Initial State: the common set-up, with the real refinement service of the
+test environment.
+
+Input:
+\begin{itemize}
+\item[(a)] Finish an empty canvas.
+\item[(b)] Draw \texttt{ref-\allowbreak{}out-\allowbreak{}scribble.json} and
+finish it.
+\item[(c)] Draw \texttt{ref-\allowbreak{}out-\allowbreak{}fish.json} and
+finish it.
+\end{itemize}
+
+Output: for each case, the drawing equals the drawing as finished exactly;
+one of its strokes can be selected and moved as in T-CRT-003 (a); and, from
+PH-2, the refined state shows not refined. In (a) the canvas stays empty and
+Squigglr shows no error.
+
+Test Case Derivation: the fit criterion of FR-CRT-015, and cause (d) of
+H-MUH-002. The real service is used because whether a drawing is recognized
+may be decided there or in Squigglr; the test passes whichever decides, as
+long as the drawing is unchanged. The scribble is the drawing least like any
+item; the fish is a plausible picture outside the set, which is more likely
+to be refined by mistake.
+
+How test will be performed: a Playwright script, run with T-CRT-014.
+
+\item{T-CRT-019: Showing whether a drawing is refined\\}
+
+Purpose: the child and the adult must be able to tell a refined drawing
+from the child's original.
+
+Type: Dynamic, automatic. Covers FR-CRT-016.
+
+Initial State: \texttt{house.json} is drawn; the shift stub is used, except
+in (g).
+
+Input: the drawing is brought into each state:
+\begin{itemize}
+\item[(a)] never refined (refinement turned off, then finished);
+\item[(b)] refined;
+\item[(c)] refined, then a refined stroke moved;
+\item[(d)] refined, then restored;
+\item[(e)] refined, then the refinement undone;
+\item[(f)] refined, new strokes drawn, refined again, and restored once;
+\item[(g)] finished while the stub answers with an error, so refinement
+fails.
+\end{itemize}
+
+Output: the refined state shows refined in (b), (c) and (f), and not refined
+in (a), (d), (e) and (g).
+
+Test Case Derivation: the fit criterion of FR-CRT-016 lists states (a) to
+(e) and (g). FR-CRT-016 asks whether the drawing ``holds a refinement that
+has not been undone or restored'': editing does not remove the refinement
+(c), and in (f) one refinement is still left after one restore. A drawing
+shown as not refined while it is refined would let an adult take assisted
+work as the child's own (H-MUH-003).
+
+How test will be performed: a Playwright script reads the indicator's
+accessible name in each state.
+
+\item{T-CRT-020: Restoring the original\\}
+
+Purpose: a restore must give back exactly what the child drew, so no
+version of the child's work is lost.
+
+Type: Dynamic, automatic. Covers FR-CRT-017, FR-CRT-018, and the restore
+step of FR-CRT-007 and FR-CRT-008.
+
+Initial State: $O_1$ is \texttt{house.json}, drawn and finished with the
+shift stub, giving $R_1 = R(O_1)$.
+
+Input:
+\begin{itemize}
+\item[(a)] From the child's view, restore the original.
+\item[(b)] From $R_1$, move stroke 1 (giving $E$), restore, then undo.
+\item[(c)] From $R_1$, draw two new strokes (giving $O_2$), finish (giving
+$R_2$), then restore twice.
+\item[(d)] Look for the restore control after (c), on a drawing never
+refined, and after a refinement and an undo.
+\item[(e)] After (a), undo, then redo.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] The restore takes one action, and the drawing equals $O_1$.
+\item[(b)] After the restore the drawing equals $O_1$; after the undo it
+equals $E$.
+\item[(c)] After the first restore the drawing equals $O_2$, which still
+holds the refined strokes of $R_1$; after the second it equals $O_1$.
+\item[(d)] No restore control is offered in any of the three.
+\item[(e)] The undo gives $R_1$; the redo gives $O_1$.
+\end{itemize}
+
+Test Case Derivation: cases (a) to (d) are parts (a) to (d) of the fit
+criterion of FR-CRT-017 (G.4 measurement (c)), and (a) is also the one-action
+restore of FR-CRT-018. Case (c) checks that each restore steps back only one
+refinement, the case most likely to lose work (H-MUH-001). In (b) and (e),
+a restore is one change that can be undone and redone (FR-CRT-007,
+FR-CRT-008).
+
+How test will be performed: a Playwright script finds the restore control in
+the child's view by its accessible name, counts the actions, and compares
+the drawing with the expected one after each step.
+
+\item{T-CRT-021: The adult restores a saved drawing\\}
+
+Purpose: an adult must be able to restore the original for a child who
+cannot, and only for the learners in their own account.
+
+Type: Dynamic, automatic. Covers FR-CRT-019.
+
+Initial State: learner A has a saved refined drawing,
+$R(\texttt{house.json})$; learner B has a saved refined drawing,
+$R(\texttt{sun.json})$; learner B is active. A second test adult account
+exists.
+
+Input:
+\begin{itemize}
+\item[(a)] The adult passes the adult check of SAF-RAY-001, opens A's
+drawings, and restores the original of A's drawing. Then A is made active
+and the drawing is reopened.
+\item[(b)] The adult starts to restore A's drawing but fails the adult
+check, then tries again and cancels it.
+\item[(c)] Signed in to the second account, the tester sends the restore
+request for A's drawing directly.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] A's reopened drawing equals \texttt{house.json}, and B's drawing
+still equals $R(\texttt{sun.json})$.
+\item[(b)] No restore happens, and A's drawing still equals
+$R(\texttt{house.json})$.
+\item[(c)] The request is refused, and A's drawing is unchanged.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-CRT-019 for (a). Cases (b) and
+(c) try to break the two limits in its statement: the adult check of
+SAF-RAY-001, which keeps a child from reaching this action, and the account
+limit of BR-001. A restore applied to the active learner instead of the
+chosen one would show in B's drawing in (a).
+
+How test will be performed: a Playwright script for (a) and (b); for (c),
+the script sends the request with the second account's session.
+
+\item{T-CRT-022: Random edit, refine and restore sequences\\}
+
+Purpose: a second, independent check of restoring, undoing and not
+refining twice, over far more orders of actions than the cases above.
+
+Type: Dynamic, automatic (Vitest with fast-check). Covers FR-CRT-017, with
+FR-CRT-007, FR-CRT-008 and FR-CRT-014.
+
+Initial State: the creative drawing module's state functions, called
+directly, with the shift stub as a plain function; a reference model of the
+drawing history, written from SRS Section~9.3 by a team member who does not
+write the module. In the model, a change is a list entry, and a refinement
+entry keeps its original.
+
+Input: \texttt{CRT\_MODEL\_RUNS} random sequences of up to
+\texttt{CRT\_SEQ\_LEN\_MAX} events, from the seed \texttt{MODEL\_SEED}. The
+events are: draw a stroke, move, resize, recolour, erase, finish, undo,
+redo, restore, and save and reopen.
+
+Output: after every event, the module and the model agree on the drawing,
+on whether undo, redo and restore are offered, and on the refined state.
+No run has a mismatch.
+
+Test Case Derivation: the four cases in the fit criterion of FR-CRT-017 cover
+a few orders; random sequences reach others, such as a restore after a
+reopen that follows the undo of a second refinement. Saving and reopening
+clears undo but keeps the original restorable (FR-CRT-007, FR-CRT-024).
+Random testing is used as in T-LRN-021, and each shrunk failure is added as
+a case to T-CRT-020.
+
+How test will be performed: \texttt{fc.assert} with the options
+\texttt{seed} = \texttt{MODEL\_SEED} and \texttt{numRuns} =
+\texttt{CRT\_MODEL\_RUNS}, in CI on every PR that changes the creative
+drawing module.
+
+\item{T-CRT-023: Failed and invalid refinement results\\}
+
+Purpose: a refinement that fails, or returns a result that breaks the rules,
+must leave the drawing exactly as the child finished it.
+
+Type: Dynamic, automatic. Covers FR-CRT-020.
+
+Initial State: each drawing $D$ of the supported set in turn, drawn and
+about to be finished.
+
+Input: $D$ is finished while the stub
+\begin{itemize}
+\item[(a)] cannot be reached, because the connection is cut;
+\item[(b)] answers with a server error;
+\item[(c)] gives no answer within \texttt{REFINE\_LATENCY\_MAX};
+\item[(d)] answers $R(D)$ with one stroke added;
+\item[(e)] answers $R(D)$ with one point moved \texttt{REFINE\_TOLERANCE} +
+0.5~CSS pixels from its original stroke;
+\item[(f)] answers with text that is not valid JSON;
+\item[(g)] answers $R(D)$ with one stroke removed;
+\item[(h)] sends $R(D)$ but cuts the answer off halfway.
+\end{itemize}
+Then the stub is set back to the shift stub and $D$ is finished again.
+
+Output: for every drawing and case, the drawing after the failure equals
+$D$ exactly; one stroke can be selected and moved as in T-CRT-003 (a), and
+the move undone; from PH-2 the refined state shows not refined. Finishing
+again makes exactly one call and gives $R(D)$.
+
+Test Case Derivation: cases (a) to (f) are the six simulated cases in the fit
+criterion of FR-CRT-020 (G.4 measurement (d)). Cases (g) and (h) are the
+``only part of a result is applied'' failure of H-MUH-002. Finishing again
+checks the rationale of FR-CRT-020: a failure must not stop later
+refinement. T-CRT-015 tests the same rules on random results.
+
+How test will be performed: a Playwright script sets the stub's answer for
+each case; (a) uses \texttt{context.setOffline()} and (c) a controlled
+clock.
+
+\item{T-CRT-024: Late results, and drawing while refinement runs\\}
+
+Purpose: the child must be able to keep drawing while refinement runs, and
+a result that arrives after the child has moved on must not overwrite the
+newer drawing.
+
+Type: Dynamic, automatic. Covers FR-CRT-021 and FR-CRT-022.
+
+Initial State: the shift stub holds its answer until the test releases it.
+$D$ is \texttt{house.json}, drawn and finished.
+
+Input: before the answer is released,
+\begin{itemize}
+\item[(a)] draw one new stroke $n$;
+\item[(b)] draw one new stroke $n$ and move stroke 1 by a known distance;
+\item[(c)] leave the creative space; the answer is released, and the drawing
+is reopened;
+\item[(d)] undo the last stroke of $D$;
+\item[(e)] start a new drawing and draw one stroke on it;
+\item[(f)] make no change.
+\end{itemize}
+Then the answer is released.
+
+Output:
+\begin{itemize}
+\item[(a)] The drawing equals $D$ plus $n$, with nothing moved by
+\texttt{REFINE\_SHIFT}.
+\item[(b)] Stroke $n$ is kept as drawn and stroke 1 is moved by exactly the
+known distance, as T-CRT-001 and T-CRT-003 (a) require; nothing else
+changes.
+\item[(c)] The drawing reopens equal to $D$.
+\item[(d)] The drawing equals $D$ without its last stroke.
+\item[(e)] The new drawing holds only its one stroke, and $D$ reopens equal
+to $D$.
+\item[(f)] The drawing equals $R(D)$.
+\end{itemize}
+
+Test Case Derivation: the fit criteria of FR-CRT-021 ((a) and (c)) and
+FR-CRT-022 ((b)), and cause (b) of H-MUH-002. Undoing (d) is also a change,
+and (e) checks that a result never reaches another drawing. Case (f) shows
+that the stub's held answer is applied when nothing has changed, so in the
+other cases a result that was discarded can be told apart from one that
+never came.
+
+How test will be performed: a Playwright script makes the changes, releases
+the stub, and compares the drawing with the expected one. T-PERF-002
+measures how quickly the canvas responds during the wait.
+
+\item{T-CRT-025: No refinement in guided lessons\\}
+
+Purpose: strokes drawn in a guided lesson must never be refined, so a lesson
+record shows only what the child drew.
+
+Type: Dynamic, automatic. Covers FR-CRT-027.
+
+Initial State: learner A, with refinement on; the shift stub, with its call
+count at zero.
+
+Input:
+\begin{itemize}
+\item[(a)] For each lesson in the catalogue, at stages T, E and I, the
+lesson's passing file is replayed and finished; at the circle lesson,
+\texttt{circle-\allowbreak{}fail.json} is also replayed.
+\item[(b)] A creative drawing is finished while the stub holds its answer;
+the child then goes to the circle lesson and replays \texttt{circle.json} at
+T; the answer is released during the attempt.
+\end{itemize}
+
+Output: in (a), the stub receives no call. In both cases, the strokes shown
+during and after each attempt equal the replayed file, and the attempt
+record holds the same strokes. In (b), the creative drawing is left
+unrefined (FR-CRT-021).
+
+Test Case Derivation: the fit criterion of FR-CRT-027, and cause (e) of
+H-MUH-002. Case (b) tries to make a late creative result land on lesson
+strokes. T-REC-002 checks the same strokes in the record in a second way.
+
+How test will be performed: a Playwright script reads the stroke list the
+canvas draws during and after each attempt, and the record from the test
+database.
+
+\item{T-CRT-026: Turning refinement off and on\\}
+
+Purpose: a child who does not want refined drawings, or the adult for them,
+must be able to keep drawings exactly as drawn.
+
+Type: Dynamic, automatic. Covers FR-CRT-030.
+
+Initial State: refinement is on for learners A and B, with the shift stub.
+
+Input:
+\begin{itemize}
+\item[(a)] As the child in A's creative space, turn refinement off, then
+draw and finish \texttt{ref-\allowbreak{}circle.json}.
+\item[(b)] Turn it on again in the creative space, then draw and finish
+\texttt{ref-\allowbreak{}square.json}.
+\item[(c)] As the adult, pass the adult check and turn refinement off in A's
+settings; back in A's creative space, draw and finish
+\texttt{ref-\allowbreak{}triangle.json}.
+\item[(d)] As the adult, turn it on again, then draw and finish
+\texttt{sun.json} as A.
+\item[(e)] With refinement off for A, make B active and finish
+\texttt{house.json}.
+\item[(f)] Turn refinement off for A, reload the page, and finish
+\texttt{ref-\allowbreak{}circle.json}.
+\end{itemize}
+
+Output: in (a), (c) and (f), the drawing stays exactly as drawn, and the
+stub receives no call. In (b), (d) and (e), the drawing $D$ becomes $R(D)$.
+
+Test Case Derivation: the fit criterion of FR-CRT-030: off and on again, once
+as the child and once as the adult. The setting is per learner profile, so
+(e) checks that it does not reach B. Case (f) checks that the setting is
+kept, so a child who turned it off does not find the next drawing refined
+(H-MUH-006).
+
+How test will be performed: a Playwright script runs the cases in order and
+reads the stub's call count.
+
+\item{T-CRT-027: Reopening a drawing in each refined state\\}
+
+Purpose: leaving the creative space must not lose a refinement's original or
+the drawing's refined state.
+
+Type: Dynamic, automatic. Covers FR-CRT-024 (refined states), with
+FR-CRT-016, FR-CRT-017 and FR-CRT-023.
+
+Initial State: learner A has \texttt{house.json} saved in each state of
+T-CRT-019 (a) to (g), one drawing per state, and an eighth drawing refined
+twice.
+
+Input: the page is reloaded, and each drawing is reopened, once in the same
+browser and once in a second browser signed in to the same account. In each
+drawing, one stroke is selected and moved, then the move is undone; then the
+original is restored as many times as the drawing has refinements left.
+
+Output: each drawing reopens equal to the drawing as saved, with the same
+refined state; the move and its undo work as in T-CRT-003 (a); no undo of a
+change made before the reload is offered; each restore gives the result
+T-CRT-020 expects for that state; and no restore is offered in states (a),
+(d), (e) and (g).
+
+Test Case Derivation: the fit criterion of FR-CRT-024 for every state of
+FR-CRT-016. FR-CRT-023 saves the originals of refinements with the drawing,
+so a restore after reopening must still work (H-MUH-001, H-MUH-005). The
+second browser shows that the originals were saved, not only kept in the
+page.
+
+How test will be performed: a Playwright script prepares the drawings with
+the shift stub, then reopens each in a new browser context.
 
 \end{enumerate}
 
@@ -4358,15 +4997,30 @@ FR-CRT-003 & T-CRT-003\\
 FR-CRT-004 & T-CRT-004\\
 FR-CRT-005 & T-CRT-005\\
 FR-CRT-006 & T-CRT-006\\
-FR-CRT-007 & T-CRT-007, T-CRT-006\\
-FR-CRT-008 & T-CRT-007 (b, c)\\
+FR-CRT-007 & T-CRT-007, T-CRT-006, T-CRT-016 (f), T-CRT-020 (b, e), T-CRT-022\\
+FR-CRT-008 & T-CRT-007 (b, c), T-CRT-020 (e), T-CRT-022\\
 FR-CRT-009 & T-CRT-008\\
-FR-CRT-023 & T-CRT-009, T-CRT-008 (b), T-CRT-010\\
-FR-CRT-024 & T-CRT-009, T-CRT-008\\
+FR-CRT-010 & T-CRT-013, T-CRT-026, T-PERF-002\\
+FR-CRT-011 & T-CRT-014, T-CRT-015, T-CRT-023 (d, g)\\
+FR-CRT-012 & T-CRT-014, T-CRT-015, T-CRT-023 (e)\\
+FR-CRT-013 & T-CRT-016, T-CRT-027\\
+FR-CRT-014 & T-CRT-017, T-CRT-022\\
+FR-CRT-015 & T-CRT-018\\
+FR-CRT-016 & T-CRT-019, T-CRT-027, T-CRT-018, T-CRT-023\\
+FR-CRT-017 & T-CRT-020, T-CRT-022, T-CRT-021, T-CRT-027\\
+FR-CRT-018 & T-CRT-020 (a)\\
+FR-CRT-019 & T-CRT-021\\
+FR-CRT-020 & T-CRT-023, T-CRT-015\\
+FR-CRT-021 & T-CRT-024, T-CRT-025 (b)\\
+FR-CRT-022 & T-CRT-024 (b), T-PERF-002\\
+FR-CRT-023 & T-CRT-009, T-CRT-008 (b), T-CRT-010, T-CRT-027\\
+FR-CRT-024 & T-CRT-009, T-CRT-008, T-CRT-027\\
 FR-CRT-025 & T-CRT-011 (a, b)\\
 FR-CRT-026 & T-CRT-010\\
+FR-CRT-027 & T-CRT-025, T-REC-002\\
 FR-CRT-028 & T-CRT-012\\
 FR-CRT-029 & T-CRT-011\\
+FR-CRT-030 & T-CRT-026\\
 FR-REC-001 & T-REC-001, INS-REC\\
 FR-REC-002 & T-REC-002, T-LRN-005, INS-EVAL\\
 FR-REC-003 & T-REC-003, INS-REC\\
@@ -4663,6 +5317,43 @@ the test iPad's screen, so a stroke that has really moved still fails.\\
 factor and the part's scale factor in a resize (T-CRT-004). Value: 0.001
 (0.1\%). Over a part 1000 CSS pixels across, this is at most one CSS pixel,
 so a visibly distorted shape still fails.\\
+\addlinespace
+\texttt{REFINE\_TOLERANCE} & The SRS constant (TBD in SRS Section~4.2): the
+largest distance, both ways, between a refined stroke and its original.
+\emph{Unit:} CSS pixels on \texttt{TEST\_CANVAS}. \emph{How and when it is
+set:} by the team in PH-1, before the first run of T-CRT-014, from adult-made
+drawings only (SRS BR-009). A script makes copies of each drawing of the
+supported set in which every point is moved by a smooth random displacement
+of at most $d$, for $d$ = 2, 4, 6, 8, 12 and 16 CSS pixels; the copies do not
+come from the refinement model. Two team members who did not make the
+drawings each view every original beside its copies on the test iPad, and
+say whether each copy is still clearly the same drawing, with no shape
+replaced. \texttt{REFINE\_TOLERANCE} is the largest $d$ that both accept for
+every drawing. The value, the copies and both reviewers' answers are
+recorded in the VnV Report, and the SRS constants table is updated in the
+same PR. If OI-03 changes the supported set, the new drawings are judged the
+same way, and the value can only go down. Setting it without the model means
+the tests cannot be tuned to what the model happens to return.\\
+\addlinespace
+\texttt{REFINE\_SHIFT} & Half of \texttt{REFINE\_TOLERANCE}: how far the shift
+stub moves every point. It is a valid refinement, far enough inside the limit
+that rounding cannot make it invalid, and far larger than \texttt{COORD\_TOL},
+so a stroke that was or was not shifted is easy to tell apart.\\
+\addlinespace
+\texttt{REFINE\_DELAY} & How long the stub holds its answer when the test does
+not release it: half of \texttt{REFINE\_LATENCY\_MAX} once that is set, and 2
+seconds until then, so a held answer never counts as a timeout.\\
+\addlinespace
+\texttt{REFINE\_RUNS} & 10 runs of each supported drawing in T-CRT-014, since
+the model may answer differently each time; 50 calls to the real service per
+run of the test.\\
+\addlinespace
+\texttt{CHECK\_RUNS} & 2,000 random drawing and result pairs per run of
+T-CRT-015.\\
+\addlinespace
+\texttt{CRT\_MODEL\_RUNS}, \texttt{CRT\_SEQ\_LEN\_MAX} & 500 random sequences
+of up to 40 events per run of T-CRT-022: enough for two refinements, edits,
+restores and a reopen in one sequence. The seed is \texttt{MODEL\_SEED}.\\
 \bottomrule
 \end{longtable}}
 
@@ -4711,6 +5402,16 @@ point and a straight line.
 \item \texttt{history-basic.json}: a learner's attempt and lesson records:
 two lesson records and eight attempt records, at known stages and with known
 results.
+\item \texttt{ref-\allowbreak{}circle.json},
+\texttt{ref-\allowbreak{}square.json} and
+\texttt{ref-\allowbreak{}triangle.json}: freehand drawings of a circle, a
+square and a triangle, drawn in the creative space without an outline. With
+\texttt{house.json} and \texttt{sun.json}, these stand in for the supported
+set in the refinement tests until OI-03 is closed
+(Section~\ref{sec:crt-refine-tests}).
+\item \texttt{ref-\allowbreak{}out-\allowbreak{}scribble.json} and
+\texttt{ref-\allowbreak{}out-\allowbreak{}fish.json}: a scribble and a fish,
+drawings of items outside the supported set.
 \end{itemize}
 
 \subsection{Usability Survey Questions?}

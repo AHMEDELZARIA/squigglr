@@ -189,6 +189,9 @@ changed FIPPA to MFIPPA (\#224).\\
 keeping work through a lost connection is in scope (ASM-005); said which parts
 of FACT-007 the team accepted; explained the \texttt{ATTEMPT\_LIMIT} check and
 what \texttt{ATTEMPT\_LIMIT\_MAX} counts (\#184, \#185, \#190).\\
+30 October 2026 & Ahmed Elzaria & Addressed peer review: gave
+\texttt{REFINE\_TOLERANCE} a unit and said how and when it is set, as planned in
+the VnV Plan (\#193).\\
 \end{longtable}
 
 ~\\
@@ -260,7 +263,8 @@ approved threshold; unresolved values appear in the constants register, and are
 also linked to an open issue in Section~\ref{sec:open-issues} where such an
 issue exists. Performance and maintainability values marked TBD are not unknowns: the
 VnV Plan states how each will be set by repeated measurement once the system
-can be tested. Diagrams, if used, must include a legend identifying their symbols
+can be tested. The same holds for \texttt{REFINE\_TOLERANCE}, which the VnV
+Plan sets from adult-made drawings. Diagrams, if used, must include a legend identifying their symbols
 and arrow meanings. Section~\ref{sec:fr-formal} defines the state-machine
 notation used to specify guided lesson behaviour.
 
@@ -1295,8 +1299,11 @@ team-defined; TBD. \emph{Default:} middle of the range; must be less than
 \texttt{IDLE\_TIMEOUT}. \emph{Trace:} BR-008, SAF-RAY-009.\\
 \addlinespace
 \texttt{REFINE\_TOLERANCE} & Maximum permitted distance between refined strokes
-and the child's original strokes in the creative space. \emph{Unit:} distance
-scale (TBD). \emph{Value:} team-defined; TBD. \emph{Trace:} G.4, BR-005.\\
+and the child's original strokes in the creative space. \emph{Unit:} CSS
+pixels on the drawing area used for testing. \emph{Value:} TBD; set by the team
+in PH-1, before the first refinement test, by judging adult-made drawings of the
+supported set (BR-009), as planned in the VnV Plan (Symbolic Parameters
+appendix). \emph{Trace:} G.4, BR-005.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers for progress
 summary understandability checks. \emph{Unit:} people (count). \emph{Value:}

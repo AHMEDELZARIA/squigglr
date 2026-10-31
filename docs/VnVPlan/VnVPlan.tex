@@ -552,8 +552,9 @@ Section~\ref{sec:trace};
 \item the unit tests for each module, chosen as described in
 Section~\ref{sec:unit-tests} once the MIS is done (the design documentation
 is due on 18 January 2027);
-\item the automated checks in Section~\ref{sec:tools}, which run these
-tests on every PR.
+\item the automated checks in Section~\ref{sec:tools}, which run the
+automatic parts of these tests on every PR, unless a test names a narrower
+trigger.
 \end{itemize}
 Reading it uses the techniques in Table~\ref{tab:static-verif}. Dynamic
 tests only show behaviour on the inputs they choose. Reading finds paths
@@ -584,13 +585,16 @@ PR code review & One teammate other than the author, normally the one who
 checks the author's work in Table~\ref{tab:vnvTeam}. Database schema and
 access-policy changes are reviewed by the Backend Lead (Rayan Nasrallah)
 together with a teammate (Development Plan). & Every PR, before merge. &
-The changed code. & Items marked PR in Table~\ref{tab:code-checklist}.\\
+The changed code and the PR's unit tests. & Items marked PR in
+Table~\ref{tab:code-checklist}. The reviewer reads the unit tests against
+the rules in Section~\ref{sec:unit-tests}.\\
 \addlinespace
 Code walkthrough & The author presents, and the rest of the team follows and
 asks questions. The Testing Lead (Muhammad Huzaifah) chooses the code and
 the scenario. The notetaker (Moustafa Moustafa) records findings in the
-meeting issue. & 45 minutes of the Sunday 10:00 team review on 15 November
-2026, 6 December 2026, 24 January 2027, 21 February 2027 and 7 March 2027.
+meeting issue. & 45 minutes of the Sunday 10:00 team review on
+22 November 2026, 6 December 2026, 24 January 2027, 21 February 2027 and
+7 March 2027.
 & At most two modules, the ones changed most since the last walkthrough,
 followed along one scenario. & Items marked W.\\
 \addlinespace
@@ -630,16 +634,19 @@ check the item: PR review (PR), walkthrough (W) and inspection (I).
 \midrule
 \endhead
 1 & Identifier names are consistent & PR, W, I & Names match the SRS and
-MIS. The stage names are demonstration, tracing, endpoints and independent.
-Constants are named exactly as in SRS Section~4.2 (for example
-\texttt{STAGE\_PASS}). Record fields are named as in SRS Section~7.2.\\
+MIS. The stage names are demonstration, full outline tracing, endpoint-only
+guidance and independent drawing, as in SRS FR-LRN-002. Constants are named
+exactly as in SRS Section~4.2 (for example \texttt{STAGE\_PASS}). Record
+fields are named as in SRS Section~7.2.\\
 \addlinespace
 2 & Identifier names are meaningful & PR, W, I & A short name such as
 \texttt{nf} is allowed only with a comment citing the SRS Section~9.2
 symbol.\\
 \addlinespace
 3 & Source code in the src folder & PR & Application code is under
-\texttt{src/}; tests and fixtures are kept out of it.\\
+\texttt{src/}. Each unit test sits next to its module as
+\texttt{<module>.test.ts}. End-to-end tests and fixtures are kept in
+\texttt{tests/} (fixtures in \texttt{tests/fixtures/}).\\
 \addlinespace
 4 & Comments on ``what'' not ``how'' & PR, I & Each exported function of
 the lesson rules, evaluation and record code states what it guarantees and
@@ -666,13 +673,13 @@ lesson, stage, attempt, in that order, everywhere.\\
 \addlinespace
 10 & Descriptive file names & PR & Each file is named after what it does.\\
 \addlinespace
-11 & Mapping to the module guide is clear & W, I, from Rev~0 & Each
-inspected file belongs to one MG module, and the mapping is kept in the
-repository.\\
+11 & Mapping to the module guide is clear & W, I, from the design
+documentation (18 January 2027) & Each inspected file belongs to one MG
+module, and the mapping is kept in the repository.\\
 \addlinespace
-12 & Mapping between MIS symbols and code symbols & I, from Rev~0 & Each MIS
-access program of the inspected module has a function of the same name,
-with the same inputs and outputs.\\
+12 & Mapping between MIS symbols and code symbols & W, I, from the design
+documentation (18 January 2027) & Each MIS access program of the inspected
+module has a function of the same name, with the same inputs and outputs.\\
 \addlinespace
 13 & Understandable to someone new to the project & W & Someone who did not
 write the code can explain the scenario's path after the walkthrough.\\
@@ -691,13 +698,19 @@ more items, so the inspections add these:
 \begin{itemize}
 \item[A1] (INS-LRN) Each row of the SRS Section~9.2 transition table maps
 to one identifiable code path. After a finished attempt, the rules are
-checked in the SRS order: pass, end at limit, extension, suggestion.
+checked in the SRS order: pass, end at limit, extension, suggestion. In
+three places SRS Section~9.2 disagrees with other parts of the SRS: a
+go-back suggestion pending during practice, the counts when a stage is
+entered again, and when an extended lesson ends. The inspector records
+which reading the code follows and raises it as an SRS feedback issue, not
+as a major finding. The guided lesson tests avoid these cases.
 \item[A2] (INS-LRN) Apart from pass-based advancement and the step from the
 demonstration to practice, only an adult action that passed the adult check
 changes the lesson or the stage (I1, I2 and SRS CON-007).
-\item[A3] (INS-LRN, INS-EVAL) An interrupted, unfinished or invalid attempt
-cannot reach the pass branch or change a count (I3, FR-LRN-009 and
-FR-LRN-010).
+\item[A3] (INS-LRN, INS-EVAL) An interrupted (not finalized) or invalid
+attempt cannot reach the pass branch or change a count (SRS FR-LRN-009 and
+FR-LRN-010). An incomplete attempt cannot pass, whatever its result, but
+counts as a failed attempt (I3, FR-LRN-011 and FR-LRN-013).
 \item[A4] (INS-LRN) On every path, the evaluable attempts at a stage never
 exceed \texttt{ATTEMPT\_LIMIT\_MAX}, the extension attempts used never
 exceed \texttt{ATTEMPT\_EXTENSION}, and the extension is granted at most
@@ -720,20 +733,20 @@ this plan or a unit test, or the gap is listed from the coverage report
 
 \paragraph{What each inspection covers.}
 \begin{itemize}
-\item INS-LRN: the lesson rules (FR-LRN-015, FR-LRN-016, FR-LRN-018 to
-FR-LRN-021 and FR-LRN-023; SRS Section~9.2).
+\item INS-LRN: the lesson rules (FR-LRN-009, FR-LRN-010, FR-LRN-015,
+FR-LRN-016, FR-LRN-018 to FR-LRN-021 and FR-LRN-023; SRS Section~9.2).
 \item INS-EVAL: stroke capture, finishing an attempt, classification, the
 pass decision and the choice of feedback (FR-LRN-007 to FR-LRN-014,
 FR-LRN-022 and FR-REC-002).
 \item INS-REC: creating and saving attempt and lesson records (FR-REC-001
-to FR-REC-010).
+and FR-REC-003 to FR-REC-010).
 \end{itemize}
 PH-1 inspects INS-EVAL and INS-LRN for the PH-1 code. INS-REC starts in
-PH-2, when the other eight FR-REC requirements are built; in PH-1,
-FR-REC-001 and FR-REC-003 rely on PR review and on T-REC-001 and T-REC-003.
-PH-2 inspects all three in full, with items 11 and 12 now that the MG and
-MIS exist. PH-3 inspects only the code changed since the commit of the PH-2
-inspection.
+PH-2, when FR-REC-004 to FR-REC-010 are built; in PH-1, FR-REC-001 and
+FR-REC-003 rely on PR review and on T-REC-001 and T-REC-003.
+PH-2 inspects all three in full, with items 11 and 12, because the MG and
+MIS are done on 18 January 2027. PH-3 inspects only the code changed since
+the commit of the PH-2 inspection.
 
 \paragraph{Inspection procedure.}
 \begin{enumerate}
@@ -750,9 +763,10 @@ line and item.
 \item \emph{Meeting} (at most one hour; moderator, inspectors and author):
 go through the findings and mark each one major or minor. A finding is
 major if it could change a pass decision, a count, a stage, a saved record
-or what the child or adult sees, or if it breaks one of A1 to A8. Every
-other finding is minor. The author answers questions but does not argue
-findings.
+or what the child or adult sees, or if it breaks one of A1 to A8. A
+disagreement inside the SRS named in A1 is not major; it becomes an SRS
+feedback issue. Every other finding is minor. The author answers questions
+but does not argue findings.
 \item \emph{Rework} (author): each major finding becomes its own issue
 labelled \texttt{bug}, linked from the inspection issue and fixed by a PR.
 Each minor finding is fixed, or closed with a reason.

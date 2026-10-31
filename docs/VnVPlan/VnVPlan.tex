@@ -1963,9 +1963,450 @@ and each seed and its result are recorded in the VnV Report.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Creative Drawing: Editing, Saving and Separation from Lessons}
+\label{sec:crt-edit-tests}
 
-...
+These tests cover the creative drawing requirements in SRS Section~9.3 that do
+not involve refinement: drawing and editing a creative drawing (FR-CRT-001 to
+FR-CRT-009), saving and reopening it under the right learner (FR-CRT-023 to
+FR-CRT-026), keeping it apart from guided lesson records (FR-CRT-028) and
+showing whether it is saved (FR-CRT-029). They follow use case UC-006 and the
+hazards H-MUH-001, H-MUH-003, H-MUH-004 and H-MUH-005 in the Hazard Analysis.
+Refinement and restoring the original are tested separately.
+
+The tests use the words of SRS Section~9.3: a \emph{part} is one or more
+strokes the child selects, and a \emph{change} is one stroke drawn or one
+editing action. Unless a test says otherwise, every test starts from the same
+set-up. A test adult account holds two learner profiles, A and B. Learner A is
+active, the drawing area is \texttt{TEST\_CANVAS}, and refinement is turned off for A, so finishing a drawing never
+changes its strokes. The prepared files the tests use are listed under
+\emph{Prepared test data for the functional tests} in the Symbolic Parameters appendix. A test passes only if the drawing has exactly
+the expected strokes, in the expected order, with the expected points, colours
+and widths. Coordinates count as equal when they differ by at most
+\texttt{COORD\_TOL}. To get the saved drawing, a script reads it through the
+same request Squigglr uses to reopen it, and compares it with the expected
+drawing, which the script computes from the fixture.
+
+\begin{enumerate}
+
+\item{T-CRT-001: Every stroke drawn is added, in order\\}
+
+Purpose: the drawing must hold exactly the strokes the child drew, so no
+stroke may be lost, merged with another or split in two.
+
+Type: Dynamic, automatic and manual. Covers FR-CRT-001.
+
+Initial State: the creative space is open for learner A with a new, empty
+drawing.
+
+Input: the five strokes of \texttt{crt-draw-5.json} are drawn: a straight
+line, a curve, a single tap, a closed loop, and a line that crosses the first
+one. The fourth and fifth strokes are drawn with the stylus lifted only
+briefly between them.
+
+Output: the drawing holds exactly five strokes, in the order drawn. Each one
+holds the points reported for it, in order. The tap is a stroke with one
+point, and the crossing line is a separate stroke from the line it crosses.
+Each of the five strokes can be selected on its own.
+
+Test Case Derivation: the fit criterion of FR-CRT-001, which asks for one new
+stroke per stroke drawn, in order, following the reported points. The tap,
+the crossing line and the short lift are the inputs most likely to make a
+drawing lose a stroke, merge two strokes, or split one.
+
+How test will be performed: a Playwright script replays the pointer events of
+the fixture as pen input and compares the saved drawing with the fixture. A
+tester then draws the same five strokes by hand with the stylus on the test
+iPad and checks the stroke count and order.
+
+\item{T-CRT-002: Selecting a part\\}
+
+Purpose: every editing action acts on the selected part, so selection must
+pick exactly the strokes the child chose.
+
+Type: Dynamic, automatic and manual. Covers FR-CRT-002.
+
+Initial State: \texttt{crt-three.json} is open for learner A. For case (c),
+\texttt{crt-cross.json} is open instead.
+
+Input: each case starts with nothing selected. After making the selection,
+the tester recolours it to a colour no stroke has yet.
+\begin{itemize}
+\item[(a)] Tap stroke 2.
+\item[(b)] Select strokes 1 and 3 together.
+\item[(c)] Tap exactly where the two strokes cross.
+\item[(d)] Tap an empty area of the canvas.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] Only stroke 2 is marked, and only stroke 2 changes colour.
+\item[(b)] Strokes 1 and 3 are marked, and only they change colour.
+\item[(c)] Exactly one stroke is marked, and only that stroke changes colour.
+\item[(d)] Nothing is marked, and recolouring changes no stroke.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-CRT-002 checks one stroke and a
+group of strokes. Cases (c) and (d) try to break selection with an ambiguous
+tap and an empty one. The SRS does not say which stroke a tap on a crossing
+selects, so case (c) only checks that the selection and the change agree.
+
+How test will be performed: a Playwright script makes each selection and
+compares the drawing before and after the recolour. A tester repeats (a)
+and (c) with the stylus on the test iPad.
+
+\item{T-CRT-003: Moving a part\\}
+
+Purpose: moving must shift the part as a whole, without changing its shape or
+touching any other stroke.
+
+Type: Dynamic, automatic. Covers FR-CRT-003.
+
+Initial State: \texttt{crt-three.json} is open for learner A.
+
+Input:
+\begin{itemize}
+\item[(a)] Select stroke 1 and drag it 100 CSS pixels right and 50 down.
+\item[(b)] Select strokes 2 and 3 and drag them 80 CSS pixels left and 40 up.
+\item[(c)] Select stroke 1 and drag it until half of it lies past the right
+edge of the canvas.
+\end{itemize}
+
+Output: in every case, every point of the selected strokes has moved by the
+same offset, in the direction of the drag, and no other stroke has changed.
+In (a) and (b), the offset is the one dragged. In (c), the moved stroke is
+still in the drawing and can still be selected.
+
+Test Case Derivation: the fit criterion of FR-CRT-003. Case (b) checks that
+a group moves together. Case (c) tries to break the move at the canvas edge,
+where a stroke might be clipped or lost. The SRS does not say whether a part
+may leave the canvas, so (c) checks only that its shape is kept and the
+stroke is not lost.
+
+How test will be performed: a Playwright script drags the selection and
+computes each point's offset from the fixture.
+
+\item{T-CRT-004: Resizing a part\\}
+
+Purpose: resizing must keep the part's proportions, so its shape stays as the
+child drew it.
+
+Type: Dynamic, automatic. Covers FR-CRT-004.
+
+Initial State: \texttt{crt-three.json} is open for learner A. For case (c),
+\texttt{crt-dot.json} is open instead.
+
+Input:
+\begin{itemize}
+\item[(a)] Select stroke 1 and enlarge it to about twice its size.
+\item[(b)] Select strokes 2 and 3 and shrink them to about half their size.
+\item[(c)] Select the one-point stroke and try to enlarge it.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] There is one scale factor $s > 1$ for the whole part. For every
+point more than \texttt{COORD\_TOL} from the centre of the part's bounding
+box, its new distance from that centre, divided by its old distance, differs
+from $s$ by a relative error of at most \texttt{SCALE\_TOL}. The centre does
+not move, and no other stroke changes.
+\item[(b)] The same as (a), except that $s < 1$.
+\item[(c)] The point stays where it was, Squigglr shows no error, and the
+other stroke does not change.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-CRT-004 multiplies every
+distance from the bounding-box centre by the same factor. The relative error
+$|d'/d - s|/s$, where $d$ and $d'$ are a point's distance from the centre
+before and after the resize, allows for floating-point rounding without
+hiding a distorted shape. Points very close to the centre are left out
+because the ratio is unstable there. Case (c) tries to break the resize with
+a bounding box of size zero, where a point's distance is zero and stays zero
+for any $s$.
+
+How test will be performed: a Playwright script resizes the selection with
+the resize handle, works out $s$ from the first point, and checks every other
+point against it.
+
+\item{T-CRT-005: Recolouring a part\\}
+
+Purpose: recolouring must change only the colour, and only of the selected
+strokes.
+
+Type: Dynamic, automatic. Covers FR-CRT-005.
+
+Initial State: \texttt{crt-three.json} is open for learner A. Its three
+strokes have three different colours.
+
+Input:
+\begin{itemize}
+\item[(a)] Select stroke 1 and recolour it, once to each colour Squigglr
+offers.
+\item[(b)] Select all three strokes and recolour them to one colour.
+\end{itemize}
+
+Output: every selected stroke has the chosen colour. Its points and width are
+the same as before, and no stroke outside the selection has changed.
+
+Test Case Derivation: the fit criterion of FR-CRT-005. Going through every
+colour in (a) catches a colour that is mapped wrongly. Case (b) checks a
+selection whose strokes start with different colours.
+
+How test will be performed: a Playwright script recolours the selection and
+compares every stroke with the fixture.
+
+\item{T-CRT-006: Erasing a part\\}
+
+Purpose: erasing must remove exactly the selected strokes, and undoing the
+erase must bring them back exactly.
+
+Type: Dynamic, automatic. Covers FR-CRT-006.
+
+Initial State: \texttt{crt-three.json} is open for learner A. For case (c),
+\texttt{crt-cross.json} is open instead.
+
+Input: in each case, erase the selection, check the drawing, then undo once.
+\begin{itemize}
+\item[(a)] Select stroke 2 and erase it.
+\item[(b)] Select all three strokes and erase them.
+\item[(c)] Select one of the two crossing strokes and erase it.
+\end{itemize}
+
+Output: after the erase, the erased strokes are gone and every other stroke
+is unchanged. In (b), the canvas is empty. In (c), the other stroke is whole,
+including the part where the two strokes crossed. After the undo, the
+drawing equals the fixture, with the strokes in their original order.
+
+Test Case Derivation: the fit criterion of FR-CRT-006. Case (b) empties the
+drawing. Case (c) checks that erasing one stroke does not also cut the
+stroke that crosses it.
+
+How test will be performed: a Playwright script erases the selection, then
+undoes it, comparing the drawing with the fixture after each step.
+
+\item{T-CRT-007: Undoing and redoing changes\\}
+
+Purpose: a child who cannot read needs a way back from any mistake, and a way
+to recover from an accidental undo.
+
+Type: Dynamic, automatic. Covers FR-CRT-007 and FR-CRT-008.
+
+Initial State: \texttt{crt-three.json} is saved for learner A and has just
+been opened. Call this drawing $S_0$.
+
+Input: five changes are made in order, giving drawings $S_1$ to $S_5$:
+$C_1$ draws a new stroke, $C_2$ moves stroke 1, $C_3$ resizes stroke 2, $C_4$
+recolours stroke 3, and $C_5$ erases the new stroke. Then:
+\begin{itemize}
+\item[(a)] Undo five times, then try a sixth undo.
+\item[(b)] Redo five times, then try a sixth redo.
+\item[(c)] Undo twice, make a new change $C_6$ (draw a stroke), then try to
+redo.
+\item[(d)] Leave the creative space, reopen the drawing, then try to undo.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] After the $k$-th undo the drawing equals $S_{5-k}$, so the fifth
+undo gives back $S_0$. The sixth undo is not offered, or it changes nothing.
+\item[(b)] After the $k$-th redo the drawing equals $S_k$. The sixth redo is
+not offered, or it changes nothing.
+\item[(c)] The drawing is $S_3$ plus the new stroke, and no redo is offered.
+\item[(d)] The drawing reopens exactly as it was left, and no undo is
+offered.
+\end{itemize}
+
+Test Case Derivation: FR-CRT-007 undoes one change at a time, most recent
+first, back to the drawing as it was opened. FR-CRT-008 redoes until the
+child makes a new change. The sequence uses one change of each kind, so each
+kind is undone and redone once. Case (d) checks FR-CRT-007's rule that
+changes made before the drawing was last opened cannot be undone. The
+refinement and restore steps in FR-CRT-007's fit criterion are tested with
+the refinement tests.
+
+How test will be performed: a Playwright script saves each $S_k$ after its
+change, then compares the drawing with the expected $S_k$ after every undo
+and redo.
+
+\item{T-CRT-008: Starting a new drawing\\}
+
+Purpose: starting a new drawing must give an empty canvas and keep the
+earlier drawing as it was.
+
+Type: Dynamic, automatic. Covers FR-CRT-009, and FR-CRT-023 and FR-CRT-024 as
+a second check.
+
+Initial State: \texttt{crt-three.json} is saved for learner A and open.
+
+Input:
+\begin{itemize}
+\item[(a)] Start a new drawing, then reopen the earlier drawing.
+\item[(b)] Move stroke 1 and, straight away, start a new drawing, without
+waiting for the save. Then reopen the earlier drawing.
+\end{itemize}
+
+Output: the new drawing has no strokes in both cases. In (a), the earlier
+drawing reopens equal to the fixture. In (b), it reopens with stroke 1
+moved. In both cases it is listed once in learner A's creative space.
+
+Test Case Derivation: the fit criterion of FR-CRT-009. Case (b) checks that
+the last change is saved with no action from the child (FR-CRT-023), even
+when the child moves on at once, which is one of the causes of H-MUH-005.
+
+How test will be performed: a Playwright script starts the new drawing,
+checks the canvas, then reopens the earlier drawing and compares it.
+
+\item{T-CRT-009: Saving to the active learner and reopening\\}
+
+Purpose: each drawing must be saved, without any action from the child, to
+the learner who drew it, and reopen exactly as it was left.
+
+Type: Dynamic, automatic and manual. Covers FR-CRT-023 and FR-CRT-024.
+
+Initial State: learners A and B have no creative drawings.
+
+Input:
+\begin{itemize}
+\item[(a)] As learner A, draw \texttt{crt-draw-5.json}, move one stroke and
+recolour another, then leave the creative space with its own control. The
+adult passes the adult check and switches to learner B, who draws
+\texttt{crt-three.json} and leaves. Both drawings are then reopened, each
+under its own learner.
+\item[(b)] As learner A, open the saved drawing and erase one stroke. While
+the drawing is still open, the adult passes the adult check and switches to
+learner B.
+\item[(c)] Reload the page, and also sign in to the same account in a second
+browser, then reopen A's drawing in each.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] A's drawing reopens with the five strokes, the move and the
+recolour, and B's reopens equal to \texttt{crt-three.json}. Every stroke of
+both can be selected and edited.
+\item[(b)] The erase is saved to learner A's drawing. Learner B's drawings do
+not change.
+\item[(c)] A's drawing is identical in both browsers and equals the drawing
+last saved.
+\end{itemize}
+
+Test Case Derivation: the fit criteria of FR-CRT-023 (two learners, each
+drawing reopened as left) and FR-CRT-024 (reopened exactly as last saved,
+every stroke editable). Case (b) checks the cause in H-MUH-004 where a
+drawing is saved to the learner active when the save completes, not when it
+was drawn. The refined states in FR-CRT-024's fit criterion are tested with
+the refinement tests.
+
+How test will be performed: a Playwright script runs each case and reads the
+saved drawings of both learners through the test database. A tester repeats
+(a) on the test iPad with the stylus.
+
+\item{T-CRT-010: Each learner sees only their own drawings\\}
+
+Purpose: on a shared account or device, one child must never see, or change,
+another child's drawing.
+
+Type: Dynamic, automatic. Covers FR-CRT-026, and FR-CRT-023 as a second
+check.
+
+Initial State: learner A has three saved drawings and learner B has two.
+Learner A is active.
+
+Input:
+\begin{itemize}
+\item[(a)] Open A's creative space and list its drawings. Then switch to B
+(through the adult check) and list again.
+\item[(b)] While A is active, open the web address of one of B's drawings
+directly.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] A's creative space lists exactly A's three drawings, and B's lists
+exactly B's two.
+\item[(b)] B's drawing is not shown, and B's drawing does not change.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-CRT-026. Case (b) tries to get
+round the list by going straight to another learner's drawing, which a child
+may do with the browser's history (H-MUH-004).
+
+How test will be performed: a Playwright script lists the drawings for each
+learner and opens B's drawing address while A is active.
+
+\item{T-CRT-011: Keeping changes through a lost connection, and showing
+unsaved changes\\}
+
+Purpose: a dropped connection must not lose the child's changes, and the
+adult must be able to see when changes are not yet saved.
+
+Type: Dynamic, automatic and manual. Covers FR-CRT-025 and FR-CRT-029.
+
+Initial State: \texttt{crt-three.json} is saved for learner A and open, and
+the network is online.
+
+Input:
+\begin{itemize}
+\item[(a)] Set the network offline. Draw two strokes and move stroke 1. Set
+the network online, wait for the save to complete, then leave the creative
+space and reopen the drawing.
+\item[(b)] Repeat (a), but turn the network off and on three times during the
+edits, making one change each time it is off.
+\item[(c)] With the network online, make one change and watch the save
+indicator.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] While offline, Squigglr shows that there are unsaved changes. After
+the connection returns and the save completes, it shows that all changes are
+saved. The reopened drawing has the two new strokes and the move.
+\item[(b)] The reopened drawing has every change exactly once, with no stroke
+saved twice, and the indicator matches the save state after each switch.
+\item[(c)] The indicator shows unsaved changes until the server confirms the
+save, then shows that all changes are saved.
+\end{itemize}
+
+Test Case Derivation: the fit criteria of FR-CRT-025 (changes made while
+offline are saved once the connection returns) and FR-CRT-029 (unsaved, then
+saved). Case (b) tries to make Squigglr save the same change twice or skip
+one, as in the retried saves of H-MUH-004 and H-MUH-005. Closing the page
+while offline is out of scope (SRS ASM-005), so it is not tested.
+
+How test will be performed: a Playwright script switches the network with
+\texttt{context.setOffline()}, records the indicator after each step, and
+reads the saved drawing through the test database. A tester repeats (a) on
+the test iPad by turning off Wi-Fi.
+
+\item{T-CRT-012: Creative drawings do not change practice records\\}
+
+Purpose: practice records must show only guided practice, so nothing done in
+the creative space may add to or change them.
+
+Type: Dynamic, automatic. Covers FR-CRT-028.
+
+Initial State: learner A has the prepared history \texttt{history-basic.json}
+(two lesson records and eight attempt records). Its attempt records, lesson
+records and progress summary are exported and kept as the reference.
+
+Input: in the creative space, draw \texttt{crt-draw-5.json}, edit it, start a
+second drawing, and finish both. Then turn refinement on for A, finish a
+prepared drawing of the supported set so that it is refined, and restore its
+original.
+
+Output: learner A's attempt records, lesson records and progress summary are
+identical to the reference. No attempt is added, and no count or date
+changes.
+
+Test Case Derivation: the fit criterion of FR-CRT-028 and the cause in
+H-MUH-003 where creative drawings and attempts are counted together. A
+refined drawing counted as an attempt would make assisted work look like the
+child's own.
+
+How test will be performed: a Playwright script exports the records and the
+summary through the test database before and after, and compares the two.
+
+\end{enumerate}
 
 \subsubsection{Attempt Records}
 \label{sec:rec-tests}
@@ -3911,6 +4352,21 @@ FR-LRN-020 & T-LRN-017, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-021 & T-LRN-018, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-022 & T-LRN-019 (inspection and automatic), INS-EVAL\\
 FR-LRN-023 & T-LRN-020, T-LRN-021, INS-LRN\\
+FR-CRT-001 & T-CRT-001\\
+FR-CRT-002 & T-CRT-002\\
+FR-CRT-003 & T-CRT-003\\
+FR-CRT-004 & T-CRT-004\\
+FR-CRT-005 & T-CRT-005\\
+FR-CRT-006 & T-CRT-006\\
+FR-CRT-007 & T-CRT-007, T-CRT-006\\
+FR-CRT-008 & T-CRT-007 (b, c)\\
+FR-CRT-009 & T-CRT-008\\
+FR-CRT-023 & T-CRT-009, T-CRT-008 (b), T-CRT-010\\
+FR-CRT-024 & T-CRT-009, T-CRT-008\\
+FR-CRT-025 & T-CRT-011 (a, b)\\
+FR-CRT-026 & T-CRT-010\\
+FR-CRT-028 & T-CRT-012\\
+FR-CRT-029 & T-CRT-011\\
 FR-REC-001 & T-REC-001, INS-REC\\
 FR-REC-002 & T-REC-002, T-LRN-005, INS-EVAL\\
 FR-REC-003 & T-REC-003, INS-REC\\
@@ -4196,6 +4652,17 @@ T-REC-001.\\
 \addlinespace
 \texttt{RETRY\_DELAY} & 2 seconds of lost connection before the network is
 restored in T-REC-008.\\
+\addlinespace
+\texttt{COORD\_TOL} & Largest difference, in CSS pixels, at which two
+coordinates still count as equal when a test compares a saved drawing with the
+expected one. Value: 0.01 CSS pixels. This allows for floating-point rounding
+when coordinates are saved and reloaded, and is far smaller than one pixel on
+the test iPad's screen, so a stroke that has really moved still fails.\\
+\addlinespace
+\texttt{SCALE\_TOL} & Largest relative error allowed between a point's scale
+factor and the part's scale factor in a resize (T-CRT-004). Value: 0.001
+(0.1\%). Over a part 1000 CSS pixels across, this is at most one CSS pixel,
+so a visibly distorted shape still fails.\\
 \bottomrule
 \end{longtable}}
 
@@ -4226,6 +4693,25 @@ ending away from its corner, a pause until the endpoint feedback appears,
 then that side redrawn to the corner) and
 \texttt{history-\allowbreak{}seed.json} (the T-REC-009 history: three
 lesson records and 19 attempt records, loaded into the test database).
+
+The creative drawing tests use the files below, made by adults like the
+files above and stored in the same folder. None is drawn by a child (SRS
+CON-005).
+\begin{itemize}
+\item \texttt{crt-draw-5.json}: the pointer events for five strokes drawn
+with the stylus: a straight line, a curve, a single tap, a closed loop, and a
+line that crosses the first. The fourth and fifth strokes are drawn with the
+stylus lifted only briefly between them.
+\item \texttt{crt-three.json}: a saved creative drawing of three strokes that
+do not touch, each in a different colour, using two stroke widths.
+\item \texttt{crt-cross.json}: a saved creative drawing of two strokes that
+cross at one point.
+\item \texttt{crt-dot.json}: a saved creative drawing of a stroke with one
+point and a straight line.
+\item \texttt{history-basic.json}: a learner's attempt and lesson records:
+two lesson records and eight attempt records, at known stages and with known
+results.
+\end{itemize}
 
 \subsection{Usability Survey Questions?}
 

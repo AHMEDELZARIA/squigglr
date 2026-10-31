@@ -192,6 +192,9 @@ what \texttt{ATTEMPT\_LIMIT\_MAX} counts (\#184, \#185, \#190).\\
 30 October 2026 & Ahmed Elzaria & Addressed peer review: gave
 \texttt{REFINE\_TOLERANCE} a unit and said how and when it is set, as planned in
 the VnV Plan (\#193).\\
+30 October 2026 & Ahmed Elzaria & Set \texttt{ADULT\_REVIEWERS} and
+\texttt{REVIEW\_PASS\_RATE}, and said how and when \texttt{RECUR\_MIN} is set,
+as planned in the VnV Plan (\#247).\\
 \end{longtable}
 
 ~\\
@@ -460,8 +463,8 @@ adult a view of the child's progress alongside control of activities (SRC-005,
 \emph{Measurement:} met when, for prepared histories showing improvement,
 recurring difficulties and changing stages, every summary separates the two
 kinds of attempt correctly and links to the right attempts; and at least
-\texttt{ADULT\_REVIEWERS} (TBD) adult reviewers interpret example summaries and
-locate the supporting attempts, with at least \texttt{REVIEW\_PASS\_RATE} (TBD)
+\texttt{ADULT\_REVIEWERS} adult reviewers interpret example summaries and
+locate the supporting attempts, with at least \texttt{REVIEW\_PASS\_RATE}
 of their tasks succeeding. \\
 \end{longtable}
 }
@@ -1307,17 +1310,19 @@ appendix). \emph{Trace:} G.4, BR-005.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers for progress
 summary understandability checks. \emph{Unit:} people (count). \emph{Value:}
-team-defined; TBD. \emph{Trace:} G.6.\\
+5, set in the VnV Plan (Symbolic Parameters appendix). \emph{Trace:} G.6.\\
 \addlinespace
 \texttt{REVIEW\_PASS\_RATE} & Minimum proportion of progress summary review
 tasks completed successfully by adults. \emph{Unit:} proportion. \emph{Value:}
-team-defined; TBD. \emph{Trace:} G.6.\\
+0.8, set in the VnV Plan before any review session (Symbolic Parameters
+appendix). \emph{Trace:} G.6.\\
 \addlinespace
 \texttt{RECUR\_MIN} & Minimum number of a learner's attempts, at the same stage
 of the same lesson within a progress summary's period, in which one predefined
 difficulty must be observed for the summary to list it as recurring.
-\emph{Unit:} attempts (integer $\geq 2$). \emph{Value:} team-defined; TBD.
-\emph{Trace:} G.6, FR-PRG-004.\\
+\emph{Unit:} attempts (integer $\geq 2$). \emph{Value:} TBD; proposed 3, and
+confirmed with the specialists in PH-2, as planned in the VnV Plan (Symbolic
+Parameters appendix). \emph{Trace:} G.6, FR-PRG-004.\\
 \addlinespace
 \texttt{AGE\_RANGE} & Intended lower and upper ages of learners served by
 Squigglr. \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.

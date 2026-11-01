@@ -5915,34 +5915,41 @@ T-OPS-002 for an outage.
 
 \paragraph{Priority.} Modules are tested in the order below, which follows
 the harm a defect could do (Hazard Analysis) and the TA's advice on coverage
-(Section~\ref{sec:plan-verification}):
+(Section~\ref{sec:plan-verification}). The coverage goals are the ones in
+Section~\ref{sec:tools}; this list only sets the order and does not add a
+second policy:
 \begin{enumerate}
-\item \textbf{Safety-critical and lesson logic:} the lesson rules, stroke
-evaluation, attempt and lesson record saving, and the adult check and access
-checks. A defect here can mislead an adult or lose a child's work. Goal:
-every branch covered.
+\item \textbf{Modules tied to a safety-critical requirement:} any module
+that a SAF- requirement depends on or that a safety-critical test
+(Section~\ref{sec:safety-tests}) calls directly. These include the lesson
+rules, stroke evaluation and the input handler (T-SAF-010), attempt and
+lesson record saving, the adult check and access checks, settings
+validation (T-SAF-008) and the progress summary computation (T-SAF-015). A
+defect here can mislead an adult or lose a child's work. Goal, as in
+Section~\ref{sec:tools}: every branch covered.
 \item \textbf{Creative drawing logic:} the refinement result check and the
 drawing history (undo, redo and restore). A defect here can change or lose a
-drawing (H-MUH-001, H-MUH-002). Goal: every branch covered.
-\item \textbf{Progress summary computation:} turning records into the
-summary's figures. These are pure functions, cheap to test fully. Goal:
-every statement covered.
+drawing (H-MUH-001, H-MUH-002). Any of these that a SAF- requirement depends
+on is in the first group instead.
+\item \textbf{Other logic modules:} for example, the parts of the progress
+summary that no SAF- requirement depends on.
 \item \textbf{User interface components:} component tests with React Testing
 Library for each screen's states (empty, loading, error, normal). Most of
-their behaviour is covered by the end-to-end and usability tests, so there
-is no coverage goal.
+their behaviour is covered by the end-to-end and usability tests.
 \end{enumerate}
-The coverage reached for each module is reported in the VnV Report, as
-Section~\ref{sec:tools} describes.
+Outside the first group, Section~\ref{sec:tools} sets no fixed target:
+reviewers check that new or changed logic has tests. The coverage reached
+for each module is reported in the VnV Report, as Section~\ref{sec:tools}
+describes.
 
 \subsection{Tests for Functional Requirements}
 
 The module tests for the functional requirements are added here once the MIS
 is done, with one subsection per MIS module. Each subsection will name the
-module's access programs and list its tests by ID, with the rule above that
-each one covers. Some unit-level tests are already planned as part of the
-system tests in Section~\ref{sec:fr-tests}, because they check one module
-directly:
+module's access programs and list its tests by \texttt{U-} ID, with the rule
+above that each one covers. Some unit-level tests are already planned as
+part of the system tests in Section~\ref{sec:fr-tests}, because they check
+one module directly:
 \begin{itemize}
 \item T-LRN-021, the lesson rules against a model of SRS Section~9.2;
 \item T-CRT-015, the refinement result check against random results;
@@ -5951,8 +5958,13 @@ restore;
 \item the Vitest parts of the guided lesson tests, which call the
 evaluation function and the input handler directly.
 \end{itemize}
-These move into the matching module's subsection, with the same IDs, once
-the module exists.
+These tests stay in Section~\ref{sec:fr-tests} with their IDs, because
+several of them run in both Vitest and Playwright under one ID, and the
+traceability table points to them there. Each module's subsection lists the
+ones that check it as cross-references, so the module's tests can be read in
+one place. If a test is later split, its unit part gets a new \texttt{U-} ID,
+and Section~\ref{sec:fr-tests} and the traceability table are updated in the
+same PR.
 
 \subsection{Tests for Nonfunctional Requirements}
 

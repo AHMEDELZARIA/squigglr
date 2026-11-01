@@ -1302,7 +1302,8 @@ team-defined; TBD. \emph{Default:} middle of the range; must be less than
 and the child's original strokes in the creative space. \emph{Unit:} CSS
 pixels on the drawing area used for testing. \emph{Value:} TBD; set by the team
 in PH-1, before the first refinement test, by judging adult-made drawings of the
-supported set (BR-009), as planned in the VnV Plan (Symbolic Parameters
+supported set (BR-009), then confirmed by supporting adults in the usability
+sessions (H-MUH-006), as planned in the VnV Plan (Symbolic Parameters
 appendix). \emph{Trace:} G.4, BR-005.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers for progress
@@ -2273,9 +2274,8 @@ Path & The points of a stroke, in the order drawn. Path = \{Point\}. & Attribute
 FR-CRT-011, FR-CRT-012 \\
 \addlinespace
 Point & One position on the drawing area that a stroke passes through. &
-Attribute & Position on the drawing area, in the same unit of distance as
-\texttt{REFINE\_\allowbreak TOLERANCE}; the unit is TBD and will be fixed with
-the value of that constant. & ASM-004; FR-CRT-012 \\
+Attribute & Position on the drawing area, in CSS pixels, the same unit of
+distance as \texttt{REFINE\_\allowbreak TOLERANCE}. & ASM-004; FR-CRT-012 \\
 \addlinespace
 Practice-only statement & The statement on every progress summary that it
 describes practice only and is not an assessment or diagnosis. & Attribute &

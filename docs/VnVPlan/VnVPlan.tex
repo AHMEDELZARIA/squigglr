@@ -2955,8 +2955,7 @@ other cases a result that was discarded can be told apart from one that
 never came.
 
 How test will be performed: a Playwright script makes the changes, releases
-the stub, and compares the drawing with the expected one. T-PERF-002
-measures how quickly the canvas responds during the wait.
+the stub, and compares the drawing with the expected one.
 
 \item{T-CRT-025: No refinement in guided lessons\\}
 
@@ -5016,7 +5015,7 @@ FR-CRT-006 & T-CRT-006\\
 FR-CRT-007 & T-CRT-007, T-CRT-006, T-CRT-016 (f), T-CRT-020 (b, e), T-CRT-022\\
 FR-CRT-008 & T-CRT-007 (b, c), T-CRT-020 (e), T-CRT-022\\
 FR-CRT-009 & T-CRT-008\\
-FR-CRT-010 & T-CRT-013, T-CRT-026, T-PERF-002\\
+FR-CRT-010 & T-CRT-013, T-CRT-026\\
 FR-CRT-011 & T-CRT-014, T-CRT-015, T-CRT-023 (d, g)\\
 FR-CRT-012 & T-CRT-014, T-CRT-015, T-CRT-023 (e)\\
 FR-CRT-013 & T-CRT-016, T-CRT-027\\
@@ -5028,7 +5027,7 @@ FR-CRT-018 & T-CRT-020 (a)\\
 FR-CRT-019 & T-CRT-021\\
 FR-CRT-020 & T-CRT-023, T-CRT-015\\
 FR-CRT-021 & T-CRT-024, T-CRT-025 (b)\\
-FR-CRT-022 & T-CRT-024 (b), T-PERF-002\\
+FR-CRT-022 & T-CRT-024 (b)\\
 FR-CRT-023 & T-CRT-009, T-CRT-008 (b), T-CRT-010, T-CRT-027\\
 FR-CRT-024 & T-CRT-009, T-CRT-008, T-CRT-027\\
 FR-CRT-025 & T-CRT-011 (a, b, d)\\
@@ -5345,7 +5344,16 @@ come from the refinement model. Two team members who did not make the
 drawings each view every original beside its copies on the test iPad, and
 say whether each copy is still clearly the same drawing, with no shape
 replaced. \texttt{REFINE\_TOLERANCE} is the largest $d$ that both accept for
-every drawing. The value, the copies and both reviewers' answers are
+every drawing. This first value is needed early, because the refinement
+tests depend on it. \emph{Confirmed:} in the adult usability sessions run by
+Shamil and Ahmed, as the Hazard Analysis asks for H-MUH-006 (a). Supporting
+adults who are not on the team view each adult-made drawing beside its copies
+for every $d$ up to \texttt{REFINE\_TOLERANCE} and beside its refined drawing
+from the model, and say whether each is still the same drawing. If any adult rejects
+a copy, the value is lowered to the largest $d$ that every adult accepts for
+every drawing, and the refinement tests are run again. A rejected refined
+drawing that is within the value is recorded as a finding against the model,
+not the value. The value, the copies and every reviewer's answers are
 recorded in the VnV Report, and the SRS constants table is updated in the
 same PR. If OI-03 changes the supported set, the new drawings are judged the
 same way, and the value can only go down. Setting it without the model means

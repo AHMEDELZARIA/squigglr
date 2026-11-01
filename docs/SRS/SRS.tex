@@ -195,6 +195,11 @@ the VnV Plan (\#193).\\
 30 October 2026 & Ahmed Elzaria & Set \texttt{ADULT\_REVIEWERS} and
 \texttt{REVIEW\_PASS\_RATE}, and said how and when \texttt{RECUR\_MIN} is set,
 as planned in the VnV Plan (\#247).\\
+1 November 2026 & Ahmed Elzaria & Addressed peer review: an unanswered go-back
+suggestion now stays pending in every section (FR-LRN-019, UC-005,
+SAF-RAY-001, the product input table, the data dictionary and Section~9.2),
+and ``ignored'' is the status of a suggestion cleared before any answer
+(\#176).\\
 \end{longtable}
 
 ~\\
@@ -2235,8 +2240,8 @@ FR-LRN-019). Go-back suggestion = Suggested stage + Suggestion status. &
 Attribute & Part of exactly one lesson record; made only after
 \texttt{DIFFICULTY\_\allowbreak STREAK} failed attempts in a row at one stage,
 and not while the child is improving; changes the stage only if an adult accepts
-it; a declined or ignored suggestion is made again only after another full
-streak. & G.3; BR-003; CON-007; UC-005; F8, F10; FR-LRN-019; FR-REC-010;
+it; a declined suggestion is made again only after another full streak, and
+an unanswered one stays pending, so no second suggestion is made. & G.3; BR-003; CON-007; UC-005; F8, F10; FR-LRN-019; FR-REC-010;
 SAF-RAY-001, SAF-RAY-007 \\
 \addlinespace
 Interrupted mark & Marks an attempt that an adult stopped, by ending the session
@@ -2361,8 +2366,9 @@ made; on acceptance the adult chooses the earlier stage. & BR-003; UC-005;
 FR-LRN-019 \\
 \addlinespace
 Suggestion status & Where a go-back suggestion stands. & Attribute & Pending,
-accepted, declined or ignored; only an adult accepts or declines, and a declined
-or ignored suggestion changes nothing. & G.3; BR-003; UC-005; F8; FR-LRN-019;
+accepted, declined or ignored. Pending until an adult answers; ignored when a
+pass or the end of the lesson clears it before any answer. Only an adult
+accepts or declines, and a declined or ignored suggestion changes nothing. & G.3; BR-003; UC-005; F8; FR-LRN-019;
 FR-REC-010 \\
 \addlinespace
 Supported item & A shape or simple object in the agreed supported set, which
@@ -2533,9 +2539,10 @@ refinement leaves the drawing unchanged (\goalref{4}). \\
 \addlinespace
 Decision on a suggestion to go back a stage & Supporting adult & \ucref{005} &
 \mbox{\reqref{FR-LRN-018}}, \mbox{\reqref{FR-LRN-019}}, SAF-RAY-001 & A declined
-or ignored suggestion changes nothing, and the suggestion stays pending without
-blocking practice until an adult decides (SAF-RAY-001; BR-003). Only an adult
-can accept it. \\
+suggestion changes nothing. An unanswered suggestion stays pending without
+blocking practice until an adult decides (SAF-RAY-001; BR-003); if a pass or the
+end of the lesson clears it first, it is recorded as ignored. Only an adult can
+accept it. \\
 \addlinespace
 Changes to a child's settings: accessibility, audio, whether refinement is on &
 Supporting adult & \ucref{010} & NFR-UX-010, NFR-UX-011 & A setting changes only
@@ -2909,8 +2916,11 @@ without improving.} \reqfield{Trigger}{Squigglr suggests going back a stage
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
   \item[2a.] The adult declines. Nothing changes, and a new suggestion needs a
   new full streak (\mbox{\reqref{FR-LRN-019}}).
-  \item[2b.] The adult does not respond. The suggestion stays pending and
-  nothing changes (\mbox{SAF-RAY-001}, BR-003).
+  \item[2b.] The adult does not respond. The suggestion stays pending, nothing
+  changes, and no second suggestion is offered while it is pending
+  (\mbox{SAF-RAY-001}, BR-003). If the child passes the stage or the lesson
+  ends first, the suggestion is cleared and recorded as ignored
+  (\mbox{\reqref{FR-REC-010}}).
 \end{description}
 \noindent\textit{Failure flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
@@ -3384,15 +3394,19 @@ without an additional adult action (FR-LRN-023).}
 return to an earlier drawing stage when the learner reaches
 \texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing evaluable
 attempts at an eligible stage and the improvement rule does not suppress
-suggestions. When an adult declines or ignores the suggestion, another
-suggestion shall require a new full failure streak.} \reqrationale{A supporting
-adult should decide whether earlier guidance is appropriate (G.3, BR-003).}
+suggestions. When an adult declines the suggestion, another suggestion shall
+require a new full failure streak. A suggestion that no adult answers shall stay
+pending, without blocking practice, and no second suggestion shall be offered
+while it is pending.} \reqrationale{A supporting adult should decide whether
+earlier guidance is appropriate (G.3, BR-003).}
 \reqfit{Replay known failing sequences immediately below and at the selected
 streak threshold at both eligible stages, including sequences with fewer than
 twice the configured \texttt{IMPROVE\_WINDOW} results and sequences with
 qualifying improvement; verify that insufficient history does not delay the
-first suggestion, that qualifying improvement suppresses it, and that a declined
-suggestion reappears only after another full failure streak.}
+first suggestion, that qualifying improvement suppresses it, that a declined
+suggestion reappears only after another full failure streak, and that while a
+suggestion is unanswered, further failed attempts are counted but no second
+suggestion is offered.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{3}; BR-003; \hyperref[src:005.01]{SRC-005.01};
@@ -3647,9 +3661,14 @@ q=\textsf{active}\land s=0\land l\in\{E,I\}\land k\ge d_p
 \]
 The rule applies to drawing levels $E$ and $I$; $T$ has no preceding drawing
 level. A suggestion changes $q$ to $\textsf{suggested}$ and $s$ to $1$, but
-\emph{does not change $l$}. Declining or ignoring a suggestion resets the streak
+\emph{does not change $l$}, and the child keeps practising while it is pending
+(SAF-RAY-001). An adult declining a suggestion clears it and resets the streak
 counter $k$ to zero, preventing an immediate re-offer; a new suggestion requires
-another $d_p$ consecutive failures.
+another $d_p$ consecutive failures. A suggestion that no adult answers stays
+pending: it changes nothing and, because $\operatorname{SuggestBack}$ needs
+$s=0$, prevents a second suggestion. If a pass, an adult selection or the end of
+the lesson clears it before any answer, it is recorded as ignored
+(FR-REC-010).
 
 \paragraph{State-transition rules.}
 Table~\ref{tab:lrn-transitions} gives the level-changing and stage-stopping
@@ -3693,7 +3712,8 @@ after viewing the example & Set $l=T$ within the same lesson; initialize
 drawing-stage counters. This does not start another lesson or require new adult
 authorization.\\
 \addlinespace
-Finalize evaluable attempt & $l\in A$, $q=\textsf{active}$ & Classify
+Finalize evaluable attempt & $l\in A$, $q\in\{\textsf{active},
+\textsf{suggested}\}$ & Classify
 $C_{\ell,l}(X)$ and $G(l)$; report pass/fail using the stage threshold;
 increment $n_a$ and, for non-pass, $n_f,k$. If $z=1$, increment $x$ for this
 additional evaluable attempt. On pass, record the result and apply the
@@ -3706,9 +3726,14 @@ nor $n_f$ is incremented, and no successful stage transition is permitted.\\
 Offer suggestion & $\operatorname{SuggestBack}(\sigma)$ & Set $s=1$,
 $q=\textsf{suggested}$; leave $\ell,l$ unchanged.\\
 \addlinespace
-Ignore or decline suggestion & $s=1$ & Clear $s$, reset $k=0$, return $q$ to
-$\textsf{active}$; leave $\ell,l$ unchanged and retain the attempt history $H$
-and cumulative stage counts.\\
+Adult declines suggestion & $s=1$ and an authorized adult declines & Clear
+$s$, reset $k=0$, return $q$ to $\textsf{active}$; leave $\ell,l$ unchanged and
+retain the attempt history $H$ and cumulative stage counts.\\
+\addlinespace
+Suggestion not answered & $s=1$ and no adult response & Keep $s=1$ and
+$q=\textsf{suggested}$; leave $\ell,l$ unchanged. Attempts continue to be
+finalized and counted. If a pass, $\operatorname{AdultSelect}$ or the end of
+the lesson clears $s$, record the suggestion as ignored.\\
 \addlinespace
 Adult accepts suggestion & $s=1$ and an authorized adult chooses a preceding
 level & Activate the chosen earlier level, clear $s$, reset stage counts; retain
@@ -3727,8 +3752,9 @@ this extension or offer a conflicting return suggestion.\\
 \addlinespace
 Passing a nonfinal drawing stage & $\operatorname{Pass}(X,l,p)$ and
 $l\in\{T,E\}$ & Save the passed attempt at its original stage; automatically set
-$l'=\operatorname{Next}(l)$ without adult action. Reset stage-specific counters
-and update $f$; leave $\ell$ unchanged.\\
+$l'=\operatorname{Next}(l)$ without adult action. Reset stage-specific counters,
+clear any pending suggestion (recorded as ignored) and update $f$; leave $\ell$
+unchanged.\\
 \addlinespace
 Passing the final drawing stage & $\operatorname{Pass}(X,I,p)$ & Save the passed
 independent attempt, set $q'=\textsf{ended}$ and $f'=I$; complete the current
@@ -3743,7 +3769,7 @@ the model requires:
 \begin{aligned}
 &\textbf{I1:}\quad \ell'\ne\ell
   \Longrightarrow\operatorname{AdultSelect};\\
-&\textbf{I2:}\quad \text{suggestion ignored or declined}
+&\textbf{I2:}\quad \text{suggestion declined or not answered}
   \Longrightarrow (\ell',l')=(\ell,l);\\
 &\textbf{I3:}\quad C_{\ell,l}(X)\ne\textsf{complete}
   \Longrightarrow \neg\operatorname{Pass}(X,l,p);\\
@@ -5275,7 +5301,8 @@ do not fit another section. Each lists the hazards it mitigates.
 lesson choice, starting stage choice, learner switching and acceptance of a
 go-back suggestion only after an adult check that a child cannot complete by
 tapping icons, and shall keep a pending suggestion, without blocking practice,
-until an adult accepts or declines it.\\
+until an adult accepts or declines it, or a pass or the end of the lesson
+clears it.\\
 \emph{Rationale:} children should be able to practise without constant adult
 help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults (CON-007;
 SRC-005, \intref{P1}{28:37}). The form of the check is \texttt{ADULT\_CHECK},

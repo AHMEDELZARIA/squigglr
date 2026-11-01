@@ -58,6 +58,9 @@ and page layout following the checklist review. \\
 2026-09-28 & Moustafa Moustafa &
 Disclosed the use of AI to diagnose and fix missing references in
 the automatically built PDFs. \\
+
+2026-11-01 & Muhammad Huzaifah &
+Addressed peer review: named the candidate model kinds for creative enhancement and referred to the SRS comparison (\#74). \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1109,6 +1112,22 @@ currently planned. Model selection will depend on a focused evaluation
 of drawing preservation, output validity, response time, and cost.
 Creative vector enhancement remains an implementation uncertainty
 to investigate through the proof-of-concept work.
+
+The candidate models are compared in the Reusable Components
+subsection of the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/pdfs/SRS/SRS.pdf}
+{Software Requirements Specification (SRS)}, which selects none of
+them. They fall into three kinds. Hosted multimodal models reached
+through an application programming interface (API), such as the
+OpenAI and Anthropic APIs, accept drawing images but send the drawing
+to an outside provider and charge per request. Open-weight
+vision-language models that the team could host itself, such as
+Qwen2.5-VL-7B-Instruct, keep drawings away from outside providers but
+need a machine with a graphics processing unit (GPU). Stroke-based
+generative models, such as Sketch-RNN, produce editable strokes but
+generate new drawings rather than adjusting the child's. The SRS also
+notes that the Gemini API's terms forbid its use in services likely
+to be accessed by people under 18.
 
 \subsection{Development and Verification Tools}
 

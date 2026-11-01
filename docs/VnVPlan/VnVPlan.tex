@@ -748,16 +748,17 @@ T-LRN-013, T-LRN-016 to T-LRN-018 and T-LRN-020) run in two ways:
 completeness and result of each attempt given directly; this is the only
 way to set exact boundary values such as 44 or 45;
 \item end to end in Playwright on the real interface, for the rows named in
-each test. There, a written result of 40 is replayed as
-\texttt{circle-\allowbreak{}fail.json} (a failing attempt), 50 as
-\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} (a higher failing
-attempt) and 85 as \texttt{circle.json} (a passing attempt), unless the
-test says otherwise. Playwright-only tests that write 40 or 85 use the same
-mapping.
+each test. There, a written 40, 50 or 85 stands for a failing attempt, a
+higher failing attempt or a passing attempt, and is replayed as
+\texttt{circle-\allowbreak{}fail.json},
+\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} or
+\texttt{circle.json}, unless the test says otherwise. Playwright-only tests
+that write 40 or 85 use the same mapping.
 \end{enumerate}
-Calibration (the \texttt{CAL\_*} constants in Table~\ref{tab:symb-fr})
-guarantees that these three files give the needed pass, fail and
-improvement results.
+The replayed files do not score the written numbers: their results lie in
+the bands of the \texttt{CAL\_*} constants in Table~\ref{tab:symb-fr} (at
+most 60, 70 to 79 and at least 90). These bands, not the written numbers,
+give the needed pass, fail and improvement results end to end.
 \item \emph{Switching learner ends the lesson.} When the adult switches
 learner or ends the session, the current learner's lesson stops. The lesson
 is recorded as unfinished (T-REC-007), and a later lesson for that learner
@@ -3925,9 +3926,9 @@ NFR-COMP-005 & T-COMP-003\\
 \end{longtable}}
 
 Table~\ref{tab:trace-fr} maps each functional requirement to the tests that
-cover it. INS-LRN, INS-EVAL and INS-REC are the code inspections planned
-under Implementation Verification. Tests from other sections that also cover
-a requirement are listed as a second approach.
+cover it. INS-LRN, INS-EVAL, INS-REC and INS-CRT are the code inspections
+planned under Implementation Verification. Tests from other sections that
+also cover a requirement are listed as a second approach.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}%

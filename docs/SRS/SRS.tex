@@ -200,6 +200,9 @@ suggestion now stays pending in every section (FR-LRN-019, UC-005,
 SAF-RAY-001, the product input table, the data dictionary and Section~9.2),
 and ``ignored'' is the status of a suggestion cleared before any answer
 (\#176).\\
+1 November 2026 & Ahmed Elzaria & Addressed peer review: moved SAF-RAY-001 to
+PH-1, with the lesson and starting stage choice it protects, and added the
+adult check to the fit criterion of FR-LRN-016 (\#177).\\
 \end{longtable}
 
 ~\\
@@ -3344,8 +3347,9 @@ by the supporting adult for the learner's session, including an adult-selected
 later starting stage.} \reqrationale{The adult controls initial level selection
 rather than the product assigning readiness (G.3, CON-007).} \reqfit{Select each
 available starting stage as an adult, launch the lesson, and verify that the
-selected stage is used; check that a child-only practice action does not change
-the configured lesson or starting stage.}
+selected stage is used; check that a child-only practice action, and an attempt
+to choose a lesson or starting stage without passing the adult check of
+SAF-RAY-001, does not change the configured lesson or starting stage.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{3}; CON-007; \hyperref[src:005.01]{SRC-005.01};
@@ -7182,7 +7186,7 @@ PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Safety-Critical Requirements (Section 12.2)}}\\
 \addlinespace
-\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-2 \\
+\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-1 \\
 \addlinespace
 \texttt{SAF-RAY-002} & Unsupported-device notice & Must & PH-2 \\
 \addlinespace

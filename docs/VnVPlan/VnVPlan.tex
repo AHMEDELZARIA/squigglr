@@ -2063,8 +2063,9 @@ Square, T, $r(\mathrm{S})$, passed, + 8~min\\
 
 Output: the expected output of each case is in its row of
 Table~\ref{tab:t-rec-001}; the test passes when every case gives it. The
-test database holds exactly ten records, all under learner A, in the order
-of Table~\ref{tab:t-rec-001}, each holding exactly the fields in its row.
+test database holds exactly ten attempt records, all under learner A, in the
+order of Table~\ref{tab:t-rec-001}, each holding exactly the fields in its
+row.
 
 Test Case Derivation: the fit criterion asks for known lessons, stages,
 results and outcomes, with one pass and one fail at each drawing stage, in
@@ -2333,8 +2334,10 @@ of the circle lesson.
 Input: the cases vary the start stage and the sequence, written as results;
 learner A, the circle lesson and the defaults stay fixed. A start at T is
 the default start: the demonstration is watched, and then the attempts
-follow. End to end, 40 is replayed as F, 85 as P and 50 as N. The cases are
-in Table~\ref{tab:t-rec-006}.
+follow. As in the guided lesson tests, a written 40, 50 or 85 stands for a
+failing, a higher failing or a passing attempt and is replayed as F, N or P,
+whose results lie in the \texttt{CAL\_*} bands, not at the written numbers.
+The cases are in Table~\ref{tab:t-rec-006}.
 
 \begin{table}[htbp]
 \centering\small

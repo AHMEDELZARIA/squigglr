@@ -3821,7 +3821,7 @@ all)} & \textbf{Without a guide (passed of all)}\\
 a & A, circle & 5 of 16 & 1 of 5\\
 b & A, square & 0 of 8 & None\\
 c & A, line & 1 of 3 & None\\
-d & D, circle (started at I) & None & 2 of 2\\
+d & D, circle (started at I) & None & 1 of 2\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -3926,8 +3926,8 @@ with the strokes exactly as the child drew them.
 
 Type: Dynamic, automatic. Covers FR-PRG-006.
 
-Initial State: the histories of learners A to C, and the history of
-T-REC-004, in which an adult-set value changes in the middle of a lesson.
+Initial State: the histories of learners A to C, and learner H's history,
+in which an adult-set value changes in the middle of a lesson.
 
 Input: open these attempt records from the summary:
 \begin{itemize}
@@ -3936,7 +3936,7 @@ Input: open these attempt records from the summary:
 endpoint not corrected (B);
 \item[(c)] an interrupted attempt (C);
 \item[(d)] the attempts just before and just after the value change
-(T-REC-004's history);
+(H);
 \item[(e)] an attempt of 40 strokes, one of them a single point (A).
 \end{itemize}
 
@@ -4075,13 +4075,14 @@ could not draw.
 Type: Dynamic, automatic. Covers FR-PRG-010.
 
 Initial State: learner D's history: a circle lesson the adult started at I,
-with two passed attempts at I; and a square lesson with three failed
+with a failed attempt at I and then a passed one, which completed the
+lesson; and a square lesson with three failed
 attempts at T, unfinished. Learner A's history.
 
 Input: open D's summary, then A's.
 
-Output: for D's circle, T and E are marked not attempted and I shows 2
-successful attempts; for D's square, T shows 0 successful attempts and is
+Output: for D's circle, T and E are marked not attempted and I shows 1
+successful attempt; for D's square, T shows 0 successful attempts and is
 marked attempted, and E and I are marked not attempted. For A, every ``--''
 in Table~\ref{tab:t-prg-002} is marked not attempted, and every 0 in a P
 column whose stage was attempted is shown as 0 successful attempts.
@@ -5958,7 +5959,8 @@ T-CRT-015.\\
 of up to 40 events per run of T-CRT-022: enough for two refinements, edits,
 restores and a reopen in one sequence. The seed is \texttt{MODEL\_SEED}.\\
 \addlinespace
-\texttt{RECUR\_MIN} & The SRS constant (TBD in SRS Section~4.2): how many of
+\texttt{RECUR\_MIN} & The SRS constant (SRS Section~4.2, proposed there
+and confirmed as below): how many of
 a learner's attempts at one stage of one lesson must show the same predefined
 difficulty for the summary to list it as recurring. \emph{Proposed value:} 3
 attempts. Two could be chance, and three at the same stage is the smallest
@@ -5969,14 +5971,14 @@ keeps 3 unless they advise otherwise. The value is recorded in the SRS
 constants table and the VnV Report. T-PRG-004 uses the symbol and generates
 its history from it, so the test does not change.\\
 \addlinespace
-\texttt{ADULT\_REVIEWERS} & The SRS constant (TBD in SRS Section~4.2): the
+\texttt{ADULT\_REVIEWERS} & The SRS constant (SRS Section~4.2): the
 fewest adult reviewers in T-PRG-013. \emph{Value:} 5, set in this plan.
 Five adults outside the team (caregivers, educators or students) is what
 the team can recruit for one round of sessions, and it gives 15 tries of
 each requirement's three tasks. If fewer than five take part, the round
 is extended until five have; the number is not lowered.\\
 \addlinespace
-\texttt{REVIEW\_PASS\_RATE} & The SRS constant (TBD in SRS Section~4.2): the
+\texttt{REVIEW\_PASS\_RATE} & The SRS constant (SRS Section~4.2): the
 smallest share of reviewer tasks in T-PRG-013 that must succeed, counted
 separately for each requirement. \emph{Value:} 0.8, set in this plan, before
 any session, and not changed after the results are seen. With five
@@ -6055,10 +6057,16 @@ from \texttt{RECUR\_MIN}.
 \item \texttt{prg-\allowbreak{}c.json}: learner C, three interrupted
 attempts at T of the circle lesson.
 \item \texttt{prg-\allowbreak{}d.json}: learner D, a circle lesson started
-at I with two passed attempts, and a square lesson with three failed
+at I with a failed attempt and then a passed one, which completed it
+(SRS BR-002), and a square lesson with three failed
 attempts at T, unfinished.
 \item \texttt{prg-\allowbreak{}f.json}: learner F, in the second account, a
 copy of A's history with new record IDs.
+\item \texttt{prg-\allowbreak{}h.json}: learner H, one circle lesson
+started at T: a failed attempt with \texttt{STAGE\_PASS} at 80, then the
+adult changes it to 70 with the adult check, then a passed attempt with
+\texttt{STAGE\_PASS} at 70, as in T-REC-004 (i). Then one passed
+attempt each at E and I completes the lesson.
 \end{itemize}
 Learner E has no records, and learner G has only the creative drawings of
 \texttt{crt-\allowbreak{}three.json}, saved three times.

@@ -473,7 +473,8 @@ refinement and record modules match what he expects. \\
 Second internal review & Every member, on their items; Ahmed moderates &
 Team review on January~10, 2027, before the informal design review
 (January~12) & Every module changed since Revision~$-1$ against both
-checklists, the traceability check again, and all four scenarios. \\
+checklists, the traceability check again, all four scenarios, and the
+interface check of T-MAINT-003. \\
 \addlinespace
 Informal design review & Chris, our TA & January~12, 2027 & Our remaining
 questions; answers recorded in the meeting issue. \\
@@ -486,6 +487,10 @@ Peer module implementation & Another team, as set by the course & January~21
 to~25, 2027 & Whether one of our modules can be built from its MIS text alone
 (see below). \\
 \addlinespace
+Module issue check & Huzaifah & When each module issue is opened, and at
+the end of PH-1, PH-2 and PH-3 & The interface check of T-MAINT-003 on every
+issue that creates a top-level module (see below). \\
+\addlinespace
 Unit test design & Huzaifah, with each test author & While writing the unit
 tests in Section~\ref{sec:unit-tests} & Whether each access program's
 expected output can be worked out from the MIS. \\
@@ -497,8 +502,9 @@ expected output can be worked out from the MIS. \\
 Checklist} and the
 \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/MIS-Checklist.tex}{MIS
 Checklist}, matched to their role, and checks it on every module they did not
-write (Table~\ref{tab:designChecklist}). Splitting the checklists means each
-item gets one careful reader instead of five quick ones.
+write (Table~\ref{tab:designChecklist}). Every item of both checklists has
+exactly one owner. Splitting the checklists means each item gets one careful
+reader instead of five quick ones.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
@@ -517,32 +523,43 @@ item gets one careful reader instead of five quick ones.
 \bottomrule
 \endlastfoot
 Ahmed & Module decomposition: one secret per module, secrets are nouns, the
-uses relation is a hierarchy and not a data flow, the three Level~1 groups,
+uses relation is a hierarchy and not a data flow, its arrows point from the
+user to the used module and down in clear layers, the three Level~1 groups,
 any control module at the top; MG quality (low coupling, information
 hiding). & MIS quality for each module: consistent, essential, general,
 minimal, high cohesion, right level of abstraction. \\
 \addlinespace
 Shamil & The traceability matrices: every requirement satisfied by a module,
 every module used for a requirement; behaviour-hiding modules related to
-requirements. & MIS completeness: every MG module is in the MIS, every type
-is defined, every template section is present. \\
+requirements; the MG follows the template. & MIS completeness: every MG
+module is in the MIS, every type is defined, every template section is
+present; each module's Uses lists only the modules needed to define its
+specification. \\
 \addlinespace
-Huzaifah & Each software-decision module is used by a behaviour-hiding
-module. & MIS semantics: each access program has an output or a state
-transition, outputs and exceptions are written as $out :=$ and $exc :=$,
-state invariants hold initially and after each call, every state and
-environment variable has a type. \\
+Huzaifah & Software-decision modules are concepts the requirements need but
+do not detail, and each is used by a behaviour-hiding module. & MIS
+semantics: each access program has an output or a state transition, and
+only rarely both; every state transition entry changes some state; outputs
+and exceptions are written as $out :=$ and $exc :=$; state invariants hold
+initially and after each call; every state and environment variable has a
+type; the syntax defines each interface precisely enough to implement. \\
 \addlinespace
 Rayan & Likely changes: the anticipated changes include every SRS likely
 change, and each likely change maps to one module. & Opaque (information
-hiding) and implementation independent; every safety requirement (SAF-) is
-met by an access program whose semantics a reviewer can point to. \\
+hiding) and implementation independent; modules that deal with files, the
+keyboard or the screen have environment variables for them; every safety
+requirement (SAF-) is met by an access program whose semantics a reviewer
+can point to. \\
 \addlinespace
 Moustafa & The Writing Checklist items, and figures that can be zoomed in. &
-The Writing Checklist items; module classification (records, ADTs with
-\textbf{Template}, abstract objects with an initializer, libraries); notation
-and syntax: exported constants have explicit values, types are not mixed,
-symbols come from the SRS, every argument and local function is used. \\
+The Writing Checklist items, and each module starting on a new page; module
+classification (records as exported types, ADTs with \textbf{Template},
+\textbf{Generic} where a module is parameterized by type, abstract objects
+with an initializer that is checked or assumed, libraries with no state);
+notation and syntax: exported constants have explicit values, types are not
+mixed, the notation is the course's or defined and is consistent, symbols
+come from the SRS, every argument and local function is used, and local
+functions make the specification easier to read. \\
 \end{longtable}
 }
 
@@ -584,9 +601,16 @@ S1 and S2 are traced at the first internal MIS review, and all four at the
 second. Each takes about 20 minutes, with one member reading the MIS aloud
 and the others checking.
 
-\paragraph{Interface check for T-MAINT-003.} At each internal MIS review,
-Huzaifah, as Testing Lead, compares each GitHub issue that creates a
-top-level module with that module's MIS entry, as T-MAINT-003 requires. An
+\paragraph{Interface check for T-MAINT-003.} NFR-MAINT-003 covers every
+issue that creates a top-level module, and most of these are opened once
+implementation starts after Design Revision~0. The check therefore follows
+the issues, not only the reviews. Each such issue is labelled
+\texttt{module} when it is opened. Huzaifah, as Testing Lead, compares it
+with that module's MIS entry within a week, and before the PR that closes
+it is merged, as T-MAINT-003 requires. An issue opened before its module is
+in the MIS is checked at the next internal MIS review. At both internal MIS
+reviews and at the end of PH-1, PH-2 and PH-3, he also lists every
+\texttt{module} issue opened since the last check, so none is missed. An
 issue with no interface description, or one that does not match the MIS, is
 a finding.
 
@@ -2462,9 +2486,10 @@ recolour another, then leave the creative space with its own control. The
 adult passes the adult check and switches to learner B, who draws
 \texttt{crt-three.json} and leaves. Both drawings are then reopened, each
 under its own learner.
-\item[(b)] As learner A, open the saved drawing and erase one stroke. While
-the drawing is still open, the adult passes the adult check and switches to
-learner B.
+\item[(b)] As learner A, open the saved drawing and erase one stroke. The
+test holds the erase's save request so that it is still pending. While the
+drawing is still open, the adult passes the adult check and switches to
+learner B, and only then is the held save released.
 \item[(c)] Reload the page, and also sign in to the same account in a second
 browser, then reopen A's drawing in each.
 \end{itemize}
@@ -2474,8 +2499,8 @@ Output:
 \item[(a)] A's drawing reopens with the five strokes, the move and the
 recolour, and B's reopens equal to \texttt{crt-three.json}. Every stroke of
 both can be selected and edited.
-\item[(b)] The erase is saved to learner A's drawing. Learner B's drawings do
-not change.
+\item[(b)] Once the released save completes, the erase is in learner A's
+drawing. Learner B's drawings do not change.
 \item[(c)] A's drawing is identical in both browsers and equals the drawing
 last saved.
 \end{itemize}
@@ -2484,12 +2509,15 @@ Test Case Derivation: the fit criteria of FR-CRT-023 (two learners, each
 drawing reopened as left) and FR-CRT-024 (reopened exactly as last saved,
 every stroke editable). Case (b) checks the cause in H-MUH-004 where a
 drawing is saved to the learner active when the save completes, not when it
-was drawn. The refined states in FR-CRT-024's fit criterion are tested in
+was drawn. Holding the save until after the switch makes sure that a build
+with this defect fails, since an unheld save would normally finish before the
+adult check. The refined states in FR-CRT-024's fit criterion are tested in
 T-CRT-027.
 
 How test will be performed: a Playwright script runs each case and reads the
-saved drawings of both learners through the test database. A tester repeats
-(a) on the test iPad with the stylus.
+saved drawings of both learners through the test database. In (b) it holds
+the save request with request routing (\texttt{page.route}) and releases it
+after the switch. A tester repeats (a) on the test iPad with the stylus.
 
 \item{T-CRT-010: Each learner sees only their own drawings\\}
 
@@ -2544,6 +2572,10 @@ space and reopen the drawing.
 edits, making one change each time it is off.
 \item[(c)] With the network online, make one change and watch the save
 indicator.
+\item[(d)] Set the network offline and draw two strokes, then close the page.
+Reopen Squigglr online and open the drawing. Repeat with the page closed
+just after the connection returns, before the indicator shows that all
+changes are saved.
 \end{itemize}
 
 Output:
@@ -2555,17 +2587,25 @@ saved. The reopened drawing has the two new strokes and the move.
 saved twice, and the indicator matches the save state after each switch.
 \item[(c)] The indicator shows unsaved changes until the server confirms the
 save, then shows that all changes are saved.
+\item[(d)] The reopened drawing has every change that the indicator showed as
+saved before the page was closed. The changes it keeps from the two strokes
+are recorded for each run, and none is kept twice.
 \end{itemize}
 
 Test Case Derivation: the fit criteria of FR-CRT-025 (changes made while
 offline are saved once the connection returns) and FR-CRT-029 (unsaved, then
 saved). Case (b) tries to make Squigglr save the same change twice or skip
-one, as in the retried saves of H-MUH-004 and H-MUH-005. Closing the page
-while offline is out of scope (SRS ASM-005), so it is not tested.
+one, as in the retried saves of H-MUH-004 and H-MUH-005. Case (d) is the
+Document/Test control of H-MUH-005 for cause (c), closing the page during and
+after a lost connection. Offline use is out of scope (SRS ASM-005), so
+FR-CRT-025 cannot require changes to survive a closed page. The case
+therefore only requires that the indicator was truthful (FR-CRT-029) and
+records which changes are kept, as the Hazard Analysis asks.
 
 How test will be performed: a Playwright script switches the network with
 \texttt{context.setOffline()}, records the indicator after each step, and
-reads the saved drawing through the test database. A tester repeats (a) on
+reads the saved drawing through the test database. In (d) it closes the page
+and opens a new one in the same browser context. A tester repeats (a) on
 the test iPad by turning off Wi-Fi.
 
 \item{T-CRT-012: Creative drawings do not change practice records\\}
@@ -3128,8 +3168,7 @@ other cases a result that was discarded can be told apart from one that
 never came.
 
 How test will be performed: a Playwright script makes the changes, releases
-the stub, and compares the drawing with the expected one. T-PERF-002
-measures how quickly the canvas responds during the wait.
+the stub, and compares the drawing with the expected one.
 
 \item{T-CRT-025: No refinement in guided lessons\\}
 
@@ -3995,7 +4034,7 @@ all)} & \textbf{Without a guide (passed of all)}\\
 a & A, circle & 5 of 16 & 1 of 5\\
 b & A, square & 0 of 8 & None\\
 c & A, line & 1 of 3 & None\\
-d & D, circle (started at I) & None & 2 of 2\\
+d & D, circle (started at I) & None & 1 of 2\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -4100,8 +4139,8 @@ with the strokes exactly as the child drew them.
 
 Type: Dynamic, automatic. Covers FR-PRG-006.
 
-Initial State: the histories of learners A to C, and the history of
-T-REC-004, in which an adult-set value changes in the middle of a lesson.
+Initial State: the histories of learners A to C, and learner H's history,
+in which an adult-set value changes in the middle of a lesson.
 
 Input: open these attempt records from the summary:
 \begin{itemize}
@@ -4110,7 +4149,7 @@ Input: open these attempt records from the summary:
 endpoint not corrected (B);
 \item[(c)] an interrupted attempt (C);
 \item[(d)] the attempts just before and just after the value change
-(T-REC-004's history);
+(H);
 \item[(e)] an attempt of 40 strokes, one of them a single point (A).
 \end{itemize}
 
@@ -4249,13 +4288,14 @@ could not draw.
 Type: Dynamic, automatic. Covers FR-PRG-010.
 
 Initial State: learner D's history: a circle lesson the adult started at I,
-with two passed attempts at I; and a square lesson with three failed
+with a failed attempt at I and then a passed one, which completed the
+lesson; and a square lesson with three failed
 attempts at T, unfinished. Learner A's history.
 
 Input: open D's summary, then A's.
 
-Output: for D's circle, T and E are marked not attempted and I shows 2
-successful attempts; for D's square, T shows 0 successful attempts and is
+Output: for D's circle, T and E are marked not attempted and I shows 1
+successful attempt; for D's square, T shows 0 successful attempts and is
 marked attempted, and E and I are marked not attempted. For A, every ``--''
 in Table~\ref{tab:t-prg-002} is marked not attempted, and every 0 in a P
 column whose stage was attempted is shown as 0 successful attempts.
@@ -5756,7 +5796,7 @@ FR-CRT-006 & T-CRT-006\\
 FR-CRT-007 & T-CRT-007, T-CRT-006, T-CRT-016 (f), T-CRT-020 (b, e), T-CRT-022\\
 FR-CRT-008 & T-CRT-007 (b, c), T-CRT-020 (e), T-CRT-022\\
 FR-CRT-009 & T-CRT-008\\
-FR-CRT-010 & T-CRT-013, T-CRT-026, T-PERF-002\\
+FR-CRT-010 & T-CRT-013, T-CRT-026\\
 FR-CRT-011 & T-CRT-014, T-CRT-015, T-CRT-023 (d, g)\\
 FR-CRT-012 & T-CRT-014, T-CRT-015, T-CRT-023 (e)\\
 FR-CRT-013 & T-CRT-016, T-CRT-027\\
@@ -5768,10 +5808,10 @@ FR-CRT-018 & T-CRT-020 (a)\\
 FR-CRT-019 & T-CRT-021\\
 FR-CRT-020 & T-CRT-023, T-CRT-015\\
 FR-CRT-021 & T-CRT-024, T-CRT-025 (b)\\
-FR-CRT-022 & T-CRT-024 (b), T-PERF-002\\
+FR-CRT-022 & T-CRT-024 (b)\\
 FR-CRT-023 & T-CRT-009, T-CRT-008 (b), T-CRT-010, T-CRT-027\\
 FR-CRT-024 & T-CRT-009, T-CRT-008, T-CRT-027\\
-FR-CRT-025 & T-CRT-011 (a, b)\\
+FR-CRT-025 & T-CRT-011 (a, b, d)\\
 FR-CRT-026 & T-CRT-010\\
 FR-CRT-027 & T-CRT-025, T-REC-002\\
 FR-CRT-028 & T-CRT-012\\
@@ -6109,7 +6149,16 @@ come from the refinement model. Two team members who did not make the
 drawings each view every original beside its copies on the test iPad, and
 say whether each copy is still clearly the same drawing, with no shape
 replaced. \texttt{REFINE\_TOLERANCE} is the largest $d$ that both accept for
-every drawing. The value, the copies and both reviewers' answers are
+every drawing. This first value is needed early, because the refinement
+tests depend on it. \emph{Confirmed:} in the adult usability sessions run by
+Shamil and Ahmed, as the Hazard Analysis asks for H-MUH-006 (a). Supporting
+adults who are not on the team view each adult-made drawing beside its copies
+for every $d$ up to \texttt{REFINE\_TOLERANCE} and beside its refined drawing
+from the model, and say whether each is still the same drawing. If any adult rejects
+a copy, the value is lowered to the largest $d$ that every adult accepts for
+every drawing, and the refinement tests are run again. A rejected refined
+drawing that is within the value is recorded as a finding against the model,
+not the value. The value, the copies and every reviewer's answers are
 recorded in the VnV Report, and the SRS constants table is updated in the
 same PR. If OI-03 changes the supported set, the new drawings are judged the
 same way, and the value can only go down. Setting it without the model means
@@ -6135,7 +6184,8 @@ T-CRT-015.\\
 of up to 40 events per run of T-CRT-022: enough for two refinements, edits,
 restores and a reopen in one sequence. The seed is \texttt{MODEL\_SEED}.\\
 \addlinespace
-\texttt{RECUR\_MIN} & The SRS constant (TBD in SRS Section~4.2): how many of
+\texttt{RECUR\_MIN} & The SRS constant (SRS Section~4.2, proposed there
+and confirmed as below): how many of
 a learner's attempts at one stage of one lesson must show the same predefined
 difficulty for the summary to list it as recurring. \emph{Proposed value:} 3
 attempts. Two could be chance, and three at the same stage is the smallest
@@ -6146,14 +6196,14 @@ keeps 3 unless they advise otherwise. The value is recorded in the SRS
 constants table and the VnV Report. T-PRG-004 uses the symbol and generates
 its history from it, so the test does not change.\\
 \addlinespace
-\texttt{ADULT\_REVIEWERS} & The SRS constant (TBD in SRS Section~4.2): the
+\texttt{ADULT\_REVIEWERS} & The SRS constant (SRS Section~4.2): the
 fewest adult reviewers in T-PRG-013. \emph{Value:} 5, set in this plan.
 Five adults outside the team (caregivers, educators or students) is what
 the team can recruit for one round of sessions, and it gives 15 tries of
 each requirement's three tasks. If fewer than five take part, the round
 is extended until five have; the number is not lowered.\\
 \addlinespace
-\texttt{REVIEW\_PASS\_RATE} & The SRS constant (TBD in SRS Section~4.2): the
+\texttt{REVIEW\_PASS\_RATE} & The SRS constant (SRS Section~4.2): the
 smallest share of reviewer tasks in T-PRG-013 that must succeed, counted
 separately for each requirement. \emph{Value:} 0.8, set in this plan, before
 any session, and not changed after the results are seen. With five
@@ -6232,10 +6282,16 @@ from \texttt{RECUR\_MIN}.
 \item \texttt{prg-\allowbreak{}c.json}: learner C, three interrupted
 attempts at T of the circle lesson.
 \item \texttt{prg-\allowbreak{}d.json}: learner D, a circle lesson started
-at I with two passed attempts, and a square lesson with three failed
+at I with a failed attempt and then a passed one, which completed it
+(SRS BR-002), and a square lesson with three failed
 attempts at T, unfinished.
 \item \texttt{prg-\allowbreak{}f.json}: learner F, in the second account, a
 copy of A's history with new record IDs.
+\item \texttt{prg-\allowbreak{}h.json}: learner H, one circle lesson
+started at T: a failed attempt with \texttt{STAGE\_PASS} at 80, then the
+adult changes it to 70 with the adult check, then a passed attempt with
+\texttt{STAGE\_PASS} at 70, as in T-REC-004 (i). Then one passed
+attempt each at E and I completes the lesson.
 \end{itemize}
 Learner E has no records, and learner G has only the creative drawings of
 \texttt{crt-\allowbreak{}three.json}, saved three times.

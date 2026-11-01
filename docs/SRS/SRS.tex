@@ -189,6 +189,25 @@ changed FIPPA to MFIPPA (\#224).\\
 keeping work through a lost connection is in scope (ASM-005); said which parts
 of FACT-007 the team accepted; explained the \texttt{ATTEMPT\_LIMIT} check and
 what \texttt{ATTEMPT\_LIMIT\_MAX} counts (\#184, \#185, \#190).\\
+30 October 2026 & Ahmed Elzaria & Addressed peer review: gave
+\texttt{REFINE\_TOLERANCE} a unit and said how and when it is set, as planned in
+the VnV Plan (\#193).\\
+30 October 2026 & Ahmed Elzaria & Set \texttt{ADULT\_REVIEWERS} and
+\texttt{REVIEW\_PASS\_RATE}, and said how and when \texttt{RECUR\_MIN} is set,
+as planned in the VnV Plan (\#247).\\
+1 November 2026 & Ahmed Elzaria & Addressed peer review: an unanswered go-back
+suggestion now stays pending in every section (FR-LRN-019, UC-005,
+SAF-RAY-001, the product input table, the data dictionary and Section~9.2),
+and ``ignored'' is the status of a suggestion cleared before any answer
+(\#176).\\
+1 November 2026 & Ahmed Elzaria & Addressed peer review: moved SAF-RAY-001 to
+PH-1, with the lesson and starting stage choice it protects, and added the
+adult check to the fit criterion of FR-LRN-016 (\#177).\\
+1 November 2026 & Ahmed Elzaria & Addressed peer review: defined the stage
+result and a complete attempt in black-box terms in Section~9.2, with
+\texttt{TRACE\_TOL} and \texttt{PART\_COVER}; listed the initial lesson
+catalogue and each lesson's required parts; added NFR-PERF-010 so the stage
+result must match its definition (\#175).\\
 \end{longtable}
 
 ~\\
@@ -260,7 +279,8 @@ approved threshold; unresolved values appear in the constants register, and are
 also linked to an open issue in Section~\ref{sec:open-issues} where such an
 issue exists. Performance and maintainability values marked TBD are not unknowns: the
 VnV Plan states how each will be set by repeated measurement once the system
-can be tested. Diagrams, if used, must include a legend identifying their symbols
+can be tested. The same holds for \texttt{REFINE\_TOLERANCE}, which the VnV
+Plan sets from adult-made drawings. Diagrams, if used, must include a legend identifying their symbols
 and arrow meanings. Section~\ref{sec:fr-formal} defines the state-machine
 notation used to specify guided lesson behaviour.
 
@@ -456,8 +476,8 @@ adult a view of the child's progress alongside control of activities (SRC-005,
 \emph{Measurement:} met when, for prepared histories showing improvement,
 recurring difficulties and changing stages, every summary separates the two
 kinds of attempt correctly and links to the right attempts; and at least
-\texttt{ADULT\_REVIEWERS} (TBD) adult reviewers interpret example summaries and
-locate the supporting attempts, with at least \texttt{REVIEW\_PASS\_RATE} (TBD)
+\texttt{ADULT\_REVIEWERS} adult reviewers interpret example summaries and
+locate the supporting attempts, with at least \texttt{REVIEW\_PASS\_RATE}
 of their tasks succeeding. \\
 \end{longtable}
 }
@@ -1251,8 +1271,23 @@ range (OI-05; CON-005--006).
 \bottomrule
 \endlastfoot
 \texttt{STAGE\_PASS} & Minimum stage result threshold for a complete attempt to
-pass a drawing stage. \emph{Unit:} points out of 100. \emph{Range:} 70--90.
+pass a drawing stage. The stage result (Section~\ref{sec:fr-formal}) is the
+smaller of the share of the lesson's figure that was drawn and the share of the
+drawing that lies on the figure, so a result of 80 means at least 80\% of each.
+\emph{Unit:} points out of 100. \emph{Range:} 70--90.
 \emph{Default:} 80. \emph{Trace:} G.2, BR-002, BR-008, OI-05.\\
+\addlinespace
+\texttt{TRACE\_TOL} & Largest distance at which a drawn point counts as on the
+lesson's figure, and a part of the figure counts as drawn. \emph{Unit:} percent
+of the figure's size (the diagonal of its bounding box), so it does not depend
+on the screen. \emph{Value:} proposed 5; confirmed by the team in PH-1, before
+the first evaluation test, on adult-made drawings (BR-009), as the VnV Plan
+calibrates its prepared attempts. \emph{Trace:} G.2, FR-LRN-011, FR-LRN-013.\\
+\addlinespace
+\texttt{PART\_COVER} & Smallest share of the length of a required part of the
+figure that must be drawn for the part to count as present. \emph{Unit:}
+percent. \emph{Value:} proposed 90; confirmed with \texttt{TRACE\_TOL}.
+\emph{Trace:} G.2, FR-LRN-011.\\
 \addlinespace
 \texttt{DIFFICULTY\_STREAK} & Consecutive unsuccessful attempts before Squigglr
 may suggest returning to an earlier stage. \emph{Unit:} failed attempts.
@@ -1295,22 +1330,28 @@ team-defined; TBD. \emph{Default:} middle of the range; must be less than
 \texttt{IDLE\_TIMEOUT}. \emph{Trace:} BR-008, SAF-RAY-009.\\
 \addlinespace
 \texttt{REFINE\_TOLERANCE} & Maximum permitted distance between refined strokes
-and the child's original strokes in the creative space. \emph{Unit:} distance
-scale (TBD). \emph{Value:} team-defined; TBD. \emph{Trace:} G.4, BR-005.\\
+and the child's original strokes in the creative space. \emph{Unit:} CSS
+pixels on the drawing area used for testing. \emph{Value:} TBD; set by the team
+in PH-1, before the first refinement test, by judging adult-made drawings of the
+supported set (BR-009), then confirmed by supporting adults in the usability
+sessions (H-MUH-006), as planned in the VnV Plan (Symbolic Parameters
+appendix). \emph{Trace:} G.4, BR-005.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers for progress
 summary understandability checks. \emph{Unit:} people (count). \emph{Value:}
-team-defined; TBD. \emph{Trace:} G.6.\\
+5, set in the VnV Plan (Symbolic Parameters appendix). \emph{Trace:} G.6.\\
 \addlinespace
 \texttt{REVIEW\_PASS\_RATE} & Minimum proportion of progress summary review
 tasks completed successfully by adults. \emph{Unit:} proportion. \emph{Value:}
-team-defined; TBD. \emph{Trace:} G.6.\\
+0.8, set in the VnV Plan before any review session (Symbolic Parameters
+appendix). \emph{Trace:} G.6.\\
 \addlinespace
 \texttt{RECUR\_MIN} & Minimum number of a learner's attempts, at the same stage
 of the same lesson within a progress summary's period, in which one predefined
 difficulty must be observed for the summary to list it as recurring.
-\emph{Unit:} attempts (integer $\geq 2$). \emph{Value:} team-defined; TBD.
-\emph{Trace:} G.6, FR-PRG-004.\\
+\emph{Unit:} attempts (integer $\geq 2$). \emph{Value:} TBD; proposed 3, and
+confirmed with the specialists in PH-2, as planned in the VnV Plan (Symbolic
+Parameters appendix). \emph{Trace:} G.6, FR-PRG-004.\\
 \addlinespace
 \texttt{AGE\_RANGE} & Intended lower and upper ages of learners served by
 Squigglr. \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
@@ -2222,8 +2263,8 @@ FR-LRN-019). Go-back suggestion = Suggested stage + Suggestion status. &
 Attribute & Part of exactly one lesson record; made only after
 \texttt{DIFFICULTY\_\allowbreak STREAK} failed attempts in a row at one stage,
 and not while the child is improving; changes the stage only if an adult accepts
-it; a declined or ignored suggestion is made again only after another full
-streak. & G.3; BR-003; CON-007; UC-005; F8, F10; FR-LRN-019; FR-REC-010;
+it; a declined suggestion is made again only after another full streak, and
+an unanswered one stays pending, so no second suggestion is made. & G.3; BR-003; CON-007; UC-005; F8, F10; FR-LRN-019; FR-REC-010;
 SAF-RAY-001, SAF-RAY-007 \\
 \addlinespace
 Interrupted mark & Marks an attempt that an adult stopped, by ending the session
@@ -2266,9 +2307,8 @@ Path & The points of a stroke, in the order drawn. Path = \{Point\}. & Attribute
 FR-CRT-011, FR-CRT-012 \\
 \addlinespace
 Point & One position on the drawing area that a stroke passes through. &
-Attribute & Position on the drawing area, in the same unit of distance as
-\texttt{REFINE\_\allowbreak TOLERANCE}; the unit is TBD and will be fixed with
-the value of that constant. & ASM-004; FR-CRT-012 \\
+Attribute & Position on the drawing area, in CSS pixels, the same unit of
+distance as \texttt{REFINE\_\allowbreak TOLERANCE}. & ASM-004; FR-CRT-012 \\
 \addlinespace
 Practice-only statement & The statement on every progress summary that it
 describes practice only and is not an assessment or diagnosis. & Attribute &
@@ -2288,8 +2328,8 @@ Recurring difficulty & A predefined difficulty that a progress summary lists
 because it keeps occurring. Recurring difficulty = Predefined difficulty + Stage
 + Lesson + count of attempts + count corrected. & Attribute & Observed in at
 least \texttt{RECUR\_MIN} attempts at the same stage of the same lesson;
-\texttt{RECUR\_MIN} is a team-set count, TBD, to be fixed with the other
-team-set values (OI-05). & G.6; FR-PRG-004 \\
+\texttt{RECUR\_MIN} is a team-set count, proposed at 3 and confirmed with the
+specialists in PH-2 (Section~\ref{sec:constants}). & G.6; FR-PRG-004 \\
 \addlinespace
 Refined drawing & A creative drawing while a refinement of it is in effect: the
 strokes the refinement produced, as the child may later edit them. & Attribute &
@@ -2349,8 +2389,9 @@ made; on acceptance the adult chooses the earlier stage. & BR-003; UC-005;
 FR-LRN-019 \\
 \addlinespace
 Suggestion status & Where a go-back suggestion stands. & Attribute & Pending,
-accepted, declined or ignored; only an adult accepts or declines, and a declined
-or ignored suggestion changes nothing. & G.3; BR-003; UC-005; F8; FR-LRN-019;
+accepted, declined or ignored. Pending until an adult answers; ignored when a
+pass or the end of the lesson clears it before any answer. Only an adult
+accepts or declines, and a declined or ignored suggestion changes nothing. & G.3; BR-003; UC-005; F8; FR-LRN-019;
 FR-REC-010 \\
 \addlinespace
 Supported item & A shape or simple object in the agreed supported set, which
@@ -2521,9 +2562,10 @@ refinement leaves the drawing unchanged (\goalref{4}). \\
 \addlinespace
 Decision on a suggestion to go back a stage & Supporting adult & \ucref{005} &
 \mbox{\reqref{FR-LRN-018}}, \mbox{\reqref{FR-LRN-019}}, SAF-RAY-001 & A declined
-or ignored suggestion changes nothing, and the suggestion stays pending without
-blocking practice until an adult decides (SAF-RAY-001; BR-003). Only an adult
-can accept it. \\
+suggestion changes nothing. An unanswered suggestion stays pending without
+blocking practice until an adult decides (SAF-RAY-001; BR-003); if a pass or the
+end of the lesson clears it first, it is recorded as ignored. Only an adult can
+accept it. \\
 \addlinespace
 Changes to a child's settings: accessibility, audio, whether refinement is on &
 Supporting adult & \ucref{010} & NFR-UX-010, NFR-UX-011 & A setting changes only
@@ -2897,8 +2939,11 @@ without improving.} \reqfield{Trigger}{Squigglr suggests going back a stage
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
   \item[2a.] The adult declines. Nothing changes, and a new suggestion needs a
   new full streak (\mbox{\reqref{FR-LRN-019}}).
-  \item[2b.] The adult does not respond. The suggestion stays pending and
-  nothing changes (\mbox{SAF-RAY-001}, BR-003).
+  \item[2b.] The adult does not respond. The suggestion stays pending, nothing
+  changes, and no second suggestion is offered while it is pending
+  (\mbox{SAF-RAY-001}, BR-003). If the child passes the stage or the lesson
+  ends first, the suggestion is cleared and recorded as ignored
+  (\mbox{\reqref{FR-REC-010}}).
 \end{description}
 \noindent\textit{Failure flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
@@ -3114,6 +3159,38 @@ verify that no letter activity is required to complete the core catalogue.}
   \reqtraces{ASM-010; LC-001; \ucref{002}}
 \end{srsrequirement}
 
+Table~\ref{tab:lesson-catalogue} lists the initial catalogue. The team chose it
+from the agreed categories; it can change (LC-001), and each lesson is stored
+as data (NFR-MAINT-001). The PoC (PH-1) offers the line, circle and square
+lessons, and the full catalogue is offered from PH-2. The required parts and
+endpoints define a complete attempt (Section~\ref{sec:fr-formal}).
+
+{\small
+\begin{longtable}{@{}l l >{\raggedright\arraybackslash}p{0.55\textwidth}@{}}
+\caption{Initial lesson catalogue}\label{tab:lesson-catalogue}\\
+\toprule
+\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Horizontal line & Line & One straight segment; its two endpoints.\\
+Vertical line & Line & One straight segment; its two endpoints.\\
+Diagonal line & Line & One straight segment; its two endpoints.\\
+Circle & Basic shape & Four quarter arcs, which together close the circle.\\
+Square & Basic shape & Four sides; four corners.\\
+Triangle & Basic shape & Three sides; three corners.\\
+House & Simple drawing & The four sides of the walls and the two sides of the
+roof; the two roof corners where the roof meets the walls, and its top.\\
+Sun & Simple drawing & The four quarter arcs of the circle and eight short
+straight rays; the outer end of each ray.\\
+\end{longtable}
+}
+
 \begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
   \reqshall{Squigglr shall make the following ordered guidance stages available
 for each guided lesson: demonstration, full outline tracing, endpoint-only
@@ -3322,8 +3399,9 @@ by the supporting adult for the learner's session, including an adult-selected
 later starting stage.} \reqrationale{The adult controls initial level selection
 rather than the product assigning readiness (G.3, CON-007).} \reqfit{Select each
 available starting stage as an adult, launch the lesson, and verify that the
-selected stage is used; check that a child-only practice action does not change
-the configured lesson or starting stage.}
+selected stage is used; check that a child-only practice action, and an attempt
+to choose a lesson or starting stage without passing the adult check of
+SAF-RAY-001, does not change the configured lesson or starting stage.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{3}; CON-007; \hyperref[src:005.01]{SRC-005.01};
@@ -3372,15 +3450,19 @@ without an additional adult action (FR-LRN-023).}
 return to an earlier drawing stage when the learner reaches
 \texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing evaluable
 attempts at an eligible stage and the improvement rule does not suppress
-suggestions. When an adult declines or ignores the suggestion, another
-suggestion shall require a new full failure streak.} \reqrationale{A supporting
-adult should decide whether earlier guidance is appropriate (G.3, BR-003).}
+suggestions. When an adult declines the suggestion, another suggestion shall
+require a new full failure streak. A suggestion that no adult answers shall stay
+pending, without blocking practice, and no second suggestion shall be offered
+while it is pending.} \reqrationale{A supporting adult should decide whether
+earlier guidance is appropriate (G.3, BR-003).}
 \reqfit{Replay known failing sequences immediately below and at the selected
 streak threshold at both eligible stages, including sequences with fewer than
 twice the configured \texttt{IMPROVE\_WINDOW} results and sequences with
 qualifying improvement; verify that insufficient history does not delay the
-first suggestion, that qualifying improvement suppresses it, and that a declined
-suggestion reappears only after another full failure streak.}
+first suggestion, that qualifying improvement suppresses it, that a declined
+suggestion reappears only after another full failure streak, and that while a
+suggestion is unanswered, further failed attempts are counted but no second
+suggestion is offered.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{3}; BR-003; \hyperref[src:005.01]{SRC-005.01};
@@ -3559,14 +3641,36 @@ This abstract event does not prescribe a particular user-interface control. A
 stylus lift alone does not finalize the attempt; interruption before
 finalization cannot produce a passed result (FR-LRN-008--010).
 
+Each lesson has a \emph{figure}: the reference drawing shown as the outline at
+stage $T$, made of the \emph{required parts} and \emph{required endpoints}
+listed for the lesson in Table~\ref{tab:lesson-catalogue}. Distances are
+measured on the drawing area and compared with \texttt{TRACE\_\allowbreak TOL}.
+At stage $I$, where no guide shows where to draw, the attempt is first moved and
+uniformly scaled so that its bounding box is centred on the figure's and its
+longer side matches the figure's; position and size on the screen therefore do
+not affect the result. At $T$ and $E$ the attempt is compared where it was
+drawn.
+
 Let $\operatorname{Valid}_{\ell,l}(X)$ mean that all input required to interpret
 the strokes is available, and let $\operatorname{Complete}_{\ell,l}(X)$ mean
-that every required part of the drawing is present according to the lesson's
-fixed stage criteria. These functions use the fixed completeness criteria of the
-selected lesson and stage. Stage result values use the normalized 0--100 scale
-specified in Table~\ref{tab:goalconst}; the actual scoring function is defined
-for each lesson's drawing criteria rather than as an assessment of a learner.
-Define
+that every required part has at least \texttt{PART\_\allowbreak COVER} of its
+length within \texttt{TRACE\_\allowbreak TOL} of a drawn stroke, and every
+required endpoint has a drawn point within \texttt{TRACE\_\allowbreak TOL} of
+it. For example, an attempt at the square lesson with one side not drawn is
+incomplete, however accurate the other three sides are.
+
+The stage result $v_{\ell,l}(X)$ of an evaluable attempt is
+\[
+v_{\ell,l}(X)=100\cdot\min(\mathit{drawn},\ \mathit{on\ figure}),
+\]
+where $\mathit{drawn}$ is the share of the figure's length within
+\texttt{TRACE\_\allowbreak TOL} of a drawn stroke, and $\mathit{on\ figure}$ is
+the share of the drawn length within \texttt{TRACE\_\allowbreak TOL} of the
+figure. It measures the drawing against the figure, not the learner. A result
+of 80 means that at least 80\% of the figure was drawn and at least 80\% of what
+was drawn lies on the figure; a square with one side missing scores at most 75.
+Stage result values use the normalized 0--100 scale specified in
+Table~\ref{tab:goalconst}. Define
 \[
 C_{\ell,l}(X)=
 \begin{cases}
@@ -3583,7 +3687,7 @@ G(l)=\begin{cases}
 \textsf{independent} & l=I.
 \end{cases}
 \]
-Let $v_{\ell,l}(X)\in[0,100]$ be the normalized stage result of an evaluable
+So $v_{\ell,l}(X)\in[0,100]$ is the normalized stage result of an evaluable
 drawing. Its threshold is $\theta_p=\texttt{STAGE\_\allowbreak PASS}(p)$, taken
 from the adult's approved profile value (or midpoint default under BR-008). The
 pass predicate is
@@ -3635,9 +3739,14 @@ q=\textsf{active}\land s=0\land l\in\{E,I\}\land k\ge d_p
 \]
 The rule applies to drawing levels $E$ and $I$; $T$ has no preceding drawing
 level. A suggestion changes $q$ to $\textsf{suggested}$ and $s$ to $1$, but
-\emph{does not change $l$}. Declining or ignoring a suggestion resets the streak
+\emph{does not change $l$}, and the child keeps practising while it is pending
+(SAF-RAY-001). An adult declining a suggestion clears it and resets the streak
 counter $k$ to zero, preventing an immediate re-offer; a new suggestion requires
-another $d_p$ consecutive failures.
+another $d_p$ consecutive failures. A suggestion that no adult answers stays
+pending: it changes nothing and, because $\operatorname{SuggestBack}$ needs
+$s=0$, prevents a second suggestion. If a pass, an adult selection or the end of
+the lesson clears it before any answer, it is recorded as ignored
+(FR-REC-010).
 
 \paragraph{State-transition rules.}
 Table~\ref{tab:lrn-transitions} gives the level-changing and stage-stopping
@@ -3681,7 +3790,8 @@ after viewing the example & Set $l=T$ within the same lesson; initialize
 drawing-stage counters. This does not start another lesson or require new adult
 authorization.\\
 \addlinespace
-Finalize evaluable attempt & $l\in A$, $q=\textsf{active}$ & Classify
+Finalize evaluable attempt & $l\in A$, $q\in\{\textsf{active},
+\textsf{suggested}\}$ & Classify
 $C_{\ell,l}(X)$ and $G(l)$; report pass/fail using the stage threshold;
 increment $n_a$ and, for non-pass, $n_f,k$. If $z=1$, increment $x$ for this
 additional evaluable attempt. On pass, record the result and apply the
@@ -3694,9 +3804,14 @@ nor $n_f$ is incremented, and no successful stage transition is permitted.\\
 Offer suggestion & $\operatorname{SuggestBack}(\sigma)$ & Set $s=1$,
 $q=\textsf{suggested}$; leave $\ell,l$ unchanged.\\
 \addlinespace
-Ignore or decline suggestion & $s=1$ & Clear $s$, reset $k=0$, return $q$ to
-$\textsf{active}$; leave $\ell,l$ unchanged and retain the attempt history $H$
-and cumulative stage counts.\\
+Adult declines suggestion & $s=1$ and an authorized adult declines & Clear
+$s$, reset $k=0$, return $q$ to $\textsf{active}$; leave $\ell,l$ unchanged and
+retain the attempt history $H$ and cumulative stage counts.\\
+\addlinespace
+Suggestion not answered & $s=1$ and no adult response & Keep $s=1$ and
+$q=\textsf{suggested}$; leave $\ell,l$ unchanged. Attempts continue to be
+finalized and counted. If a pass, $\operatorname{AdultSelect}$ or the end of
+the lesson clears $s$, record the suggestion as ignored.\\
 \addlinespace
 Adult accepts suggestion & $s=1$ and an authorized adult chooses a preceding
 level & Activate the chosen earlier level, clear $s$, reset stage counts; retain
@@ -3715,8 +3830,9 @@ this extension or offer a conflicting return suggestion.\\
 \addlinespace
 Passing a nonfinal drawing stage & $\operatorname{Pass}(X,l,p)$ and
 $l\in\{T,E\}$ & Save the passed attempt at its original stage; automatically set
-$l'=\operatorname{Next}(l)$ without adult action. Reset stage-specific counters
-and update $f$; leave $\ell$ unchanged.\\
+$l'=\operatorname{Next}(l)$ without adult action. Reset stage-specific counters,
+clear any pending suggestion (recorded as ignored) and update $f$; leave $\ell$
+unchanged.\\
 \addlinespace
 Passing the final drawing stage & $\operatorname{Pass}(X,I,p)$ & Save the passed
 independent attempt, set $q'=\textsf{ended}$ and $f'=I$; complete the current
@@ -3731,7 +3847,7 @@ the model requires:
 \begin{aligned}
 &\textbf{I1:}\quad \ell'\ne\ell
   \Longrightarrow\operatorname{AdultSelect};\\
-&\textbf{I2:}\quad \text{suggestion ignored or declined}
+&\textbf{I2:}\quad \text{suggestion declined or not answered}
   \Longrightarrow (\ell',l')=(\ell,l);\\
 &\textbf{I3:}\quad C_{\ell,l}(X)\ne\textsf{complete}
   \Longrightarrow \neg\operatorname{Pass}(X,l,p);\\
@@ -5263,7 +5379,8 @@ do not fit another section. Each lists the hazards it mitigates.
 lesson choice, starting stage choice, learner switching and acceptance of a
 go-back suggestion only after an adult check that a child cannot complete by
 tapping icons, and shall keep a pending suggestion, without blocking practice,
-until an adult accepts or declines it.\\
+until an adult accepts or declines it, or a pass or the end of the lesson
+clears it.\\
 \emph{Rationale:} children should be able to practise without constant adult
 help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults (CON-007;
 SRC-005, \intref{P1}{28:37}). The form of the check is \texttt{ADULT\_CHECK},
@@ -5500,6 +5617,26 @@ ten consecutive runs.}
   \reqphase{PH-2}
   \reqsources{\goalref{2}; \goalref{5}; \goalref{6}}
   \reqtraces{\reqref{FR-LRN-007}; \reqref{FR-LRN-008}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{NFR-PERF-010}{Stage result and completeness agree with their definition}
+  \reqshall{For every evaluable attempt, Squigglr's stage result shall differ by
+at most 1 point from the value defined in Section~\ref{sec:fr-formal}, and its
+complete or incomplete classification shall equal the one defined there.}
+\reqrationale{A threshold of 70 or 90 only means something if the result
+measures what the SRS says it does. Determinism (NFR-PERF-004) alone would allow
+a result that is repeatable but wrong (G.2).} \reqfit{For prepared attempts at
+every stage of every catalogue lesson, including attempts with a missing part,
+a missed endpoint and results just above and below \texttt{STAGE\_PASS}, compare
+Squigglr's stage result and classification with those computed by a separate
+reference script, written from Section~\ref{sec:fr-formal} by a team member
+who did not write the evaluation code. Pass when every result is within 1 point
+and every classification matches.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{2}; BR-002}
+  \reqtraces{\reqref{FR-LRN-011}; \reqref{FR-LRN-013};
+  \reqref{NFR-PERF-004}; H-AHM-004}
 \end{srsrequirement}
 
 \subsection{Robustness or Fault-Tolerance Requirements}
@@ -6882,7 +7019,7 @@ requirement, including the safety requirements derived from the Hazard Analysis.
 The functional requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements are
 classified here as \emph{Must} and assigned to the phase containing the
-behaviour they protect. The 140 identified requirements in this SRS are
+behaviour they protect. The 142 identified requirements in this SRS are
 scheduled in PH-1 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7143,7 +7280,7 @@ PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Safety-Critical Requirements (Section 12.2)}}\\
 \addlinespace
-\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-2 \\
+\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-1 \\
 \addlinespace
 \texttt{SAF-RAY-002} & Unsupported-device notice & Must & PH-2 \\
 \addlinespace
@@ -7185,6 +7322,9 @@ PH-2 \\
 12.3)}}\\
 \addlinespace
 \reqref{NFR-PERF-004} & Stage result scoring accuracy & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-PERF-010} & Stage result and completeness agree with their
+definition & Must & PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Robustness or Fault-Tolerance Requirements
 (Section 12.4)}}\\
@@ -7895,6 +8035,10 @@ reciprocal links.
 \addlinespace
 \reqref{FR-LRN-008} & \reqref{NFR-PERF-004}; \reqref{NFR-MAINT-002} & NFR
 Traceability \\
+\addlinespace
+\reqref{FR-LRN-011} & \reqref{NFR-PERF-010} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-013} & \reqref{NFR-PERF-010} & NFR Traceability \\
 \addlinespace
 \reqref{FR-LRN-014} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015};
 \reqref{NFR-UX-016} & NFR Traceability \\

@@ -753,17 +753,283 @@ assignee, and what closes it. An issue closes when the fix is merged or when
 we record why we are not changing the plan.
 
 \subsection{Implementation Verification}
+\label{sec:impl-verification}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+The implementation is checked in two ways: by running it and by reading
+it. Running it covers:
+\begin{itemize}
+\item the system tests in this plan: the functional tests (T-LRN, T-CRT,
+T-REC and T-PRG) and the nonfunctional tests (T-UX, T-PERF, T-SAF, T-OPS,
+T-MAINT, T-SEC, T-CULT and T-COMP), traced to the requirements in
+Section~\ref{sec:trace};
+\item the unit tests for each module, chosen as described in
+Section~\ref{sec:unit-tests} once the MIS is done (the design documentation
+is due on 18 January 2027);
+\item the automated checks in Section~\ref{sec:tools}, which run the
+automatic parts of these tests on every PR, unless a test names a narrower
+trigger.
+\end{itemize}
+Reading it uses the techniques in Table~\ref{tab:static-verif}. Dynamic
+tests only show behaviour on the inputs they choose. Reading finds paths
+that no test reaches, and checks what no test can, such as naming,
+hard-coded constants and the mapping to the MG and MIS. The safety
+inspection (SI, Section~\ref{sec:safety-tests}) covers the code tied to the
+safety-critical requirements and is not repeated here.
 
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth}%
+>{\raggedright\arraybackslash}p{0.25\textwidth}%
+>{\raggedright\arraybackslash}p{0.18\textwidth}%
+>{\raggedright\arraybackslash}p{0.16\textwidth}%
+>{\raggedright\arraybackslash}p{0.13\textwidth}@{}}
+\caption{Static verification of the implementation}
+\label{tab:static-verif}\\
+\toprule
+\textbf{Technique} & \textbf{Who} & \textbf{When} & \textbf{What is read} &
+\textbf{Checklist}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Technique} & \textbf{Who} & \textbf{When} & \textbf{What is read} &
+\textbf{Checklist}\\
+\midrule
+\endhead
+PR code review & One teammate other than the author, normally the one who
+checks the author's work in Table~\ref{tab:vnvTeam}. Database schema and
+access-policy changes are reviewed by the Backend Lead (Rayan Nasrallah)
+together with a teammate (Development Plan). & Every PR, before merge. &
+The changed code and the PR's unit tests. & Items marked PR in
+Table~\ref{tab:code-checklist}. The reviewer reads the unit tests against
+the rules in Section~\ref{sec:unit-tests}.\\
+\addlinespace
+Code walkthrough & The author presents, and the rest of the team follows and
+asks questions. The Testing Lead (Muhammad Huzaifah) chooses the code and
+the scenario. The notetaker (Moustafa Moustafa) records findings in the
+meeting issue. & 45 minutes of the Sunday 10:00 team review on
+22 November 2026, 6 December 2026, 24 January 2027, 21 February 2027 and
+7 March 2027.
+& At most two modules, the ones changed most since the last walkthrough,
+followed along one scenario. & Items marked W.\\
+\addlinespace
+Code inspection (INS-LRN, INS-EVAL, INS-REC, INS-CRT) & The Testing Lead
+moderates. Two inspectors who did not write the code read it. The author
+answers questions. & Completed by 20 November 2026 (PH-1), 29 January 2027
+(PH-2) and 12 March 2027 (PH-3). & The lesson rules; stroke capture and
+evaluation; record saving; the refinement result check and drawing history.
+& Items marked I, plus A1 to A11.\\
+\addlinespace
+Safety inspection (SI) & Rayan runs it and Huzaifah records. & Before Rev~0
+and Rev~1. & The code tied to the SAF requirements. & The SI steps in
+Section~\ref{sec:safety-tests}.\\
+\bottomrule
+\end{longtable}}
 
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+Table~\ref{tab:code-checklist} shows how reviewers apply each item of the
+team's
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/Code-Checklist.tex}{Code
+Checklist} to Squigglr. The ``Used in'' column names the techniques that
+check the item: PR review (PR), walkthrough (W) and inspection (I).
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.04\textwidth}%
+>{\raggedright\arraybackslash}p{0.23\textwidth}%
+>{\raggedright\arraybackslash}p{0.11\textwidth}%
+>{\raggedright\arraybackslash}p{0.51\textwidth}@{}}
+\caption{Code Checklist items and how reviewers apply them}
+\label{tab:code-checklist}\\
+\toprule
+\textbf{\#} & \textbf{Item} & \textbf{Used in} &
+\textbf{What the reviewer checks in Squigglr}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{\#} & \textbf{Item} & \textbf{Used in} &
+\textbf{What the reviewer checks in Squigglr}\\
+\midrule
+\endhead
+1 & Identifier names are consistent & PR, W, I & Names match the SRS and
+MIS. The stage names are demonstration, full outline tracing, endpoint-only
+guidance and independent drawing, as in SRS FR-LRN-002. Constants are named
+exactly as in SRS Section~4.2 (for example \texttt{STAGE\_PASS}). Record
+fields are named as in SRS Section~7.2.\\
+\addlinespace
+2 & Identifier names are meaningful & PR, W, I & A short name such as
+\texttt{nf} is allowed only with a comment citing the SRS Section~9.2
+symbol.\\
+\addlinespace
+3 & Source code in the src folder & PR & Application code is under
+\texttt{src/}. Each unit test sits next to its module as
+\texttt{<module>.test.ts}. End-to-end tests and fixtures are kept in
+\texttt{tests/} (fixtures in \texttt{tests/fixtures/}).\\
+\addlinespace
+4 & Comments on ``what'' not ``how'' & PR, I & Each exported function of
+the lesson rules, evaluation, record, refinement check and drawing history
+code states what it guarantees and cites its SRS requirement (for example
+``FR-LRN-021'').\\
+\addlinespace
+5 & Avoid hard-coded constants & PR, I & No literal value of an SRS
+constant, such as 80, 8 or 5. Values come from the learner's settings, or
+from one constants module that uses the SRS names.\\
+\addlinespace
+6 & Consistent indentation & PR & The Prettier check passes; this item is
+not checked by hand.\\
+\addlinespace
+7 & Explicit identification of coding standard & PR, once & The ESLint and
+Prettier configuration files are committed, and the README links the
+Development Plan coding standard.\\
+\addlinespace
+8 & Code standard is followed & PR, I & ESLint and \texttt{tsc} pass. The
+reviewer checks what the tools cannot: \texttt{camelCase} and
+\texttt{PascalCase}, and a justification next to every \texttt{any} or lint
+suppression.\\
+\addlinespace
+9 & Parameters in the same order for all functions & PR, I & Learner,
+lesson, stage, attempt, in that order, everywhere.\\
+\addlinespace
+10 & Descriptive file names & PR & Each file is named after what it does.\\
+\addlinespace
+11 & Mapping to the module guide is clear & W, I, from the design
+documentation (18 January 2027) & Each inspected file belongs to one MG
+module, and the mapping is kept in the repository.\\
+\addlinespace
+12 & Mapping between MIS symbols and code symbols & W, I, from the design
+documentation (18 January 2027) & Each MIS access program of the inspected
+module has a function of the same name, with the same inputs and outputs.\\
+\addlinespace
+13 & Understandable to someone new to the project & W & Someone who did not
+write the code can explain the scenario's path after the walkthrough.\\
+\addlinespace
+14 & Esoteric language features avoided & PR, W & A simpler construct is
+used wherever one would do.\\
+\addlinespace
+15 & Incomplete code flagged & PR, I & Incomplete code is marked
+\texttt{TODO(\#issue)} with an open issue, and no \texttt{TODO} remains in
+inspected code at a milestone.\\
+\bottomrule
+\end{longtable}}
+
+\paragraph{Items added for the inspections.} The Code Checklist asks for
+more items, so the inspections add these:
+\begin{itemize}
+\item[A1] (INS-LRN) Each row of the SRS Section~9.2 transition table maps
+to one identifiable code path. After a finished attempt, the rules are
+checked in the SRS order: pass, end at limit, extension, suggestion. In
+three places SRS Section~9.2 disagrees with other parts of the SRS: a
+go-back suggestion pending during practice, the counts when a stage is
+entered again, and when an extended lesson ends. The inspector records
+which reading the code follows and raises it as an SRS feedback issue, not
+as a major finding. The guided lesson tests avoid these cases.
+\item[A2] (INS-LRN) Apart from pass-based advancement and the step from the
+demonstration to practice, only an adult action that passed the adult check
+changes the lesson or the stage (I1, I2 and SRS CON-007).
+\item[A3] (INS-LRN, INS-EVAL) An interrupted (not finalized) or invalid
+attempt cannot reach the pass branch or change a count (SRS FR-LRN-009 and
+FR-LRN-010). An incomplete attempt cannot pass, whatever its result, but
+counts as a failed attempt (I3, FR-LRN-011 and FR-LRN-013).
+\item[A4] (INS-LRN) On every path, the evaluable attempts at a stage never
+exceed \texttt{ATTEMPT\_LIMIT\_MAX}, the extension attempts used never
+exceed \texttt{ATTEMPT\_EXTENSION}, and the extension is granted at most
+once (I5).
+\item[A5] (INS-EVAL) Evaluation and saving use the strokes as captured,
+with no smoothing or refinement, and the lesson code imports nothing from
+the refinement code (I4, SRS BR-004 and BR-005).
+\item[A6] (INS-EVAL) Feedback and completion text come only from the lesson
+catalogue data, never from code literals or a model (FR-LRN-014,
+FR-LRN-022 and NFR-MAINT-001).
+\item[A7] (INS-REC) An attempt record copies the adult-set values in use
+instead of pointing at the current settings (FR-REC-004), and no code path
+updates a saved attempt record or an ended lesson record (FR-REC-009).
+\item[A8] (INS-REC) A retried save cannot create a second record, and each
+attempt is saved under the lesson record it was made in (FR-REC-008).
+\item[A9] (INS-CRT) A refinement result is checked as a whole before any
+of it is applied. It is applied only if it changes nothing but the paths
+of existing strokes and keeps every refined stroke within
+\texttt{REFINE\_TOLERANCE} of its original; a failed, rejected or
+out-of-date result leaves the drawing unchanged (SRS FR-CRT-011,
+FR-CRT-012, FR-CRT-020 and FR-CRT-021; H-MUH-002). A stroke that an earlier
+refinement changed is not refined again unless the child edited it since
+(FR-CRT-014).
+\item[A10] (INS-CRT) Every edit, refinement and restore is one undoable
+change in the drawing history. The original strokes of each refinement
+are kept apart and never overwritten, also when the drawing is saved and
+reopened, so a restore returns them exactly (FR-CRT-007, FR-CRT-017,
+FR-CRT-018 and FR-CRT-024; H-MUH-001).
+\item[A11] (all) Every branch of the inspected files is reached by a test in
+this plan or a unit test, or the gap is listed from the coverage report
+(Section~\ref{sec:tools}).
+\end{itemize}
+
+\paragraph{What each inspection covers.}
+\begin{itemize}
+\item INS-LRN: the lesson rules (FR-LRN-009, FR-LRN-010, FR-LRN-015,
+FR-LRN-016, FR-LRN-018 to FR-LRN-021 and FR-LRN-023; SRS Section~9.2).
+\item INS-EVAL: stroke capture, finishing an attempt, classification, the
+pass decision and the choice of feedback (FR-LRN-007 to FR-LRN-014,
+FR-LRN-022 and FR-REC-002).
+\item INS-REC: creating and saving attempt and lesson records (FR-REC-001
+and FR-REC-003 to FR-REC-010).
+\item INS-CRT: checking refinement results, and the creative drawing
+history with undo, redo and restore (FR-CRT-007, FR-CRT-008, FR-CRT-011,
+FR-CRT-012, FR-CRT-014, FR-CRT-017 to FR-CRT-021 and FR-CRT-024).
+\end{itemize}
+PH-1 inspects INS-EVAL and INS-LRN for the PH-1 code. INS-REC starts in
+PH-2, when FR-REC-004 to FR-REC-010 are built; in PH-1, FR-REC-001 and
+FR-REC-003 rely on PR review and on T-REC-001 and T-REC-003. INS-CRT
+also starts in PH-2, when FR-CRT-014, FR-CRT-019, FR-CRT-021 and
+FR-CRT-024 complete refinement and restore; in PH-1, the creative
+drawing code relies on PR review and on the T-CRT tests.
+PH-2 inspects all four in full, with items 11 and 12, because the MG and
+MIS are done on 18 January 2027. PH-3 inspects only the code changed since
+the commit of the PH-2 inspection.
+
+\paragraph{Inspection procedure.}
+\begin{enumerate}
+\item \emph{Planning} (moderator, two working days before the meeting): open
+an issue labelled \texttt{review}. The issue names the files and commit,
+the SRS requirements, the two inspectors and the checklist items. The
+inspectors are chosen from people who did not write the files, according
+to the commit history. For INS-REC, one of them is the Backend Lead unless
+he wrote the code. If the Testing Lead wrote any of the files, the
+milestone QA coordinator moderates instead.
+\item \emph{Preparation} (each inspector alone, at most one hour): check the
+code against every item, and list each finding in the issue with its file,
+line and item.
+\item \emph{Meeting} (at most one hour; moderator, inspectors and author):
+go through the findings and mark each one major or minor. A finding is
+major if it could change a pass decision, a count, a stage, a saved record
+or what the child or adult sees, or if it breaks one of A1 to A10. A
+disagreement inside the SRS named in A1 is not major; it becomes an SRS
+feedback issue. Every other finding is minor. The author answers questions
+but does not argue findings.
+\item \emph{Rework} (author): each major finding becomes its own issue
+labelled \texttt{bug}, linked from the inspection issue and fixed by a PR.
+Each minor finding is fixed, or closed with a reason.
+\item \emph{Follow-up} (moderator): check every major fix. If there were
+three or more major findings, inspect the changed code again before the
+milestone.
+\end{enumerate}
+The inspection passes when no major finding is open on its date. When a
+file is in both an inspection and the safety inspection at the same
+milestone, the team holds one meeting: the SI steps first, then A1 to A11.
+
+\paragraph{Walkthrough procedure.} The author shares the code on screen and
+follows one scenario from input to saved result, for example a failing
+attempt from the stylus events, through evaluation and the lesson rules,
+to the saved attempt record. Listeners say where they cannot follow (item
+13), and findings become GitHub issues. The walkthroughs on 6 December 2026
+and 21 February 2027 prepare for the course code-review interviews on 9
+December 2026 and 23 February 2027 (Development Plan). Findings from those
+interviews are recorded the same way. From 24 January 2027, walkthroughs
+also check items 11 and 12.
+
+\paragraph{Feasibility and reporting.} An inspection takes about seven
+person-hours: two hours of preparation for the two inspectors, a one-hour
+meeting for four people, and one hour of planning and follow-up. The ten
+inspections (two in PH-1, four in PH-2 and four smaller ones in PH-3)
+take about 60 person-hours, or about twelve for each member over the year.
+Walkthroughs use time in the existing weekly meeting. The VnV Report lists
+each inspection and walkthrough with its date, commit, participants,
+findings by checklist item and severity, and status.
 
 \subsection{Automated Testing and Verification Tools}
 \label{sec:tools}
@@ -918,18 +1184,21 @@ next attempt (T-LRN-016). FR-LRN-001 to FR-LRN-007, FR-LRN-010, FR-LRN-011,
 FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022 and FR-LRN-023 are due in
 PH-1, and the rest in PH-2. Each test first runs in the phase of the
 requirements it covers. After that, its automatic parts run in CI on every
-PR, and its manual parts run at the milestones the test names. The tests
-try to cause the failures in Hazard Analysis rows H-AHM-001 to H-AHM-007:
-lost or doubled strokes, an incomplete drawing that passes, the wrong
-feedback, a suggestion at the wrong time, and a stale or wrong learner's
-setting. Every drawing is made by an adult team member, and no child takes
-part (SRS CON-005 and CON-006).
+PR, unless the test names a narrower trigger, and its manual parts run at
+the milestones the test names. The tests try to cause the failures in Hazard
+Analysis rows H-AHM-001 to H-AHM-007: lost or doubled strokes, an
+incomplete drawing that passes, the wrong feedback, a suggestion at the
+wrong time, and a stale or wrong learner's setting. H-AHM-003, a wrong
+coordinate mapping, is tested by T-SAF-010. Every drawing is made by an
+adult team member, and no child takes part (SRS CON-005 and CON-006).
 
 \paragraph{Conventions.} The tests below share these conventions.
 \begin{itemize}
 \item \emph{Test lessons.} The tests use the line, circle and square
-lessons of the catalogue. The rules are the same for every lesson, and the
-tests of FR-LRN-001 to FR-LRN-006 run on every catalogue lesson.
+lessons of the catalogue. The rules are the same for every lesson. The
+tests of FR-LRN-001 to FR-LRN-006 (T-LRN-001 to T-LRN-004) run on every
+catalogue lesson, except cases (e) and (f) of T-LRN-002, which use the
+three test lessons.
 \item \emph{Defaults.} The adult-set values are at their SRS defaults
 unless a row says otherwise: \texttt{STAGE\_PASS} 80,
 \texttt{DIFFICULTY\_STREAK} 4, \texttt{ATTEMPT\_LIMIT} 8,
@@ -958,20 +1227,25 @@ T-LRN-013, T-LRN-016 to T-LRN-018 and T-LRN-020) run in two ways:
 completeness and result of each attempt given directly; this is the only
 way to set exact boundary values such as 44 or 45;
 \item end to end in Playwright on the real interface, for the rows named in
-each test. There, a written result of 40 is replayed as
-\texttt{circle-\allowbreak{}fail.json} (a failing attempt), 50 as
-\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} (a higher failing
-attempt) and 85 as \texttt{circle.json} (a passing attempt), unless the
-test says otherwise. Playwright-only tests that write 40 or 85 use the same
-mapping.
+each test. There, a written 40, 50 or 85 stands for a failing attempt, a
+higher failing attempt or a passing attempt, and is replayed as
+\texttt{circle-\allowbreak{}fail.json},
+\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} or
+\texttt{circle.json}, unless the test says otherwise. Playwright-only tests
+that write 40 or 85 use the same mapping.
 \end{enumerate}
-Calibration (the \texttt{CAL\_*} constants in Table~\ref{tab:symb-fr})
-guarantees that these three files give the needed pass, fail and
-improvement results.
+The replayed files do not score the written numbers: their results lie in
+the bands of the \texttt{CAL\_*} constants in Table~\ref{tab:symb-fr} (at
+most 60, 70 to 79 and at least 90). These bands, not the written numbers,
+give the needed pass, fail and improvement results end to end.
 \item \emph{Switching learner ends the lesson.} When the adult switches
 learner or ends the session, the current learner's lesson stops. The lesson
 is recorded as unfinished (T-REC-007), and a later lesson for that learner
 is a new lesson record.
+\item \emph{The list of results $H$.} In SRS Section~9.2, $H$ holds the
+results of the evaluable attempts at the current stage. This is the state
+definition; the transition table does not append to $H$. The tests, and the
+model of T-LRN-021, follow the state definition.
 \end{itemize}
 
 \begin{enumerate}
@@ -1014,11 +1288,12 @@ Initial State: learner A, plus learner B for case (f), each with no lesson
 records, on one device.
 
 Input: the cases vary the adult's starting choice and the child's actions;
-the lesson rules and the defaults stay fixed. Each case is run for the
-line, circle and square lessons. ``Good drawing'' means \texttt{line.json},
-\texttt{circle.json} or
-\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, and ``failing
-drawing'' means \texttt{line-\allowbreak{}short.json},
+the lesson rules and the defaults stay fixed. Cases (a) to (d) run for every
+catalogue lesson, and cases (e) and (f) for the line, circle and square
+lessons. ``Good drawing'' means the lesson's good-drawing fixture:
+\texttt{line.json}, \texttt{circle.json} or
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} for the test
+lessons. ``Failing drawing'' means \texttt{line-\allowbreak{}short.json},
 \texttt{circle-\allowbreak{}fail.json} or
 \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, according to
 the lesson. The cases are in Table~\ref{tab:t-lrn-002}.
@@ -1044,8 +1319,11 @@ E, I, then the lesson is completed\\
 e & Start at E & The child makes a failing drawing, finishes it, retries,
 taps the avatar and taps the stage indicator & The lesson is unchanged, the
 stage shown is still E, and the lesson record's starting stage is E\\
-f & A starts at E, B at T, same lesson & The adult switches A, then B, then
-A & Each learner starts at their own stage\\
+f & A at E, B at T, same lesson & The adult switches A, then B, then A. On
+each switch, the adult starts the lesson again with that learner's stage,
+with the adult check & The stage shown is the one just selected for that
+learner, and each lesson record holds its learner's starting stage (E, T,
+E)\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1122,9 +1400,10 @@ FR-LRN-006.
 Initial State: each catalogue lesson opened at T, E and I in turn, with the
 adult check. The drawing area is \texttt{TEST\_CANVAS}.
 
-Input: the cases vary the stage; the lesson's good drawing
+Input: the cases vary the stage; the lesson's good drawing stays fixed
 (\texttt{line.json}, \texttt{circle.json} or
-\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}) stays fixed. The
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} for the test
+lessons, and the good-drawing fixture of any other catalogue lesson). The
 cases are in Table~\ref{tab:t-lrn-004}.
 
 \begin{table}[htbp]
@@ -1359,7 +1638,8 @@ names. (d) tries to make invalid input count toward the limit (H-AHM-006).
 to the drawing area is covered by T-SAF-010.
 
 How test will be performed: Vitest sends each file to the input handler
-and the evaluation. Playwright replays (a) to (e).
+and the evaluation. Playwright replays (a) to (e), with 40 replayed as
+\texttt{circle-\allowbreak{}fail.json}.
 
 \item{T-LRN-009: Complete or incomplete\\}
 
@@ -1371,8 +1651,9 @@ Type: Dynamic, automatic and manual. Covers FR-LRN-011.
 Initial State: the line, circle and square lessons, each evaluated at T, E
 and I.
 
-Input: the cases vary the lesson and the drawing; each case runs at all
-three drawing stages. The cases are in Table~\ref{tab:t-lrn-009}.
+Input: the cases vary the lesson and the drawing; the defaults stay fixed,
+and each case runs at all three drawing stages. The cases are in
+Table~\ref{tab:t-lrn-009}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1424,7 +1705,8 @@ Type: Dynamic, automatic. Covers FR-LRN-012.
 Initial State: learner A with the circle lesson.
 
 Input: the cases vary the stage of each attempt and how the lesson
-started. The cases are in Table~\ref{tab:t-lrn-010}.
+started; the circle lesson and the defaults stay fixed. The cases are in
+Table~\ref{tab:t-lrn-010}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1472,9 +1754,11 @@ Type: Dynamic, automatic. Covers FR-LRN-013.
 Initial State: the circle lesson at T for one learner. The square lesson is
 used for case (j).
 
-Input: the cases vary \texttt{STAGE\_PASS} and the attempt. Cases (a) to
-(f) are each run with \texttt{STAGE\_PASS} = 70, 80 and 90; cases (g) to
-(j) are end to end. The cases are in Table~\ref{tab:t-lrn-011}.
+Input: the cases vary \texttt{STAGE\_PASS} and the attempt; the circle
+lesson at T (the square lesson for case (j)) and the other settings at
+their defaults stay fixed. Cases (a) to (f) are each run with
+\texttt{STAGE\_PASS} = 70, 80 and 90; cases (g) to (j) are end to end. The
+cases are in Table~\ref{tab:t-lrn-011}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1641,8 +1925,8 @@ values in its row, with the other five at their defaults. The minimum and
 maximum must be saved, leaving the value unset must save the value in the
 ``Unset'' column, and the values just outside the range must be refused. A
 refused value keeps the previous value and shows a message to the adult.
-Cases (g) to (l) try combinations and the use of the saved values. The
-cases are in Table~\ref{tab:t-lrn-014}.
+Cases (g) to (l) try combinations and the use of the saved values, each
+from a new child profile. The cases are in Table~\ref{tab:t-lrn-014}.
 
 \begin{table}[htbp]
 \centering\small
@@ -1843,7 +2127,7 @@ $60 - 50 = +10$, then $60 - 60 = 0$; in (h), $55 - 50 = +5$, which is
 $+4$; in (j), $\mathrm{mean}(45, 45) - \mathrm{mean}(40, 40) = +5$, then
 $\mathrm{mean}(45, 45) - \mathrm{mean}(40, 45) = +2.5$.
 \item (k): a decline resets the streak, so a new suggestion needs a new full
-streak (FR-LRN-019 and SRS UC-005 step~2a). At the 10th failure, ``End at
+streak (FR-LRN-019 and SRS UC-005 step~2a). At the tenth failure, ``End at
 limit'' takes priority.
 \item (l) is the main flow of SRS UC-005; the furthest stage is kept.
 \item (m) is SRS UC-005 step~2b.
@@ -2027,8 +2311,11 @@ about the drawing and never label, diagnose or compare the child.
 Type: Static (inspection) and dynamic, automatic. Covers FR-LRN-022.
 
 Initial State: the catalogue feedback text at the revision, plus every
-lesson-end message (completed, ended at the limit, extended and
-unfinished).
+lesson-end message: ``every stage passed'', ``ended at
+\texttt{ATTEMPT\_LIMIT}'', ``ended when a granted extension ran out or
+\texttt{ATTEMPT\_LIMIT\_MAX} was reached'' and ``unfinished''. The message
+that tells the adult an extension was granted is added, if the design shows
+one.
 
 Input: (a) a team member who did not write the text reads every message,
 using \texttt{forbidden-\allowbreak{}terms.txt} and three questions: does
@@ -2055,8 +2342,8 @@ completion outcomes using prepared attempts). The terms come from:
 ``slow'', ``better than'', ``worse than'' and ``other children''.
 \end{itemize}
 
-How test will be performed: (a) once per revision (Rev~0 and Rev~1), and in
-PR review whenever catalogue text changes; findings become GitHub issues.
+How test will be performed: (a) at PH-1, Rev~0 and Rev~1, and in PR review
+whenever catalogue text changes; findings become GitHub issues.
 (b) in CI.
 
 \item{T-LRN-020: Automatic advancement within the lesson\\}
@@ -2125,7 +2412,8 @@ Initial State:
 table of guided lesson state transitions and of the predicates
 $\mathrm{Pass}$, $\mathrm{Improving}$ and
 $\mathrm{SuggestBack}$, written by the Testing Lead, who does not
-write the lesson rules module;
+write the lesson rules module. In the model, $H$ holds the results of the
+evaluable attempts at the current stage, as in the conventions;
 \item the lesson rules module, which offers a read-only view of its state
 for tests;
 \item both start at the same chosen drawing stage with the same learner
@@ -2146,7 +2434,7 @@ drawn more often.
 follows every suggestion with an adult accept or decline, places an accept
 only as the last event of a sequence, and draws only settings with
 \texttt{ATTEMPT\_LIMIT} + \texttt{ATTEMPT\_EXTENSION} $\ge$
-\texttt{ATTEMPT\_LIMIT\_MAX}. These are the three cases where SRS
+\texttt{ATTEMPT\_LIMIT\_MAX}. These are three of the places where SRS
 Section~9.2 disagrees with SRS UC-005, BR-002 and SAF-RAY-005.
 \end{itemize}
 
@@ -3313,8 +3601,10 @@ Input: ten attempts, each finished \texttt{ATTEMPT\_GAP} after the one
 before, except attempt 10, which is finished 0.5 seconds after attempt 9.
 The lesson, stage and file vary; the learner and settings stay fixed.
 $r(x)$ is the result the evaluation function returns for file $x$ at that
-stage; the test computes it by calling the function directly. The attempts
-are in Table~\ref{tab:t-rec-001}.
+stage; the test computes it by calling the function directly. M and S stand
+for \texttt{square-\allowbreak{}missing-\allowbreak{}side.json} and
+\texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}. The attempts are
+in Table~\ref{tab:t-rec-001}.
 
 \begin{table}[htbp]
 \centering\small
@@ -3334,9 +3624,9 @@ are in Table~\ref{tab:t-rec-001}.
 5 & Circle, I & F & Circle, I, $r(\mathrm{F})$, not passed, + 5~min\\
 6 & Circle, I & P & Circle, I, $r(\mathrm{P})$, passed, + 6~min\\
 7 & Square, T & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}
-& Square, T, its result, not passed, + 7~min\\
+& Square, T, $r(\mathrm{M})$, not passed, + 7~min\\
 8 & Square, T & \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} &
-Square, T, its result, passed, + 8~min\\
+Square, T, $r(\mathrm{S})$, passed, + 8~min\\
 9 & Circle, T (new lesson) & F & Circle, T, $r(\mathrm{F})$, not passed,
 + 9~min\\
 10 & Circle, T & F & Circle, T, $r(\mathrm{F})$, not passed, + 9~min
@@ -3345,15 +3635,24 @@ Square, T, its result, passed, + 8~min\\
 \end{tabularx}
 \end{table}
 
-Output: exactly ten records, all under learner A, in the order of
-Table~\ref{tab:t-rec-001}, each holding exactly the fields in its row.
+Output: the expected output of each case is in its row of
+Table~\ref{tab:t-rec-001}; the test passes when every case gives it. The
+test database holds exactly ten attempt records, all under learner A, in the
+order of Table~\ref{tab:t-rec-001}, each holding exactly the fields in its
+row.
 
 Test Case Derivation: the fit criterion asks for known lessons, stages,
 results and outcomes, with one pass and one fail at each drawing stage, in
 the order the attempts ended. The outcomes follow from calibration
 ($r(\mathrm{F}) \le 60$ and $r(\mathrm{P}) \ge 90$, against
-\texttt{STAGE\_PASS} 80). The controlled clock makes the times exact.
-Attempts 9 and 10 check the order when times are close.
+\texttt{STAGE\_PASS} 80). Attempt 7 is not passed because it is incomplete
+(SRS FR-LRN-011), although $r(\mathrm{M})$ is at least
+\texttt{CAL\_INCOMPLETE\_MIN}; attempt 8 passes because
+$r(\mathrm{S}) \ge 90$. Attempts 2, 4 and 8 change the stage when they
+pass, so they try to cause H-MUH-003 (a), where the stage is ``taken from
+the lesson's stage when the save completes rather than when the child
+drew''. The controlled clock makes the times exact. Attempts 9 and 10 check
+the order when times are close.
 
 How test will be performed: Playwright with a controlled clock, then a
 database read.
@@ -3403,9 +3702,11 @@ Table~\ref{tab:t-rec-002}; the test passes when every case gives it. No
 record holds an outline, endpoint marks, feedback marks or refined points.
 
 Test Case Derivation: the fit criterion (point for point, and nothing that
-was not drawn), with SRS BR-004 and BR-005. (d) is a near miss, the drawing
-most tempting to ``tidy''. In (e), the feedback of SAF-MOU-001 must not
-enter the record. (f) checks that no stroke leaks between attempts.
+was not drawn), with SRS BR-004 and BR-005. The cases follow H-MUH-003 (b),
+where ``Strokes are smoothed or corrected before they are saved''. (d) is a
+near miss, the drawing most tempting to ``tidy''. In (e), the feedback of
+SAF-MOU-001 must not enter the record. (f) checks that no stroke leaks
+between attempts.
 
 How test will be performed: Playwright replays each file and compares the
 stored points with the file. Inspection item A5 of INS-EVAL checks the code
@@ -3424,7 +3725,8 @@ T for case (d)).
 Input: the cases vary the difficulties in the attempt and whether the child
 corrects them; the learner and the defaults stay fixed. The difficulty
 names are the catalogue's predefined difficulties for the square lesson at
-E. The cases are in Table~\ref{tab:t-rec-003}.
+E; ``missing side'' is the incomplete-shape observation of T-LRN-012 (b).
+The cases are in Table~\ref{tab:t-rec-003}.
 
 \begin{table}[htbp]
 \centering\small
@@ -3437,15 +3739,16 @@ E. The cases are in Table~\ref{tab:t-rec-003}.
 \textbf{Expected difficulties in the record}\\
 \midrule
 a & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, finished
-with no correction & Missing side, not corrected\\
+with no correction & Missing side (the incomplete-shape observation), not
+corrected\\
 b & \texttt{square-\allowbreak{}missing-\allowbreak{}side-\allowbreak{}%
 corrected.json} & Missing side, corrected\\
 c & \texttt{square-\allowbreak{}endpoint-\allowbreak{}and-\allowbreak{}%
 side.json} & Incorrect endpoint, corrected; missing side, not corrected\\
 d & \texttt{circle.json} at T & None\\
 e & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json} with two
-pauses of \texttt{STROKE\_PAUSE}, so the feedback shows twice, then
-finished & Missing side, not corrected, listed once\\
+pauses, each until the missing-side feedback appears, then finished &
+Missing side, not corrected, listed once\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -3474,6 +3777,8 @@ so a later change cannot alter what an earlier record means.
 Type: Dynamic, automatic. Covers FR-REC-004.
 
 Initial State: learner A with all eight adult-set values at their defaults.
+Each of cases (a) to (h) starts from a new learner profile with the
+defaults.
 
 Input: in cases (a) to (h), the adult starts the circle lesson at I and
 replays P, which completes the lesson in one attempt (record 1). The adult
@@ -3526,10 +3831,13 @@ and record 1 is unchanged after the change.
 
 Test Case Derivation: the fit criterion asks for records before and after a
 change to each adult-set value; the eight values are those of SRS BR-008.
-The SRS does not say whether a change applies to a lesson already running,
-so in (i) the record must agree with the outcome it produced (H-AHM-007,
-stale setting). (j) is H-AHM-007, wrong learner. (g) and (h) use the ends of
-the \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} ranges,
+Cases (a) to (h) follow H-MUH-007 (b), where ``Records refer to the
+learner's current adult-set values, which an adult may change at any
+time''. The SRS does not say whether a change applies to a lesson already
+running, so in (i) the record must agree with the outcome it produced
+(H-AHM-007, stale setting). (j) is H-AHM-007, wrong learner. (g) and (h) use
+the ends of the \texttt{LESSON\_IDLE\_PROMPT} and
+\texttt{LESSON\_IDLE\_END} ranges,
 which are set for the test of SAF-RAY-009; the minimums and maximums in (j)
 include them too.
 
@@ -3598,9 +3906,12 @@ Initial State: learner A with no lesson records. Each case is a new start
 of the circle lesson.
 
 Input: the cases vary the start stage and the sequence, written as results;
-learner A, the circle lesson and the defaults stay fixed. End to end, 40 is
-replayed as F, 85 as P and 50 as N. The cases are in
-Table~\ref{tab:t-rec-006}.
+learner A, the circle lesson and the defaults stay fixed. A start at T is
+the default start: the demonstration is watched, and then the attempts
+follow. As in the guided lesson tests, a written 40, 50 or 85 stands for a
+failing, a higher failing or a passing attempt and is replayed as F, N or P,
+whose results lie in the \texttt{CAL\_*} bands, not at the written numbers.
+The cases are in Table~\ref{tab:t-rec-006}.
 
 \begin{table}[htbp]
 \centering\small
@@ -3612,8 +3923,9 @@ Table~\ref{tab:t-rec-006}.
 \textbf{Case} & \textbf{Start} & \textbf{Sequence} &
 \textbf{Expected lesson record}\\
 \midrule
-a & T & 40, 85, 85, 40, 85 & Start T; furthest I; successes T~1, E~1,
-I~1; ending ``every stage passed''; extension count 0; five attempts\\
+a & T (the default start) & 40, 85, 85, 40, 85 & Start T, the first drawing
+stage, with no attempt at D; furthest I; successes T~1, E~1, I~1; ending
+``every stage passed''; extension count 0; five attempts\\
 b & The adult starts at E & $4 \times 40$ [D], $4 \times 40$ & Start E;
 furthest E; successes all 0; ending ``ended at
 \texttt{ATTEMPT\_LIMIT}''; eight attempts\\
@@ -3634,8 +3946,11 @@ Output: the expected output of each case is in its row of
 Table~\ref{tab:t-rec-006}; the test passes when every case gives it.
 
 Test Case Derivation: the fit criterion asks for a start at the first
-drawing stage and a later start chosen by the adult. The ending labels are
-the lesson endings of the SRS Section~7.2 data dictionary. The counts
+drawing stage and a later start chosen by the adult. In (a), the
+demonstration is watched first, so the start is T and no attempt is at D.
+The ending labels are the lesson endings of the SRS Section~7.2 data
+dictionary. The cases follow H-MUH-007 (c), whose mitigation is to ``keep a
+lesson record for every lesson start''. The counts
 follow the stage rules tested in T-LRN-016 to T-LRN-020. In (c), the child
 passes T twice, so T has two successes. In (d), the extension ends at
 $8 + 2 = 10$. (e) checks that each start makes a new record (SAF-RAY-006).
@@ -3764,8 +4079,10 @@ check, and A makes one attempt with F. This lesson stays open through step
 (f) and is record (4). A SHA-256 hash of the canonical JSON of every
 attempt record (20 in total) and of records (1) to (3) is stored.
 
-Input: the steps run in order, each followed by a comparison with the
-stored hashes. The steps are in Table~\ref{tab:t-rec-009}.
+Input: the steps vary the change; learner A, the seeded records and the
+stored hashes stay fixed. The steps run in order, each followed by a
+comparison with the stored hashes. The steps are in
+Table~\ref{tab:t-rec-009}.
 
 \begin{table}[htbp]
 \centering\small
@@ -3780,10 +4097,11 @@ a & The adult changes every adult-set value to the maximum of its range &
 Every stored hash matches\\
 b & The adult changes the circle lesson's starting stage to E & Every
 stored hash matches\\
-c & The adult turns audio off and refinement off & Every stored hash
+c & The adult turns audio off and refinement off, and changes each
+accessibility setting once the SRS defines them & Every stored hash
 matches\\
 d & A new lesson is added to the catalogue & Every stored hash matches\\
-e & The outline and feedback text of the circle lesson are edited in the
+e & The outline and feedback text of the square lesson are edited in the
 catalogue & Every stored hash matches\\
 f & The line lesson is removed from the catalogue & Every stored hash
 matches; record (3) and its attempts are still shown with the lesson's
@@ -3791,8 +4109,9 @@ name\\
 g & In the second context, A continues record (4) with F, then P & Every
 stored hash matches; record (4) has two more attempts, and its earlier
 attempts are unchanged\\
-h & A direct request, as the adult, to change the outcome of attempt record
-1 to passed & Refused; every stored hash matches\\
+h & A direct request, as the adult, to change the outcome of the first
+attempt record of record (1) to passed & Refused; every stored hash
+matches\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -3803,16 +4122,20 @@ Table~\ref{tab:t-rec-009}; the test passes when every step gives it.
 Test Case Derivation: the fit criterion changes every adult-set value, a
 starting stage and the other settings (SRS UC-010), and adds a lesson to
 and removes a lesson from the catalogue. (e) is a catalogue edit (SRS
-LC-001) that could re-score old attempts. In (g), the record of a lesson
-that has not ended may still grow. Record (4) holds one failure before
-(g), so (g) gives no suggestion at either end of the
+LC-001) that could re-score old attempts. The edit is to the square lesson,
+whose record (2) has ended, so it cannot change record (4), a circle
+lesson. In (g), the record of a lesson that has not ended may still grow.
+Record (4) holds one failure before (g), so (g) gives no suggestion at
+either end of the
 \texttt{DIFFICULTY\_STREAK} range. (h) tries the direct route; its audit
 event is tested by T-SEC-003. The steps follow H-MUH-007 (d).
 
 How test will be performed: a Playwright script runs the steps and
 recomputes the hashes from the database. Until the
 \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} ranges are
-set, those two values keep their defaults in the seed and in (a).
+set, those two values keep their defaults in the seed and in (a). Until the
+SRS defines the accessibility settings, (c) changes only audio and
+refinement.
 
 \item{T-REC-010: Suggestions and responses\\}
 
@@ -3851,8 +4174,9 @@ One: ignored\\
 f & $3 \times \mathrm{F}$; the child taps accept (the adult check is not
 completed); then the adult declines & One: declined, never accepted\\
 g & At T, $7 \times \mathrm{F}$ & None\\
-h & $3 \times \mathrm{F}$; the adult switches to B; B makes one attempt &
-A's record: one, ignored; B's record: none\\
+h & $3 \times \mathrm{F}$; the adult switches to B and starts the circle
+lesson for B at T; B makes one attempt & A's record: one, ignored; B's
+record: none\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -5747,9 +6071,9 @@ NFR-COMP-005 & T-COMP-003\\
 \end{longtable}}
 
 Table~\ref{tab:trace-fr} maps each functional requirement to the tests that
-cover it. INS-LRN, INS-EVAL and INS-REC are the code inspections planned
-under Implementation Verification. Tests from other sections that also cover
-a requirement are listed as a second approach.
+cover it. INS-LRN, INS-EVAL, INS-REC and INS-CRT are the code inspections
+planned under Implementation Verification. Tests from other sections that
+also cover a requirement are listed as a second approach.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}%
@@ -5765,7 +6089,7 @@ a requirement are listed as a second approach.
 \midrule
 \endhead
 FR-LRN-001 & T-LRN-001, T-MAINT-001\\
-FR-LRN-002 & T-LRN-002, T-LRN-020\\
+FR-LRN-002 & T-LRN-001, T-LRN-002, T-LRN-020\\
 FR-LRN-003 & T-LRN-003, T-REC-006 (a)\\
 FR-LRN-004 & T-LRN-004 (a), T-LRN-010 (a)\\
 FR-LRN-005 & T-LRN-004 (b), T-LRN-010 (b)\\
@@ -5773,7 +6097,7 @@ FR-LRN-006 & T-LRN-004 (c), T-LRN-010 (c)\\
 FR-LRN-007 & T-LRN-005, T-REC-002, T-SAF-009, T-SAF-010, INS-EVAL\\
 FR-LRN-008 & T-LRN-006, T-SAF-009, INS-EVAL\\
 FR-LRN-009 & T-LRN-007, T-LRN-021, T-REC-005, INS-EVAL, INS-LRN\\
-FR-LRN-010 & T-LRN-008, T-LRN-021, T-SAF-010, INS-EVAL\\
+FR-LRN-010 & T-LRN-008, T-LRN-021, T-SAF-010, INS-EVAL, INS-LRN\\
 FR-LRN-011 & T-LRN-009, T-LRN-011 (d), INS-EVAL\\
 FR-LRN-012 & T-LRN-010, T-SAF-015, INS-EVAL\\
 FR-LRN-013 & T-LRN-011, T-LRN-021, T-PERF-004, INS-EVAL\\
@@ -5783,7 +6107,8 @@ FR-LRN-016 & T-LRN-002, T-SAF-001, INS-LRN\\
 FR-LRN-017 & T-LRN-014, T-SAF-008\\
 FR-LRN-018 & T-LRN-015, T-LRN-021, T-SAF-001, INS-LRN\\
 FR-LRN-019 & T-LRN-016, T-LRN-021, INS-LRN\\
-FR-LRN-020 & T-LRN-017, T-LRN-021, T-SAF-005, INS-LRN\\
+FR-LRN-020 & T-LRN-016 (g), T-LRN-016 (h), T-LRN-017, T-LRN-021,
+T-SAF-005, INS-LRN\\
 FR-LRN-021 & T-LRN-018, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-022 & T-LRN-019 (inspection and automatic), INS-EVAL\\
 FR-LRN-023 & T-LRN-020, T-LRN-021, INS-LRN\\
@@ -6098,9 +6423,10 @@ changes them, the test cells change with them.\\
 \texttt{TEST\_CANVAS} & 1024 $\times$ 768 CSS pixels: the drawing area size
 for every replay, so stored coordinates can be compared exactly.\\
 \addlinespace
-\texttt{STROKE\_PAUSE} & 2 seconds between strokes or before a check. Must
-stay below the minimum of \texttt{LESSON\_IDLE\_PROMPT} once its range is
-set; if that minimum is 2 seconds or less, half of it is used instead.\\
+\texttt{STROKE\_PAUSE} & 2 seconds between strokes or before a check. Three
+times \texttt{STROKE\_PAUSE} (used in T-LRN-006 (c)) must stay below the
+minimum of \texttt{LESSON\_IDLE\_PROMPT} once its range is set; if that
+minimum is 6 seconds or less, a quarter of it is used instead.\\
 \addlinespace
 \texttt{CAL\_FAIL\_MAX} & 60 points:
 \texttt{circle-\allowbreak{}fail.json} must score at most this at every
@@ -6113,7 +6439,8 @@ range, and be classified complete, at every drawing stage.\\
 \texttt{CAL\_PASS\_MIN} & 90 points: \texttt{line.json},
 \texttt{circle.json} and
 \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} must each score at
-least this at every drawing stage of their lesson.\\
+least this, and be classified complete, at every drawing stage of their
+lesson.\\
 \addlinespace
 \texttt{CAL\_INCOMPLETE\_MIN} & 70 points:
 \texttt{square-\allowbreak{}missing-\allowbreak{}side.json} must score at
@@ -6242,7 +6569,11 @@ stylus, before the first run of the tests that use it (PH-1 or PH-2); no
 child takes part. The Testing Lead checks the calibration (the
 \texttt{CAL\_*} constants) after recording, and again in CI whenever the
 evaluation function changes. A file that falls outside its band is recorded
-again; this is not a test failure. The attempt record tests also use
+again; this is not a test failure. Each lesson added to the catalogue also
+needs a good-drawing fixture, recorded by an adult when the lesson is added
+and calibrated like the others: it must score at least
+\texttt{CAL\_PASS\_MIN} and be classified complete at every drawing stage.
+T-LRN-002 (a) to (d) and T-LRN-004 use it. The attempt record tests also use
 \texttt{square-\allowbreak{}missing-\allowbreak{}side-\allowbreak{}%
 corrected.json} (\texttt{square-\allowbreak{}missing-\allowbreak{}%
 side.json}, a pause until the missing-side feedback appears, then the

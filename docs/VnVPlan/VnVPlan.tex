@@ -2326,8 +2326,9 @@ our requirements, and for correctness, recomputing every attempt sequence on
 its own. Two scripts, written with AI help, also checked my work: one applies
 the rules of SRS Section~9.2 to the sequence tables, and one confirms that
 every FR-LRN and FR-REC requirement is in the traceability table. For Git, it
-managed my branches and commits, rebased my branches onto \texttt{main},
-fixed merge conflicts, and wrote and opened my pull requests. In this
+managed my branches and commits, rebased my local branches onto
+\texttt{main} before I first pushed them and only merged after that, fixed
+merge conflicts, and wrote and opened my pull requests. In this
 document, this covered Section~3.5, the guided lesson and attempt record
 tests in Section~4.1, the functional traceability table in Section~4.3, the
 functional symbolic parameters and test data in Section~6.1, and my
@@ -2454,10 +2455,10 @@ lesson rules in SRS Section~9.2, and properties that fast-check can check
 over 1,000 random attempt sequences in each run. I have written
 example-based unit tests, but never a model precise enough to serve as the
 expected output.
-\item \emph{Running code inspections.} As moderator of INS-LRN, INS-EVAL and
-INS-REC, I have to plan each inspection, keep the meeting to an hour, sort
-findings into major and minor, and follow up on fixes. So far I have only
-reviewed pull requests on my own.
+\item \emph{Running code inspections.} As moderator of INS-LRN, INS-EVAL,
+INS-REC and INS-CRT, I have to plan each inspection, keep the meeting to an
+hour, sort findings into major and minor, and follow up on fixes. So far I
+have only reviewed pull requests on my own.
 \end{itemize}
 
 \item For each of the knowledge areas and skills identified in the previous

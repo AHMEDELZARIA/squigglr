@@ -412,12 +412,225 @@ issue tracker?}
 \wss{Maybe create an SRS checklist?}
 
 \subsection{Design Verification}
+\label{sec:design-verification}
 
-\wss{Plans for design verification}
+The design is written in two documents: the Module Guide (MG), which splits
+Squigglr into modules, each hiding one secret, and the Module Interface
+Specification (MIS), which gives each module's access programs, state and
+behaviour. Design verification checks three things: that the MG covers every
+SRS requirement and hides every likely change, that each MIS module is
+precise enough to implement and to test from its text alone, and that the
+modules work together on the scenarios that matter most. Ahmed, as design
+verification lead, plans and moderates the reviews. The MG names the author of
+each module, and \textbf{no one signs off on a module they wrote}: if a
+reviewer's items fall on their own module, Ahmed gives those items to another
+reviewer for that module.
 
-\wss{The review will include reviews by your classmates}
+Table~\ref{tab:designReviews} lists the reviews. They follow the course
+schedule in Development Plan Section~8, and the internal reviews use the
+Sunday team review meeting before each deadline.
 
-\wss{Create a checklists?}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.2\textwidth}
+  >{\raggedright\arraybackslash}p{0.33\textwidth}@{}}
+\caption{Reviews of the design documents}
+\label{tab:designReviews}\\
+\toprule
+\textbf{Review} & \textbf{Who} & \textbf{When} & \textbf{What it checks} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Review} & \textbf{Who} & \textbf{When} & \textbf{What it checks} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Internal MG review & Every member, on the checklist items they own
+(Table~\ref{tab:designChecklist}); Ahmed moderates & Team review on
+November~8, 2026, before the informal Design Revision~$-1$ meeting
+(November~11) & The MG against the MG Checklist, and the traceability check
+below. \\
+\addlinespace
+Informal Design Revision~$-1$ & Chris, our TA & November~11, 2026 & Our
+questions on the module decomposition. Moustafa records the answers in the
+meeting issue, as for the VnV Plan. \\
+\addlinespace
+Internal MIS review & Every member, on their items; Ahmed moderates &
+Team review on November~15, 2026, before Design Revision~$-1$
+(November~16) & The MIS against the MIS Checklist, the task-based inspection
+of scenarios S1 and S2, and the interface check of T-MAINT-003. \\
+\addlinespace
+Peer review & The peer team assigned by the course & November~19, 2026 &
+The MG and MIS, read by people outside the project. We ask them to use the
+MG and MIS Checklists. \\
+\addlinespace
+Supervisor review & Dr.\ Anand & Weekly supervisor meeting after
+November~16, 2026 & A one-page summary of the modules, to check that the
+refinement and record modules match what he expects. \\
+\addlinespace
+Second internal review & Every member, on their items; Ahmed moderates &
+Team review on January~10, 2027, before the informal design review
+(January~12) & Every module changed since Revision~$-1$ against both
+checklists, the traceability check again, all four scenarios, and the
+interface check of T-MAINT-003. \\
+\addlinespace
+Informal design review & Chris, our TA & January~12, 2027 & Our remaining
+questions; answers recorded in the meeting issue. \\
+\addlinespace
+Final check & Ahmed and Moustafa & Team review on January~17, 2027, before
+Design Revision~0 (January~18) & Every finding issue is closed or deferred
+with a reason, and the traceability check passes. \\
+\addlinespace
+Peer module implementation & Another team, as set by the course & January~21
+to~25, 2027 & Whether one of our modules can be built from its MIS text alone
+(see below). \\
+\addlinespace
+Module issue check & Huzaifah & When each module issue is opened, and at
+the end of PH-1, PH-2 and PH-3 & The interface check of T-MAINT-003 on every
+issue that creates a top-level module (see below). \\
+\addlinespace
+Unit test design & Huzaifah, with each test author & While writing the unit
+tests in Section~\ref{sec:unit-tests} & Whether each access program's
+expected output can be worked out from the MIS. \\
+\end{longtable}
+}
+
+\paragraph{Who owns which checklist items.} Each member owns a part of the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/MG-Checklist.tex}{MG
+Checklist} and the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/MIS-Checklist.tex}{MIS
+Checklist}, matched to their role, and checks it on every module they did not
+write (Table~\ref{tab:designChecklist}). Every item of both checklists has
+exactly one owner. Splitting the checklists means each item gets one careful
+reader instead of five quick ones.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
+  >{\raggedright\arraybackslash}p{0.37\textwidth}
+  >{\raggedright\arraybackslash}p{0.36\textwidth}@{}}
+\caption{Design checklist items owned by each member}
+\label{tab:designChecklist}\\
+\toprule
+\textbf{Member} & \textbf{MG Checklist} & \textbf{MIS Checklist} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Member} & \textbf{MG Checklist} & \textbf{MIS Checklist} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Ahmed & Module decomposition: one secret per module, secrets are nouns, the
+uses relation is a hierarchy and not a data flow, its arrows point from the
+user to the used module and down in clear layers, the three Level~1 groups,
+any control module at the top; MG quality (low coupling, information
+hiding). & MIS quality for each module: consistent, essential, general,
+minimal, high cohesion, right level of abstraction. \\
+\addlinespace
+Shamil & The traceability matrices: every requirement satisfied by a module,
+every module used for a requirement; behaviour-hiding modules related to
+requirements; the MG follows the template. & MIS completeness: every MG
+module is in the MIS, every type is defined, every template section is
+present; each module's Uses lists only the modules needed to define its
+specification. \\
+\addlinespace
+Huzaifah & Software-decision modules are concepts the requirements need but
+do not detail, and each is used by a behaviour-hiding module. & MIS
+semantics: each access program has an output or a state transition, and
+only rarely both; every state transition entry changes some state; outputs
+and exceptions are written as $out :=$ and $exc :=$; state invariants hold
+initially and after each call; every state and environment variable has a
+type; the syntax defines each interface precisely enough to implement. \\
+\addlinespace
+Rayan & Likely changes: the anticipated changes include every SRS likely
+change, and each likely change maps to one module. & Opaque (information
+hiding) and implementation independent; modules that deal with files, the
+keyboard or the screen have environment variables for them; every safety
+requirement (SAF-) is met by an access program whose semantics a reviewer
+can point to. \\
+\addlinespace
+Moustafa & The Writing Checklist items, and figures that can be zoomed in. &
+The Writing Checklist items, and each module starting on a new page; module
+classification (records as exported types, ADTs with \textbf{Template},
+\textbf{Generic} where a module is parameterized by type, abstract objects
+with an initializer that is checked or assumed, libraries with no state);
+notation and syntax: exported constants have explicit values, types are not
+mixed, the notation is the course's or defined and is consistent, symbols
+come from the SRS, every argument and local function is used, and local
+functions make the specification easier to read. \\
+\end{longtable}
+}
+
+\paragraph{Traceability check.} The SRS has eight likely changes (LC-001 to
+LC-008, SRS Section~27). Shamil runs a script that lists
+every requirement ID defined in the SRS and every ID in the MG's traceability
+matrix, and reports any requirement with no module and any module with no
+requirement. Rayan checks by reading that each likely change maps to exactly
+one module, or that the MG explains the exception. The check passes when the
+script reports no gaps and every likely change is accounted for. It runs at
+both internal reviews and again at the final check, because requirements may
+change between them.
+
+\paragraph{Task-based inspection.} A checklist looks at one module at a time,
+so it can miss a gap between modules. The reviewers therefore trace prepared
+scenarios through the MIS, writing down each access program called, its
+inputs, the state it changes and its output. A step that no access program
+covers, a type that does not match between caller and callee, an exception
+that no caller handles, or a state invariant that breaks is a finding. The
+scenarios cover the riskiest parts of the product:
+\begin{itemize}
+\item \textbf{S1, guided attempt.} The child draws
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json} at stage E with
+the stylus: stroke capture, evaluation, the missing-side feedback, the lesson
+rules (result, streak and \texttt{ATTEMPT\_LIMIT}) and the saved attempt
+record.
+\item \textbf{S2, refinement and restore.} The child finishes
+\texttt{house.json} in the creative space: the refinement request, the
+\texttt{REFINE\_TOLERANCE} check of the result, applying it as one change,
+then a restore and an undo; and the same with the connection lost.
+\item \textbf{S3, progress summary.} The adult opens learner A's summary
+(T-PRG-002), chooses the circle lesson, and opens the attempts behind a
+recurring difficulty.
+\item \textbf{S4, shared device.} The adult passes the adult check and
+switches learner while an attempt is still waiting to be saved
+(SAF-RAY-003, SAF-RAY-007).
+\end{itemize}
+S1 and S2 are traced at the first internal MIS review, and all four at the
+second. Each takes about 20 minutes, with one member reading the MIS aloud
+and the others checking.
+
+\paragraph{Interface check for T-MAINT-003.} NFR-MAINT-003 covers every
+issue that creates a top-level module, and most of these are opened once
+implementation starts after Design Revision~0. The check therefore follows
+the issues, not only the reviews. Each such issue is labelled
+\texttt{module} when it is opened. Huzaifah, as Testing Lead, compares it
+with that module's MIS entry within a week, and before the PR that closes
+it is merged, as T-MAINT-003 requires. An issue opened before its module is
+in the MIS is checked at the next internal MIS review. At both internal MIS
+reviews and at the end of PH-1, PH-2 and PH-3, he also lists every
+\texttt{module} issue opened since the last check, so none is missed. An
+issue with no interface description, or one that does not match the MIS, is
+a finding.
+
+\paragraph{Peer module implementation.} In January, another team builds one
+of our modules from its MIS (Development Plan Section~8). This is an outside
+check that the MIS can be implemented from its text. Each question they have
+to ask us, and each place where their module behaves differently from ours,
+is recorded as a finding against the MIS, and their reflection
+(January~25) is read at the next team review.
+
+\paragraph{Recording findings and finishing.} Every finding becomes a GitHub
+issue labelled \texttt{review}, with the module, the checklist item or
+scenario step, and one owner, normally the module's author. Ahmed links it to
+the milestone's design tracking issue. Moustafa turns peer and TA feedback
+into issues in the same way, within a week. A review is complete when every
+module has been checked against every checklist item by someone who did not
+write it, the traceability check passes, and each finding issue is closed by
+a merged PR or deferred with a written reason that Ahmed accepts. The
+filled-in checklists are attached to the tracking issue, and the number of
+findings per review is reported in the VnV Report.
 
 \subsection{Verification and Validation Plan Verification}
 \label{sec:plan-verification}
@@ -3986,6 +4199,574 @@ How test will be performed: Playwright and a database read.
 
 \end{enumerate}
 
+\subsubsection{Progress Summaries}
+\label{sec:prg-tests}
+
+These tests cover the twelve progress summary requirements in SRS
+Section~9.5 (FR-PRG-001 to FR-PRG-012). FR-PRG-007 is due in PH-3 and the
+rest in PH-2. They follow UC-009 (review progress) and UC-010 (review
+history and change settings). A summary is built only from the attempt and
+lesson records of SRS Section~9.4, which the attempt record tests
+(Section~\ref{sec:rec-tests}) check, so these tests load prepared records
+straight into the test database and check what the summary makes of them.
+The tests try to cause the failures in Hazard Analysis rows H-MUH-003,
+H-MUH-004, H-MUH-008 and H-RAY-003: assisted work shown as the child's own,
+one learner's records shown under another, a summary that misleads the
+adult, and a summary that judges the child. Two requirements also need adult
+reviewers (FR-PRG-003 and FR-PRG-005); T-PRG-013 runs those tasks in the
+adult usability sessions instead of a separate survey. FR-PRG-012 is checked
+by inspection, with an automatic scan as a second approach. SAF-RAY-004 (no
+diagnosis or comparison) and SAF-RAY-006 (limit endings) are tested by
+T-SAF-004 and T-SAF-006 and not repeated here.
+
+\emph{Set-up.} One test adult account holds learners A to E, whose
+histories are listed under \emph{Prepared test data for the functional
+tests} in the Symbolic Parameters appendix. A second test adult account
+holds learner F, with a history like A's. Each test loads the histories it
+names into an empty test database, as in T-REC-009. The adult-set values are
+at their defaults. ``With a guide'' means stages T and E, and ``without a
+guide'' stage I, as in SRS Section~9.5. Learner A's history is the main one:
+\begin{itemize}
+\item circle, three lesson records, started 2, 9 and 16 November 2026;
+\item square, one record, started 3 November, ended at
+\texttt{ATTEMPT\_LIMIT} at T;
+\item line, one record, started 10 November, unfinished.
+\end{itemize}
+Its 32 attempts are listed in Table~\ref{tab:t-prg-002}. The records are
+stored out of start order (16 November before 9 November), so a summary that
+lists records in storage order fails.
+
+A summary's figures and items are read from the page by their accessible
+names, so each count can be matched to its lesson, stage and kind. To get the
+expected attempts, the script computes them from the history file, not from
+Squigglr.
+
+\begin{enumerate}
+
+\item{T-PRG-001: One learner per summary\\}
+
+Purpose: an adult must never see one learner's records in another learner's
+summary, especially an educator with several learners.
+
+Type: Dynamic, automatic. Covers FR-PRG-001.
+
+Initial State: learners A to E in the first account and learner F in the
+second, each with their history.
+
+Input:
+\begin{itemize}
+\item[(a)] Signed in to the first account, open the summary of each of A to
+E in turn.
+\item[(b)] Open A's summary, and switch to B's while A's is still loading
+(the test set-up holds the answer for A's records for 2 seconds).
+\item[(c)] Signed in to the second account, open the web address of A's
+summary.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] Each summary names its learner and contains exactly that
+learner's records: every attempt and lesson record ID in it is in the
+learner's history, and every ID in the history is in it.
+\item[(b)] The page ends showing B's summary with only B's records; nothing
+of A's appears, even briefly after A's answer arrives.
+\item[(c)] The summary is refused, and none of A's records is shown.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-PRG-001 asks for at least three
+learners with known histories; (a) uses five. Case (b) tries the cause of
+H-MUH-004 where a late answer fills the wrong learner's view. Case (c)
+checks the account limit of BR-001; F's history looks like A's, so a leak
+between accounts would not show as an empty page.
+
+How test will be performed: a Playwright script collects the record IDs
+behind every item on the page and compares them with the history file.
+
+\item{T-PRG-002: Progress over time by lesson\\}
+
+Purpose: the adult must see, lesson by lesson, how far the child got each
+time and how each lesson ended, so change over time is visible.
+
+Type: Dynamic, automatic. Covers FR-PRG-002.
+
+Initial State: learner A's history.
+
+Input: open A's summary. The lesson records in the history are in
+Table~\ref{tab:t-prg-002}; ``P/F'' is the number of passed and failed
+attempts at each stage, and ``--'' means the stage was not attempted.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Learner A's lesson records and the expected summary for T-PRG-002
+(FR-PRG-002)}
+\label{tab:t-prg-002}
+\begin{tabularx}{\textwidth}{@{}l l l l l l
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Lesson} & \textbf{Started} & \textbf{T (P/F)} & \textbf{E (P/F)} &
+\textbf{I (P/F)} & \textbf{Furthest} & \textbf{Expected ending}\\
+\midrule
+Circle & 2 Nov & 1/2 & 0/8 & -- & E & Ended at the limit\\
+Circle & 9 Nov & 1/0 & 1/1 & 0/2 & I & Unfinished\\
+Circle & 16 Nov & 1/0 & 1/0 & 1/2 & I & Every stage passed\\
+Square & 3 Nov & 0/8 & -- & -- & T & Ended at the limit\\
+Line & 10 Nov & 1/1 & 0/1 & -- & E & Unfinished\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the summary shows three lessons. Under each, its records are listed
+in start order (circle: 2, 9, then 16 November), each with the starting stage
+T, the furthest stage, the successful attempts at each stage (the P column)
+and the ending in the table.
+
+Test Case Derivation: the fit criterion of FR-PRG-002 names a history showing
+improvement (the three circle records), a lesson ended at
+\texttt{ATTEMPT\_LIMIT} (the first circle record and the square) and an
+unfinished lesson (the second circle record and the line). An unfinished
+lesson shown as failed would mislead the adult (H-MUH-008). The records are
+stored out of order to catch a summary sorted by storage instead of by
+start.
+
+How test will be performed: a Playwright script reads each record's row in
+the summary and compares it with the table.
+
+\item{T-PRG-003: Attempts with and without a guide kept apart\\}
+
+Purpose: assisted work must never be counted as the child's independent
+work, or an adult could move the child on too soon.
+
+Type: Dynamic, automatic. Covers FR-PRG-003 (the counting part; the
+reviewer part is T-PRG-013).
+
+Initial State: the histories of learners A and D.
+
+Input: open each summary. The expected counts are in
+Table~\ref{tab:t-prg-003}, computed from Table~\ref{tab:t-prg-002} for A.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Expected attempt counts for T-PRG-003 (FR-PRG-003)}
+\label{tab:t-prg-003}
+\begin{tabularx}{\textwidth}{@{}l l
+  >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Learner, lesson} & \textbf{With a guide (passed of
+all)} & \textbf{Without a guide (passed of all)}\\
+\midrule
+a & A, circle & 5 of 16 & 1 of 5\\
+b & A, square & 0 of 8 & None\\
+c & A, line & 1 of 3 & None\\
+d & D, circle (started at I) & None & 1 of 2\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: every count or list in each summary is labelled as with a guide or
+without a guide and matches its cell in Table~\ref{tab:t-prg-003}. Where a
+kind has no attempts, the summary says so instead of showing a count of the
+other kind. No figure is labelled as covering both kinds, and no list mixes
+them.
+
+Test Case Derivation: the fit criterion of FR-PRG-003. Case (a) has both
+kinds. In (b) and (c) only guided attempts exist, and in (d) only unguided
+ones, where a combined figure would equal the one kind present and could
+pass unnoticed unless it is labelled. This is the cause in H-MUH-003 where
+assisted work looks independent.
+
+How test will be performed: a Playwright script reads every count and list,
+with its label, from the page.
+
+\item{T-PRG-004: Recurring difficulties\\}
+
+Purpose: the summary must show what keeps going wrong, using exactly the
+rule the SRS gives for ``recurring''.
+
+Type: Dynamic, automatic. Covers FR-PRG-004.
+
+Initial State: learner B's history, generated by a script from the value of
+\texttt{RECUR\_MIN} (written $r$ below), so the file follows the constant.
+All attempts are in the square lesson. The difficulties are the catalogue's
+predefined ones for the square, as in T-REC-003.
+
+Input: open B's summary. The cases are in Table~\ref{tab:t-prg-004}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-PRG-004 (FR-PRG-004)}
+\label{tab:t-prg-004}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Attempts in B's history} & \textbf{Expected in the
+summary}\\
+\midrule
+a & Missing side at E in exactly $r$ attempts, one of them corrected &
+Listed for square at E: $r$ attempts, 1 corrected\\
+b & Incorrect endpoint at E in $r - 1$ attempts & Not listed\\
+c & Missing side at T in $r - 1$ attempts (as well as case (a) at E) & Not
+listed for T; case (a)'s count stays $r$\\
+d & Missing side at I in $r$ attempts, split across two lesson records,
+all corrected & Listed for square at I: $r$ attempts, $r$ corrected\\
+e & After the summary is read, one more attempt with incorrect endpoint at E
+is added, and the summary is reopened & Case (b) is now listed: $r$
+attempts, 0 corrected\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: the summary lists exactly the difficulties marked ``listed'' in
+Table~\ref{tab:t-prg-004}, with their counts, and nothing else.
+
+Test Case Derivation: the fit criterion of FR-PRG-004 asks for one
+difficulty at exactly \texttt{RECUR\_MIN} and another one fewer, (a) and
+(b). Case (c) checks ``at the same stage'': adding T to E would wrongly give
+$2r - 1$. Case (d) checks that records of the same lesson are counted
+together, and that corrections do not hide a difficulty (BR-007,
+FR-REC-003). Case (e) crosses the boundary from below.
+
+How test will be performed: a Playwright script reads the list of recurring
+difficulties and compares it with the table.
+
+\item{T-PRG-005: Opening the attempts behind the summary\\}
+
+Purpose: an adult who doubts a number must be able to see the drawings it
+came from, and exactly those.
+
+Type: Dynamic, automatic. Covers FR-PRG-005 (the automatic part; the
+reviewer part is T-PRG-013).
+
+Initial State: the histories of learners A and B.
+
+Input: in each summary, every figure and item is opened in turn: each count
+of T-PRG-002 and T-PRG-003, each recurring difficulty of T-PRG-004, and each
+lesson record.
+
+Output: each one opens exactly the attempt records it was computed from, by
+ID, as computed from the history file. For example, ``circle, with a guide,
+5 passed'' opens the five passed T and E attempts in
+Table~\ref{tab:t-prg-002}. A figure of zero opens an empty list that says no
+attempts match. Every opened list belongs to the summary's learner.
+
+Test Case Derivation: the fit criterion of FR-PRG-005, applied to every figure
+instead of a sample, because one wrong link is enough to mislead an adult
+(H-MUH-008). Zero is the case most likely to open the wrong list or fail.
+
+How test will be performed: a Playwright script opens each item, reads the
+record IDs it lists, and closes it.
+
+\item{T-PRG-006: The attempt record view\\}
+
+Purpose: the adult must see everything Squigglr recorded about an attempt,
+with the strokes exactly as the child drew them.
+
+Type: Dynamic, automatic. Covers FR-PRG-006.
+
+Initial State: the histories of learners A to C, and learner H's history,
+in which an adult-set value changes in the middle of a lesson.
+
+Input: open these attempt records from the summary:
+\begin{itemize}
+\item[(a)] a passed attempt at T, and a failed attempt at I (A);
+\item[(b)] an attempt at E with missing side corrected and incorrect
+endpoint not corrected (B);
+\item[(c)] an interrupted attempt (C);
+\item[(d)] the attempts just before and just after the value change
+(H);
+\item[(e)] an attempt of 40 strokes, one of them a single point (A).
+\end{itemize}
+
+Output: each view shows the lesson, stage, outcome (or the interrupted mark
+in (c), with no outcome), date and time, each difficulty with its correction
+mark, and the adult-set values in use. In (d), the two views show the values
+before and after the change. The strokes drawn in each view equal the
+recorded strokes: the same number, order and boundaries, and every point
+within \texttt{COORD\_TOL}. In (e), the single-point stroke is shown.
+
+Test Case Derivation: the fit criterion of FR-PRG-006 lists the values; each
+case adds one that is easy to drop: a correction mark, an interrupted
+attempt with no outcome, values that differ between attempts, and a
+one-point stroke (BR-004).
+
+How test will be performed: a Playwright script reads the fields and the
+stroke list the view draws, and compares them with the record in the test
+database.
+
+\item{T-PRG-007: The adult chooses what the summary shows\\}
+
+Purpose: the adult must be able to narrow the summary without changing the
+records or mixing guided and independent attempts.
+
+Type: Dynamic, automatic. Covers FR-PRG-007 (PH-3).
+
+Initial State: learner A's history. A hash of A's records is stored, as in
+T-REC-009.
+
+Input: the cases are in Table~\ref{tab:t-prg-007}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Cases for T-PRG-007 (FR-PRG-007)}
+\label{tab:t-prg-007}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Case} & \textbf{Choice} & \textbf{Expected summary}\\
+\midrule
+a & None (as first opened) & All five lesson records\\
+b & Circle only & The three circle records\\
+c & Dates 9 to 16 November & The circle records of 9 and 16 November, and
+the line record\\
+d & Circle, and dates 9 to 16 November & The circle records of 9 and 16
+November\\
+e & The adult-set values hidden, then shown & The values hidden in the
+summary and in opened records, then shown again\\
+f & Dates ending at the exact time of one attempt & That attempt is in a
+count and in the list the count opens, or in neither\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: each case shows what its row says, with attempts with and without a
+guide still separate as in T-PRG-003, and after every case the stored hash
+of A's records still matches.
+
+Test Case Derivation: the fit criterion of FR-PRG-007: choices change only
+what is shown, records stay the same, and the two kinds stay separate. The
+SRS says the summary covers all records until the adult chooses, (a). It
+does not say whether a date range includes its end, so (f) checks only that
+a figure and the records it opens agree (FR-PRG-005).
+
+How test will be performed: a Playwright script makes each choice, reads the
+summary as in T-PRG-002, and hashes the records afterwards.
+
+\item{T-PRG-008: Empty history\\}
+
+Purpose: a learner with no recorded practice must not look like a learner
+who failed.
+
+Type: Dynamic, automatic. Covers FR-PRG-008.
+
+Initial State: learner E, with no records; learner A's history; a learner
+G, added for this test, with three saved creative drawings and no attempts.
+
+Input:
+\begin{itemize}
+\item[(a)] Open E's summary.
+\item[(b)] Open A's summary with the dates 1 to 31 December 2026 chosen
+(from PH-3, when FR-PRG-007 is built).
+\item[(c)] Open G's summary.
+\end{itemize}
+
+Output: each summary states that no practice is recorded, and shows no
+stage, no count (not even 0), no difficulty, no ending and no date of a
+latest attempt.
+
+Test Case Derivation: the fit criterion of FR-PRG-008 names (a) and (b). Case
+(c) checks that creative drawings are not counted as practice (FR-CRT-028).
+A summary of zeros reads as failure (H-MUH-008, H-RAY-003).
+
+How test will be performed: a Playwright script reads the page and fails on
+any stage name, number or difficulty in the summary area.
+
+\item{T-PRG-009: Interrupted attempts shown apart\\}
+
+Purpose: an interrupted attempt has no outcome, so it must count neither as
+a failure nor as a success.
+
+Type: Dynamic, automatic. Covers FR-PRG-009.
+
+Initial State: learner C's history: three interrupted attempts at T of the
+circle lesson, and nothing else. Learner A's history.
+
+Input:
+\begin{itemize}
+\item[(a)] Open C's summary.
+\item[(b)] Add four interrupted attempts to A's history, one at each stage
+of the circle record of 16 November and one at T of the square record, and
+open A's summary.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] The summary shows three interrupted attempts at T of the circle
+lesson, no successful or unsuccessful attempt, and no stage passed.
+\item[(b)] Every count of T-PRG-002 and T-PRG-003 is unchanged, and the four
+interrupted attempts are shown separately at their lessons and stages.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-PRG-009, with both parts: a
+history of only interrupted attempts, and interrupted attempts added to a
+known history. (b) adds one at every stage, so a count that takes them in
+anywhere changes.
+
+How test will be performed: a Playwright script compares the counts with
+those of T-PRG-002 and T-PRG-003.
+
+\item{T-PRG-010: Stages not attempted\\}
+
+Purpose: a stage the child never tried must not look like a stage the child
+could not draw.
+
+Type: Dynamic, automatic. Covers FR-PRG-010.
+
+Initial State: learner D's history: a circle lesson the adult started at I,
+with a failed attempt at I and then a passed one, which completed the
+lesson; and a square lesson with three failed
+attempts at T, unfinished. Learner A's history.
+
+Input: open D's summary, then A's.
+
+Output: for D's circle, T and E are marked not attempted and I shows 1
+successful attempt; for D's square, T shows 0 successful attempts and is
+marked attempted, and E and I are marked not attempted. For A, every ``--''
+in Table~\ref{tab:t-prg-002} is marked not attempted, and every 0 in a P
+column whose stage was attempted is shown as 0 successful attempts.
+
+Test Case Derivation: the fit criterion of FR-PRG-010 asks for a lesson
+started at a later stage (D's circle, BR-003) and a stage attempted only
+without success (D's square at T). A's history adds stages not reached
+because the lesson ended first.
+
+How test will be performed: a Playwright script reads each stage's mark and
+count.
+
+\item{T-PRG-011: Latest attempt included\\}
+
+Purpose: an adult must be able to tell when recent practice is missing from
+a summary because it has not been saved yet.
+
+Type: Dynamic, automatic. Covers FR-PRG-011.
+
+Initial State: learner A's history, whose latest attempt is at 10:42:00 on
+16 November 2026, and a controlled clock. Two browser contexts: the child's
+and the adult's.
+
+Input:
+\begin{itemize}
+\item[(a)] In the child's context, the connection is cut and A makes two
+attempts, which are held back (SAF-RAY-003). The adult opens A's summary in
+the other context.
+\item[(b)] The connection returns, the saves are confirmed, and the adult
+reopens the summary.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item[(a)] The summary states 16 November 2026, 10:42, and contains 32
+attempts, none of the two held back.
+\item[(b)] The summary states the time of the second new attempt, and
+contains 34 attempts.
+\end{itemize}
+
+Test Case Derivation: the fit criterion of FR-PRG-011. Case (b) checks that
+the date moves on once the attempts are saved, so the statement is not
+fixed when the summary is first built.
+
+How test will be performed: a Playwright script cuts the child's
+connection with \texttt{context.setOffline()} and uses a controlled clock.
+
+\item{T-PRG-012: No overall score\\}
+
+Purpose: Squigglr does not judge a child's ability, so no summary may sum
+up the child as one score, grade or rating.
+
+Type: Static (inspection), manual, with an automatic scan. Covers
+FR-PRG-012.
+
+Initial State: the summaries of learners A to E at that revision.
+
+Input:
+\begin{itemize}
+\item[(a)] Inspection. Rayan, who owns SAF-RAY-004, and one team member
+who did not write the summary view read every summary, at the safety
+inspection before Rev~0 and Rev~1 (as for T-SAF-004). They look for any
+number, percentage, star, bar, colour scale, level or word (such as
+``overall'', ``average'', ``score'', ``grade'' or ``rating'') that combines
+results from more than one stage.
+\item[(b)] Scan. A script lists every number and percentage in every summary
+with its accessible name, and checks that each belongs to one stage of one
+lesson, or is a count of attempts or records, not a result. It also searches
+the summary text for the words in (a) and for the terms in
+\texttt{forbidden-\allowbreak{}terms.txt}.
+\end{itemize}
+
+Output: the inspectors find no such figure, and the scan finds no number that
+combines results of more than one stage, no percentage computed across
+stages and none of the words. Each finding is recorded as a GitHub issue
+labelled \texttt{safety}.
+
+Test Case Derivation: the fit criterion of FR-PRG-012 is an inspection. A
+score can appear in forms no word list catches, like a chart, so the
+inspection is the main check. The scan is a second approach that runs on
+every PR and catches a score added between inspections. Counts of attempts
+are allowed: they are not results.
+
+How test will be performed: (a) during the safety inspection, with findings
+recorded by the Testing Lead; (b) in CI with the Playwright tests.
+
+\item{T-PRG-013: Adults find the independent attempts and the attempts
+behind the summary\\}
+
+Purpose: correct figures are not enough; adults must be able to read them.
+This is the reviewer part of the fit criteria of FR-PRG-003 and FR-PRG-005.
+
+Type: Dynamic, manual. Covers FR-PRG-003 and FR-PRG-005.
+
+Initial State: the summaries of learners A and B on the test iPad; at
+least \texttt{ADULT\_REVIEWERS} adult reviewers, none of them on the team,
+who have not seen Squigglr's summaries before. No child takes part (SRS
+CON-005).
+
+Input: each reviewer does the tasks in Table~\ref{tab:t-prg-013}, without
+help, as part of the adult usability sessions.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Reviewer tasks for T-PRG-013 (FR-PRG-003, FR-PRG-005)}
+\label{tab:t-prg-013}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}X l@{}}
+\toprule
+\textbf{Task} & \textbf{Question (learner)} & \textbf{Success} &
+\textbf{For}\\
+\midrule
+R1 & In the circle lesson, how many attempts did the child make without a
+guide? (A) & Answers 5 & 003\\
+R2 & Which circle attempts on 16 November were made without a guide? (A) &
+Points to exactly the three I attempts of that record & 003\\
+R3 & Did the child make any attempt without a guide in the square lesson?
+(A) & Answers no & 003\\
+R4 & Open the attempts with a missing side at the endpoint stage of the
+square. (B) & Opens exactly the $r$ attempts of T-PRG-004 (a) & 005\\
+R5 & Open the successful attempts at the endpoint stage of the circle
+lesson. (A) & Opens exactly the 2 passed E attempts & 005\\
+R6 & Open the attempts of the square lesson that ended at the limit. (A) &
+Opens exactly its 8 attempts & 005\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Output: at least \texttt{ADULT\_REVIEWERS} reviewers take part, and at least
+\texttt{REVIEW\_PASS\_RATE} of the tasks succeed, counted separately for
+R1 to R3 (FR-PRG-003) and R4 to R6 (FR-PRG-005).
+
+Test Case Derivation: the reviewer parts of the fit criteria of FR-PRG-003
+and FR-PRG-005. Each task has one right answer, known from the history
+files, so success is not a matter of opinion. R3 is the trap case: a reviewer
+who reads a combined count would answer yes.
+
+How test will be performed: in the adult usability sessions that Shamil and
+Ahmed run (Software Validation section). These six tasks are added to the
+session script in the Usability Survey Questions appendix (\#198), so the
+team runs one set of sessions, not a second survey. The notetaker records
+each task as a success or failure, and the results go in the VnV Report. A
+rate below \texttt{REVIEW\_PASS\_RATE} is a defect in the summary design,
+which is changed and tested again in the next round.
+
+\end{enumerate}
+
 \subsection{Tests for Nonfunctional Requirements}
 \label{sec:nfr-tests}
 
@@ -5371,135 +6152,171 @@ FR-REC-007 & T-REC-007, T-LRN-015 (f), INS-REC\\
 FR-REC-008 & T-REC-008, T-PERF-005, T-SAF-003, INS-REC\\
 FR-REC-009 & T-REC-009, T-SEC-003, INS-REC\\
 FR-REC-010 & T-REC-010, T-SAF-007, INS-REC\\
+FR-PRG-001 & T-PRG-001, T-PRG-005\\
+FR-PRG-002 & T-PRG-002, T-SAF-006\\
+FR-PRG-003 & T-PRG-003, T-PRG-013 (R1--R3), T-PRG-007\\
+FR-PRG-004 & T-PRG-004, T-PRG-013 (R4)\\
+FR-PRG-005 & T-PRG-005, T-PRG-013 (R4--R6), T-PRG-007 (f)\\
+FR-PRG-006 & T-PRG-006\\
+FR-PRG-007 & T-PRG-007, T-PRG-008 (b)\\
+FR-PRG-008 & T-PRG-008\\
+FR-PRG-009 & T-PRG-009, T-PRG-006 (c)\\
+FR-PRG-010 & T-PRG-010, T-PRG-002\\
+FR-PRG-011 & T-PRG-011\\
+FR-PRG-012 & T-PRG-012 (inspection and automatic), T-SAF-004\\
 \bottomrule
 \end{longtable}}
 
 \section{Unit Test Description}
 \label{sec:unit-tests}
 
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
+The Module Interface Specification (MIS) is due on 18 January 2027, so this
+section gives the rules for choosing unit tests rather than the tests
+themselves. The rules are written so that, once the MIS exists, each
+module's tests follow from its specification, and a reviewer can check that
+none is missing. The module tests and their traceability table are added in
+the VnV Plan revision after the MIS.
 
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
+\paragraph{How unit tests are chosen.} Each module's tests are designed first
+from its MIS (black box), then completed from the code (white box):
+\begin{enumerate}
+\item \textbf{Normal case.} Each access program gets at least one test of its
+usual behaviour, with the expected output or state change worked out from
+its semantics in the MIS.
+\item \textbf{Boundaries.} Each input with a range is tested at its minimum
+and maximum and just outside them. Inputs that are SRS constants, such as
+\texttt{STAGE\_PASS} or \texttt{ATTEMPT\_LIMIT}, are tested at the ends of
+their ranges in SRS Section~4.2, as the system tests are.
+\item \textbf{Errors.} Each exception in the MIS ($exc :=$) gets a test that
+raises it, and a test that a caller handles it.
+\item \textbf{State.} For modules with state (abstract objects and
+templates), the state invariant is checked after every call in every test.
+For the lesson rules, each transition in the table of SRS Section~9.2 gets a
+test, and T-LRN-021 compares the module with a model of that section.
+\item \textbf{Random inputs.} For modules that take shapes or sequences, a
+fast-check property test runs many generated inputs from a fixed seed
+(\texttt{MODEL\_SEED}), as T-LRN-021, T-CRT-015 and T-CRT-022 already do.
+\item \textbf{Coverage.} The coverage report (Section~\ref{sec:tools}) is then
+read for branches that no test reaches, and a test is added for each one, or
+the reason it cannot be reached is written in the test file.
+\end{enumerate}
 
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
+\paragraph{How tests are written and named.} Tests are written in Vitest, as
+named in Section~\ref{sec:tools}, in a file next to the module
+(\texttt{<module>.test.ts}). Each test's name gives the access program, the
+case and the expected result, for example ``\texttt{evaluate -- empty stroke
+list -- returns incomplete}'', and a comment cites the MIS access program
+and the SRS requirement it supports. The tests are given IDs
+\texttt{U-<MODULE>-\#\#\#} for the traceability table. The test code is the
+detailed record of inputs and outputs, so they are not copied into this
+document. Outside services (the database, sign-in and the refinement
+service) are reached only through Squigglr's own wrapper modules, so unit
+tests replace them with fakes.
+
+\paragraph{Who does what.} The author of a module writes its unit tests in
+the same PR as the module. The PR reviewer checks the tests against the rules
+above as part of the PR code review in the Implementation
+Verification section. The Testing Lead (Huzaifah) checks
+that each expected output can be worked out from the MIS, as planned in
+Design Verification (Section~\ref{sec:design-verification}).
 
 \subsection{Unit Testing Scope}
 
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
+\paragraph{Out of scope.} We do not unit test code we did not write, which
+its makers verify (Section~\ref{sec:objectives}):
+\begin{itemize}
+\item the drawing library (Paper.js) and the browser's Pointer Events;
+\item the web framework (Next.js and React);
+\item the hosting and database services (Vercel and Supabase, including
+Supabase Auth);
+\item the refinement model.
+\end{itemize}
+Squigglr reaches each of these through a wrapper module of its own, and the
+wrappers are in scope: their unit tests use a fake of the service and check
+what Squigglr sends and how it handles each answer, including errors and
+timeouts. How the real services behave with Squigglr is checked by the
+system tests, for example T-CRT-014 for the real refinement service and
+T-OPS-002 for an outage.
+
+\paragraph{Priority.} Modules are tested in the order below, which follows
+the harm a defect could do (Hazard Analysis) and the TA's advice on coverage
+(Section~\ref{sec:plan-verification}). The coverage goals are the ones in
+Section~\ref{sec:tools}; this list only sets the order and does not add a
+second policy:
+\begin{enumerate}
+\item \textbf{Modules tied to a safety-critical requirement:} any module
+that a SAF- requirement depends on or that a safety-critical test
+(Section~\ref{sec:safety-tests}) calls directly. These include the lesson
+rules, stroke evaluation and the input handler (T-SAF-010), attempt and
+lesson record saving, the adult check and access checks, settings
+validation (T-SAF-008) and the progress summary computation (T-SAF-015). A
+defect here can mislead an adult or lose a child's work. Goal, as in
+Section~\ref{sec:tools}: every branch covered.
+\item \textbf{Creative drawing logic:} the refinement result check and the
+drawing history (undo, redo and restore). A defect here can change or lose a
+drawing (H-MUH-001, H-MUH-002). Any of these that a SAF- requirement depends
+on is in the first group instead.
+\item \textbf{Other logic modules:} for example, the parts of the progress
+summary that no SAF- requirement depends on.
+\item \textbf{User interface components:} component tests with React Testing
+Library for each screen's states (empty, loading, error, normal). Most of
+their behaviour is covered by the end-to-end and usability tests.
+\end{enumerate}
+Outside the first group, Section~\ref{sec:tools} sets no fixed target:
+reviewers check that new or changed logic has tests. The coverage reached
+for each module is reported in the VnV Report, as Section~\ref{sec:tools}
+describes.
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
-
-\subsubsection{Module 1}
-
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
-
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-
-\item{...\\}
-    
-\end{enumerate}
-
-\subsubsection{Module 2}
-
-...
+The module tests for the functional requirements are added here once the MIS
+is done, with one subsection per MIS module. Each subsection will name the
+module's access programs and list its tests by \texttt{U-} ID, with the rule
+above that each one covers. Some unit-level tests are already planned as
+part of the system tests in Section~\ref{sec:fr-tests}, because they check
+one module directly:
+\begin{itemize}
+\item T-LRN-021, the lesson rules against a model of SRS Section~9.2;
+\item T-CRT-015, the refinement result check against random results;
+\item T-CRT-022, the drawing history against a model of undo, redo and
+restore;
+\item the Vitest parts of the guided lesson tests, which call the
+evaluation function and the input handler directly.
+\end{itemize}
+These tests stay in Section~\ref{sec:fr-tests} with their IDs, because
+several of them run in both Vitest and Playwright under one ID, and the
+traceability table points to them there. Each module's subsection lists the
+ones that check it as cross-references, so the module's tests can be read in
+one place. If a test is later split, its unit part gets a new \texttt{U-} ID,
+and Section~\ref{sec:fr-tests} and the traceability table are updated in the
+same PR.
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
-
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
-
-\subsubsection{Module ?}
-		
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
-\end{enumerate}
-
-\subsubsection{Module ?}
-
-...
+Most nonfunctional requirements are about the whole product and are tested in
+Section~\ref{sec:nfr-tests}. At module level, two kinds of test will be
+added once the MIS is done:
+\begin{itemize}
+\item \textbf{Timing of hot code.} A Vitest benchmark of the evaluation
+function and the refinement result check on the prepared stroke files, so a
+slow module can be found before T-PERF-001 and T-PERF-002 fail on the whole
+system.
+\item \textbf{Wrapper behaviour under failure.} Tests that each wrapper
+module times out, retries or reports an error as SAF-RAY-003 and the
+operational requirements expect, with a fake service that fails on purpose.
+\end{itemize}
 
 \subsection{Traceability Between Test Cases and Modules}
 
-\wss{Provide evidence that all modules have been considered.}
-				
+Once the MIS is done, a table here maps each MIS module to its unit tests and
+to the requirements they support, so every module can be seen to be
+considered. The table is complete when every module has a test file, or a
+written reason it has none (for example, a module that only re-exports
+types), and every access program has at least a normal case. The
+traceability check in Design Verification (Section~\ref{sec:design-verification})
+is extended to list any module with no tests, and it runs at the final check
+before each design revision.
+
 \bibliographystyle{plainnat}
 
 \bibliography{../../refs/References}
@@ -5705,6 +6522,33 @@ T-CRT-015.\\
 \texttt{CRT\_MODEL\_RUNS}, \texttt{CRT\_SEQ\_LEN\_MAX} & 500 random sequences
 of up to 40 events per run of T-CRT-022: enough for two refinements, edits,
 restores and a reopen in one sequence. The seed is \texttt{MODEL\_SEED}.\\
+\addlinespace
+\texttt{RECUR\_MIN} & The SRS constant (SRS Section~4.2, proposed there
+and confirmed as below): how many of
+a learner's attempts at one stage of one lesson must show the same predefined
+difficulty for the summary to list it as recurring. \emph{Proposed value:} 3
+attempts. Two could be chance, and three at the same stage is the smallest
+count that shows a pattern. \emph{How and when it is set:} the team shows the
+specialists summaries of learner B's history built with 2, 3 and 4 at the
+first specialist validation session after the summary is built (PH-2), and
+keeps 3 unless they advise otherwise. The value is recorded in the SRS
+constants table and the VnV Report. T-PRG-004 uses the symbol and generates
+its history from it, so the test does not change.\\
+\addlinespace
+\texttt{ADULT\_REVIEWERS} & The SRS constant (SRS Section~4.2): the
+fewest adult reviewers in T-PRG-013. \emph{Value:} 5, set in this plan.
+Five adults outside the team (caregivers, educators or students) is what
+the team can recruit for one round of sessions, and it gives 15 tries of
+each requirement's three tasks. If fewer than five take part, the round
+is extended until five have; the number is not lowered.\\
+\addlinespace
+\texttt{REVIEW\_PASS\_RATE} & The SRS constant (SRS Section~4.2): the
+smallest share of reviewer tasks in T-PRG-013 that must succeed, counted
+separately for each requirement. \emph{Value:} 0.8, set in this plan, before
+any session, and not changed after the results are seen. With five
+reviewers, at least 12 of the 15 tries must succeed: one reviewer may fail
+every task, or several may each miss one, but a summary that misleads most
+readers on one task cannot pass.\\
 \bottomrule
 \end{longtable}}
 
@@ -5768,6 +6612,33 @@ set in the refinement tests until OI-03 is closed
 \texttt{ref-\allowbreak{}out-\allowbreak{}fish.json}: a scribble and a fish,
 drawings of items outside the supported set.
 \end{itemize}
+The progress summary tests load these histories into the test database, as
+in T-REC-009. Each is a JSON file of attempt and lesson records written by
+the team, not recorded from anyone, so no person's data is used:
+\begin{itemize}
+\item \texttt{prg-\allowbreak{}a.json}: learner A, the five lesson records
+and 32 attempts of Table~\ref{tab:t-prg-002}, stored out of start order,
+with the latest attempt at 10:42:00 on 16 November 2026.
+\item \texttt{prg-\allowbreak{}b.json}: learner B, square lesson attempts
+with the difficulties of Table~\ref{tab:t-prg-004}, generated by a script
+from \texttt{RECUR\_MIN}.
+\item \texttt{prg-\allowbreak{}c.json}: learner C, three interrupted
+attempts at T of the circle lesson.
+\item \texttt{prg-\allowbreak{}d.json}: learner D, a circle lesson started
+at I with a failed attempt and then a passed one, which completed it
+(SRS BR-002), and a square lesson with three failed
+attempts at T, unfinished.
+\item \texttt{prg-\allowbreak{}f.json}: learner F, in the second account, a
+copy of A's history with new record IDs.
+\item \texttt{prg-\allowbreak{}h.json}: learner H, one circle lesson
+started at T: a failed attempt with \texttt{STAGE\_PASS} at 80, then the
+adult changes it to 70 with the adult check, then a passed attempt with
+\texttt{STAGE\_PASS} at 70, as in T-REC-004 (i). Then one passed
+attempt each at E and I completes the lesson.
+\end{itemize}
+Learner E has no records, and learner G has only the creative drawings of
+\texttt{crt-\allowbreak{}three.json}, saved three times.
+
 
 \subsection{Usability Survey Questions?}
 
@@ -5830,6 +6701,20 @@ and decisions into draft wording, to improve sentence structure, clarity and
 flow, and to help with \LaTeX{} formatting. Through Claude Code, it also
 helped manage the repository (branches, commits and merges). I reviewed every
 AI-assisted passage before including it.
+
+\textbf{Ahmed:} I used Anthropic's Claude Opus 5.5, accessed through Claude
+Code, while preparing my sections of this document: the creative drawing and
+progress summary tests in Section~4.1, their rows in the traceability table,
+their symbolic parameters and test data, Design Verification
+(Section~\ref{sec:design-verification}), the Unit Test Description
+(Section~\ref{sec:unit-tests}) and my reflection answers. All the ideas behind
+these sections are my own: what each test checks, which cases try to break
+Squigglr, how the constants are set, and how the design is reviewed. I used
+the model to turn my notes and decisions into draft wording, and to clean up
+grammar, sentence structure and clarity, along with \LaTeX{} formatting. I
+reviewed every AI-assisted passage against the SRS, the Hazard Analysis and the
+parts of this plan my teammates wrote, and checked the expected outputs of my
+tests myself, before including it. The final content is my responsibility.
 
 \newpage{}
 
@@ -5942,6 +6827,29 @@ VoiceOver on the iPad for NFR-UX-020, and finishing the adult tasks with only a
 keyboard for NFR-UX-023.
 \end{itemize}
 
+\textbf{Ahmed:} For my part of the plan (the creative drawing and progress
+summary tests, design verification, and the usability sessions with Shamil), I
+need three skills I do not yet have:
+\begin{itemize}
+\item \emph{Property-based testing with fast-check.} T-CRT-015 and T-CRT-022
+only work if the generators produce the inputs that matter, such as a
+refinement result just past \texttt{REFINE\_TOLERANCE} or an undo right after
+a reopen, and if the reference model is simple enough to trust as the
+expected output.
+\item \emph{Faking an outside service in Playwright.} Most refinement tests
+depend on intercepting Squigglr's calls to the refinement service and
+answering with a stub that can shift strokes, hold its answer, fail, or send
+a broken or partial result (T-CRT-013, T-CRT-023 and T-CRT-024). If the stub
+is wrong, every one of those tests is wrong with it.
+\item \emph{Running reviews with other people.} I moderate the design reviews
+in Section~\ref{sec:design-verification}. With a teammate I set the first
+value of \texttt{REFINE\_TOLERANCE} in PH-1, and with Shamil I run the adult
+sessions where T-PRG-013 is done and where supporting adults confirm that
+value. This means keeping a review focused on findings, and giving reviewers
+a task without hinting at the answer, so a success really means the summary
+is clear.
+\end{itemize}
+
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
@@ -5979,6 +6887,32 @@ through before the first review at Rev~0. After that I will do hands-on passes
 on the first frontend screens I review, because a checker can tell me a control
 has a label, but not whether the label makes sense to someone who can't see the
 icon.
+
+\textbf{Ahmed:}
+\begin{itemize}
+\item \emph{Property-based testing.} Two approaches: work through the
+fast-check documentation and its examples of model-based testing, or start
+from small properties of my own code and grow them. I will start with the
+documentation, then write T-CRT-022's history model for undo and redo first,
+before restore is added. The documentation shows how shrinking and seeds
+work, which T-CRT-015 and T-CRT-022 rely on, and a small model that already
+passes is easier to trust when I add restore and refinement to it.
+\item \emph{Faking a service in Playwright.} Two approaches: read the
+Playwright guide on network interception (\texttt{page.route}), or run a
+local mock server that pretends to be the refinement service. I will use
+\texttt{page.route}, because it lives inside each test, so a test can hold,
+release or break the answer at exactly the step it needs. A mock server would
+need its own set-up and could fall out of step with the tests. I will build
+the shift stub first, as soon as the creative space can send a request.
+\item \emph{Running reviews.} Two approaches: read about inspection roles and
+usability test facilitation (for example the Nielsen Norman Group's guides on
+running usability sessions), or practise on a small scale first. I will do
+both: read about facilitation before the first session, and run a 20-minute
+practice of the S1 walkthrough with the team at the first internal MIS review,
+and a practice of the T-PRG-013 tasks with one teammate before any outside
+reviewer sees them. A practice run shows which tasks or questions give the
+answer away while it is still cheap to fix them.
+\end{itemize}
 
 \end{enumerate}
 

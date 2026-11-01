@@ -1305,7 +1305,8 @@ team-defined; TBD. \emph{Default:} middle of the range; must be less than
 and the child's original strokes in the creative space. \emph{Unit:} CSS
 pixels on the drawing area used for testing. \emph{Value:} TBD; set by the team
 in PH-1, before the first refinement test, by judging adult-made drawings of the
-supported set (BR-009), as planned in the VnV Plan (Symbolic Parameters
+supported set (BR-009), then confirmed by supporting adults in the usability
+sessions (H-MUH-006), as planned in the VnV Plan (Symbolic Parameters
 appendix). \emph{Trace:} G.4, BR-005.\\
 \addlinespace
 \texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers for progress
@@ -2278,9 +2279,8 @@ Path & The points of a stroke, in the order drawn. Path = \{Point\}. & Attribute
 FR-CRT-011, FR-CRT-012 \\
 \addlinespace
 Point & One position on the drawing area that a stroke passes through. &
-Attribute & Position on the drawing area, in the same unit of distance as
-\texttt{REFINE\_\allowbreak TOLERANCE}; the unit is TBD and will be fixed with
-the value of that constant. & ASM-004; FR-CRT-012 \\
+Attribute & Position on the drawing area, in CSS pixels, the same unit of
+distance as \texttt{REFINE\_\allowbreak TOLERANCE}. & ASM-004; FR-CRT-012 \\
 \addlinespace
 Practice-only statement & The statement on every progress summary that it
 describes practice only and is not an assessment or diagnosis. & Attribute &
@@ -2300,8 +2300,8 @@ Recurring difficulty & A predefined difficulty that a progress summary lists
 because it keeps occurring. Recurring difficulty = Predefined difficulty + Stage
 + Lesson + count of attempts + count corrected. & Attribute & Observed in at
 least \texttt{RECUR\_MIN} attempts at the same stage of the same lesson;
-\texttt{RECUR\_MIN} is a team-set count, TBD, to be fixed with the other
-team-set values (OI-05). & G.6; FR-PRG-004 \\
+\texttt{RECUR\_MIN} is a team-set count, proposed at 3 and confirmed with the
+specialists in PH-2 (Section~\ref{sec:constants}). & G.6; FR-PRG-004 \\
 \addlinespace
 Refined drawing & A creative drawing while a refinement of it is in effect: the
 strokes the refinement produced, as the child may later edit them. & Attribute &

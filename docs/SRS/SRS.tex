@@ -203,6 +203,11 @@ and ``ignored'' is the status of a suggestion cleared before any answer
 1 November 2026 & Ahmed Elzaria & Addressed peer review: moved SAF-RAY-001 to
 PH-1, with the lesson and starting stage choice it protects, and added the
 adult check to the fit criterion of FR-LRN-016 (\#177).\\
+1 November 2026 & Ahmed Elzaria & Addressed peer review: defined the stage
+result and a complete attempt in black-box terms in Section~9.2, with
+\texttt{TRACE\_TOL} and \texttt{PART\_COVER}; listed the initial lesson
+catalogue and each lesson's required parts; added NFR-PERF-010 so the stage
+result must match its definition (\#175).\\
 \end{longtable}
 
 ~\\
@@ -1266,8 +1271,23 @@ range (OI-05; CON-005--006).
 \bottomrule
 \endlastfoot
 \texttt{STAGE\_PASS} & Minimum stage result threshold for a complete attempt to
-pass a drawing stage. \emph{Unit:} points out of 100. \emph{Range:} 70--90.
+pass a drawing stage. The stage result (Section~\ref{sec:fr-formal}) is the
+smaller of the share of the lesson's figure that was drawn and the share of the
+drawing that lies on the figure, so a result of 80 means at least 80\% of each.
+\emph{Unit:} points out of 100. \emph{Range:} 70--90.
 \emph{Default:} 80. \emph{Trace:} G.2, BR-002, BR-008, OI-05.\\
+\addlinespace
+\texttt{TRACE\_TOL} & Largest distance at which a drawn point counts as on the
+lesson's figure, and a part of the figure counts as drawn. \emph{Unit:} percent
+of the figure's size (the diagonal of its bounding box), so it does not depend
+on the screen. \emph{Value:} proposed 5; confirmed by the team in PH-1, before
+the first evaluation test, on adult-made drawings (BR-009), as the VnV Plan
+calibrates its prepared attempts. \emph{Trace:} G.2, FR-LRN-011, FR-LRN-013.\\
+\addlinespace
+\texttt{PART\_COVER} & Smallest share of the length of a required part of the
+figure that must be drawn for the part to count as present. \emph{Unit:}
+percent. \emph{Value:} proposed 90; confirmed with \texttt{TRACE\_TOL}.
+\emph{Trace:} G.2, FR-LRN-011.\\
 \addlinespace
 \texttt{DIFFICULTY\_STREAK} & Consecutive unsuccessful attempts before Squigglr
 may suggest returning to an earlier stage. \emph{Unit:} failed attempts.
@@ -3139,6 +3159,38 @@ verify that no letter activity is required to complete the core catalogue.}
   \reqtraces{ASM-010; LC-001; \ucref{002}}
 \end{srsrequirement}
 
+Table~\ref{tab:lesson-catalogue} lists the initial catalogue. The team chose it
+from the agreed categories; it can change (LC-001), and each lesson is stored
+as data (NFR-MAINT-001). The PoC (PH-1) offers the line, circle and square
+lessons, and the full catalogue is offered from PH-2. The required parts and
+endpoints define a complete attempt (Section~\ref{sec:fr-formal}).
+
+{\small
+\begin{longtable}{@{}l l >{\raggedright\arraybackslash}p{0.55\textwidth}@{}}
+\caption{Initial lesson catalogue}\label{tab:lesson-catalogue}\\
+\toprule
+\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Horizontal line & Line & One straight segment; its two endpoints.\\
+Vertical line & Line & One straight segment; its two endpoints.\\
+Diagonal line & Line & One straight segment; its two endpoints.\\
+Circle & Basic shape & Four quarter arcs, which together close the circle.\\
+Square & Basic shape & Four sides; four corners.\\
+Triangle & Basic shape & Three sides; three corners.\\
+House & Simple drawing & The four sides of the walls and the two sides of the
+roof; the two roof corners where the roof meets the walls, and its top.\\
+Sun & Simple drawing & The four quarter arcs of the circle and eight short
+straight rays; the outer end of each ray.\\
+\end{longtable}
+}
+
 \begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
   \reqshall{Squigglr shall make the following ordered guidance stages available
 for each guided lesson: demonstration, full outline tracing, endpoint-only
@@ -3589,14 +3641,36 @@ This abstract event does not prescribe a particular user-interface control. A
 stylus lift alone does not finalize the attempt; interruption before
 finalization cannot produce a passed result (FR-LRN-008--010).
 
+Each lesson has a \emph{figure}: the reference drawing shown as the outline at
+stage $T$, made of the \emph{required parts} and \emph{required endpoints}
+listed for the lesson in Table~\ref{tab:lesson-catalogue}. Distances are
+measured on the drawing area and compared with \texttt{TRACE\_\allowbreak TOL}.
+At stage $I$, where no guide shows where to draw, the attempt is first moved and
+uniformly scaled so that its bounding box is centred on the figure's and its
+longer side matches the figure's; position and size on the screen therefore do
+not affect the result. At $T$ and $E$ the attempt is compared where it was
+drawn.
+
 Let $\operatorname{Valid}_{\ell,l}(X)$ mean that all input required to interpret
 the strokes is available, and let $\operatorname{Complete}_{\ell,l}(X)$ mean
-that every required part of the drawing is present according to the lesson's
-fixed stage criteria. These functions use the fixed completeness criteria of the
-selected lesson and stage. Stage result values use the normalized 0--100 scale
-specified in Table~\ref{tab:goalconst}; the actual scoring function is defined
-for each lesson's drawing criteria rather than as an assessment of a learner.
-Define
+that every required part has at least \texttt{PART\_\allowbreak COVER} of its
+length within \texttt{TRACE\_\allowbreak TOL} of a drawn stroke, and every
+required endpoint has a drawn point within \texttt{TRACE\_\allowbreak TOL} of
+it. For example, an attempt at the square lesson with one side not drawn is
+incomplete, however accurate the other three sides are.
+
+The stage result $v_{\ell,l}(X)$ of an evaluable attempt is
+\[
+v_{\ell,l}(X)=100\cdot\min(\mathit{drawn},\ \mathit{on\ figure}),
+\]
+where $\mathit{drawn}$ is the share of the figure's length within
+\texttt{TRACE\_\allowbreak TOL} of a drawn stroke, and $\mathit{on\ figure}$ is
+the share of the drawn length within \texttt{TRACE\_\allowbreak TOL} of the
+figure. It measures the drawing against the figure, not the learner. A result
+of 80 means that at least 80\% of the figure was drawn and at least 80\% of what
+was drawn lies on the figure; a square with one side missing scores at most 75.
+Stage result values use the normalized 0--100 scale specified in
+Table~\ref{tab:goalconst}. Define
 \[
 C_{\ell,l}(X)=
 \begin{cases}
@@ -3613,7 +3687,7 @@ G(l)=\begin{cases}
 \textsf{independent} & l=I.
 \end{cases}
 \]
-Let $v_{\ell,l}(X)\in[0,100]$ be the normalized stage result of an evaluable
+So $v_{\ell,l}(X)\in[0,100]$ is the normalized stage result of an evaluable
 drawing. Its threshold is $\theta_p=\texttt{STAGE\_\allowbreak PASS}(p)$, taken
 from the adult's approved profile value (or midpoint default under BR-008). The
 pass predicate is
@@ -5545,6 +5619,26 @@ ten consecutive runs.}
   \reqtraces{\reqref{FR-LRN-007}; \reqref{FR-LRN-008}}
 \end{srsrequirement}
 
+\begin{srsrequirement}{NFR-PERF-010}{Stage result and completeness agree with their definition}
+  \reqshall{For every evaluable attempt, Squigglr's stage result shall differ by
+at most 1 point from the value defined in Section~\ref{sec:fr-formal}, and its
+complete or incomplete classification shall equal the one defined there.}
+\reqrationale{A threshold of 70 or 90 only means something if the result
+measures what the SRS says it does. Determinism (NFR-PERF-004) alone would allow
+a result that is repeatable but wrong (G.2).} \reqfit{For prepared attempts at
+every stage of every catalogue lesson, including attempts with a missing part,
+a missed endpoint and results just above and below \texttt{STAGE\_PASS}, compare
+Squigglr's stage result and classification with those computed by a separate
+reference script, written from Section~\ref{sec:fr-formal} by a team member
+who did not write the evaluation code. Pass when every result is within 1 point
+and every classification matches.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{2}; BR-002}
+  \reqtraces{\reqref{FR-LRN-011}; \reqref{FR-LRN-013};
+  \reqref{NFR-PERF-004}; H-AHM-004}
+\end{srsrequirement}
+
 \subsection{Robustness or Fault-Tolerance Requirements}
 \label{sec:robustness}
 
@@ -6925,7 +7019,7 @@ requirement, including the safety requirements derived from the Hazard Analysis.
 The functional requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements are
 classified here as \emph{Must} and assigned to the phase containing the
-behaviour they protect. The 140 identified requirements in this SRS are
+behaviour they protect. The 142 identified requirements in this SRS are
 scheduled in PH-1 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7228,6 +7322,9 @@ PH-2 \\
 12.3)}}\\
 \addlinespace
 \reqref{NFR-PERF-004} & Stage result scoring accuracy & Must & PH-2 \\
+\addlinespace
+\reqref{NFR-PERF-010} & Stage result and completeness agree with their
+definition & Must & PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Robustness or Fault-Tolerance Requirements
 (Section 12.4)}}\\
@@ -7938,6 +8035,10 @@ reciprocal links.
 \addlinespace
 \reqref{FR-LRN-008} & \reqref{NFR-PERF-004}; \reqref{NFR-MAINT-002} & NFR
 Traceability \\
+\addlinespace
+\reqref{FR-LRN-011} & \reqref{NFR-PERF-010} & NFR Traceability \\
+\addlinespace
+\reqref{FR-LRN-013} & \reqref{NFR-PERF-010} & NFR Traceability \\
 \addlinespace
 \reqref{FR-LRN-014} & \reqref{NFR-UX-004}; \reqref{NFR-UX-015};
 \reqref{NFR-UX-016} & NFR Traceability \\

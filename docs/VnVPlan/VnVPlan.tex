@@ -49,6 +49,8 @@ table in Section 4.3 and the Symbolic Parameters in Section 6.1 (\#227).\\
 29 October 2026 & Rayan Nasrallah & Added his reflection answers (\#228).\\
 29 October 2026 & Rayan Nasrallah & Added his generative AI use disclosure
 (\#229).\\
+30 October 2026 & Rayan Nasrallah & Fixed review issues in the nonfunctional
+and safety tests (\#231).\\
 30 October 2026 & Moustafa Moustafa & Wrote Section 3.1, Verification and
 Validation Team (\#232).\\
 30 October 2026 & Moustafa Moustafa & Wrote Sections 2.1 and 2.2, Summary and
@@ -65,13 +67,80 @@ revision history rows to the SRS and Hazard Analysis (\#236).\\
 4, 4.1, 4.2 and 4.3 (\#237).\\
 30 October 2026 & Moustafa Moustafa & Rewrote reflection Questions 1 and 2 as
 team answers and added Moustafa's Questions 3 and 4 (\#242).\\
+30 October 2026 & Muhammad Huzaifah & Wrote Section 3.5, Implementation
+Verification: PR code review, code walkthroughs, and the code inspections
+INS-LRN, INS-EVAL and INS-REC with their checklist, schedule and procedure
+(\#251).\\
+30 October 2026 & Muhammad Huzaifah & Wrote the guided lesson tests in
+Section 4.1.1, T-LRN-001 to T-LRN-021, the functional traceability table in
+Section 4.3 and the symbolic parameters for functional tests in Section 6.1
+(\#252).\\
+30 October 2026 & Muhammad Huzaifah & Wrote the attempt record tests in
+Section 4.1.4, T-REC-001 to T-REC-010, with their rows in the functional
+traceability table and their symbolic parameters (\#253).\\
+30 October 2026 & Muhammad Huzaifah & Added his answers to reflection
+Questions 3 and 4 and his generative AI use disclosure (\#254).\\
+30 October 2026 & Ahmed Elzaria & Wrote the creative drawing tests for
+editing and saving in Section 4.1, T-CRT-001 to T-CRT-012, with their
+traceability rows, the constants \texttt{COORD\_TOL} and
+\texttt{SCALE\_TOL}, and their test data (\#255).\\
+30 October 2026 & Ahmed Elzaria & Wrote the creative drawing tests for
+refinement and restoring the original in Section 4.1, T-CRT-013 to
+T-CRT-027, with their traceability rows, how and when
+\texttt{REFINE\_TOLERANCE} is set, the refinement test constants and their
+test data (\#256).\\
+30 October 2026 & Ahmed Elzaria & Wrote the progress summary tests in
+Section 4.1, T-PRG-001 to T-PRG-013, with their traceability rows, the
+prepared histories, and the values of \texttt{RECUR\_MIN},
+\texttt{ADULT\_REVIEWERS} and \texttt{REVIEW\_PASS\_RATE} (\#257).\\
+30 October 2026 & Ahmed Elzaria & Wrote Section 3.3, Design Verification:
+the design reviews and their dates, the checklist items each member owns,
+the traceability check, the task-based inspection scenarios and how
+findings are recorded (\#258).\\
+30 October 2026 & Ahmed Elzaria & Wrote Section 5, Unit Test Description:
+how unit tests are chosen from the MIS, how they are named, who writes and
+checks them, and the scope and priority of modules (\#259).\\
+30 October 2026 & Ahmed Elzaria & Added his reflection answers and his
+generative AI use disclosure (\#260).\\
 31 October 2026 & Shamil Canbolat & Added 3.2 SRS 
 Verification, 3.7 Software Validation, 4.2 Usability and Accessibility Tests,
 usability survey questions in Appendix, my 4.3 traceability rows, symbolic 
 parameters, reflection questions, and AI disclosure (\#261).\\
+31 October 2026 & Muhammad Huzaifah & Revised Section 3.5 after peer review:
+PR reviewers also read the unit tests, conflicts within the SRS are raised
+as SRS feedback instead of major findings, and the inspection dates and
+checklist items were updated (\#251).\\
+31 October 2026 & Muhammad Huzaifah & Revised the guided lesson tests after
+peer review: stated which lessons each case uses and what stays fixed,
+defined the list of results $H$, named the lesson-end messages and added
+\texttt{STROKE\_PAUSE} and \texttt{LESSON\_IDLE\_PROMPT} (\#252).\\
+31 October 2026 & Muhammad Huzaifah & Revised the attempt record tests after
+peer review: linked the cases to hazards H-MUH-003 and H-MUH-007 and stated
+each test's fixtures and expected outputs (\#253).\\
+31 October 2026 & Muhammad Huzaifah & Revised his reflection answers and AI
+use disclosure after peer review (\#254).\\
 1 November 2026 & Shamil Canbolat & Reworked the usability tests and survey
 to align them with the supervisor, specialist, and adult reviews (\#261).\\
 1 November 2026 & Shamil Canbolat & Added 2.3 Custom Documents (\#261).\\
+1 November 2026 & Muhammad Huzaifah & Added the INS-CRT code inspection for
+the refinement result check and the drawing history (checklist items A9 and
+A10), and updated the inspection effort to about 60 person-hours (\#251).\\
+1 November 2026 & Muhammad Huzaifah & Made the replay convention of the
+guided lesson and attempt record tests match the \texttt{CAL\_*} calibration
+bands, and named INS-CRT in the functional traceability introduction
+(\#252, \#253).\\
+1 November 2026 & Muhammad Huzaifah & Clarified the rebase statement in his
+AI use disclosure and added INS-CRT to the inspections he moderates
+(\#254).\\
+1 November 2026 & Ahmed Elzaria & Addressed Huzaifah's review: tested
+closing the page during a lost connection (T-CRT-011) and a learner switch
+while a save is pending (T-CRT-009); \texttt{REFINE\_TOLERANCE} is now
+confirmed by supporting adults; fixed learner D's history and added
+\texttt{prg-h.json}; gave every design checklist item an owner; matched
+the unit test priority to the code coverage rule (\#255 to \#260).\\
+1 November 2026 & Moustafa Moustafa & Final QA of coverage and constants: added
+T-PERF-008, updated the go-back suggestion tests and T-UX-002 to match the SRS,
+gave every TBD constant a method and added the missing revision rows (\#275).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -958,9 +1027,8 @@ more items, so the inspections add these:
 \item[A1] (INS-LRN) Each row of the SRS Section~9.2 transition table maps
 to one identifiable code path. After a finished attempt, the rules are
 checked in the SRS order: pass, end at limit, extension, suggestion. In
-three places SRS Section~9.2 disagrees with other parts of the SRS: a
-go-back suggestion pending during practice, the counts when a stage is
-entered again, and when an extended lesson ends. The inspector records
+two places SRS Section~9.2 disagrees with other parts of the SRS: the counts
+when a stage is entered again, and when an extended lesson ends. The inspector records
 which reading the code follows and raises it as an SRS feedback issue, not
 as a major finding. The guided lesson tests avoid these cases.
 \item[A2] (INS-LRN) Apart from pass-based advancement and the step from the
@@ -1129,7 +1197,7 @@ merged while a required check fails. The existing
 \addlinespace
 Performance measurement & Safari Web Inspector (Timelines), Chrome
 DevTools (Performance panel) and the browser Performance API
-(\texttt{performance.now()}) & Measures stroke latency, refinement time and
+(\texttt{performance.\allowbreak now()}) & Measures stroke latency, refinement time and
 page load for the performance tests. Safari Web Inspector, run on a Mac, reads
 timings from the test iPad; Chrome DevTools is used for runs on a laptop.
 Timings logged by Playwright scripts make the measurements repeatable.\\
@@ -1244,10 +1312,9 @@ These tests cover the 23 guided lesson requirements in SRS Section~9.1
 (FR-LRN-001 to FR-LRN-023) and the rules and invariants of the formal
 specification in SRS Section~9.2. The lesson flow is summarized with the
 safety-critical tests (Section~\ref{sec:safety-tests}). That summary follows
-SRS UC-005, where the child keeps practising while a suggestion waits. In
-SRS Section~9.2, an attempt can only be finished while no suggestion is
-pending, so in these tests an adult answers every suggestion before the
-next attempt (T-LRN-016). FR-LRN-001 to FR-LRN-007, FR-LRN-010, FR-LRN-011,
+SRS UC-005 and Section~9.2, where the child keeps practising while a
+suggestion waits. Unless a case says otherwise, an adult answers every
+suggestion before the next attempt (T-LRN-016). FR-LRN-001 to FR-LRN-007, FR-LRN-010, FR-LRN-011,
 FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022 and FR-LRN-023 are due in
 PH-1, and the rest in PH-2. Each test first runs in the phase of the
 requirements it covers. After that, its automatic parts run in CI on every
@@ -1356,7 +1423,7 @@ records, on one device.
 
 Input: the cases vary the adult's starting choice and the child's actions;
 the lesson rules and the defaults stay fixed. Cases (a) to (d) run for every
-catalogue lesson, and cases (e) and (f) for the line, circle and square
+catalogue lesson, and cases (e) to (g) for the line, circle and square
 lessons. ``Good drawing'' means the lesson's good-drawing fixture:
 \texttt{line.json}, \texttt{circle.json} or
 \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json} for the test
@@ -1391,6 +1458,10 @@ each switch, the adult starts the lesson again with that learner's stage,
 with the adult check & The stage shown is the one just selected for that
 learner, and each lesson record holds its learner's starting stage (E, T,
 E)\\
+g & Start at E & The child tries to choose another lesson, then stage I; at
+each adult check, the child leaves it, then enters a wrong answer & The
+lesson is unchanged, the stage shown is still E, and the lesson record's
+starting stage is E\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1404,7 +1475,8 @@ counts at zero (SRS UC-004 step~4). Whether the demonstration comes first
 at a later start is not checked, because SRS Section~9.2 and SRS UC-003
 disagree on it. (e) is the fit criterion's ``child-only practice action does
 not change the configured lesson or starting stage''. (f) is H-AHM-007, the
-wrong learner's setting.
+wrong learner's setting. (g) is the fit criterion's attempt to choose a
+lesson or starting stage without passing the adult check of SAF-RAY-001.
 
 How test will be performed: Playwright reads the visible stage and the
 lesson record. A tester repeats (a) to (c) with the stylus on the test iPad
@@ -2118,8 +2190,8 @@ the child's session.
 \item{T-LRN-016: Go-back suggestion\\}
 
 Purpose: the adult should get a suggestion to go back after a full run of
-failures, and not when the child is improving, has too few attempts, or has
-just declined one.
+failures, and not when the child is improving, has too few attempts, has
+just declined one, or still has one waiting.
 
 Type: Dynamic, automatic. Covers FR-LRN-019.
 
@@ -2136,8 +2208,9 @@ Table~\ref{tab:t-lrn-016}.
 \setlength{\tabcolsep}{4pt}
 \caption{Cases for T-LRN-016 (FR-LRN-019)}
 \label{tab:t-lrn-016}
-\begin{tabularx}{\textwidth}{@{}l l l >{\raggedright\arraybackslash}X
-  >{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\textwidth}{@{}l l l
+  >{\raggedright\arraybackslash\hsize=0.8\hsize}X
+  >{\raggedright\arraybackslash\hsize=1.2\hsize}X@{}}
 \toprule
 \textbf{Case} & \textbf{Stage} &
 \begin{tabular}[b]{@{}l@{}}\texttt{DIFFICULTY\_STREAK},\\
@@ -2170,6 +2243,12 @@ n & E & 3, 2, 8 & 40, \texttt{inv}, 40, \texttt{int}, 40 [D] &
 Suggestion only after the 5th input (the 3rd evaluable attempt)\\
 o & E & 3, 2, 8 & 40, 40, 85, then at I 40, 40, 40 [D] & None at E;
 suggestion after the 3rd failure at I\\
+p & E & 3, 2, 8 & $6 \times 40$, no answer & Suggestion after the 3rd
+only, still pending; six counted\\
+q & E & 3, 2, 8 & $3 \times 40$, no answer, 85 & Stage I; suggestion
+ignored\\
+r & E & 3, 2, 8 & $8 \times 40$, no answer & Suggestion after the 3rd
+only; lesson ends; suggestion ignored\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2201,10 +2280,13 @@ limit'' takes priority.
 \item (n) follows FR-LRN-009, FR-LRN-010 and the H-AHM-006 cause in which
 ``invalid input is counted as failure''.
 \item (o): a pass changes the stage and clears the streak.
+\item (p) to (r): an unanswered suggestion stays pending, further failed
+attempts are counted and no second suggestion is offered (the fit criterion
+and SRS UC-005 step~2b). A pass in (q) and the end of the lesson in (r) clear
+it, and it is recorded as ignored (FR-REC-010).
 \end{itemize}
-In every case, the adult answers a suggestion before the next attempt,
-because SRS Section~9.2 and SRS UC-005 disagree on whether a pending
-suggestion blocks practice.
+In every case except (m) and (p) to (r), the adult answers a suggestion
+before the next attempt.
 
 How test will be performed: Vitest runs every case. Playwright repeats (b)
 with three \texttt{circle-\allowbreak{}fail.json}. Playwright also runs,
@@ -2497,12 +2579,12 @@ adult decline; an adult accept to an earlier stage; a child's attempt to
 accept, skip or change lesson; and an adult selection of a new lesson.
 \item Settings: drawn from the SRS ranges, with the ends of each range
 drawn more often.
+\item A suggestion can be left unanswered while attempts continue.
 \item Until the SRS settles where it disagrees with itself, the generator
-follows every suggestion with an adult accept or decline, places an accept
-only as the last event of a sequence, and draws only settings with
-\texttt{ATTEMPT\_LIMIT} + \texttt{ATTEMPT\_EXTENSION} $\ge$
-\texttt{ATTEMPT\_LIMIT\_MAX}. These are three of the places where SRS
-Section~9.2 disagrees with SRS UC-005, BR-002 and SAF-RAY-005.
+places an accept only as the last event of a sequence, and draws only
+settings with \texttt{ATTEMPT\_LIMIT} + \texttt{ATTEMPT\_EXTENSION} $\ge$
+\texttt{ATTEMPT\_LIMIT\_MAX}. These are the places where SRS Section~9.2
+disagrees with SRS BR-002 and SAF-RAY-005.
 \end{itemize}
 
 Output: after every event, the state of the module equals the state of the
@@ -4244,6 +4326,7 @@ g & At T, $7 \times \mathrm{F}$ & None\\
 h & $3 \times \mathrm{F}$; the adult switches to B and starts the circle
 lesson for B at T; B makes one attempt & A's record: one, ignored; B's
 record: none\\
+i & $3 \times \mathrm{F}$, nobody answers, then P & One: ignored\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -4257,8 +4340,7 @@ Test Case Derivation: the fit criterion asks for suggestions that are
 accepted, declined and not yet answered, each listed once. The statuses
 come from the SRS Section~7.2 data dictionary (pending, accepted, declined
 or ignored). A pending suggestion becomes ignored when the lesson ends, or
-the stage changes, without an answer, which is the team's reading of
-``ignored''. In (f), only an adult can accept (SAF-RAY-001). In (g), T has
+the stage changes, without an answer, as that entry says. In (f), only an adult can accept (SAF-RAY-001). In (g), T has
 no earlier stage. In (h), suggestions belong to their learner
 (SAF-RAY-007), and switching ends A's lesson as unfinished (T-REC-007).
 
@@ -4886,23 +4968,28 @@ How test will be performed: the team records control counts and motion
 checks in a screen inventory. The participants take the survey after the 
 review.
 
-\item{T-UX-002: Child screens usable without reading\\}
+\item{T-UX-002: Child screens usable without reading, adult views in one
+language\\}
 
-Purpose: children who cannot read must be able to use child-facing screens.
+Purpose: children who cannot read must be able to use child-facing screens,
+and adults must be able to read every adult view.
 
 Type: Dynamic, manual. Covers NFR-UX-002 and NFR-UX-012.
 
 Initial State: the PH-2 release build.
 
-Input: team audit of child tasks with text covered or hidden.
+Input: team audit of child tasks with text covered or hidden, and of the
+text in every adult view.
 
-Output: every child task can be completed without reading.
+Output: every child task can be completed without reading, and all text in
+every adult view is in \texttt{INTERFACE\_LANGUAGE}.
 
 Test Case Derivation: the fit criteria of NFR-UX-002 and NFR-UX-012.
 
 How test will be performed: one team member hides or covers all on-screen 
 text on each child-facing screen and completes the child tasks in UC-003 
-and UC-006, recording any task that needs a word-based instruction.
+and UC-006, recording any task that needs a word-based instruction. They
+then read every adult view and record any text in another language.
 
 \item{T-UX-003: Adult and child views look distinct\\}
 
@@ -5173,7 +5260,7 @@ fix.
 \label{sec:perf-tests}
 
 These tests cover the performance requirements in SRS Section~12
-(NFR-PERF-001 to NFR-PERF-005, NFR-PERF-008 and NFR-PERF-009). Timing
+(NFR-PERF-001 to NFR-PERF-005 and NFR-PERF-008 to NFR-PERF-010). Timing
 thresholds are written as symbolic constants. The SRS leaves their values to
 this plan, so each constant in the Symbolic Parameters appendix states how its
 value is set and when.
@@ -5236,8 +5323,8 @@ because replayed events skip the real stylus input path on the iPad, which
 could add its own delay.
 
 How test will be performed: the replay script stamps
-\texttt{performance.now()} at the last pointer event and in the next
-\texttt{requestAnimationFrame} callback after the stroke is drawn. For the
+\texttt{performance.\allowbreak now()} at the last pointer event and in the next
+\texttt{request\allowbreak Animation\allowbreak Frame} callback after the stroke is drawn. For the
 manual runs, the iPad is connected to a Mac and the same interval is read
 from a Safari Web Inspector timeline recording. Times are summarized as
 described above.
@@ -5278,7 +5365,7 @@ in, with the browser cache cleared.
 Input: the adult opens the progress summary ten consecutive times.
 
 Output: each time, the summary is fully visible within
-\texttt{SUMMARY\_LOAD\_MAX}.
+\texttt{SUMMARY\_\allowbreak LOAD\_\allowbreak MAX}.
 
 Test Case Derivation: the fit criterion of NFR-PERF-003 names ten
 consecutive requests. A large history is used because load time grows with
@@ -5378,7 +5465,7 @@ demo (PH-1, 23 November 2026), Rev~0 (PH-2, 1 February 2027) and the final
 demo (PH-3, 15 March 2027).
 
 Input: on the iPad and on each other combination in
-\texttt{SUPPORTED\_DEVICES} that the team has access to, a team member
+\texttt{SUPPORTED\_\allowbreak DEVICES} that the team has access to, a team member
 follows the checklist of every feature: create an account and a child
 profile, run one guided lesson to the end, draw in the creative space,
 restore an original, and open the progress summary.
@@ -5394,6 +5481,41 @@ each milestone. Running it at the two earlier milestones, not only at the
 final demo, means a browser update that breaks a feature is found while there
 is still time to fix it. The results are kept as a table of device by feature
 in the VnV Report.
+
+\item{T-PERF-008: Stage result matches its definition\\}
+
+Purpose: a threshold of 70 or 90 only means something if the stage result
+measures what the SRS says it does. T-PERF-004 shows the result repeats, but a
+result can be repeatable and still wrong.
+
+Type: Dynamic, automatic (unit test in Vitest). Covers NFR-PERF-010.
+
+Initial State: the stage evaluation module is loaded with the criteria of
+every catalogue lesson, with \texttt{TRACE\_TOL} and \texttt{PART\_COVER}
+set. A separate reference script computes the result and the classification
+from SRS Section~9.2. A team member who did not write the evaluation code
+writes it.
+
+Input: prepared attempts at every drawing stage of every catalogue lesson:
+(a) the lesson's good drawing; (b) a drawing with a missing part;
+(c) a drawing with a missed endpoint; (d) drawings just above and just below
+\texttt{STAGE\_PASS} at 70, 80 and 90. The line, circle and square lessons
+use \texttt{line-\allowbreak{}wrong-\allowbreak{}end.json},
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json} and
+\texttt{circle-\allowbreak{}near-\allowbreak{}miss.json} where they fit. A
+script makes the other attempts from each lesson's good drawing.
+
+Output: every stage result is within 1 point of the reference script's, and
+every complete or incomplete classification matches.
+
+Test Case Derivation: the fit criterion of NFR-PERF-010. The two sides are
+written separately so that a misreading of SRS Section~9.2 shows up as a
+mismatch instead of being copied into both.
+
+How test will be performed: a Vitest test runs the module and the reference
+script on the same attempts and compares them. It first runs at PH-2, then in
+CI on every PR that changes the evaluation function or the catalogue. A
+mismatch is checked against SRS Section~9.2 to find which side is wrong.
 
 \end{enumerate}
 
@@ -5608,7 +5730,7 @@ the lesson must end by itself at the limit the adult set.
 Type: Dynamic, automatic. Covers SAF-RAY-005.
 
 Initial State: a child profile with \texttt{ATTEMPT\_LIMIT} and
-\texttt{ATTEMPT\_LIMIT\_MAX} at the lowest values in their ranges; the test
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} at the lowest values in their ranges; the test
 is then repeated with the highest values.
 
 Input: (a) at the tracing stage, the failing attempt
@@ -6421,6 +6543,7 @@ NFR-PERF-004 & T-PERF-004 (unit and UI)\\
 NFR-PERF-005 & T-PERF-005, T-SAF-003\\
 NFR-PERF-008 & T-PERF-006\\
 NFR-PERF-009 & T-PERF-007, T-OPS-003\\
+NFR-PERF-010 & T-PERF-008\\
 NFR-UX-001 & T-UX-001, T-COMP-003\\
 NFR-UX-002 & T-UX-002\\
 NFR-UX-003 & T-UX-003\\
@@ -6765,7 +6888,7 @@ example, ``within \texttt{FEEDBACK\_LATENCY\_MAX}'').
 \textbf{Constant} & \textbf{Value or how it is set}\\
 \midrule
 \endhead
-\texttt{FEEDBACK\_LATENCY\_MAX} & Milliseconds. Set at the end of PH-1 from
+\texttt{FEEDBACK\_\allowbreak LATENCY\_\allowbreak MAX} & Milliseconds. Set at the end of PH-1 from
 the target-tablet experiment in the Development Plan, run on the test iPad:
 the team measures the stroke latency of the first
 working build, checks whether drawing feels immediate, and sets the
@@ -6798,7 +6921,7 @@ NFR-UX-013, NFR-UX-014).\\
 \texttt{UX\_PASS\_RATE} & Proportion of reviewers. 
 Set to 0.8 before the first PH-2. For \texttt{UX\_REVIEWERS}=5 this 
 means at least four reviewers need to complete each task 
-(NFR-UX-009, NFR-UX-013, NFR-UX-014).\\
+(NFR-UX-006, NFR-UX-009, NFR-UX-013, NFR-UX-014).\\
 \addlinespace
 \texttt{SETUP\_TIME\_MAX} & Minutes. Set to 5 before PH-2, after the team
 times a rehearsal of the profile and lesson setup flow and confirms that
@@ -6810,11 +6933,33 @@ message aloud. Short messages are suitable for children and people with
 developmental impairments.
 (NFR-UX-015).\\
 \addlinespace
-\texttt{IDLE\_TIMEOUT}, \texttt{FAILED\_SAVES}, \texttt{SUPPORTED\_DEVICES},
-\texttt{ADULT\_CHECK}, \texttt{STAGE\_PASS}, \texttt{ATTEMPT\_LIMIT},
-\texttt{ATTEMPT\_LIMIT\_MAX}, \texttt{ATTEMPT\_EXTENSION},
-\texttt{DIFFICULTY\_STREAK}, \texttt{LESSON\_IDLE\_PROMPT},
-\texttt{LESSON\_IDLE\_END} & As defined in the
+\texttt{IDLE\_TIMEOUT} & Minutes. Set by the team before the first run of
+T-SAF-013 and recorded in the SRS constants table (SAF-SHA-006).\\
+\addlinespace
+\texttt{FAILED\_\allowbreak SAVES} & Save attempts. Set by the team before the first run of
+T-SAF-003 and recorded in the SRS constants table (SAF-SHA-003).\\
+\addlinespace
+\texttt{SUPPORTED\_\allowbreak DEVICES} & Device and browser list. Set by the team before
+the first run of T-PERF-007 at PH-1, starting from the test iPad, and
+recorded in the SRS constants table. T-PERF-007 can remove a combination at
+any milestone (SAF-RAY-002).\\
+\addlinespace
+\texttt{INTERFACE\_\allowbreak LANGUAGE} & Proposed value: English, the language of our adult
+reviewers and project documents. Confirmed by the team before the first run
+of T-UX-002 and recorded in the SRS constants table (NFR-UX-012).\\
+\addlinespace
+\texttt{AGE\_RANGE} & Years. No test uses it, since it describes the learners
+we design for and no child takes part in testing. Set with the specialists at
+the first validation session in PH-2 and recorded in the SRS constants table.\\
+\addlinespace
+\texttt{TRACE\_TOL}, \texttt{PART\_COVER} & Percent. The SRS proposes 5 and
+90. Confirmed by the team in PH-1, before the first evaluation test, on
+adult-made drawings (NFR-PERF-010).\\
+\addlinespace
+\texttt{TARGET\_SIZE\_MIN}, \texttt{ADULT\_CHECK}, \texttt{STAGE\_PASS},
+\texttt{ATTEMPT\_LIMIT}, \texttt{ATTEMPT\_LIMIT\_MAX},
+\texttt{ATTEMPT\_EXTENSION}, \texttt{DIFFICULTY\_STREAK},
+\texttt{LESSON\_IDLE\_PROMPT}, \texttt{LESSON\_IDLE\_END} & As defined in the
 SRS constants table.\\
 \addlinespace
 \texttt{PERF\_RUNS} & Number of repeated runs per timing test on the test iPad.

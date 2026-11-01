@@ -208,6 +208,9 @@ result and a complete attempt in black-box terms in Section~9.2, with
 \texttt{TRACE\_TOL} and \texttt{PART\_COVER}; listed the initial lesson
 catalogue and each lesson's required parts; added NFR-PERF-010 so the stage
 result must match its definition (\#175).\\
+1 November 2026 & Moustafa Moustafa & Changed the fit criterion of NFR-UX-006 to
+the share of reviewers answering 4 or 5, as T-UX-006 in the VnV Plan does, and
+removed \texttt{STYLE\_RATING\_MIN} (\#275).\\
 \end{longtable}
 
 ~\\
@@ -1366,13 +1369,10 @@ and usability reviews. \emph{Unit:} people (count). \emph{Value:} team-defined;
 TBD. \emph{Trace:} NFR-UX-003, NFR-UX-006, NFR-UX-007, NFR-UX-009, NFR-UX-013,
 NFR-UX-014.\\
 \addlinespace
-\texttt{STYLE\_RATING\_MIN} & Minimum median rating, on a five-point scale, that
-reviewers give child-facing screens for being appealing and calm. \emph{Unit:}
-rating (1--5). \emph{Value:} team-defined; TBD. \emph{Trace:} NFR-UX-006.\\
-\addlinespace
 \texttt{UX\_PASS\_RATE} & Minimum proportion of reviewers who must complete a
-usability or learning task. \emph{Unit:} proportion. \emph{Value:} team-defined;
-TBD. \emph{Trace:} NFR-UX-009, NFR-UX-013, NFR-UX-014.\\
+usability or learning task, or answer 4 or 5 on a five-point rating.
+\emph{Unit:} proportion. \emph{Value:} team-defined; TBD. \emph{Trace:} NFR-UX-006,
+NFR-UX-009, NFR-UX-013, NFR-UX-014.\\
 \addlinespace
 \texttt{SETUP\_TIME\_MAX} & Maximum time for a first-time adult to create a
 child's profile and start a lesson. \emph{Unit:} minutes. \emph{Value:}
@@ -4993,8 +4993,8 @@ design may not be appealing enough for children, and that the right balance is a
 playful design in a calm, minimally stimulating environment (\srcref{009.05}).}
 \reqfit{Show at least \texttt{UX\_REVIEWERS} adult reviewers every child-facing
 screen and ask them to rate how appealing to children and how calm each is, on a
-five-point scale. Pass when the median of each rating is at least
-\texttt{STYLE\_RATING\_MIN}.}
+five-point scale. Pass when at least \texttt{UX\_PASS\_RATE} of them answer 4 or
+5 on each rating.}
   \reqpriority{Should}
   \reqphase{PH-3}
   \reqsources{\srcref{009.05}} \reqtraces{\reqref{NFR-UX-001};

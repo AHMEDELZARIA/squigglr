@@ -65,6 +65,14 @@ revision history rows to the SRS and Hazard Analysis (\#236).\\
 4, 4.1, 4.2 and 4.3 (\#237).\\
 30 October 2026 & Moustafa Moustafa & Rewrote reflection Questions 1 and 2 as
 team answers and added Moustafa's Questions 3 and 4 (\#242).\\
+31 October 2026 & Shamil Canbolat & Added 3.2 SRS 
+Verification, 3.7 Software Validation, 4.2 Usability and Accessibility Tests,
+usability survey questions in Appendix, my 4.3 traceability rows, symbolic 
+parameters, reflection questions, and AI disclosure (\#198).\\
+1 November 2026 & Shamil Canbolat & Reworked the usability tests and survey
+to align them with the supervisor, specialist, and adult reviews.\\
+1 November 2026 & Shamil Canbolat& Added 2.3 Custom Documents
+
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -122,6 +130,8 @@ requirement group it tests: \texttt{LRN}, \texttt{REC}, \texttt{CRT},
 \texttt{PRG}, \texttt{UX}, \texttt{PERF}, \texttt{SAF}, \texttt{OPS},
 \texttt{MAINT}, \texttt{SEC}, \texttt{CULT} or \texttt{COMP}. \\
 VnV & Verification and validation. \\
+QA & Quality assurance, the final review done by one member of the group
+for each deliverable to check for quality and consistency. \\
 \end{longtable}
 }
 
@@ -244,12 +254,23 @@ With five people and one academic year, we are leaving these out:
 
 \subsection{Custom Documents}
 
-\wss{Summarize the CDs (Custom Documents) that were tackled by this project.  CDs 
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  CDs should have already
-been approved by the course instructor as included in your problem statement.
-You can use a pull request to update your CDs (in TeamComposition.csv or
-Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+The two custom documents include:
+\begin{itemize}
+  \item \textbf{Fall: Specialist Interview Report.} This report documents the
+    second interview described in Section~\ref{sec:software-validation}, with
+    domain specialists P1, P2 and P3. It will state the interview method and
+    questions and include the transcript as an appendix. An analysis will
+    show whether the requirements fit
+    specialist expectations, giving the team concrete evidence for changes
+    before Rev~1.
+  \item \textbf{Winter: Usability Report.} This report documents the third 
+    interview in Section~\ref{sec:software-validation} for adult usability 
+    sessions. It will state the evaluation goals and method, list the tasks 
+    and survey questions, and report task completion, timing, observed 
+    difficulties and survey results. The findings will identify which adult 
+    workflows and child-facing screens need improvement before the final 
+    demonstration. No children will be involved.
+\end{itemize}
 
 \subsection{Relevant Documentation}
 \label{sec:relevant-docs}
@@ -357,8 +378,8 @@ software validation. Sets up the sessions with the supervisor and the
 specialists, sets up the automated testing tools, and keeps the CI build and
 test workflow running. & Ahmed \\
 \addlinespace
-Moustafa Moustafa \newline \emph{VnV plan verification and quality assurance
-(QA) coordinator for this milestone} &
+Moustafa Moustafa \newline \emph{VnV plan verification and QA coordinator for 
+this milestone} &
 Verifies this plan and does its final review against the VnV and Writing
 checklists. Turns review feedback into GitHub issues, takes notes at
 every review and validation session, and reviews the frontend code. &
@@ -399,17 +420,41 @@ next team meeting and update Table~\ref{tab:vnvTeam}.
 
 \subsection{SRS Verification}
 
-\wss{List any approaches you intend to use for SRS verification.  This may
-  include ad hoc feedback from reviewers, like your classmates (like your
-  primary reviewer), or you may plan for something more rigorous/systematic.}
+\label{sec:srs-verification}
 
-\wss{If you have a supervisor for the project, you shouldn't just say they will
-read over the SRS.  You should explain your structured approach to the review.
-Will you have a meeting?  What will you present?  What questions will you ask?
-Will you give them instructions for a task-based inspection?  Will you use your
-issue tracker?}
+SRS verification consists of a meeting with Dr.\ Anand where the SRS document
+is reviewed against specific parts of the \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/SRS-Checklist.tex}{SRS checklist}.
+The points "follows writing checklist," "follows the template," and "reference
+material" along with all of their subitems will not be included in the review 
+as these were either addressed in the SRS QA review or are pending being addressed 
+as peer review issues. Only "functional requirements," "non-functional requirements," 
+"requirements," and "likely and unlikely changes" will be considered because the
+review is intended to be a brief audit with our supervisor to get general approval
+for the document and address only outstanding concerns. Including the points 
+"overall qualities of documentation" and "avenue rubric" would be overly detailed
+and distract from the main focus of the document. The peer review covers more
+detailed fixes.
 
-\wss{Maybe create an SRS checklist?}
+Dr.\ Anand will thus be asked to keep in mind the subitems in those three 
+sections of the checklist as he reads the 140 requirements and eight likely 
+changes. The requirements and validation lead (Shamil) will prepare a document
+with only the requirements and likely changes for Dr.\ Anand so that he does
+not have to search through the SRS document. He will be asked to discuss his
+thoughts and comments at the review which consists of a video call discussion 
+planned and coordinated by Shamil who will attend the meeting with the review 
+notetaker (Moustafa). Shamil will primarily move the conversation along but 
+both team members are expected to participate. 
+
+As this is a verification, not validation, Dr.\ Anand will only be confirming 
+that the requirements meet the checklist criteria (e.g. functional requirements 
+are validatable and abstract), not checking whether they are the right 
+requirements. Validation with Dr.\ Anand is discussed in 
+Section~\ref{sec:software-validation}.
+
+The team will perform this review once before the VnV Report is due. The 
+notetaker will turn eachach actionable omission, ambiguity, conflict or 
+failed checklist item into a GitHub issue labelled \texttt{SRS Verification}, 
+with the affected requirement ID, one assignee and an expected resolution.
 
 \subsection{Design Verification}
 
@@ -637,23 +682,47 @@ Verification remain necessary.
 
 \subsection{Software Validation}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
+\label{sec:software-validation}
 
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
+As explained in Section~\ref{sec:objectives}, "validation and usability matter 
+more than verification." Thus we verify our requirements before implementing 
+them (Section~\ref{sec:srs-verification}) and we validate those same 
+requirements after turning them into software. This approach allocates the 
+less important verification step to the abstract prior phase and the more 
+important validation step to the concrete subsequent phase.
 
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
+Software validation consists of multiple review sessions with different 
+parties. Shamil coordinates the sessions with help from Ahmed. Moustafa 
+records session notes and turns each actionable finding into a GitHub 
+issue labelled \texttt{Software Validation} linked to the affected goal 
+or requirement, with one assignee and an expected resolution. 
 
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
+The first review will be with Dr.\ Anand shortly after the Rev 0 demo. The
+second review will be with domain specialists P1, P2, and P3 before Rev~1. 
+These first two reviews will be over video call and consist of a demonstration 
+prepared by Shamil and Ahmed that covers the main SRS scenarios including 
+features like the guided lesson, creative space, and adult progress summary,
+asking whether these behaviours are appropriate for the intended setting.
+The respective participants will subsquently be asked whether the requirements 
+should change before Rev~1. The first review also covers
+T-UX-007: Dr.\ Anand reviews the child-facing colours, images, and
+feedback style, and each
+requested change is recorded.
 
-\wss{This section might reference back to the SRS verification section.}
+The third review will be with \texttt{UX\_REVIEWERS} adult participants taking part in task-based 
+sessions on the test iPad. After the application is briefly described to them,
+they will complete tasks representative of an adult supporting a child and 
+complete a short survey (Section~\ref{sec:usability-survey}). The tasks,
+observations, and survey provide evidence for a portion of the tests in
+Section~\ref{sec:ux-tests}. Shamil and Ahmed will plan these user tasks
+based on the main SRS scenarios, which will be read to the participants without
+coaching or demonstration of the interface. They will be invited to think 
+aloud as they work. Moustafa will note task completion and time in addition 
+to hesitation, errors, backtracking, requests for help from the participants. 
+After the tasks, the participants complete the survey. Shamil and Ahmed will 
+also prepare and run a card sort of adult and child screenshots after the 
+task review, to cover T-UX-003. This review will happen before the final 
+demonstration.
 
 \section{System Tests}
 \label{sec:system-tests}
@@ -749,8 +818,329 @@ have one too, but one run can be slow by chance, so they repeat each run and
 report the results as tables and plots in the VnV Report. Where a requirement can't be
 tested by running Squigglr, like the wording in a template, we check it with a
 review or an inspection and say who does it, when, and with which checklist.
-The usability tasks and survey questions are in the Usability Survey
-Questions appendix.
+The survey questions used in the adult review sessions are in the appendix
+(Section~\ref{sec:usability-survey}).
+
+\subsubsection{Usability and Accessibility}
+\label{sec:ux-tests}
+
+These tests cover SRS Sections~10 and~11 (NFR-UX-001 to NFR-UX-024) and
+the selected WCAG 2.2 criteria in NFR-COMP-005. The adult review 
+in Section~\ref{sec:software-validation} and survey in 
+Section~\ref{sec:usability-survey} provide evidence for the tests that
+use them. The term "corresponding survey question" refers to the question
+in the survey that is labelled with the respective tests ID.
+
+\begin{enumerate}
+
+\item{T-UX-001: Calm, uncluttered child screens\\}
+
+Purpose: child-facing screens should be uncluttered and free of distracting
+movement so the child can focus while drawing.
+
+Type: Dynamic, manual. Covers NFR-UX-001.
+
+Initial State: the PH-2 release build.
+
+Input: Team audit of controls, animation, and flashing on 
+every child-facing screen. the adult review session and usability survey.
+
+Output: each screen has no more than \texttt{CHILD\_CONTROLS\_MAX} controls
+and no animation or flashing while a stroke is drawn. Any automatically moving 
+content can be paused, stopped or hidden. No content flashes more than three 
+times per second. Affirmative responses to the corresponding survey question 
+meet or exceed \texttt{UX\_PASS\_RATE}.
+
+Test Case Derivation: the fit criterion of NFR-UX-001. Screen checks verify
+the objective parameters the team chose, while the survey checks the subjective
+opinions of adults on whether the screens are uncluttered.
+
+How test will be performed: the team records control counts and motion
+checks in a screen inventory. The participants take the survey after the 
+review.
+
+\item{T-UX-002: Child screens usable without reading\\}
+
+Purpose: children who cannot read must be able to use child-facing screens.
+
+Type: Dynamic, manual. Covers NFR-UX-002 and NFR-UX-012.
+
+Initial State: the PH-2 release build.
+
+Input: team audit of child tasks with text covered or hidden.
+
+Output: every child task can be completed without reading.
+
+Test Case Derivation: the fit criteria of NFR-UX-002 and NFR-UX-012.
+
+How test will be performed: one team member hides or covers all on-screen 
+text on each child-facing screen and completes the child tasks in UC-003 
+and UC-006, recording any task that needs a word-based instruction.
+
+\item{T-UX-003: Adult and child views look distinct\\}
+
+Purpose: an adult should recognize an adult-only view immediately and not
+mistake it for a child-facing screen.
+
+Type: Static, manual. Covers NFR-UX-003.
+
+Initial State: screenshots of every child-facing screen and adult view from
+the PH-2 release build.
+
+Input: card sort activity during adult review.
+
+Output: every reviewer sorts every screenshot into the correct category.
+
+Test Case Derivation: the fit criterion of NFR-UX-003.
+
+How test will be performed: Shamil prepares the shuffled screenshots,
+adult reviewers sort screenshots into 'adult' and 'child' without titles 
+or other labels. A misclassified screenshot is recorded as a finding.
+
+\item{T-UX-004: Encouraging feedback\\}
+
+Purpose: feedback must not shame a child.
+
+Type: Dynamic, manual. Covers NFR-UX-004, NFR-UX-015, and NFR-UX-016.
+
+Initial State: the PH-2 release build.
+
+Input: Team audit of approved messages, checking their word count, 
+prohibited wording, and acknowledgement of effort. the adult review session and 
+usability survey.
+
+Output: All feedback acknowledges effort, avoids error styling, avoids negative
+words like 'wrong', 'bad', or 'fail', and is no longer than
+\texttt{FEEDBACK\_WORDS\_MAX} words when spoken. Affirmative responses to the 
+corresponding survey question meet or exceed \texttt{UX\_PASS\_RATE}.
+
+Test Case Derivation: the fit criteria of NFR-UX-004, NFR-UX-015 and
+NFR-UX-016. The audit verifies the the objective parameters the team chose, 
+while the survey checks the subjective opinions of adults on whether the 
+feedback is encouraging.
+
+How test will be performed: the team records that all feedback avoids
+error styling and acknowledge effort. The participants take the survey
+after the review.
+
+\item{T-UX-005: Consistent child controls\\}
+
+Purpose: the same action must look and behave consistently throughout the
+child-facing screens.
+
+Type: Dynamic, manual. Covers NFR-UX-005.
+
+Initial State: the PH-2 release build.
+
+Input: team audit of each actions on every child-facing screen it appears
+on for one identical color, icon, and position. the adult review session and usability 
+survey
+
+Output: Affirmative responses to the corresponding survey question 
+meet or exceed \texttt{UX\_PASS\_RATE}.
+
+Test Case Derivation: the fit criterion of NFR-UX-005. The audit verifies 
+the the objective parameters the team chose, while the survey checks the 
+whether the adults notice consistency in child controls.
+
+How test will be performed: The team records that each possible action 
+on every child-facing screen it appears on has the same color, icon, and 
+position. The participants take the survey after the review.
+
+\item{T-UX-006: Appealing but calm style\\}
+
+Purpose: child-facing colours, images and feedback should be appealing
+without being overstimulating.
+
+Type: Dynamic, manual. Covers NFR-UX-006.
+
+Initial State: the PH-2 release build.
+
+Input: the adult review session and usability survey
+
+Output: Affirmative responses to the two corresponding survey questions 
+both meet or exceed \texttt{UX\_PASS\_RATE}.
+
+Test Case Derivation: the fit criterion of NFR-UX-006. Appeal and calmness
+are rated separately because they do not imply each other.
+
+How test will be performed: The participants take the survey after the 
+review.
+
+\item{T-UX-007: Style reviewed with educator\\}
+
+Purpose: fulfill the style review by an educator or occupational
+therapist mentioned in the SRS.
+
+Type: Dynamic, manual. Covers NFR-UX-007.
+
+Initial State: the PH-2 release build.
+
+Input: the review session with Dr.\ Anand.
+
+Output: Each requested change is made or recorded with a reason.
+
+Test Case Derivation: the fit criterion of NFR-UX-007.
+
+How test will be performed: Shamil presents the child-facing style to
+Dr.\ Anand during review and Moustafa records comments. the team
+tracks each request to completion or records why it is not made.
+
+\item{T-UX-008: Lesson practice without adult help\\}
+
+Purpose: once an adult starts a lesson, the child should be able to continue
+through its stages and retries without repeated adult intervention.
+
+Type: Dynamic, manual. Covers NFR-UX-008.
+
+Initial State: the PH-2 release build.
+
+Input: the adult review session.
+
+Output: between lesson start and end, the only adult action required is
+responding to a go-back suggestion.
+
+Test Case Derivation: the fit criterion of NFR-UX-008.
+
+How test will be performed: the tester records that the adult is able to
+complete a lesson after starting it without the adult intervention
+features being required repeatedly.
+
+\item{T-UX-009: First-time adult setup and task learning\\}
+
+Purpose: a new adult should be able to set up a child and use the main adult
+features without outside help or training.
+
+Type: Dynamic, manual. Covers NFR-UX-009 and NFR-UX-014.
+
+Initial State: the PH-2 release build.
+
+Input: the adult review session.
+
+Output: at least \texttt{UX\_PASS\_RATE} of participants create a profile
+and start a lesson within \texttt{SETUP\_TIME\_MAX} minutes, and at least
+\texttt{UX\_PASS\_RATE} complete each remaining task without outside help.
+
+Test Case Derivation: the fit criteria of NFR-UX-009 and NFR-UX-014.
+
+How test will be performed: The moderator observes
+without coaching and records completion, time, hesitation, errors and
+requests for help.
+
+\item{T-UX-010: Per-child audio and refinement settings\\}
+
+Purpose: an adult must be able to personalize audio and refinement
+for each child.
+
+Type: Dynamic, manual and automatic. Covers NFR-UX-010 and NFR-UX-011.
+
+Initial State: the PH-2 release build with one adult account with two 
+child profiles with default settings.
+
+Input: turn audio off and refinement off for child A, leave both on for
+child B, and run a lesson and creative drawing for each profile. Draw the
+same prepared strokes for both children.
+
+Output: no sound plays for child A and audio feedback plays for child B in
+both lesson and creative screens. Child A's saved strokes match the input
+exactly; child B's drawing is refined. Switching profiles does not change
+either child's saved settings.
+
+Test Case Derivation: the fit criteria of NFR-UX-010 and NFR-UX-011.
+
+How test will be performed: Playwright checks the persisted settings and
+saved strokes; a tester confirms audio playback and the per-child behavior
+on the iPad.
+
+\item{T-UX-011: Lesson demonstration shows start and direction\\}
+
+Purpose: a learner should be able to identify how to begin and which way to
+draw by watching a lesson demonstration, without relying on words or sound.
+
+Type: Dynamic, manual. Covers NFR-UX-013.
+
+Initial State: the PH-2 release build. 
+
+Input: the adult review session.
+
+Output: at least \texttt{UX\_PASS\_RATE} of reviewers identify both the
+correct start point and direction for every lesson.
+
+Test Case Derivation: the fit criterion of NFR-UX-013.
+
+How test will be performed: the tester records that participants can identify 
+the start point and drawing direction after watch every lesson demonstration.
+
+\item{T-UX-012: Plain and consistent wording in adult views\\}
+
+Purpose: adults should understand the information in the application
+without clinical training or unexplained project terminology.
+
+Type: Dynamic, manual. Covers NFR-UX-017.
+
+Initial State: the PH-2 release build.
+
+Input: the SRS glossary and a team audit of each view for unexplained glossary 
+terms and the words 'diagnosis', 'disorder', 'delay', 'score', 
+'rank' and 'below average'. the adult review session and usability survey
+
+Output: Each glossary term used is explained the first time it appears in a 
+view, and none of the listed diagnostic words appear. Affirmative responses 
+to the corresponding survey question meet or exceed \texttt{UX\_PASS\_RATE}. 
+
+Test Case Derivation: the fit criterion of NFR-UX-017. The audit verifies 
+the the objective parameters the team chose, while the survey checks the 
+whether the subjective opinions of adults on whether the adult-view 
+wording is plain and consistent.
+
+How test will be performed: The team records each glossary term and when
+and whether it is explained, afterwards checking that none of the recorded
+terms are in the list of diagnostic words. The participants take the survey 
+after the review.
+
+\item{T-UX-013: Selected WCAG 2.2 accessibility criteria\\}
+
+Purpose: verify the specific accessibility behaviours selected for Squigglr
+on child-facing and adult-facing screens.
+
+Type: Dynamic, manual and automatic. Covers NFR-UX-018, NFR-UX-019, NFR-UX-020, 
+NFR-UX-021, NFR-UX-022, NFR-UX-023, NFR-UX-024, and NFR-COMP-005.
+
+Initial State: the PH-2 release build.
+
+Input: (a) measure each child control's touch target at the smallest screen
+size (WCAG~2.2 success criterion 2.5.5 Target Size (Enhanced)); (b) check
+text contrast at 4.5:1 and control graphics at 3:1 (1.4.3 Contrast
+(Minimum), 1.4.11 Non-text Contrast); (c) run an automated accessibility
+checker and inspect the accessible name of every control (1.1.1 Non-text
+Content); (d) display every child message with audio on and off and confirm
+that it is not conveyed by sensory characteristics alone (1.3.3 Sensory
+Characteristics); (e) list every sound and inspect those longer than three
+seconds for a pause or stop control (1.4.2 Audio Control); (f) complete every adult task
+in UC-001, UC-002, UC-005, UC-009 and UC-010 using only a keyboard
+(2.1.1 Keyboard); (g) zoom every adult view to 200 percent (1.4.4 Resize
+Text).
+
+Output: (a) every target is at least \texttt{TARGET\_SIZE\_MIN}; (b) every
+text and control graphic meets its required contrast ratio; (c) every
+control has a text alternative that names its action; (d) every child
+message remains visible with audio off, is also spoken when audio is on,
+and produces no sound when audio is off;
+(e) each sound longer than three seconds can be paused or stopped from its
+screen; (f) every adult task can be completed with keyboard alone; (g) no
+content or function is lost at 200 percent zoom.
+
+Test Case Derivation: the fit criteria of NFR-UX-018 to NFR-UX-024 and 
+NFR-COMP-005.
+
+How test will be performed: two team members record each criterion against
+the relevant screen and task in the accessibility review sheet. They use a
+contrast checker and automated accessibility checker where appropriate,
+then verify the results manually with a ruler, VoiceOver, keyboard, and
+browser zoom. Any unmet criterion becomes an issue and is retested after a
+fix.
+
+\end{enumerate}
 
 \subsubsection{Performance}
 \label{sec:perf-tests}
@@ -1977,8 +2367,9 @@ to its tests. A letter after a test ID, like \texttt{T-LRN-005 (c)}, points to
 one case of a parameterized test. Waiting Room features (SRS Section~25) are
 not listed, since they are out of scope.
 
-Table~\ref{tab:trace-nfr} maps each performance, safety-critical,
-operational, maintainability, security, cultural and compliance requirement
+Table~\ref{tab:trace-nfr} maps each usability, accessibility, performance,
+safety-critical, operational, maintainability, security, cultural and
+compliance requirement
 to the tests that cover it. ``SI'' is the safety inspection described with
 the safety-critical tests. Every safety-critical requirement has at
 least two kinds of evidence, and several other requirements are also
@@ -2003,6 +2394,30 @@ NFR-PERF-004 & T-PERF-004 (unit and UI)\\
 NFR-PERF-005 & T-PERF-005, T-SAF-003\\
 NFR-PERF-008 & T-PERF-006\\
 NFR-PERF-009 & T-PERF-007, T-OPS-003\\
+NFR-UX-001 & T-UX-001, T-COMP-003\\
+NFR-UX-002 & T-UX-002\\
+NFR-UX-003 & T-UX-003\\
+NFR-UX-004 & T-UX-004, T-COMP-003\\
+NFR-UX-005 & T-UX-005, T-COMP-003\\
+NFR-UX-006 & T-UX-006\\
+NFR-UX-007 & T-UX-007\\
+NFR-UX-008 & T-UX-008\\
+NFR-UX-009 & T-UX-009\\
+NFR-UX-010 & T-UX-010\\
+NFR-UX-011 & T-UX-010\\
+NFR-UX-012 & T-UX-002\\
+NFR-UX-013 & T-UX-011\\
+NFR-UX-014 & T-UX-009\\
+NFR-UX-015 & T-UX-004, T-COMP-003\\
+NFR-UX-016 & T-UX-004\\
+NFR-UX-017 & T-UX-012\\
+NFR-UX-018 & T-UX-013, T-COMP-003\\
+NFR-UX-019 & T-UX-013, T-COMP-003\\
+NFR-UX-020 & T-UX-013, T-COMP-003\\
+NFR-UX-021 & T-UX-013, T-COMP-003\\
+NFR-UX-022 & T-UX-013, T-COMP-003\\
+NFR-UX-023 & T-UX-013, T-COMP-003\\
+NFR-UX-024 & T-UX-013\\
 SAF-RAY-001 & T-SAF-001, SI\\
 SAF-RAY-002 & T-SAF-002, SI\\
 SAF-RAY-003 & T-SAF-003, T-PERF-005, SI\\
@@ -2222,6 +2637,31 @@ schools and households expected during the capstone (NFR-PERF-008).\\
 \texttt{LOCATE\_TIME\_MAX} & Minutes. Set by the team before the first
 T-MAINT-002 walkthrough (NFR-MAINT-002).\\
 \addlinespace
+\texttt{CHILD\_CONTROLS\_MAX} & Controls per child-facing screen. 
+Set to 3 before PH-2. Child-screen inventory is reviewed with specialists.
+Limit leaves room for drawing actions without cluttering screen (NFR-UX-001).\\
+\addlinespace
+\texttt{UX\_REVIEWERS} & Adult reviewers. Set to 5 before the first PH-2
+usability session, so that one educator or occupational therapist can be
+included in the style review and a four-of-five result corresponds to the
+80\% task threshold (NFR-UX-003, NFR-UX-006, NFR-UX-007, NFR-UX-009,
+NFR-UX-013, NFR-UX-014).\\
+\addlinespace
+\texttt{UX\_PASS\_RATE} & Proportion of reviewers. 
+Set to 0.8 before the first PH-2. For \texttt{UX\_REVIEWERS}=5 this 
+means at least four reviewers need to complete each task 
+(NFR-UX-009, NFR-UX-013, NFR-UX-014).\\
+\addlinespace
+\texttt{SETUP\_TIME\_MAX} & Minutes. Set to 5 before PH-2, after the team
+times a rehearsal of the profile and lesson setup flow and confirms that
+five minutes is a practical for a first-time adult user (NFR-UX-009).\\
+\addlinespace
+\texttt{FEEDBACK\_WORDS\_MAX} & Words per spoken message. Set to 8 before
+PH-1, after the team reviews the approved child message list and reads each
+message aloud. Short messages are suitable for children and people with
+developmental impairments.
+(NFR-UX-015).\\
+\addlinespace
 \texttt{IDLE\_TIMEOUT}, \texttt{FAILED\_SAVES}, \texttt{SUPPORTED\_DEVICES},
 \texttt{ADULT\_CHECK}, \texttt{STAGE\_PASS}, \texttt{ATTEMPT\_LIMIT},
 \texttt{ATTEMPT\_LIMIT\_MAX}, \texttt{ATTEMPT\_EXTENSION},
@@ -2246,9 +2686,27 @@ in PH-1, and stored in the repository under \texttt{tests/fixtures/}: \texttt{li
 plus the probe list \texttt{injection-\allowbreak{}probes.txt}. Each file holds the
 pointer events (position, pressure, time) for one attempt.
 
-\subsection{Usability Survey Questions?}
+\subsection{Usability Survey Questions}
+\label{sec:usability-survey}
 
-\wss{This is a section that would be appropriate for some projects.}
+After the adult task review, participants answer the questions below.
+For all questions, use a five-point scale where 1 is \emph{strongly
+disagree} and 5 is \emph{strongly agree}. A response of 4 or 5 is
+affirmative.
+\begin{enumerate}
+  \item These child-facing screens feel uncluttered, and their movement does
+    not distract me while drawing. (T-UX-001)
+  \item The feedback was encouraging and described the drawing rather than
+    judging the child. (T-UX-004)
+  \item The same action used consistent icons, colours and positions across
+    the child-facing screens. (T-UX-005)
+  \item This child-facing screen looks appealing for children.
+    (T-UX-006)
+  \item This child-facing screen feels calm rather than overstimulating.
+    (T-UX-006)
+  \item The text in this adult view is clear and easy to understand.
+    (T-UX-012)
+\end{enumerate}
 
 \newpage{}
 
@@ -2307,6 +2765,14 @@ and decisions into draft wording, to improve sentence structure, clarity and
 flow, and to help with \LaTeX{} formatting. Through Claude Code, it also
 helped manage the repository (branches, commits and merges). I reviewed every
 AI-assisted passage before including it.
+
+\textbf{Shamil:} For the SRS I used VS Code Copilot which uses ChatGPT 6 Luna. 
+I used the chatbot to generate skeletons of my sections with starting text based 
+on analysis of the document. I used this starting text for idea generation and 
+brainstorming, using my own words for the written content, but sometimes repurposing 
+generated text with rewording, paraphrasing, or by completely rewriting. For 
+some generated snippets I kept the writing as it was with minimal editing. All 
+decisions in my sections are my own.
 
 \newpage{}
 
@@ -2419,6 +2885,19 @@ VoiceOver on the iPad for NFR-UX-020, and finishing the adult tasks with only a
 keyboard for NFR-UX-023.
 \end{itemize}
 
+\textbf{Shamil:} As requirements and validation lead and DevOps lead I need to 
+build skills in two areas:
+\begin{itemize}
+\item \emph{Moderating usability sessions}: giving neutral task instructions, 
+observing without coaching, and adapting to unexpected user behavior. Although
+Moustafa is handling recording completion, errors, and requests for help, I 
+still need to be able to identify these behaviours to guide the adult sessions
+properly. I also need this for the style and learnability reviews in T-UX-005, 
+T-UX-009 and T-UX-011.
+\item \emph{Test automation and CI}: configuring the planned checks to run on
+pull requests and diagnosing failures in the workflow.
+\end{itemize}
+
 \item For each of the knowledge areas and skills identified in the previous
 question, what are at least two approaches to acquiring the knowledge or
 mastering the skill? Of the identified approaches, which will each team
@@ -2456,6 +2935,15 @@ through before the first review at Rev~0. After that I will do hands-on passes
 on the first frontend screens I review, because a checker can tell me a control
 has a label, but not whether the label makes sense to someone who can't see the
 icon.
+
+\textbf{Shamil:} For moderating usability sessions, I can learn from a guide on 
+task-based testing and neutral think-aloud prompts, or I can practise by running
+a pilot session with a teammate acting as the adult and giving me advice.
+
+For test automation and CI, I can watch video tutorials on GitHub actions and
+automation, working along as I go in a test GitHub project or clone of Squigglr.
+I can also talk to teammates who own each tests to build a scaffold for the 
+actions which they can review and approve.
 
 \end{enumerate}
 

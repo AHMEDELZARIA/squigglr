@@ -2272,9 +2272,10 @@ recolour another, then leave the creative space with its own control. The
 adult passes the adult check and switches to learner B, who draws
 \texttt{crt-three.json} and leaves. Both drawings are then reopened, each
 under its own learner.
-\item[(b)] As learner A, open the saved drawing and erase one stroke. While
-the drawing is still open, the adult passes the adult check and switches to
-learner B.
+\item[(b)] As learner A, open the saved drawing and erase one stroke. The
+test holds the erase's save request so that it is still pending. While the
+drawing is still open, the adult passes the adult check and switches to
+learner B, and only then is the held save released.
 \item[(c)] Reload the page, and also sign in to the same account in a second
 browser, then reopen A's drawing in each.
 \end{itemize}
@@ -2284,8 +2285,8 @@ Output:
 \item[(a)] A's drawing reopens with the five strokes, the move and the
 recolour, and B's reopens equal to \texttt{crt-three.json}. Every stroke of
 both can be selected and edited.
-\item[(b)] The erase is saved to learner A's drawing. Learner B's drawings do
-not change.
+\item[(b)] Once the released save completes, the erase is in learner A's
+drawing. Learner B's drawings do not change.
 \item[(c)] A's drawing is identical in both browsers and equals the drawing
 last saved.
 \end{itemize}
@@ -2294,12 +2295,15 @@ Test Case Derivation: the fit criteria of FR-CRT-023 (two learners, each
 drawing reopened as left) and FR-CRT-024 (reopened exactly as last saved,
 every stroke editable). Case (b) checks the cause in H-MUH-004 where a
 drawing is saved to the learner active when the save completes, not when it
-was drawn. The refined states in FR-CRT-024's fit criterion are tested with
+was drawn. Holding the save until after the switch makes sure that a build
+with this defect fails, since an unheld save would normally finish before the
+adult check. The refined states in FR-CRT-024's fit criterion are tested with
 the refinement tests.
 
 How test will be performed: a Playwright script runs each case and reads the
-saved drawings of both learners through the test database. A tester repeats
-(a) on the test iPad with the stylus.
+saved drawings of both learners through the test database. In (b) it holds
+the save request with request routing (\texttt{page.route}) and releases it
+after the switch. A tester repeats (a) on the test iPad with the stylus.
 
 \item{T-CRT-010: Each learner sees only their own drawings\\}
 
@@ -2354,6 +2358,10 @@ space and reopen the drawing.
 edits, making one change each time it is off.
 \item[(c)] With the network online, make one change and watch the save
 indicator.
+\item[(d)] Set the network offline and draw two strokes, then close the page.
+Reopen Squigglr online and open the drawing. Repeat with the page closed
+just after the connection returns, before the indicator shows that all
+changes are saved.
 \end{itemize}
 
 Output:
@@ -2365,17 +2373,25 @@ saved. The reopened drawing has the two new strokes and the move.
 saved twice, and the indicator matches the save state after each switch.
 \item[(c)] The indicator shows unsaved changes until the server confirms the
 save, then shows that all changes are saved.
+\item[(d)] The reopened drawing has every change that the indicator showed as
+saved before the page was closed. The changes it keeps from the two strokes
+are recorded for each run, and none is kept twice.
 \end{itemize}
 
 Test Case Derivation: the fit criteria of FR-CRT-025 (changes made while
 offline are saved once the connection returns) and FR-CRT-029 (unsaved, then
 saved). Case (b) tries to make Squigglr save the same change twice or skip
-one, as in the retried saves of H-MUH-004 and H-MUH-005. Closing the page
-while offline is out of scope (SRS ASM-005), so it is not tested.
+one, as in the retried saves of H-MUH-004 and H-MUH-005. Case (d) is the
+Document/Test control of H-MUH-005 for cause (c), closing the page during and
+after a lost connection. Offline use is out of scope (SRS ASM-005), so
+FR-CRT-025 cannot require changes to survive a closed page. The case
+therefore only requires that the indicator was truthful (FR-CRT-029) and
+records which changes are kept, as the Hazard Analysis asks.
 
 How test will be performed: a Playwright script switches the network with
 \texttt{context.setOffline()}, records the indicator after each step, and
-reads the saved drawing through the test database. A tester repeats (a) on
+reads the saved drawing through the test database. In (d) it closes the page
+and opens a new one in the same browser context. A tester repeats (a) on
 the test iPad by turning off Wi-Fi.
 
 \item{T-CRT-012: Creative drawings do not change practice records\\}
@@ -4363,7 +4379,7 @@ FR-CRT-008 & T-CRT-007 (b, c)\\
 FR-CRT-009 & T-CRT-008\\
 FR-CRT-023 & T-CRT-009, T-CRT-008 (b), T-CRT-010\\
 FR-CRT-024 & T-CRT-009, T-CRT-008\\
-FR-CRT-025 & T-CRT-011 (a, b)\\
+FR-CRT-025 & T-CRT-011 (a, b, d)\\
 FR-CRT-026 & T-CRT-010\\
 FR-CRT-028 & T-CRT-012\\
 FR-CRT-029 & T-CRT-011\\

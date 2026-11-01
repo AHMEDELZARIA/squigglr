@@ -96,7 +96,10 @@ lesson again in H-RAY-005; added the \texttt{ATTEMPT\_LIMIT\_MAX} check to
 H-RAY-007 and CA-006 (\#182, \#183).\\
 1 November 2026 & Ahmed Elzaria & Addressed peer review: planned SAF-RAY-001 for
 PH-1 in the roadmap, with the lesson and starting stage choice it protects
-(\#177).\\
+(\#177).
+1 November 2026 & Ahmed Elzaria & Addressed peer review: FR-LRN-019 and
+SAF-RAY-001 now say that an unanswered go-back suggestion stays pending, as in
+the SRS (\#176).\\
 \end{longtable}
 
 ~\newpage
@@ -1714,8 +1717,10 @@ FR-LRN-019\newline\emph{Difficulty suggestion} & Squigglr shall offer, without
 applying, an optional suggestion to return to an earlier drawing stage when the
 learner reaches \texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing
 evaluable attempts at an eligible stage and the improvement rule does not
-suppress suggestions. When an adult declines or ignores the suggestion, another
-suggestion shall require a new full failure streak. & H-AHM-006, H-AHM-007 &
+suppress suggestions. When an adult declines the suggestion, another suggestion
+shall require a new full failure streak. A suggestion that no adult answers
+shall stay pending, without blocking practice, and no second suggestion shall be
+offered while it is pending. & H-AHM-006, H-AHM-007 &
 Learning Activity \\
 \addlinespace
 FR-LRN-020\newline\emph{Improvement-\allowbreak{}based extension} & Squigglr
@@ -2009,7 +2014,8 @@ Accessibility \\
 SAF-RAY-001 & Squigglr shall allow lesson choice, starting stage choice, learner
 switching and acceptance of a go-back suggestion only after an adult check that
 a child cannot complete by tapping icons, and shall keep a pending suggestion,
-without blocking practice, until an adult accepts or declines it. & H-RAY-001,
+without blocking practice, until an adult accepts or declines it, or a pass or
+the end of the lesson clears it. & H-RAY-001,
 H-RAY-006 & Safety-Critical \\
 \addlinespace
 SAF-RAY-002 & Before a lesson starts, Squigglr shall check the device and

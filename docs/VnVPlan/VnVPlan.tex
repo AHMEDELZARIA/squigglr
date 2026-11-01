@@ -473,7 +473,8 @@ refinement and record modules match what he expects. \\
 Second internal review & Every member, on their items; Ahmed moderates &
 Team review on January~10, 2027, before the informal design review
 (January~12) & Every module changed since Revision~$-1$ against both
-checklists, the traceability check again, and all four scenarios. \\
+checklists, the traceability check again, all four scenarios, and the
+interface check of T-MAINT-003. \\
 \addlinespace
 Informal design review & Chris, our TA & January~12, 2027 & Our remaining
 questions; answers recorded in the meeting issue. \\
@@ -486,6 +487,10 @@ Peer module implementation & Another team, as set by the course & January~21
 to~25, 2027 & Whether one of our modules can be built from its MIS text alone
 (see below). \\
 \addlinespace
+Module issue check & Huzaifah & When each module issue is opened, and at
+the end of PH-1, PH-2 and PH-3 & The interface check of T-MAINT-003 on every
+issue that creates a top-level module (see below). \\
+\addlinespace
 Unit test design & Huzaifah, with each test author & While writing the unit
 tests in Section~\ref{sec:unit-tests} & Whether each access program's
 expected output can be worked out from the MIS. \\
@@ -497,8 +502,9 @@ expected output can be worked out from the MIS. \\
 Checklist} and the
 \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/MIS-Checklist.tex}{MIS
 Checklist}, matched to their role, and checks it on every module they did not
-write (Table~\ref{tab:designChecklist}). Splitting the checklists means each
-item gets one careful reader instead of five quick ones.
+write (Table~\ref{tab:designChecklist}). Every item of both checklists has
+exactly one owner. Splitting the checklists means each item gets one careful
+reader instead of five quick ones.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
@@ -517,32 +523,43 @@ item gets one careful reader instead of five quick ones.
 \bottomrule
 \endlastfoot
 Ahmed & Module decomposition: one secret per module, secrets are nouns, the
-uses relation is a hierarchy and not a data flow, the three Level~1 groups,
+uses relation is a hierarchy and not a data flow, its arrows point from the
+user to the used module and down in clear layers, the three Level~1 groups,
 any control module at the top; MG quality (low coupling, information
 hiding). & MIS quality for each module: consistent, essential, general,
 minimal, high cohesion, right level of abstraction. \\
 \addlinespace
 Shamil & The traceability matrices: every requirement satisfied by a module,
 every module used for a requirement; behaviour-hiding modules related to
-requirements. & MIS completeness: every MG module is in the MIS, every type
-is defined, every template section is present. \\
+requirements; the MG follows the template. & MIS completeness: every MG
+module is in the MIS, every type is defined, every template section is
+present; each module's Uses lists only the modules needed to define its
+specification. \\
 \addlinespace
-Huzaifah & Each software-decision module is used by a behaviour-hiding
-module. & MIS semantics: each access program has an output or a state
-transition, outputs and exceptions are written as $out :=$ and $exc :=$,
-state invariants hold initially and after each call, every state and
-environment variable has a type. \\
+Huzaifah & Software-decision modules are concepts the requirements need but
+do not detail, and each is used by a behaviour-hiding module. & MIS
+semantics: each access program has an output or a state transition, and
+only rarely both; every state transition entry changes some state; outputs
+and exceptions are written as $out :=$ and $exc :=$; state invariants hold
+initially and after each call; every state and environment variable has a
+type; the syntax defines each interface precisely enough to implement. \\
 \addlinespace
 Rayan & Likely changes: the anticipated changes include every SRS likely
 change, and each likely change maps to one module. & Opaque (information
-hiding) and implementation independent; every safety requirement (SAF-) is
-met by an access program whose semantics a reviewer can point to. \\
+hiding) and implementation independent; modules that deal with files, the
+keyboard or the screen have environment variables for them; every safety
+requirement (SAF-) is met by an access program whose semantics a reviewer
+can point to. \\
 \addlinespace
 Moustafa & The Writing Checklist items, and figures that can be zoomed in. &
-The Writing Checklist items; module classification (records, ADTs with
-\textbf{Template}, abstract objects with an initializer, libraries); notation
-and syntax: exported constants have explicit values, types are not mixed,
-symbols come from the SRS, every argument and local function is used. \\
+The Writing Checklist items, and each module starting on a new page; module
+classification (records as exported types, ADTs with \textbf{Template},
+\textbf{Generic} where a module is parameterized by type, abstract objects
+with an initializer that is checked or assumed, libraries with no state);
+notation and syntax: exported constants have explicit values, types are not
+mixed, the notation is the course's or defined and is consistent, symbols
+come from the SRS, every argument and local function is used, and local
+functions make the specification easier to read. \\
 \end{longtable}
 }
 
@@ -584,9 +601,16 @@ S1 and S2 are traced at the first internal MIS review, and all four at the
 second. Each takes about 20 minutes, with one member reading the MIS aloud
 and the others checking.
 
-\paragraph{Interface check for T-MAINT-003.} At each internal MIS review,
-Huzaifah, as Testing Lead, compares each GitHub issue that creates a
-top-level module with that module's MIS entry, as T-MAINT-003 requires. An
+\paragraph{Interface check for T-MAINT-003.} NFR-MAINT-003 covers every
+issue that creates a top-level module, and most of these are opened once
+implementation starts after Design Revision~0. The check therefore follows
+the issues, not only the reviews. Each such issue is labelled
+\texttt{module} when it is opened. Huzaifah, as Testing Lead, compares it
+with that module's MIS entry within a week, and before the PR that closes
+it is merged, as T-MAINT-003 requires. An issue opened before its module is
+in the MIS is checked at the next internal MIS review. At both internal MIS
+reviews and at the end of PH-1, PH-2 and PH-3, he also lists every
+\texttt{module} issue opened since the last check, so none is missed. An
 issue with no interface description, or one that does not match the MIS, is
 a finding.
 

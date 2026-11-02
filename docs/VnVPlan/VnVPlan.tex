@@ -216,7 +216,7 @@ PH-1, PH-2, PH-3 & The SRS delivery phases: the proof-of-concept demo
 (23 November 2026), Rev~0 (1 February 2027) and the final demo
 (15 March 2027). \\
 PR & Pull request: a proposed change to the repository, reviewed before it
-merges into \texttt{main}. \\
+merges. \\
 QA & Quality assurance, the final review done by one member of the group
 for each deliverable to check for quality and consistency. \\
 Rev~0, Rev~1 & The first complete version of the product and documents, and
@@ -505,7 +505,7 @@ People outside the team are also involved:
     goes straight into our requirements and tests, for example using an
     avatar instead of the child's name.
   \item \textbf{Domain specialists P1, P2 and P3.} Dr.\ Anand asked us
-    (October~28 meeting) to go back to the specialists we interviewed for the
+    (28~October meeting) to go back to the specialists we interviewed for the
     SRS, or people with similar qualifications. They will see a demonstration of a working version of Squigglr and give
     feedback on the lesson guidance and feedback wording. They are
     volunteering their time, so we will keep the session short and work
@@ -520,7 +520,7 @@ People outside the team are also involved:
 Our roles shift over the year. In the Fall, we write this plan and review
 the SRS and design documents. In the Winter, each of us runs the tests for
 our area as it gets built, and Shamil and Ahmed run the usability and
-specialist sessions. Like in the Development Plan, the QA coordinator
+specialist sessions. As in the Development Plan, the QA coordinator
 rotates every milestone and is named in that milestone's tracking issue. If
 someone is unavailable or a role gets too heavy, we reassign the work at the
 next team meeting and update Table~\ref{tab:vnvTeam}.
@@ -528,8 +528,9 @@ next team meeting and update Table~\ref{tab:vnvTeam}.
 \subsection{SRS Verification}
 \label{sec:srs-verification}
 
-SRS verification consists of a meeting with Dr.\ Anand where the SRS document
-is reviewed against specific parts of the
+The SRS has already been through the team's QA review and a peer review, and we
+track that feedback as GitHub issues. Beyond those, SRS verification consists of
+a meeting with Dr.\ Anand where the SRS document is reviewed against specific parts of the
 \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/docs/Checklists/SRS-Checklist.tex}{SRS
 checklist}. The points ``follows writing checklist'', ``follows the template''
 and ``reference material'', along with all of their subitems, will not be
@@ -601,42 +602,42 @@ Sunday team review meeting before each deadline.
 \endlastfoot
 Internal MG review & Every member, on the checklist items they own
 (Table~\ref{tab:designChecklist}); Ahmed moderates & Team review on
-November~8, 2026, before the informal Design Revision~$-1$ meeting
-(November~11) & The MG against the MG Checklist, and the traceability check
+8~November 2026, before the informal Design Revision~$-1$ meeting
+(11~November) & The MG against the MG Checklist, and the traceability check
 below. \\
 \addlinespace
-Informal Design Revision~$-1$ & Chris, our TA & November~11, 2026 & Our
+Informal Design Revision~$-1$ & Chris, our TA & 11~November 2026 & Our
 questions on the module decomposition. Moustafa records the answers in the
 meeting issue, as for the VnV Plan. \\
 \addlinespace
 Internal MIS review & Every member, on their items; Ahmed moderates &
-Team review on November~15, 2026, before Design Revision~$-1$
-(November~16) & The MIS against the MIS Checklist, the task-based inspection
+Team review on 15~November 2026, before Design Revision~$-1$
+(16~November) & The MIS against the MIS Checklist, the task-based inspection
 of scenarios S1 and S2, and the interface check of T-MAINT-003. \\
 \addlinespace
-Peer review & The peer team assigned by the course & November~19, 2026 &
+Peer review & The peer team assigned by the course & 19~November 2026 &
 The MG and MIS, read by people outside the project. We ask them to use the
 MG and MIS Checklists. \\
 \addlinespace
 Supervisor review & Dr.\ Anand & Weekly supervisor meeting after
-November~16, 2026 & A one-page summary of the modules, to check that the
+16~November 2026 & A one-page summary of the modules, to check that the
 refinement and record modules match what he expects. \\
 \addlinespace
 Second internal review & Every member, on their items; Ahmed moderates &
-Team review on January~10, 2027, before the informal design review
-(January~12) & Every module changed since Revision~$-1$ against both
+Team review on 10~January 2027, before the informal design review
+(12~January) & Every module changed since Revision~$-1$ against both
 checklists, the traceability check again, all four scenarios, and the
 interface check of T-MAINT-003. \\
 \addlinespace
-Informal design review & Chris, our TA & January~12, 2027 & Our remaining
+Informal design review & Chris, our TA & 12~January 2027 & Our remaining
 questions; answers recorded in the meeting issue. \\
 \addlinespace
-Final check & Ahmed and Moustafa & Team review on January~17, 2027, before
-Design Revision~0 (January~18) & Every finding issue is closed or deferred
+Final check & Ahmed and Moustafa & Team review on 17~January 2027, before
+Design Revision~0 (18~January) & Every finding issue is closed or deferred
 with a reason, and the traceability check passes. \\
 \addlinespace
-Peer module implementation & Another team, as set by the course & January~21
-to~25, 2027 & Whether one of our modules can be built from its MIS text alone
+Peer module implementation & Another team, as set by the course & 21~to
+25~January 2027 & Whether one of our modules can be built from its MIS text alone
 (see below). \\
 \addlinespace
 Module issue check & Huzaifah & When each module issue is opened, and at
@@ -722,8 +723,8 @@ matrix, and reports any requirement with no module and any module with no
 requirement. Rayan checks by reading that each likely change maps to exactly
 one module, or that the MG explains the exception. The check passes when the
 script reports no gaps and every likely change is accounted for. It runs at
-both internal reviews and again at the final check, because requirements may
-change between them.
+the internal MG review, the second internal review and the final check, because
+requirements may change between them.
 
 \paragraph{Task-based inspection.} A checklist looks at one module at a time,
 so it can miss a gap between modules. The reviewers therefore trace prepared
@@ -770,7 +771,7 @@ of our modules from its MIS (Development Plan Section~8). This is an outside
 check that the MIS can be implemented from its text. Each question they have
 to ask us, and each place where their module behaves differently from ours,
 is recorded as a finding against the MIS, and their reflection
-(January~25) is read at the next team review.
+(25~January) is read at the next team review.
 
 \paragraph{Recording findings and finishing.} Every finding becomes a GitHub
 issue labelled \texttt{review}, with the module, the checklist item or
@@ -811,18 +812,18 @@ Verification and Validation Team section) & Every PR, before it merges & The
 changed sections, using the review questions below.
 A PR needs one approval from someone other than its author. \\
 \addlinespace
-TA review & Chris, our TA & Informal meeting on October~28, 2026, and the
+TA review & Chris, our TA & Informal meeting on 28~October 2026, and the
 marked submission & Our questions on how to write the plan, then whether the
-submitted plan is specific and feasible. His October~28 answers are listed
+submitted plan is specific and feasible. His 28~October answers are listed
 below. \\
 \addlinespace
-Supervisor review & Dr.\ Anand & Supervisor meeting on October~28, 2026, where
+Supervisor review & Dr.\ Anand & Supervisor meeting on 28~October 2026, where
 we discussed validation (\#201), then our weekly meetings after that & A high-level
 summary of how we will validate Squigglr, to check we are validating what
 matters to him. \\
 \addlinespace
 Peer review & The peer teams assigned by the course & After submission, due
-November~5, 2026 & The whole plan, read by people outside the project. We ask
+5~November 2026 & The whole plan, read by people outside the project. We ask
 them to use the VnV checklist. \\
 \addlinespace
 Mutation check & Each member, on sections they did not write & Before Rev~0
@@ -830,7 +831,7 @@ and before Rev~1 & Whether our tests would actually
 catch realistic bugs (see below). \\
 \addlinespace
 Final QA & Moustafa, except Moustafa's own sections, which Shamil checks &
-November~1--2, 2026 & The whole plan against the VnV and Writing checklists and
+1--2~November 2026 & The whole plan against the VnV and Writing checklists and
 the rubric (see below). \\
 \addlinespace
 Running the plan & The owner of each test & Rev~0 and Rev~1 & Any test we
@@ -838,7 +839,7 @@ cannot run exactly as written is a defect in this plan. \\
 \end{longtable}
 }
 
-\paragraph{TA feedback from October~28.} In an informal meeting, we asked
+\paragraph{TA feedback from 28~October.} In an informal meeting, we asked
 Chris how to handle a few parts of the plan. His answers became rules for the
 whole plan:
 \begin{itemize}
@@ -1289,11 +1290,11 @@ issue labelled \texttt{Software Validation} linked to the affected goal
 or requirement, with one assignee and an expected resolution. 
 
 The first review will be with Dr.\ Anand shortly after the Rev~0 demo. The
-second review will be with domain specialists P1, P2, and P3 before Rev~1. 
+second review will be with domain specialists P1, P2 and P3 before Rev~1. 
 These first two reviews will be over video call and consist of a demonstration 
-prepared by Shamil and Ahmed that covers the main SRS scenarios including 
-features like the guided lesson, creative space, and adult progress summary,
-asking whether these behaviours are appropriate for the intended setting.
+prepared by Shamil and Ahmed that covers the main SRS scenarios, including
+the guided lesson, creative space and adult progress summary. We ask whether
+these behaviours are appropriate for the intended setting.
 The respective participants will subsequently be asked whether the requirements
 should change before Rev~1. In the first review, Dr.\ Anand also reviews the
 child-facing colours, images and feedback style for T-UX-007, and each requested
@@ -1304,7 +1305,7 @@ including at least one educator or occupational therapist, taking part in
 task-based sessions on the test iPad. After the application is briefly described to them,
 they will complete tasks representative of an adult supporting a child and 
 complete a short survey (Section~\ref{sec:usability-survey}). The tasks,
-observations, and survey provide evidence for a portion of the tests in
+observations and survey provide evidence for a portion of the tests in
 Section~\ref{sec:ux-tests}. Shamil and Ahmed will plan these user tasks
 based on the main SRS scenarios, which will be read to the participants without
 coaching or demonstration of the interface. They will be invited to think 
@@ -2248,7 +2249,7 @@ Initial State: the circle lesson at the stage in each case's row.
 
 Input: the cases vary the stage, three settings and the sequence of
 results; \texttt{STAGE\_PASS}, \texttt{ATTEMPT\_EXTENSION} and
-\texttt{ATTEMPT\_LIMIT\_MAX} stay at their defaults. The Settings column
+\texttt{ATTEMPT\_LIMIT\_MAX} stay at their defaults. The third column
 gives the three settings in the order of its header. The cases are in
 Table~\ref{tab:t-lrn-016}.
 
@@ -2355,7 +2356,7 @@ Type: Dynamic, automatic. Covers FR-LRN-020.
 
 Initial State: the circle lesson at T, where no suggestion can appear.
 
-Input: the cases vary four settings, given in the Settings column in the
+Input: the cases vary four settings, given in the second column in the
 order of its header, and the sequence of results; \texttt{STAGE\_PASS}
 stays at 80 and \texttt{DIFFICULTY\_STREAK} at 4. Every case satisfies
 \texttt{ATTEMPT\_LIMIT} + \texttt{ATTEMPT\_EXTENSION} $\ge$
@@ -4226,7 +4227,7 @@ Table~\ref{tab:t-rec-008}.
 \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Case} & \textbf{Setup} & \textbf{Expected records}\\
+\textbf{Case} & \textbf{Set-up} & \textbf{Expected records}\\
 \midrule
 a & Circle lesson at T: F, F, F, F, P. For each attempt, the first save
 request is cut off and the network comes back after
@@ -4917,7 +4918,7 @@ Type: Dynamic, manual. Covers FR-PRG-003 and FR-PRG-005.
 
 Initial State: the summaries of learners A and B on the test iPad; at
 least \texttt{ADULT\_REVIEWERS} adult reviewers, none of them on the team,
-who have not seen Squigglr's summaries before. No child takes part (SRS
+who have not seen Squigglr's summaries before the session. No child takes part (SRS
 CON-005).
 
 Input: each reviewer does the tasks in Table~\ref{tab:t-prg-013}, without
@@ -5031,16 +5032,18 @@ Type: Dynamic, manual. Covers NFR-UX-002 and NFR-UX-012.
 
 Initial State: the PH-2 release build.
 
-Input: a team audit of child tasks with text covered or hidden, and of the
-text in every adult view.
+Input: a team audit of the controls on every child-facing screen, of child tasks
+with text covered or hidden, and of the text in every adult view.
 
-Output: every child task can be completed without reading, and all text in
-every adult view is in \texttt{INTERFACE\_LANGUAGE}.
+Output: every control on a child-facing screen shows an image or icon, every
+child task can be completed without reading, and all text in every adult view is
+in \texttt{INTERFACE\_LANGUAGE}.
 
 Test Case Derivation: the fit criteria of NFR-UX-002 and NFR-UX-012.
 
-How test will be performed: one team member hides or covers all on-screen 
-text on each child-facing screen and completes the child tasks in UC-003 
+How test will be performed: one team member records whether each control shows
+an image or icon, hides or covers all on-screen text on each child-facing screen
+and completes the child tasks in UC-003 
 and UC-006, recording any task that needs a word-based instruction. They
 then read every adult view and record any text in another language.
 
@@ -5068,7 +5071,7 @@ or other labels. A misclassified screenshot is recorded as a finding.
 
 Purpose: feedback must not shame a child.
 
-Type: Dynamic, manual. Covers NFR-UX-004, NFR-UX-015, and NFR-UX-016.
+Type: Dynamic, manual. Covers NFR-UX-004, NFR-UX-015 and NFR-UX-016.
 
 Initial State: the PH-1 release build for the audit of NFR-UX-004 and
 NFR-UX-015, which are due then; the PH-2 release build for NFR-UX-016 and the
@@ -5194,7 +5197,7 @@ Test Case Derivation: the fit criterion of NFR-UX-008.
 How test will be performed: the tester records each adult action in each lesson,
 and any action other than a response to a suggestion is a finding.
 
-\testitem{T-UX-009: First-time adult setup and task learning}
+\testitem{T-UX-009: First-time adult set-up and task learning}
 
 Purpose: a new adult should be able to set up a child and use the main adult
 features without outside help or training.
@@ -5216,9 +5219,9 @@ Test Case Derivation: the fit criteria of NFR-UX-009 and NFR-UX-014. One round
 gives the evidence for both, because both need adults who have not used Squigglr
 and nobody can be a first-time user twice.
 
-How test will be performed: the moderator observes
-without coaching and records completion, time, hesitation, errors and
-requests for help.
+How test will be performed: the moderator observes without coaching, and
+Moustafa records completion, time, hesitation, errors, backtracking and requests
+for help.
 
 \testitem{T-UX-010: Per-child audio and refinement settings}
 
@@ -5280,7 +5283,7 @@ Input: a team audit of each adult view against the SRS glossary and the words
 plus the adult review session and usability survey.
 
 Output: each glossary term used is explained the first time it appears in a
-view, and none of the listed diagnostic words appear. The sentence that
+view, and none of the listed diagnostic words appears. The sentence that
 SAF-RAY-004 requires, saying the view is not an assessment or diagnosis, is not a
 finding, as in T-LRN-019. For each adult view, affirmative responses to the
 corresponding survey question meet or exceed \texttt{UX\_PASS\_RATE}. 
@@ -5290,8 +5293,8 @@ checks the subjective opinions of adults on whether the adult-view wording is
 plain and consistent.
 
 How test will be performed: the team records each glossary term and when
-and whether it is explained, afterwards checking that none of the recorded
-terms are in the list of diagnostic words. The participants take the survey 
+and whether it is explained, then searches the text of each view for the listed
+diagnostic words. The participants take the survey 
 after the review.
 
 \testitem{T-UX-013: Selected WCAG 2.2 accessibility criteria}
@@ -5300,7 +5303,7 @@ Purpose: verify the specific accessibility behaviours selected for Squigglr
 on child-facing and adult-facing screens.
 
 Type: Dynamic, manual and automatic. Covers NFR-UX-018, NFR-UX-019, NFR-UX-020, 
-NFR-UX-021, NFR-UX-022, NFR-UX-023, NFR-UX-024, and NFR-COMP-005.
+NFR-UX-021, NFR-UX-022, NFR-UX-023, NFR-UX-024 and NFR-COMP-005.
 
 Initial State: the PH-2 release build. Cases (f) and (g) first run on the PH-3
 release build, when NFR-UX-023 and NFR-UX-024 are due.
@@ -5333,7 +5336,7 @@ NFR-COMP-005.
 How test will be performed: two team members record each criterion against
 the relevant screen and task in the accessibility review sheet. They use a
 contrast checker and automated accessibility checker where appropriate,
-then verify the results manually with a ruler, VoiceOver, keyboard, and
+then verify the results manually with a ruler, VoiceOver, keyboard and
 browser zoom. Any unmet criterion becomes an issue and is retested after a
 fix.
 
@@ -5363,7 +5366,8 @@ laptop under the same rules.
 
 \paragraph{Why each test is repeated.} Even in a controlled setting, one
 measurement can be slow by chance, for example when the browser collects
-garbage. Each timing test is therefore repeated \texttt{PERF\_RUNS} times, and
+garbage. Each timing test is therefore repeated \texttt{PERF\_RUNS} times,
+unless its fit criterion names a number of runs (T-PERF-003), and
 the VnV Report gives the minimum, median, 95th percentile and maximum of the
 measured times next to the threshold. A test passes only when the 95th
 percentile and the maximum are both within the threshold. This way a single
@@ -5422,17 +5426,21 @@ Initial State: the creative space is open with refinement on and the
 refinement service reachable.
 
 Input: the prepared drawings \texttt{house.json} and \texttt{sun.json}
-are replayed and finished, \texttt{PERF\_RUNS} times each; during the wait,
-a further stroke is replayed every 200~ms.
+are replayed and finished, \texttt{PERF\_RUNS} times each, in two sets of
+runs: (a) with no input during the wait; (b) with a further stroke replayed
+every 200~ms during the wait.
 
-Output: the refined result appears within \texttt{REFINE\_LATENCY\_MAX} of finishing, and every stroke replayed during the wait is drawn
-and saved without an error.
+Output: (a) the refined result appears within \texttt{REFINE\_LATENCY\_MAX} of
+finishing. (b) Every stroke replayed during the wait is drawn and saved without
+an error or a blocked input, and the late result is discarded, as in T-CRT-024.
 
 Test Case Derivation: NFR-PERF-002 requires both the time limit and an
-unblocked canvas while the refinement is pending.
+unblocked canvas while the refinement is pending. They need separate runs,
+because FR-CRT-021 discards a result once the drawing has changed, so a run with
+new strokes never shows a refined result.
 
-How test will be performed: the script records the time from the finish
-action to the first frame showing the refined result, and checks the
+How test will be performed: in (a), the script records the time from the finish
+action to the first frame showing the refined result; in (b), it checks the
 canvas contents after each extra stroke.
 
 \testitem{T-PERF-003: Progress summary load time}
@@ -5920,8 +5928,8 @@ saved and out-of-range values are refused; (c) all three settings are refused;
 
 Example: the team-set range for \texttt{ATTEMPT\_LIMIT} is 6 to 10, so an unset
 value is 8, values 6 and 10 are saved, and 5 and 11 are refused. With
-\texttt{DIFFICULTY\_STREAK} = 5, an \texttt{ATTEMPT\_LIMIT} of 5 is refused,
-because the lesson would end before the adult received the
+\texttt{DIFFICULTY\_STREAK} = 5, an \texttt{ATTEMPT\_LIMIT} of 5 is refused: it
+is below the range, and the lesson would also end before the adult received the
 go-back suggestion.
 
 Test Case Derivation: the fit criterion of SAF-RAY-008 (H-RAY-007), using
@@ -6051,7 +6059,7 @@ for them, so the record shows only the child's own work.
 
 Type: Dynamic, automatic. Covers SAF-MOU-001.
 
-Initial State: a guided lesson at each predefined difficulty.
+Initial State: a guided lesson for each predefined difficulty.
 
 Input: \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, an attempt
 with one side missing, and the prepared drawing with a missed part for every
@@ -6354,9 +6362,9 @@ pipeline is set up, and repeats this whenever the lint rules change.
 \label{sec:sec-tests}
 
 These tests cover SRS Section~15 (NFR-SEC-001 to NFR-SEC-006). They use
-test accounts only. A child profile holds only a unique identifier generated
-by Squigglr and an avatar chosen by the adult or the child (SRS BR-001,
-NFR-SEC-004).
+test accounts only. A child profile identifies the child only by a unique
+identifier generated by Squigglr and an avatar chosen by the adult or the child
+(SRS BR-001, NFR-SEC-004).
 
 \begin{enumerate}
 
@@ -6636,7 +6644,7 @@ NFR-PERF-004 & T-PERF-004 (unit and UI)\\
 NFR-PERF-005 & T-PERF-005, T-SAF-003\\
 NFR-PERF-008 & T-PERF-006\\
 NFR-PERF-009 & T-PERF-007, T-OPS-003\\
-NFR-PERF-010 & T-PERF-008\\
+NFR-PERF-010 & T-PERF-008, INS-EVAL\\
 NFR-UX-001 & T-UX-001, T-COMP-003\\
 NFR-UX-002 & T-UX-002\\
 NFR-UX-003 & T-UX-003\\
@@ -6650,10 +6658,10 @@ NFR-UX-010 & T-UX-010, T-UX-013 (d)\\
 NFR-UX-011 & T-UX-010, T-CRT-026\\
 NFR-UX-012 & T-UX-002\\
 NFR-UX-013 & T-UX-011\\
-NFR-UX-014 & T-UX-009\\
+NFR-UX-014 & T-UX-009, T-PRG-013\\
 NFR-UX-015 & T-UX-004, T-LRN-019\\
 NFR-UX-016 & T-UX-004\\
-NFR-UX-017 & T-UX-012\\
+NFR-UX-017 & T-UX-012, T-SAF-004\\
 NFR-UX-018 & T-UX-013, T-COMP-003\\
 NFR-UX-019 & T-UX-013, T-COMP-003\\
 NFR-UX-020 & T-UX-013, T-COMP-003\\
@@ -6680,20 +6688,20 @@ SAF-MOU-001 & T-SAF-014, SI\\
 SAF-MOU-002 & T-SAF-015, SI\\
 SAF-MOU-003 & T-SAF-016, SI\\
 NFR-OPS-001 & T-OPS-001\\
-NFR-OPS-002 & T-OPS-002\\
+NFR-OPS-002 & T-OPS-002, T-CRT-023\\
 NFR-OPS-003 & T-OPS-003, T-PERF-007\\
-NFR-MAINT-001 & T-MAINT-001\\
+NFR-MAINT-001 & T-MAINT-001, INS-EVAL\\
 NFR-MAINT-002 & T-MAINT-002\\
 NFR-MAINT-003 & T-MAINT-003\\
 NFR-MAINT-004 & T-MAINT-004\\
 NFR-SEC-001 & T-SEC-001, T-SAF-011\\
 NFR-SEC-002 & T-SEC-002\\
-NFR-SEC-003 & T-SEC-003\\
+NFR-SEC-003 & T-SEC-003, T-REC-009 (h)\\
 NFR-SEC-004 & T-SEC-004, T-COMP-001\\
 NFR-SEC-005 & T-SEC-005\\
 NFR-SEC-006 & T-SEC-006\\
 NFR-CULT-002 & T-CULT-001, T-UX-007\\
-NFR-COMP-001 & T-COMP-001\\
+NFR-COMP-001 & T-COMP-001, T-SEC-004, T-SAF-012\\
 NFR-COMP-002 & T-COMP-002\\
 NFR-COMP-005 & T-COMP-003, T-UX-013\\
 \bottomrule
@@ -6762,7 +6770,7 @@ FR-CRT-018 & T-CRT-020 (a), INS-CRT\\
 FR-CRT-019 & T-CRT-021, INS-CRT\\
 FR-CRT-020 & T-CRT-023, T-CRT-015, INS-CRT\\
 FR-CRT-021 & T-CRT-024, T-CRT-025 (b), INS-CRT\\
-FR-CRT-022 & T-CRT-024 (b)\\
+FR-CRT-022 & T-CRT-024 (b), T-PERF-002 (b)\\
 FR-CRT-023 & T-CRT-009, T-CRT-008 (b), T-CRT-010, T-CRT-027\\
 FR-CRT-024 & T-CRT-009, T-CRT-008, T-CRT-027, INS-CRT\\
 FR-CRT-025 & T-CRT-011 (a, b, d)\\
@@ -6834,7 +6842,7 @@ the reason it cannot be reached is written in the test file.
 named in Section~\ref{sec:tools}, in a file next to the module
 (\texttt{<module>.test.ts}). Each test's name gives the access program, the
 case and the expected result, for example ``\texttt{evaluate -- empty stroke
-list -- returns incomplete}'', and a comment cites the MIS access program
+list -- returns invalid}'', and a comment cites the MIS access program
 and the SRS requirement it supports. The tests are given IDs
 \texttt{U-<MODULE>-\#\#\#} for the traceability table. The test code is the
 detailed record of inputs and outputs, so they are not copied into this
@@ -6992,15 +7000,20 @@ strokes of an accepted build do not fail. After that the limit is fixed
 and does not follow later builds. Recorded in the SRS constants table (NFR-PERF-001).\\
 \addlinespace
 \texttt{REFINE\_LATENCY\_MAX} & Seconds. Set in PH-2 from the measured
-response time of the chosen refinement service (NFR-PERF-002).\\
+response time of the chosen refinement service, as the longest time the team
+accepts plus a margin, and then fixed (NFR-PERF-002). Until then, T-CRT-023 (c),
+which first runs in PH-1, uses a provisional limit taken from the first
+refinement calls.\\
 \addlinespace
 \texttt{SUMMARY\_LOAD\_MAX} & Seconds. Set in PH-2 from the first
-measurement of T-PERF-003 (NFR-PERF-003).\\
+measurement of T-PERF-003, as the longest time the team accepts plus a margin,
+and then fixed (NFR-PERF-003).\\
 \addlinespace
 \texttt{CONCURRENT\_CAPACITY} & Sessions. Set in PH-2 from the number of
 schools and households expected during the capstone (NFR-PERF-008).\\
 \addlinespace
-\texttt{LOCATE\_TIME\_MAX} & Minutes. Set by the team before the first
+\texttt{LOCATE\_TIME\_MAX} & Minutes. Proposed value: 5, so the three questions
+of T-MAINT-002 fit in about 15 minutes. Confirmed by the team before the first
 T-MAINT-002 walkthrough (NFR-MAINT-002).\\
 \addlinespace
 \texttt{CHILD\_CONTROLS\_MAX} & Controls per child-facing screen. Proposed
@@ -7023,7 +7036,7 @@ on each rating in the usability survey (NFR-UX-006, NFR-UX-009, NFR-UX-013,
 NFR-UX-014).\\
 \addlinespace
 \texttt{SETUP\_TIME\_MAX} & Minutes. Set to 5 before PH-2, after the team
-times a rehearsal of the profile and lesson setup flow and confirms that
+times a rehearsal of the profile and lesson set-up flow and confirms that
 five minutes is practical for a first-time adult user (NFR-UX-009).\\
 \addlinespace
 \texttt{FEEDBACK\_WORDS\_MAX} & Words per spoken message. Set to 8 before
@@ -7031,11 +7044,15 @@ PH-1, after the team reviews the approved child message list and reads each
 message aloud. Short messages are suitable for children and people with
 developmental impairments (NFR-UX-015).\\
 \addlinespace
-\texttt{IDLE\_TIMEOUT} & Minutes. Set by the team before the first run of
-T-SAF-013 and recorded in the SRS constants table (SAF-SHA-006).\\
+\texttt{IDLE\_TIMEOUT} & Minutes. Proposed value: 15, long enough for an adult
+to step away during practice and longer than \texttt{LESSON\_IDLE\_END}. Confirmed
+by the team before the first run of T-SAF-013 and recorded in the SRS constants
+table (SAF-SHA-006).\\
 \addlinespace
-\texttt{FAILED\_\allowbreak SAVES} & Save attempts. Set by the team before the first run of
-T-SAF-003 and recorded in the SRS constants table (SAF-SHA-003).\\
+\texttt{FAILED\_\allowbreak SAVES} & Save attempts. Proposed value: 3, enough to
+show that each failed save is reported, not only the first. Confirmed by the team
+before the first run of T-SAF-003 and recorded in the SRS constants table
+(SAF-SHA-003).\\
 \addlinespace
 \texttt{SUPPORTED\_\allowbreak DEVICES} & Device and browser list. Set by the team before
 the first run of T-PERF-007 at PH-1, starting from the test iPad, and
@@ -7074,7 +7091,7 @@ pause, and \texttt{LESSON\_IDLE\_PROMPT} $<$ \texttt{LESSON\_IDLE\_END} $<$
 specialists at their review of the PH-2 build (the second review in
 Section~\ref{sec:software-validation}), and record them in the SRS constants table (SAF-RAY-009).\\
 \addlinespace
-\texttt{PERF\_RUNS} & Number of repeated runs per timing test on the test iPad.
+\texttt{PERF\_RUNS} & Number of repeated runs per timing test.
 Proposed value: 30, enough to report a stable median and 95th percentile.\\
 \addlinespace
 \texttt{HISTORY\_SIZE\_LARGE} & Number of attempts in the large prepared
@@ -7245,8 +7262,8 @@ smallest share of reviewer tasks in T-PRG-013 that must succeed, counted
 separately for each requirement. \emph{Value:} 0.8, set in this plan, before
 any session, and not changed after the results are seen. With five
 reviewers, at least 12 of the 15 tries must succeed: one reviewer may fail
-every task, or several may each miss one, but a summary that misleads most
-readers on one task cannot pass.\\
+every task, or several may each miss one, but a summary that misleads four of
+the five readers on one task cannot pass.\\
 \bottomrule
 \end{longtable}}
 
@@ -7365,7 +7382,8 @@ question 6 once for each adult view, and the answers are kept for each screen.
 Section~\ref{sec:software-validation}) follows these steps on the test iPad. The
 tasks are read out without coaching or a demonstration of the interface, and
 Moustafa records completion, time, hesitation, errors, backtracking and requests
-for help.
+for help. We plan for about an hour per session, and Shamil's pilot session with a
+teammate checks that this is realistic.
 \begin{enumerate}
   \item Describe Squigglr briefly and ask the participant to think aloud.
   \item Adult tasks (T-UX-009): ``Add a child and start a lesson for them'', then
@@ -7428,8 +7446,8 @@ wrote are listed in the revision history and in the Individual Disclosures.
   that fit our planned technology stack, compare the options for each kind of
   test, identify the privacy and compliance standards that apply to the data
   Squigglr collects, and work out strategies for the more technical tests.
-  Rayan then chose the tools and tests. This affected Section~3.6 and the
-  security and compliance tests in Section~4.2.
+  Rayan then chose the tools and tests. This affected Section~\ref{sec:tools} and the
+  security and compliance tests in Section~\ref{sec:nfr-tests}.
 
   \item \textbf{Drafting tests and wording.} Members decided what each test
   checks and which cases to include, and AI turned those decisions into draft
@@ -7437,12 +7455,12 @@ wrote are listed in the revision history and in the Individual Disclosures.
   and clarity. Shamil used generated skeletons with starting text to brainstorm,
   then wrote the content in their own words or reworded the generated text, and
   kept some snippets with minimal editing. This affected the sections each
-  member wrote throughout the plan, including the tests in Sections~4.1 and 4.2,
-  the symbolic parameters and test data in Section~6.1, and the reflection
+  member wrote throughout the plan, including the tests in Sections~\ref{sec:fr-tests} and~\ref{sec:nfr-tests},
+  the symbolic parameters and test data in Section~\ref{sec:symbolic-parameters}, and the reflection
   answers.
 
   \item \textbf{Working out expected outputs.} For the guided lesson and attempt
-  record tests in Section~4.1, AI worked out the expected output of each attempt
+  record tests in Section~\ref{sec:fr-tests}, AI worked out the expected output of each attempt
   sequence from SRS Section~9.2.
 
   \item \textbf{Reviewing for consistency.} As sections were merged, members
@@ -7455,11 +7473,11 @@ wrote are listed in the revision history and in the Individual Disclosures.
   revision history.
 
   \item \textbf{Checking with scripts.} AI helped write scripts that apply the
-  rules of SRS Section~9.2 to the sequence tables in Section~4.1, and that
+  rules of SRS Section~9.2 to the sequence tables in Section~\ref{sec:fr-tests}, and that
   confirm every FR-LRN and FR-REC requirement is in the traceability table in
-  Section~4.3. Final QA scripts also checked that every requirement is traced,
+  Section~\ref{sec:trace}. Final QA scripts also checked that every requirement is traced,
   that every test has all its fields and a unique ID, that every fixture is
-  described in Section~6.1, and that every constant has a value or a way to set
+  described in Section~\ref{sec:symbolic-parameters}, and that every constant has a value or a way to set
   it.
 
   \item \textbf{Pull request reviews.} GitHub Copilot left automated reviews on
@@ -7503,7 +7521,7 @@ material was written by a team member or with the help of an AI system.}
 
 \subsection*{Individual Disclosures}
 
-\textbf{Rayan:} I used Anthropic's Claude Opus 5.5 at medium effort, accessed
+\noindent\hspace{\parindent}\textbf{Rayan:} I used Anthropic's Claude Opus 5.5 at medium effort, accessed
 through Claude Code, while preparing my sections of this document (the
 automated testing and verification tools, the performance, safety-critical,
 operational, maintainability, security, cultural and compliance tests, the
@@ -7553,15 +7571,15 @@ every FR-LRN and FR-REC requirement is in the traceability table. For Git, it
 managed my branches and commits, rebased my local branches onto
 \texttt{main} before I first pushed them and only merged after that, fixed
 merge conflicts, and wrote and opened my pull requests. In this
-document, this covered Section~3.5, the guided lesson and attempt record
-tests in Section~4.1, the functional traceability table in Section~4.3, the
-functional symbolic parameters and test data in Section~6.1, and my
+document, this covered Section~\ref{sec:impl-verification}, the guided lesson and attempt record
+tests in Section~\ref{sec:fr-tests}, the functional traceability table in Section~\ref{sec:trace}, the
+functional symbolic parameters and test data in Section~\ref{sec:symbolic-parameters}, and my
 reflection answers. I reviewed every AI-assisted passage before including it.
 All decisions in my sections are my own.
 
 \textbf{Ahmed:} I used Anthropic's Claude Opus 5.5, accessed through Claude
 Code, while preparing my sections of this document: the creative drawing and
-progress summary tests in Section~4.1, their rows in the traceability table,
+progress summary tests in Section~\ref{sec:fr-tests}, their rows in the traceability table,
 their symbolic parameters and test data, Design Verification
 (Section~\ref{sec:design-verification}), the Unit Test Description
 (Section~\ref{sec:unit-tests}) and my reflection answers. All the ideas behind
@@ -7605,7 +7623,7 @@ graduate attribute of Lifelong Learning.
 
 \textbf{Team:} Something that really went well was talking to Chris, our TA,
 and Dr.~Anand, our supervisor, before the plan was finished. In our meeting with
-Chris on October 28, 2026, we asked about the things we were unsure of: whether
+Chris on 28~October 2026, we asked about the things we were unsure of: whether
 thresholds we cannot set yet can be decided by measurement, how many tests a
 safety requirement needs, whether we need a fixed code coverage target, and
 whether one parameterized test can cover several boundary cases. His answers
@@ -7637,7 +7655,7 @@ or a test changed how something should work, we had to go back through the SRS,
 change it, and then check that our tests still matched it. The main changes came
 from two meetings:
 \begin{itemize}
-\item \emph{Our supervisor meeting on October 28, 2026.} Dr.~Anand advised
+\item \emph{Our supervisor meeting on 28~October 2026.} Dr.~Anand advised
 that we should not collect children's personal details, so a child's profile
 now holds only a generated identifier and an avatar instead of a first name
 and username. This changed the business rules, the data dictionary, a
@@ -7701,12 +7719,12 @@ VoiceOver on the iPad for NFR-UX-020, and finishing the adult tasks with only a
 keyboard for NFR-UX-023.
 \end{itemize}
 
-\textbf{Shamil:} As requirements and validation lead and DevOps lead I need to 
+\textbf{Shamil:} As requirements and validation lead and DevOps lead, I need to
 build skills in two areas:
 \begin{itemize}
 \item \emph{Moderating usability sessions}: giving neutral task instructions, 
 observing without coaching, and adapting to unexpected user behaviour. Although
-Moustafa is handling recording completion, errors, and requests for help, I 
+Moustafa is recording completion, errors and requests for help, I 
 still need to be able to identify these behaviours to guide the adult sessions
 properly. I also need this for the style and learnability reviews in T-UX-005, 
 T-UX-009 and T-UX-011.
@@ -7814,7 +7832,7 @@ rules exists. Modelling one rule early, against our first lesson rules code,
 shows quickly where the code and my reading of the SRS differ. Ahmed is
 learning property-based testing with fast-check for his creative drawing
 tests, so we will share what we learn. I will turn to the book if modelling
-all of Section~9.2 gets hard.
+all of SRS Section~9.2 gets hard.
 \item \emph{Code inspections.} There are two approaches: read the
 inspection procedure in IEEE Std 1028, the standard for software reviews and
 audits, or learn by doing a trial inspection. I will do both, in that order.

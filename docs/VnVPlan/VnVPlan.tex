@@ -228,6 +228,9 @@ generative AI use disclosure and our reflection.
 \section{General Information}
 \label{sec:general}
 
+This section says what Squigglr is, what this plan checks and leaves out, and
+which documents it builds on.
+
 \subsection{Summary}
 \label{sec:summary}
 
@@ -379,12 +382,13 @@ into our verification and validation (VnV) work:
     roles.
     Its target-tablet experiment is where the first performance limits come
     from.
-  \item \textbf{Module Guide (MG)} \citep{MG}. Due in January 2027. Splits
+  \item \textbf{Module Guide (MG)} \citep{MG}. A first version is due on 16 November
+    2026 and the full version in January 2027. Splits
     Squigglr into modules. The unit tests are organized by these modules, and
     the traceability between tests and modules checks that each one is
     covered. Design verification reviews it with the MG checklist.
-  \item \textbf{Module Interface Specification (MIS)} \citep{MIS}. Also due
-    in January 2027. Gives each module's interface, which is what the unit
+  \item \textbf{Module Interface Specification (MIS)} \citep{MIS}. Also has a first version due on 16
+    November 2026 and the full version in January 2027. Gives each module's interface, which is what the unit
     tests call and check against.
   \item \textbf{VnV Report} \citep{VnVReport}. Where we record the results of
     running this plan, including the measured values the performance tests
@@ -795,8 +799,8 @@ Peer review & The peer teams assigned by the course & After submission, due
 November~5, 2026 & The whole plan, read by people outside the project. We ask
 them to use the VnV checklist. \\
 \addlinespace
-Mutation check & Each member, on sections they did not write & Final QA
-(November~1--2, 2026) and before Rev~1 & Whether our tests would actually
+Mutation check & Each member, on sections they did not write & Before Rev~0
+and before Rev~1 & Whether our tests would actually
 catch realistic bugs (see below). \\
 \addlinespace
 Final QA & Moustafa, except Moustafa's own sections, which Shamil checks &
@@ -864,7 +868,8 @@ this.
     are left, and that the PDF builds with no errors or undefined references;
   \item goes through the VnV and Writing checklists and the rubric, one item
     at a time;
-  \item sends fixes in someone else's section to them as PR comments.
+  \item puts fixes in someone else's section in the QA pull request and asks them
+    to review it.
 \end{enumerate}
 
 \paragraph{Tracking findings.} Small fixes the team finds, like wording, go in
@@ -5064,7 +5069,7 @@ Test Case Derivation: the fit criterion of NFR-UX-005. The audit verifies the
 objective parameters the team chose, while the survey checks whether adults
 notice consistency in child controls.
 
-How test will be performed: The team records that each possible action 
+How test will be performed: the team records that each possible action 
 on every child-facing screen it appears on has the same colour, icon and
 position. The participants take the survey after the review.
 
@@ -5085,7 +5090,7 @@ both meet or exceed \texttt{UX\_PASS\_RATE}.
 Test Case Derivation: the fit criterion of NFR-UX-006. Appeal and calmness
 are rated separately because they do not imply each other.
 
-How test will be performed: The participants take the survey after the 
+How test will be performed: the participants take the survey after the
 review.
 
 \item{T-UX-007: Style reviewed with educator\\}
@@ -5151,7 +5156,7 @@ and start a lesson within \texttt{SETUP\_TIME\_MAX}, and at least
 
 Test Case Derivation: the fit criteria of NFR-UX-009 and NFR-UX-014.
 
-How test will be performed: The moderator observes
+How test will be performed: the moderator observes
 without coaching and records completion, time, hesitation, errors and
 requests for help.
 
@@ -5222,7 +5227,7 @@ Test Case Derivation: the fit criterion of NFR-UX-017. The audit verifies the ob
 checks the subjective opinions of adults on whether the adult-view wording is
 plain and consistent.
 
-How test will be performed: The team records each glossary term and when
+How test will be performed: the team records each glossary term and when
 and whether it is explained, afterwards checking that none of the recorded
 terms are in the list of diagnostic words. The participants take the survey 
 after the review.
@@ -6722,7 +6727,7 @@ FR-PRG-012 & T-PRG-012 (inspection and automatic), T-SAF-004\\
 \section{Unit Test Description}
 \label{sec:unit-tests}
 
-The Module Interface Specification (MIS) is due on 18 January 2027, so this
+The full Module Interface Specification (MIS) is due on 18 January 2027, so this
 section gives the rules for choosing unit tests rather than the tests
 themselves. The rules are written so that, once the MIS exists, each
 module's tests follow from its specification, and a reviewer can check that
@@ -6877,12 +6882,13 @@ before each design revision.
 
 \section{Appendix}
 
-This is where you can place additional information.
+This appendix gives the values of the symbolic constants, or how each one will
+be set, and the usability survey questions.
 
 \subsection{Symbolic Parameters}
 
-The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
-Their values are defined in this section for easy maintenance.
+The test cases use symbolic constants instead of literal values, so a value
+only has to change in one place.
 
 The constants in Table~\ref{tab:symb-nfr} are used by the nonfunctional tests. The SRS leaves the
 timing thresholds to this plan; their values are set by measurement rather

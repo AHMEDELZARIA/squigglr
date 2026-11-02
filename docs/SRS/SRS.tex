@@ -214,6 +214,9 @@ removed \texttt{STYLE\_RATING\_MIN} (\#275).\\
 2 November 2026 & Moustafa Moustafa & Addressed peer review: SAF-RAY-009 now
 also mitigates H-RAY-004, with the reason for having no stop button, and the
 hazard table lists it for H-RAY-004 and H-RAY-006 (\#194).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: Section~4 lists the
+retired identifiers, and the functional-to-nonfunctional table says that safety
+requirements are traced through hazards (\#192).\\
 \end{longtable}
 
 ~\\
@@ -1019,7 +1022,8 @@ project.\\
 \section{Naming Conventions and Terminology}
 \label{sec:terminology}
 This section defines the vocabulary, identifiers and constants used throughout
-the specification.
+the specification. Identifiers are never renumbered or reused, so a removed
+requirement leaves a gap: SAF-SHA-004, SAF-SHA-005 and NFR-CULT-001 are retired.
 
 \subsection{Glossary and Acronyms}
 \label{sec:glossary}
@@ -8011,9 +8015,11 @@ G.3, G.6; SRC-008, SRC-009.01 & \ucref{010} & \reqref{FR-LRN-017};
 \subsection{Functional to nonfunctional requirements}
 \label{sec:fr-nfr}
 
-Table~\ref{tab:fr-nfr} records cross-type references in a requirement's
-\emph{Traceability} field. One-way references should not be mistaken for a
-reciprocal links.
+Table~\ref{tab:fr-nfr} records references between a functional requirement and
+a nonfunctional requirement with an NFR identifier, in either one's
+\emph{Traceability} field. One-way references
+should not be mistaken for reciprocal links. Safety-critical requirements
+(SAF) are linked through their hazards in Table~\ref{tab:hazard-req}.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}

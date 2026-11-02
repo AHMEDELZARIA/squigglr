@@ -217,6 +217,10 @@ hazard table lists it for H-RAY-004 and H-RAY-006 (\#194).\\
 2 November 2026 & Moustafa Moustafa & Addressed peer review: Section~4 lists the
 retired identifiers, and the functional-to-nonfunctional table says that safety
 requirements are traced through hazards (\#192).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: added FR-LRN-024,
+which ends a guided attempt when it passes or after the new adult-set
+\texttt{ATTEMPT\_IDLE}, and updated UC-003, Section~9.2, BR-008 and the
+adult-set values to match (\#186).\\
 \end{longtable}
 
 ~\\
@@ -1240,14 +1244,14 @@ into web content. & Section 15\\
 \subsection{Symbolic Constants}
 \label{sec:constants}
 Table~\ref{tab:goalconst} specifies the parameters used in guided lessons,
-creative refinement and progress summary verification. The eight
+creative refinement and progress summary verification. The nine
 adult-configurable parameters have an allowed range and a default value for each
 learner profile (BR-008, \srcref{008}). Their defaults are the midpoints of
 their respective ranges. Each configuration shall satisfy
 \texttt{ATTEMPT\_LIMIT} $>$ \texttt{DIFFICULTY\_STREAK} and
 \texttt{ATTEMPT\_LIMIT\_MAX} $\geq$ \texttt{ATTEMPT\_LIMIT}, and
-\texttt{LESSON\_IDLE\_PROMPT} $<$ \texttt{LESSON\_IDLE\_END} $<$
-\texttt{IDLE\_TIMEOUT}. Drawing stage
+\texttt{ATTEMPT\_IDLE} $<$ \texttt{LESSON\_IDLE\_PROMPT} $<$
+\texttt{LESSON\_IDLE\_END} $<$ \texttt{IDLE\_TIMEOUT}. Drawing stage
 results are expressed on a normalized scale from 0 to 100; higher results
 indicate closer agreement with the stage's fixed criteria. The result is not a
 measure of the child's ability (BR-006). Attempt count settings shall be
@@ -1328,6 +1332,13 @@ one of these is a pass and it is always the last; a maximum of 10 allows 9
 failed attempts and a pass, or 10 failed attempts. \emph{Unit:} attempts. \emph{Range:} 8--12.
 \emph{Default:} 10; must be at least \texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3,
 BR-002, OI-05.\\
+\addlinespace
+\texttt{ATTEMPT\_IDLE} & Time with no input after the last stroke of an attempt
+that has not passed, after which Squigglr ends the attempt. It must be longer
+than the child's usual pause between strokes, so the adult sets it for each
+child. \emph{Unit:} seconds. \emph{Range:} team-defined; TBD. \emph{Default:}
+middle of the range; must be less than \texttt{LESSON\_IDLE\_PROMPT}.
+\emph{Trace:} BR-008, FR-LRN-024.\\
 \addlinespace
 \texttt{LESSON\_IDLE\_PROMPT} & Time with no input during a guided lesson after
 which Squigglr shows the child a check-in. \emph{Unit:} seconds. \emph{Range:}
@@ -1620,7 +1631,8 @@ release; generated advice to a child cannot.\\
 \item[BR-008] The supporting adult sets \texttt{STAGE\_PASS},
 \texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT}, \texttt{IMPROVE\_WINDOW},
 \texttt{ATTEMPT\_EXTENSION}, \texttt{ATTEMPT\_LIMIT\_MAX},
-\texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} for each child.
+\texttt{ATTEMPT\_IDLE}, \texttt{LESSON\_IDLE\_PROMPT} and
+\texttt{LESSON\_IDLE\_END} for each child.
 When an adult creates a child profile, Squigglr asks them to choose each value,
 and for \texttt{STAGE\_PASS} shows example drawings of what its minimum and
 maximum look like. The adult can change the values later. A value the adult does
@@ -2217,17 +2229,18 @@ Actual strokes & The strokes the child drew in an attempt. Actual strokes =
 corrected, ideal or refined shape. & BR-004; ULC-005; FR-LRN-007; FR-REC-002;
 FR-CRT-027 \\
 \addlinespace
-Adult-set values & The eight values a supporting adult chooses for each child
+Adult-set values & The nine values a supporting adult chooses for each child
 (Table~\ref{tab:goalconst}). Adult-set values = \texttt{STAGE\_PASS} +
 \texttt{DIFFICULTY\_STREAK} + \texttt{ATTEMPT\_LIMIT} + \texttt{IMPROVE\_WINDOW}
 + \texttt{ATTEMPT\_EXTENSION} + \texttt{ATTEMPT\_LIMIT\_MAX} +
-\texttt{LESSON\_IDLE\_PROMPT} + \texttt{LESSON\_IDLE\_END}. & Attribute & Each
+\texttt{ATTEMPT\_IDLE} + \texttt{LESSON\_IDLE\_PROMPT} +
+\texttt{LESSON\_IDLE\_END}. & Attribute & Each
 within its team-set range, by default its middle; \texttt{ATTEMPT\_\allowbreak
 LIMIT} larger than \texttt{DIFFICULTY\_\allowbreak STREAK};
 \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX} at least
 \texttt{ATTEMPT\_\allowbreak LIMIT}. \texttt{STAGE\_PASS} is a result in points
-out of 100; \texttt{LESSON\_IDLE\_PROMPT} and \texttt{LESSON\_IDLE\_END} are
-times in seconds; the others are counts of attempts. & G.2, G.3; BR-008; FR-LRN-017;
+out of 100; \texttt{ATTEMPT\_IDLE}, \texttt{LESSON\_IDLE\_PROMPT} and
+\texttt{LESSON\_IDLE\_END} are times in seconds; the others are counts of attempts. & G.2, G.3; BR-008; FR-LRN-017;
 UC-001, UC-010; F6, F9; SAF-RAY-008 \\
 \addlinespace
 Adult-set values in use & The learner's adult-set values at the time an attempt
@@ -2844,9 +2857,12 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
   (\mbox{\reqref{FR-LRN-003}}), then moves to the starting stage.
   \item Squigglr shows the stage's guidance: the full outline, the endpoints
   only, or no guide (\mbox{\reqref{FR-LRN-004}}--\mbox{\reqref{FR-LRN-006}}).
-  \item The child draws one or more strokes. Lifting the stylus does not end the
-  attempt (\mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}}).
-  \item When the attempt is finalized, Squigglr classifies it as complete or
+  \item The child draws one or more strokes. Each time the child lifts the
+  stylus, Squigglr checks the strokes so far; lifting the stylus alone does not
+  end the attempt (\mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}}).
+  \item The attempt ends when the strokes so far are complete and meet
+  \texttt{STAGE\_PASS}, or, if they do not, after \texttt{ATTEMPT\_IDLE} with
+  no input (\mbox{\reqref{FR-LRN-024}}). Squigglr classifies it as complete or
   incomplete and as assisted or independent, and passes it only if it is
   complete and meets \texttt{STAGE\_PASS}
   (\mbox{\reqref{FR-LRN-011}}--\mbox{\reqref{FR-LRN-013}}).
@@ -2895,7 +2911,7 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
 \reqfield{Postconditions}{Every evaluable attempt is recorded, the furthest
 stage reached is saved, and no stage moved back without an adult's acceptance.}
 \reqfield{Requirements}{\mbox{\reqref{FR-LRN-002}}--\mbox{\reqref{FR-LRN-015}},
-\mbox{\reqref{FR-LRN-019}}--\mbox{\reqref{FR-LRN-023}}; \mbox{SAF-RAY-003},
+\mbox{\reqref{FR-LRN-019}}--\mbox{\reqref{FR-LRN-024}}; \mbox{SAF-RAY-003},
 \mbox{SAF-RAY-005}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-007}; \mbox{SAF-AHM-001},
 \mbox{SAF-AHM-002}.} \reqfield{Sources}{\goalref{1}, \goalref{2}, \goalref{3};
 \mbox{SRC-005.01}.}
@@ -3554,6 +3570,29 @@ stage is skipped automatically.}
   \ucref{003}; \ucref{004}; OI-04 (TA confirmation); H-AHM-004, H-MOU-004}
 \end{srsrequirement}
 
+\begin{srsrequirement}{FR-LRN-024}{Ending an attempt}
+  \reqshall{Each time the child lifts the stylus in a guided lesson, Squigglr
+shall evaluate the strokes of the attempt so far, and shall end the attempt as
+passed as soon as they are complete and meet \texttt{STAGE\_PASS}. If they do
+not, Squigglr shall end the attempt as not passed after \texttt{ATTEMPT\_IDLE}
+with no input. No other event ends an attempt, except an interruption
+(FR-LRN-009).} \reqrationale{The child cannot read and should not have to
+decide when a drawing is done, so Squigglr ends a passing attempt by itself.
+Lines and shapes can take several strokes (FR-LRN-008), so a non-passing
+attempt waits for a pause longer than the child's usual pause between strokes.
+Children draw at different speeds, so the adult sets \texttt{ATTEMPT\_IDLE} for
+each child (BR-008).} \reqfit{For prepared attempts, a passing figure ends as
+passed at the stylus lift that completes it, with no further input; a
+two-stroke figure is not ended after its first stroke while the pause is
+shorter than \texttt{ATTEMPT\_IDLE}; and a non-passing attempt ends as not
+passed at \texttt{ATTEMPT\_IDLE} after its last stroke.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{2}; ASM-004; BR-008; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-008}; \reqref{FR-LRN-009}; \reqref{FR-LRN-013};
+  \ucref{003}; H-AHM-001}
+\end{srsrequirement}
+
 \paragraph{Source-to-requirement traceability.}
 Table~\ref{tab:lrn-traces} provides source-side links for the most important
 learning-activity decisions; each requirement also links back to its evidence in
@@ -3583,9 +3622,9 @@ G.2, BR-002 & \reqref{FR-LRN-005}, \reqref{FR-LRN-006}, \reqref{FR-LRN-011},
 G.3, BR-003, CON-007 & \reqref{FR-LRN-016}, \reqref{FR-LRN-018},
 \reqref{FR-LRN-019}, \reqref{FR-LRN-023}; OI-04\\
 BR-008, \srcref{008} & \reqref{FR-LRN-013}, \reqref{FR-LRN-017},
-\reqref{FR-LRN-019}, \reqref{FR-LRN-020}\\
+\reqref{FR-LRN-019}, \reqref{FR-LRN-020}, \reqref{FR-LRN-024}\\
 ASM-004, BR-004 & \reqref{FR-LRN-007}, \reqref{FR-LRN-008}, \reqref{FR-LRN-009},
-\reqref{FR-LRN-010}\\
+\reqref{FR-LRN-010}, \reqref{FR-LRN-024}\\
 BR-006--007 & \reqref{FR-LRN-014}, \reqref{FR-LRN-022}\\
 \hyperref[src:005.01]{SRC-005.01}, \hyperref[src:005.05]{SRC-005.05} &
 \reqref{FR-LRN-016}, \reqref{FR-LRN-018}, \reqref{FR-LRN-019}\\
@@ -3644,7 +3683,8 @@ An attempt is a finite ordered list of stylus strokes $X=(x_1,\ldots,x_j)$,
 where every $x_i$ is an ordered list of reported points. Lifting the stylus
 closes one $x_i$, not the attempt. The terminal event
 $\operatorname{Finalize}(X)$ denotes the end of input collection for an attempt.
-This abstract event does not prescribe a particular user-interface control. A
+It occurs at a stylus lift after which the strokes so far pass, or after
+\texttt{ATTEMPT\_IDLE} with no input (FR-LRN-024); the child uses no control. A
 stylus lift alone does not finalize the attempt; interruption before
 finalization cannot produce a passed result (FR-LRN-008--010).
 
@@ -4532,7 +4572,7 @@ H-MUH-007}
 \begin{srsrequirement}{FR-REC-004}{Adult-set values in use}
   \reqshall{Squigglr shall keep in each attempt record the value of each
 adult-set value that was in use for the learner when the attempt was made.}
-\reqrationale{The adult-set values are the eight values of BR-008 listed in
+\reqrationale{The adult-set values are the nine values of BR-008 listed in
 Table~\ref{tab:goalconst}, and the outcome of an attempt depends on the
 \texttt{STAGE\_\allowbreak PASS} in use, and the adult may change the values at
 any time (BR-008). Keeping the values with each attempt means a later change
@@ -6106,7 +6146,7 @@ rule as clarified, not a new choice between automatic and adult-authorized
 forward progression. & G.3, CON-007 & Shamil Canbolat & Oct.\ 17, 2026 \\
 \addlinespace
 OI-05 & \emph{Verification of learning thresholds.} Section~\ref{sec:constants}
-defines the ranges and defaults for the eight adult-configurable values and the
+defines the ranges and defaults for the nine adult-configurable values and the
 fixed \texttt{IMPROVE\_MARGIN}. Verify the selected ranges with adult-made
 drawings, provide examples illustrating the endpoints of the
 \texttt{STAGE\_PASS} range, and confirm that the drawing-evaluation method
@@ -6653,7 +6693,7 @@ product must not do there; the last row answers that.
 \bottomrule
 \endlastfoot
 More work for supporting adults & Squigglr gives adults new tasks: creating a
-learner profile, choosing eight adult-set values, with example drawings to help
+learner profile, choosing nine adult-set values, with example drawings to help
 with \texttt{STAGE\_PASS} (BR-008), choosing lessons and starting stages,
 answering go-back suggestions (BR-003) and reviewing records. An educator with a
 short slot per learner (PER-3) or a parent who reviews once a week (PER-2) may
@@ -7073,6 +7113,8 @@ Section~\ref{sec:waiting-room}.
 \reqref{FR-LRN-009} & Interrupted attempt handling & Must & PH-2 \\
 \addlinespace
 \reqref{FR-LRN-010} & Invalid and ambiguous input & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-024} & Ending an attempt & Must & PH-1 \\
 \addlinespace
 \reqref{FR-LRN-011} & Completeness classification & Must & PH-1 \\
 \addlinespace
@@ -7984,7 +8026,7 @@ G.1, G.3; SRC-005.01 & \ucref{002} & \reqref{FR-LRN-001}; \reqref{FR-LRN-016};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-009}; \reqref{NFR-UX-014} \\
 \addlinespace
 G.1--G.3; SRC-005.01 & \ucref{003} & \reqref{FR-LRN-002}--\reqref{FR-LRN-015};
-\reqref{FR-LRN-020}--\reqref{FR-LRN-023}; \reqref{NFR-UX-001};
+\reqref{FR-LRN-020}--\reqref{FR-LRN-024}; \reqref{NFR-UX-001};
 \reqref{NFR-UX-002}; \reqref{NFR-UX-004}; \reqref{NFR-UX-008};
 \reqref{NFR-UX-013}; \reqref{NFR-UX-015}; \reqref{NFR-PERF-001} \\
 \addlinespace
@@ -8115,8 +8157,8 @@ H-RAY-006 & SAF-RAY-001; SAF-RAY-007; SAF-RAY-009; \reqref{FR-REC-008};
 \addlinespace
 H-RAY-007 & SAF-RAY-008 & SAF-RAY-008 \\
 \addlinespace
-H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010} &
-\reqref{FR-LRN-007}--\reqref{FR-LRN-010} \\
+H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024} &
+\reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024} \\
 \addlinespace
 H-AHM-002 & \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 &
 \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 \\

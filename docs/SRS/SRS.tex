@@ -211,6 +211,9 @@ result must match its definition (\#175).\\
 1 November 2026 & Moustafa Moustafa & Changed the fit criterion of NFR-UX-006 to
 the share of reviewers answering 4 or 5, as T-UX-006 in the VnV Plan does, and
 removed \texttt{STYLE\_RATING\_MIN} (\#275).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: SAF-RAY-009 now
+also mitigates H-RAY-004, with the reason for having no stop button, and the
+hazard table lists it for H-RAY-004 and H-RAY-006 (\#194).\\
 \end{longtable}
 
 ~\\
@@ -5479,14 +5482,16 @@ without input shall not count as an attempt or toward
 watching (CA-001). On a shared device (CA-004), another child could then
 continue under the first child's profile. Ending an idle lesson before
 \texttt{IDLE\_TIMEOUT} logs the adult out (SAF-SHA-006) gives the lesson a
-clear ending in the record. Some children pause often, so the adult sets both
-times for each child (BR-008).\\
+clear ending in the record. A tired or upset child can also stop drawing, and
+the lesson then ends without more failed attempts (H-RAY-004); there is no stop
+button, since the child does not exit a lesson (CA-001). Some children pause
+often, so the adult sets both times for each child (BR-008).\\
 \emph{Fit criterion:} in prepared lessons with no input, the check-in appears at
 \texttt{LESSON\_IDLE\_PROMPT}, a touch dismisses it and the lesson continues,
 and with no further input the lesson ends at \texttt{LESSON\_IDLE\_END} with
 its progress saved and the ending recorded as inactivity; no attempt is counted
 for the idle time.\\
-\emph{Hazards:} H-RAY-006.
+\emph{Hazards:} H-RAY-004, H-RAY-006.
 
 \item[SAF-AHM-001]\phantomsection\label{req:SAF-AHM-001} Squigglr shall prevent
 duplicate reports of the same stylus input event from being counted more than
@@ -8094,12 +8099,13 @@ SAF-RAY-002; SAF-RAY-003; \reqref{FR-REC-008}; \reqref{FR-PRG-011} \\
 H-RAY-003 & SAF-RAY-004; \reqref{FR-PRG-008}; \reqref{FR-PRG-012} & SAF-RAY-004;
 \reqref{FR-PRG-008}; \reqref{FR-PRG-012} \\
 \addlinespace
-H-RAY-004 & SAF-RAY-005 & SAF-RAY-005 \\
+H-RAY-004 & SAF-RAY-005; SAF-RAY-009 & SAF-RAY-005; SAF-RAY-009 \\
 \addlinespace
 H-RAY-005 & SAF-RAY-006 & SAF-RAY-006 \\
 \addlinespace
-H-RAY-006 & SAF-RAY-001; SAF-RAY-007; \reqref{FR-REC-008}; \reqref{FR-PRG-001} &
-SAF-RAY-001; SAF-RAY-007; \reqref{FR-REC-008}; \reqref{FR-PRG-001} \\
+H-RAY-006 & SAF-RAY-001; SAF-RAY-007; SAF-RAY-009; \reqref{FR-REC-008};
+\reqref{FR-PRG-001} & SAF-RAY-001; SAF-RAY-007; SAF-RAY-009;
+\reqref{FR-REC-008}; \reqref{FR-PRG-001} \\
 \addlinespace
 H-RAY-007 & SAF-RAY-008 & SAF-RAY-008 \\
 \addlinespace

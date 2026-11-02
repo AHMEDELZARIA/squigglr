@@ -100,6 +100,9 @@ the SRS (\#176).\\
 1 November 2026 & Ahmed Elzaria & Addressed peer review: planned SAF-RAY-001 for
 PH-1 in the roadmap, with the lesson and starting stage choice it protects
 (\#177).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: H-RAY-004 now
+cites SAF-RAY-009, so a child who stops drawing leaves the lesson without more
+failed attempts (\#194).\\
 \end{longtable}
 
 ~\newpage
@@ -886,10 +889,12 @@ improvement extension lengthens the lesson; no adult may be watching (CA-001). &
 The child becomes distressed, stops practising or refuses the activity later.
 Loss: well-being; the practice benefit. & Psychological/ well-being & Mitigate:
 end the lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX}
-when extended, and save progress (G.3); let audio feedback be muted (SRC-005,
-P2, 37:39). Document/Test: test that each lesson ends at \texttt{ATTEMPT\_LIMIT}
-and that no extended lesson passes \texttt{ATTEMPT\_LIMIT\_MAX}. & G.3,
-SAF-RAY-005 \\
+when extended, and save progress (G.3); end the lesson when the child stops
+drawing, without counting the idle time as failed attempts; let audio feedback
+be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
+\texttt{ATTEMPT\_LIMIT}, that no extended lesson passes
+\texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no attempt added.
+& G.3, SAF-RAY-005, SAF-RAY-009 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
 \texttt{ATTEMPT\_LIMIT}, the same lesson is started again at once and the repetition continues. &
@@ -2059,7 +2064,7 @@ SAF-RAY-009 & During a guided lesson, Squigglr shall show a check-in a child
 who cannot read can understand after \texttt{LESSON\_IDLE\_PROMPT} with no
 input, end the lesson after \texttt{LESSON\_IDLE\_END} with no input, keep the
 progress saved and record that it ended for inactivity, without counting the
-idle time as an attempt. & H-RAY-006 & Safety-Critical \\
+idle time as an attempt. & H-RAY-004, H-RAY-006 & Safety-Critical \\
 \addlinespace
 SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
 event from being counted more than once during evaluation or recording of an

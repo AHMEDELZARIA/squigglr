@@ -100,6 +100,10 @@ the SRS (\#176).\\
 1 November 2026 & Ahmed Elzaria & Addressed peer review: planned SAF-RAY-001 for
 PH-1 in the roadmap, with the lesson and starting stage choice it protects
 (\#177).\\
+1 November 2026 & Muhammad Huzaifah & Addressed peer review: renamed C2 to
+Lesson and stage-check logic and C4 to Creative refinement, which no longer
+assumes an external model, and said in the H-SHA introduction and the coverage
+table how H-SHA-002 applies to each refinement approach (\#178).\\
 \end{longtable}
 
 ~\newpage
@@ -428,17 +432,17 @@ at (1.4,0) {Other people who see records}; \node[person] (team) at (4.4,0)
   (5.75,-5.75); \node[anchor=north west, font=\scriptsize\bfseries] at
   (-5.7,-2.78) {\progname{} (system boundary)}; \node[comp] (c1) at
   (-4.35,-3.65) {\textbf{C1} Touch and stylus canvas}; \node[comp] (c2) at
-  (-1.45,-3.65) {\textbf{C2} Lesson and assessment logic}; \node[comp] (c3) at
+  (-1.45,-3.65) {\textbf{C2} Lesson and stage-check logic}; \node[comp] (c3) at
   (1.45,-3.65) {\textbf{C3} Guidance-suggestion logic}; \node[comp] (c6) at
   (4.35,-3.65) {\textbf{C6} Adult access and summaries}; \node[comp] (c5) at
   (-4.35,-5.0) {\textbf{C5} Attempt storage and history}; \node[comp] (c4) at
-  (-1.45,-5.0) {\textbf{C4} Creative refinement with an external model};
+  (-1.45,-5.0) {\textbf{C4} Creative refinement};
   \node[comp] (c8) at (1.45,-5.0) {\textbf{C8} Learner profiles and adult-set
   values}; \node[comp] (c7) at (4.35,-5.0) {\textbf{C7} Hosting and
   authentication};
 % Outside: services
-\node[ext] (provider) at (-2.9,-7.0) {External refinement model and its
-  provider}; \node[ext] (hosting) at (1.0,-7.0) {Hosting service}; \node[ext]
+\node[ext] (provider) at (-2.9,-7.0) {External refinement model, if used, and
+  its provider}; \node[ext] (hosting) at (1.0,-7.0) {Hosting service}; \node[ext]
   (auth) at (4.35,-7.0) {Authentication service};
 % Interactions
 \draw[both] (child) -- node[lbl, left=1mm] {strokes; feedback} (device);
@@ -515,7 +519,7 @@ resize, recolour, erase) and their undo. & The strokes of the current attempt or
 drawing until they are checked or saved. & G.1, G.4; CON-003; ASM-003, ASM-004;
 UC-003, UC-006 \\
 \addlinespace
-C2 & Lesson and assessment logic & Runs each lesson's stages, checks every
+C2 & Lesson and stage-check logic & Runs each lesson's stages, checks every
 attempt against the stage's pass criteria, chooses predefined feedback, moves
 the child on after a pass, and ends the lesson at the attempt limit, extending
 it once if the child is improving (BR-002). & Whether an attempt passes; the
@@ -528,11 +532,13 @@ suggestion until an adult responds, and applies it only if the adult accepts. &
 Each suggestion's state: pending, accepted, declined or ignored. & G.3; BR-003;
 CON-007; UC-005 \\
 \addlinespace
-C4 & Creative refinement with an external model & Refines a creative drawing
-minimally using an external refinement model, keeps the result editable, and
-restores the child's original strokes when the child asks or, if the child
-cannot, when an adult asks. Covers what \progname{} sends to the model and how
-it checks what comes back. Refinement can be turned off (UC-007). & Each
+C4 & Creative refinement & Refines a creative drawing minimally, keeps the
+result editable, and restores the child's original strokes when the child asks
+or, if the child cannot, when an adult asks. The refinement approach is still
+open: geometric smoothing on the device, an external refinement model, or both
+(SRC-002; LC-004). If a model is used, C4 also covers what \progname{} sends to
+it and how it checks what comes back. Refinement can be turned off (UC-007). &
+Each
 creative drawing's original strokes and refined version. & G.4; BR-005; ASM-011;
 LC-004; UC-006, UC-007 \\
 \addlinespace
@@ -565,9 +571,10 @@ values in use. & BR-001, BR-008, BR-009; ASM-008, ASM-016; UC-001, UC-010 \\
 \end{longtable}
 }
 
-Two components need a note. C4 and C7 cover \progname{}'s \emph{use} of outside
-services: what it sends, what it accepts back and how it behaves when a service
-fails. The services themselves lie outside the boundary. C8 was added to the
+Two components need a note. C7, and C4 when refinement uses an external model,
+cover \progname{}'s \emph{use} of outside services: what it sends, what it
+accepts back and how it behaves when a service fails. The services themselves
+lie outside the boundary. C8 was added to the
 seven components first planned because learner profiles and adult-set values
 follow rules of their own (BR-001, BR-008) and are used by several components:
 C2 applies the values, C5 files records under the active learner, and C6 lets an
@@ -633,10 +640,11 @@ School IT administration & Manages school devices and networks, on which adults
 may not be able to install software (CON-002); a school may block the site
 (ASM-013). & \progname{} unavailable or partly blocked at school (C7, C1). \\
 \addlinespace
-External refinement model and its provider & An existing pretrained model that
-the team does not train or run, from a provider that may change (SRC-002;
-LC-004). & The service unavailable or slow, changes that are invalid or too
-large, or drawings sent to it kept by the provider (C4). \\
+External refinement model and its provider & An existing pretrained model, if
+the team uses one for refinement, that the team does not train or run, from a
+provider that may change (SRC-002; LC-004). & The service unavailable or slow,
+changes that are invalid or too large, or drawings sent to it kept by the
+provider (C4). \\
 \addlinespace
 Hosting service & A managed service that serves the website and stores the
 records (SRC-002). & An outage, or stored records lost or delayed (C7, C5). \\
@@ -767,10 +775,11 @@ checked against the five categories of harm (Physical, Psychological/well-being,
 Privacy/security, Data integrity and Availability), so that a component that
 works as specified but still harms a child is also recorded; safety is not the
 same as correctness \citep{Smith2026L08}. For the creative refinement component,
-which uses an external model, this check also covered the risks of artificial
-intelligence (AI) that arise from how \progname{} uses the model: compromise of
-privacy, over-reliance, loss of human agency, lack of capability or robustness,
-and lack of transparency \citep{SlatteryEtAl2024}. Third, each team member
+which may use an external model, this check also covered the risks of artificial
+intelligence (AI) that would arise from how \progname{} uses such a model:
+compromise of privacy, over-reliance, loss of human agency, lack of capability
+or robustness, and lack of transparency \citep{SlatteryEtAl2024}. Third, each
+team member
 writes the rows for the parts of the SRS they own, so each hazard ID carries its
 writer's prefix (H-RAY, H-MOU, H-AHM, H-MUH or H-SHA), and each member's rows
 form a table of their own. The coverage check of
@@ -1067,9 +1076,12 @@ FR-LRN-021 \\
 \label{sec:fmea-sha}
 
 Table~\ref{tab:fmea-sha} covers hazards regarding account and data security,
-practice records, and the external AI refinement provider. Effects are assessed
-based on privacy, data integrity, and the trustworthiness of content shown to
-children and adults.
+practice records, and the external AI refinement provider, if one is used.
+Geometric refinement runs on the device and sends no drawing to an outside
+service, so the refinement service named in H-SHA-002 applies only when an
+external model refines drawings; failures of either approach in changing a
+drawing are analysed in H-MUH-002. Effects are assessed based on privacy, data
+integrity, and the trustworthiness of content shown to children and adults.
 
 \begin{fmealandscape}
 {\footnotesize
@@ -1297,10 +1309,10 @@ components.
 \bottomrule
 \endlastfoot
 %
-\multicolumn{8}{@{}l}{\textbf{C4 Creative refinement with an external model}}
+\multicolumn{8}{@{}l}{\textbf{C4 Creative refinement}}
 \\*
 \addlinespace
-H-MUH-001 & Creative refinement with an external model & A creative change
+H-MUH-001 & Creative refinement & A creative change
 cannot be reversed: undo does not step back an edit, a refinement or a restore;
 restoring the original is not available to the child or to the adult; or a
 restore does not return the original strokes exactly. & (a)~The original strokes
@@ -1325,14 +1337,15 @@ by point with the original. & (a)~FR-CRT-017, FR-CRT-024\newline
 (c)~FR-CRT-017\newline
 (d)~FR-CRT-018, FR-CRT-019 \\
 \addlinespace
-H-MUH-002 & Creative refinement with an external model & A refinement changes
+H-MUH-002 & Creative refinement & A refinement changes
 the drawing wrongly: a point moves further than \texttt{REFINE\_TOLERANCE}; a
 stroke is added, removed or recoloured; only part of a result is applied; or a
 refinement reaches a drawing outside the supported set, an older version of the
-drawing, or strokes drawn in a guided lesson. & (a)~The external model returns
-invalid, malformed, partial or excessive changes, and the team does not train it
-(LC-004). (b)~A slow connection (CA-003) delivers a result after the child has
-kept drawing or has closed the drawing. (c)~A stroke is refined again each time
+drawing, or strokes drawn in a guided lesson. & (a)~The refinement returns
+invalid, malformed, partial or excessive changes; if an external model is used,
+the team does not train it (LC-004). (b)~A slow connection (CA-003) delivers a
+result after the child has kept drawing or has closed the drawing. (c)~A stroke
+is refined again each time
 the child finishes, so the changes add up. (d)~The drawing is empty or is not of
 a supported item (OI-03). (e)~Nothing bars refinement from guided lessons. & The
 drawing is no longer what the child drew, and the child may no longer see it as
@@ -1354,7 +1367,7 @@ with drawings outside the supported set, and with guided lesson strokes. &
 (d)~FR-CRT-015\newline
 (e)~FR-CRT-027 \\
 \addlinespace
-H-MUH-006 & Creative refinement with an external model & A refinement that meets
+H-MUH-006 & Creative refinement & A refinement that meets
 every rule is still not accepted by the child as their own drawing: the child
 erases or redraws the refined parts, stops drawing, or is upset after the
 refinement. & (a)~Refinement happens with no action from the child (BR-005), and
@@ -1541,15 +1554,15 @@ C1 Touch and stylus canvas & H-MOU-001 & H-MOU-001, H-MOU-003, (H-MOU-002),
 (H-MUH-001) & --- & H-RAY-002, H-AHM-001, H-AHM-002, H-AHM-003, (H-MUH-001) &
 H-RAY-002 \\
 \addlinespace
-C2 Lesson and assessment logic & --- & H-RAY-004, H-RAY-005, H-MOU-002,
+C2 Lesson and stage-check logic & --- & H-RAY-004, H-RAY-005, H-MOU-002,
 H-MOU-004, (H-RAY-001), (H-RAY-007) & --- & H-AHM-004, H-AHM-005, (H-AHM-001),
 (H-AHM-002), (H-AHM-003), (H-AHM-007) & --- \\
 \addlinespace
 C3 Guidance-\allowbreak{}suggestion logic & --- & H-AHM-006 & (H-RAY-006) & ---
 & --- \\
 \addlinespace
-C4 Creative refinement with an external model & --- & H-MOU-006, H-MUH-001,
-H-MUH-002, H-MUH-006 & --- & H-MUH-001, H-MUH-002, (H-MUH-003) & --- \\
+C4 Creative refinement & --- & H-MOU-006, H-MUH-001, H-MUH-002, H-MUH-006 &
+(H-SHA-002) & H-MUH-001, H-MUH-002, (H-MUH-003) & --- \\
 \addlinespace
 C5 Attempt storage and history & --- & H-MUH-005, (H-RAY-003), (H-RAY-005),
 (H-MOU-005) & H-MUH-004, (H-RAY-006) & H-MUH-003, H-MUH-004, H-MUH-005,
@@ -1575,7 +1588,7 @@ Several pairs were examined and no credible failure mode was found in them:
   feedback, so \mbox{H-MOU-001} is placed there. Practice that does not end or
   that is started again at once is a psychological/well-being hazard, not a physical
   path to bodily harm; H-RAY-004 and H-RAY-005 address it in the lesson and
-  assessment logic (C2). The guidance-suggestion logic (C3), creative refinement
+  stage-check logic (C2). The guidance-suggestion logic (C3), creative refinement
   (C4), storage (C5), summaries (C6), hosting and authentication (C7) and
   learner profiles (C8) neither present child-facing content nor lengthen
   practice.
@@ -1583,7 +1596,7 @@ Several pairs were examined and no credible failure mode was found in them:
   of hosting or authentication (C7) reaches only the adult, as lost
   availability.
   \item \emph{Privacy/security:} the canvas (C1) shows only the open attempt or
-  drawing, and the lesson and assessment logic (C2) holds only the current
+  drawing, and the lesson and stage-check logic (C2) holds only the current
   attempt; showing them for the wrong learner is analysed under learner profiles
   (H-RAY-006) and storage (H-MUH-004).
   \item \emph{Availability:} when summaries (C6) or learner profiles (C8) cannot

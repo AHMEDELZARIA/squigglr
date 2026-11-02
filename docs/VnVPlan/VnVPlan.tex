@@ -145,6 +145,8 @@ gave every TBD constant a method and added the missing revision rows (\#275).\\
 corrected the custom documents and the timing of the reviews, matched the
 usability tests to their SRS fit criteria, and fixed spelling, grammar and
 acronyms across the plan (\#275).\\
+1 November 2026 & Moustafa Moustafa & Wrote the team part of the generative AI
+use disclosure: tools, uses and verification, and added my entry (\#275).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -7277,36 +7279,119 @@ affirmative.
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
+This appendix describes how generative AI tools helped the team prepare and
+review this plan. The testing decisions in this plan came from our own
+discussions, the SRS and Hazard Analysis, and our meetings with our supervisor
+and teaching assistant. AI tools helped us carry out and express that work;
+they did not make decisions for us. Each member's own use is described in the
+Individual Disclosures at the end of this appendix. The team remains
+responsible for the content of the final document.
 
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+The team used the following tools while preparing this plan:
+
+\begin{itemize}
+  \item \textbf{Anthropic's Claude Opus 5.5}, accessed through Claude Code
+  (Rayan at medium effort, Moustafa at high effort, and Ahmed) and through the
+  omp coding agent at high and extra-high effort (Huzaifah);
+  \item \textbf{OpenAI's GPT-6.1 Sol} at medium effort, run as helper agents
+  that read our source documents (Huzaifah);
+  \item \textbf{VS Code Copilot} using ChatGPT 6 Luna (Shamil);
+  \item \textbf{GitHub Copilot code review}, which the team uses to provide
+  automated reviews on pull requests to the project repository.
+\end{itemize}
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+The uses below materially contributed to this plan. The sections each member
+wrote are listed in the revision history and in the Individual Disclosures.
 
-\wss{For each of the uses, identify which parts of the document were affected.}
+\begin{itemize}
+  \item \textbf{Planning the work.} AI helped members split their assignments
+  into smaller GitHub sub-issues and plan them from the issues, the rubric, the
+  VnV, Code and Writing checklists, the SRS, the Hazard Analysis and the
+  Development Plan. Helper agents read the longer documents and returned
+  summaries with line numbers. AI also helped write the GitHub issues for the
+  SRS and Hazard Analysis feedback from our meeting notes and reviews. This
+  affected how we divided the work, not a specific section.
 
-\wss{You do not need to report every interaction, but you should disclose the 
-uses that materially contributed to your work}
+  \item \textbf{Researching testing tools and approaches.} AI helped find tools
+  that fit our planned technology stack, compare the options for each kind of
+  test, identify the privacy and compliance standards that apply to the data
+  Squigglr collects, and work out strategies for the more technical tests.
+  Rayan then chose the tools and tests. This affected Section~3.6 and the
+  security and compliance tests in Section~4.2.
+
+  \item \textbf{Drafting tests and wording.} Members decided what each test
+  checks and which cases to include, and AI turned those decisions into draft
+  test cases, wording and \LaTeX{}, and helped with grammar, sentence structure
+  and clarity. Shamil used generated skeletons with starting text to brainstorm,
+  then wrote the content in their own words or reworded the generated text, and
+  kept some snippets with minimal editing. This affected the sections each
+  member wrote throughout the plan, including the tests in Sections~4.1 and 4.2,
+  the symbolic parameters and test data in Section~6.1, and the reflection
+  answers.
+
+  \item \textbf{Working out expected outputs.} For the guided lesson and attempt
+  record tests in Section~4.1, AI worked out the expected output of each attempt
+  sequence from SRS Section~9.2.
+
+  \item \textbf{Reviewing for consistency.} As sections were merged, members
+  used AI to check their tests against the SRS, the Hazard Analysis, the notes
+  from our supervisor and TA meetings, and the sections already merged. During
+  Final QA, Moustafa also used it to go through the whole plan against the VnV
+  and Writing checklists, the rubric and the SRS fit criteria. It flagged
+  problems such as usability tests that did not match their fit criteria and
+  wrong review dates. The resulting changes are in the Final QA rows of the
+  revision history.
+
+  \item \textbf{Checking with scripts.} AI helped write scripts that apply the
+  rules of SRS Section~9.2 to the sequence tables in Section~4.1, and that
+  confirm every FR-LRN and FR-REC requirement is in the traceability table in
+  Section~4.3. Final QA scripts also checked that every requirement is traced,
+  that every test has all its fields and a unique ID, that every fixture is
+  described in Section~6.1, and that every constant has a value or a way to set
+  it.
+
+  \item \textbf{Pull request reviews.} GitHub Copilot left automated reviews on
+  several of the pull requests for this plan. A separate Claude Code session
+  also reviewed pull requests \#232 to \#237 and left 34 comments. In every
+  case, a member decided which comments were valid and how to resolve them.
+
+  \item \textbf{Repository management.} Through Claude Code and the omp agent,
+  AI helped manage branches, commits and merges, fix merge conflicts, and write
+  pull request descriptions.
+\end{itemize}
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
+Every AI-assisted passage was reviewed by its author against the decisions the
+team had made before it was included. Text that did not match what we had
+decided was changed or removed.
+
+Tests were checked against the requirements they trace to, the Hazard Analysis
+and the sections teammates had already merged. Ahmed checked the expected
+outputs of the creative drawing and progress summary tests. For the
+attempt sequences, a review agent recomputed every sequence on its own and a
+script applied the rules of SRS Section~9.2 to the tables. Rayan checked each
+privacy and compliance standard before deciding which tests to include. During
+Final QA, the usability tests were compared with their SRS fit criteria.
+
+We did not treat a clean script run as proof. In Final QA, our constants script
+only read one field of the SRS table and missed two constants with a TBD range.
+Copilot's review caught them, so we fixed both and rechecked the other
+constants. We also built the final PDF, confirmed it has no undefined
+references or citations, and checked every page for content running off the
+page.
+
+Review comments from GitHub Copilot, and findings from AI-assisted reviews,
+were treated as suggestions, and a member judged each one before acting on it.
+Teammates also reviewed each other's pull requests before merging.
+
+\textbf{The team is responsible for the accuracy, completeness,
+consistency, and appropriateness of this document, regardless of whether
+material was written by a team member or with the help of an AI system.}
 
 \subsection*{Individual Disclosures}
 
@@ -7365,6 +7450,7 @@ tests in Section~4.1, the functional traceability table in Section~4.3, the
 functional symbolic parameters and test data in Section~6.1, and my
 reflection answers. I reviewed every AI-assisted passage before including it.
 All decisions in my sections are my own.
+
 \textbf{Ahmed:} I used Anthropic's Claude Opus 5.5, accessed through Claude
 Code, while preparing my sections of this document: the creative drawing and
 progress summary tests in Section~4.1, their rows in the traceability table,
@@ -7378,6 +7464,23 @@ grammar, sentence structure and clarity, along with \LaTeX{} formatting. I
 reviewed every AI-assisted passage against the SRS, the Hazard Analysis and the
 parts of this plan my teammates wrote, and checked the expected outputs of my
 tests myself, before including it. The final content is my responsibility.
+
+\textbf{Moustafa:} I used Anthropic's Claude Opus 5.5, accessed through Claude
+Code. Because the document was so large, I relied on it heavily to save time on
+project management. Connected to the GitHub CLI, it split my assignment into
+sub-issues so I could track my work in smaller pieces, checked which tasks I
+still had left, and made my commits and pull requests. For writing, I decided
+what each part should say and gave it my ideas, sometimes after brainstorming
+with it. It then wrote a first draft and the \LaTeX{} for it, which I refined
+until it said exactly what I intended. I also used it for review: as teammates
+merged their sections, I had it read the document again to check that my
+additions stayed consistent with the rest and contradicted nothing, and it
+helped me review my teammates' pull requests. GitHub Copilot also gave a light
+automated review on a few of my pull requests.
+
+All ideas in my sections are my own. I reviewed every AI-drafted passage against
+my intended meaning before including it, and I decided which flagged
+inconsistencies and review comments were valid and how to resolve them.
 
 \newpage{}
 

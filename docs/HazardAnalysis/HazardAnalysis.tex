@@ -101,8 +101,8 @@ the SRS (\#176).\\
 PH-1 in the roadmap, with the lesson and starting stage choice it protects
 (\#177).\\
 2 November 2026 & Moustafa Moustafa & Addressed peer review: H-RAY-004 now
-cites SAF-RAY-009, so a child who stops drawing leaves the lesson without more
-failed attempts (\#194).\\
+cites SAF-RAY-009, so a child who stops drawing leaves the lesson with no
+failed attempt beyond the one in progress (\#194).\\
 2 November 2026 & Moustafa Moustafa & Addressed peer review: H-MOU-001 now
 mitigates flashing outside drawing instead of claiming to eliminate it, since
 SAF-MOU-003 allows up to three flashes a second (\#189).\\
@@ -112,6 +112,8 @@ cites FR-LRN-024, which ends a non-passing attempt only after
 and the PH-1 roadmap (\#186).\\
 2 November 2026 & Moustafa Moustafa & NFR-UX-017 now says the same as the SRS:
 it bans describing the child in diagnostic, clinical or ranking terms (\#285).\\
+3 November 2026 & Moustafa Moustafa & Addressed PR review: the H-RAY-004 test
+allows the failed attempt in progress when a child stops drawing (\#290).\\
 \end{longtable}
 
 ~\newpage
@@ -902,7 +904,8 @@ when extended, and save progress (G.3); end the lesson when the child stops
 drawing, without counting the idle time as failed attempts; let audio feedback
 be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
 \texttt{ATTEMPT\_LIMIT}, that no extended lesson passes
-\texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no attempt added.
+\texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no failed
+attempt beyond the one in progress.
 & G.3, SAF-RAY-005, SAF-RAY-009 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at

@@ -229,6 +229,10 @@ requires, so a summary can pass both (\#285).\\
 2 November 2026 & Moustafa Moustafa & SRC-005.02 and the NFR-UX-003 rationale
 now match the transcript: the view of progress was P2's suggestion, not part of
 the past project (\#287).\\
+3 November 2026 & Moustafa Moustafa & Addressed PR review: the SAF-RAY-009
+rationale counts the attempt in progress when a child stops, Section~4.2 rejects
+values that break any cross-setting inequality, and Section~26 counts 143
+requirements (\#290).\\
 \end{longtable}
 
 ~\\
@@ -1266,8 +1270,8 @@ their respective ranges. Each configuration shall satisfy
 results are expressed on a normalized scale from 0 to 100; higher results
 indicate closer agreement with the stage's fixed criteria. The result is not a
 measure of the child's ability (BR-006). Attempt count settings shall be
-integers, and values violating the allowed ranges or the two cross-setting
-inequalities shall be rejected (BR-008).
+integers, and values violating the allowed ranges or any of the cross-setting
+inequalities above shall be rejected (BR-008).
 
 \paragraph{Basis and verification of numerical values.}
 The project team selected the initial ranges, defaults, five-point
@@ -5542,7 +5546,8 @@ watching (CA-001). On a shared device (CA-004), another child could then
 continue under the first child's profile. Ending an idle lesson before
 \texttt{IDLE\_TIMEOUT} logs the adult out (SAF-SHA-006) gives the lesson a
 clear ending in the record. A tired or upset child can also stop drawing, and
-the lesson then ends without more failed attempts (H-RAY-004); there is no stop
+the lesson then ends with no failed attempt beyond the one in progress, which
+ends at \texttt{ATTEMPT\_IDLE} (FR-LRN-024, H-RAY-004); there is no stop
 button, since the child does not exit a lesson (CA-001). Some children pause
 often, so the adult sets both times for each child (BR-008).\\
 \emph{Fit criterion:} in prepared lessons with no input, the check-in appears at
@@ -7083,7 +7088,7 @@ requirement, including the safety requirements derived from the Hazard Analysis.
 The functional requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements are
 classified here as \emph{Must} and assigned to the phase containing the
-behaviour they protect. The 142 identified requirements in this SRS are
+behaviour they protect. The 143 identified requirements in this SRS are
 scheduled in PH-1 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 

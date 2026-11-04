@@ -168,6 +168,9 @@ SRS FR-LRN-024: defined the finishing action as waiting \texttt{ATTEMPT\_IDLE},
 added cases (d) and (e) to T-LRN-006, changed T-LRN-007 (d), added
 \texttt{ATTEMPT\_IDLE} to T-REC-004, T-SAF-008 and the test values, and tied
 \texttt{STROKE\_PAUSE} to it (\#186, \#290).\\
+3 November 2026 & Moustafa Moustafa & Addressed PR review: T-SAF-017 now derives
+from H-RAY-004 and H-RAY-006 and has case (d), a child who stops partway
+through an attempt; the SRS verification counts 143 requirements (\#290).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -549,7 +552,7 @@ outstanding concerns. Including ``overall qualities of documentation'' and
 the document. The peer review covers more detailed fixes.
 
 Dr.\ Anand will thus be asked to keep in mind the subitems in those four
-sections of the checklist as he reads the 142 requirements and eight likely
+sections of the checklist as he reads the 143 requirements and eight likely
 changes. The requirements and validation lead (Shamil) will prepare a document
 with only the requirements and likely changes for Dr.\ Anand, so that he does
 not have to search through the SRS document. He will be asked to discuss his
@@ -6163,7 +6166,9 @@ the safety inspection; any problem is recorded as a GitHub issue labelled
 
 Purpose: a child may walk away during a lesson, and on a shared device
 another child could carry on under their profile, so an idle lesson must
-check in with the child and then end, with a clear record for the adult.
+check in with the child and then end, with a clear record for the adult. A
+tired or upset child who stops drawing must not get more failed attempts
+than the one in progress.
 
 Type: Dynamic, automatic and manual. Covers SAF-RAY-009.
 
@@ -6173,21 +6178,28 @@ values in their ranges; the test is then repeated with the highest values.
 
 Input: (a) no input for \texttt{LESSON\_IDLE\_PROMPT}, then a touch; (b) no
 input for \texttt{LESSON\_IDLE\_END}; (c) two failed attempts, then no input
+until the lesson ends; (d) one stroke of
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, then no input
 until the lesson ends.
 
 Output: (a) the check-in appears at \texttt{LESSON\_IDLE\_PROMPT}, the touch
 dismisses it, and the lesson continues at the same stage; (b) the check-in
 appears, then the lesson ends at \texttt{LESSON\_IDLE\_END}, the progress is
 saved, and the adult's view shows the lesson ended for inactivity; (c) the
-record shows exactly two failed attempts, so the idle time added none.
+record shows exactly two failed attempts, so the idle time added none; (d)
+the attempt ends as not passed at \texttt{ATTEMPT\_IDLE}, the lesson ends at
+\texttt{LESSON\_IDLE\_END}, and the record shows exactly one failed attempt.
 
 Example: with illustrative values of 60 seconds for the check-in and 120
 seconds for the end, a child who stops drawing sees an animated character at 60 seconds; if nobody
 touches the screen, the lesson ends at 120 seconds and the adult sees ``ended:
 no activity''.
 
-Test Case Derivation: the fit criterion of SAF-RAY-009 (H-RAY-006). Case (c)
-checks that inactivity is never counted as failure.
+Test Case Derivation: the fit criterion of SAF-RAY-009 (H-RAY-004,
+H-RAY-006). Case (c) checks that inactivity is never counted as failure.
+Case (d) checks the H-RAY-004 rationale: a child who stops partway through
+gets only the attempt in progress, which FR-LRN-024 ends at
+\texttt{ATTEMPT\_IDLE}.
 
 How test will be performed: Playwright uses a controlled clock to move time
 forward and checks the screen and the saved record; a tester checks by hand

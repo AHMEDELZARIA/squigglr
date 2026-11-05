@@ -163,6 +163,14 @@ usability tests to their SRS fit criteria, and fixed spelling, grammar and
 acronyms across the plan (\#275).\\
 1 November 2026 & Moustafa Moustafa & Wrote the team part of the generative AI
 use disclosure: tools, uses and verification, and added Moustafa's entry (\#275).\\
+2 November 2026 & Moustafa Moustafa & Matched the guided lesson tests to the new
+SRS FR-LRN-024: defined the finishing action as waiting \texttt{ATTEMPT\_IDLE},
+added cases (d) and (e) to T-LRN-006, changed T-LRN-007 (d), added
+\texttt{ATTEMPT\_IDLE} to T-REC-004, T-SAF-008 and the test values, and tied
+\texttt{STROKE\_PAUSE} to it (\#186, \#290).\\
+3 November 2026 & Moustafa Moustafa & Addressed PR review: T-SAF-017 now derives
+from H-RAY-004 and H-RAY-006 and has case (d), a child who stops partway
+through an attempt; the SRS verification counts 143 requirements (\#290).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -544,7 +552,7 @@ outstanding concerns. Including ``overall qualities of documentation'' and
 the document. The peer review covers more detailed fixes.
 
 Dr.\ Anand will thus be asked to keep in mind the subitems in those four
-sections of the checklist as he reads the 142 requirements and eight likely
+sections of the checklist as he reads the 143 requirements and eight likely
 changes. The requirements and validation lead (Shamil) will prepare a document
 with only the requirements and likely changes for Dr.\ Anand, so that he does
 not have to search through the SRS document. He will be asked to discuss his
@@ -1358,15 +1366,15 @@ each step.
 \subsubsection{Guided Lessons}
 \label{sec:lrn-tests}
 
-These tests cover the 23 guided lesson requirements in SRS Section~9.1
-(FR-LRN-001 to FR-LRN-023) and the rules and invariants of the formal
+These tests cover the 24 guided lesson requirements in SRS Section~9.1
+(FR-LRN-001 to FR-LRN-024) and the rules and invariants of the formal
 specification in SRS Section~9.2. The lesson flow is summarized with the
 safety-critical tests (Section~\ref{sec:safety-tests}). That summary follows
 SRS UC-005 and Section~9.2, where the child keeps practising while a
 suggestion waits. Unless a case says otherwise, an adult answers every
 suggestion before the next attempt (T-LRN-016). FR-LRN-001 to FR-LRN-007, FR-LRN-010, FR-LRN-011,
-FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022 and FR-LRN-023 are due in
-PH-1, and the rest in PH-2. Each test first runs in the phase of the
+FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022, FR-LRN-023 and FR-LRN-024
+are due in PH-1, and the rest in PH-2. Each test first runs in the phase of the
 requirements it covers. After that, its automatic parts run in CI on every
 PR, unless the test names a narrower trigger, and its manual parts run at
 the milestones the test names. The tests try to cause the failures in Hazard
@@ -1389,10 +1397,12 @@ unless a row says otherwise: \texttt{STAGE\_PASS} 80,
 \texttt{IMPROVE\_WINDOW} 2, \texttt{ATTEMPT\_EXTENSION} 2 and
 \texttt{ATTEMPT\_LIMIT\_MAX} 10 (SRS Section~4.2).
 \texttt{IMPROVE\_MARGIN} is fixed at 5.
-\item \emph{Finishing and adult check.} ``The finishing action'' is
-whatever control the design gives for ending an attempt (Finalize in SRS
-Section~9.2). Every prepared attempt ends with the finishing action unless a
-row says otherwise. ``The adult check'' is \texttt{ADULT\_CHECK}, as in the
+\item \emph{Finishing and adult check.} The child uses no control to end an
+attempt (SRS FR-LRN-024). A passing attempt ends at the stylus lift that
+completes it. ``The finishing action'' is waiting \texttt{ATTEMPT\_IDLE}
+with no input after the last stroke, which ends an attempt that has not
+passed. Every prepared attempt that does not pass is followed by the
+finishing action unless a row says otherwise. ``The adult check'' is \texttt{ADULT\_CHECK}, as in the
 safety-critical tests.
 \item \emph{How a sequence is written.} A number is one complete attempt
 with that stage result, out of 100. \texttt{95i} is an incomplete attempt
@@ -1683,9 +1693,11 @@ same event lists to the input handler directly.
 \testitem{T-LRN-006: Several strokes make one attempt}
 
 Purpose: lifting the stylus between strokes must not end the attempt, or
-the first side of a square would be judged as a whole square.
+the first side of a square would be judged as a whole square. A passing
+drawing must end the attempt by itself, and a non-passing one only after
+\texttt{ATTEMPT\_IDLE}.
 
-Type: Dynamic, automatic. Covers FR-LRN-008.
+Type: Dynamic, automatic. Covers FR-LRN-008 and FR-LRN-024.
 
 Initial State: the square lesson at T, with zero attempts.
 
@@ -1712,6 +1724,12 @@ c & The first stroke of
 \texttt{STROKE\_PAUSE} with the stylus lifted & No outcome shown and the
 attempt count still zero; after the second stroke and the finishing action,
 one complete attempt\\
+d & \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, then no input
+& The attempt ends as passed at the lift of the fourth stroke, with no
+wait; stage E\\
+e & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, then no
+input & No outcome before \texttt{ATTEMPT\_IDLE}; at \texttt{ATTEMPT\_IDLE}
+after the last stroke, one incomplete attempt, not passed\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1722,7 +1740,9 @@ Table~\ref{tab:t-lrn-006}; the test passes when every case gives it.
 Test Case Derivation: the fit criterion (``one attempt is evaluated against
 the complete figure, not two''). In SRS Section~9.2, a lift closes a
 stroke, not the attempt. (c) is the H-AHM-001 cause in which ``a stylus
-lift is mistaken for the end of an attempt''.
+lift is mistaken for the end of an attempt''. (d) and (e) are the fit
+criterion of FR-LRN-024: a passing figure ends at its last lift, and a
+non-passing one at \texttt{ATTEMPT\_IDLE}.
 
 How test will be performed: Playwright counts the attempt records and the
 evaluation results.
@@ -1758,8 +1778,9 @@ ends the session (adult check) & No outcome; stage T; counts zero; the
 attempt shows as interrupted, apart from finished attempts\\
 c & The same two strokes, then the adult switches to learner B & As (b);
 the interrupted attempt is saved under A, and nothing under B\\
-d & All of \texttt{circle.json} (which passes when finished) without the
-finishing action, then a page reload & Not passed; stage T; counts zero\\
+d & All the points of \texttt{circle.json} (which passes when finished),
+then a page reload before the stylus is lifted & Not passed; stage T; counts
+zero\\
 e & Half of \texttt{circle.json}, then the page is hidden for
 \texttt{STROKE\_PAUSE} and shown again & No outcome; counts zero\\
 \bottomrule
@@ -3976,16 +3997,17 @@ so a later change cannot alter what an earlier record means.
 
 Type: Dynamic, automatic. Covers FR-REC-004.
 
-Initial State: learner A with all eight adult-set values at their defaults.
+Initial State: learner A with all nine adult-set values at their defaults.
 Each of cases (a) to (h) starts from a new learner profile with the
 defaults.
 
 Input: in cases (a) to (h), the adult starts the circle lesson at I and
 replays P, which completes the lesson in one attempt (record 1). The adult
 then changes the one value in the row, with the adult check, and repeats
-the same steps (record 2). The other seven values stay at their defaults.
-Cases (i) and (j) test a change during a lesson and two learners. The
-cases are in Table~\ref{tab:t-rec-004}.
+the same steps (record 2). The other eight values stay at their defaults.
+Cases (i) and (j) test a change during a lesson and two learners, and case
+(k) does the same as (a) to (h) for \texttt{ATTEMPT\_IDLE}. The cases are in
+Table~\ref{tab:t-rec-004}.
 
 \begin{table}[htbp]
 \centering\small
@@ -4019,18 +4041,21 @@ i & \texttt{STAGE\_PASS} is changed from 80 to 70 during a lesson at T,
 then one N attempt & The record holds 70 with passed, or 80 with not
 passed; any other pairing fails\\
 j & A at all minimums and B at all maximums, alternating on one device,
-one F each & Each record holds its own learner's eight values\\
+one F each & Each record holds its own learner's nine values\\
+k & \texttt{ATTEMPT\_IDLE} is changed from its default to the minimum of
+its range between record 1 and record 2 & Record 1 holds the default and
+record 2 the minimum\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 Output: the expected output of each case is in its row of
 Table~\ref{tab:t-rec-004}; the test passes when every case gives it. In
-(a) to (h), each record also holds the defaults for the other seven values,
-and record 1 is unchanged after the change.
+(a) to (h) and (k), each record also holds the defaults for the other eight
+values, and record 1 is unchanged after the change.
 
 Test Case Derivation: the fit criterion asks for records before and after a
-change to each adult-set value; the eight values are those of SRS BR-008.
+change to each adult-set value; the nine values are those of SRS BR-008.
 Cases (a) to (h) follow H-MUH-007 (b), where ``Records refer to the
 learner's current adult-set values, which an adult may change at any
 time''. The SRS does not say whether a change applies to a lesson already
@@ -4038,11 +4063,12 @@ running, so in (i) the record must agree with the outcome it produced
 (H-AHM-007, stale setting). (j) is H-AHM-007, wrong learner. (g) and (h) use
 the ends of the \texttt{LESSON\_IDLE\_PROMPT} and
 \texttt{LESSON\_IDLE\_END} ranges,
-which are set for the test of SAF-RAY-009; the minimums and maximums in (j)
-include them too.
+which are set for the test of SAF-RAY-009, and (k) the minimum of the
+\texttt{ATTEMPT\_IDLE} range; the minimums and maximums in (j) include them
+too.
 
-How test will be performed: Playwright and a database read. (g), (h) and
-(j) are first run once those ranges are set.
+How test will be performed: Playwright and a database read. (g), (h), (j)
+and (k) are first run once those ranges are set.
 
 \testitem{T-REC-005: Interrupted attempt record}
 
@@ -4270,7 +4296,7 @@ earlier record says.
 Type: Dynamic, automatic. Covers FR-REC-009.
 
 Initial State: \texttt{history-\allowbreak{}seed.json} is loaded for
-learner A, whose eight adult-set values are at the minimums of their
+learner A, whose nine adult-set values are at the minimums of their
 ranges. The file holds three lesson records with 19 attempt records in
 total: (1) circle, every stage passed; (2) square, ended at
 \texttt{ATTEMPT\_LIMIT}; (3) line, unfinished. Then, in a second browser
@@ -5918,12 +5944,13 @@ Initial State: a new child profile with no values chosen.
 Input: (a) no value is set; (b) each value is set to its minimum, its
 maximum, one below the minimum and one above the maximum; (c)
 \texttt{ATTEMPT\_LIMIT} is set equal to \texttt{DIFFICULTY\_STREAK}, and
-\texttt{ATTEMPT\_LIMIT\_MAX} is set one below \texttt{ATTEMPT\_LIMIT}, and
+\texttt{ATTEMPT\_LIMIT\_MAX} is set one below \texttt{ATTEMPT\_LIMIT},
+\texttt{ATTEMPT\_IDLE} is set equal to \texttt{LESSON\_IDLE\_PROMPT}, and
 \texttt{LESSON\_IDLE\_END} is set equal to \texttt{LESSON\_IDLE\_PROMPT}; (d) a
 change is tried without completing the adult check.
 
 Output: (a) each value is the middle of its range; (b) in-range values are
-saved and out-of-range values are refused; (c) all three settings are refused;
+saved and out-of-range values are refused; (c) all four settings are refused;
 (d) nothing changes. The values in use are shown with the child's records.
 
 Example: the team-set range for \texttt{ATTEMPT\_LIMIT} is 6 to 10, so an unset
@@ -6139,7 +6166,9 @@ the safety inspection; any problem is recorded as a GitHub issue labelled
 
 Purpose: a child may walk away during a lesson, and on a shared device
 another child could carry on under their profile, so an idle lesson must
-check in with the child and then end, with a clear record for the adult.
+check in with the child and then end, with a clear record for the adult. A
+tired or upset child who stops drawing must not get more failed attempts
+than the one in progress.
 
 Type: Dynamic, automatic and manual. Covers SAF-RAY-009.
 
@@ -6149,21 +6178,28 @@ values in their ranges; the test is then repeated with the highest values.
 
 Input: (a) no input for \texttt{LESSON\_IDLE\_PROMPT}, then a touch; (b) no
 input for \texttt{LESSON\_IDLE\_END}; (c) two failed attempts, then no input
+until the lesson ends; (d) one stroke of
+\texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, then no input
 until the lesson ends.
 
 Output: (a) the check-in appears at \texttt{LESSON\_IDLE\_PROMPT}, the touch
 dismisses it, and the lesson continues at the same stage; (b) the check-in
 appears, then the lesson ends at \texttt{LESSON\_IDLE\_END}, the progress is
 saved, and the adult's view shows the lesson ended for inactivity; (c) the
-record shows exactly two failed attempts, so the idle time added none.
+record shows exactly two failed attempts, so the idle time added none; (d)
+the attempt ends as not passed at \texttt{ATTEMPT\_IDLE}, the lesson ends at
+\texttt{LESSON\_IDLE\_END}, and the record shows exactly one failed attempt.
 
 Example: with illustrative values of 60 seconds for the check-in and 120
 seconds for the end, a child who stops drawing sees an animated character at 60 seconds; if nobody
 touches the screen, the lesson ends at 120 seconds and the adult sees ``ended:
 no activity''.
 
-Test Case Derivation: the fit criterion of SAF-RAY-009 (H-RAY-006). Case (c)
-checks that inactivity is never counted as failure.
+Test Case Derivation: the fit criterion of SAF-RAY-009 (H-RAY-004,
+H-RAY-006). Case (c) checks that inactivity is never counted as failure.
+Case (d) checks the H-RAY-004 rationale: a child who stops partway through
+gets only the attempt in progress, which FR-LRN-024 ends at
+\texttt{ATTEMPT\_IDLE}.
 
 How test will be performed: Playwright uses a controlled clock to move time
 forward and checks the screen and the saved record; a tester checks by hand
@@ -6749,6 +6785,7 @@ T-SAF-005, INS-LRN\\
 FR-LRN-021 & T-LRN-018, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-022 & T-LRN-019 (inspection and automatic), T-UX-004, INS-EVAL\\
 FR-LRN-023 & T-LRN-020, T-LRN-021, INS-LRN\\
+FR-LRN-024 & T-LRN-006, INS-LRN\\
 FR-CRT-001 & T-CRT-001, T-CRT-009 (a)\\
 FR-CRT-002 & T-CRT-002, T-CRT-016 (a)\\
 FR-CRT-003 & T-CRT-003, T-CRT-016 (b)\\
@@ -7082,14 +7119,14 @@ whichever form is chosen (SAF-RAY-001).\\
 \texttt{ATTEMPT\_LIMIT}, \texttt{ATTEMPT\_LIMIT\_MAX},
 \texttt{ATTEMPT\_EXTENSION}, \texttt{DIFFICULTY\_STREAK} & As defined in the SRS constants table.\\
 \addlinespace
-\texttt{LESSON\_IDLE\_PROMPT}, \texttt{LESSON\_IDLE\_END} & Seconds. The team sets
-both ranges before the first test that uses them, by timing how long adult team
+\texttt{ATTEMPT\_IDLE}, \texttt{LESSON\_IDLE\_PROMPT}, \texttt{LESSON\_IDLE\_END} & Seconds. The team sets
+the three ranges before the first test that uses them, by timing how long adult team
 members pause between strokes when they rehearse a lesson (no child takes part).
-The minimum of \texttt{LESSON\_IDLE\_PROMPT} has to be longer than the longest
-pause, and \texttt{LESSON\_IDLE\_PROMPT} $<$ \texttt{LESSON\_IDLE\_END} $<$
-\texttt{IDLE\_TIMEOUT}, as the SRS requires. We check the ranges with the
+The minimum of \texttt{ATTEMPT\_IDLE} has to be longer than the longest
+pause, and \texttt{ATTEMPT\_IDLE} $<$ \texttt{LESSON\_IDLE\_PROMPT} $<$
+\texttt{LESSON\_IDLE\_END} $<$ \texttt{IDLE\_TIMEOUT}, as the SRS requires. We check the ranges with the
 specialists at their review of the PH-2 build (the second review in
-Section~\ref{sec:software-validation}), and record them in the SRS constants table (SAF-RAY-009).\\
+Section~\ref{sec:software-validation}), and record them in the SRS constants table (FR-LRN-024, SAF-RAY-009).\\
 \addlinespace
 \texttt{PERF\_RUNS} & Number of repeated runs per timing test.
 Proposed value: 30, enough to report a stable median and 95th percentile.\\
@@ -7137,7 +7174,7 @@ for every replay, so stored coordinates can be compared exactly.\\
 \addlinespace
 \texttt{STROKE\_PAUSE} & 2 seconds between strokes or before a check. Three
 times \texttt{STROKE\_PAUSE} (used in T-LRN-006 (c)) must stay below the
-minimum of \texttt{LESSON\_IDLE\_PROMPT} once its range is set; if that
+minimum of \texttt{ATTEMPT\_IDLE} once its range is set; if that
 minimum is 6 seconds or less, a quarter of it is used instead.\\
 \addlinespace
 \texttt{CAL\_FAIL\_MAX} & 60 points:

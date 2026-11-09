@@ -100,6 +100,24 @@ the SRS (\#176).\\
 1 November 2026 & Ahmed Elzaria & Addressed peer review: planned SAF-RAY-001 for
 PH-1 in the roadmap, with the lesson and starting stage choice it protects
 (\#177).\\
+1 November 2026 & Muhammad Huzaifah & Addressed peer review: renamed C2 to
+Lesson and stage-check logic and C4 to Creative refinement, which no longer
+assumes an external model, and said in the H-SHA introduction and the coverage
+table how H-SHA-002 applies to each refinement approach (\#178).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: H-RAY-004 now
+cites SAF-RAY-009, so a child who stops drawing leaves the lesson with no
+failed attempt beyond the one in progress (\#194).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: H-MOU-001 now
+mitigates flashing outside drawing instead of claiming to eliminate it, since
+SAF-MOU-003 allows up to three flashes a second (\#189).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: H-AHM-001 now
+cites FR-LRN-024, which ends a non-passing attempt only after
+\texttt{ATTEMPT\_IDLE}; added it to the HA-derived requirements, their totals
+and the PH-1 roadmap (\#186).\\
+2 November 2026 & Moustafa Moustafa & NFR-UX-017 now says the same as the SRS:
+it bans describing the child in diagnostic, clinical or ranking terms (\#285).\\
+3 November 2026 & Moustafa Moustafa & Addressed PR review: the H-RAY-004 test
+allows the failed attempt in progress when a child stops drawing (\#290).\\
 \end{longtable}
 
 ~\newpage
@@ -428,17 +446,17 @@ at (1.4,0) {Other people who see records}; \node[person] (team) at (4.4,0)
   (5.75,-5.75); \node[anchor=north west, font=\scriptsize\bfseries] at
   (-5.7,-2.78) {\progname{} (system boundary)}; \node[comp] (c1) at
   (-4.35,-3.65) {\textbf{C1} Touch and stylus canvas}; \node[comp] (c2) at
-  (-1.45,-3.65) {\textbf{C2} Lesson and assessment logic}; \node[comp] (c3) at
+  (-1.45,-3.65) {\textbf{C2} Lesson and stage-check logic}; \node[comp] (c3) at
   (1.45,-3.65) {\textbf{C3} Guidance-suggestion logic}; \node[comp] (c6) at
   (4.35,-3.65) {\textbf{C6} Adult access and summaries}; \node[comp] (c5) at
   (-4.35,-5.0) {\textbf{C5} Attempt storage and history}; \node[comp] (c4) at
-  (-1.45,-5.0) {\textbf{C4} Creative refinement with an external model};
+  (-1.45,-5.0) {\textbf{C4} Creative refinement};
   \node[comp] (c8) at (1.45,-5.0) {\textbf{C8} Learner profiles and adult-set
   values}; \node[comp] (c7) at (4.35,-5.0) {\textbf{C7} Hosting and
   authentication};
 % Outside: services
-\node[ext] (provider) at (-2.9,-7.0) {External refinement model and its
-  provider}; \node[ext] (hosting) at (1.0,-7.0) {Hosting service}; \node[ext]
+\node[ext] (provider) at (-2.9,-7.0) {External refinement model, if used, and
+  its provider}; \node[ext] (hosting) at (1.0,-7.0) {Hosting service}; \node[ext]
   (auth) at (4.35,-7.0) {Authentication service};
 % Interactions
 \draw[both] (child) -- node[lbl, left=1mm] {strokes; feedback} (device);
@@ -515,7 +533,7 @@ resize, recolour, erase) and their undo. & The strokes of the current attempt or
 drawing until they are checked or saved. & G.1, G.4; CON-003; ASM-003, ASM-004;
 UC-003, UC-006 \\
 \addlinespace
-C2 & Lesson and assessment logic & Runs each lesson's stages, checks every
+C2 & Lesson and stage-check logic & Runs each lesson's stages, checks every
 attempt against the stage's pass criteria, chooses predefined feedback, moves
 the child on after a pass, and ends the lesson at the attempt limit, extending
 it once if the child is improving (BR-002). & Whether an attempt passes; the
@@ -528,11 +546,13 @@ suggestion until an adult responds, and applies it only if the adult accepts. &
 Each suggestion's state: pending, accepted, declined or ignored. & G.3; BR-003;
 CON-007; UC-005 \\
 \addlinespace
-C4 & Creative refinement with an external model & Refines a creative drawing
-minimally using an external refinement model, keeps the result editable, and
-restores the child's original strokes when the child asks or, if the child
-cannot, when an adult asks. Covers what \progname{} sends to the model and how
-it checks what comes back. Refinement can be turned off (UC-007). & Each
+C4 & Creative refinement & Refines a creative drawing minimally, keeps the
+result editable, and restores the child's original strokes when the child asks
+or, if the child cannot, when an adult asks. The refinement approach is still
+open: geometric smoothing on the device, an external refinement model, or both
+(SRC-002; LC-004). If a model is used, C4 also covers what \progname{} sends to
+it and how it checks what comes back. Refinement can be turned off (UC-007). &
+Each
 creative drawing's original strokes and refined version. & G.4; BR-005; ASM-011;
 LC-004; UC-006, UC-007 \\
 \addlinespace
@@ -565,9 +585,10 @@ values in use. & BR-001, BR-008, BR-009; ASM-008, ASM-016; UC-001, UC-010 \\
 \end{longtable}
 }
 
-Two components need a note. C4 and C7 cover \progname{}'s \emph{use} of outside
-services: what it sends, what it accepts back and how it behaves when a service
-fails. The services themselves lie outside the boundary. C8 was added to the
+Two components need a note. C7, and C4 when refinement uses an external model,
+cover \progname{}'s \emph{use} of outside services: what it sends, what it
+accepts back and how it behaves when a service fails. The services themselves
+lie outside the boundary. C8 was added to the
 seven components first planned because learner profiles and adult-set values
 follow rules of their own (BR-001, BR-008) and are used by several components:
 C2 applies the values, C5 files records under the active learner, and C6 lets an
@@ -633,10 +654,11 @@ School IT administration & Manages school devices and networks, on which adults
 may not be able to install software (CON-002); a school may block the site
 (ASM-013). & \progname{} unavailable or partly blocked at school (C7, C1). \\
 \addlinespace
-External refinement model and its provider & An existing pretrained model that
-the team does not train or run, from a provider that may change (SRC-002;
-LC-004). & The service unavailable or slow, changes that are invalid or too
-large, or drawings sent to it kept by the provider (C4). \\
+External refinement model and its provider & An existing pretrained model, if
+the team uses one for refinement, that the team does not train or run, from a
+provider that may change (SRC-002; LC-004). & The service unavailable or slow,
+changes that are invalid or too large, or drawings sent to it kept by the
+provider (C4). \\
 \addlinespace
 Hosting service & A managed service that serves the website and stores the
 records (SRC-002). & An outage, or stored records lost or delayed (C7, C5). \\
@@ -767,10 +789,11 @@ checked against the five categories of harm (Physical, Psychological/well-being,
 Privacy/security, Data integrity and Availability), so that a component that
 works as specified but still harms a child is also recorded; safety is not the
 same as correctness \citep{Smith2026L08}. For the creative refinement component,
-which uses an external model, this check also covered the risks of artificial
-intelligence (AI) that arise from how \progname{} uses the model: compromise of
-privacy, over-reliance, loss of human agency, lack of capability or robustness,
-and lack of transparency \citep{SlatteryEtAl2024}. Third, each team member
+which may use an external model, this check also covered the risks of artificial
+intelligence (AI) that would arise from how \progname{} uses such a model:
+compromise of privacy, over-reliance, loss of human agency, lack of capability
+or robustness, and lack of transparency \citep{SlatteryEtAl2024}. Third, each
+team member
 writes the rows for the parts of the SRS they own, so each hazard ID carries its
 writer's prefix (H-RAY, H-MOU, H-AHM, H-MUH or H-SHA), and each member's rows
 form a table of their own. The coverage check of
@@ -886,10 +909,13 @@ improvement extension lengthens the lesson; no adult may be watching (CA-001). &
 The child becomes distressed, stops practising or refuses the activity later.
 Loss: well-being; the practice benefit. & Psychological/ well-being & Mitigate:
 end the lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX}
-when extended, and save progress (G.3); let audio feedback be muted (SRC-005,
-P2, 37:39). Document/Test: test that each lesson ends at \texttt{ATTEMPT\_LIMIT}
-and that no extended lesson passes \texttt{ATTEMPT\_LIMIT\_MAX}. & G.3,
-SAF-RAY-005 \\
+when extended, and save progress (G.3); end the lesson when the child stops
+drawing, without counting the idle time as failed attempts; let audio feedback
+be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
+\texttt{ATTEMPT\_LIMIT}, that no extended lesson passes
+\texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no failed
+attempt beyond the one in progress.
+& G.3, SAF-RAY-005, SAF-RAY-009 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
 \texttt{ATTEMPT\_LIMIT}, the same lesson is started again at once and the repetition continues. &
@@ -982,10 +1008,13 @@ premature finalization (ASM-004); a stylus lift is mistaken for the end of an
 attempt. & The drawing appears incomplete or is scored inaccurately; a child
 receives undeserved failure feedback or loses a practice attempt. Loss: accurate
 feedback and record integrity. & Data integrity & Mitigate: retain ordered
-points and stroke boundaries; distinguish stylus lifts from finalization; treat
-interrupted or unevaluable input as non-passing without consuming an attempt.
-Document/Test: replay partial strokes and interruptions before and during a
-stroke. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010 \\
+points and stroke boundaries; distinguish stylus lifts from finalization; end
+a non-passing attempt only after \texttt{ATTEMPT\_IDLE}, which the adult sets
+for each child; treat interrupted or unevaluable input as non-passing without
+consuming an attempt. Document/Test: replay partial strokes and interruptions
+before and during a stroke, and pauses between strokes shorter than
+\texttt{ATTEMPT\_IDLE}. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010,
+FR-LRN-024 \\
 \addlinespace
 \mbox{H-AHM-002} & Stylus event capture; attempt evaluation & One drawn stroke
 is captured or evaluated twice, inflating coverage or producing a spurious extra
@@ -1067,9 +1096,12 @@ FR-LRN-021 \\
 \label{sec:fmea-sha}
 
 Table~\ref{tab:fmea-sha} covers hazards regarding account and data security,
-practice records, and the external AI refinement provider. Effects are assessed
-based on privacy, data integrity, and the trustworthiness of content shown to
-children and adults.
+practice records, and the external AI refinement provider, if one is used.
+Geometric refinement runs on the device and sends no drawing to an outside
+service, so the refinement service named in H-SHA-002 applies only when an
+external model refines drawings; failures of either approach in changing a
+drawing are analysed in H-MUH-002. Effects are assessed based on privacy, data
+integrity, and the trustworthiness of content shown to children and adults.
 
 \begin{fmealandscape}
 {\footnotesize
@@ -1179,9 +1211,10 @@ children react differently to sensory input (SRC-009.05; FACT-003); no adult may
 be watching (CA-001). & The child becomes overwhelmed or distressed and stops
 practising; rapid flashing can also trigger seizures in rare cases. Loss:
 well-being; physical safety; the practice benefit. & Psychological/ well-being;
-Physical & Eliminate: no flashing on any child-facing screen, and no animation
-while the child draws. Mitigate: let an adult turn audio off for each child, let
-long sounds be paused, and keep a calm style reviewed by adults including an
+Physical & Eliminate: no animation or flashing while the child draws.
+Mitigate: let nothing on a child-facing screen flash more than three times a
+second, below the seizure threshold; let an adult turn audio off for each child,
+let long sounds be paused, and keep a calm style reviewed by adults including an
 educator or occupational therapist. Document/Test: inspect every child-facing
 screen against the calm-screen checklist. & SAF-MOU-003, NFR-UX-001, NFR-UX-006,
 NFR-UX-007, NFR-UX-010, NFR-UX-022 \\
@@ -1297,10 +1330,10 @@ components.
 \bottomrule
 \endlastfoot
 %
-\multicolumn{8}{@{}l}{\textbf{C4 Creative refinement with an external model}}
+\multicolumn{8}{@{}l}{\textbf{C4 Creative refinement}}
 \\*
 \addlinespace
-H-MUH-001 & Creative refinement with an external model & A creative change
+H-MUH-001 & Creative refinement & A creative change
 cannot be reversed: undo does not step back an edit, a refinement or a restore;
 restoring the original is not available to the child or to the adult; or a
 restore does not return the original strokes exactly. & (a)~The original strokes
@@ -1325,14 +1358,15 @@ by point with the original. & (a)~FR-CRT-017, FR-CRT-024\newline
 (c)~FR-CRT-017\newline
 (d)~FR-CRT-018, FR-CRT-019 \\
 \addlinespace
-H-MUH-002 & Creative refinement with an external model & A refinement changes
+H-MUH-002 & Creative refinement & A refinement changes
 the drawing wrongly: a point moves further than \texttt{REFINE\_TOLERANCE}; a
 stroke is added, removed or recoloured; only part of a result is applied; or a
 refinement reaches a drawing outside the supported set, an older version of the
-drawing, or strokes drawn in a guided lesson. & (a)~The external model returns
-invalid, malformed, partial or excessive changes, and the team does not train it
-(LC-004). (b)~A slow connection (CA-003) delivers a result after the child has
-kept drawing or has closed the drawing. (c)~A stroke is refined again each time
+drawing, or strokes drawn in a guided lesson. & (a)~The refinement returns
+invalid, malformed, partial or excessive changes; if an external model is used,
+the team does not train it (LC-004). (b)~A slow connection (CA-003) delivers a
+result after the child has kept drawing or has closed the drawing. (c)~A stroke
+is refined again each time
 the child finishes, so the changes add up. (d)~The drawing is empty or is not of
 a supported item (OI-03). (e)~Nothing bars refinement from guided lessons. & The
 drawing is no longer what the child drew, and the child may no longer see it as
@@ -1354,7 +1388,7 @@ with drawings outside the supported set, and with guided lesson strokes. &
 (d)~FR-CRT-015\newline
 (e)~FR-CRT-027 \\
 \addlinespace
-H-MUH-006 & Creative refinement with an external model & A refinement that meets
+H-MUH-006 & Creative refinement & A refinement that meets
 every rule is still not accepted by the child as their own drawing: the child
 erases or redraws the refined parts, stops drawing, or is upset after the
 refinement. & (a)~Refinement happens with no action from the child (BR-005), and
@@ -1541,15 +1575,15 @@ C1 Touch and stylus canvas & H-MOU-001 & H-MOU-001, H-MOU-003, (H-MOU-002),
 (H-MUH-001) & --- & H-RAY-002, H-AHM-001, H-AHM-002, H-AHM-003, (H-MUH-001) &
 H-RAY-002 \\
 \addlinespace
-C2 Lesson and assessment logic & --- & H-RAY-004, H-RAY-005, H-MOU-002,
+C2 Lesson and stage-check logic & --- & H-RAY-004, H-RAY-005, H-MOU-002,
 H-MOU-004, (H-RAY-001), (H-RAY-007) & --- & H-AHM-004, H-AHM-005, (H-AHM-001),
 (H-AHM-002), (H-AHM-003), (H-AHM-007) & --- \\
 \addlinespace
 C3 Guidance-\allowbreak{}suggestion logic & --- & H-AHM-006 & (H-RAY-006) & ---
 & --- \\
 \addlinespace
-C4 Creative refinement with an external model & --- & H-MOU-006, H-MUH-001,
-H-MUH-002, H-MUH-006 & --- & H-MUH-001, H-MUH-002, (H-MUH-003) & --- \\
+C4 Creative refinement & --- & H-MOU-006, H-MUH-001, H-MUH-002, H-MUH-006 &
+(H-SHA-002) & H-MUH-001, H-MUH-002, (H-MUH-003) & --- \\
 \addlinespace
 C5 Attempt storage and history & --- & H-MUH-005, (H-RAY-003), (H-RAY-005),
 (H-MOU-005) & H-MUH-004, (H-RAY-006) & H-MUH-003, H-MUH-004, H-MUH-005,
@@ -1575,7 +1609,7 @@ Several pairs were examined and no credible failure mode was found in them:
   feedback, so \mbox{H-MOU-001} is placed there. Practice that does not end or
   that is started again at once is a psychological/well-being hazard, not a physical
   path to bodily harm; H-RAY-004 and H-RAY-005 address it in the lesson and
-  assessment logic (C2). The guidance-suggestion logic (C3), creative refinement
+  stage-check logic (C2). The guidance-suggestion logic (C3), creative refinement
   (C4), storage (C5), summaries (C6), hosting and authentication (C7) and
   learner profiles (C8) neither present child-facing content nor lengthen
   practice.
@@ -1583,7 +1617,7 @@ Several pairs were examined and no credible failure mode was found in them:
   of hosting or authentication (C7) reaches only the adult, as lost
   availability.
   \item \emph{Privacy/security:} the canvas (C1) shows only the open attempt or
-  drawing, and the lesson and assessment logic (C2) holds only the current
+  drawing, and the lesson and stage-check logic (C2) holds only the current
   attempt; showing them for the wrong learner is analysed under learner profiles
   (H-RAY-006) and storage (H-MUH-004).
   \item \emph{Availability:} when summaries (C6) or learner profiles (C8) cannot
@@ -1754,6 +1788,13 @@ from endpoint-only guidance to independent drawing, upon a passing attempt at
 the active stage; a passing independent drawing attempt completes the current
 lesson without starting a different lesson. & H-AHM-004, H-MOU-004 & Learning
 Activity \\
+\addlinespace
+FR-LRN-024\newline\emph{Ending an attempt} & Each time the child lifts the stylus
+in a guided lesson, Squigglr shall evaluate the strokes of the attempt so far,
+and shall end the attempt as passed as soon as they are complete and meet
+\texttt{STAGE\_PASS}. If they do not, Squigglr shall end the attempt as not
+passed after \texttt{ATTEMPT\_IDLE} with no input. No other event ends an
+attempt, except an interruption (FR-LRN-009). & H-AHM-001 & Learning Activity \\
 \addlinespace
 FR-CRT-007\newline\emph{Undo a change} & Squigglr shall let the child undo the
 changes to the open creative drawing one at a time, most recent first, back to
@@ -1997,7 +2038,8 @@ Politeness \\
 \addlinespace
 NFR-UX-017\newline\emph{Plain wording in adult views} & Adult views shall use
 plain language, shall explain each glossary term where it first appears in a
-view, and shall not use diagnostic, clinical or ranking words. & H-MOU-005 &
+view, and shall not describe the child in diagnostic, clinical or ranking
+terms. & H-MOU-005 &
 Under\-stand\-ability and Politeness \\
 \addlinespace
 NFR-UX-021\newline\emph{Feedback not by sound alone} & Every message to the
@@ -2059,7 +2101,7 @@ SAF-RAY-009 & During a guided lesson, Squigglr shall show a check-in a child
 who cannot read can understand after \texttt{LESSON\_IDLE\_PROMPT} with no
 input, end the lesson after \texttt{LESSON\_IDLE\_END} with no input, keep the
 progress saved and record that it ended for inactivity, without counting the
-idle time as an attempt. & H-RAY-006 & Safety-Critical \\
+idle time as an attempt. & H-RAY-004, H-RAY-006 & Safety-Critical \\
 \addlinespace
 SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
 event from being counted more than once during evaluation or recording of an
@@ -2099,7 +2141,7 @@ times in any one-second period. & H-MOU-001 & Safety-Critical \\
 \end{longtable}
 }
 
-In total, 88 requirements are HA-derived: 16 Learning Activity, 22 Creative
+In total, 89 requirements are HA-derived: 17 Learning Activity, 22 Creative
 Drawing, nine Attempt Record and 11 Progress Summary requirements, five Look
 and Feel and seven Usability and Humanity requirements, and 18 safety-critical
 requirements. Every row of the five FMEA tables cites at least one of them. The
@@ -2181,13 +2223,15 @@ strokes (FR-LRN-007), no passing status for missing or ambiguous input
 distortion of stroke positions when the canvas size or device orientation
 changes (SAF-AHM-002) (H-AHM-001, H-AHM-002, H-AHM-003). \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023 & The
+PH-1 (Nov.~23, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023,
+FR-LRN-024 & The
 fourth PoC experiment uses prepared sequences of successful and unsuccessful
 attempts and demonstrates reduced assistance following success (SRC-002). These
 requirements state when an attempt is complete and passes (FR-LRN-011,
-FR-LRN-013), that the lesson and starting stage the adult chose are used
+FR-LRN-013), when it ends (FR-LRN-024), that the lesson and starting stage the adult chose are used
 (FR-LRN-016) and that a passing attempt advances within the lesson without a
-further adult action (FR-LRN-023) (H-AHM-004, H-AHM-005, H-AHM-007, H-MOU-004).
+further adult action (FR-LRN-023) (H-AHM-001, H-AHM-004, H-AHM-005, H-AHM-007,
+H-MOU-004).
 \\
 \addlinespace
 PH-1 (Nov.~23, 2026) & SAF-RAY-001 & The PoC lets an adult choose the lesson and

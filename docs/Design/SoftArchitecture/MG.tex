@@ -50,6 +50,9 @@
 \midrule
 9 November 2026 & Moustafa Moustafa & Added the reference material, the
 introduction and the anticipated and unlikely changes (\#297).\\
+9 November 2026 & Moustafa Moustafa & Added the module hierarchy, the
+connection between requirements and design and the module decomposition
+(\#298).\\
 \bottomrule
 \end{tabularx}
 
@@ -275,11 +278,47 @@ design decisions the modules rely on.
 This section provides an overview of the module design. Modules are summarized
 in a hierarchy decomposed by secrets in Table \ref{TblMH}. The modules listed
 below, which are leaves in the hierarchy tree, are the modules that will
-actually be implemented.
+actually be implemented. Level 1 of the hierarchy (Hardware-Hiding,
+Behaviour-Hiding and Software Decision) only groups the leaves and is not
+implemented.
 
 \begin{description}
-\item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
-\item ...
+\item [\refstepcounter{mnum} \mthemnum \label{mInputDevice}:] Input Device Module
+\item [\refstepcounter{mnum} \mthemnum \label{mDisplay}:] Display Module
+\item [\refstepcounter{mnum} \mthemnum \label{mAudio}:] Audio Output Module
+\item [\refstepcounter{mnum} \mthemnum \label{mLessonControl}:] Guided Lesson
+  Control Module
+\item [\refstepcounter{mnum} \mthemnum \label{mCatalogue}:] Lesson Catalogue
+  Module
+\item [\refstepcounter{mnum} \mthemnum \label{mAttempt}:] Attempt Module
+\item [\refstepcounter{mnum} \mthemnum \label{mEvaluation}:] Attempt Evaluation
+  Module
+\item [\refstepcounter{mnum} \mthemnum \label{mFeedback}:] Feedback Module
+\item [\refstepcounter{mnum} \mthemnum \label{mImprovement}:] Improvement
+  Measure Module
+\item [\refstepcounter{mnum} \mthemnum \label{mRecord}:] Attempt Record Module
+\item [\refstepcounter{mnum} \mthemnum \label{mCreative}:] Creative Drawing
+  Module
+\item [\refstepcounter{mnum} \mthemnum \label{mRefineControl}:] Refinement
+  Control Module
+\item [\refstepcounter{mnum} \mthemnum \label{mChildScreen}:] Child Screen
+  Module
+\item [\refstepcounter{mnum} \mthemnum \label{mAccess}:] Adult Access Module
+\item [\refstepcounter{mnum} \mthemnum \label{mProfile}:] Learner Profile Module
+\item [\refstepcounter{mnum} \mthemnum \label{mSettings}:] Learner Settings
+  Module
+\item [\refstepcounter{mnum} \mthemnum \label{mSummary}:] Progress Summary
+  Module
+\item [\refstepcounter{mnum} \mthemnum \label{mAdultView}:] Adult View Module
+\item [\refstepcounter{mnum} \mthemnum \label{mStroke}:] Stroke Module
+\item [\refstepcounter{mnum} \mthemnum \label{mGeometry}:] Geometry Module
+\item [\refstepcounter{mnum} \mthemnum \label{mHistory}:] Edit History Module
+\item [\refstepcounter{mnum} \mthemnum \label{mRefineEngine}:] Refinement
+  Engine Module
+\item [\refstepcounter{mnum} \mthemnum \label{mStorage}:] Storage Module
+\item [\refstepcounter{mnum} \mthemnum \label{mRecovery}:] Connection Recovery
+  Module
+\item [\refstepcounter{mnum} \mthemnum \label{mLog}:] Audit Log Module
 \end{description}
 
 
@@ -290,22 +329,36 @@ actually be implemented.
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding Module} & ~ \\
+\multirow{3}{0.3\textwidth}{Hardware-Hiding Module} & Input Device Module\\
+& Display Module\\
+& Audio Output Module\\
 \midrule
 
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding Module} & ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\ 
-& ?\\
+\multirow{15}{0.3\textwidth}{Behaviour-Hiding Module} & Guided Lesson Control
+Module\\
+& Lesson Catalogue Module\\
+& Attempt Module\\
+& Attempt Evaluation Module\\
+& Feedback Module\\
+& Improvement Measure Module\\
+& Attempt Record Module\\
+& Creative Drawing Module\\
+& Refinement Control Module\\
+& Child Screen Module\\
+& Adult Access Module\\
+& Learner Profile Module\\
+& Learner Settings Module\\
+& Progress Summary Module\\
+& Adult View Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision Module} & {?}\\
-& ?\\
-& ?\\
+\multirow{7}{0.3\textwidth}{Software Decision Module} & Stroke Module\\
+& Geometry Module\\
+& Edit History Module\\
+& Refinement Engine Module\\
+& Storage Module\\
+& Connection Recovery Module\\
+& Audit Log Module\\
 \bottomrule
 
 \end{tabular}
@@ -317,14 +370,66 @@ actually be implemented.
 
 The design of the system is intended to satisfy the requirements developed in
 the SRS. In this stage, the system is decomposed into modules. The connection
-between requirements and modules is listed in Table~\ref{TblRT}.
+between requirements and modules is listed in Table~\ref{TblRT}. The design
+decisions below are the ones the requirements call for but do not make
+themselves.
 
-\wss{The intention of this section is to document decisions that are made
-  ``between'' the requirements and the design.  To satisfy some requirements,
-  design decisions need to be made.  Rather than make these decisions implicit,
-  they are explicitly recorded here.  For instance, if a program has security
-  requirements, a specific design decision may be made to satisfy those
-  requirements with a password.}
+\begin{itemize}
+\item \textbf{Lessons are data.} The lessons, stages, target shapes and
+  predefined difficulties are kept as data that the Lesson Catalogue Module
+  (\mref{mCatalogue}) reads, so adding or reordering a lesson changes no code
+  (NFR-MAINT-001, LC-001). All the rules for moving between stages are in one
+  module, the Guided Lesson Control Module (\mref{mLessonControl}), so a
+  programmer can find stage behaviour in one place (NFR-MAINT-002).
+\item \textbf{One way in for drawing input.} Only the Input Device Module
+  (\mref{mInputDevice}) reads browser pointer events. It drops duplicate reports
+  of the same event (SAF-AHM-001), keeps points in place when the canvas size or
+  orientation changes (SAF-AHM-002), and passes the rest of the system strokes
+  in the form the Stroke Module (\mref{mStroke}) defines. A new device or finger
+  input then changes only \mref{mInputDevice} (LC-003, LC-006).
+\item \textbf{Strokes are drawn on the device.} The Display Module
+  (\mref{mDisplay}) draws each stroke as it comes in, with no call to the
+  server, to meet the stroke feedback latency (NFR-PERF-001).
+\item \textbf{Feedback content is kept apart from feedback rules.} The Guided
+  Lesson Control Module decides which feedback to give, and the Feedback Module
+  (\mref{mFeedback}) holds what it looks and sounds like, so educators and
+  therapists can revise the content without changing the rules (LC-005,
+  NFR-UX-007).
+\item \textbf{Refinement is checked before it is applied.} The Refinement
+  Control Module (\mref{mRefineControl}) keeps the original strokes, checks every
+  result from the Refinement Engine Module (\mref{mRefineEngine}) against the
+  refinement tolerance, and leaves the drawing unchanged if the result is late,
+  fails or is out of tolerance (FR-CRT-012, FR-CRT-017, FR-CRT-020,
+  FR-CRT-021). The refinement service can then be swapped without touching the
+  creative space (LC-004).
+\item \textbf{Records are written once.} The Attempt Record Module
+  (\mref{mRecord}) saves each attempt once and never changes a saved record
+  (FR-REC-008, FR-REC-009). The Storage Module (\mref{mStorage}) refuses changes
+  to saved records, and the Audit Log Module (\mref{mLog}) logs any attempt to
+  change one (NFR-SEC-003).
+\item \textbf{A save counts only when the server confirms it.} The Storage
+  Module reports a save as done only after the server confirms it (SAF-SHA-003).
+  Until then, the Connection Recovery Module (\mref{mRecovery}) keeps the
+  attempt or drawing on the device and sends it again when the connection comes
+  back (SAF-RAY-003, NFR-PERF-005, FR-CRT-025).
+\item \textbf{Every request is from a signed-in adult.} The Adult Access Module
+  (\mref{mAccess}) signs adults in through an authentication service, and the
+  Storage Module serves data only to a signed-in adult who owns it (SAF-SHA-001,
+  NFR-SEC-001). An action a child must not do alone, such as choosing a lesson,
+  goes through an adult check in \mref{mAccess} (SAF-RAY-001).
+\item \textbf{Adult-set values are checked in one place.} The Learner Settings
+  Module (\mref{mSettings}) checks every value against its range and the other
+  values before saving it (SAF-RAY-008), and the other modules only read the
+  saved values (LC-002).
+\item \textbf{Progress summaries are not stored.} The Progress Summary Module
+  (\mref{mSummary}) builds a summary from the saved records each time an adult
+  opens it, as the SRS data model describes, so a summary can never disagree
+  with the records (FR-PRG-011, LC-007).
+\item \textbf{Child screens and adult views are separate modules.} The Child
+  Screen Module (\mref{mChildScreen}) and the Adult View Module
+  (\mref{mAdultView}) share no layout, which keeps the adult views distinct from
+  what the child sees (NFR-UX-003).
+\end{itemize}
 
 \section{Module Decomposition} \label{SecMD}
 
@@ -335,64 +440,328 @@ module. The \emph{Services} field specifies \emph{what} the module will do
 without documenting \emph{how} to do it. For each module, a suggestion for the
 implementing software is given under the \emph{Implemented By} title. If the
 entry is \emph{OS}, this means that the module is provided by the operating
-system or by standard programming language libraries.  \emph{\progname{}} means the
-module will be implemented by the \progname{} software.
+system, the browser or standard programming language libraries.
+\emph{\progname{}} means the module will be implemented by the \progname{}
+software, and a library in brackets is one the module is expected to use.
 
 Only the leaf modules in the hierarchy have to be implemented. If a dash
 (\emph{--}) is shown, this means that the module is not a leaf and will not have
 to be implemented.
 
-\subsection{Hardware Hiding Modules (\mref{mHH})}
+\subsection{Hardware-Hiding Modules}
 
 \begin{description}
-\item[Secrets:]The data structure and algorithm used to implement the virtual
-  hardware.
-\item[Services:]Serves as a virtual hardware used by the rest of the
-  system. This module provides the interface between the hardware and the
-  software. So, the system can use it to display outputs or to accept inputs.
-\item[Implemented By:] OS
-\end{description}
-
-\subsection{Behaviour-Hiding Module}
-
-\begin{description}
-\item[Secrets:]The contents of the required behaviours.
-\item[Services:]Includes programs that provide externally visible behaviour of
-  the system as specified in the software requirements specification (SRS)
-  documents. This module serves as a communication layer between the
-  hardware-hiding module and the software decision module. The programs in this
-  module will need to change if there are changes in the SRS.
+\item[Secrets:] The data structures and algorithms used to implement the
+  virtual hardware.
+\item[Services:] Serves as a virtual hardware used by the rest of the system.
+  These modules provide the interface between the device, through the browser,
+  and the software. So, the system can use them to accept drawing input, draw on
+  the screen and play sounds.
 \item[Implemented By:] --
 \end{description}
 
-\subsubsection{Input Format Module (\mref{mInput})}
+\subsubsection{Input Device Module (\mref{mInputDevice})}
 
 \begin{description}
-\item[Secrets:]The format and structure of the input data.
-\item[Services:]Converts the input data into the data structure used by the
-  input parameters module.
-\item[Implemented By:] [Your Program Name Here]
-\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-  [Information to include for leaf modules in the decomposition by secrets tree.]
+\item[Secrets:] The way the browser reports touchscreen and stylus input, and
+  the list of supported device and browser combinations. These are one secret
+  because a new device changes both together (LC-003).
+\item[Services:] Turns browser pointer events into stroke points, drops
+  duplicate reports of the same event, keeps points in place when the canvas
+  size or orientation changes, and tells the adult when the device or browser is
+  not supported.
+\item[Implemented By:] \progname{} (Pointer Events)
+\item[Type of Module:] Abstract Object
 \end{description}
 
-\subsubsection{Etc.}
+\subsubsection{Display Module (\mref{mDisplay})}
 
+\begin{description}
+\item[Secrets:] The drawing library and the method used to draw strokes, guides
+  and images on the screen.
+\item[Services:] Draws strokes, guide outlines, endpoints, demonstrations and
+  feedback images on the canvas, and limits flashing on child screens.
+\item[Implemented By:] \progname{} (Paper.js)
+\item[Type of Module:] Abstract Object
+\end{description}
 
-\subsection{Software Decision Module}
+\subsubsection{Audio Output Module (\mref{mAudio})}
+
+\begin{description}
+\item[Secrets:] The browser audio interface and the format of the sound files.
+\item[Services:] Plays a sound and turns sound on or off for the active
+  learner.
+\item[Implemented By:] OS (browser audio)
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsection{Behaviour-Hiding Modules}
+
+\begin{description}
+\item[Secrets:] The contents of the required behaviours.
+\item[Services:] Includes programs that provide externally visible behaviour of
+  the system as specified in the software requirements specification (SRS)
+  documents. These modules serve as a communication layer between the
+  hardware-hiding modules and the software decision modules. The programs in
+  these modules will need to change if there are changes in the SRS.
+\item[Implemented By:] --
+\end{description}
+
+\subsubsection{Guided Lesson Control Module (\mref{mLessonControl})}
+
+\begin{description}
+\item[Secrets:] The rules for moving through a guided lesson: which stage comes
+  next, when an extension or go-back suggestion is given, and when the lesson
+  ends. These are one secret because the SRS rules for advancing and ending a
+  lesson depend on each other (FR-LRN-019 to FR-LRN-021).
+\item[Services:] Starts a lesson at the stage an adult chooses, starts each
+  attempt, decides the feedback after each attempt, moves to the next stage,
+  offers an extension or a go-back suggestion, and ends the lesson at the
+  attempt limit or when the child stops drawing.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Lesson Catalogue Module (\mref{mCatalogue})}
+
+\begin{description}
+\item[Secrets:] The lessons, their stages, target shapes and predefined
+  difficulties, and the format they are stored in.
+\item[Services:] Gives the list of approved lessons, and the target shape,
+  guides and predefined difficulties of each stage.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Attempt Module (\mref{mAttempt})}
+
+\begin{description}
+\item[Secrets:] The events that end an attempt.
+\item[Services:] Collects the strokes of one attempt, asks for an evaluation at
+  each stylus lift, and ends the attempt when it passes, after
+  \texttt{ATTEMPT\_IDLE} with no input, or when it is interrupted.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Data Type
+\end{description}
+
+\subsubsection{Attempt Evaluation Module (\mref{mEvaluation})}
+
+\begin{description}
+\item[Secrets:] The method that classifies an attempt against its target.
+\item[Services:] Decides whether an attempt is valid, complete and guided,
+  whether it meets \texttt{STAGE\_PASS}, and which predefined difficulties it
+  shows.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
+\end{description}
+
+\subsubsection{Feedback Module (\mref{mFeedback})}
+
+\begin{description}
+\item[Secrets:] The wording, images, colours and sounds of the feedback the
+  child sees.
+\item[Services:] Gives the content to show or play for each kind of feedback,
+  such as a passed stage, a missed part or effort on a non-passing attempt.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
+\end{description}
+
+\subsubsection{Improvement Measure Module (\mref{mImprovement})}
+
+\begin{description}
+\item[Secrets:] The measure of improvement over past attempts.
+\item[Services:] Says whether the child is improving at a stage, from the
+  results of their past attempts within \texttt{IMPROVE\_WINDOW}.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
+\end{description}
+
+\subsubsection{Attempt Record Module (\mref{mRecord})}
+
+\begin{description}
+\item[Secrets:] The contents of attempt and lesson records.
+\item[Services:] Saves each attempt once, with its actual strokes, result,
+  difficulties and the adult-set values in use, saves each lesson record and
+  suggestion response, and reads back a learner's records.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Creative Drawing Module (\mref{mCreative})}
+
+\begin{description}
+\item[Secrets:] The editing tools of the creative space.
+\item[Services:] Draws strokes, selects, moves, resizes, recolours and erases a
+  part, undoes and redoes a change, starts a new drawing, shows unsaved changes,
+  and saves and reopens the active learner's drawings.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Refinement Control Module (\mref{mRefineControl})}
+
+\begin{description}
+\item[Secrets:] The rules for when a drawing is refined and how a result is
+  accepted.
+\item[Services:] Refines a finished drawing when refinement is on, checks the
+  result against the refinement tolerance, applies it as editable strokes,
+  shows that the drawing is refined, restores the exact original, and leaves the
+  drawing unchanged when refinement fails or the result is out of date.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Child Screen Module (\mref{mChildScreen})}
+
+\begin{description}
+\item[Secrets:] The layout and navigation of the child screens.
+\item[Services:] Shows the guided lesson screen and the creative space with
+  large touch targets, images and icons instead of text, and the active
+  learner's avatar.
+\item[Implemented By:] \progname{} (React, Next.js)
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Adult Access Module (\mref{mAccess})}
+
+\begin{description}
+\item[Secrets:] The authentication service and sign-in method.
+\item[Services:] Signs an adult up, in and out, signs them out after
+  \texttt{IDLE\_TIMEOUT}, logs sign-in events, and runs the adult check before
+  an action a child must not do alone.
+\item[Implemented By:] \progname{} (Supabase Auth)
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Learner Profile Module (\mref{mProfile})}
+
+\begin{description}
+\item[Secrets:] The contents of a learner profile and the choice of active
+  learner.
+\item[Services:] Creates a learner profile with an identifier and an avatar,
+  lists an adult's learners, and sets and gives the active learner.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Learner Settings Module (\mref{mSettings})}
+
+\begin{description}
+\item[Secrets:] The adult-set values, with the range and default of each and the
+  rules between them.
+\item[Services:] Saves a learner's adult-set values only when each is in its
+  range and the rules between them hold, fills in the default for a value the
+  adult does not choose, and gives the saved values to the other modules.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Progress Summary Module (\mref{mSummary})}
+
+\begin{description}
+\item[Secrets:] The method that builds a progress summary from the records.
+\item[Services:] Builds one learner's progress over time by lesson, keeps
+  attempts with and without a guide apart, shows recurring difficulties,
+  interrupted attempts and stages not attempted, opens the attempts behind it,
+  and gives no overall score.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
+\end{description}
+
+\subsubsection{Adult View Module (\mref{mAdultView})}
+
+\begin{description}
+\item[Secrets:] The layout and navigation of the adult views.
+\item[Services:] Shows the sign-in, profile, settings, lesson choice, progress
+  and history views in plain wording, usable by keyboard and with resizable
+  text.
+\item[Implemented By:] \progname{} (React, Next.js)
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsection{Software Decision Modules}
 
 \begin{description}
 \item[Secrets:] The design decision based on mathematical theorems, physical
-  facts, or programming considerations. The secrets of this module are
+  facts, or programming considerations. The secrets of these modules are
   \emph{not} described in the SRS.
 \item[Services:] Includes data structure and algorithms used in the system that
-  do not provide direct interaction with the user. 
-  % Changes in these modules are more likely to be motivated by a desire to
-  % improve performance than by externally imposed changes.
+  do not provide direct interaction with the user.
 \item[Implemented By:] --
 \end{description}
 
-\subsubsection{Etc.}
+\subsubsection{Stroke Module (\mref{mStroke})}
+
+\begin{description}
+\item[Secrets:] The data structure for strokes and their points.
+\item[Services:] Creates a stroke, adds points with their times, and gives the
+  points of a stroke back.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Data Type
+\end{description}
+
+\subsubsection{Geometry Module (\mref{mGeometry})}
+
+\begin{description}
+\item[Secrets:] The geometric algorithms on paths.
+\item[Services:] Measures how far a path is from a target path and how much of
+  the target it covers, and smooths and simplifies a path.
+\item[Implemented By:] \progname{} (Paper.js)
+\item[Type of Module:] Library
+\end{description}
+
+\subsubsection{Edit History Module (\mref{mHistory})}
+
+\begin{description}
+\item[Secrets:] The data structure that keeps edits for undo and redo.
+\item[Services:] Records a change, undoes the last change and redoes an undone
+  change.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Data Type
+\end{description}
+
+\subsubsection{Refinement Engine Module (\mref{mRefineEngine})}
+
+\begin{description}
+\item[Secrets:] The algorithm or service that refines stroke coordinates.
+\item[Services:] Takes stroke coordinates and returns adjusted coordinates at
+  the same scale, or reports that it could not refine them.
+\item[Implemented By:] \progname{} (refinement service TBD, LC-004)
+\item[Type of Module:] Library
+\end{description}
+
+\subsubsection{Storage Module (\mref{mStorage})}
+
+\begin{description}
+\item[Secrets:] The database and hosting service, and the layout of records in
+  them.
+\item[Services:] Saves and reads records for a signed-in adult, checks input
+  before saving it, refuses changes to saved records, and confirms each save.
+\item[Implemented By:] \progname{} (Supabase PostgreSQL)
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Connection Recovery Module (\mref{mRecovery})}
+
+\begin{description}
+\item[Secrets:] The on-device store for unsaved attempts and drawings, and the
+  rule for when they are sent again.
+\item[Services:] Keeps an attempt or drawing on the device until the server
+  confirms it is saved, sends it again when the connection comes back, and lists
+  the ones that could not be saved.
+\item[Implemented By:] \progname{} (browser storage)
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Audit Log Module (\mref{mLog})}
+
+\begin{description}
+\item[Secrets:] The contents and location of the audit log.
+\item[Services:] Logs sign-in events and attempts to change saved records on the
+  server.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Abstract Object
+\end{description}
 
 \section{Traceability Matrix} \label{SecTM}
 

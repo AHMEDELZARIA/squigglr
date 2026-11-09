@@ -23,9 +23,10 @@
 \newcommand{\actheacnum}{AC\theacnum}
 \newcommand{\acref}[1]{AC\ref{#1}}
 
+% Unlikely changes are ULC, not UC, because the SRS uses UC for use cases.
 \newcounter{ucnum}
-\newcommand{\uctheucnum}{UC\theucnum}
-\newcommand{\uref}[1]{UC\ref{#1}}
+\newcommand{\uctheucnum}{ULC\theucnum}
+\newcommand{\uref}[1]{ULC\ref{#1}}
 
 \newcounter{mnum}
 \newcommand{\mthemnum}{M\themnum}
@@ -43,11 +44,12 @@
 
 \section{Revision History}
 
-\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
-\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3cm}
+>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X}
+\toprule \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+9 November 2026 & Moustafa Moustafa & Added the reference material, the
+introduction and the anticipated and unlikely changes (\#297).\\
 \bottomrule
 \end{tabularx}
 
@@ -66,15 +68,17 @@ This section records information for easy reference.
   \midrule 
   AC & Anticipated Change\\
   DAG & Directed Acyclic Graph \\
+  FR & Functional Requirement (SRS)\\
+  LC & Likely Change (SRS)\\
   M & Module \\
   MG & Module Guide \\
+  MIS & Module Interface Specification\\
+  NFR & Non-Functional Requirement (SRS)\\
   OS & Operating System \\
-  R & Requirement\\
-  SC & Scientific Computing \\
+  SAF & Safety-Critical Requirement (SRS)\\
   SRS & Software Requirements Specification\\
-  \progname & Explanation of program name\\
-  UC & Unlikely Change \\
-  \wss{etc.} & \wss{...}\\
+  \progname & The drawing practice website this MG describes\\
+  ULC & Unlikely Change \\
   \bottomrule
 \end{tabular}\\
 
@@ -97,11 +101,12 @@ software.  A module is a work assignment for a programmer or programming
 team~\citep{ParnasEtAl1984}.  We advocate a decomposition
 based on the principle of information hiding~\citep{Parnas1972a}.  This
 principle supports design for change, because the ``secrets'' that each module
-hides represent likely future changes.  Design for change is valuable in SC,
-where modifications are frequent, especially during initial development as the
-solution space is explored.  
+hides represent likely future changes.  Design for change matters for
+\progname{} because several parts are expected to change: the lessons, the
+supported devices, the refinement service and the feedback the child sees
+(SRS Section~27~\citep{SRS}).
 
-Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
+Our design follows the rules laid out by \citet{ParnasEtAl1984}, as follows:
 \begin{itemize}
 \item System details that are likely to change independently should be the
   secrets of separate modules.
@@ -113,7 +118,9 @@ Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
 After completing the first stage of the design, the Software Requirements
 Specification (SRS), the Module Guide (MG) is developed~\citep{ParnasEtAl1984}. The MG
 specifies the modular structure of the system and is intended to allow both
-designers and maintainers to easily identify the parts of the software.  The
+designers and maintainers to easily identify the parts of the software. The
+requirements the modules meet are in the SRS~\citep{SRS}, and the interface of
+each module is in the MIS~\citep{MIS}. The
 potential readers of this document are as follows:
 
 \begin{itemize}
@@ -153,34 +160,114 @@ unlikely changes are listed in Section \ref{SecUchange}.
 Anticipated changes are the source of the information that is to be hidden
 inside the modules. Ideally, changing one of the anticipated changes will only
 require changing the one module that hides the associated decision. The approach
-adapted here is called design for
+adopted here is called design for
 change.
 
-\begin{description}
-\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
-  hardware on which the software is running.
-\item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
-  initial input data.
-\item ...
-\end{description}
+The anticipated changes cover every likely change in the SRS (LC-001 to LC-008,
+SRS Section~27~\citep{SRS}), shown in brackets after each one, and add the
+design decisions the SRS does not fix. They are changes to the requirements,
+the design or the implementation, not to values set while Squigglr runs, such as
+a child's adult-set values.
 
-\wss{Anticipated changes relate to changes that would be made in requirements,
-design or implementation choices.  They are not related to changes that are made
-at run-time, like the values of parameters.}
+\begin{description}
+\item[\refstepcounter{acnum} \actheacnum \label{acDevice}:] The devices,
+  browsers and input types Squigglr reads drawing input from, for example a new
+  tablet or finger input added later (LC-003, LC-006).
+\item[\refstepcounter{acnum} \actheacnum \label{acDisplay}:] How strokes, guides
+  and images are drawn on the screen, for example a different drawing library.
+\item[\refstepcounter{acnum} \actheacnum \label{acAudio}:] How sounds are played
+  in the browser and the format of the sound files.
+\item[\refstepcounter{acnum} \actheacnum \label{acLessonFlow}:] The rules for
+  moving through a guided lesson, for example when an extension is offered or
+  when a go-back suggestion is made.
+\item[\refstepcounter{acnum} \actheacnum \label{acCatalogue}:] The lessons in
+  the catalogue, their order, their target shapes and their predefined
+  difficulties, for example adding letters after shapes (LC-001).
+\item[\refstepcounter{acnum} \actheacnum \label{acAttemptEnd}:] What ends an
+  attempt, for example adding a button the child taps when done.
+\item[\refstepcounter{acnum} \actheacnum \label{acEvaluation}:] How an attempt
+  is evaluated against its target and how difficulties are found, for example a
+  new measure of how far a stroke is from the target.
+\item[\refstepcounter{acnum} \actheacnum \label{acFeedback}:] The wording,
+  images, colours and sounds of the feedback the child sees (LC-005).
+\item[\refstepcounter{acnum} \actheacnum \label{acImprovement}:] How
+  improvement is measured from past attempts (LC-008).
+\item[\refstepcounter{acnum} \actheacnum \label{acRecord}:] What an attempt or
+  lesson record holds, for example a new value the adults want recorded.
+\item[\refstepcounter{acnum} \actheacnum \label{acTools}:] The editing tools in
+  the creative space, for example adding a fill tool.
+\item[\refstepcounter{acnum} \actheacnum \label{acRefineRules}:] When a drawing
+  is refined and how a result is checked before it is applied, for example a
+  new refinement tolerance check.
+\item[\refstepcounter{acnum} \actheacnum \label{acChildScreen}:] The layout and
+  navigation of the child screens, which educators and therapists will review
+  (NFR-UX-007).
+\item[\refstepcounter{acnum} \actheacnum \label{acAuth}:] The authentication
+  service and how adults sign in, for example a school sign-in.
+\item[\refstepcounter{acnum} \actheacnum \label{acProfile}:] What a learner
+  profile holds and how the active learner is chosen, for example a guest
+  learner.
+\item[\refstepcounter{acnum} \actheacnum \label{acSettings}:] Which values an
+  adult can set, and the team-set range and default of each, which may be
+  recalibrated after adult-made verification (LC-002).
+\item[\refstepcounter{acnum} \actheacnum \label{acSummary}:] Which recorded
+  values a progress summary shows and how they are grouped (LC-007).
+\item[\refstepcounter{acnum} \actheacnum \label{acAdultView}:] The layout and
+  navigation of the adult views.
+\item[\refstepcounter{acnum} \actheacnum \label{acStroke}:] The data structure
+  for strokes, for example adding stylus pressure.
+\item[\refstepcounter{acnum} \actheacnum \label{acGeometry}:] The geometric
+  algorithms on paths, for example a different smoothing method.
+\item[\refstepcounter{acnum} \actheacnum \label{acHistory}:] How edits are kept
+  for undo and redo, for example how many steps are kept.
+\item[\refstepcounter{acnum} \actheacnum \label{acRefineEngine}:] The algorithm
+  or service that refines stroke coordinates, which may change because of cost,
+  quality or availability (LC-004).
+\item[\refstepcounter{acnum} \actheacnum \label{acStorage}:] The database and
+  hosting service, and how records are laid out in them.
+\item[\refstepcounter{acnum} \actheacnum \label{acRecovery}:] Where unsaved
+  attempts and drawings are kept on the device and when they are sent again.
+\item[\refstepcounter{acnum} \actheacnum \label{acLog}:] What is logged about
+  sign-ins and changes to saved records, and where the log is kept.
+\end{description}
 
 \subsection{Unlikely Changes} \label{SecUchange}
 
 The module design should be as general as possible. However, a general system is
 more complex. Sometimes this complexity is not necessary. Fixing some design
 decisions at the system architecture stage can simplify the software design. If
-these decision should later need to be changed, then many parts of the design
+these decisions should later need to be changed, then many parts of the design
 will potentially need to be modified. Hence, it is not intended that these
 decisions will be changed.
 
+The unlikely changes cover every unlikely change in the SRS (ULC-001 to ULC-006,
+SRS Section~27~\citep{SRS}), shown in brackets after each one, and add two
+design decisions the modules rely on.
+
 \begin{description}
-\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
-  (Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
-\item ...
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucWeb}:] Squigglr is a website
+  used in a browser, with no installation (ULC-001).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucAdultsOnly}:] Only supporting
+  adults view and manage practice records. Children do not (ULC-002).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucAdultChooses}:] An adult
+  chooses the lesson, the starting stage and any skip or backward move. Passing
+  an attempt moves to the next stage of the same lesson, never to a new lesson
+  (ULC-003).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucNoDiagnosis}:] Squigglr gives
+  no diagnosis, no judgement of a child's abilities and no comparison with other
+  children (ULC-004).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucActualStrokes}:] Guided lesson
+  records keep the strokes the child actually drew. Refinement happens only in
+  the creative space (ULC-005).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucNoChildData}:] The project
+  gathers no information from or about children and runs no study with
+  children (ULC-006).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucStages}:] Each guided lesson
+  has four guidance stages in a fixed order: demonstration, full outline,
+  endpoints only and independent drawing (FR-LRN-002).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucPaths}:] Drawings are kept
+  as paths of stroke coordinates, not as images, so they stay editable and can
+  be evaluated and refined.
 \end{description}
 
 \section{Module Hierarchy} \label{SecMH}

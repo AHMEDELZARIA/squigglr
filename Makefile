@@ -40,6 +40,7 @@ all: $(patsubst %.tex, %.pdf, $(wildcard **/*.tex))
 	$(call COMPILE_BIBTEX,$<)
 	$(call COMPILE_TEX,$<)
 	$(call COMPILE_TEX,$<)
+	$(call COMPILE_TEX,$<)
 
 # Clean generated files
 clean:

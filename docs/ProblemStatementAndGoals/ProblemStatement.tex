@@ -49,6 +49,15 @@ interview.\\
 14 October 2026 & Rayan Nasrallah & Stated that the adult chooses
 child-dependent values, such as pass accuracy, within a range the team
 sets, following the supervisor meeting of 14 October 2026.\\
+1 November 2026 & Muhammad Huzaifah & Addressed peer review: added a
+paragraph to the Problem subsection on what existing apps offer and the gaps
+that the goals address, referring to the SRS survey (\#69).\\
+1 November 2026 & Moustafa Moustafa & Changed the fall custom document from
+literature review report to specialist interview report, to match the
+Development Plan.\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: linked creative
+drawing to the problem, and changed G.4 to automatic refinement that can be
+turned off and never changes guided lesson records, as in the SRS (\#70).\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -83,13 +92,33 @@ drawings without this context can obscure changes in independent
 performance and make it harder to identify appropriate next steps for
 practice.
 
+Existing apps meet parts of this need. Handwriting and tracing apps guide
+children through letters, numbers, and shapes, sometimes with less help at
+each step; fine-motor practice apps report scores or compare a child with
+reference ranges; and children's drawing apps offer free drawing. A survey of
+twelve such products, in the Off-the-Shelf Solutions section of the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/pdfs/SRS/SRS.pdf}{Software
+Requirements Specification}, found none that combines what this problem
+requires, and three gaps stand out. None of the products is described as
+recording which guide a child used, which difficulties occurred, and which
+were later corrected (G.5). The products that report to adults screen, score,
+or compare children rather than separating guided attempts from independent
+ones (G.6). Drawing assistants replace a child's sketch with an artist's
+drawing or a perfect shape instead of keeping the drawing the child's own
+(G.4). Graded tracing practice (G.1, G.2) does exist, but mostly in installed
+apps centred on letters and numbers, and the one browser-based tracing tool
+found keeps no records. \progname{} aims to offer these parts together.
+
 Squigglr aims to support visual-motor practice through drawing activities
 with adjustable guidance and difficulty, while making the practice
 process understandable to supporting adults. Individual attempt records
 and progress summaries will distinguish independent performance from
 assisted completion and show recurring difficulties and changes over
-time. Creative drawing will provide opportunities for self-expression
-alongside structured practice. The intended benefit is to help children
+time. Guided lessons practise lines and shapes on their own; a creative
+space will let children use the same skills in drawings of their own
+choosing. The domain specialists we consulted said this free drawing
+space is valuable and that choice keeps children motivated to practise.
+The intended benefit is to help children
 practise with increasing independence and help supporting adults make
 informed decisions about further practice. Clinical diagnosis and
 treatment are outside the project scope.
@@ -107,8 +136,8 @@ artwork, and records that help supporting adults interpret progress.
     preferences.
     \item Drawing strokes entered with a stylus on a touchscreen device
     during practice and creative activities.
-    \item Requests to refine creative artwork and editing actions,
-    such as moving, resizing, recolouring, erasing, or undoing changes
+    \item Finished creative drawings, the setting that turns refinement
+    on or off, and editing actions, such as moving, resizing, recolouring, erasing, or undoing changes
     to drawing elements.
     \item Requests from authorised adults to view a child's activity
     history, individual attempts, and progress summaries.
@@ -258,18 +287,22 @@ defined in the requirements.
 
 \subsection{Support editable creative drawing and refinement}
 
-Provide a creative space where children can draw freely and request
-automatic refinement of supported shapes and simple objects. The
-refined artwork should remain editable within the drawing space so
-that children can continue developing their work and restore their
-original drawing if desired.
+Provide a creative space where children can draw freely, using the
+lines and shapes they practise in guided lessons. When a child finishes
+a drawing of a supported shape or simple object, Squigglr refines it by
+adjusting the child's own strokes. The refined artwork should remain
+editable within the drawing space so that children can continue
+developing their work and restore their original drawing if desired.
+Refinement can be turned off, and it never changes guided lesson
+attempts or their records.
 
-This goal is achieved when users can create a drawing, request a
-supported refinement, continue editing the result, and recover the
-unmodified drawing. The team will verify this using representative
-drawings from the agreed supported set, checking that refinement
-preserves editability and that unsuccessful refinement requests leave
-the existing drawing unchanged.
+This goal is achieved when users can finish a drawing that is then
+refined, continue editing the result, and recover the unmodified
+drawing. The team will verify this using representative drawings from
+the agreed supported set, checking that refinement preserves
+editability, that a failed refinement leaves the existing drawing
+unchanged, and that with refinement turned off the strokes are kept as
+drawn.
 
 
 \subsection{Preserve meaningful activity records}
@@ -341,22 +374,18 @@ activity.
 
 \section{Custom Documents (CDs)}
 
-The team proposes a Literature Review Report for the fall term and a
+The team proposes a Specialist Interview Report for the fall term and a
 Usability Report for the winter term, consistent with the Development
 Plan. These choices remain subject to instructor approval.
 
 \medskip
 
-\noindent\textbf{Fall --- Literature Review Report}
+\noindent\textbf{Fall --- Specialist Interview Report}
 
-The report will examine research on visual-motor development,
-foundational drawing practice, and the learning and support needs of
-children, including those with autism or ADHD. It will compare
-findings, identify limitations in the evidence, and explain how the
-research informs Squigglr's activities, guidance, and progress
-tracking. It will distinguish evidence supporting the proposed
-approach from evidence of effectiveness that would require evaluation
-of Squigglr itself.
+The report will cover the interview we held with domain specialists. It
+will state the interview method and questions, identify the participants
+by code only, include the de-identified transcript as an appendix, and
+analyze which findings shaped which requirements and hazards.
 
 \medskip
 

@@ -104,6 +104,20 @@ PH-1 in the roadmap, with the lesson and starting stage choice it protects
 Lesson and stage-check logic and C4 to Creative refinement, which no longer
 assumes an external model, and said in the H-SHA introduction and the coverage
 table how H-SHA-002 applies to each refinement approach (\#178).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: H-RAY-004 now
+cites SAF-RAY-009, so a child who stops drawing leaves the lesson with no
+failed attempt beyond the one in progress (\#194).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: H-MOU-001 now
+mitigates flashing outside drawing instead of claiming to eliminate it, since
+SAF-MOU-003 allows up to three flashes a second (\#189).\\
+2 November 2026 & Moustafa Moustafa & Addressed peer review: H-AHM-001 now
+cites FR-LRN-024, which ends a non-passing attempt only after
+\texttt{ATTEMPT\_IDLE}; added it to the HA-derived requirements, their totals
+and the PH-1 roadmap (\#186).\\
+2 November 2026 & Moustafa Moustafa & NFR-UX-017 now says the same as the SRS:
+it bans describing the child in diagnostic, clinical or ranking terms (\#285).\\
+3 November 2026 & Moustafa Moustafa & Addressed PR review: the H-RAY-004 test
+allows the failed attempt in progress when a child stops drawing (\#290).\\
 \end{longtable}
 
 ~\newpage
@@ -895,10 +909,13 @@ improvement extension lengthens the lesson; no adult may be watching (CA-001). &
 The child becomes distressed, stops practising or refuses the activity later.
 Loss: well-being; the practice benefit. & Psychological/ well-being & Mitigate:
 end the lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX}
-when extended, and save progress (G.3); let audio feedback be muted (SRC-005,
-P2, 37:39). Document/Test: test that each lesson ends at \texttt{ATTEMPT\_LIMIT}
-and that no extended lesson passes \texttt{ATTEMPT\_LIMIT\_MAX}. & G.3,
-SAF-RAY-005 \\
+when extended, and save progress (G.3); end the lesson when the child stops
+drawing, without counting the idle time as failed attempts; let audio feedback
+be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
+\texttt{ATTEMPT\_LIMIT}, that no extended lesson passes
+\texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no failed
+attempt beyond the one in progress.
+& G.3, SAF-RAY-005, SAF-RAY-009 \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
 \texttt{ATTEMPT\_LIMIT}, the same lesson is started again at once and the repetition continues. &
@@ -991,10 +1008,13 @@ premature finalization (ASM-004); a stylus lift is mistaken for the end of an
 attempt. & The drawing appears incomplete or is scored inaccurately; a child
 receives undeserved failure feedback or loses a practice attempt. Loss: accurate
 feedback and record integrity. & Data integrity & Mitigate: retain ordered
-points and stroke boundaries; distinguish stylus lifts from finalization; treat
-interrupted or unevaluable input as non-passing without consuming an attempt.
-Document/Test: replay partial strokes and interruptions before and during a
-stroke. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010 \\
+points and stroke boundaries; distinguish stylus lifts from finalization; end
+a non-passing attempt only after \texttt{ATTEMPT\_IDLE}, which the adult sets
+for each child; treat interrupted or unevaluable input as non-passing without
+consuming an attempt. Document/Test: replay partial strokes and interruptions
+before and during a stroke, and pauses between strokes shorter than
+\texttt{ATTEMPT\_IDLE}. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010,
+FR-LRN-024 \\
 \addlinespace
 \mbox{H-AHM-002} & Stylus event capture; attempt evaluation & One drawn stroke
 is captured or evaluated twice, inflating coverage or producing a spurious extra
@@ -1191,9 +1211,10 @@ children react differently to sensory input (SRC-009.05; FACT-003); no adult may
 be watching (CA-001). & The child becomes overwhelmed or distressed and stops
 practising; rapid flashing can also trigger seizures in rare cases. Loss:
 well-being; physical safety; the practice benefit. & Psychological/ well-being;
-Physical & Eliminate: no flashing on any child-facing screen, and no animation
-while the child draws. Mitigate: let an adult turn audio off for each child, let
-long sounds be paused, and keep a calm style reviewed by adults including an
+Physical & Eliminate: no animation or flashing while the child draws.
+Mitigate: let nothing on a child-facing screen flash more than three times a
+second, below the seizure threshold; let an adult turn audio off for each child,
+let long sounds be paused, and keep a calm style reviewed by adults including an
 educator or occupational therapist. Document/Test: inspect every child-facing
 screen against the calm-screen checklist. & SAF-MOU-003, NFR-UX-001, NFR-UX-006,
 NFR-UX-007, NFR-UX-010, NFR-UX-022 \\
@@ -1768,6 +1789,13 @@ the active stage; a passing independent drawing attempt completes the current
 lesson without starting a different lesson. & H-AHM-004, H-MOU-004 & Learning
 Activity \\
 \addlinespace
+FR-LRN-024\newline\emph{Ending an attempt} & Each time the child lifts the stylus
+in a guided lesson, Squigglr shall evaluate the strokes of the attempt so far,
+and shall end the attempt as passed as soon as they are complete and meet
+\texttt{STAGE\_PASS}. If they do not, Squigglr shall end the attempt as not
+passed after \texttt{ATTEMPT\_IDLE} with no input. No other event ends an
+attempt, except an interruption (FR-LRN-009). & H-AHM-001 & Learning Activity \\
+\addlinespace
 FR-CRT-007\newline\emph{Undo a change} & Squigglr shall let the child undo the
 changes to the open creative drawing one at a time, most recent first, back to
 the drawing as it was when the child opened it. & H-MUH-001 & Creative Drawing
@@ -2010,7 +2038,8 @@ Politeness \\
 \addlinespace
 NFR-UX-017\newline\emph{Plain wording in adult views} & Adult views shall use
 plain language, shall explain each glossary term where it first appears in a
-view, and shall not use diagnostic, clinical or ranking words. & H-MOU-005 &
+view, and shall not describe the child in diagnostic, clinical or ranking
+terms. & H-MOU-005 &
 Under\-stand\-ability and Politeness \\
 \addlinespace
 NFR-UX-021\newline\emph{Feedback not by sound alone} & Every message to the
@@ -2072,7 +2101,7 @@ SAF-RAY-009 & During a guided lesson, Squigglr shall show a check-in a child
 who cannot read can understand after \texttt{LESSON\_IDLE\_PROMPT} with no
 input, end the lesson after \texttt{LESSON\_IDLE\_END} with no input, keep the
 progress saved and record that it ended for inactivity, without counting the
-idle time as an attempt. & H-RAY-006 & Safety-Critical \\
+idle time as an attempt. & H-RAY-004, H-RAY-006 & Safety-Critical \\
 \addlinespace
 SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
 event from being counted more than once during evaluation or recording of an
@@ -2112,7 +2141,7 @@ times in any one-second period. & H-MOU-001 & Safety-Critical \\
 \end{longtable}
 }
 
-In total, 88 requirements are HA-derived: 16 Learning Activity, 22 Creative
+In total, 89 requirements are HA-derived: 17 Learning Activity, 22 Creative
 Drawing, nine Attempt Record and 11 Progress Summary requirements, five Look
 and Feel and seven Usability and Humanity requirements, and 18 safety-critical
 requirements. Every row of the five FMEA tables cites at least one of them. The
@@ -2194,13 +2223,15 @@ strokes (FR-LRN-007), no passing status for missing or ambiguous input
 distortion of stroke positions when the canvas size or device orientation
 changes (SAF-AHM-002) (H-AHM-001, H-AHM-002, H-AHM-003). \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023 & The
+PH-1 (Nov.~23, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023,
+FR-LRN-024 & The
 fourth PoC experiment uses prepared sequences of successful and unsuccessful
 attempts and demonstrates reduced assistance following success (SRC-002). These
 requirements state when an attempt is complete and passes (FR-LRN-011,
-FR-LRN-013), that the lesson and starting stage the adult chose are used
+FR-LRN-013), when it ends (FR-LRN-024), that the lesson and starting stage the adult chose are used
 (FR-LRN-016) and that a passing attempt advances within the lesson without a
-further adult action (FR-LRN-023) (H-AHM-004, H-AHM-005, H-AHM-007, H-MOU-004).
+further adult action (FR-LRN-023) (H-AHM-001, H-AHM-004, H-AHM-005, H-AHM-007,
+H-MOU-004).
 \\
 \addlinespace
 PH-1 (Nov.~23, 2026) & SAF-RAY-001 & The PoC lets an adult choose the lesson and

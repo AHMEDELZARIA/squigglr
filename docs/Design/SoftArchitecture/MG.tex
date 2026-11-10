@@ -67,6 +67,10 @@ fixed four uses, redrew the uses hierarchy by level, and added missing modules
 to four trace rows (\#302).\\
 10 November 2026 & Moustafa Moustafa & Added who implements each module to the
 timeline, and set the year of the MG and MIS references to 2026 (\#302).\\
+10 November 2026 & Moustafa Moustafa & Addressed the Copilot review: listed
+every way a lesson ends in the Guided Lesson Control services, let Storage
+delete records, added the Attempt Record Module to SAF-RAY-004, and reworded
+AC25 and the introduction (\#302).\\
 \bottomrule
 \end{tabularx}
 
@@ -125,8 +129,9 @@ based on the principle of information hiding~\citep{Parnas1972a}.  This
 principle supports design for change, because the ``secrets'' that each module
 hides represent likely future changes.  Design for change matters for
 \progname{} because several parts are expected to change: the lessons, the
-supported devices, the refinement service and the feedback the child sees
-(Software Requirements Specification (SRS) Section~27~\citep{SRS}).
+supported devices, the refinement service and the feedback the child sees.
+These are listed in Section~27 of the Software Requirements Specification
+(SRS)~\citep{SRS}.
 
 Our design follows the rules laid out by \citet{ParnasEtAl1984}, as follows:
 \begin{itemize}
@@ -255,8 +260,8 @@ a child's adult-set values.
   hosting service.
 \item[\refstepcounter{acnum} \actheacnum \label{acRecovery}:] Where unsaved
   attempts and drawings are kept on the device and when they are sent again.
-\item[\refstepcounter{acnum} \actheacnum \label{acLog}:] What is logged about
-  sign-ins and changes to saved records, and where the log is kept.
+\item[\refstepcounter{acnum} \actheacnum \label{acLog}:] How and where the
+  audit log is kept.
 \end{description}
 
 \subsection{Unlikely Changes} \label{SecUchange}
@@ -434,8 +439,9 @@ themselves.
 \item \textbf{Records are written once.} The Attempt Record Module
   (\mref{mRecord}) saves each attempt once and never changes a saved record
   (FR-REC-008, FR-REC-009). The Storage Module (\mref{mStorage}) refuses changes
-  to saved records, and the Audit Log Module (\mref{mLog}) logs any attempt to
-  change one (NFR-SEC-003).
+  to saved records other than deletion, which follows the privacy rules still
+  to be decided (OI-02), and the Audit Log Module (\mref{mLog}) logs any
+  attempt to change one (NFR-SEC-003).
 \item \textbf{A save counts only when the server confirms it.} The Storage
   Module reports a save as done only after the server confirms it (SAF-SHA-003).
   Until then, the Connection Recovery Module (\mref{mRecovery}) keeps the
@@ -552,7 +558,9 @@ to be implemented.
   lesson starts, starts a lesson at the stage an adult chooses, starts each
   attempt, decides the feedback after each attempt, moves to the next stage,
   offers an extension or a go-back suggestion, and ends the lesson at the
-  attempt limit or when the child stops drawing.
+  attempt limit, when the independent stage is passed (FR-LRN-023), or after
+  \texttt{LESSON\_IDLE\_END} with no input, following a check-in at
+  \texttt{LESSON\_IDLE\_PROMPT} (SAF-RAY-009).
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -779,7 +787,8 @@ to be implemented.
 \item[Secrets:] The database and hosting service.
 \item[Services:] Saves and reads the data each owner module gives it, for the
   signed-in adult its caller names, checks input
-  before saving it, refuses changes to saved records, and confirms each save.
+  before saving it, refuses changes to saved records other than deletion
+  (FR-REC-009, OI-02), and confirms each save.
 \item[Implemented By:] \progname{} (Supabase PostgreSQL)
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -815,7 +824,7 @@ functional requirements (FR), the non-functional requirements (NFR) and the
 safety-critical requirements (SAF). Every requirement is met by at least one
 module, and every module meets at least one requirement. NFR-MAINT-003 and
 NFR-MAINT-004 apply to every module (``All'' in the table), because each module
-has an MIS entry and follows the team's coding style.
+will have an MIS entry (\#264 to \#266) and follow the team's coding style.
 
 {\small
 \begin{longtable}{@{}p{0.21\textwidth} p{0.24\textwidth} p{0.21\textwidth}
@@ -945,7 +954,7 @@ FR-REC-001 & \mref{mRecord} &
 FR-REC-002 & \mref{mRecord}, \mref{mStroke} &
   SAF-RAY-003 & \mref{mAdultView}, \mref{mStorage}, \mref{mRecovery}\\
 FR-REC-003 & \mref{mRecord} &
-  SAF-RAY-004 & \mref{mSummary}\\
+  SAF-RAY-004 & \mref{mRecord}, \mref{mSummary}\\
 FR-REC-004 & \mref{mRecord}, \mref{mSettings} &
   SAF-RAY-005 & \mref{mLessonControl}, \mref{mSettings}\\
 FR-REC-005 & \mref{mAttempt}, \mref{mRecord} &

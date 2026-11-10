@@ -61,6 +61,12 @@ uses hierarchy diagram (\#299).\\
 9 November 2026 & Moustafa Moustafa & Added the user interfaces,
 communication protocols, database design and timeline, and fixed the MG and
 writing checklist items (\#300).\\
+9 November 2026 & Moustafa Moustafa & Addressed the PR review: narrowed the
+Storage, Adult Access, Audio Output, Connection Recovery and Audit Log secrets,
+fixed four uses, redrew the uses hierarchy by level, and added missing modules
+to four trace rows (\#302).\\
+10 November 2026 & Moustafa Moustafa & Added who implements each module to the
+timeline, and set the year of the MG and MIS references to 2026 (\#302).\\
 \bottomrule
 \end{tabularx}
 
@@ -88,6 +94,7 @@ This section records information for easy reference.
   MIS & Module Interface Specification\\
   NFR & Non-Functional Requirement (SRS)\\
   OS & Operating System \\
+  PH & Delivery Phase (SRS)\\
   SAF & Safety-Critical Requirement (SRS)\\
   SRS & Software Requirements Specification\\
   TBD & To Be Determined\\
@@ -95,7 +102,7 @@ This section records information for easy reference.
   \progname & The drawing practice website this MG describes\\
   ULC & Unlikely Change \\
   \bottomrule
-\end{tabular}\\
+\end{tabular}
 
 \newpage
 
@@ -119,7 +126,7 @@ principle supports design for change, because the ``secrets'' that each module
 hides represent likely future changes.  Design for change matters for
 \progname{} because several parts are expected to change: the lessons, the
 supported devices, the refinement service and the feedback the child sees
-(SRS Section~27~\citep{SRS}).
+(Software Requirements Specification (SRS) Section~27~\citep{SRS}).
 
 Our design follows the rules laid out by \citet{ParnasEtAl1984}, as follows:
 \begin{itemize}
@@ -130,8 +137,8 @@ Our design follows the rules laid out by \citet{ParnasEtAl1984}, as follows:
   structures must obtain it by calling access programs belonging to that module.
 \end{itemize}
 
-After completing the first stage of the design, the Software Requirements
-Specification (SRS), the Module Guide (MG) is
+After completing the first stage of the design, the SRS, the Module Guide (MG)
+is
 developed~\citep{ParnasEtAl1984}. The MG
 specifies the modular structure of the system and is intended to allow both
 designers and maintainers to easily identify the parts of the software. The
@@ -162,9 +169,9 @@ modules. Section \ref{SecMD} gives a detailed description of the
 modules. Section \ref{SecTM} includes two traceability matrices. One checks
 the completeness of the design against the requirements provided in the SRS. The
 other shows the relation between anticipated changes and the modules. Section
-\ref{SecUse} describes the use relation between modules. The last sections
-cover the user interfaces, communication protocols, database design and
-timeline.
+\ref{SecUse} describes the use relation between modules. Sections
+\ref{SecUI}, \ref{SecProtocols}, \ref{SecDB} and \ref{SecTimeline} cover the
+user interfaces, communication protocols, database design and timeline.
 
 \section{Anticipated and Unlikely Changes} \label{SecChange}
 
@@ -181,7 +188,8 @@ require changing the one module that hides the associated decision. The approach
 adopted here is called design for
 change.
 
-The anticipated changes cover every likely change in the SRS (LC-001 to LC-008,
+The anticipated changes (AC) cover every likely change in the SRS (LC-001 to
+LC-008,
 SRS Section~27~\citep{SRS}), shown in brackets after each one, and add the
 design decisions the SRS does not fix. They are changes to the requirements,
 the design or the implementation, not to values set while Squigglr runs, such as
@@ -194,7 +202,7 @@ a child's adult-set values.
 \item[\refstepcounter{acnum} \actheacnum \label{acDisplay}:] How strokes, guides
   and images are drawn on the screen, for example a different drawing library.
 \item[\refstepcounter{acnum} \actheacnum \label{acAudio}:] How sounds are played
-  in the browser and the format of the sound files.
+  in the browser.
 \item[\refstepcounter{acnum} \actheacnum \label{acLessonFlow}:] The rules for
   moving through a guided lesson, for example when an extension is offered or
   when a go-back suggestion is made.
@@ -220,16 +228,18 @@ a child's adult-set values.
 \item[\refstepcounter{acnum} \actheacnum \label{acChildScreen}:] The layout and
   navigation of the child screens, which educators and therapists will review
   (NFR-UX-007).
-\item[\refstepcounter{acnum} \actheacnum \label{acAuth}:] The authentication
-  service and how adults sign in, for example a school sign-in.
+\item[\refstepcounter{acnum} \actheacnum \label{acAuth}:] How adults sign in and
+  confirm adult-only actions, for example a school sign-in or a different
+  authentication service.
 \item[\refstepcounter{acnum} \actheacnum \label{acProfile}:] What a learner
   profile holds and how the active learner is chosen, for example a guest
   learner.
-\item[\refstepcounter{acnum} \actheacnum \label{acSettings}:] Which values an
-  adult can set, and the team-set range and default of each, which may be
+\item[\refstepcounter{acnum} \actheacnum \label{acSettings}:] Which settings a
+  learner has, and the team-set range and default of each, which may be
   recalibrated after adult-made verification (LC-002).
 \item[\refstepcounter{acnum} \actheacnum \label{acSummary}:] Which recorded
-  values a progress summary shows and how they are grouped (LC-007).
+  values a progress summary shows, how they are grouped, and whether a summary
+  can be exported (LC-007, OI-02).
 \item[\refstepcounter{acnum} \actheacnum \label{acAdultView}:] The layout and
   navigation of the adult views.
 \item[\refstepcounter{acnum} \actheacnum \label{acStroke}:] The data structure
@@ -242,7 +252,7 @@ a child's adult-set values.
   or service that refines stroke coordinates, which may change because of cost,
   quality or availability (LC-004).
 \item[\refstepcounter{acnum} \actheacnum \label{acStorage}:] The database and
-  hosting service, and how records are laid out in them.
+  hosting service.
 \item[\refstepcounter{acnum} \actheacnum \label{acRecovery}:] Where unsaved
   attempts and drawings are kept on the device and when they are sent again.
 \item[\refstepcounter{acnum} \actheacnum \label{acLog}:] What is logged about
@@ -272,11 +282,12 @@ design decisions the modules rely on.
   an attempt moves to the next stage of the same lesson, never to a new lesson
   (ULC-003).
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucNoDiagnosis}:] Squigglr gives
-  no diagnosis, no judgement of a child's abilities and no comparison with other
-  children (ULC-004).
+  no diagnosis, no judgement of a child's abilities, no comparison with other
+  children and no effectiveness claims (ULC-004).
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucActualStrokes}:] Guided lesson
   records keep the strokes the child actually drew. Refinement happens only in
-  the creative space (ULC-005).
+  the creative space, the original can be restored, and refinement can be
+  turned off (ULC-005).
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucNoChildData}:] The project
   gathers no information from or about children and runs no study with
   children (ULC-006).
@@ -432,17 +443,18 @@ themselves.
   back (SAF-RAY-003, NFR-PERF-005, FR-CRT-025).
 \item \textbf{Every request is from a signed-in adult.} The Adult Access Module
   (\mref{mAccess}) signs adults in through an authentication service, and the
-  Storage Module serves data only to a signed-in adult who owns it (SAF-SHA-001,
-  NFR-SEC-001). An action a child must not do alone, such as choosing a lesson,
-  goes through an adult check in \mref{mAccess} (SAF-RAY-001).
-\item \textbf{Adult-set values are checked in one place.} The Learner Settings
+  Storage Module, given the signed-in adult by its caller, serves data only to
+  the adult who owns it (SAF-SHA-001, NFR-SEC-001). An action a child must not
+  do alone, such as choosing a lesson, goes through an adult check in
+  \mref{mAccess} (SAF-RAY-001).
+\item \textbf{Learner settings are checked in one place.} The Learner Settings
   Module (\mref{mSettings}) checks every value against its range and the other
   values before saving it (SAF-RAY-008), and the other modules only read the
   saved values (LC-002).
 \item \textbf{Progress summaries are not stored.} The Progress Summary Module
   (\mref{mSummary}) builds a summary from the saved records each time an adult
   opens it, as the SRS data model describes, so a summary can never disagree
-  with the records (FR-PRG-011, LC-007).
+  with the records (G.6, LC-007).
 \item \textbf{Child screens and adult views are separate modules.} The Child
   Screen Module (\mref{mChildScreen}) and the Adult View Module
   (\mref{mAdultView}) share no layout, which keeps the adult views distinct from
@@ -511,10 +523,9 @@ to be implemented.
 \subsubsection{Audio Output Module (\mref{mAudio})}
 
 \begin{description}
-\item[Secrets:] The browser audio interface and the format of the sound files.
-\item[Services:] Plays a sound and turns sound on or off for the active
-  learner.
-\item[Implemented By:] OS (browser audio)
+\item[Secrets:] How the browser plays sounds.
+\item[Services:] Plays a sound, and mutes or unmutes sound.
+\item[Implemented By:] \progname{} (browser audio)
 \item[Type of Module:] Abstract Object
 \end{description}
 
@@ -563,7 +574,8 @@ to be implemented.
 \item[Secrets:] The events that end an attempt.
 \item[Services:] Collects the strokes of one attempt, asks for an evaluation at
   each stylus lift, and ends the attempt when it passes, after
-  \texttt{ATTEMPT\_IDLE} with no input, or when it is interrupted.
+  \texttt{ATTEMPT\_IDLE} with no input, or when it is interrupted, and gives
+  the evaluation result of the attempt.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Data Type
 \end{description}
@@ -629,7 +641,8 @@ to be implemented.
   accepted.
 \item[Services:] Refines a finished drawing when refinement is on, checks the
   result against the refinement tolerance, applies it as editable strokes,
-  shows that the drawing is refined, restores the exact original, and leaves the
+  shows that the drawing is refined, keeps the original strokes through the
+  Creative Drawing Module and restores them exactly, and leaves the
   drawing unchanged when refinement fails or the result is out of date.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Object
@@ -649,7 +662,8 @@ to be implemented.
 \subsubsection{Adult Access Module (\mref{mAccess})}
 
 \begin{description}
-\item[Secrets:] The authentication service and sign-in method.
+\item[Secrets:] How adults sign up, sign in and out, and confirm actions a
+  child must not do alone.
 \item[Services:] Signs an adult up, in and out, signs them out after
   \texttt{IDLE\_TIMEOUT}, logs sign-in events, and runs the adult check before
   an action a child must not do alone.
@@ -671,11 +685,13 @@ to be implemented.
 \subsubsection{Learner Settings Module (\mref{mSettings})}
 
 \begin{description}
-\item[Secrets:] The adult-set values, with the range and default of each and the
-  rules between them.
-\item[Services:] Saves a learner's adult-set values only when each is in its
-  range and the rules between them hold, fills in the default for a value the
-  adult does not choose, and gives the saved values to the other modules.
+\item[Secrets:] A learner's settings (the adult-set values and the audio and
+  refinement switches), with the range and default of each and the rules
+  between them.
+\item[Services:] Saves a learner's settings only when each is in its range and
+  the rules between them hold, fills in the default for a value the adult does
+  not choose, and gives the saved values to the other modules. The refinement
+  switch is the one setting the child can change (FR-CRT-030).
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -698,7 +714,7 @@ to be implemented.
 \item[Secrets:] The layout and navigation of the adult views.
 \item[Services:] Shows the sign-in, profile, settings, lesson choice, progress
   and history views in plain wording, usable by keyboard and with resizable
-  text.
+  text, and tells the adult which attempts or drawings could not be saved.
 \item[Implemented By:] \progname{} (React, Next.js)
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -708,7 +724,10 @@ to be implemented.
 \begin{description}
 \item[Secrets:] The design decision based on mathematical theorems, physical
   facts, or programming considerations. The secrets of these modules are
-  \emph{not} described in the SRS.
+  \emph{not} described in the SRS. The Connection Recovery Module
+  (\mref{mRecovery}) and the Audit Log Module (\mref{mLog}) meet SRS
+  requirements, but what they hide (the on-device store and how the log is
+  stored) is not in the SRS.
 \item[Services:] Includes data structure and algorithms used in the system that
   do not provide direct interaction with the user.
 \item[Implemented By:] --
@@ -757,9 +776,9 @@ to be implemented.
 \subsubsection{Storage Module (\mref{mStorage})}
 
 \begin{description}
-\item[Secrets:] The database and hosting service, and the layout of records in
-  them.
-\item[Services:] Saves and reads records for a signed-in adult, checks input
+\item[Secrets:] The database and hosting service.
+\item[Services:] Saves and reads the data each owner module gives it, for the
+  signed-in adult its caller names, checks input
   before saving it, refuses changes to saved records, and confirms each save.
 \item[Implemented By:] \progname{} (Supabase PostgreSQL)
 \item[Type of Module:] Abstract Object
@@ -768,8 +787,8 @@ to be implemented.
 \subsubsection{Connection Recovery Module (\mref{mRecovery})}
 
 \begin{description}
-\item[Secrets:] The on-device store for unsaved attempts and drawings, and the
-  rule for when they are sent again.
+\item[Secrets:] How unsaved attempts and drawings are kept on the device until
+  the server has them.
 \item[Services:] Keeps an attempt or drawing on the device until the server
   confirms it is saved, sends it again when the connection comes back, and lists
   the ones that could not be saved.
@@ -780,7 +799,7 @@ to be implemented.
 \subsubsection{Audit Log Module (\mref{mLog})}
 
 \begin{description}
-\item[Secrets:] The contents and location of the audit log.
+\item[Secrets:] How the audit log is stored.
 \item[Services:] Logs sign-in events and attempts to change saved records on the
   server.
 \item[Implemented By:] \progname{}
@@ -897,7 +916,7 @@ FR-CRT-017 & \mref{mRefineControl} &
   NFR-MAINT-002 & \mref{mLessonControl}\\
 FR-CRT-018 & \mref{mRefineControl}, \mref{mChildScreen} &
   NFR-MAINT-003 & All\\
-FR-CRT-019 & \mref{mRefineControl}, \mref{mAdultView} &
+FR-CRT-019 & \mref{mRefineControl}, \mref{mAccess}, \mref{mAdultView} &
   NFR-MAINT-004 & All\\
 FR-CRT-020 & \mref{mRefineControl} &
   NFR-SEC-001 & \mref{mAccess}, \mref{mStorage}\\
@@ -924,13 +943,14 @@ FR-CRT-030 & \mref{mRefineControl}, \mref{mSettings} &
 FR-REC-001 & \mref{mRecord} &
   SAF-RAY-002 & \mref{mInputDevice}, \mref{mLessonControl}, \mref{mAdultView}\\
 FR-REC-002 & \mref{mRecord}, \mref{mStroke} &
-  SAF-RAY-003 & \mref{mStorage}, \mref{mRecovery}\\
+  SAF-RAY-003 & \mref{mAdultView}, \mref{mStorage}, \mref{mRecovery}\\
 FR-REC-003 & \mref{mRecord} &
   SAF-RAY-004 & \mref{mSummary}\\
 FR-REC-004 & \mref{mRecord}, \mref{mSettings} &
   SAF-RAY-005 & \mref{mLessonControl}, \mref{mSettings}\\
 FR-REC-005 & \mref{mAttempt}, \mref{mRecord} &
-  SAF-RAY-006 & \mref{mLessonControl}, \mref{mRecord}\\
+  SAF-RAY-006 & \mref{mLessonControl}, \mref{mRecord}, \mref{mSummary},
+    \mref{mAdultView}\\
 FR-REC-006 & \mref{mRecord} &
   SAF-RAY-007 & \mref{mRecord}, \mref{mChildScreen}, \mref{mProfile}\\
 FR-REC-007 & \mref{mLessonControl}, \mref{mRecord} &
@@ -946,7 +966,7 @@ FR-PRG-001 & \mref{mProfile}, \mref{mSummary} &
 FR-PRG-002 & \mref{mSummary} &
   SAF-SHA-002 & \mref{mAccess}, \mref{mRefineEngine}, \mref{mStorage}\\
 FR-PRG-003 & \mref{mSummary} &
-  SAF-SHA-003 & \mref{mStorage}, \mref{mRecovery}\\
+  SAF-SHA-003 & \mref{mAdultView}, \mref{mStorage}, \mref{mRecovery}\\
 FR-PRG-004 & \mref{mSummary} &
   SAF-SHA-006 & \mref{mAccess}\\
 FR-PRG-005 & \mref{mSummary}, \mref{mAdultView} &
@@ -1014,7 +1034,11 @@ higher level of the hierarchy are essentially simpler because they use modules
 from the lower levels.
 
 An arrow from module A to module B means A uses B, so the code of A would import
-B. The figure is not a data flow diagram. Every arrow points down. The Child
+B. The figure is not a data flow diagram. Each band of the figure is one level
+of the hierarchy, labelled on the left. A module at level 0 uses no other
+module, and every other module is one level above the highest module it uses,
+so every arrow points down. Level 0 is drawn on two rows to leave room for the
+arrows. The Child
 Screen Module (\mref{mChildScreen}) and the Adult View Module
 (\mref{mAdultView}) are at the top, because every action starts from a child
 screen or an adult view. The Guided Lesson Control Module
@@ -1035,87 +1059,85 @@ whether refinement is on in the same way.
     fill=white},
   hh/.style={mod, fill=gray!15},
   sd/.style={mod, dashed},
+  lvl/.style={font=\footnotesize\itshape, text=black!60},
   use/.style={-{Stealth[length=2mm]}, semithick, draw=black!70}]
-% Row 1
+\node[lvl, anchor=east] at (-2.90,0.00) {Level 5};
+\node[lvl, anchor=east] at (-2.90,-1.90) {Level 4};
+\node[lvl, anchor=east] at (-2.90,-3.80) {Level 3};
+\node[lvl, anchor=east] at (-2.90,-5.70) {Level 2};
+\node[lvl, anchor=east] at (-2.90,-7.60) {Level 1};
+\node[lvl, anchor=east] at (-2.90,-10.45) {Level 0};
 \node[mod] (m13) at (5.20,0.00) {M13\\Child Screen};
-\node[mod] (m18) at (9.10,0.00) {M18\\Adult View};
-% Row 2
-\node[hh] (m3) at (1.30,-1.90) {M3\\Audio Output};
-\node[mod] (m4) at (10.40,-1.90) {M4\\Guided Lesson Control};
-\node[mod] (m12) at (13.00,-1.90) {M12\\Refinement Control};
-\node[mod] (m17) at (16.90,-1.90) {M17\\Progress Summary};
-% Row 3
-\node[mod] (m15) at (1.30,-3.80) {M15\\Learner Profile};
-\node[mod] (m16) at (3.90,-3.80) {M16\\Learner Settings};
-\node[mod] (m11) at (9.10,-3.80) {M11\\Creative Drawing};
-\node[mod] (m10) at (16.90,-3.80) {M10\\Attempt Record};
-% Row 4
-\node[sd] (m24) at (0.00,-5.70) {M24\\Connection Recovery};
-\node[mod] (m5) at (11.70,-5.70) {M5\\Lesson Catalogue};
-\node[mod] (m6) at (16.90,-5.70) {M6\\Attempt};
-% Row 5
-\node[sd] (m23) at (1.30,-7.60) {M23\\Storage};
-\node[hh] (m1) at (10.40,-7.60) {M1\\Input Device};
-\node[mod] (m7) at (16.90,-7.60) {M7\\Attempt Evaluation};
-% Row 6
-\node[mod] (m14) at (2.60,-9.50) {M14\\Adult Access};
-\node[mod] (m9) at (15.60,-9.50) {M9\\Improvement Measure};
-% Row 7
-\node[sd] (m25) at (0.00,-11.40) {M25\\Audit Log};
-\node[hh] (m2) at (5.20,-11.40) {M2\\Display};
-\node[sd] (m20) at (13.00,-11.40) {M20\\Geometry};
-% Row 8
-\node[sd] (m21) at (1.30,-13.30) {M21\\Edit History};
-\node[sd] (m19) at (6.50,-13.30) {M19\\Stroke};
-\node[mod] (m8) at (10.40,-13.30) {M8\\Feedback};
-\node[sd] (m22) at (15.60,-13.30) {M22\\Refinement Engine};
+\node[mod] (m18) at (10.40,0.00) {M18\\Adult View};
+\node[mod] (m12) at (0.00,-1.90) {M12\\Refinement Control};
+\node[mod] (m17) at (7.80,-1.90) {M17\\Progress Summary};
+\node[mod] (m4) at (14.30,-1.90) {M4\\Guided Lesson Control};
+\node[mod] (m10) at (3.90,-3.80) {M10\\Attempt Record};
+\node[mod] (m11) at (10.40,-3.80) {M11\\Creative Drawing};
+\node[mod] (m6) at (18.20,-3.80) {M6\\Attempt};
+\node[mod] (m15) at (0.00,-5.70) {M15\\Learner Profile};
+\node[sd] (m24) at (2.60,-5.70) {M24\\Connection Recovery};
+\node[mod] (m16) at (7.80,-5.70) {M16\\Learner Settings};
+\node[mod] (m7) at (11.70,-5.70) {M7\\Attempt Evaluation};
+\node[mod] (m5) at (18.20,-5.70) {M5\\Lesson Catalogue};
+\node[sd] (m20) at (0.00,-7.60) {M20\\Geometry};
+\node[hh] (m2) at (2.60,-7.60) {M2\\Display};
+\node[sd] (m23) at (6.50,-7.60) {M23\\Storage};
+\node[mod] (m14) at (14.30,-7.60) {M14\\Adult Access};
+\node[hh] (m1) at (18.20,-7.60) {M1\\Input Device};
+\node[sd] (m22) at (0.00,-9.50) {M22\\Refinement Engine};
+\node[mod] (m8) at (0.00,-11.40) {M8\\Feedback};
+\node[hh] (m3) at (2.60,-11.40) {M3\\Audio Output};
+\node[sd] (m19) at (5.20,-11.40) {M19\\Stroke};
+\node[sd] (m21) at (9.10,-11.40) {M21\\Edit History};
+\node[sd] (m25) at (11.70,-11.40) {M25\\Audit Log};
+\node[mod] (m9) at (16.90,-11.40) {M9\\Improvement Measure};
 % Uses: an arrow from A to B means A uses B
 \begin{pgfonlayer}{background}
 \draw[use] (m13) -- (m4);
-\draw[use] (m13) -- (m11);
-\draw[use] (m13) .. controls (8.25,-4.45) .. (m12);
+\draw[use] (m13) .. controls (8.35,0.67) and (10.08,-0.60) .. (m11);
+\draw[use] (m13) -- (m12);
 \draw[use] (m13) -- (m15);
 \draw[use] (m13) -- (m16);
-\draw[use] (m13) -- (m2);
-\draw[use] (m13) -- (m3);
-\draw[use] (m13) -- (m8);
+\draw[use] (m13) .. controls (6.60,-3.31) and (5.74,-5.84) .. (m2);
+\draw[use] (m13) .. controls (5.89,-4.16) and (5.03,-7.96) .. (m3);
+\draw[use] (m13) .. controls (6.62,-5.24) and (4.89,-9.04) .. (m8);
 \draw[use] (m18) -- (m4);
 \draw[use] (m18) -- (m12);
 \draw[use] (m18) -- (m14);
-\draw[use] (m18) -- (m15);
+\draw[use] (m18) .. controls (6.16,-0.50) and (2.70,-2.40) .. (m15);
 \draw[use] (m18) -- (m16);
 \draw[use] (m18) -- (m17);
-\draw[use] (m4) -- (m1);
+\draw[use] (m18) .. controls (9.22,-3.84) and (6.62,-5.74) .. (m24);
+\draw[use] (m4) .. controls (14.94,-4.25) and (16.24,-6.15) .. (m1);
 \draw[use] (m4) -- (m5);
 \draw[use] (m4) -- (m6);
-\draw[use] (m4) -- (m7);
-\draw[use] (m4) .. controls (14.49,-4.68) .. (m9);
-\draw[use] (m4) .. controls (13.14,-4.58) .. (m10);
-\draw[use] (m4) .. controls (3.99,-3.12) .. (m14);
-\draw[use] (m4) -- (m16);
+\draw[use] (m4) -- (m9);
+\draw[use] (m4) -- (m10);
+\draw[use] (m4) -- (m14);
+\draw[use] (m4) .. controls (10.92,-1.09) and (8.76,-2.36) .. (m16);
 \draw[use] (m12) -- (m11);
-\draw[use] (m12) -- (m20);
-\draw[use] (m12) .. controls (12.55,-8.00) .. (m22);
+\draw[use] (m12) .. controls (-3.47,-3.80) and (-3.47,-5.70) .. (m20);
+\draw[use] (m12) .. controls (-3.47,-4.43) and (-3.47,-6.97) .. (m22);
 \draw[use] (m17) -- (m10);
 \draw[use] (m11) -- (m1);
-\draw[use] (m11) -- (m2);
-\draw[use] (m11) -- (m19);
+\draw[use] (m11) .. controls (7.45,-4.35) and (4.85,-5.61) .. (m2);
+\draw[use] (m11) .. controls (9.33,-6.79) and (7.59,-9.32) .. (m19);
 \draw[use] (m11) -- (m21);
-\draw[use] (m11) -- (m23);
+\draw[use] (m11) .. controls (10.22,-6.21) and (8.92,-7.48) .. (m23);
 \draw[use] (m11) -- (m24);
 \draw[use] (m10) -- (m19);
-\draw[use] (m10) .. controls (8.67,-3.95) .. (m23);
+\draw[use] (m10) -- (m23);
 \draw[use] (m10) -- (m24);
-\draw[use] (m6) -- (m1);
+\draw[use] (m6) .. controls (20.60,-5.07) and (20.60,-6.33) .. (m1);
 \draw[use] (m6) -- (m7);
 \draw[use] (m6) -- (m19);
 \draw[use] (m5) -- (m23);
-\draw[use] (m15) -- (m23);
+\draw[use] (m15) .. controls (2.84,-4.03) and (5.01,-4.66) .. (m23);
 \draw[use] (m16) -- (m23);
 \draw[use] (m24) -- (m23);
-\draw[use] (m7) .. controls (10.83,-8.87) .. (m19);
-\draw[use] (m7) .. controls (13.69,-8.21) .. (m20);
-\draw[use] (m23) -- (m14);
+\draw[use] (m7) -- (m19);
+\draw[use] (m7) .. controls (8.36,-9.76) and (4.46,-10.39) .. (m20);
 \draw[use] (m23) -- (m25);
 \draw[use] (m14) -- (m25);
 \draw[use] (m1) -- (m19);
@@ -1129,9 +1151,7 @@ modules. An arrow from A to B means A uses B.}
 \label{FigUH}
 \end{figure}
 
-%\section*{References}
-
-\section{User Interfaces}
+\section{User Interfaces} \label{SecUI}
 
 \progname{} has two sets of screens, each owned by one module. The Child Screen
 Module (\mref{mChildScreen}) owns the screens the child uses, and the Adult View
@@ -1162,7 +1182,7 @@ NFR-UX-024). Screen layouts are not fixed yet, because the SRS asks for the
 style to be reviewed with educators or occupational therapists first
 (NFR-UX-007), so the designs will be added in Rev~0.
 
-\section{Design of Communication Protocols}
+\section{Design of Communication Protocols} \label{SecProtocols}
 
 There is no custom protocol. Drawing input reaches \progname{} through the
 browser's Pointer Events, which the Input Device Module (\mref{mInputDevice})
@@ -1178,11 +1198,12 @@ reads. Everything else uses standard web protocols:
   coordinates back. No personal information is sent (SAF-SHA-002).
 \end{itemize}
 
-\section{Database Design}
+\section{Database Design} \label{SecDB}
 
 \progname{} keeps its data in a hosted PostgreSQL database. The database follows
 the business data model in SRS Section~7~\citep{SRS}, and each kind of data is
-read and written by one module only. Table~\ref{TblDB} summarizes it. The
+read and written by one module only, through the Storage Module
+(\mref{mStorage}). Table~\ref{TblDB} summarizes it. The
 tables, keys and columns are left to the MIS and the implementation.
 
 \begin{table}[H]
@@ -1214,48 +1235,72 @@ Access rules in the database let an adult read and write only their own
 learners' data (NFR-SEC-001). Progress summaries are not stored, as
 Section~\ref{SecConnection} explains.
 
-\section{Timeline}
+\section{Timeline} \label{SecTimeline}
 
 Table~\ref{TblTimeline} gives, for each module, the team member who writes its
-MIS and the phases in which it is built. A module starts in the first phase that
+MIS, the team member who implements it and the phases in which it is built.
+Each member implements five modules that work closely together, so the modules
+that use each other are mostly built by the same person. Ahmed builds the
+guided lessons, Shamil builds creative drawing and refinement, Muhammad builds
+the adult side, Moustafa builds strokes, records and storage, and Rayan builds
+the child screen, input and output. A module starts in the first phase that
 has one of its requirements and is finished by the last one, using the SRS
 phases: PH-1 is the proof of concept (November 23, 2026), PH-2 is Rev~0
 (February 1, 2027) and PH-3 is the final demonstration (March 15,
-2027)~\citep{SRS}. Implementation tasks are tracked as GitHub issues.
+2027)~\citep{SRS}. In PH-1, a module that a PH-1 module uses but that starts in
+PH-2 (\mref{mAudio}, \mref{mImprovement}, \mref{mSettings}, \mref{mRecovery} and
+\mref{mLog}) is a stub that returns defaults. Implementation tasks are tracked
+as GitHub issues.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{p{0.38\textwidth} p{0.24\textwidth} p{0.12\textwidth}
-p{0.12\textwidth}}
+\begin{tabular}{@{}p{0.28\textwidth} l l l l@{}}
 \toprule
-\textbf{Module} & \textbf{MIS author} & \textbf{Starts} & \textbf{Done by}\\
+\textbf{Module} & \textbf{MIS author} & \textbf{Implemented by} &
+\textbf{Starts} & \textbf{Done by}\\
 \midrule
-\mref{mInputDevice} Input Device & Shamil Canbolat & PH-1 & PH-3\\
-\mref{mDisplay} Display & Shamil Canbolat & PH-1 & PH-3\\
-\mref{mAudio} Audio Output & Ahmed Elzaria & PH-2 & PH-2\\
-\mref{mLessonControl} Guided Lesson Control & Ahmed Elzaria & PH-1 & PH-2\\
-\mref{mCatalogue} Lesson Catalogue & Ahmed Elzaria & PH-1 & PH-2\\
-\mref{mAttempt} Attempt & Ahmed Elzaria & PH-1 & PH-2\\
-\mref{mEvaluation} Attempt Evaluation & Ahmed Elzaria & PH-1 & PH-2\\
-\mref{mFeedback} Feedback & Ahmed Elzaria & PH-1 & PH-3\\
-\mref{mImprovement} Improvement Measure & Ahmed Elzaria & PH-2 & PH-2\\
-\mref{mRecord} Attempt Record & Ahmed Elzaria & PH-1 & PH-2\\
-\mref{mCreative} Creative Drawing & Shamil Canbolat & PH-1 & PH-3\\
-\mref{mRefineControl} Refinement Control & Shamil Canbolat & PH-1 & PH-2\\
-\mref{mChildScreen} Child Screen & Shamil Canbolat & PH-1 & PH-3\\
-\mref{mAccess} Adult Access & Muhammad Huzaifah & PH-1 & PH-3\\
-\mref{mProfile} Learner Profile & Muhammad Huzaifah & PH-1 & PH-3\\
-\mref{mSettings} Learner Settings & Muhammad Huzaifah & PH-2 & PH-2\\
-\mref{mSummary} Progress Summary & Muhammad Huzaifah & PH-1 & PH-3\\
-\mref{mAdultView} Adult View & Muhammad Huzaifah & PH-1 & PH-3\\
-\mref{mStroke} Stroke & Shamil Canbolat & PH-1 & PH-2\\
-\mref{mGeometry} Geometry & Ahmed Elzaria & PH-1 & PH-2\\
-\mref{mHistory} Edit History & Shamil Canbolat & PH-1 & PH-3\\
-\mref{mRefineEngine} Refinement Engine & Shamil Canbolat & PH-1 & PH-2\\
-\mref{mStorage} Storage & Muhammad Huzaifah & PH-1 & PH-3\\
-\mref{mRecovery} Connection Recovery & Muhammad Huzaifah & PH-2 & PH-3\\
-\mref{mLog} Audit Log & Muhammad Huzaifah & PH-2 & PH-2\\
+\mref{mInputDevice} Input Device &
+  Shamil Canbolat & Rayan Nasrallah & PH-1 & PH-3\\
+\mref{mDisplay} Display & Shamil Canbolat & Rayan Nasrallah & PH-1 & PH-3\\
+\mref{mAudio} Audio Output & Ahmed Elzaria & Rayan Nasrallah & PH-2 & PH-2\\
+\mref{mLessonControl} Guided Lesson Control &
+  Ahmed Elzaria & Ahmed Elzaria & PH-1 & PH-2\\
+\mref{mCatalogue} Lesson Catalogue &
+  Ahmed Elzaria & Ahmed Elzaria & PH-1 & PH-2\\
+\mref{mAttempt} Attempt & Ahmed Elzaria & Ahmed Elzaria & PH-1 & PH-2\\
+\mref{mEvaluation} Attempt Evaluation &
+  Ahmed Elzaria & Ahmed Elzaria & PH-1 & PH-2\\
+\mref{mFeedback} Feedback & Ahmed Elzaria & Rayan Nasrallah & PH-1 & PH-3\\
+\mref{mImprovement} Improvement Measure &
+  Ahmed Elzaria & Ahmed Elzaria & PH-2 & PH-2\\
+\mref{mRecord} Attempt Record &
+  Ahmed Elzaria & Moustafa Moustafa & PH-1 & PH-2\\
+\mref{mCreative} Creative Drawing &
+  Shamil Canbolat & Shamil Canbolat & PH-1 & PH-3\\
+\mref{mRefineControl} Refinement Control &
+  Shamil Canbolat & Shamil Canbolat & PH-1 & PH-2\\
+\mref{mChildScreen} Child Screen &
+  Shamil Canbolat & Rayan Nasrallah & PH-1 & PH-3\\
+\mref{mAccess} Adult Access &
+  Muhammad Huzaifah & Muhammad Huzaifah & PH-1 & PH-3\\
+\mref{mProfile} Learner Profile &
+  Muhammad Huzaifah & Muhammad Huzaifah & PH-1 & PH-3\\
+\mref{mSettings} Learner Settings &
+  Muhammad Huzaifah & Muhammad Huzaifah & PH-2 & PH-2\\
+\mref{mSummary} Progress Summary &
+  Muhammad Huzaifah & Muhammad Huzaifah & PH-1 & PH-3\\
+\mref{mAdultView} Adult View &
+  Muhammad Huzaifah & Muhammad Huzaifah & PH-1 & PH-3\\
+\mref{mStroke} Stroke & Shamil Canbolat & Moustafa Moustafa & PH-1 & PH-2\\
+\mref{mGeometry} Geometry & Ahmed Elzaria & Shamil Canbolat & PH-1 & PH-2\\
+\mref{mHistory} Edit History & Shamil Canbolat & Shamil Canbolat & PH-1 & PH-3\\
+\mref{mRefineEngine} Refinement Engine &
+  Shamil Canbolat & Shamil Canbolat & PH-1 & PH-2\\
+\mref{mStorage} Storage & Muhammad Huzaifah & Moustafa Moustafa & PH-1 & PH-3\\
+\mref{mRecovery} Connection Recovery &
+  Muhammad Huzaifah & Moustafa Moustafa & PH-2 & PH-3\\
+\mref{mLog} Audit Log & Muhammad Huzaifah & Moustafa Moustafa & PH-2 & PH-2\\
 \bottomrule
 \end{tabular}
 \caption{Timeline by module}

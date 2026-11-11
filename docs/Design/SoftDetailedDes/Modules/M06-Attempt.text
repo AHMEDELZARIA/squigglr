@@ -1,9 +1,113 @@
 \section{MIS of the Attempt Module (\mref{mAttempt})}
 \label{sec:mAttempt}
 
-\wss{This module's interface is written in \#264. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Template Module}
+
+Attempt
+
+\subsection{Uses}
+
+Input Device Module (\mref{mInputDevice}), Attempt Evaluation Module
+(\mref{mEvaluation}), Stroke Module (\mref{mStroke}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+\begin{itemize}
+\item AttemptT $= ?$, one attempt at one drawing stage of a lesson.
+\item OutcomeT $= \{\mathit{open}, \mathit{passed}, \mathit{notPassed},
+\mathit{invalid}, \mathit{interrupted}\}$, how the attempt ended, or
+$\mathit{open}$ while it has not ended.
+\item ObservedT = tuple of $(\mathit{difficulty}: \text{DifficultyT},
+\mathit{corrected}: \mathbb{B})$, a predefined difficulty seen during the
+attempt and whether the child corrected it later in the same attempt
+(FR-REC-003).
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+new AttemptT & $\ell$: LessonIdT, $l$: DrawingStageT, $f$: FigureT,
+$\mathit{ds}$: set of DifficultyT, $\mathit{stagePass}$: $\mathbb{R}$,
+$\mathit{attemptIdle}$: $\mathbb{R}$ & AttemptT & -- \\
+addStroke & $s$: StrokeT & -- & attemptEnded \\
+checkIdle & -- & -- & -- \\
+interrupt & -- & -- & attemptEnded \\
+outcome & -- & OutcomeT & -- \\
+evaluation & -- & EvaluationT & notEvaluated \\
+strokes & -- & seq of StrokeT & -- \\
+observed & -- & set of ObservedT & -- \\
+lesson & -- & LessonIdT & -- \\
+stage & -- & DrawingStageT & -- \\
+endedAt & -- & DateTimeT & attemptOpen \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $\ell$: LessonIdT and $l$: DrawingStageT, the lesson and stage of the
+attempt.
+\item $f$: FigureT and $\mathit{ds}$: set of DifficultyT, the lesson's figure
+and the predefined difficulties of the stage.
+\item $\mathit{stagePass}$: $\mathbb{R}$ and $\mathit{attemptIdle}$:
+$\mathbb{R}$, the learner's \texttt{STAGE\_PASS} and \texttt{ATTEMPT\_IDLE}
+when the attempt started.
+\item $X$: seq of StrokeT, the strokes drawn so far, in order.
+\item $\mathit{last}$: EvaluationT, the evaluation after the most recent
+stylus lift.
+\item $\mathit{seen}$: set of ObservedT, every difficulty seen so far.
+\item $\mathit{out}$: OutcomeT.
+\item $t_{\mathit{end}}$: DateTimeT, when the attempt ended.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+None. The time of the child's last input is read from the Input Device Module
+(\mref{mInputDevice}).
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item The Guided Lesson Control Module (\mref{mLessonControl}) creates an
+attempt with values from the Lesson Catalogue (\mref{mCatalogue}) and the
+Learner Settings Module (\mref{mSettings}), passes each finished stroke to
+\texttt{addStroke} at the stylus lift that ends it, and calls
+\texttt{checkIdle} often enough that the attempt ends within a second of
+\texttt{ATTEMPT\_IDLE}.
+\item The input device has already dropped duplicate points and points it
+cannot map to the drawing area (SAF-AHM-001, SAF-AHM-002).
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{new AttemptT} starts an open attempt with no strokes.
+\item \texttt{addStroke} appends $s$ to $X$, evaluates all of $X$ with the
+Attempt Evaluation Module (FR-LRN-008), and updates $\mathit{seen}$, marking a
+difficulty corrected when it is no longer observed. If the evaluation passes,
+the attempt ends as $\mathit{passed}$ (FR-LRN-024).
+\item \texttt{checkIdle} ends an open attempt that has at least one stroke when
+\texttt{ATTEMPT\_IDLE} has passed since the last input: as $\mathit{invalid}$
+if the last evaluation is invalid (FR-LRN-010), and otherwise as
+$\mathit{notPassed}$. An attempt with no strokes is left open.
+\item \texttt{interrupt} ends the attempt as $\mathit{interrupted}$, keeping
+its strokes and difficulties and no evaluation result (FR-LRN-009,
+FR-REC-005).
+\item The other programs give the state. \texttt{evaluation} raises
+\texttt{notEvaluated} before the first stroke, and \texttt{endedAt} raises
+\texttt{attemptOpen} while the attempt is open.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

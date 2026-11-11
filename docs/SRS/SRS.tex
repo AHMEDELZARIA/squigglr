@@ -233,6 +233,7 @@ the past project (\#287).\\
 rationale counts the attempt in progress when a child stops, Section~4.2 rejects
 values that break any cross-setting inequality, and Section~26 counts 143
 requirements (\#290).\\
+11 November 2026 & Muhammad Huzaifah & Added ASM-018, that each learner profile is used by one child with an adult present, and told adults so in the user documentation (\#279).\\
 \end{longtable}
 
 ~\\
@@ -1821,6 +1822,21 @@ will check the margin with prepared adult-made sequences, not with children
 \emph{If false:} a lesson may be extended for a child who is not improving, or
 not extended for one who is. \texttt{ATTEMPT\_LIMIT\_MAX} still ends the lesson.
 Relevant to safety.
+\item[ASM-018] Each learner profile is used by one child, and a supporting adult
+is present and knows which child is drawing during guided practice.\\
+\emph{Rationale:} the supervisor advised that practice data is only useful for
+tracking when an adult is watching and knows that it is one child paying
+attention; a sibling or friend drawing on the same profile makes the records
+unreliable (supervisor meeting of Oct.~28, 2026,
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/201}{\#201}). Squigglr
+holds only an identifier and an avatar for a child (BR-001), so it cannot tell
+which child is drawing.\\
+\emph{Depends on it:} G.5, G.6; BR-001; FR-PRG-001; SAF-RAY-007.\\
+\emph{If false:} attempt records and progress summaries mix more than one
+child's practice, and a supporting adult may act on a summary that does not
+describe the learner. Squigglr does not detect this; the user documentation
+tells supporting adults to keep one profile for each child
+(Table~\ref{tab:user-docs}).
 \end{description}
 
 \section{The Scope of the Work}
@@ -7653,8 +7669,8 @@ Reading records and summaries & What each attempt and lesson record holds; how
 attempts made with a guide are told apart from those made without one; how to
 open the attempts behind a summary; the values in use for each attempt; and that
 records describe practice only and are not a diagnosis or a measure of ability,
-including when shared with others. & UC-008, UC-009, UC-010; G.5, G.6; BR-006;
-ASM-006; CA-005; SAF-RAY-004 & Supporting adults, and those they share records
+including when shared with others. Also that each learner profile is for one child: if a sibling or friend draws on it, its records and summaries no longer describe that child. & UC-008, UC-009, UC-010; G.5, G.6; BR-006;
+ASM-006, ASM-018; CA-005; SAF-RAY-004 & Supporting adults, and those they share records
 with \\
 \addlinespace
 Creative space and refinement & That refinement happens automatically and
@@ -8731,6 +8747,7 @@ sections with the work my teammates had already merged. For Git, it managed my
 branches and commits, merged main into my branches, fixed merge conflicts and
 wrote my pull request descriptions. In this document, this covered Sections 7,
 9.3 to 9.5, 19, 20, 22 to 24 and 26. All decisions in my sections are my own.
+For the revisions made after the TA and supervisor feedback and the team audit (\#279, \#288, \#289, \#303), I gave Claude Sonnet 5.5 agents written instructions through the omp coding agent; they made the edits, and I checked each change against its issue before asking for review.
 
 \newpage{}
 

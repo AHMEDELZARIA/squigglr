@@ -233,6 +233,9 @@ the past project (\#287).\\
 rationale counts the attempt in progress when a child stops, Section~4.2 rejects
 values that break any cross-setting inequality, and Section~26 counts 143
 requirements (\#290).\\
+11 November 2026 & Muhammad Huzaifah & Brought the open issues up to date:
+closed OI-06 and OI-08 with what settled them, gave the seven open issues a
+current status and target date, and removed dates repeated elsewhere (\#288).\\
 \end{longtable}
 
 ~\\
@@ -4951,8 +4954,8 @@ The specialists advised starting from the Web Content Accessibility Guidelines
 specific WCAG ideas as non-functional requirements rather than treating WCAG as
 a constraint (\srcref{008}). Each requirement below that is based on a WCAG
 success criterion names it in its rationale. Further WCAG-based accessibility
-criteria are in Section~\ref{sec:usability}, and listing WCAG as a standard is
-open issue OI-08.
+criteria are in Section~\ref{sec:usability}, and the selected WCAG 2.2 success
+criteria are listed in \reqref{NFR-COMP-005} (OI-08).
 
 \subsection{Appearance Requirements}
 \label{sec:appearance}
@@ -6104,10 +6107,11 @@ This section lists questions that are not yet settled and could change the
 requirements. Each issue has an identifier (OI-\#\#), an owner, the decision or
 evidence needed to close it, the goals, constraints or requirements it affects,
 and a target date. Requirement identifiers are linked here as the requirements
-are written. Target dates come from the SRS schedule (review copy Oct.\ 17,
-2026; submission Oct.\ 19, 2026) or from the course deadlines in
-Table~\ref{tab:con-schedule} (CON-004) where an issue cannot be closed before
-submission.
+are written. Target dates come from the course deadlines in
+Table~\ref{tab:con-schedule} (CON-004). The table was last reviewed in November
+2026. An issue that has been settled stays in the table, marked Closed in the
+Target column with what settled it, so that references to its identifier still
+resolve.
 
 {\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.07\textwidth}%
@@ -6132,26 +6136,33 @@ OI-01 & \emph{School and shared devices.} School devices may be shared by
 several children (SRC-004) and are often managed centrally (CON-002). One adult
 account holds several learner profiles, and an adult switches between them
 (BR-001). Still needed: whether an adult signs in on each shared device, and how
-a device is left when a session ends. & G.5, G.6, CON-001, CON-002;
-\reqref{NFR-SEC-001}, \reqref{NFR-SEC-002}, \reqref{SAF-RAY-007},
-\reqref{SAF-SHA-001}, \reqref{SAF-SHA-006} & Shamil Canbolat & Oct.\ 17, 2026 \\
+a device is left when a session ends. \emph{Status, Nov.\ 2026:} open.
+\reqref{NFR-SEC-001}, \reqref{NFR-SEC-002} and \reqref{SAF-SHA-006} set who may
+read an account, sign-out and the session timeout; the sign-in policy for a
+shared device and what is left on it are not decided. & G.5, G.6, CON-001,
+CON-002; \reqref{NFR-SEC-001}, \reqref{NFR-SEC-002}, \reqref{SAF-RAY-007},
+\reqref{SAF-SHA-001}, \reqref{SAF-SHA-006} & Shamil Canbolat & Feb.\ 1, 2027
+(Rev~0) \\
 \addlinespace
 OI-02 & \emph{Privacy of practice records.} The supervisor's advice to collect
 no information about children (SRC-004,
 \href{https://github.com/AHMEDELZARIA/squigglr/issues/21}{\#21}) concerns
 personal information; storing practice attempts is acceptable. Still needed: the
 privacy requirements for attempt records, including who can see them, whether
-and how they can be shared, and how they are deleted. & G.5, G.6, CON-005;
+and how they can be shared, and how they are deleted. \emph{Status, Nov.\
+2026:} open. Decided: only an identifier and an avatar are held for a child
+(\reqref{NFR-SEC-004}) and only the adult who holds the account reads its
+records (\reqref{NFR-SEC-001}). Not decided: whether and how records are shared
+or exported, and how they are deleted. & G.5, G.6, CON-005;
 \reqref{NFR-SEC-001}, \reqref{NFR-SEC-004}, \reqref{SAF-SHA-002},
-\reqref{FR-REC-009} & Shamil Canbolat & Oct.\ 17, 2026 \\
+\reqref{FR-REC-009} & Shamil Canbolat & Feb.\ 1, 2027 (Rev~0) \\
 \addlinespace
 OI-03 & \emph{Scope of G.4.} A peer reviewer suggested moving creative drawing
 and refinement to the stretch goals
-(\href{https://github.com/AHMEDELZARIA/squigglr/issues/70}{\#70}). The team may
-adopt the change or reply on the issue explaining why G.4 stays a core goal
-(SRC-006). Still needed: the reply on the issue and, if G.4 stays, a supported
-set of items small enough for the schedule. & G.4 & Muhammad Huzaifah & Oct.\
-17, 2026 \\
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/70}{\#70}). The team
+replied on the issue, which closed on Nov.\ 5, 2026, and G.4 stays a core goal
+(SRC-006). Still needed: a supported set of items small enough for the
+schedule. & G.4 & Muhammad Huzaifah & Nov.\ 23, 2026 (PoC) \\
 \addlinespace
 OI-04 & \emph{TA confirmation of revised G.3.} The team distinguishes adult
 selection of lessons, starting stages, skips and backward moves from automatic
@@ -6163,7 +6174,7 @@ CON-007). G.3 permits an optional suggestion to go back a stage after
 adult-control revision in principle and asked that the updated PSG be merged
 after marking the submitted version (SRC-006). Still needed: confirmation of the
 rule as clarified, not a new choice between automatic and adult-authorized
-forward progression. & G.3, CON-007 & Shamil Canbolat & Oct.\ 17, 2026 \\
+forward progression. & G.3, CON-007 & Shamil Canbolat & Nov.\ 23, 2026 (PoC) \\
 \addlinespace
 OI-05 & \emph{Verification of learning thresholds.} Section~\ref{sec:constants}
 defines the ranges and defaults for the nine adult-configurable values and the
@@ -6171,35 +6182,43 @@ fixed \texttt{IMPROVE\_MARGIN}. Verify the selected ranges with adult-made
 drawings, provide examples illustrating the endpoints of the
 \texttt{STAGE\_PASS} range, and confirm that the drawing-evaluation method
 produces results on the specified 0--100 scale (SRC-004, SRC-008). No child
-testing is permitted. & G.2, G.3; \reqref{FR-LRN-017}, \reqref{FR-LRN-020},
-\reqref{FR-LRN-021} & Ahmed Elzaria & Nov.\ 2, 2026 (V\&V Plan) \\
+testing is permitted. \emph{Status, Nov.\ 2026:} open. The V\&V Plan now plans
+this verification (T-LRN-017, T-SAF-008, T-PERF-008); its results are still
+needed. & G.2, G.3; \reqref{FR-LRN-017}, \reqref{FR-LRN-020},
+\reqref{FR-LRN-021} & Ahmed Elzaria & Feb.\ 1, 2027 (Rev~0) \\
 \addlinespace
 OI-06 & \emph{Data isolation between institutions.} A peer reviewer asked how
 records from different schools or centres are kept apart
-(\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}). Still needed:
-a decision on whether Squigglr supports separate institutions in this project
-and, if so, the access and privacy requirements that keep their records apart. &
+(\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}).
+\emph{Closed:} institutional self-hosting and separate data for each
+institution are out of scope for this project (note after
+\reqref{NFR-SEC-004}); \reqref{NFR-SEC-001} and \reqref{SAF-SHA-001} keep each
+account's records apart. &
 G.5, G.6; \reqref{NFR-SEC-001}; out-of-scope note after \reqref{NFR-SEC-004} &
-Shamil Canbolat & Oct.\ 17, 2026 \\
+Shamil Canbolat & Closed Nov.\ 2026 \\
 \addlinespace
 OI-07 & \emph{Budget.} No budget has been set (Budget Constraints), and external
 services may have costs. Still needed: the TA's confirmation of whether any
-budget is available. & G.4 (refinement service) & Shamil Canbolat & Oct.\ 17,
-2026 \\
+budget is available. & G.4 (refinement service) & Shamil Canbolat & Nov.\ 23,
+2026 (PoC) \\
 \addlinespace
 OI-08 & \emph{Selected WCAG 2.2 success criteria.} The specialists recommended
 starting with WCAG (SRC-005, \intref{P2}{39:26}), and the supervisor advised
 taking specific WCAG ideas as non-functional requirements rather than as a
 constraint (SRC-008). The criteria Squigglr follows are now listed in
-NFR-UX-001, NFR-UX-004, NFR-UX-005 and NFR-UX-018 to NFR-UX-024. Still needed:
-WCAG 2.2 listed in Standards Compliance Requirements. & G.1; NFR-UX-001,
-NFR-UX-004, NFR-UX-005, NFR-UX-018 to NFR-UX-024 & Shamil Canbolat & Oct.\ 17,
-2026 \\
+NFR-UX-001, NFR-UX-004, NFR-UX-005 and NFR-UX-018 to NFR-UX-024.
+\emph{Closed:} \reqref{NFR-COMP-005} in Standards Compliance Requirements lists
+the selected WCAG 2.2 success criteria. Full WCAG conformance stays a stretch
+goal (Section~\ref{sec:waiting-room}). & G.1; NFR-UX-001,
+NFR-UX-004, NFR-UX-005, NFR-UX-018 to NFR-UX-024 & Shamil Canbolat & Closed
+Nov.\ 2026 \\
 \addlinespace
 OI-09 & \emph{Supported devices and browsers.} CON-003 leaves the device and
 browser combinations TBD. Still needed: the list of combinations the team will
-support and test with a stylus. & CON-001, CON-003 & Shamil Canbolat & Nov.\ 2,
-2026 (V\&V Plan) \\
+support and test with a stylus. \emph{Status, Nov.\ 2026:} open. The V\&V Plan
+gives the method for choosing the combinations (Symbolic Parameters,
+\texttt{SUPPORTED\_DEVICES}); the list itself is still needed. & CON-001,
+CON-003 & Shamil Canbolat & Nov.\ 23, 2026 (PoC) \\
 \end{longtable}
 }
 
@@ -6555,9 +6574,8 @@ hardware-independent input from a mouse, pen or touchscreen
 \citep{W3C2026PointerEvents}; which devices and browsers Squigglr supports is
 still open (OI-09). Supabase provides a Postgres database, authentication and
 file storage, is open source under the Apache License 2.0, and can be
-self-hosted \citep{Supabase2026GitHub}; the self-hosting option bears on data
-isolation between institutions (OI-06,
-\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}). Vercel's Hobby
+self-hosted \citep{Supabase2026GitHub}; self-hosting for institutions is out of
+scope (OI-06). Vercel's Hobby
 plan is free but limited to non-commercial personal use, and when a usage limit
 is exceeded the feature usually stays unavailable until 30 days have passed
 \citep{Vercel2026Hobby}.
@@ -7012,9 +7030,10 @@ Use by institutions & Schools or centres may adopt Squigglr; a peer reviewer
 asked how their records would be kept apart
 (\href{https://github.com/AHMEDELZARIA/squigglr/issues/75}{\#75}), and an
 educator may manage many learners (ASM-012). One shared store of records may not
-meet an institution's expectations. & OI-06 decides whether separate
-institutions are supported in this project and, if so, the access and privacy
-requirements that keep their records apart. \\
+meet an institution's expectations. & Institutional self-hosting and separate
+data for each institution are out of scope for this project (OI-06); the access
+rules of \reqref{NFR-SEC-001} and \reqref{SAF-SHA-001} keep each account's
+records apart. \\
 \addlinespace
 Maintenance after the course & Who maintains Squigglr after the project ends is
 not decided (Maintenance Users and Service Technicians). Hosting accounts,
@@ -7581,7 +7600,7 @@ the evaluation (SRC-002), by the POC demonstration window. \\
 Devices for development and testing & Unknown & The POC needs a target tablet
 with a compatible stylus and a second device and browser combination (SRC-002).
 Whether team members already own suitable devices is not recorded. & TBD with
-the supported devices (OI-09): Shamil Canbolat, Nov.\ 2, 2026. \\
+the supported devices (OI-09): Shamil Canbolat. \\
 \addlinespace
 Devices and network for users & Not a project cost & Homes and schools use their
 own touchscreen device with a stylus and their own network (ASM-003, ASM-005);
@@ -7598,8 +7617,8 @@ The total monetary cost is TBD, which matches Budget Constraints. With both free
 plans and geometric refinement only, the known service costs are \$0, subject to
 the free plans' limits and terms; device costs are still unknown. Any paid plan
 or model requests must fit within the \$500 course limit, of which at most \$150
-can be reimbursed. Whether any budget is available is OI-07 (Shamil Canbolat,
-Oct.\ 17, 2026). The Volere template suggests estimating cost from counts of use
+can be reimbursed. Whether any budget is available is OI-07 (Shamil Canbolat).
+The Volere template suggests estimating cost from counts of use
 cases and requirements \citep{robertson2012volere}; those counts are not final
 while the requirements are being written, so no such estimate is given here.
 

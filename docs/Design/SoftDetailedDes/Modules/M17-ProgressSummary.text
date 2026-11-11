@@ -1,9 +1,124 @@
 \section{MIS of the Progress Summary Module (\mref{mSummary})}
 \label{sec:mSummary}
 
-\wss{This module's interface is written in \#266. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+ProgressSummary
+
+\subsection{Uses}
+
+Attempt Record Module (\mref{mRecord}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\begin{itemize}
+\item \texttt{PRACTICE\_ONLY}: string $=$ ``This summary describes practice
+only. It is not an assessment or a diagnosis.'', the practice-only statement
+that the Adult View Module (\mref{mAdultView}) shows on every summary
+(SAF-RAY-004).
+\end{itemize}
+
+\subsubsection{Exported Types}
+
+The types LessonRecordT, AttemptRecordT and EndingT are those of the Attempt
+Record Module (\mref{mRecord}).
+
+{\sloppy
+\begin{itemize}
+\item ViewChoiceT = tuple of $(\mathit{lessons}: \text{set of LessonIdT},$
+$\mathit{from}: \text{DateTimeT} \cup \{\bot\},$ $\mathit{to}:
+\text{DateTimeT} \cup \{\bot\})$, the lessons and dates an adult asks a summary
+to cover (FR-PRG-007). The empty set covers every lesson, and $\bot$ sets no
+limit on the dates. Which recorded values are shown is chosen in the Adult View
+Module (\mref{mAdultView}).
+\item StageStatusT $= \{\mathit{notAttempted}, \mathit{attempted}\}$
+(FR-PRG-010).
+\item StageSummaryT = tuple of $(\mathit{stage}: \text{DrawingStageT},$
+$\mathit{status}: \text{StageStatusT},$ $\mathit{passed}: \text{seq of
+AttemptRecordT},$ $\mathit{notPassed}: \text{seq of AttemptRecordT},$
+$\mathit{interrupted}: \text{seq of AttemptRecordT})$, the attempts at one
+drawing stage of one run of a lesson. Stages $T$ and $E$ are drawn with a guide
+and stage $I$ without one (FR-PRG-003, FR-PRG-009).
+\item RunT = tuple of $(\mathit{record}: \text{LessonRecordT},$
+$\mathit{stages}: \text{seq of StageSummaryT})$, one start of a lesson, with its
+starting stage, furthest stage, passes, extensions and ending (FR-PRG-002).
+\item LessonSummaryT = tuple of $(\mathit{lesson}: \text{LessonIdT},$
+$\mathit{runs}: \text{seq of RunT},$ $\mathit{limitEndings}: \mathbb{N}_0,$
+$\mathit{extensions}: \mathbb{N}_0)$, every run of one lesson in the order they
+started, with the number of runs that ended at a limit and the number of
+extensions granted (SAF-RAY-006).
+\item RecurringT = tuple of $(\mathit{lesson}: \text{LessonIdT},$
+$\mathit{stage}: \text{DrawingStageT},$ $\mathit{difficulty}:
+\text{DifficultyT},$ $\mathit{seen}: \text{seq of AttemptRecordT},$
+$\mathit{corrected}: \text{seq of AttemptRecordT})$, one recurring difficulty
+(FR-PRG-004).
+\item SummaryT = tuple of $(\mathit{learner}: \text{LearnerIdT},$
+$\mathit{lessons}: \text{seq of LessonSummaryT},$ $\mathit{recurring}:
+\text{seq of RecurringT},$ $\mathit{latest}: \text{DateTimeT} \cup \{\bot\})$,
+the progress summary of one learner (FR-PRG-001). It has no field that combines
+results across stages or lessons (FR-PRG-012).
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+summary & $a$: AdultIdT, $p$: LearnerIdT, $v$: ViewChoiceT & SummaryT &
+notOwner, unavailable \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. A summary is built from the records each time it is asked for, and has
+no data of its own.
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
+signed in.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief, \texttt{summary} reads
+$p$'s lesson records and their attempts with \texttt{lessonRecords} and
+\texttt{attempts} of the Attempt Record Module, keeps those of the lessons and
+dates in $v$, and builds the summary from them:
+\begin{itemize}
+\item Each lesson's runs are kept in the order they started, so no earlier
+attempt is hidden by a later run (SAF-RAY-006). A run's limit ending is an
+ending of $\mathit{endedAtLimit}$ or $\mathit{endedAtMax}$.
+\item Each run has a stage summary for every drawing stage, so attempts with and
+without a guide are never added together (FR-PRG-003, SAF-MOU-002), interrupted
+attempts are kept apart from the others (FR-PRG-009), and a stage the child did
+not reach is $\mathit{notAttempted}$ (FR-PRG-010).
+\item A difficulty is recurring when it was seen in at least \texttt{RECUR\_MIN}
+of the learner's attempts at the same stage of the same lesson.
+$\mathit{corrected}$ holds the attempts in which the child corrected it
+(FR-PRG-004). \texttt{RECUR\_MIN} is this module's secret, proposed at 3 in the
+SRS.
+\item $\mathit{latest}$ is the end time of the learner's latest attempt,
+including one saved just before the summary was asked for (FR-PRG-011), or
+$\bot$ if there is none. A learner with no records gets a summary with no
+lessons (FR-PRG-008).
+\item Every figure in the summary holds the attempt records behind it, so that
+the adult can open them (FR-PRG-005). Each record keeps the adult-set values it
+was made with (SAF-RAY-008).
+\end{itemize}
+\texttt{summary} raises \texttt{notOwner} if $p$ is not one of $a$'s learners,
+and \texttt{unavailable} if the records cannot be read.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

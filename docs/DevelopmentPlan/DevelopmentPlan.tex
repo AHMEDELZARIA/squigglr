@@ -66,6 +66,10 @@ literature review report to specialist interview report. \\
 2026-11-02 & Moustafa Moustafa & Addressed peer review: stated that only
 two POC experiments concern creative drawing, and that the others do not
 depend on refinement (\#70). \\
+2026-11-11 & Muhammad Huzaifah & Added a Traceability subsection to the
+Workflow Plan after TA feedback: the chain from issue to submission tag, how to
+follow it both ways, commits without an issue number, and the reviewer and QA
+coordinator checks (\#318). \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -490,6 +494,85 @@ checks the generated PDF and identifies the exact submitted commit with an
 annotated tag, for example \texttt{submission/dev-plan-2026-09-28}. Record the
 tag and commit in the deliverable's tracking issue. Preserve existing tags;
 use a new revision suffix, such as \texttt{-r2}, for a corrected submission.
+
+\subsection{Traceability}
+\label{sec:traceability}
+
+Every change can be followed from the issue that asked for it to the
+submitted document, and back. Table~\ref{tab:trace-chain} gives each link and
+where it is recorded.
+
+\begin{table}[!htbp]
+\caption{Traceability links}
+\label{tab:trace-chain}
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.27\textwidth}Y@{}}
+\toprule
+\textbf{Link} & \textbf{Where it is recorded}\\
+\midrule
+Issue to branch & The branch name carries the type and the issue number, for
+example \texttt{docs/318-traceability}.\\
+\addlinespace
+Branch to commits & Each commit subject ends with the issue number, for
+example \texttt{(\#318)}.\\
+\addlinespace
+Commits to PR & The PR title includes the issue number, and the PR body links
+the issue with \texttt{Closes \#N} or \texttt{Refs \#N}.\\
+\addlinespace
+PR to \texttt{main} & The PR is merged with a merge commit, which names the PR
+and keeps every commit of the branch.\\
+\addlinespace
+Merge to closed issue & GitHub closes the issue when a PR with
+\texttt{Closes \#N} merges, and the issue then lists the PR.\\
+\addlinespace
+Change to document & Each changed document gains a revision-history row that
+cites the issue, for example (\#69).\\
+\addlinespace
+Document to submission & The annotated submission tag names the submitted
+commit. The tag and the commit are recorded in the deliverable's tracking
+issue.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Following the chain.}
+Going forwards from an issue, its linked PRs appear on the issue,
+\texttt{git log --grep '\#N'} lists its commits, and the PR's merge commit
+shows when the change reached \texttt{main}. Going backwards from a line of a
+document, \texttt{git blame} gives the commit and the commit subject gives the
+issue. Then \texttt{git log --merges --ancestry-path <commit>..main} gives the
+merge commit, and so the PR and its review. From a submitted PDF, the
+submission tag gives the commit.
+
+\paragraph{Tracking issue.}
+A tracking issue is the deliverable-level issue that stands for the whole
+deliverable on the project board and in its milestone. It names the milestone
+QA coordinator described in
+Section~\ref{sec:meeting-milestone-responsibilities}. For example,
+\#15 is the tracking issue for this plan.
+
+\paragraph{Commits without an issue number.}
+Three kinds of commit carry no issue number, and each is traced another way.
+A merge commit made by GitHub is traced through the PR it names. A commit with
+the subject \texttt{Update generated PDFs for review} is pushed to
+\texttt{main} by the \emph{Build LaTeX and Deploy PDFs} workflow. It holds only
+generated PDFs and is traced to the push before it. A commit written by a
+member before this convention, or without following it, is traced through its
+author and date; of the last 100 commits on \texttt{main} on
+Nov.~11, 2026, only two cite nothing (\texttt{9518ba8} and
+\texttt{c8bf198}). History is not rewritten, so a commit that cites nothing
+stays as it is.
+
+\paragraph{Checks.}
+Before approving, the PR reviewer confirms that the branch name, the PR title
+and the PR body cite the issue, that every commit subject cites it, and that
+each changed document has a revision-history row citing it. A commit missing
+its reference is named in the PR description instead of being rewritten. At
+each submission, the milestone QA coordinator confirms that every issue in the
+milestone is closed by a merged PR or carries a disposition label, and that the
+revision-history rows added since the last submission cite issues. The
+coordinator then creates the submission tag and records it in the tracking
+issue.
 
 \subsection{Issues and Project-Board States}
 
@@ -1370,6 +1453,10 @@ workflow restored \LaTeX{} from its cache, and proposed a change to the
 workflow file (\texttt{latex-pages.yml}) that restores the command and
 stops the build if it is missing. The team reviewed the change and
 confirmed in a pull-request build that the references were restored.
+
+For the traceability subsection (\#318), Muhammad Huzaifah gave a
+Claude Sonnet 5.5 agent written instructions through the omp coding
+agent and checked the result against the issue before review.
 
 \subsection{Verification of AI-Generated Content}
 

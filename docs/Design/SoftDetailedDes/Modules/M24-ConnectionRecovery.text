@@ -30,6 +30,7 @@ KindT, ItemIdT and ItemT are those of the Storage Module (\mref{mStorage}).
 \subsubsection{Exported Access Programs}
 
 \begin{accessprograms}
+init & -- & -- & -- \\
 save & $a$: AdultIdT, $k$: KindT, $p$: LearnerIdT $\cup$ $\{\bot\}$,
 $\mathit{id}$: ItemIdT, $x$: ItemT & $\mathbb{B}$ & notOwner, unchangeable,
 invalidInput \\
@@ -45,8 +46,9 @@ None. The kept items are in $\mathit{deviceStore}$.
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item $\mathit{deviceStore}$: the items kept in the browser's storage on this
-device. It stays when the page is closed.
+\item $\mathit{deviceStore}$: set of tuple of $(\mathit{adult}:
+\text{AdultIdT},$ $u: \text{UnsavedT})$, the items kept in the browser's
+storage on this device. It stays when the page is closed.
 \item $\mathit{connection}$: $\mathbb{B}$, whether the browser reports a network
 connection.
 \end{itemize}
@@ -54,6 +56,8 @@ connection.
 \subsubsection{Assumptions}
 
 \begin{itemize}
+\item \texttt{init} is called once, when the page is opened, before any other
+access program.
 \item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
 signed in.
 \end{itemize}
@@ -67,8 +71,8 @@ it with \texttt{put} of the Storage Module. It gives true once the server
 confirms, and removes the item from $\mathit{deviceStore}$. It gives false if
 the server does not answer, and the item stays kept (SAF-RAY-003,
 FR-CRT-025).
-\item Every kept item is sent again when $\mathit{connection}$ becomes true and
-when \progname{} is next opened on the device, until the server confirms it
+\item \texttt{init}, and every change of $\mathit{connection}$ to true, sends
+each kept item again, until the server confirms it
 (NFR-PERF-005). Because a repeated \texttt{put} changes nothing, an item is
 never saved twice (FR-REC-008).
 \item The other exceptions of \texttt{put} are passed on, and the item is not

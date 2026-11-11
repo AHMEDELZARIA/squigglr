@@ -61,9 +61,12 @@ None.
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item $\mathit{db}$: the hosted database. It holds every saved item with its
-kind, adult and learner, and the access rules that let an adult reach only
-their own items (NFR-SEC-001, SAF-SHA-001).
+\item $\mathit{db}$: set of tuple of $(\mathit{kind}: \text{KindT},$
+$\mathit{adult}: \text{AdultIdT} \cup \{\bot\},$ $\mathit{learner}:
+\text{LearnerIdT} \cup \{\bot\},$ $\mathit{id}: \text{ItemIdT},$
+$\mathit{item}: \text{ItemT})$, the saved items in the hosted database. The
+database's access rules let an adult reach only their own items (NFR-SEC-001,
+SAF-SHA-001).
 \end{itemize}
 
 \subsubsection{Assumptions}

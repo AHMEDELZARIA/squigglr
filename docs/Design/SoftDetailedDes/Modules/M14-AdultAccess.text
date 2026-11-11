@@ -38,6 +38,7 @@ settings (SAF-RAY-008) and restoring a drawing (FR-CRT-019).
 \subsubsection{Exported Access Programs}
 
 \begin{accessprograms}
+init & -- & -- & -- \\
 signUp & $c$: CredentialsT & SignUpResultT & unavailable \\
 signIn & $c$: CredentialsT & $\mathbb{B}$ & unavailable \\
 signOut & -- & -- & notSignedIn \\
@@ -51,25 +52,30 @@ adultCheck & $\mathit{act}$: AdultActionT & $\mathbb{B}$ & notSignedIn \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-\item $\mathit{lastInput}$: DateTimeT, the time of the last input to the page,
-initially the time the page was opened.
+\item $\mathit{lastInput}$: DateTimeT, the time of the last input to the page.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item $\mathit{auth}$: the hosted sign-in service, with its accounts and the
-session of this browser (NFR-OPS-002).
-\item $\mathit{screen}$: the browser window, on which this module shows only the
-adult check.
-\item $\mathit{input}$: the pointer and key input to the page, used to time
-inactivity (SAF-SHA-006) and to read the answer to the adult check.
+\item $\mathit{auth}$: tuple of $(\mathit{accounts}: \text{set of tuple of }
+(\mathit{id}: \text{AdultIdT}, \mathit{c}: \text{CredentialsT}),$
+$\mathit{session}: \text{AdultIdT} \cup \{\bot\})$, the accounts of the hosted
+sign-in service and the session of this browser (NFR-OPS-002).
+\item $\mathit{screen}$: seq of seq of PixelT, the pixels of the browser window,
+where PixelT is the colour of one pixel. This module shows only the adult check
+on it.
+\item $\mathit{input}$: seq of InputEventT, the key presses and pointer events
+on the page, each with its time. It is used to time inactivity (SAF-SHA-006)
+and to read the answer to the adult check.
 \item $\mathit{clock}$: DateTimeT, the current time.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
+\item \texttt{init} is called once, when the page is opened, before any other
+access program.
 \item A wrong password or an email already in use is the adult's mistake, not
 the caller's, so it is an output (false, or $\mathit{emailInUse}$), not an
 exception. Callers use \texttt{isSignedIn} before the programs that raise
@@ -80,6 +86,8 @@ exception. Callers use \texttt{isSignedIn} before the programs that raise
 
 The full semantics are given in Revision~0. In brief:
 \begin{itemize}
+\item \texttt{init} sets $\mathit{lastInput}$ to the current time. A session
+kept by the browser from an earlier visit stays open.
 \item \texttt{signUp} creates an account with the sign-in service and signs the
 adult in. It collects nothing but the email and password (NFR-SEC-004).
 \item \texttt{signIn} opens a session and gives true, or gives false and logs a

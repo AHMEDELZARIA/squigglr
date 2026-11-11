@@ -32,6 +32,7 @@ adult who chose it.
 \subsubsection{Exported Access Programs}
 
 \begin{accessprograms}
+init & -- & -- & -- \\
 avatars & -- & seq of AvatarT & -- \\
 create & $a$: AdultIdT, $\mathit{av}$: AvatarT & LearnerIdT & unavailable \\
 learners & $a$: AdultIdT & seq of LearnerT & unavailable \\
@@ -47,7 +48,7 @@ clearActive & -- & -- & -- \\
 
 \begin{itemize}
 \item $\mathit{current}$: ActiveT $\cup$ $\{\bot\}$, the active learner on this
-device, initially $\bot$ (none).
+device, or $\bot$ when there is none.
 \end{itemize}
 
 \subsubsection{Environment Variables}
@@ -57,6 +58,8 @@ None. The profiles are kept through the Storage Module (\mref{mStorage}).
 \subsubsection{Assumptions}
 
 \begin{itemize}
+\item \texttt{init} is called once, when the page is opened, before any other
+access program.
 \item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
 signed in.
 \item Before \texttt{setActive}, the caller has had the adult pass the adult
@@ -70,6 +73,8 @@ check for $\mathit{learnerSwitch}$ (SAF-RAY-001). Only the Adult View Module
 
 The full semantics are given in Revision~0. In brief:
 \begin{itemize}
+\item \texttt{init} sets $\mathit{current}$ to $\bot$, so no learner is active
+until an adult chooses one.
 \item \texttt{avatars} gives the avatars an adult can choose from.
 \item \texttt{create} saves a new profile with an identifier that \progname{}
 generates, and gives that identifier (BR-001). It does not change

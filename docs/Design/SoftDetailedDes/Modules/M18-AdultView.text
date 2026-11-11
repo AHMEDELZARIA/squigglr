@@ -47,6 +47,7 @@ There is one access program for each action an adult takes in the adult views.
 The inputs are what the adult enters or selects in the view.
 
 \begin{accessprograms}
+init & -- & -- & -- \\
 signUp & $c$: CredentialsT & -- & -- \\
 signIn & $c$: CredentialsT & -- & -- \\
 signOut & -- & -- & -- \\
@@ -70,21 +71,25 @@ showUnsaved & -- & -- & -- \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-\item $\mathit{view}$: ViewT, the view shown, initially $\mathit{signIn}$.
+\item $\mathit{view}$: ViewT, the view shown.
 \item $\mathit{parts}$: set of SummaryPartT, the recorded values shown in a
-summary, initially all of them.
+summary.
 \end{itemize}
 
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item $\mathit{screen}$: the browser window while an adult view is shown.
-\item $\mathit{input}$: the adult's key and pointer input to the adult views.
+\item $\mathit{screen}$: seq of seq of PixelT, the pixels of the browser window
+while an adult view is shown, where PixelT is the colour of one pixel.
+\item $\mathit{input}$: seq of InputEventT, the adult's key presses and pointer
+events in the adult views, each with its time.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
+\item \texttt{init} is called each time an adult view is opened, before any
+other access program.
 \item \texttt{showAttempts} is given the attempt records behind a figure of the
 summary on the screen, which the adult has just selected.
 \end{itemize}
@@ -93,6 +98,9 @@ summary on the screen, which the adult has just selected.
 
 The full semantics are given in Revision~0. In brief:
 \begin{itemize}
+\item \texttt{init} sets $\mathit{view}$ to $\mathit{profiles}$ if an adult is
+signed in and to $\mathit{signIn}$ if not, and sets $\mathit{parts}$ to every
+recorded value.
 \item Each program carries out one adult action and shows its result. A problem,
 such as a wrong password, a setting out of range, an unsupported device
 (SAF-RAY-002) or a server that does not answer, is shown on the screen in plain

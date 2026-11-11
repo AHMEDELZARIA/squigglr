@@ -17,12 +17,14 @@ None.
 
 \subsubsection{Exported Types}
 
+{\sloppy
 \begin{itemize}
-\item EventKindT $= \{\mathit{signInFailed}, \mathit{sessionTimeout},
-\mathit{changeRefused}\}$, the security events that are logged: a failed
+\item EventKindT $= \{\mathit{signInFailed},$ $\mathit{sessionTimeout},$
+$\mathit{changeRefused}\}$, the security events that are logged: a failed
 sign-in and a session timeout (NFR-SEC-005), and a refused change to a saved
 record (NFR-SEC-003).
 \end{itemize}
+}
 
 \subsubsection{Exported Access Programs}
 
@@ -40,8 +42,10 @@ None.
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item $\mathit{auditLog}$: the server-side store of audit events, each with its
-kind, adult, subject and time.
+\item $\mathit{auditLog}$: seq of tuple of $(\mathit{kind}: \text{EventKindT},$
+$\mathit{adult}: \text{AdultIdT} \cup \{\bot\},$ $\mathit{about}:
+\text{string},$ $\mathit{at}: \text{DateTimeT})$, the server-side store of audit
+events.
 \item $\mathit{clock}$: DateTimeT, the current time.
 \end{itemize}
 

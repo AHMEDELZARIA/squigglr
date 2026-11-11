@@ -179,8 +179,9 @@ who manage the devices and networks (PER-3, ASM-013).
 This document records the hazards the team has identified, the failure modes
 behind them, and the action recommended for each. Its outputs are safety
 requirements: every recommended action traces to a requirement in the SRS, and
-the requirements derived from this analysis are listed again in
-Section~\ref{sec:safety-reqs}. The team uses the analysis to decide what the SRS
+the requirements that mitigate its hazards are listed again in
+Section~\ref{sec:safety-reqs}, and which of them this analysis created is shown.
+The team uses the analysis to decide what the SRS
 must require and what later verification must test; reviewers use it to check
 that the requirements address the ways \progname{} can fail. The analysis covers
 \progname{} as the SRS specifies it, used at home, at school and in other places
@@ -247,10 +248,11 @@ in its original order.
   \item \emph{Safety and security requirements (Section~\ref{sec:safety-reqs}):}
   as the teaching assistant (TA) advised (SRC-006), each safety requirement is
   written once, in the SRS, and the FMEA refers to it by ID. This section
-  repeats the statement of every requirement derived from the HA exactly as the
-  SRS states it, with the hazards it mitigates.
-  \item \emph{Roadmap (Section~\ref{sec:roadmap}):} each requirement derived
-  from the HA is assigned to a project phase, PH-1 (proof of concept), PH-2
+  repeats the statement of every requirement that mitigates a hazard exactly as
+  the SRS states it, with the hazards it mitigates, and which of them this
+  analysis created.
+  \item \emph{Roadmap (Section~\ref{sec:roadmap}):} each requirement that
+  mitigates a hazard is assigned to a project phase, PH-1 (proof of concept), PH-2
   (Revision~0) or PH-3 (final), or to Future, with the phase dates set in the
   SRS Introduction.
 \end{itemize}
@@ -264,7 +266,8 @@ equipment and services around them. Section~\ref{sec:assumptions} lists the
 critical assumptions, kept few so that they do not assume hazards away.
 Section~\ref{sec:fmea} states the method, gives the FMEA tables, one for each
 author's rows, and checks their coverage. Section~\ref{sec:safety-reqs} lists
-the safety and security requirements derived from the analysis, and
+the requirements that mitigate its hazards and shows which of them this
+analysis created, and
 Section~\ref{sec:roadmap} gives the phase in which each is planned. The
 references follow, then two appendices: the disclosure of generative artificial
 intelligence (AI) use and the team's reflection. Table~\ref{TblRevisionHistory}
@@ -756,8 +759,8 @@ Table~\ref{tab:fmea-muh} (H-MUH). Table~\ref{tab:fmea-coverage} places every row
 of the five tables under a component and checks that every component has been
 examined for every category of harm. Each row ends with the requirements of the
 Software Requirements Specification (SRS) that mitigate it; the Safety and
-Security Requirements section lists the requirements derived from this analysis
-again.
+Security Requirements section lists the requirements that mitigate its hazards
+again, and which of them this analysis created.
 
 \subsection{Method}\label{sec:fmea-method}
 
@@ -1629,30 +1632,38 @@ Several pairs were examined and no credible failure mode was found in them:
 
 \section{Safety and Security Requirements}\label{sec:safety-reqs}
 
-This section lists the safety and security requirements derived from the hazard
-analysis (HA). A requirement is HA-derived when its ID appears in the Mitigating
-requirement IDs column of any of the five per-author FMEA tables (H-RAY, H-AHM,
-H-MOU, H-SHA, and H-MUH) in the Failure Mode and Effect Analysis section, so
-that it carries out the recommended action of at least one hazard. As the
-teaching assistant (TA) advised (SRC-006), each requirement is written once, in
-the SRS, together with its rationale, fit criterion, priority, phase and
-sources. This section therefore adds no requirement of its own:
-Table~\ref{tab:safety-reqs} repeats the statement of each HA-derived requirement
-exactly as the SRS states it.
+This section lists the requirements that mitigate the hazards of this analysis:
+every requirement whose ID appears in the Mitigating requirement IDs column of
+one of the five FMEA tables (H-RAY, H-AHM, H-MOU, H-SHA and H-MUH). They form
+two groups. A requirement was \emph{created by this analysis} when it was added
+to the SRS because a hazard showed that no requirement covered it. These are the
+safety-critical requirements (SAF) and two Creative Drawing requirements,
+FR-CRT-029 and FR-CRT-030, which were added when H-MUH-005 and H-MUH-006 showed
+a gap. A requirement is an \emph{existing requirement that mitigates a hazard}
+when it was written from the SRS's own sources, such as a goal, a business rule
+or a use case, and an FMEA row also names it. The split follows each author's
+account in the Reflection appendix and the pull requests that added the
+requirements. As the teaching assistant (TA) advised (SRC-006), each
+requirement is written once, in the SRS, together with its rationale, fit
+criterion, priority, phase and sources. This section therefore adds no
+requirement of its own: Tables~\ref{tab:safety-reqs} and~\ref{tab:existing-reqs}
+repeat the statement of each of these requirements exactly as the SRS states it.
 
-The table has three groups. Functional requirements come first, in the order of
-the SRS subsections that hold them: the Learning Activity, Creative Drawing,
-Attempt Record and Progress Summary requirements. The look and feel and
-usability requirements (NFR-UX) follow, in ID order. Safety-critical
-requirements come last (SAF-RAY, SAF-AHM, SAF-SHA and SAF-MOU); the
-SRS keeps them in its Safety-Critical Requirements subsection because they do
-not fit another section. For each requirement, the table gives its ID, with the
-short title the SRS gives it where there is one, its statement, the hazards
-whose FMEA rows cite it, and the SRS subsection that holds it. The subsection is
-named in words, because the SRS is a separate document; for the same reason, a
-statement that refers to an SRS table names the table by its caption. Names in
-monospaced capitals, such as \texttt{STAGE\_PASS}, are symbolic constants that
-the SRS defines in its table ``Central symbolic constants register''.
+The first table holds the requirements created by this analysis: the two
+Creative Drawing requirements first, then the safety-critical requirements
+(SAF-RAY, SAF-AHM, SAF-SHA and SAF-MOU), which the SRS keeps in its
+Safety-Critical Requirements subsection because they do not fit another section.
+The second table holds the existing requirements. Its functional requirements
+come first, in the order of the SRS subsections that hold them: the Learning
+Activity, Creative Drawing, Attempt Record and Progress Summary requirements.
+The look and feel and usability requirements (NFR-UX) follow, in ID order. For
+each requirement, a table gives its ID, with the short title the SRS gives it
+where there is one, its statement, the hazards whose FMEA rows cite it, and the
+SRS subsection that holds it. The subsection is named in words, because the SRS
+is a separate document; for the same reason, a statement that refers to an SRS
+table names the table by its caption. Names in monospaced capitals, such as
+\texttt{STAGE\_PASS}, are symbolic constants that the SRS defines in its table
+``Central symbolic constants register''.
 
 Some rows of the H-RAY and H-MOU tables also cite goals (G.2 to G.6), business
 rules (BR-004 and BR-005) or constraints (CON-001, CON-002, CON-003 and CON-007)
@@ -1660,7 +1671,7 @@ among their mitigations. A goal states what \progname{} is for, a business rule
 governs who may do what with \progname{} whatever its design, and a constraint
 is imposed on the project from outside, so none of them is a requirement and
 none is repeated here. Every row that cites a goal, a business rule or a
-constraint also cites at least one requirement of Table~\ref{tab:safety-reqs}.
+constraint also cites at least one requirement of these two tables.
 
 {\footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -1670,8 +1681,132 @@ constraint also cites at least one requirement of Table~\ref{tab:safety-reqs}.
   >{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.75cm-6\tabcolsep\relax}
   >{\raggedright\arraybackslash}p{1.75cm}
   >{\raggedright\arraybackslash}p{1.9cm}@{}}
-\caption{HA-derived requirements, as stated in the SRS}
+\caption{Requirements created by this analysis, as stated in the SRS}
 \label{tab:safety-reqs}\\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} & \textbf{SRS section} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} & \textbf{SRS section} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{@{}r@{}}{\emph{Continued on the next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{4}{@{}l}{\textbf{Creative Drawing requirements}} \\*
+\addlinespace
+FR-CRT-029\newline\emph{Show unsaved changes} & Squigglr shall show, while a
+creative drawing is open, whether every change to it has been saved. & H-MUH-005
+& Creative Drawing \\
+\addlinespace
+FR-CRT-030\newline\emph{Turn refinement off} & Squigglr shall let the child, and
+the supporting adult, turn automatic refinement off and on for a learner
+profile. & H-MUH-006 & Creative Drawing \\
+\addlinespace
+\midrule
+\multicolumn{4}{@{}l}{\textbf{Safety-critical requirements}} \\*
+\addlinespace
+SAF-RAY-001 & Squigglr shall allow lesson choice, starting stage choice, learner
+switching and acceptance of a go-back suggestion only after an adult check that
+a child cannot complete by tapping icons, and shall keep a pending suggestion,
+without blocking practice, until an adult accepts or declines it, or a pass or
+the end of the lesson clears it. & H-RAY-001,
+H-RAY-006 & Safety-Critical \\
+\addlinespace
+SAF-RAY-002 & Before a lesson starts, Squigglr shall check the device and
+browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not match,
+show an adult-readable notice that results may be unreliable. & H-RAY-002 &
+Safety-Critical \\
+\addlinespace
+SAF-RAY-003 & Squigglr shall keep each completed attempt on the device until the
+server confirms it is saved, and shall tell the adult which attempts could not
+be saved. & H-RAY-002 & Safety-Critical \\
+\addlinespace
+SAF-RAY-004 & No record, summary or export shall show a diagnostic label, a
+judgement of the child's abilities or a comparison with other children, and
+every summary and export shall state that it describes practice only and is not
+an assessment or diagnosis. & H-RAY-003, H-MOU-005 & Safety-Critical \\
+\addlinespace
+SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or at
+\texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from the child,
+and shall keep the progress saved up to that point. & H-RAY-004 &
+Safety-Critical \\
+\addlinespace
+SAF-RAY-006 & Squigglr shall record each lesson that ends at
+\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement
+extension, show the adult how many times these happened for each lesson, and
+keep earlier attempts when the same lesson is started again. & H-RAY-005 & Safety-Critical
+\\
+\addlinespace
+SAF-RAY-007 & Squigglr shall identify the active learner on every practice
+screen in a form a child who cannot read can recognize, and shall save every
+attempt and suggestion to that learner only. & H-RAY-006 & Safety-Critical \\
+\addlinespace
+SAF-RAY-008 & Squigglr shall save a child's adult-set values (the SRS table
+``Central symbolic constants register'') only within their team-set ranges, with
+\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
+\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the
+middle of each range when the adult does not choose; shall allow changes only
+after the adult check; and shall show the values in use alongside the child's
+records. & H-RAY-007 & Safety-Critical \\
+\addlinespace
+SAF-RAY-009 & During a guided lesson, Squigglr shall show a check-in a child
+who cannot read can understand after \texttt{LESSON\_IDLE\_PROMPT} with no
+input, end the lesson after \texttt{LESSON\_IDLE\_END} with no input, keep the
+progress saved and record that it ended for inactivity, without counting the
+idle time as an attempt. & H-RAY-004, H-RAY-006 & Safety-Critical \\
+\addlinespace
+SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
+event from being counted more than once during evaluation or recording of an
+attempt, while preserving legitimate separately drawn strokes, including
+overlapping strokes. & H-AHM-002 & Safety-Critical \\
+\addlinespace
+SAF-AHM-002 & Squigglr shall preserve the relative positions and order of stylus
+points within the active drawing surface when the canvas size or supported
+device orientation changes, and shall reject input whose coordinates cannot be
+mapped reliably to that surface. & H-AHM-003 & Safety-Critical \\
+\addlinespace
+SAF-SHA-001 & Squigglr shall authenticate data at every endpoint where it is
+accessed. & H-SHA-001 & Safety-Critical \\
+\addlinespace
+SAF-SHA-002 & Squigglr shall confirm that all essential third-party services do
+not transmit PII through their public interface. & H-SHA-002 & Safety-Critical
+\\
+\addlinespace
+SAF-SHA-003 & Squigglr shall report a save as successful only after the server
+confirms it, and shall inform the
+adult when a save fails. & H-SHA-003 & Safety-Critical \\
+\addlinespace
+SAF-SHA-006 & Squigglr shall log out the user after \texttt{IDLE\_TIMEOUT}
+(TBD) of inactivity. & H-SHA-001 & Safety-Critical \\
+\addlinespace
+SAF-MOU-001 & In guided lessons, feedback on a missed part shall show the child
+where the part is missing without drawing it for them. & H-MOU-004 &
+Safety-Critical \\
+\addlinespace
+SAF-MOU-002 & Records and progress summaries shall keep attempts made with a
+guide separate from attempts made without one, shall not include creative space
+drawings, and shall not present the number of attempts as a measure of the
+child's skill. & H-MOU-005 & Safety-Critical \\
+\addlinespace
+SAF-MOU-003 & No content on any child-facing screen shall flash more than three
+times in any one-second period. & H-MOU-001 & Safety-Critical \\
+\end{longtable}
+}
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{2.1cm}
+  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.75cm-6\tabcolsep\relax}
+  >{\raggedright\arraybackslash}p{1.75cm}
+  >{\raggedright\arraybackslash}p{1.9cm}@{}}
+\caption{Existing requirements that mitigate a hazard, as stated in the SRS}
+\label{tab:existing-reqs}\\
 \toprule
 \textbf{ID} & \textbf{Requirement} & \textbf{Hazards} & \textbf{SRS section} \\
 \midrule
@@ -1882,14 +2017,6 @@ refine any stroke drawn in a guided lesson. & H-MUH-002 & Creative Drawing \\
 FR-CRT-028\newline\emph{Creative drawings are not attempts} & Squigglr shall not
 count a creative drawing as an attempt. & H-MUH-003 & Creative Drawing \\
 \addlinespace
-FR-CRT-029\newline\emph{Show unsaved changes} & Squigglr shall show, while a
-creative drawing is open, whether every change to it has been saved. & H-MUH-005
-& Creative Drawing \\
-\addlinespace
-FR-CRT-030\newline\emph{Turn refinement off} & Squigglr shall let the child, and
-the supporting adult, turn automatic refinement off and on for a learner
-profile. & H-MUH-006 & Creative Drawing \\
-\addlinespace
 FR-REC-001\newline\emph{Attempt record} & Squigglr shall keep, for each attempt
 that ends with an outcome, an attempt record holding the lesson, the stage, the
 attempt's result, the outcome (whether the attempt passed its stage, FR-LRN-013)
@@ -2049,108 +2176,21 @@ sound; no message shall rely on sound alone. & H-MOU-003 & Accessibility \\
 NFR-UX-022\newline\emph{Control of audio} & Any sound that plays automatically
 for more than 3 seconds shall have a control to pause or stop it. & H-MOU-001 &
 Accessibility \\
-\addlinespace
-\midrule
-\multicolumn{4}{@{}l}{\textbf{Safety-critical requirements}} \\*
-\addlinespace
-SAF-RAY-001 & Squigglr shall allow lesson choice, starting stage choice, learner
-switching and acceptance of a go-back suggestion only after an adult check that
-a child cannot complete by tapping icons, and shall keep a pending suggestion,
-without blocking practice, until an adult accepts or declines it, or a pass or
-the end of the lesson clears it. & H-RAY-001,
-H-RAY-006 & Safety-Critical \\
-\addlinespace
-SAF-RAY-002 & Before a lesson starts, Squigglr shall check the device and
-browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not match,
-show an adult-readable notice that results may be unreliable. & H-RAY-002 &
-Safety-Critical \\
-\addlinespace
-SAF-RAY-003 & Squigglr shall keep each completed attempt on the device until the
-server confirms it is saved, and shall tell the adult which attempts could not
-be saved. & H-RAY-002 & Safety-Critical \\
-\addlinespace
-SAF-RAY-004 & No record, summary or export shall show a diagnostic label, a
-judgement of the child's abilities or a comparison with other children, and
-every summary and export shall state that it describes practice only and is not
-an assessment or diagnosis. & H-RAY-003, H-MOU-005 & Safety-Critical \\
-\addlinespace
-SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or at
-\texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from the child,
-and shall keep the progress saved up to that point. & H-RAY-004 &
-Safety-Critical \\
-\addlinespace
-SAF-RAY-006 & Squigglr shall record each lesson that ends at
-\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement
-extension, show the adult how many times these happened for each lesson, and
-keep earlier attempts when the same lesson is started again. & H-RAY-005 & Safety-Critical
-\\
-\addlinespace
-SAF-RAY-007 & Squigglr shall identify the active learner on every practice
-screen in a form a child who cannot read can recognize, and shall save every
-attempt and suggestion to that learner only. & H-RAY-006 & Safety-Critical \\
-\addlinespace
-SAF-RAY-008 & Squigglr shall save a child's adult-set values (the SRS table
-``Central symbolic constants register'') only within their team-set ranges, with
-\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
-\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the
-middle of each range when the adult does not choose; shall allow changes only
-after the adult check; and shall show the values in use alongside the child's
-records. & H-RAY-007 & Safety-Critical \\
-\addlinespace
-SAF-RAY-009 & During a guided lesson, Squigglr shall show a check-in a child
-who cannot read can understand after \texttt{LESSON\_IDLE\_PROMPT} with no
-input, end the lesson after \texttt{LESSON\_IDLE\_END} with no input, keep the
-progress saved and record that it ended for inactivity, without counting the
-idle time as an attempt. & H-RAY-004, H-RAY-006 & Safety-Critical \\
-\addlinespace
-SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
-event from being counted more than once during evaluation or recording of an
-attempt, while preserving legitimate separately drawn strokes, including
-overlapping strokes. & H-AHM-002 & Safety-Critical \\
-\addlinespace
-SAF-AHM-002 & Squigglr shall preserve the relative positions and order of stylus
-points within the active drawing surface when the canvas size or supported
-device orientation changes, and shall reject input whose coordinates cannot be
-mapped reliably to that surface. & H-AHM-003 & Safety-Critical \\
-\addlinespace
-SAF-SHA-001 & Squigglr shall authenticate data at every endpoint where it is
-accessed. & H-SHA-001 & Safety-Critical \\
-\addlinespace
-SAF-SHA-002 & Squigglr shall confirm that all essential third-party services do
-not transmit PII through their public interface. & H-SHA-002 & Safety-Critical
-\\
-\addlinespace
-SAF-SHA-003 & Squigglr shall report a save as successful only after the server
-confirms it, and shall inform the
-adult when a save fails. & H-SHA-003 & Safety-Critical \\
-\addlinespace
-SAF-SHA-006 & Squigglr shall log out the user after \texttt{IDLE\_TIMEOUT}
-(TBD) of inactivity. & H-SHA-001 & Safety-Critical \\
-\addlinespace
-SAF-MOU-001 & In guided lessons, feedback on a missed part shall show the child
-where the part is missing without drawing it for them. & H-MOU-004 &
-Safety-Critical \\
-\addlinespace
-SAF-MOU-002 & Records and progress summaries shall keep attempts made with a
-guide separate from attempts made without one, shall not include creative space
-drawings, and shall not present the number of attempts as a measure of the
-child's skill. & H-MOU-005 & Safety-Critical \\
-\addlinespace
-SAF-MOU-003 & No content on any child-facing screen shall flash more than three
-times in any one-second period. & H-MOU-001 & Safety-Critical \\
 \end{longtable}
 }
 
-In total, 89 requirements are HA-derived: 17 Learning Activity, 22 Creative
-Drawing, nine Attempt Record and 11 Progress Summary requirements, five Look
-and Feel and seven Usability and Humanity requirements, and 18 safety-critical
-requirements. Every row of the five FMEA tables cites at least one of them. The
+In total, 89 requirements mitigate at least one hazard. This analysis created 20
+of them: the 18 safety-critical requirements and two Creative Drawing
+requirements. The other 69 already existed: 17 Learning Activity, 20 Creative
+Drawing, nine Attempt Record and 11 Progress Summary requirements, five Look and
+Feel and seven Usability and Humanity requirements. Every row of the five FMEA
+tables cites at least one of them. The
 Roadmap section that follows states the phase in which each is planned.
 
 \section{Roadmap}\label{sec:roadmap}
 
-This section states when each HA-derived requirement of
-Table~\ref{tab:safety-reqs} is planned to be met. The capstone timeline has
+This section states when each requirement of Tables~\ref{tab:safety-reqs}
+and~\ref{tab:existing-reqs} is planned to be met. The capstone timeline has
 three phases, each named after the course deliverable that ends it: PH-1, the
 proof-of-concept (PoC) demonstration, from Nov.~23, 2026; PH-2, Revision~0
 (Rev~0), from Feb.~1, 2027; and PH-3, the final demonstration, from Mar.~15,

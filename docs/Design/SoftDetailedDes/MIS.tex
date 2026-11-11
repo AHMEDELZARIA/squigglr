@@ -84,6 +84,9 @@ Evaluation and Geometry Modules (\#326).\\
 11 November 2026 & Ahmed Elzaria & Added the MIS of the Guided Lesson Control
 and Improvement Measure Modules, with the access program for each lesson
 transition of SRS Section~9.2 (\#327).\\
+11 November 2026 & Ahmed Elzaria & Added the MIS of the Attempt Record Module,
+and checked the lesson and attempt modules against the MIS checklist
+(\#328).\\
 \bottomrule
 \end{tabularx}
 
@@ -192,7 +195,9 @@ more than one module, so that every module uses the same names. They are plain
 data types, so using one does not make a module use another module. The last
 column names the module whose data the type describes and which decides its
 values. StrokeT is the exception: it is an abstract data type, so a module that
-uses it uses the Stroke Module (\mref{mStroke}). A type that only one module
+calls its access programs uses the Stroke Module (\mref{mStroke}). A module
+that only passes a stroke on, as the Guided Lesson Control Module
+(\mref{mLessonControl}) does, does not. A type that only one module
 uses is defined in that module's section.
 
 {\small

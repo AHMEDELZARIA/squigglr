@@ -58,12 +58,13 @@ The state follows the state $\sigma$ of SRS Section~9.2:
 \begin{itemize}
 \item $\ell$: LessonIdT, $p$: LearnerIdT and $l$: StageT, the lesson, the
 learner and the current stage.
-\item $q$: StatusT.
+\item $q$: StatusT, initially $\mathit{noLesson}$.
 \item $n_f$, $n_a$, $k$: $\mathbb{N}_0$, the failed attempts, the evaluable
 attempts and the current failure streak at this stage.
 \item $H$: seq of $\mathbb{R}$, the stage results of the evaluable attempts at
 this stage, in order.
-\item $s$: $\mathbb{B}$, whether a go-back suggestion is pending.
+\item $s$: $\mathbb{B}$, whether a go-back suggestion is pending, and $i$:
+$\mathbb{N}_0$, its index in the lesson record.
 \item $z$: $\mathbb{B}$ and $x$: $\mathbb{N}_0$, whether the extension has been
 granted at this stage, and the evaluable attempts made since.
 \item $f$: StageT, the furthest stage reached in the lesson.

@@ -43,6 +43,18 @@ urlcolor=cyan          % color of external links
 \newcommand{\mref}[1]{M\ref{#1}}
 \newcommand{\mdef}[1]{\refstepcounter{mnum}\mthemnum\label{#1}}
 
+% Table of a module's exported access programs. Use one row per program:
+% name & inputs & output & exceptions \\
+\newenvironment{accessprograms}
+  {\par\noindent\small\renewcommand{\arraystretch}{1.2}%
+   \tabularx{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}
+   >{\raggedright\arraybackslash}X
+   >{\raggedright\arraybackslash}p{0.17\textwidth}
+   >{\raggedright\arraybackslash}p{0.24\textwidth}@{}}
+   \toprule \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+   \midrule}
+  {\bottomrule\endtabularx\par}
+
 \begin{document}
 
 \title{Module Interface Specification for \progname{}}
@@ -64,6 +76,9 @@ urlcolor=cyan          % color of external links
 11 November 2026 & Ahmed Elzaria & Added the introduction, the notation, the
 types shared between modules and the module decomposition, and gave each module
 its own file (\#324).\\
+11 November 2026 & Ahmed Elzaria & Added the MIS of the Audio Output, Lesson
+Catalogue and Feedback Modules, and the feedback, image and sound types
+(\#325).\\
 \bottomrule
 \end{tabularx}
 
@@ -203,8 +218,11 @@ Section~9.2) & \mref{mCatalogue}\\
 DrawingStageT & $\{T, E, I\}$, the stages at which the child draws (the set
 $A$ of SRS Section~9.2) & \mref{mCatalogue}\\
 LessonIdT & Identifies one lesson in the catalogue & \mref{mCatalogue}\\
-DifficultyT & Identifies one predefined difficulty, such as a missed part or a
-missed endpoint (BR-007) & \mref{mCatalogue}\\
+DifficultyT & tuple of $(\mathit{kind}: \{\mathit{missedPart},
+\mathit{missedEndpoint}, \mathit{offFigure}\}, \mathit{index}: \mathbb{N}_0)$,
+one predefined difficulty (BR-007): a required part or endpoint of the figure
+that was not drawn, given by its index in the figure, or strokes drawn away
+from the figure (index 0) & \mref{mCatalogue}\\
 FigureT & tuple of $(\mathit{parts}: \text{seq of PathT},
 \mathit{endpoints}: \text{seq of PointT})$, the required parts and endpoints of
 a lesson's figure (SRS Table~\ref{tab:lesson-catalogue}) & \mref{mCatalogue}\\
@@ -217,9 +235,17 @@ EvaluationT & tuple of $(\mathit{class}: \text{ClassT}, \mathit{guidance}:
 \mathit{difficulties}: \text{set of DifficultyT})$, the outcome of evaluating
 the strokes of an attempt. The result is on the 0--100 scale of the SRS. &
 \mref{mEvaluation}\\
-FeedbackKindT & The kinds of feedback a child can be given after an attempt,
-such as a passed stage, a missed part or effort on an attempt that did not
-pass & \mref{mFeedback}\\
+FeedbackKindT & $\{\mathit{stagePassed},$ $\mathit{lessonComplete},$
+$\mathit{keepTrying},$ $\mathit{notEvaluable},$ $\mathit{checkIn},$
+$\mathit{lessonEnded}\}$, the kinds of message the child can be given during a
+guided lesson, other than the feedback on a predefined difficulty &
+\mref{mFeedback}\\
+FeedbackT & tuple of $(\mathit{message}: \text{string}, \mathit{image}:
+\text{ImageIdT}, \mathit{sound}: \text{SoundIdT})$, the content of one message
+to the child & \mref{mFeedback}\\
+ImageIdT & Identifies one image that \progname{} shows the child &
+\mref{mFeedback}\\
+SoundIdT & Identifies one sound that \progname{} can play & \mref{mFeedback}\\
 AdultIdT & Identifies a signed-in supporting adult & \mref{mAccess}\\
 LearnerIdT & Identifies one learner profile & \mref{mProfile}\\
 SettingsT & tuple of the nine adult-set values of one learner (BR-008), each

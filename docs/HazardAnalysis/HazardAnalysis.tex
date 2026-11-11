@@ -4,6 +4,7 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{longtable}
+\usepackage{needspace}
 \usepackage{pdflscape}
 \usepackage{eso-pic}
 \usepackage[round]{natbib}
@@ -118,6 +119,8 @@ and the PH-1 roadmap (\#186).\\
 it bans describing the child in diagnostic, clinical or ranking terms (\#285).\\
 3 November 2026 & Moustafa Moustafa & Addressed PR review: the H-RAY-004 test
 allows the failed attempt in progress when a child stops drawing (\#290).\\
+11 November 2026 & Muhammad Huzaifah & Formatting only: let long words break in
+the H-SHA table and kept the last disclosure heading with its text (\#289).\\
 \end{longtable}
 
 ~\newpage
@@ -1129,11 +1132,11 @@ integrity, and the trustworthiness of content shown to children and adults.
 \bottomrule
 \endlastfoot
 
-H-SHA-001 & Authentication; account management & An unauthorized user gains
+H-SHA-001 & Authenti\-cation; account management & An unauthorized user gains
 access to a learners account data or the entire account. & Weak or reused
 credentials; missing server-side authorization checks & The child's privacy is
 violated as the unauthorized user can read or write over personal data. Loss:
-privacy and trust in the system. & Privacy/security & Mitigate: implement
+privacy and trust in the system. & Privacy/ security & Mitigate: implement
 authentication at every endpoint the data is accessed at; end session and logout
 after an extended inactivity; Document/Test: test that attempts to access other
 accounts' data under the hood is rejected by the server & SAF-SHA-001,
@@ -1144,7 +1147,7 @@ is sent to a third-party service (other than ones approved for functionality) &
 Error reporting or refinement service receive raw request payloads of private
 learner data; developers use uninspected external SDK & Privacy policy violated
 and child's private data exposed. Loss: privacy; regulatory compliance. &
-Privacy/security & Mitigate: administer protocol for reviewing all third-party
+Privacy/ security & Mitigate: administer protocol for reviewing all third-party
 services that are essential before implementing, reject all non-essential
 services. Document/Test: run grey-box (white-box if open source) integration
 tests in contained environments inspecting whether third-party services transmit
@@ -2555,6 +2558,7 @@ All ideas in my sections are my own. I reviewed every AI-drafted passage against
 my intended meaning before including it, and I decided which flagged
 inconsistencies and review comments were valid and how to resolve them.
 
+\needspace{3\baselineskip}
 \textbf{Huzaifah:} I used Anthropic's Claude Opus 5.5 at high effort through the
 omp coding agent, along with Claude Sonnet 5.5 (high) helper agents that rebased
 and reviewed my branches. GitHub Copilot also left an automated review on one of

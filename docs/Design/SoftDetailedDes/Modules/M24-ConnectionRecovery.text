@@ -1,9 +1,84 @@
 \section{MIS of the Connection Recovery Module (\mref{mRecovery})}
 \label{sec:mRecovery}
 
-\wss{This module's interface is written in \#266. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+ConnectionRecovery
+
+\subsection{Uses}
+
+Storage Module (\mref{mStorage}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item UnsavedT = tuple of $(\mathit{kind}: \text{KindT},$ $\mathit{learner}:
+\text{LearnerIdT} \cup \{\bot\},$ $\mathit{id}: \text{ItemIdT},$
+$\mathit{item}: \text{ItemT},$ $\mathit{kept}: \text{DateTimeT})$, an item kept
+on the device that the server has not yet confirmed, and when it was kept.
+KindT, ItemIdT and ItemT are those of the Storage Module (\mref{mStorage}).
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+save & $a$: AdultIdT, $k$: KindT, $p$: LearnerIdT $\cup$ $\{\bot\}$,
+$\mathit{id}$: ItemIdT, $x$: ItemT & $\mathbb{B}$ & notOwner, unchangeable,
+invalidInput \\
+unsaved & $a$: AdultIdT & seq of UnsavedT & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. The kept items are in $\mathit{deviceStore}$.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{deviceStore}$: the items kept in the browser's storage on this
+device. It stays when the page is closed.
+\item $\mathit{connection}$: $\mathbb{B}$, whether the browser reports a network
+connection.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
+signed in.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{save} keeps the item in $\mathit{deviceStore}$ first, then sends
+it with \texttt{put} of the Storage Module. It gives true once the server
+confirms, and removes the item from $\mathit{deviceStore}$. It gives false if
+the server does not answer, and the item stays kept (SAF-RAY-003,
+FR-CRT-025).
+\item Every kept item is sent again when $\mathit{connection}$ becomes true and
+when \progname{} is next opened on the device, until the server confirms it
+(NFR-PERF-005). Because a repeated \texttt{put} changes nothing, an item is
+never saved twice (FR-REC-008).
+\item The other exceptions of \texttt{put} are passed on, and the item is not
+kept, because sending it again would fail the same way.
+\item \texttt{unsaved} gives $a$'s kept items, oldest first, so the adult can be
+told what is not yet saved (SAF-SHA-003).
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

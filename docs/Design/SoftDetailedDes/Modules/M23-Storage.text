@@ -1,9 +1,110 @@
 \section{MIS of the Storage Module (\mref{mStorage})}
 \label{sec:mStorage}
 
-\wss{This module's interface is written in \#266. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+Storage
+
+\subsection{Uses}
+
+Audit Log Module (\mref{mLog}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item KindT $= \{\mathit{learner},$ $\mathit{settings},$ $\mathit{lesson},$
+$\mathit{lessonRecord},$ $\mathit{attemptRecord},$ $\mathit{drawing}\}$, the
+kinds of saved item. Each kind is laid out by the module that owns it: the
+Learner Profile (\mref{mProfile}), Learner Settings (\mref{mSettings}), Lesson
+Catalogue (\mref{mCatalogue}), Attempt Record (\mref{mRecord}) and Creative
+Drawing (\mref{mCreative}) Modules.
+\item ItemIdT, which identifies one saved item. No two items have the same
+identifier.
+\item ItemT, the data of one item, as its owner module lays it out: a tuple
+whose fields are numbers, Booleans, strings, date-times, or sequences and
+tuples of these. This module does not look inside an item, except to check its
+text before saving (NFR-SEC-006).
+\item EntryT = tuple of $(\mathit{id}: \text{ItemIdT},$ $\mathit{learner}:
+\text{LearnerIdT} \cup \{\bot\},$ $\mathit{item}: \text{ItemT})$, one saved
+item with the learner it belongs to.
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+newId & -- & ItemIdT & -- \\
+put & $a$: AdultIdT, $k$: KindT, $p$: LearnerIdT $\cup$ $\{\bot\}$,
+$\mathit{id}$: ItemIdT, $x$: ItemT & -- & notOwner, unchangeable, invalidInput,
+unavailable \\
+get & $a$: AdultIdT $\cup$ $\{\bot\}$, $k$: KindT, $\mathit{id}$: ItemIdT &
+ItemT & notOwner, unknownItem, unavailable \\
+list & $a$: AdultIdT $\cup$ $\{\bot\}$, $k$: KindT, $p$: LearnerIdT $\cup$
+$\{\bot\}$ & seq of EntryT & notOwner, unavailable \\
+remove & $a$: AdultIdT, $k$: KindT, $\mathit{id}$: ItemIdT & -- & notOwner,
+unknownItem, unavailable \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{db}$: the hosted database. It holds every saved item with its
+kind, adult and learner, and the access rules that let an adult reach only
+their own items (NFR-SEC-001, SAF-SHA-001).
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
+signed in.
+\item The Attempt Record Module replaces a lesson record only until it ends
+that record's lesson (FR-REC-009).
+\item Lessons are stored by the team, outside \progname{}.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{newId} gives an identifier that no item has.
+\item \texttt{put} saves $x$ as item $\mathit{id}$ of kind $k$, for adult $a$
+and learner $p$, creating it or replacing it. $p = \bot$ is for an item that
+belongs to the adult rather than to one learner, such as a learner profile.
+\texttt{put} returns only after the server confirms the save (SAF-SHA-003).
+Repeating a \texttt{put} with the same $\mathit{id}$ and $x$ changes nothing,
+so an attempt that is sent again is still saved once (FR-REC-008).
+\item A saved attempt record is never replaced: \texttt{put} with a different
+$x$ raises \texttt{unchangeable} and logs the refused change with the Audit Log
+Module, without the record's contents (FR-REC-009, NFR-SEC-003).
+\item \texttt{get} and \texttt{list} give only $a$'s items (NFR-SEC-001).
+\texttt{list} gives the items of learner $p$, or every item of kind $k$ that
+belongs to $a$ when $p = \bot$. Lessons belong to no adult, so they are read
+with $a = \bot$.
+\item \texttt{remove} deletes an item. Who may delete records is still an open
+issue in the SRS (OI-02).
+\end{itemize}
+\texttt{notOwner} is raised when $p$ or the item is not $a$'s, when $a = \bot$
+for a kind other than $\mathit{lesson}$, and when \texttt{put} or
+\texttt{remove} is given kind $\mathit{lesson}$. \texttt{invalidInput} is raised
+when the text of $x$ fails the input check (NFR-SEC-006), and
+\texttt{unavailable} when the server does not answer or does not confirm.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

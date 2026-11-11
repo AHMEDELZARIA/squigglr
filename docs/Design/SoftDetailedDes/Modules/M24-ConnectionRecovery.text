@@ -1,0 +1,9 @@
+\section{MIS of the Connection Recovery Module (\mref{mRecovery})}
+\label{sec:mRecovery}
+
+\wss{This module's interface is written in \#266. Follow the layout of
+the module template: Module, Uses, Syntax (Exported Constants, Exported Access
+Programs) and Semantics (State Variables, Environment Variables, Assumptions,
+Access Routine Semantics, Local Functions).}
+
+\newpage

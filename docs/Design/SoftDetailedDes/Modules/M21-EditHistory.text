@@ -1,0 +1,9 @@
+\section{MIS of the Edit History Module (\mref{mHistory})}
+\label{sec:mHistory}
+
+\wss{This module's interface is written in \#265. Follow the layout of
+the module template: Module, Uses, Syntax (Exported Constants, Exported Access
+Programs) and Semantics (State Variables, Environment Variables, Assumptions,
+Access Routine Semantics, Local Functions).}
+
+\newpage

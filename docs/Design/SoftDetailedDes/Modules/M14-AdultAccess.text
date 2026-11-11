@@ -1,9 +1,103 @@
 \section{MIS of the Adult Access Module (\mref{mAccess})}
 \label{sec:mAccess}
 
-\wss{This module's interface is written in \#266. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+AdultAccess
+
+\subsection{Uses}
+
+Audit Log Module (\mref{mLog}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None. \texttt{IDLE\_TIMEOUT} and the form of the adult check are this module's
+secret.
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item CredentialsT = tuple of $(\mathit{email}: \text{string},$
+$\mathit{password}: \text{string})$, what an adult enters to sign up or sign
+in.
+\item SignUpResultT $= \{\mathit{created}, \mathit{emailInUse},
+\mathit{notAccepted}\}$, where $\mathit{notAccepted}$ means the credentials do
+not meet the rules of the sign-in service.
+\item AdultActionT $= \{\mathit{lessonChoice},$ $\mathit{suggestionAnswer},$
+$\mathit{learnerSwitch},$ $\mathit{settingsChange},$
+$\mathit{drawingRestore}\}$, the actions a child must not take alone: choosing
+a lesson and its starting stage and answering a go-back suggestion (SAF-RAY-001,
+FR-LRN-018), switching the active learner (SAF-RAY-001), changing a learner's
+settings (SAF-RAY-008) and restoring a drawing (FR-CRT-019).
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+signUp & $c$: CredentialsT & SignUpResultT & unavailable \\
+signIn & $c$: CredentialsT & $\mathbb{B}$ & unavailable \\
+signOut & -- & -- & notSignedIn \\
+isSignedIn & -- & $\mathbb{B}$ & -- \\
+adult & -- & AdultIdT & notSignedIn \\
+adultCheck & $\mathit{act}$: AdultActionT & $\mathbb{B}$ & notSignedIn \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $\mathit{lastInput}$: DateTimeT, the time of the last input to the page,
+initially the time the page was opened.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{auth}$: the hosted sign-in service, with its accounts and the
+session of this browser (NFR-OPS-002).
+\item $\mathit{screen}$: the browser window, on which this module shows only the
+adult check.
+\item $\mathit{input}$: the pointer and key input to the page, used to time
+inactivity (SAF-SHA-006) and to read the answer to the adult check.
+\item $\mathit{clock}$: DateTimeT, the current time.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item A wrong password or an email already in use is the adult's mistake, not
+the caller's, so it is an output (false, or $\mathit{emailInUse}$), not an
+exception. Callers use \texttt{isSignedIn} before the programs that raise
+\texttt{notSignedIn}.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{signUp} creates an account with the sign-in service and signs the
+adult in. It collects nothing but the email and password (NFR-SEC-004).
+\item \texttt{signIn} opens a session and gives true, or gives false and logs a
+failed sign-in with the Audit Log Module (NFR-SEC-005). \texttt{signOut} ends
+the session, so it cannot be used again (NFR-SEC-002).
+\item \texttt{isSignedIn} is true while a session is open. A session with no
+input for \texttt{IDLE\_TIMEOUT} is ended and the timeout is logged
+(SAF-SHA-006, NFR-SEC-005).
+\item \texttt{adult} gives the signed-in adult. Every module that reads or saves
+an adult's data is given this value by its caller (SAF-SHA-001).
+\item \texttt{adultCheck} shows a short check that a young child cannot pass
+alone and gives whether it was passed. When it gives false, the caller does
+not carry out $\mathit{act}$ (SAF-RAY-001, SAF-RAY-008).
+\end{itemize}
+\texttt{unavailable} is raised when the sign-in service does not answer.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

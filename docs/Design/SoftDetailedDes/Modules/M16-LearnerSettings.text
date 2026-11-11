@@ -1,9 +1,110 @@
 \section{MIS of the Learner Settings Module (\mref{mSettings})}
 \label{sec:mSettings}
 
-\wss{This module's interface is written in \#266. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+LearnerSettings
+
+\subsection{Uses}
+
+Storage Module (\mref{mStorage}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None. The range and default of each adult-set value are this module's secret;
+\texttt{range} gives them. Their values are those of the symbolic constants of
+the SRS (BR-008, BR-009).
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item SettingNameT $= \{\mathit{stagePass},$ $\mathit{difficultyStreak},$
+$\mathit{attemptLimit},$ $\mathit{improveWindow},$
+$\mathit{attemptExtension},$ $\mathit{attemptLimitMax},$
+$\mathit{attemptIdle},$ $\mathit{lessonIdlePrompt},$
+$\mathit{lessonIdleEnd}\}$, the names of the fields of SettingsT
+(Table~\ref{tab:shared-types}).
+\item RangeT = tuple of $(\mathit{min}: \mathbb{N}_0,$ $\mathit{max}:
+\mathbb{N}_0,$ $\mathit{default}: \mathbb{N}_0)$, the team-set range of one
+adult-set value and its default, in the unit of its SRS constant: points out of
+100 for $\mathit{stagePass}$, seconds for the three idle times, and attempts for
+the others.
+\item OptionsT = tuple of $(\mathit{audio}: \mathbb{B},$ $\mathit{refinement}:
+\mathbb{B})$, the audio setting (NFR-UX-010) and the refinement setting
+(FR-CRT-030) of one learner. The SRS data dictionary also lists accessibility
+settings, which the SRS has not defined yet, so they are not part of this
+interface.
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+settings & $a$: AdultIdT, $p$: LearnerIdT & SettingsT & notOwner,
+unavailable \\
+range & $n$: SettingNameT & RangeT & -- \\
+check & $s$: SettingsT & set of SettingNameT & -- \\
+save & $a$: AdultIdT, $p$: LearnerIdT, $s$: SettingsT & -- & invalidSettings,
+notOwner, unavailable \\
+options & $a$: AdultIdT, $p$: LearnerIdT & OptionsT & notOwner, unavailable \\
+setAudio & $a$: AdultIdT, $p$: LearnerIdT, $\mathit{on}$: $\mathbb{B}$ & -- &
+notOwner, unavailable \\
+setRefinement & $a$: AdultIdT, $p$: LearnerIdT, $\mathit{on}$: $\mathbb{B}$ &
+-- & notOwner, unavailable \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. The saved settings are kept through the Storage Module
+(\mref{mStorage}).
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
+signed in.
+\item Before \texttt{save} and \texttt{setAudio}, the caller has had the adult
+pass the adult check for $\mathit{settingsChange}$ (SAF-RAY-008).
+\texttt{setRefinement} needs no adult check, because the child may turn
+refinement off and on in the creative space (FR-CRT-030).
+\item The team-set ranges keep \texttt{LESSON\_IDLE\_END} below
+\texttt{IDLE\_TIMEOUT} for every allowed value, so this module does not check
+that rule.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{settings} gives $p$'s saved values, with the default for each
+value the adult has not chosen (the middle of its range). \texttt{options}
+gives $p$'s audio and refinement settings.
+\item \texttt{range} gives the range and default of value $n$.
+\item \texttt{check} gives the values of $s$ that are outside their range or
+break a rule between values: \texttt{ATTEMPT\_LIMIT} $>$
+\texttt{DIFFICULTY\_STREAK}, \texttt{ATTEMPT\_LIMIT\_MAX} $\geq$
+\texttt{ATTEMPT\_LIMIT}, and \texttt{ATTEMPT\_IDLE} $<$
+\texttt{LESSON\_IDLE\_PROMPT} $<$ \texttt{LESSON\_IDLE\_END}. Both values of a
+broken rule are given. An empty set means $s$ can be saved.
+\item \texttt{save} saves $s$ for $p$ and raises \texttt{invalidSettings} if
+$\texttt{check}(s) \neq \emptyset$, so no value outside its range is ever saved
+(SAF-RAY-008). The values a lesson uses are those read when it is chosen.
+\item \texttt{setAudio} and \texttt{setRefinement} save one field of $p$'s
+options.
+\end{itemize}
+Each program raises \texttt{notOwner} if $p$ is not one of $a$'s learners.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

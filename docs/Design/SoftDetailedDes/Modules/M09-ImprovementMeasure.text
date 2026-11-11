@@ -1,9 +1,64 @@
 \section{MIS of the Improvement Measure Module (\mref{mImprovement})}
 \label{sec:mImprovement}
 
-\wss{This module's interface is written in \#264. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+ImprovementMeasure
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\begin{itemize}
+\item $\texttt{IMPROVE\_MARGIN} = 5$, in points out of 100, the smallest rise in
+the average stage result that counts as improvement. The team fixed this value
+(SRS Symbolic Constants).
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+improving & $H$: seq of $\mathbb{R}$, $w$: $\mathbb{N}$ & $\mathbb{B}$ & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $w$ is the learner's \texttt{IMPROVE\_WINDOW}, which the Learner Settings
+Module (\mref{mSettings}) keeps between 1 and 3, and each value in $H$ is a
+stage result between 0 and 100.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{improving}($H, w$):
+\begin{itemize}
+\item output: $\mathit{out} := \mathit{Improving}(H, w)$, the predicate of SRS
+Section~9.2. It is false when $H$ has fewer than $2w$ results. Otherwise it is
+true when the average of the last $w$ results is at least
+\texttt{IMPROVE\_MARGIN} above the average of the $w$ results before them
+(FR-LRN-019, FR-LRN-020).
+\item exception: none.
+\end{itemize}
+The measure is the secret of this module (LC-008), so a different measure of
+improvement changes only this module.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

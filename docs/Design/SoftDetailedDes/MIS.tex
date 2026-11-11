@@ -81,6 +81,9 @@ Catalogue and Feedback Modules, and the feedback, image and sound types
 (\#325).\\
 11 November 2026 & Ahmed Elzaria & Added the MIS of the Attempt, Attempt
 Evaluation and Geometry Modules (\#326).\\
+11 November 2026 & Ahmed Elzaria & Added the MIS of the Guided Lesson Control
+and Improvement Measure Modules, with the access program for each lesson
+transition of SRS Section~9.2 (\#327).\\
 \bottomrule
 \end{tabularx}
 
@@ -228,6 +231,9 @@ from the figure (index 0) & \mref{mCatalogue}\\
 FigureT & tuple of $(\mathit{parts}: \text{seq of PathT},
 \mathit{endpoints}: \text{seq of PointT})$, the required parts and endpoints of
 a lesson's figure (SRS Table~\ref{tab:lesson-catalogue}) & \mref{mCatalogue}\\
+GuideT & tuple of $(\mathit{outline}: \text{seq of PathT},
+\mathit{endpoints}: \text{seq of PointT})$, what is shown to guide the child at
+a drawing stage & \mref{mCatalogue}\\
 ClassT & $\{\mathit{complete}, \mathit{incomplete}, \mathit{invalid}\}$ (the
 set $R$ of SRS Section~9.2) & \mref{mEvaluation}\\
 GuidanceT & $\{\mathit{assisted}, \mathit{independent}\}$ (the set $M$ of SRS

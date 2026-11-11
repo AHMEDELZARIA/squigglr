@@ -21,9 +21,6 @@ changed or removed without a change to the code (NFR-MAINT-001, LC-001).
 \begin{itemize}
 \item CategoryT $= \{\mathit{line}, \mathit{shape}, \mathit{simpleDrawing}\}$,
 the categories of the approved catalogue (FR-LRN-001).
-\item GuideT = tuple of $(\mathit{outline}: \text{seq of PathT},
-\mathit{endpoints}: \text{seq of PointT})$, what is shown to guide the child at
-a drawing stage.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}

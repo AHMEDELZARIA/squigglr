@@ -810,7 +810,11 @@ cause the harm), \emph{Mitigate} (reduce its effect, or make it visible and
 recoverable) or \emph{Document/Test} (a statement to users or a verification
 activity that limits or checks what remains); one cell may hold several. Actions
 state what \progname{} must do, not how. The last column of each row names, by
-ID, the SRS requirements, goals or constraints that carry out its action. For
+ID, the SRS requirements, goals or constraints that carry out its action. In
+that column, an ID in bold is a requirement that this analysis created: it was
+added to the SRS because the hazard showed that no requirement covered it. An ID
+in plain type is a requirement that the SRS already had from its own sources and
+that also mitigates the hazard. For
 the H-MUH rows, each cited requirement lists the hazard among its own traces, so
 the trace runs in both directions. An action that needs a requirement not yet in
 the SRS is added to the owner's section of the SRS, or to its Safety-Critical
@@ -878,7 +882,7 @@ an adult; well-being. & Psychological/ well-being & Mitigate: place every
 adult-only action (choosing a lesson or stage, accepting a suggestion) behind an
 adult check that a child cannot pass by tapping icons; keep a pending suggestion
 waiting, without blocking practice, until an adult reviews it. & CON-007, G.3,
-SAF-RAY-001 \\
+\textbf{SAF-RAY-001} \\
 \addlinespace
 H-RAY-002 & Browser front end; saving of attempts & Squigglr is used on an
 unsupported device or browser, without a stylus, or loses its connection during
@@ -890,7 +894,7 @@ availability. & Data integrity or Availability & Mitigate: before a lesson
 starts, check the device and browser against \texttt{SUPPORTED\_DEVICES} and
 show the adult a notice when they do not match; keep each attempt until the
 server confirms it is saved, and tell the adult when an attempt could not be
-saved. & CON-001, CON-002, CON-003, G.5, SAF-RAY-002, SAF-RAY-003, FR-REC-008,
+saved. & CON-001, CON-002, CON-003, G.5, \textbf{SAF-RAY-002}, \textbf{SAF-RAY-003}, FR-REC-008,
 FR-PRG-011 \\
 \addlinespace
 H-RAY-003 & Attempt records; progress summaries & Practice records are used as
@@ -903,7 +907,7 @@ decisions about support. & Psychological/ well-being & Eliminate: show no
 diagnostic labels, judgements of the child's abilities or comparisons with other
 children in any record or summary. Mitigate: state on every summary and export
 that the records describe practice only and are not an assessment. & G.5, G.6,
-SAF-RAY-004, FR-PRG-008, FR-PRG-012 \\
+\textbf{SAF-RAY-004}, FR-PRG-008, FR-PRG-012 \\
 \addlinespace
 H-RAY-004 & Lesson flow; feedback & Repeated failed attempts at one stage
 continue until the child becomes frustrated or agitated. & Failure feedback
@@ -918,7 +922,7 @@ be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
 \texttt{ATTEMPT\_LIMIT}, that no extended lesson passes
 \texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no failed
 attempt beyond the one in progress.
-& G.3, SAF-RAY-005, SAF-RAY-009 \\
+& G.3, \textbf{SAF-RAY-005}, \textbf{SAF-RAY-009} \\
 \addlinespace
 H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
 \texttt{ATTEMPT\_LIMIT}, the same lesson is started again at once and the repetition continues. &
@@ -930,7 +934,7 @@ happened. Loss: well-being; misleading records. & Psychological/ well-being &
 Mitigate: record each lesson that ended at \texttt{ATTEMPT\_LIMIT} and show the
 adult how many times this happened per lesson; keep earlier attempts when the
 same lesson is started again. Document/Test: test that starting the lesson
-again after the limit keeps the earlier record. & G.3, G.5, SAF-RAY-006 \\
+again after the limit keeps the earlier record. & G.3, G.5, \textbf{SAF-RAY-006} \\
 \addlinespace
 H-RAY-006 & Learner selection; attempt records & On a shared device, attempts or
 a pending suggestion are saved to, or shown for, the wrong child. & Several
@@ -942,7 +946,7 @@ privacy; record integrity. & Privacy/ security & Mitigate: show which learner is
 active on every practice screen in a way a child who cannot read can recognize;
 require an adult action to switch learners; show the attempts behind a
 suggestion when the adult reviews it; end a lesson after a set time with no
-input. & G.5, SAF-RAY-001, SAF-RAY-007, SAF-RAY-009,
+input. & G.5, \textbf{SAF-RAY-001}, \textbf{SAF-RAY-007}, \textbf{SAF-RAY-009},
 FR-REC-008, FR-PRG-001 \\
 \addlinespace
 H-RAY-007 & Child profile settings; lesson flow & A stage check or lesson limit
@@ -963,7 +967,7 @@ values, an \texttt{ATTEMPT\_LIMIT} not larger than \texttt{DIFFICULTY\_STREAK}
 and an \texttt{ATTEMPT\_LIMIT\_MAX} below \texttt{ATTEMPT\_LIMIT} are refused,
 that the default is the midpoint, and that each \texttt{STAGE\_PASS} example
 drawing gets the result it shows when the check scores it. & G.2, G.3,
-SAF-RAY-008 \\
+\textbf{SAF-RAY-008} \\
 \end{longtable}
 }
 \end{fmealandscape}
@@ -1028,7 +1032,7 @@ feedback and practice records. & Data integrity & Mitigate: reject duplicate
 events within the same attempt before evaluation, without deleting legitimate
 separate strokes. Document/Test: replay duplicate events and distinct repeated
 strokes; verify that each is handled appropriately. & FR-LRN-007, FR-LRN-008;
-SAF-AHM-001 \\
+\textbf{SAF-AHM-001} \\
 \addlinespace
 \mbox{H-AHM-003} & Input coordinates; reference-shape alignment & Valid stylus
 points are mapped to the wrong position or order and used to score the drawing.
@@ -1039,7 +1043,7 @@ progress records. & Data integrity & Mitigate: verify that captured coordinates
 remain in the current drawing surface and retain their recorded order; reject
 input that cannot be mapped reliably. Document/Test: repeat known stroke traces
 before and after resizing or rotating the device. & FR-LRN-007, FR-LRN-010;
-SAF-AHM-002 \\
+\textbf{SAF-AHM-002} \\
 \addlinespace
 \mbox{H-AHM-004} & Completeness and pass classifier; lesson flow & An incomplete
 drawing (for example, a square missing a side) is reported as passing and
@@ -1139,8 +1143,8 @@ violated as the unauthorized user can read or write over personal data. Loss:
 privacy and trust in the system. & Privacy/security & Mitigate: implement
 authentication at every endpoint the data is accessed at; end session and logout
 after an extended inactivity; Document/Test: test that attempts to access other
-accounts' data under the hood is rejected by the server & SAF-SHA-001,
-SAF-SHA-006 \\
+accounts' data under the hood is rejected by the server & \textbf{SAF-SHA-001},
+\textbf{SAF-SHA-006} \\
 \addlinespace
 H-SHA-002 & Data transmission; third-party integrations & Private learner data
 is sent to a third-party service (other than ones approved for functionality) &
@@ -1151,7 +1155,7 @@ Privacy/security & Mitigate: administer protocol for reviewing all third-party
 services that are essential before implementing, reject all non-essential
 services. Document/Test: run grey-box (white-box if open source) integration
 tests in contained environments inspecting whether third-party services transmit
-PII. & SAF-SHA-002 \\
+PII. & \textbf{SAF-SHA-002} \\
 \addlinespace
 H-SHA-003 & Attempt persistence; save confirmation & A practice attempt is lost
 without the user being informed, or the system reports a false successful save.
@@ -1165,7 +1169,7 @@ a save as successful only after the server confirms it, and tell the adult when
 a save fails. Document/Test: run integration tests in which saves fail after the
 request is sent, and verify that no success is shown and the adult is told. &
 G.5,
-SAF-SHA-003 \\
+\textbf{SAF-SHA-003} \\
 \end{longtable}
 }
 \end{fmealandscape}
@@ -1219,7 +1223,7 @@ Mitigate: let nothing on a child-facing screen flash more than three times a
 second, below the seizure threshold; let an adult turn audio off for each child,
 let long sounds be paused, and keep a calm style reviewed by adults including an
 educator or occupational therapist. Document/Test: inspect every child-facing
-screen against the calm-screen checklist. & SAF-MOU-003, NFR-UX-001, NFR-UX-006,
+screen against the calm-screen checklist. & \textbf{SAF-MOU-003}, NFR-UX-001, NFR-UX-006,
 NFR-UX-007, NFR-UX-010, NFR-UX-022 \\
 \addlinespace
 \mbox{H-MOU-002} & Feedback wording and style & Feedback tells the child that
@@ -1255,7 +1259,7 @@ benefit. & Psychological/ well-being & Eliminate: in guided lessons, never draw
 a missed part for the child. Mitigate: point to the missed part and let the
 child draw it; fade guidance automatically on a pass; keep the child's actual
 strokes. Document/Test: check that no feedback adds strokes to an attempt. &
-SAF-MOU-001, FR-LRN-014, FR-LRN-023, BR-004 \\
+\textbf{SAF-MOU-001}, FR-LRN-014, FR-LRN-023, BR-004 \\
 \addlinespace
 \mbox{H-MOU-005} & Progress summaries; attempt records & A progress view makes
 the child look more or less independent than they were. & Combined with
@@ -1268,8 +1272,8 @@ suitable support decisions; the child's well-being. & Data integrity;
 Psychological/ well-being & Mitigate: never present the number of attempts as a
 measure of skill, and use plain, non-clinical wording. Document/Test: check that
 no summary of a prepared history ranks or rates the child by the number of
-attempts. & SAF-MOU-002, G.6,
-FR-LRN-012, BR-005, SAF-RAY-004, NFR-UX-017 \\
+attempts. & \textbf{SAF-MOU-002}, G.6,
+FR-LRN-012, BR-005, \textbf{SAF-RAY-004}, NFR-UX-017 \\
 \addlinespace
 \mbox{H-MOU-006} & Creative space refinement & Refinement changes the drawing
 too much: points move further than intended, or parts are added or removed. &
@@ -1409,7 +1413,7 @@ not establish children's or caregivers' preferences, and have supporting adults
 judge, on adult-made drawings, whether each refined drawing is still the same
 drawing. (b)~Mitigate: show whether the open drawing holds a refinement.
 (c)~Mitigate: let the child restore the original directly, without an adult. &
-(a)~FR-CRT-012, FR-CRT-015, FR-CRT-030\newline
+(a)~FR-CRT-012, FR-CRT-015, \textbf{FR-CRT-030}\newline
 (b)~FR-CRT-016\newline
 (c)~FR-CRT-018 \\
 \midrule
@@ -1485,7 +1489,7 @@ show whether the open drawing's changes are all saved. Document/Test: test
 closing the page during and after a lost connection, and record which changes
 each reopened drawing keeps. & (a)~FR-CRT-023, FR-CRT-024\newline
 (b)~FR-CRT-025\newline
-(c)~FR-CRT-023, FR-CRT-025, FR-CRT-029 \\
+(c)~FR-CRT-023, FR-CRT-025, \textbf{FR-CRT-029} \\
 \addlinespace
 H-MUH-007 & Attempt storage and history & An attempt record or lesson record
 does not hold what happened: a predefined difficulty is missing because the
@@ -2190,7 +2194,8 @@ Roadmap section that follows states the phase in which each is planned.
 \section{Roadmap}\label{sec:roadmap}
 
 This section states when each requirement of Tables~\ref{tab:safety-reqs}
-and~\ref{tab:existing-reqs} is planned to be met. The capstone timeline has
+and~\ref{tab:existing-reqs} is planned to be met; as in the FMEA tables, an ID
+in bold is a requirement this analysis created. The capstone timeline has
 three phases, each named after the course deliverable that ends it: PH-1, the
 proof-of-concept (PoC) demonstration, from Nov.~23, 2026; PH-2, Revision~0
 (Rev~0), from Feb.~1, 2027; and PH-3, the final demonstration, from Mar.~15,
@@ -2214,10 +2219,10 @@ mitigates.
 \setlength{\tabcolsep}{4pt}
 \exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
 \begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{2.1cm}
-  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-3.8cm-4\tabcolsep\relax}
+  >{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{2.4cm}
+  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-4.1cm-4\tabcolsep\relax}
   @{}}
-\caption{Phase of each HA-derived requirement}
+\caption{Phase of each requirement that mitigates a hazard}
 \label{tab:roadmap}\\
 \toprule
 \textbf{Phase (date)} & \textbf{Requirement IDs} & \textbf{Rationale} \\
@@ -2253,7 +2258,7 @@ used remain available (SRC-002). These two requirements define that record: each
 attempt's lesson, stage and outcome, and every predefined difficulty observed,
 marked as corrected or not (H-MUH-003, H-MUH-007). \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-007, FR-LRN-010, SAF-AHM-001, SAF-AHM-002 & The
+PH-1 (Nov.~23, 2026) & FR-LRN-007, FR-LRN-010, \textbf{SAF-AHM-001}, \textbf{SAF-AHM-002} & The
 first PoC experiment draws with touch and a compatible stylus on the target
 tablet, repeats the interactions on an additional device and browser, and checks
 that strokes follow the input position and remain continuous (SRC-002). These
@@ -2274,7 +2279,7 @@ further adult action (FR-LRN-023) (H-AHM-001, H-AHM-004, H-AHM-005, H-AHM-007,
 H-MOU-004).
 \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & SAF-RAY-001 & The PoC lets an adult choose the lesson and
+PH-1 (Nov.~23, 2026) & \textbf{SAF-RAY-001} & The PoC lets an adult choose the lesson and
 starting stage (FR-LRN-016), so the adult check that keeps a child from making
 that choice is planned with it: a phase demonstration may not rely on a
 safeguard that is not built (SRS Section~21.2). The check needs no adult
@@ -2303,7 +2308,7 @@ records. The PoC does not need a complete application (SRC-002), so these
 requirements are planned for Rev~0 (H-MUH-001, H-MUH-002, H-MUH-003, H-MUH-004,
 H-MUH-005). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & FR-CRT-030, NFR-UX-011 & Refinement is turned off for a
+PH-2 (Feb.~1, 2027) & \textbf{FR-CRT-030}, NFR-UX-011 & Refinement is turned off for a
 learner profile, so these requirements need the learner profiles and settings
 planned for Rev~0, like the requirements that keep creative drawings to one
 learner. Until then, every refinement stays within \texttt{REFINE\_TOLERANCE}
@@ -2321,32 +2326,32 @@ Progress summaries are built from the complete records, so they are planned with
 them (G.6). These requirements keep each summary to one learner and consistent
 with the records behind it (H-MUH-003, H-MUH-004, H-MUH-008). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-007, SAF-SHA-001, SAF-SHA-006 & Learner switching
+PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-007}, \textbf{SAF-SHA-001}, \textbf{SAF-SHA-006} & Learner switching
 and an active learner exist only once the product has adult accounts and
 several learner profiles, which the PoC does not need; SAF-SHA-001 and
 SAF-SHA-006 protect those accounts (H-SHA-001). All three are planned with the
 requirements that keep drawings and summaries to one learner (FR-CRT-023,
 FR-CRT-026, FR-PRG-001) (H-RAY-006). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-002, SAF-SHA-002, SAF-SHA-003 & The device check
+PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-002}, \textbf{SAF-SHA-002}, \textbf{SAF-SHA-003} & The device check
 needs the list of supported devices and browsers (\texttt{SUPPORTED\_DEVICES}),
 which the team sets by Nov.~2, 2026 (OI-09). The first PoC experiment records
 the hardware and browser versions tested (SRC-002), which informs that list
 (H-RAY-002). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-003 & Keeping each completed attempt on the device
+PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-003} & Keeping each completed attempt on the device
 until the server confirms the save protects the stored records, which are
 planned for Rev~0. The requirement is planned with FR-REC-008 and FR-PRG-011
 (H-RAY-002). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-004, SAF-MOU-002, FR-LRN-012, NFR-UX-017 & These
+PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-004}, \textbf{SAF-MOU-002}, FR-LRN-012, NFR-UX-017 & These
 requirements apply to every record view and progress summary, which are planned
 for Rev~0 with the Progress Summary requirements. SAF-MOU-002 keeps apart the
 assisted and independent attempts that FR-LRN-012 classifies; FR-LRN-012 and
 NFR-UX-017 have this phase in their Phase field in the SRS (H-RAY-003,
 H-MOU-005). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-005, SAF-RAY-006, SAF-RAY-009 & Ending a lesson
+PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-005}, \textbf{SAF-RAY-006}, \textbf{SAF-RAY-009} & Ending a lesson
 at its limit or after inactivity, and recording lessons that reach the limit
 and are started again, belong to the
 complete lesson flow and the lesson record. The fourth PoC experiment, as the
@@ -2355,7 +2360,7 @@ lesson ends (SRC-002). Both are planned with FR-REC-006 and FR-REC-007, and
 SAF-RAY-005 with FR-LRN-021, which ends the lesson at its attempt limit
 (H-RAY-004, H-RAY-005). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-RAY-008 & Checking adult-set values uses their
+PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-008} & Checking adult-set values uses their
 team-set ranges, which the SRS table ``Central symbolic constants register''
 defines and whose verification is due Nov.~2, 2026 (OI-05). Applying the adult's
 values is planned with FR-LRN-017, and showing the values in use with the
@@ -2374,14 +2379,14 @@ the one in their Phase field in the SRS, and it matches that of SAF-RAY-005,
 SAF-RAY-006 and SAF-RAY-008, which protect the same functions (H-AHM-005,
 H-AHM-006, H-AHM-007, H-MOU-004). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & SAF-MOU-001, NFR-UX-016 & Feedback on a missed part, and
+PH-2 (Feb.~1, 2027) & \textbf{SAF-MOU-001}, NFR-UX-016 & Feedback on a missed part, and
 feedback that acknowledges the child's effort, are part of the feedback
 observations of FR-LRN-014. SAF-MOU-001 is planned with FR-LRN-014, and
 NFR-UX-016 has this phase in its Phase field in the SRS (H-MOU-002, H-MOU-004).
 \\
 \addlinespace
 PH-2 (Feb.~1, 2027) & NFR-UX-001, NFR-UX-002, NFR-UX-010, NFR-UX-021,
-NFR-UX-022, SAF-MOU-003 & Child-facing screens and audio feedback are complete
+NFR-UX-022, \textbf{SAF-MOU-003} & Child-facing screens and audio feedback are complete
 only in the product as a whole, which Rev~0 demonstrates; the PoC experiments
 use team-created drawings and prepared attempts (SRC-002). The phase of each
 NFR-UX requirement is the one in its Phase field in the SRS. SAF-MOU-003 is
@@ -2401,7 +2406,7 @@ changes made while the connection is lost are at risk. Offline use is out of
 scope (ASM-005), and the FMEA's test of closing the page during a lost
 connection records which changes are kept (H-MUH-005). \\
 \addlinespace
-PH-3 (Mar.~15, 2027) & FR-CRT-029 & Showing whether every change has been saved
+PH-3 (Mar.~15, 2027) & \textbf{FR-CRT-029} & Showing whether every change has been saved
 (priority Should) lets an adult keep the page open until a change made while the
 connection was lost has been saved, because offline use is out of scope
 (ASM-005) and such changes are kept only while the page stays open (FR-CRT-025)
@@ -2417,7 +2422,7 @@ H-MOU-002). \\
 \end{longtable}
 }
 
-No HA-derived requirement is planned for Future: every row of the five FMEA
+No requirement that mitigates a hazard is planned for Future: every row of the five FMEA
 tables has its mitigating requirements planned within the capstone. Four of the
 items left outside the scope of this analysis, as the Scope and Purpose of
 Hazard Analysis section explains, are features that may be added later. Each

@@ -34,7 +34,7 @@ attempt that just ended.
 
 \begin{accessprograms}
 select & $a$: AdultIdT, $p$: LearnerIdT, $\ell$: LessonIdT, $l$: StageT & -- &
-adultCheckFailed, unsupportedDevice, unknownLesson \\
+adultCheckFailed, unsupportedDevice, unknownLesson, notOwner, unavailable \\
 beginPractice & -- & -- & notAtDemonstration \\
 addStroke & $s$: StrokeT & ReportT & noAttempt \\
 tick & -- & ReportT & -- \\
@@ -96,12 +96,13 @@ The full semantics are given in Revision~0, as a transition for each row of the
 SRS table of guided lesson state transitions (SRS Table~\ref{tab:lrn-transitions}).
 In brief:
 \begin{itemize}
-\item \texttt{select} runs the adult check of the Adult Access Module and the
-device check of the Input Device Module, ends any lesson in progress as
+\item \texttt{select} runs the adult check of the Adult Access Module for
+$\mathit{lessonChoice}$ and the device check of the Input Device Module, ends any lesson in progress as
 unfinished, reads the learner's settings, starts a new lesson record, and sets
 $(\ell, l)$ with all stage counts, the history, the suggestion and the
 extension reset (AdultSelect; FR-LRN-016, FR-LRN-018, SAF-RAY-001,
-SAF-RAY-002).
+SAF-RAY-002). It raises \texttt{notOwner} if $p$ is not one of $a$'s
+learners, and \texttt{unavailable} if the learner's settings cannot be read.
 \item \texttt{beginPractice} moves from stage $D$ to stage $T$ and starts the
 first attempt.
 \item \texttt{addStroke} gives the stroke to the current attempt. If the
@@ -116,8 +117,9 @@ stage (FR-LRN-015). The report gives the feedback for what happened.
 the same rules as \texttt{addStroke}, shows the check-in after
 \texttt{LESSON\_IDLE\_PROMPT} with no input, and ends the lesson after
 \texttt{LESSON\_IDLE\_END} (SAF-RAY-009).
-\item \texttt{answerSuggestion} runs the adult check. Declining clears $s$ and
-resets $k$; accepting moves to the earlier stage $l$. Both are saved in the
+\item \texttt{answerSuggestion} runs the adult check for
+$\mathit{suggestionAnswer}$. Declining clears $s$ and resets $k$, and $l$ is not
+used; accepting moves to the earlier stage $l$. Both are saved in the
 lesson record (FR-REC-010). A suggestion that is never answered stays pending
 and blocks nothing.
 \item \texttt{stop} interrupts the current attempt and ends the lesson as

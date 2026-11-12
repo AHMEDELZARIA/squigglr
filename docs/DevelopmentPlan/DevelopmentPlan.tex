@@ -69,6 +69,11 @@ depend on refinement (\#70). \\
 2026-11-11 & Ahmed Elzaria & Addressed TA feedback: the lists in the Team
 Charter and the meeting procedure in the Team Meeting Plan are now bulleted or
 numbered lists, with no rule changed (\#320). \\
+2026-11-11 & Ahmed Elzaria & Addressed TA feedback: the POC is now a hosted
+first version built around the square lesson, with two refinement experiments
+run on their own. The model experiment is narrowed to one model with a pass
+criterion set before the run, adaptive guidance is no longer an experiment, and
+a new subsection says what each failed experiment would mean (\#319). \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -887,10 +892,23 @@ remain tentative.\\
 \label{sec:poc-plan}
 
 The Proof of Concept (POC) will investigate the implementation risks
-that could prevent Squigglr from meeting its core goals. It will use
-small, focused experiments in drawing input, editable refinement, and
-adaptive guidance. A complete application, polished interface, and full
-lesson catalogue are not required for these experiments.
+that could prevent Squigglr from meeting its core goals. It has two parts:
+
+\begin{itemize}
+    \item A first working version of Squigglr, built around one guided
+    lesson, the square, and hosted so that the specialists can try it on
+    their own time and give feedback. The project supervisor suggested this
+    form, and the teaching team agreed that a larger POC is justified when it
+    is useful to the project. The app is then extended at each milestone.
+    \item Two small refinement experiments, run on their own rather than in
+    the hosted app.
+\end{itemize}
+
+The app is not a small version of the whole product. It holds only what the
+square lesson needs in PH-1 (SRS Section~21): no progress summary, no adult
+accounts and no creative space. The line and circle lessons, which the SRS
+also plans for PH-1, follow the same rules and are stored as data, so they are
+added once the square lesson works.
 
 \subsection{Main Implementation Risks}
 
@@ -908,11 +926,11 @@ lesson catalogue are not required for these experiments.
     drawing. Geometric shape correction alone would not establish
     that this model-based approach is feasible.
 
-    \item \textbf{Adaptive guidance:}
-    Drawing observations must support consistent changes in
-    assistance. The implementation must distinguish successful
-    attempts from repeated difficulty and apply the intended rules
-    without losing the attempt history or the support level used.
+    \item \textbf{Drawing evaluation:}
+    The fixed criteria must tell a complete square that meets
+    \texttt{STAGE\_PASS} from an incomplete or inaccurate one, at every
+    drawing stage, and the attempt records must keep what happened. If they
+    cannot, no lesson can advance a child correctly.
 
     \item \textbf{Touchscreen and stylus interaction:}
     Input coordinates, stroke continuity, and drawing responsiveness
@@ -920,7 +938,16 @@ lesson catalogue are not required for these experiments.
     drawing library reduces some implementation work but does not
     establish that its integration will behave correctly on the
     target hardware.
+
+    \item \textbf{Fit with practice:}
+    The specialists may find that the lesson flow does not suit the
+    children they work with. Finding this out from a working lesson before
+    Rev~0 costs far less than finding it out from the finished product.
 \end{itemize}
+
+The rules for moving between stages, extensions and go-back suggestions are
+not a feasibility risk. They are fixed logic, and the V\&V Plan tests them
+(T-LRN-016, T-LRN-017 and T-LRN-020).
 
 Editable refinement is the main technical uncertainty. The initial
 investigation will use a small, agreed set of two-dimensional shapes
@@ -928,7 +955,7 @@ and simple objects. Isometric drawing and unrestricted enhancement of
 arbitrary drawings are outside the POC scope.
 
 Only the refinement experiments (2 and 3 below) concern creative
-drawing. The input and adaptive guidance experiments (1 and 4) cover
+drawing. The input experiment and the square lesson (1 and 4) cover
 what the guided lessons and records rely on, and do not depend on
 refinement, so a refinement risk that stays unresolved does not hold
 back the other core goals.
@@ -959,52 +986,78 @@ observed results, and remaining limitations.
     recovery independently of a model.
 
     \item \textbf{Investigate model-based enhancement.}
-    Evaluate a candidate pretrained model using team-created drawing
-    examples and a limited set of structured drawing instructions.
-    Check whether its responses contain valid operations and
-    coordinates that the application can apply to editable paths.
-    Demonstrate validation of an invalid instruction and confirm
-    that rejection leaves the drawing unchanged. Record successful
-    and unsuccessful examples, response times, and estimated
-    request costs. Report this evidence separately from the
-    geometric refinement results.
+    Evaluate one candidate pretrained model on the agreed supported
+    drawings, with a limited set of structured drawing instructions. Before
+    the run, the team records in the POC issue the share of responses that
+    must be valid operations the application can apply, for the experiment
+    to pass. Demonstrate that an invalid instruction is rejected and leaves
+    the drawing unchanged. Record successful and unsuccessful examples,
+    response times, and estimated request costs. Report this evidence
+    separately from the geometric refinement results.
 
-    \item \textbf{Exercise adaptive guidance.}
-    Use one tracing activity and prepared sequences of successful
-    and unsuccessful attempts. Display the observations used by
-    the guidance rules and show the expected assistance level after
-    each attempt. Demonstrate both reduced assistance following
-    success and increased assistance following repeated difficulty.
-    Inspect the attempt records to confirm that the observations
-    and assistance used remain available.
+    \item \textbf{Run the square lesson end to end.}
+    On the hosted app and the target tablet, run the square lesson through
+    its demonstration and its three drawing stages. Use prepared passing,
+    failing, incomplete and interrupted attempts to show that each is
+    evaluated as expected, that a pass reduces the guidance by moving to
+    the next stage, and that the attempt records keep the strokes, the
+    stage and the outcome. Then share the app with the specialists, and
+    record their feedback for the demonstration.
 \end{enumerate}
 
 Before running the experiments, the team will record the supported
-examples, guidance rules, and provisional evaluation criteria.
-A risk will remain unresolved if the observed behaviour does not
-satisfy those criteria. The demonstration will include limitations
+examples, the square lesson's required parts and endpoints, and the
+evaluation criteria. A risk will remain unresolved if the observed behaviour
+does not satisfy those criteria. The demonstration will include limitations
 and unsuccessful cases rather than relying only on selected successes.
 
-Prepared attempts will test the correctness of the adaptive rules.
-They will not establish that those rules improve children's
-visual-motor skills or that the chosen assistance levels suit all
-learners. Those questions require later stakeholder evaluation and
-are not prerequisites for this technical demonstration.
+Prepared attempts will test the correctness of the evaluation and the lesson
+rules. Neither they nor the specialists' first impressions will establish that
+the lessons improve children's visual-motor skills. That question requires
+later stakeholder evaluation and is not a prerequisite for this technical
+demonstration.
+
+\subsection{If an Experiment Fails}
+
+Each experiment tests a risk to a different goal, so a failure changes the
+project in a different way:
+
+\begin{enumerate}
+    \item \textbf{Input.} Every goal depends on drawing input, so this is
+    the most serious failure. The team would narrow the supported devices
+    and browsers, or replace the drawing library, before Rev~0.
+    \item \textbf{Geometric refinement.} Editable refinement (G.4) could not
+    be met as specified. The team would narrow the supported drawing set to
+    the shapes where refinement works. The guided lessons are not affected.
+    \item \textbf{Model-based enhancement.} The model would not be used.
+    Creative refinement would use geometric correction only (experiment 2),
+    and further model investigation would be deferred. No guided practice
+    goal depends on it.
+    \item \textbf{Square lesson.} If the criteria cannot tell a complete
+    square from an incomplete one, the pass criteria are reworked before
+    more lessons are added. If the specialists find the lesson flow
+    unsuitable, the lesson design changes before Rev~0, which is why the
+    app is shared with them.
+\end{enumerate}
+
+Changes affecting core goals will be agreed with the supervisor and reflected
+consistently in the Problem Statement and Goals document and this plan.
 
 \subsection{Preparation and Follow-Up}
 
-The team will aim to complete the focused experiments by early
-November, leaving time to investigate failures and rehearse before
-the assigned POC demonstration. Preparation will proceed through
-the following checkpoints:
+The POC demonstration window is Nov.~23 to Dec.~4. Preparation will proceed
+through the following checkpoints:
 
 \begin{itemize}
-    \item Confirm the target hardware, supported drawing examples,
-    guidance rules, and evaluation criteria.
-    \item Implement and evaluate the input, refinement, and guidance
+    \item Confirm the target hardware, the square lesson's required parts
+    and endpoints, the supported refinement examples, the evaluation
+    criteria, and the pass criterion of experiment 3.
+    \item Build and host the square lesson, and run the refinement
     experiments independently.
-    \item Review the evidence, identify unresolved risks, and agree
-    on the demonstration content.
+    \item Share the hosted app with the specialists, leaving them time to
+    try it before the demonstration.
+    \item Review the evidence and the specialists' feedback, identify
+    unresolved risks, and agree on the demonstration content.
     \item Rehearse on the target hardware and retain the results
     and known limitations for discussion with the supervisor.
 \end{itemize}
@@ -1014,14 +1067,9 @@ The relevant technical leads will coordinate implementation, the
 Testing Lead will coordinate evaluation, and all members will
 contribute through assigned development and review tasks.
 
-If an experiment exposes a risk that the team cannot reasonably
-resolve, the team will review the evidence with the project
-supervisor. Possible adjustments include narrowing the supported
-drawing set, simplifying the guidance rules, or using geometric
-refinement while further model investigation is deferred.
-Changes affecting core goals will be agreed with the supervisor
-and reflected consistently in the Problem Statement and Goals
-document and this plan.
+After the demonstration, the hosted app becomes the starting point for Rev~0
+and is extended at each milestone, following the phase plan in SRS
+Section~21.
 
 \section{Expected Technology}
 

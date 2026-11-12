@@ -233,6 +233,9 @@ the past project (\#287).\\
 rationale counts the attempt in progress when a child stops, Section~4.2 rejects
 values that break any cross-setting inequality, and Section~26 counts 143
 requirements (\#290).\\
+11 November 2026 & Shamil Canbolat & Adjusted NFR-SEC-004 to specify not storing
+data in logs, added parent-facing privacy information
+requirement and its traceability.\\
 \end{longtable}
 
 ~\\
@@ -5985,6 +5988,23 @@ holds only the identifier and the avatar.}
   \reqsources{\srcref{004}} \reqtraces{BR-001; \reqref{NFR-SEC-001}}
 \end{srsrequirement}
 
+\begin{srsrequirement}{NFR-SEC-007}{Parent-facing data and storage information}
+  \reqshall{Squigglr shall provide adults a page, accessible before
+profile creation and from adult views, listing every adult and learner data
+field it collects, generates, stores or sends to third parties, where each is
+stored (if applicable) and who can access it.}
+  \reqrationale{Parents need to know what data Squigglr handles and where
+  it is kept.}
+  \reqfit{Pass if adults can open it as required and all data, storage and 
+access details are accurate compared to deployed authentication, database, 
+browser storage, logs and network traffic.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{6}; \srcref{005.02}}
+  \reqtraces{\ucref{009}; \reqref{FR-PRG-001}; \reqref{NFR-SEC-001};
+  \reqref{NFR-SEC-004}}
+\end{srsrequirement}
+
 \emph{Note:} Institutional self-hosting or per-institution data partitioning is
 out of scope for this project. Account-level access control is already enforced
 by \reqref{NFR-SEC-001} and \reqref{SAF-SHA-001}, which is sufficient for a
@@ -7088,7 +7108,7 @@ requirement, including the safety requirements derived from the Hazard Analysis.
 The functional requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements are
 classified here as \emph{Must} and assigned to the phase containing the
-behaviour they protect. The 143 identified requirements in this SRS are
+behaviour they protect. The 144 identified requirements in this SRS are
 scheduled in PH-1 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7459,6 +7479,9 @@ PH-2 \\
 \addlinespace
 \reqref{NFR-SEC-004} & Minimal personal data collection & Must & PH-1 \\
 \addlinespace
+\reqref{NFR-SEC-007} & Parent-facing data and storage information & Must &
+PH-2 \\
+\addlinespace
 \multicolumn{4}{@{}l}{\textbf{Audit Requirements (Section 15.4)}}\\
 \addlinespace
 \reqref{NFR-SEC-005} & Server-side logging of authentication events & Should &
@@ -7671,9 +7694,10 @@ devices and browsers; the need for a network connection, and what happens to
 attempts that could not be saved. & ASM-002, ASM-005, ASM-008, ASM-015; OI-01,
 OI-09; SAF-RAY-003 & Supporting adults \\
 \addlinespace
-Privacy notice & What Squigglr stores about the adult and each child, who can
-see it, and how records are shared and deleted. & BR-001; ASM-009; OI-02 &
-Supporting adults \\
+Privacy notice & What Squigglr stores about the adult and each child, where it
+is stored and who can see it; what stays temporarily in the browser; what is
+sent to outside services. & BR-001; ASM-009; OI-02;
+\reqref{NFR-SEC-007} & Supporting adults \\
 \addlinespace
 Notes for school administrators & The web address and the outside services a
 managed network must allow, and confirmation that nothing is installed. &
@@ -8067,7 +8091,7 @@ G.5; SRC-001 & \ucref{008} & \reqref{FR-REC-001}--\reqref{FR-REC-010};
 \addlinespace
 G.6; SRC-005.02 & \ucref{009} & \reqref{FR-PRG-001}--\reqref{FR-PRG-012};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-014}; \reqref{NFR-PERF-003};
-\reqref{NFR-SEC-001} \\
+\reqref{NFR-SEC-001}; \reqref{NFR-SEC-007} \\
 \addlinespace
 G.3, G.6; SRC-008, SRC-009.01 & \ucref{010} & \reqref{FR-LRN-017};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-014}; \reqref{NFR-PERF-003};
@@ -8130,6 +8154,8 @@ Traceability \\
 \addlinespace
 \reqref{FR-PRG-004}; \reqref{FR-PRG-005}; \reqref{FR-PRG-006} &
 \reqref{NFR-SEC-001}; \reqref{NFR-UX-003} & NFR Traceability \\
+\addlinespace
+\reqref{FR-PRG-001} & \reqref{NFR-SEC-007} & NFR Traceability \\
 \end{longtable}}
 
 \subsection{Hazards to mitigating requirements}

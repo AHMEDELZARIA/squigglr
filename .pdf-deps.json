@@ -1,4 +1,10 @@
 {
+  "docs/CDs/Interviews/InterviewReport.tex": [
+    "docs/CDs/Interviews/InterviewReport.tex",
+    "docs/Comments.text",
+    "docs/Common.text",
+    "docs/SRS/InterviewTranscript.text"
+  ],
   "docs/CDs/MLReport/main.tex": [
     "docs/CDs/MLReport/acl.sty",
     "docs/CDs/MLReport/custom.bib",

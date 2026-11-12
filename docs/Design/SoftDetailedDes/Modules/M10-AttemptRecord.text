@@ -73,7 +73,6 @@ lessonRecords & $a$: AdultIdT, $p$: LearnerIdT & seq of LessonRecordT &
 notOwner, unavailable \\
 attempts & $a$: AdultIdT, $r$: LessonRecordIdT & seq of AttemptRecordT &
 unknownRecord, unavailable \\
-unsaved & $a$: AdultIdT & seq of AttemptRecordT & -- \\
 \end{accessprograms}
 
 \subsection{Semantics}
@@ -92,8 +91,10 @@ None.
 
 \begin{itemize}
 \item The Guided Lesson Control Module (\mref{mLessonControl}) is the only
-module that writes records, and the Progress Summary (\mref{mSummary}) and
-Adult View (\mref{mAdultView}) Modules only read them.
+module that writes records, and the Progress Summary Module (\mref{mSummary})
+is the only module that reads them. The Adult View Module (\mref{mAdultView})
+gets records from the Progress Summary, and gets the records not yet saved from
+the Connection Recovery Module.
 \item Who may delete records is still an open issue in the SRS (OI-02), so
 deletion is left to the Storage Module and is not part of this interface yet.
 \end{itemize}
@@ -118,8 +119,7 @@ response to the lesson record (SAF-RAY-006, FR-REC-010).
 \item \texttt{endLesson} sets the ending and the furthest stage. After it, the
 lesson record and its attempts never change (FR-REC-009).
 \item \texttt{lessonRecords} and \texttt{attempts} read back a learner's
-records, oldest first, and \texttt{unsaved} lists the attempts not yet
-confirmed by the server, for the Adult View (SAF-RAY-003).
+records, oldest first.
 \end{itemize}
 Records hold only guided practice, never a creative drawing (FR-CRT-028), keep each
 attempt's stage so that attempts with and without a guide stay apart

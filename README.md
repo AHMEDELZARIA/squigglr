@@ -16,6 +16,10 @@ etc.
 
 The documentation for this project is updated on the project's [GitHub page](https://ahmedelzaria.github.io/squigglr/).
 
+## Custom documents
+
+- **Fall: Specialist Interview Report**: [`docs/CDs/Interviews/InterviewReport.tex`](docs/CDs/Interviews/InterviewReport.tex) (PDF in `pdfs/CDs/Interviews/` after the build)
+
 ## Git Conventions
 
 ### Branch naming

@@ -5979,7 +5979,9 @@ needed, it would make sense to collect the adult's information rather than the
 child; this supports Squigglr's accountability, consent, and access obligations
 under PIPEDA~\cite{pipeda}.} \reqfit{Passes if there is no field during child
 registration other than choosing an avatar, and the stored child profile
-holds only the identifier and the avatar.}
+holds only the identifier and the avatar; attempts to add such information 
+through profile updates or direct API requests are not stored; and application 
+logs do not retain it.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\srcref{004}} \reqtraces{BR-001; \reqref{NFR-SEC-001}}

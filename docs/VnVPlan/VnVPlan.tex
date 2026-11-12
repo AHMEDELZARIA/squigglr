@@ -555,7 +555,7 @@ outstanding concerns. Including ``overall qualities of documentation'' and
 the document. The peer review covers more detailed fixes.
 
 Dr.\ Anand will thus be asked to keep in mind the subitems in those four
-sections of the checklist as he reads the 143 requirements and eight likely
+sections of the checklist as he reads the 158 requirements and eight likely
 changes. The requirements and validation lead (Shamil) will prepare a document
 with only the requirements and likely changes for Dr.\ Anand, so that he does
 not have to search through the SRS document. He will be asked to discuss his
@@ -1084,8 +1084,8 @@ as a major finding. The guided lesson tests avoid these cases.
 demonstration to practice, only an adult action that passed the adult check
 changes the lesson or the stage (I1, I2 and SRS CON-007).
 \item[A3] (INS-LRN, INS-EVAL) An interrupted (not finalized) or invalid
-attempt cannot reach the pass branch or change a count (SRS FR-LRN-009 and
-FR-LRN-010). An incomplete attempt cannot pass, whatever its result, but
+attempt cannot reach the pass branch or change a count (SRS FR-LRN-010 and
+FR-LRN-030 to FR-LRN-032). An incomplete attempt cannot pass, whatever its result, but
 counts as a failed attempt (I3, FR-LRN-011 and FR-LRN-013).
 \item[A4] (INS-LRN) On every path, the evaluable attempts at a stage never
 exceed \texttt{ATTEMPT\_LIMIT\_MAX}, the extension attempts used never
@@ -1123,10 +1123,11 @@ this plan or a unit test, or the gap is listed from the coverage report
 \paragraph{What each inspection covers.}
 \begin{itemize}
 \item INS-LRN: the lesson rules (FR-LRN-009, FR-LRN-010, FR-LRN-015,
-FR-LRN-016, FR-LRN-018 to FR-LRN-021 and FR-LRN-023; SRS Section~9.2).
+FR-LRN-016, FR-LRN-018 to FR-LRN-021, FR-LRN-023 and FR-LRN-030 to
+FR-LRN-037; SRS Section~9.2).
 \item INS-EVAL: stroke capture, finishing an attempt, classification, the
 pass decision and the choice of feedback (FR-LRN-007 to FR-LRN-014,
-FR-LRN-022 and FR-REC-002).
+FR-LRN-022, FR-LRN-030, FR-LRN-032, FR-LRN-038, FR-LRN-039 and FR-REC-002).
 \item INS-REC: creating and saving attempt and lesson records (FR-REC-001
 and FR-REC-003 to FR-REC-010).
 \item INS-CRT: checking refinement results, and the creative drawing
@@ -1369,15 +1370,15 @@ each step.
 \subsubsection{Guided Lessons}
 \label{sec:lrn-tests}
 
-These tests cover the 24 guided lesson requirements in SRS Section~9.1
-(FR-LRN-001 to FR-LRN-024) and the rules and invariants of the formal
+These tests cover the 39 guided lesson requirements in SRS Section~9.1
+(FR-LRN-001 to FR-LRN-039) and the rules and invariants of the formal
 specification in SRS Section~9.2. The lesson flow is summarized with the
 safety-critical tests (Section~\ref{sec:safety-tests}). That summary follows
 SRS UC-005 and Section~9.2, where the child keeps practising while a
 suggestion waits. Unless a case says otherwise, an adult answers every
 suggestion before the next attempt (T-LRN-016). FR-LRN-001 to FR-LRN-007, FR-LRN-010, FR-LRN-011,
-FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022, FR-LRN-023 and FR-LRN-024
-are due in PH-1, and the rest in PH-2. Each test first runs in the phase of the
+FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022 to FR-LRN-029, FR-LRN-032,
+FR-LRN-038 and FR-LRN-039 are due in PH-1, and the rest in PH-2. Each test first runs in the phase of the
 requirements it covers. After that, its automatic parts run in CI on every
 PR, unless the test names a narrower trigger, and its manual parts run at
 the milestones the test names. The tests try to cause the failures in Hazard
@@ -1391,7 +1392,8 @@ adult team member, and no child takes part (SRS CON-005 and CON-006).
 \begin{itemize}
 \item \emph{Test lessons.} The tests use the line, circle and square
 lessons of the catalogue. The rules are the same for every lesson. The
-tests of FR-LRN-001 to FR-LRN-006 (T-LRN-001 to T-LRN-004) run on every
+tests of FR-LRN-001 to FR-LRN-006 and FR-LRN-025 to FR-LRN-029 (T-LRN-001 to
+T-LRN-004) run on every
 catalogue lesson, except cases (e) and (f) of T-LRN-002, which use the
 three test lessons.
 \item \emph{Defaults.} The adult-set values are at their SRS defaults
@@ -1550,7 +1552,7 @@ at each milestone.
 Purpose: watching the example must not count as practice, or the records
 would overstate what the child did.
 
-Type: Dynamic, automatic. Covers FR-LRN-003.
+Type: Dynamic, automatic. Covers FR-LRN-003 and FR-LRN-025.
 
 Initial State: learner A with no lesson records; each catalogue lesson
 started with the default start.
@@ -1561,7 +1563,7 @@ Table~\ref{tab:t-lrn-003}.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Cases for T-LRN-003 (FR-LRN-003)}
+\caption{Cases for T-LRN-003 (FR-LRN-003 and FR-LRN-025)}
 \label{tab:t-lrn-003}
 \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
@@ -1583,7 +1585,8 @@ record\\
 Output: the expected output of each case is in its row of
 Table~\ref{tab:t-lrn-003}; the test passes when every case gives it.
 
-Test Case Derivation: (a) and (c) are the fit criterion. D has no scored
+Test Case Derivation: (a) and (c) are the fit criteria of FR-LRN-003 and
+FR-LRN-025. D has no scored
 attempts (SRS Section~9.2: ``Only levels in A admit scored drawing
 attempts''). In (b), strokes during the demonstration try to sneak in an
 attempt. In (d), there is no stroke, so there is no record (FR-REC-005).
@@ -1596,8 +1599,8 @@ test database after each case.
 Purpose: each stage must show exactly the help it promises, so that less
 help really means less help.
 
-Type: Dynamic, automatic and manual. Covers FR-LRN-004, FR-LRN-005 and
-FR-LRN-006.
+Type: Dynamic, automatic and manual. Covers FR-LRN-004 to FR-LRN-006 and
+FR-LRN-026 to FR-LRN-029.
 
 Initial State: each catalogue lesson opened at T, E and I in turn, with the
 adult check. The drawing area is \texttt{TEST\_CANVAS}.
@@ -1610,7 +1613,7 @@ cases are in Table~\ref{tab:t-lrn-004}.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Cases for T-LRN-004 (FR-LRN-004 to FR-LRN-006)}
+\caption{Cases for T-LRN-004 (FR-LRN-004 to 006 and FR-LRN-026 to 029)}
 \label{tab:t-lrn-004}
 \begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
@@ -1630,8 +1633,10 @@ c & I & Neither the outline nor the points are visible & The same as (a)\\
 Output: the expected output of each case is in its row of
 Table~\ref{tab:t-lrn-004}; the test passes when every case gives it.
 
-Test Case Derivation: (a), (b) and (c) are the fit criteria of FR-LRN-004,
-FR-LRN-005 and FR-LRN-006, each with a stylus attempt that is accepted.
+Test Case Derivation: (a), (b) and (c) are the fit criteria of each stage's
+requirements: FR-LRN-004 and FR-LRN-026 at T, FR-LRN-005, FR-LRN-027 and
+FR-LRN-028 at E, and FR-LRN-006 and FR-LRN-029 at I, each with a stylus attempt
+that is accepted.
 
 How test will be performed: before drawing, Playwright compares a
 screenshot of the empty drawing area with a reference screenshot for each
@@ -1700,7 +1705,8 @@ the first side of a square would be judged as a whole square. A passing
 drawing must end the attempt by itself, and a non-passing one only after
 \texttt{ATTEMPT\_IDLE}.
 
-Type: Dynamic, automatic. Covers FR-LRN-008 and FR-LRN-024.
+Type: Dynamic, automatic. Covers FR-LRN-008, FR-LRN-024, FR-LRN-038 and
+FR-LRN-039.
 
 Initial State: the square lesson at T, with zero attempts.
 
@@ -1743,9 +1749,10 @@ Table~\ref{tab:t-lrn-006}; the test passes when every case gives it.
 Test Case Derivation: the fit criterion (``one attempt is evaluated against
 the complete figure, not two''). In SRS Section~9.2, a lift closes a
 stroke, not the attempt. (c) is the H-AHM-001 cause in which ``a stylus
-lift is mistaken for the end of an attempt''. (d) and (e) are the fit
-criterion of FR-LRN-024: a passing figure ends at its last lift, and a
-non-passing one at \texttt{ATTEMPT\_IDLE}.
+lift is mistaken for the end of an attempt''. Every case evaluates the
+strokes at each lift (FR-LRN-038). (d) is the fit criterion of FR-LRN-039, a
+passing figure ends at its last lift, and (e) that of FR-LRN-024, a
+non-passing one ends at \texttt{ATTEMPT\_IDLE}.
 
 How test will be performed: Playwright counts the attempt records and the
 evaluation results.
@@ -1755,7 +1762,7 @@ evaluation results.
 Purpose: an attempt cut off before it is finished must never pass, advance
 the child or use up an attempt.
 
-Type: Dynamic, automatic. Covers FR-LRN-009.
+Type: Dynamic, automatic. Covers FR-LRN-009, FR-LRN-030 and FR-LRN-031.
 
 Initial State: learner A at T of the circle lesson (the square lesson for
 cases (b) and (c)), with zero attempts; learner B also exists.
@@ -1766,7 +1773,7 @@ Table~\ref{tab:t-lrn-007}.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Cases for T-LRN-007 (FR-LRN-009)}
+\caption{Cases for T-LRN-007 (FR-LRN-009, FR-LRN-030 and FR-LRN-031)}
 \label{tab:t-lrn-007}
 \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
@@ -1808,7 +1815,7 @@ from the lesson state and the records.
 Purpose: input that cannot be read reliably must not pass and must not use
 up an attempt.
 
-Type: Dynamic, automatic. Covers FR-LRN-010.
+Type: Dynamic, automatic. Covers FR-LRN-010 and FR-LRN-032.
 
 Initial State: the circle lesson at T, with zero attempts.
 
@@ -1818,7 +1825,7 @@ settings stay fixed. The cases are in Table~\ref{tab:t-lrn-008}.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Cases for T-LRN-008 (FR-LRN-010)}
+\caption{Cases for T-LRN-008 (FR-LRN-010 and FR-LRN-032)}
 \label{tab:t-lrn-008}
 \begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
@@ -2267,7 +2274,7 @@ Purpose: the adult should get a suggestion to go back after a full run of
 failures, and not when the child is improving, has too few attempts, has
 just declined one, or still has one waiting.
 
-Type: Dynamic, automatic. Covers FR-LRN-019.
+Type: Dynamic, automatic. Covers FR-LRN-019 and FR-LRN-033 to FR-LRN-036.
 
 Initial State: the circle lesson at the stage in each case's row.
 
@@ -2280,7 +2287,7 @@ Table~\ref{tab:t-lrn-016}.
 \begin{table}[htbp]
 \centering\footnotesize
 \setlength{\tabcolsep}{4pt}
-\caption{Cases for T-LRN-016 (FR-LRN-019)}
+\caption{Cases for T-LRN-016 (FR-LRN-019 and FR-LRN-033 to FR-LRN-036)}
 \label{tab:t-lrn-016}
 \begin{tabularx}{\textwidth}{@{}l l l
   >{\raggedright\arraybackslash\hsize=0.8\hsize}X
@@ -2341,22 +2348,22 @@ both eligible stages (the fit criterion).
 \item (f): with \texttt{IMPROVE\_WINDOW} 3, the improvement check needs six
 results, so three rising results do not delay the suggestion (``insufficient
 history does not delay the first suggestion'').
-\item (g) to (j) compare the last window with the one before: in (g),
+\item (g) to (j) compare the last window with the one before (FR-LRN-036): in (g),
 $60 - 50 = +10$, then $60 - 60 = 0$; in (h), $55 - 50 = +5$, which is
 \texttt{IMPROVE\_MARGIN}, and ``at least'' counts as improving; in (i),
 $+4$; in (j), $\mathrm{mean}(45, 45) - \mathrm{mean}(40, 40) = +5$, then
 $\mathrm{mean}(45, 45) - \mathrm{mean}(40, 45) = +2.5$.
 \item (k): a decline resets the streak, so a new suggestion needs a new full
-streak (FR-LRN-019 and SRS UC-005 step~2a). At the tenth failure, ``End at
+streak (FR-LRN-033 and SRS UC-005 step~2a). At the tenth failure, ``End at
 limit'' takes priority.
 \item (l) is the main flow of SRS UC-005; the furthest stage is kept.
-\item (m) is SRS UC-005 step~2b.
-\item (n) follows FR-LRN-009, FR-LRN-010 and the H-AHM-006 cause in which
+\item (m) is SRS UC-005 step~2b (FR-LRN-034).
+\item (n) follows FR-LRN-031, FR-LRN-032 and the H-AHM-006 cause in which
 ``invalid input is counted as failure''.
 \item (o): a pass changes the stage and clears the streak.
 \item (p) to (r): an unanswered suggestion stays pending, further failed
-attempts are counted and no second suggestion is offered (the fit criterion
-and SRS UC-005 step~2b). A pass in (q) and the end of the lesson in (r) clear
+attempts are counted and no second suggestion is offered (the fit criteria of
+FR-LRN-034 and FR-LRN-035, and SRS UC-005 step~2b). A pass in (q) and the end of the lesson in (r) clear
 it, and it is recorded as ignored (FR-REC-010).
 \end{itemize}
 In every case except (m) and (p) to (r), the adult answers a suggestion
@@ -2376,7 +2383,7 @@ suggestion.
 Purpose: a child who is improving when the limit arrives gets a few more
 tries, once, and never more than the maximum.
 
-Type: Dynamic, automatic. Covers FR-LRN-020.
+Type: Dynamic, automatic. Covers FR-LRN-020 and FR-LRN-037.
 
 Initial State: the circle lesson at T, where no suggestion can appear.
 
@@ -2391,7 +2398,7 @@ Table~\ref{tab:t-lrn-017}.
 \begin{table}[htbp]
 \centering\footnotesize
 \setlength{\tabcolsep}{4pt}
-\caption{Cases for T-LRN-017 (FR-LRN-020)}
+\caption{Cases for T-LRN-017 (FR-LRN-020 and FR-LRN-037)}
 \label{tab:t-lrn-017}
 \begin{tabularx}{\textwidth}{@{}l l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
@@ -2627,7 +2634,8 @@ attempt sequences than the tables above can list.
 
 Type: Dynamic, automatic (Vitest with fast-check). Covers the rules and
 invariants of SRS Section~9.2, with FR-LRN-009, FR-LRN-010, FR-LRN-013,
-FR-LRN-015, FR-LRN-018 to FR-LRN-021 and FR-LRN-023.
+FR-LRN-015, FR-LRN-018 to FR-LRN-021, FR-LRN-023 and FR-LRN-030 to
+FR-LRN-037.
 
 Initial State:
 \begin{itemize}
@@ -6783,12 +6791,27 @@ FR-LRN-016 & T-LRN-002, T-SAF-001, INS-LRN\\
 FR-LRN-017 & T-LRN-014, T-SAF-008\\
 FR-LRN-018 & T-LRN-015, T-LRN-021, T-SAF-001, INS-LRN\\
 FR-LRN-019 & T-LRN-016, T-LRN-021, INS-LRN\\
-FR-LRN-020 & T-LRN-016 (g), T-LRN-016 (h), T-LRN-017, T-LRN-021,
-T-SAF-005, INS-LRN\\
+FR-LRN-020 & T-LRN-017, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-021 & T-LRN-018, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-022 & T-LRN-019 (inspection and automatic), T-UX-004, INS-EVAL\\
 FR-LRN-023 & T-LRN-020, T-LRN-021, INS-LRN\\
 FR-LRN-024 & T-LRN-006, INS-LRN\\
+FR-LRN-025 & T-LRN-003, T-REC-006 (a)\\
+FR-LRN-026 & T-LRN-004 (a), T-LRN-010 (a)\\
+FR-LRN-027 & T-LRN-004 (b)\\
+FR-LRN-028 & T-LRN-004 (b), T-LRN-010 (b)\\
+FR-LRN-029 & T-LRN-004 (c), T-LRN-010 (c)\\
+FR-LRN-030 & T-LRN-007, T-LRN-021, INS-EVAL, INS-LRN\\
+FR-LRN-031 & T-LRN-007, T-LRN-016 (n), T-LRN-021, T-REC-005, INS-LRN\\
+FR-LRN-032 & T-LRN-008, T-LRN-016 (n), T-LRN-021, T-SAF-010, INS-EVAL,
+INS-LRN\\
+FR-LRN-033 & T-LRN-016 (k), T-LRN-021, INS-LRN\\
+FR-LRN-034 & T-LRN-016 (m), T-LRN-016 (p) to (r), T-LRN-021, INS-LRN\\
+FR-LRN-035 & T-LRN-016 (p), T-LRN-021, INS-LRN\\
+FR-LRN-036 & T-LRN-016 (g) to (j), T-LRN-021, INS-LRN\\
+FR-LRN-037 & T-LRN-017, T-LRN-021, T-SAF-005, INS-LRN\\
+FR-LRN-038 & T-LRN-006, INS-EVAL\\
+FR-LRN-039 & T-LRN-006, INS-EVAL, INS-LRN\\
 FR-CRT-001 & T-CRT-001, T-CRT-009 (a)\\
 FR-CRT-002 & T-CRT-002, T-CRT-016 (a)\\
 FR-CRT-003 & T-CRT-003, T-CRT-016 (b)\\

@@ -1404,7 +1404,7 @@ unless a row says otherwise: \texttt{STAGE\_PASS} 80,
 \texttt{IMPROVE\_MARGIN} is fixed at 5.
 \item \emph{Finishing and adult check.} The child uses no control to end an
 attempt (SRS FR-LRN-024). A passing attempt ends at the stylus lift that
-completes it. ``The finishing action'' is waiting \texttt{ATTEMPT\_IDLE}
+completes it (SRS FR-LRN-039). ``The finishing action'' is waiting \texttt{ATTEMPT\_IDLE}
 with no input after the last stroke, which ends an attempt that has not
 passed. Every prepared attempt that does not pass is followed by the
 finishing action unless a row says otherwise. ``The adult check'' is \texttt{ADULT\_CHECK}, as in the
@@ -1716,7 +1716,8 @@ in Table~\ref{tab:t-lrn-006}.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Cases for T-LRN-006 (FR-LRN-008)}
+\caption{Cases for T-LRN-006 (FR-LRN-008, FR-LRN-024, FR-LRN-038,
+FR-LRN-039)}
 \label{tab:t-lrn-006}
 \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X
   >{\raggedright\arraybackslash}X@{}}
@@ -1730,8 +1731,9 @@ b & \texttt{square-\allowbreak{}2-\allowbreak{}strokes.json} (two L-shaped
 strokes), then the finishing action & One attempt, classified complete\\
 c & The first stroke of
 \texttt{square-\allowbreak{}2-\allowbreak{}strokes.json}, then three times
-\texttt{STROKE\_PAUSE} with the stylus lifted & No outcome shown and the
-attempt count still zero; after the second stroke and the finishing action,
+\texttt{STROKE\_PAUSE} with the stylus lifted & An evaluation of the first
+stroke recorded at its lift (incomplete), but no outcome shown and the attempt
+count still zero; after the second stroke and the finishing action,
 one complete attempt\\
 d & \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, then no input
 & The attempt ends as passed at the lift of the fourth stroke, with no
@@ -1749,8 +1751,8 @@ Table~\ref{tab:t-lrn-006}; the test passes when every case gives it.
 Test Case Derivation: the fit criterion (``one attempt is evaluated against
 the complete figure, not two''). In SRS Section~9.2, a lift closes a
 stroke, not the attempt. (c) is the H-AHM-001 cause in which ``a stylus
-lift is mistaken for the end of an attempt''. Every case evaluates the
-strokes at each lift (FR-LRN-038). (d) is the fit criterion of FR-LRN-039, a
+lift is mistaken for the end of an attempt''. (c) also checks that the
+strokes are evaluated at the first lift (the fit criterion of FR-LRN-038). (d) is the fit criterion of FR-LRN-039, a
 passing figure ends at its last lift, and (e) that of FR-LRN-024, a
 non-passing one ends at \texttt{ATTEMPT\_IDLE}.
 
@@ -6811,7 +6813,7 @@ FR-LRN-035 & T-LRN-016 (p), T-LRN-021, INS-LRN\\
 FR-LRN-036 & T-LRN-016 (g) to (j), T-LRN-021, INS-LRN\\
 FR-LRN-037 & T-LRN-017, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-038 & T-LRN-006, INS-EVAL\\
-FR-LRN-039 & T-LRN-006, INS-EVAL, INS-LRN\\
+FR-LRN-039 & T-LRN-006, INS-EVAL\\
 FR-CRT-001 & T-CRT-001, T-CRT-009 (a)\\
 FR-CRT-002 & T-CRT-002, T-CRT-016 (a)\\
 FR-CRT-003 & T-CRT-003, T-CRT-016 (b)\\

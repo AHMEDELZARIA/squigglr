@@ -2300,8 +2300,8 @@ difficulty. & G.5; FR-REC-003; FR-PRG-004 \\
 Extension count & The number of times the attempt limit of a lesson record was
 extended because the child was improving. & Attribute & Count of extensions, at
 most one at each stage; evaluable attempts at one stage never exceed
-\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002; FR-LRN-020;
-SAF-RAY-006 \\
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002; FR-LRN-020,
+FR-LRN-037; SAF-RAY-006 \\
 \addlinespace
 Furthest stage reached & The latest stage of the lesson that the learner reached
 in a lesson record. & Attribute & A stage of the lesson. & G.5; BR-002;
@@ -2410,7 +2410,8 @@ third stages are made with a guide and at the fourth without one (FR-LRN-012
 calls them assisted and independent). & Attribute & Demonstration; tracing a
 full outline; drawing between endpoints only; or drawing with no guide, in that
 order. Attempts are made only at the three drawing stages, not at the
-demonstration. & G.1, G.2, G.6; BR-002; FR-LRN-002, FR-LRN-003, FR-LRN-012;
+demonstration. & G.1, G.2, G.6; BR-002; FR-LRN-002, FR-LRN-003, FR-LRN-012,
+FR-LRN-025;
 FR-PRG-003; \texttt{STAGE\_PASS} \\
 \addlinespace
 Stage result & The result of an evaluable attempt on the normalized scale of
@@ -3305,7 +3306,7 @@ that the stage's attempt counters are unchanged.}
   \reqphase{PH-2}
   \reqsources{\goalref{2}, \goalref{5}; ASM-004; \srcref{001}}
   \reqtraces{\reqref{FR-LRN-009}; \reqref{FR-LRN-021}; \ucref{003};
-  H-AHM-006}
+  H-AHM-001, H-AHM-006}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-010}{Invalid input not passed}
@@ -3331,7 +3332,8 @@ of FR-LRN-010; confirm that the stage's attempt counters are unchanged.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{2}; ASM-004; BR-004; \srcref{001}}
-  \reqtraces{\reqref{FR-LRN-010}; \reqref{FR-LRN-021}; \ucref{003}; H-AHM-003}
+  \reqtraces{\reqref{FR-LRN-010}; \reqref{FR-LRN-021}; \ucref{003}; H-AHM-001,
+  H-AHM-003, H-AHM-006}
 \end{srsrequirement}
 
 \subsubsection{Guidance stages}
@@ -8391,8 +8393,8 @@ H-RAY-006 & SAF-RAY-001; SAF-RAY-007; SAF-RAY-009; \reqref{FR-REC-008};
 \addlinespace
 H-RAY-007 & SAF-RAY-008 & SAF-RAY-008 \\
 \addlinespace
-H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024}; \reqref{FR-LRN-030}; \reqref{FR-LRN-038}; \reqref{FR-LRN-039} &
-\reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024}; \reqref{FR-LRN-030}; \reqref{FR-LRN-038}; \reqref{FR-LRN-039} \\
+H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024}; \reqref{FR-LRN-030}--\reqref{FR-LRN-032}; \reqref{FR-LRN-038}; \reqref{FR-LRN-039} &
+\reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024}; \reqref{FR-LRN-030}--\reqref{FR-LRN-032}; \reqref{FR-LRN-038}; \reqref{FR-LRN-039} \\
 \addlinespace
 H-AHM-002 & \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 &
 \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 \\
@@ -8408,8 +8410,8 @@ H-AHM-005 & \reqref{FR-LRN-011}; \reqref{FR-LRN-013}; \reqref{FR-LRN-014};
 \reqref{FR-LRN-013}; \reqref{FR-LRN-014}; \reqref{NFR-UX-004};
 \reqref{NFR-UX-015} \\
 \addlinespace
-H-AHM-006 & \reqref{FR-LRN-009}; \reqref{FR-LRN-018}--\reqref{FR-LRN-020}; \reqref{FR-LRN-030}; \reqref{FR-LRN-031}; \reqref{FR-LRN-033}--\reqref{FR-LRN-037} &
-\reqref{FR-LRN-009}; \reqref{FR-LRN-018}--\reqref{FR-LRN-020}; \reqref{FR-LRN-030}; \reqref{FR-LRN-031}; \reqref{FR-LRN-033}--\reqref{FR-LRN-037} \\
+H-AHM-006 & \reqref{FR-LRN-009}; \reqref{FR-LRN-018}--\reqref{FR-LRN-020}; \reqref{FR-LRN-030}--\reqref{FR-LRN-037} &
+\reqref{FR-LRN-009}; \reqref{FR-LRN-018}--\reqref{FR-LRN-020}; \reqref{FR-LRN-030}--\reqref{FR-LRN-037} \\
 \addlinespace
 H-AHM-007 & \reqref{FR-LRN-016}; \reqref{FR-LRN-017}; \reqref{FR-LRN-019};
 \reqref{FR-LRN-021} & \reqref{FR-LRN-016}; \reqref{FR-LRN-017};

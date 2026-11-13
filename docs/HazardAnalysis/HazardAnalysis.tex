@@ -1018,7 +1018,7 @@ for each child; treat interrupted or unevaluable input as non-passing without
 consuming an attempt. Document/Test: replay partial strokes and interruptions
 before and during a stroke, and pauses between strokes shorter than
 \texttt{ATTEMPT\_IDLE}. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010,
-FR-LRN-024, FR-LRN-030, FR-LRN-038, FR-LRN-039 \\
+FR-LRN-024, FR-LRN-030, FR-LRN-031, FR-LRN-032, FR-LRN-038, FR-LRN-039 \\
 \addlinespace
 \mbox{H-AHM-002} & Stylus event capture; attempt evaluation & One drawn stroke
 is captured or evaluated twice, inflating coverage or producing a spurious extra
@@ -1079,7 +1079,7 @@ non-passing attempts and the defined improvement predicate; leave the current
 stage unchanged until an authorized adult accepts. Document/Test: replay
 improving, non-improving, invalid and threshold-boundary sequences; decline or
 ignore a suggestion. & FR-LRN-009, FR-LRN-018, FR-LRN-019, FR-LRN-020,
-FR-LRN-030, FR-LRN-031, FR-LRN-033 to FR-LRN-037 \\
+FR-LRN-030 to FR-LRN-037 \\
 \addlinespace
 \mbox{H-AHM-007} & Learner settings; attempt and lesson evaluation & The active
 attempt is evaluated using another learner's threshold, a stale value or a
@@ -1793,12 +1793,12 @@ H-AHM-006 & Learning Activity \\
 \addlinespace
 FR-LRN-031\newline\emph{Interrupted attempt not counted} & Squigglr shall not
 count an interrupted or unfinished drawing attempt toward the stage's attempt
-limits. & H-AHM-006 & Learning Activity \\
+limits. & H-AHM-001, H-AHM-006 & Learning Activity \\
 \addlinespace
 FR-LRN-032\newline\emph{Invalid input not counted} & Squigglr shall not count
 input that is missing, invalid or too ambiguous to evaluate toward the stage's
-evaluable attempt or unsuccessful attempt limits. & H-AHM-003 & Learning
-Activity \\
+evaluable attempt or unsuccessful attempt limits. & H-AHM-001, H-AHM-003,
+H-AHM-006 & Learning Activity \\
 \addlinespace
 FR-LRN-033\newline\emph{Declined suggestion needs a new streak} & After an adult
 declines a difficulty suggestion, Squigglr shall offer another only after a new

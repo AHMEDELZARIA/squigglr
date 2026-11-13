@@ -72,9 +72,10 @@ None. The stored lessons are reached through the Storage Module
 \subsubsection{Access Routine Semantics}
 
 The full semantics are given in Revision~0. In brief: \texttt{load} reads the
-stored lessons into $\mathit{catalogue}$. It raises
-\texttt{catalogueUnavailable} when the Storage Module (\mref{mStorage}) raises
-\texttt{unavailable} while the lessons are read, and \texttt{badLesson} if a
+stored lessons into $\mathit{catalogue}$. When the Storage Module
+(\mref{mStorage}) raises \texttt{unavailable} while the lessons are read,
+\texttt{load} raises \texttt{catalogue\-Unavailable}. It raises
+\texttt{badLesson} if a
 lesson has no figure, an empty part or a difficulty whose index is not in its
 figure; \texttt{lessons} gives the identifiers in $\mathit{catalogue}$ in order;
 \texttt{name}, \texttt{category} and \texttt{figure} give those fields of one

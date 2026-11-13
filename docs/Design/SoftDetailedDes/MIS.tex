@@ -246,8 +246,12 @@ $\mathit{lessonEnded}\}$, the kinds of message the child can be given during a
 guided lesson, other than the feedback on a predefined difficulty &
 \mref{mFeedback}\\
 FeedbackT & tuple of $(\mathit{message}: \text{string}, \mathit{image}:
-\text{ImageIdT}, \mathit{sound}: \text{SoundIdT})$, the content of one message
-to the child & \mref{mFeedback}\\
+\text{ImageIdT}, \mathit{colour}: \text{ColourIdT}, \mathit{sound}:
+\text{SoundIdT})$, the content of one message to the child. The colour is the
+one used to show the message and to mark where a missed part or endpoint is &
+\mref{mFeedback}\\
+ColourIdT & Identifies one colour that \progname{} uses for feedback &
+\mref{mFeedback}\\
 ImageIdT & Identifies one image that \progname{} shows the child &
 \mref{mFeedback}\\
 SoundIdT & Identifies one sound that \progname{} can play & \mref{mFeedback}\\

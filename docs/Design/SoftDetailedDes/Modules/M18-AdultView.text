@@ -121,7 +121,10 @@ because it saves the first values of a new profile and changes no saved value
 shows the values that \texttt{check} of the Learner Settings Module gives,
 and saves only when there are none.
 \item The lesson choice view lists the lessons of the Lesson Catalogue Module
-by name.
+by name. Before it passes a lesson choice to \texttt{select}, it calls
+\texttt{deviceSupported} of the Guided Lesson Control Module. When that gives
+false, it shows the adult a notice that results may be unreliable and calls
+\texttt{select} only if the adult goes on (SAF-RAY-002, UC-002).
 \item \texttt{showProgress} shows the summary of $p$ for $v$ with the values in
 $\mathit{ps}$, and always with \texttt{PRACTICE\_ONLY} (SAF-RAY-004).
 \texttt{showAttempts} shows every value of each record in $\mathit{rs}$, with

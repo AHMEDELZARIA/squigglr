@@ -23,10 +23,6 @@ None.
 \item OutcomeT $= \{\mathit{open}, \mathit{passed}, \mathit{notPassed},
 \mathit{invalid}, \mathit{interrupted}\}$, how the attempt ended, or
 $\mathit{open}$ while it has not ended.
-\item ObservedT = tuple of $(\mathit{difficulty}: \text{DifficultyT},
-\mathit{corrected}: \mathbb{B})$, a predefined difficulty seen during the
-attempt and whether the child corrected it later in the same attempt
-(FR-REC-003).
 \end{itemize}
 
 \subsubsection{Exported Access Programs}

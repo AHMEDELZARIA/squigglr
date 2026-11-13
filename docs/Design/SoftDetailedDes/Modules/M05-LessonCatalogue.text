@@ -43,7 +43,8 @@ notLoaded, unknownLesson \\
 \subsubsection{State Variables}
 
 \begin{itemize}
-\item $\mathit{loaded}$: $\mathbb{B}$, whether the catalogue has been read.
+\item $\mathit{loaded}$: $\mathbb{B}$, whether the catalogue has been read,
+initially false.
 \item $\mathit{catalogue}$: seq of LessonT, the approved lessons in the order
 they are offered, where LessonT is the local type below.
 \end{itemize}

@@ -84,6 +84,9 @@ Evaluation and Geometry Modules (\#326).\\
 11 November 2026 & Ahmed Elzaria & Added the MIS of the Guided Lesson Control
 and Improvement Measure Modules, with the access program for each lesson
 transition of SRS Section~9.2 (\#327).\\
+11 November 2026 & Ahmed Elzaria & Added the MIS of the Attempt Record Module,
+and checked the lesson and attempt modules against the MIS checklist
+(\#328).\\
 \bottomrule
 \end{tabularx}
 
@@ -196,9 +199,11 @@ more than one module, so that every module uses the same names. They are plain
 data types, so using one does not make a module use another module. The last
 column names the module whose data the type describes and which decides its
 values. StrokeT is the exception: it is an abstract data type, so a module that
-uses it uses the Stroke Module (\mref{mStroke}). A type that one module
-defines and other modules only name is defined in that module's Exported Types,
-and the others refer to it there.
+calls its access programs uses the Stroke Module (\mref{mStroke}). A module
+that only passes a stroke on, as the Guided Lesson Control Module
+(\mref{mLessonControl}) does, does not. A type that one module defines and
+other modules only name is defined in that module's Exported Types, and the
+others refer to it there.
 
 {\small
 \renewcommand{\arraystretch}{1.2}
@@ -248,6 +253,10 @@ EvaluationT & tuple of $(\mathit{class}: \text{ClassT}, \mathit{guidance}:
 \mathit{difficulties}: \text{set of DifficultyT})$, the outcome of evaluating
 the strokes of an attempt. The result is on the 0--100 scale of the SRS. &
 \mref{mEvaluation}\\
+ObservedT & tuple of $(\mathit{difficulty}: \text{DifficultyT},
+\mathit{corrected}: \mathbb{B})$, a predefined difficulty seen during an
+attempt and whether the child corrected it later in the same attempt
+(FR-REC-003) & \mref{mAttempt}\\
 FeedbackKindT & $\{\mathit{stagePassed},$ $\mathit{lessonComplete},$
 $\mathit{keepTrying},$ $\mathit{notEvaluable},$ $\mathit{checkIn},$
 $\mathit{lessonEnded}\}$, the kinds of message the child can be given during a

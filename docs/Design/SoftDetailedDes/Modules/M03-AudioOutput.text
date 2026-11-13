@@ -30,8 +30,9 @@ isMuted & -- & $\mathbb{B}$ & -- \\
 
 \begin{itemize}
 \item $\mathit{muted}$: $\mathbb{B}$, whether sound is turned off for the
-active learner.
-\item $\mathit{playing}$: $\mathbb{B}$, whether a sound is playing.
+active learner, initially false.
+\item $\mathit{playing}$: $\mathbb{B}$, whether a sound is playing, initially
+false.
 \end{itemize}
 
 \subsubsection{Environment Variables}

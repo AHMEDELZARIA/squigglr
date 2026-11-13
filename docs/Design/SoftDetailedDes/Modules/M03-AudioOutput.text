@@ -37,15 +37,17 @@ active learner.
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item $\mathit{speaker}$: the browser's audio output on the device.
+\item $\mathit{speaker}$: SoundIdT $\cup$ $\{\bot\}$, the sound the browser's
+audio output on the device is playing, or $\bot$ when it plays none.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
 \item The caller (the Child Screen Module, \mref{mChildScreen}) calls
-\texttt{setMuted} with the active learner's audio setting from the Learner
-Settings Module (\mref{mSettings}) before it plays any sound for that learner,
+\texttt{setMuted} with the negation of the active learner's audio setting
+(audio on means not muted) from the Learner Settings Module (\mref{mSettings})
+before it plays any sound for that learner,
 and again whenever the active learner or the setting changes (NFR-UX-010).
 \item Every sound is also shown on screen as a message, so a sound that the
 browser does not play loses no information (NFR-UX-021).

@@ -1,9 +1,96 @@
 \section{MIS of the Lesson Catalogue Module (\mref{mCatalogue})}
 \label{sec:mCatalogue}
 
-\wss{This module's interface is written in \#264. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+LessonCatalogue
+
+\subsection{Uses}
+
+Storage Module (\mref{mStorage}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None. The lessons are data, read at run time, so that a lesson can be added,
+changed or removed without a change to the code (NFR-MAINT-001, LC-001).
+
+\subsubsection{Exported Types}
+
+\begin{itemize}
+\item CategoryT $= \{\mathit{line}, \mathit{shape}, \mathit{simpleDrawing}\}$,
+the categories of the approved catalogue (FR-LRN-001).
+\item GuideT = tuple of $(\mathit{outline}: \text{seq of PathT},
+\mathit{endpoints}: \text{seq of PointT})$, what is shown to guide the child at
+a drawing stage.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+load & -- & -- & catalogueUnavailable, badLesson \\
+lessons & -- & seq of LessonIdT & notLoaded \\
+name & $\ell$: LessonIdT & string & notLoaded, unknownLesson \\
+category & $\ell$: LessonIdT & CategoryT & notLoaded, unknownLesson \\
+figure & $\ell$: LessonIdT & FigureT & notLoaded, unknownLesson \\
+demonstration & $\ell$: LessonIdT & seq of PathT & notLoaded, unknownLesson \\
+guide & $\ell$: LessonIdT, $l$: DrawingStageT & GuideT & notLoaded,
+unknownLesson \\
+difficulties & $\ell$: LessonIdT, $l$: DrawingStageT & set of DifficultyT &
+notLoaded, unknownLesson \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $\mathit{loaded}$: $\mathbb{B}$, whether the catalogue has been read.
+\item $\mathit{catalogue}$: seq of LessonT, the approved lessons in the order
+they are offered, where LessonT is the local type below.
+\end{itemize}
+
+\noindent LessonT = tuple of $(\mathit{id}: \text{LessonIdT},$
+$\mathit{name}: \text{string},$ $\mathit{category}: \text{CategoryT},$
+$\mathit{figure}: \text{FigureT},$ $\mathit{demonstration}: \text{seq of
+PathT},$ $\mathit{difficulties}: \text{DrawingStageT} \rightarrow \text{set of
+DifficultyT})$.
+
+\subsubsection{Environment Variables}
+
+None. The stored lessons are reached through the Storage Module
+(\mref{mStorage}).
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item \texttt{load} is called once, before any other access program, when
+\progname{} starts.
+\item The team checks a lesson before it is stored. The checks in
+\texttt{load} only stop a damaged or incomplete lesson from being offered.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief: \texttt{load} reads the
+stored lessons into $\mathit{catalogue}$. When the Storage Module
+(\mref{mStorage}) raises \texttt{unavailable} while the lessons are read,
+\texttt{load} raises \texttt{catalogue\-Unavailable}. It raises
+\texttt{badLesson} if a
+lesson has no figure, an empty part or a difficulty whose index is not in its
+figure; \texttt{lessons} gives the identifiers in $\mathit{catalogue}$ in order;
+\texttt{name}, \texttt{category} and \texttt{figure} give those fields of one
+lesson; \texttt{demonstration} gives the parts of the figure in the order the
+example draws them (FR-LRN-003); \texttt{guide} gives the whole figure as the
+outline at stage $T$, only the endpoints at stage $E$, and nothing at stage $I$
+(FR-LRN-004 to FR-LRN-006); \texttt{difficulties} gives the predefined
+difficulties of that stage of the lesson. Each raises \texttt{notLoaded} before
+\texttt{load} and \texttt{unknownLesson} for an identifier not in
+$\mathit{catalogue}$.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

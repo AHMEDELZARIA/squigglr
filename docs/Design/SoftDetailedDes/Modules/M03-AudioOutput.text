@@ -1,9 +1,69 @@
 \section{MIS of the Audio Output Module (\mref{mAudio})}
 \label{sec:mAudio}
 
-\wss{This module's interface is written in \#264. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+AudioOutput
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+play & $s$: SoundIdT & -- & -- \\
+stop & -- & -- & -- \\
+setMuted & $m$: $\mathbb{B}$ & -- & -- \\
+isMuted & -- & $\mathbb{B}$ & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $\mathit{muted}$: $\mathbb{B}$, whether sound is turned off for the
+active learner.
+\item $\mathit{playing}$: $\mathbb{B}$, whether a sound is playing.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{speaker}$: SoundIdT $\cup$ $\{\bot\}$, the sound the browser's
+audio output on the device is playing, or $\bot$ when it plays none.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item The caller (the Child Screen Module, \mref{mChildScreen}) calls
+\texttt{setMuted} with the negation of the active learner's audio setting
+(audio on means not muted) from the Learner Settings Module (\mref{mSettings})
+before it plays any sound for that learner,
+and again whenever the active learner or the setting changes (NFR-UX-010).
+\item Every sound is also shown on screen as a message, so a sound that the
+browser does not play loses no information (NFR-UX-021).
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief: \texttt{play} plays $s$
+on the speaker unless $\mathit{muted}$, stopping any sound already playing;
+\texttt{stop} stops the sound that is playing, so that a long sound can be
+stopped from the screen it plays on (NFR-UX-022); \texttt{setMuted} sets
+$\mathit{muted}$, and muting also stops the sound that is playing;
+\texttt{isMuted} gives $\mathit{muted}$.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

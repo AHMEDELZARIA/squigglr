@@ -65,7 +65,9 @@ is $\mathit{assisted}$ at $T$ and $E$ and $\mathit{independent}$ at $I$
 (FR-LRN-012), $v$ is the stage result $100 \cdot \min(\mathit{drawn},
 \mathit{onFigure})$, and $\mathit{obs}$ is the set of difficulties in
 $\mathit{ds}$ that the strokes show (FR-LRN-014). At stage $I$, the strokes are
-first moved and scaled onto the figure's bounding box. The result is the same
+first fitted to the figure's bounding box with \texttt{fitToBox} of the Geometry
+Module (\mref{mGeometry}): moved and uniformly scaled, as in SRS Section~9.2.
+The result is the same
 every time for the same inputs (NFR-PERF-004) and matches the definition in SRS
 Section~9.2 (NFR-PERF-010).
 \item exception: $\mathit{exc} := (f.\mathit{parts} = \langle\rangle

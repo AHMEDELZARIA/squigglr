@@ -1,9 +1,72 @@
 \section{MIS of the Audit Log Module (\mref{mLog})}
 \label{sec:mLog}
 
-\wss{This module's interface is written in \#266. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+AuditLog
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item EventKindT $= \{\mathit{signInFailed},$ $\mathit{sessionTimeout},$
+$\mathit{changeRefused}\}$, the security events that are logged: a failed
+sign-in and a session timeout (NFR-SEC-005), and a refused change to a saved
+record (NFR-SEC-003).
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+log & $e$: EventKindT, $a$: AdultIdT $\cup$ $\{\bot\}$, $\mathit{about}$:
+string & -- & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{auditLog}$: seq of tuple of $(\mathit{kind}: \text{EventKindT},$
+$\mathit{adult}: \text{AdultIdT} \cup \{\bot\},$ $\mathit{about}:
+\text{string},$ $\mathit{at}: \text{DateTimeT})$, the server-side store of audit
+events.
+\item $\mathit{clock}$: DateTimeT, the current time.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $\mathit{about}$ names what the event concerns, such as the email
+entered or an item's identifier. It never holds a password or the contents of a
+record (NFR-SEC-003).
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief, \texttt{log} adds the
+event $(e, a, \mathit{about}, \mathit{clock})$ to $\mathit{auditLog}$, with $a
+= \bot$ when no adult is known, as for a failed sign-in with an unknown email.
+No access program of \progname{} reads $\mathit{auditLog}$, so no adult can see
+it (NFR-SEC-005).
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

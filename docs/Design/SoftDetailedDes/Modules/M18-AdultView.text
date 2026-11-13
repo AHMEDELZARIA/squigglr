@@ -1,9 +1,144 @@
 \section{MIS of the Adult View Module (\mref{mAdultView})}
 \label{sec:mAdultView}
 
-\wss{This module's interface is written in \#266. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+AdultView
+
+\subsection{Uses}
+
+Display Module (\mref{mDisplay}), Guided Lesson Control Module
+(\mref{mLessonControl}), Lesson Catalogue Module (\mref{mCatalogue}), Refinement
+Control Module (\mref{mRefineControl}), Adult Access Module (\mref{mAccess}),
+Learner Profile Module (\mref{mProfile}), Learner Settings Module
+(\mref{mSettings}), Progress Summary Module (\mref{mSummary}), Connection
+Recovery Module (\mref{mRecovery}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+The inputs below use CredentialsT of the Adult Access Module, AvatarT of the
+Learner Profile Module, ViewChoiceT of the Progress Summary Module, and
+AttemptRecordT of the Attempt Record Module (\mref{mRecord}), which this module
+only gets from the Progress Summary Module and passes on. DrawingIdT identifies
+one saved creative drawing and is the type of the Refinement Control Module.
+
+{\sloppy
+\begin{itemize}
+\item ViewT $= \{\mathit{signIn},$ $\mathit{profiles},$ $\mathit{settings},$
+$\mathit{lessonChoice},$ $\mathit{progress},$ $\mathit{attempts},$
+$\mathit{drawings},$ $\mathit{unsaved}\}$, the adult views.
+\item SummaryPartT $= \{\mathit{startingStage},$ $\mathit{furthestStage},$
+$\mathit{passes},$ $\mathit{lessonEnding},$ $\mathit{limitCounts},$
+$\mathit{recurring},$ $\mathit{interrupted},$ $\mathit{notAttempted}\}$, the
+recorded values an adult can choose to show in a progress summary
+(FR-PRG-007).
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+There is one access program for each action an adult takes in the adult views.
+The inputs are what the adult enters or selects in the view.
+
+\begin{accessprograms}
+init & -- & -- & -- \\
+signUp & $c$: CredentialsT & -- & -- \\
+signIn & $c$: CredentialsT & -- & -- \\
+signOut & -- & -- & -- \\
+addLearner & $\mathit{av}$: AvatarT, $s$: SettingsT & -- & -- \\
+switchLearner & $p$: LearnerIdT & -- & -- \\
+saveSettings & $p$: LearnerIdT, $s$: SettingsT & -- & -- \\
+setAudio & $p$: LearnerIdT, $\mathit{on}$: $\mathbb{B}$ & -- & -- \\
+chooseLesson & $\ell$: LessonIdT, $l$: StageT & -- & -- \\
+acceptSuggestion & $l$: DrawingStageT & -- & -- \\
+declineSuggestion & -- & -- & -- \\
+showProgress & $p$: LearnerIdT, $v$: ViewChoiceT, $\mathit{ps}$: set of
+SummaryPartT & -- & -- \\
+showAttempts & $\mathit{rs}$: seq of AttemptRecordT & -- & -- \\
+showDrawings & $p$: LearnerIdT & -- & -- \\
+restoreDrawing & $d$: DrawingIdT & -- & -- \\
+showUnsaved & -- & -- & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $\mathit{view}$: ViewT, the view shown.
+\item $\mathit{parts}$: set of SummaryPartT, the recorded values shown in a
+summary.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{screen}$: seq of seq of PixelT, the pixels of the browser window
+while an adult view is shown, where PixelT is the colour of one pixel.
+\item $\mathit{input}$: seq of InputEventT, the adult's key presses and pointer
+events in the adult views, each with its time.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item \texttt{init} is called each time an adult view is opened, before any
+other access program.
+\item \texttt{showAttempts} is given the attempt records behind a figure of the
+summary on the screen, which the adult has just selected.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{init} sets $\mathit{view}$ to $\mathit{profiles}$ if an adult is
+signed in and to $\mathit{signIn}$ if not, and sets $\mathit{parts}$ to every
+recorded value.
+\item Each program carries out one adult action and shows its result. A problem,
+such as a wrong password, a setting out of range, an unsupported device
+(SAF-RAY-002) or a server that does not answer, is shown on the screen in plain
+words (NFR-UX-017), so no program raises an exception.
+\item \texttt{switchLearner}, \texttt{saveSettings}, \texttt{setAudio} and
+\texttt{restoreDrawing} first run the adult check of the Adult Access Module,
+and change nothing if it is not passed (SAF-RAY-001, SAF-RAY-008, FR-CRT-019).
+The lesson choice and the answers to a go-back suggestion are passed to
+\texttt{select} and \texttt{answerSuggestion} of the Guided Lesson Control
+Module, which run the check themselves.
+\item \texttt{switchLearner} and \texttt{signOut} first call \texttt{stop} of
+the Guided Lesson Control Module. \texttt{signOut} also clears the active
+learner.
+\item \texttt{addLearner} creates the profile and saves its settings, so a new
+adult can set up a learner in one view (NFR-UX-009). It runs no adult check,
+because it saves the first values of a new profile and changes no saved value
+(SAF-RAY-008). \texttt{saveSettings}
+shows the values that \texttt{check} of the Learner Settings Module gives,
+and saves only when there are none.
+\item The lesson choice view lists the lessons of the Lesson Catalogue Module
+by name. Before it passes a lesson choice to \texttt{select}, it calls
+\texttt{deviceSupported} of the Guided Lesson Control Module. When that gives
+false, it shows the adult a notice that results may be unreliable and calls
+\texttt{select} only if the adult goes on (SAF-RAY-002, UC-002).
+\item \texttt{showProgress} shows the summary of $p$ for $v$ with the values in
+$\mathit{ps}$, and always with \texttt{PRACTICE\_ONLY} (SAF-RAY-004).
+\texttt{showAttempts} shows every value of each record in $\mathit{rs}$, with
+its strokes drawn by the Display Module (FR-PRG-005, FR-PRG-006).
+\item \texttt{showDrawings} lists $p$'s saved drawings that can be restored.
+\item \texttt{showUnsaved} lists the attempts and drawings that are still kept
+on the device and not yet saved (SAF-RAY-003, SAF-SHA-003).
+\item The adult views look different from the child's screens (NFR-UX-003),
+every action can be done with the keyboard alone (NFR-UX-023), and their text
+can be enlarged (NFR-UX-024).
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

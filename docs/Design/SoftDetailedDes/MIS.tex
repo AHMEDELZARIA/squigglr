@@ -36,6 +36,13 @@ urlcolor=cyan          % color of external links
 \input{../../Comments.text}
 \input{../../Common.text}
 
+% Module numbers, the same as the MG (Table 1 of the MG). \mref{mAudio} gives
+% M3. The labels are set in the Module Decomposition table below.
+\newcounter{mnum}
+\newcommand{\mthemnum}{M\themnum}
+\newcommand{\mref}[1]{M\ref{#1}}
+\newcommand{\mdef}[1]{\refstepcounter{mnum}\mthemnum\label{#1}}
+
 \begin{document}
 
 \title{Module Interface Specification for \progname{}}
@@ -50,11 +57,13 @@ urlcolor=cyan          % color of external links
 
 \section{Revision History}
 
-\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
-\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3cm}
+>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X}
+\toprule \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+11 November 2026 & Ahmed Elzaria & Added the introduction, the notation, the
+types shared between modules and the module decomposition, and gave each module
+its own file (\#324).\\
 \bottomrule
 \end{tabularx}
 
@@ -62,9 +71,27 @@ Date 2 & 1.1 & Notes\\
 
 \section{Symbols, Abbreviations and Acronyms}
 
-See SRS Documentation at \wss{give url}
+The symbols, abbreviations and acronyms are those of the SRS~\citep{SRS}
+(Section~4, Naming Conventions and Terminology) and of the
+MG~\citep{MG} (Section~2, Reference Material). Symbolic constants, such as
+\texttt{STAGE\_PASS} and \texttt{ATTEMPT\_LIMIT}, are defined with their units,
+ranges and defaults in the Symbolic Constants subsection of the SRS. This
+document adds the following.
 
-\wss{Also add any additional symbols, abbreviations or acronyms}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l p{0.7\textwidth}}
+\toprule
+\textbf{Symbol} & \textbf{Description}\\
+\midrule
+M & Module, numbered as in the MG (for example, \mref{mAudio})\\
+MIS & Module Interface Specification\\
+$D$, $T$, $E$, $I$ & The stages of a guided lesson: demonstration, full-outline
+tracing, endpoint-only guidance and independent drawing (SRS
+Section~9.2)\\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \newpage
 
@@ -76,17 +103,20 @@ See SRS Documentation at \wss{give url}
 
 \section{Introduction}
 
-The following document details the Module Interface Specifications for
-\wss{Fill in your project name and description}
+The following document details the Module Interface Specifications (MIS) for
+\progname{}, a website on which a young child practises drawing lines, shapes
+and simple drawings with a stylus. In guided lessons the guidance is removed
+stage by stage, and in the creative space the child draws freely and can have a
+drawing refined. A supporting adult chooses the lessons, sets the values that
+control them and sees the child's progress.
 
 Complementary documents include the System Requirement Specifications
-and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
+(SRS)~\citep{SRS} and the Module Guide (MG)~\citep{MG}. The MG names each module
+and the secret it hides; this document gives each module's interface. The full
+documentation and implementation can be found at
+\url{https://github.com/AHMEDELZARIA/squigglr}.
 
 \section{Notation}
-
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
 
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
@@ -95,137 +125,203 @@ with the addition that template modules have been adapted from
 multiple assignment statement and conditional rules follow the form $(c_1
 \Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
 
-The following table summarizes the primitive data types used by \progname. 
+The following table summarizes the primitive data types used by \progname.
 
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
-\noindent 
-\begin{tabular}{l l p{7.5cm}} 
-\toprule 
-\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
+\noindent
+\begin{tabular}{l l p{7.5cm}}
+\toprule
+\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\
 \midrule
+Boolean & $\mathbb{B}$ & true or false\\
 character & char & a single symbol or digit\\
 integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
 natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
+natural number with zero & $\mathbb{N}_0$ & a number without a fractional
+component in [0, $\infty$)\\
 real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
 \bottomrule
-\end{tabular} 
+\end{tabular}
 \end{center}
 
 \noindent
-The specification of \progname \ uses some derived data types: sequences, strings, and
-tuples. Sequences are lists filled with elements of the same data type. Strings
-are sequences of characters. Tuples contain a list of values, potentially of
-different types. In addition, \progname \ uses functions, which
-are defined by the data types of their inputs and outputs. Local functions are
-described by giving their type signature followed by their specification.
+The specification of \progname \ uses some derived data types: sequences,
+strings, sets, tuples and enumerations. Sequences are lists filled with
+elements of the same data type, written ``seq of $T$''. Strings are sequences
+of characters. Sets are unordered collections without repeats, written ``set
+of $T$''. Tuples contain a list of values, potentially of different types, and
+their fields are named, as in $p.x$. An enumeration is a type with a fixed list
+of values, written as the set of those values, such as $\{D, T, E, I\}$. In
+addition, \progname \ uses functions, which are defined by the data types of
+their inputs and outputs. Local functions are described by giving their type
+signature followed by their specification.
+
+The symbolic constants of the SRS keep their names, written in typewriter font,
+for example \texttt{STAGE\_PASS}. A module whose behaviour depends on an
+adult-set value (the nine values of BR-008 in the SRS) is given the value as
+an input. Only the Guided Lesson Control Module (\mref{mLessonControl}) reads
+these values from the Learner Settings Module (\mref{mSettings}), when a lesson
+is chosen, and it passes them on to the modules it calls, so that those modules
+never read the Learner Settings Module themselves. A constant that the team
+fixes belongs to the one module that uses it. It is an exported constant of
+that module when its value is known, as \texttt{TRACE\_TOL} is, and part of the
+module's secret while the SRS still leaves its value to be decided.
+
+\subsection{Types Shared Between Modules}
+\label{sec:shared-types}
+
+Table~\ref{tab:shared-types} lists the types that appear in the interfaces of
+more than one module, so that every module uses the same names. They are plain
+data types, so using one does not make a module use another module. The last
+column names the module whose data the type describes and which decides its
+values. StrokeT is the exception: it is an abstract data type, so a module that
+uses it uses the Stroke Module (\mref{mStroke}). A type that one module
+defines and other modules only name is defined in that module's Exported Types,
+and the others refer to it there.
+
+{\small
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}
+>{\raggedright\arraybackslash}p{0.56\textwidth}
+>{\raggedright\arraybackslash}p{0.16\textwidth}@{}}
+\caption{Types shared between modules}\label{tab:shared-types}\\
+\toprule
+\textbf{Type} & \textbf{Definition} & \textbf{Owner}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Type} & \textbf{Definition} & \textbf{Owner}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+PointT & tuple of $(x: \mathbb{R}, y: \mathbb{R})$, a position on the
+drawing area & Notation\\
+StrokeT & An abstract data type: the points of one stylus contact, in the order
+drawn, with the time of each point & \mref{mStroke}\\
+PathT & seq of PointT, a line through the points in order. The parts of a
+lesson's figure are paths. & Notation\\
+DateTimeT & A date and time, in Coordinated Universal Time & Notation\\
+StageT & $\{D, T, E, I\}$, the stages of a guided lesson (the set $L$ of SRS
+Section~9.2) & \mref{mCatalogue}\\
+DrawingStageT & $\{T, E, I\}$, the stages at which the child draws (the set
+$A$ of SRS Section~9.2) & \mref{mCatalogue}\\
+LessonIdT & Identifies one lesson in the catalogue & \mref{mCatalogue}\\
+DifficultyT & Identifies one predefined difficulty, such as a missed part or a
+missed endpoint (BR-007) & \mref{mCatalogue}\\
+FigureT & tuple of $(\mathit{parts}: \text{seq of PathT},
+\mathit{endpoints}: \text{seq of PointT})$, the required parts and endpoints of
+a lesson's figure (SRS Table~\ref{tab:lesson-catalogue}) & \mref{mCatalogue}\\
+ClassT & $\{\mathit{complete}, \mathit{incomplete}, \mathit{invalid}\}$ (the
+set $R$ of SRS Section~9.2) & \mref{mEvaluation}\\
+GuidanceT & $\{\mathit{assisted}, \mathit{independent}\}$ (the set $M$ of SRS
+Section~9.2) & \mref{mEvaluation}\\
+EvaluationT & tuple of $(\mathit{class}: \text{ClassT}, \mathit{guidance}:
+\text{GuidanceT}, \mathit{result}: \mathbb{R}, \mathit{passed}: \mathbb{B},
+\mathit{difficulties}: \text{set of DifficultyT})$, the outcome of evaluating
+the strokes of an attempt. The result is on the 0--100 scale of the SRS. &
+\mref{mEvaluation}\\
+FeedbackKindT & The kinds of feedback a child can be given after an attempt,
+such as a passed stage, a missed part or effort on an attempt that did not
+pass & \mref{mFeedback}\\
+AdultIdT & Identifies a signed-in supporting adult & \mref{mAccess}\\
+LearnerIdT & Identifies one learner profile & \mref{mProfile}\\
+SettingsT & tuple of the nine adult-set values of one learner (BR-008), each
+field named after its SRS constant: \emph{stagePass}, \emph{difficultyStreak},
+\emph{attemptLimit}, \emph{improveWindow}, \emph{attemptExtension},
+\emph{attemptLimitMax}, \emph{attemptIdle}, \emph{lessonIdlePrompt} and
+\emph{lessonIdleEnd} & \mref{mSettings}\\
+\end{longtable}
+}
 
 \section{Module Decomposition}
 
-The following table is taken directly from the Module Guide document for this project.
+The following table is taken directly from the Module Guide document for this
+project~\citep{MG}. The module numbers are the same in both documents. The last
+column names the issue in which each module's interface is written.
 
-\begin{table}[h!]
-\centering
-\begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
+{\small
+\renewcommand{\arraystretch}{1.1}
+\begin{longtable}{@{}p{0.22\textwidth} l p{0.42\textwidth} l@{}}
+\caption{Module Hierarchy}\label{TblMH}\\
 \toprule
-\textbf{Level 1} & \textbf{Level 2}\\
+\textbf{Level 1} & \textbf{No.} & \textbf{Level 2} & \textbf{MIS part}\\
 \midrule
-
-{Hardware-Hiding} & ~ \\
+\endfirsthead
+\toprule
+\textbf{Level 1} & \textbf{No.} & \textbf{Level 2} & \textbf{MIS part}\\
 \midrule
-
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-& Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
-& Control Module\\
-& Specification Parameters Module\\
-\midrule
-
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
-& Plotting\\
+\endhead
 \bottomrule
+\endlastfoot
+Hardware-Hiding & \mdef{mInputDevice} & Input Device Module & \#265\\
+& \mdef{mDisplay} & Display Module & \#265\\
+& \mdef{mAudio} & Audio Output Module & \#264\\
+\midrule
+Behaviour-Hiding & \mdef{mLessonControl} & Guided Lesson Control Module &
+\#264\\
+& \mdef{mCatalogue} & Lesson Catalogue Module & \#264\\
+& \mdef{mAttempt} & Attempt Module & \#264\\
+& \mdef{mEvaluation} & Attempt Evaluation Module & \#264\\
+& \mdef{mFeedback} & Feedback Module & \#264\\
+& \mdef{mImprovement} & Improvement Measure Module & \#264\\
+& \mdef{mRecord} & Attempt Record Module & \#264\\
+& \mdef{mCreative} & Creative Drawing Module & \#265\\
+& \mdef{mRefineControl} & Refinement Control Module & \#265\\
+& \mdef{mChildScreen} & Child Screen Module & \#265\\
+& \mdef{mAccess} & Adult Access Module & \#266\\
+& \mdef{mProfile} & Learner Profile Module & \#266\\
+& \mdef{mSettings} & Learner Settings Module & \#266\\
+& \mdef{mSummary} & Progress Summary Module & \#266\\
+& \mdef{mAdultView} & Adult View Module & \#266\\
+\midrule
+Software Decision & \mdef{mStroke} & Stroke Module & \#265\\
+& \mdef{mGeometry} & Geometry Module & \#264\\
+& \mdef{mHistory} & Edit History Module & \#265\\
+& \mdef{mRefineEngine} & Refinement Engine Module & \#265\\
+& \mdef{mStorage} & Storage Module & \#266\\
+& \mdef{mRecovery} & Connection Recovery Module & \#266\\
+& \mdef{mLog} & Audit Log Module & \#266\\
+\end{longtable}
+}
 
-\end{tabular}
-\caption{Module Hierarchy}
-\label{TblMH}
-\end{table}
+Each module's section below follows the same layout: Module, Uses, Syntax
+(exported constants, exported types and access programs), and Semantics (state variables,
+environment variables, assumptions, access routine semantics and local
+functions). In Design Revision~$-1$ the access routine semantics are left for
+Revision~0. The Uses of each module are those of the uses hierarchy in the MG.
 
 \newpage
-~\newpage
 
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
-
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
-
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
-
-\subsection{Module}
-
-\wss{Short name for the module}
-
-\subsection{Uses}
-
-
-\subsection{Syntax}
-
-\subsubsection{Exported Constants}
-
-\subsubsection{Exported Access Programs}
-
-\begin{center}
-\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
-\hline
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
-\hline
-\wss{accessProg} & - & - & - \\
-\hline
-\end{tabular}
-\end{center}
-
-\subsection{Semantics}
-
-\subsubsection{State Variables}
-
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
-
-\subsubsection{Environment Variables}
-
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
-
-\subsubsection{Assumptions}
-
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
-
-\subsubsection{Access Routine Semantics}
-
-\noindent \wss{accessProg}():
-\begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
-\end{itemize}
-
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
-
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
-
-\subsubsection{Local Functions}
-
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
+% One file per module, in module order, so the three MIS parts (#264, #265,
+% #266) each edit their own files and do not conflict. The files end in .text,
+% not .tex, so the PDF build does not try to compile them on their own.
+\input{Modules/M01-InputDevice.text}
+\input{Modules/M02-Display.text}
+\input{Modules/M03-AudioOutput.text}
+\input{Modules/M04-LessonControl.text}
+\input{Modules/M05-LessonCatalogue.text}
+\input{Modules/M06-Attempt.text}
+\input{Modules/M07-AttemptEvaluation.text}
+\input{Modules/M08-Feedback.text}
+\input{Modules/M09-ImprovementMeasure.text}
+\input{Modules/M10-AttemptRecord.text}
+\input{Modules/M11-CreativeDrawing.text}
+\input{Modules/M12-RefinementControl.text}
+\input{Modules/M13-ChildScreen.text}
+\input{Modules/M14-AdultAccess.text}
+\input{Modules/M15-LearnerProfile.text}
+\input{Modules/M16-LearnerSettings.text}
+\input{Modules/M17-ProgressSummary.text}
+\input{Modules/M18-AdultView.text}
+\input{Modules/M19-Stroke.text}
+\input{Modules/M20-Geometry.text}
+\input{Modules/M21-EditHistory.text}
+\input{Modules/M22-RefinementEngine.text}
+\input{Modules/M23-Storage.text}
+\input{Modules/M24-ConnectionRecovery.text}
+\input{Modules/M25-AuditLog.text}
 
 \newpage
 

@@ -33,15 +33,16 @@ dictionary, with SAF-RAY-009's ending for inactivity).
 confirmed a save, or the record is kept on the device until it does.
 \item AttemptRecordT = tuple of $(\mathit{lesson}: \text{LessonIdT},$
 $\mathit{stage}: \text{DrawingStageT},$ $\mathit{outcome}:
-\text{RecordOutcomeT},$ $\mathit{result}: \mathbb{R},$ $\mathit{difficulties}: \text{set of NotedT},$ $\mathit{settings}: \text{SettingsT},$
+\text{RecordOutcomeT},$ $\mathit{result}: \mathbb{R},$ $\mathit{difficulties}: \text{set of ObservedT},$ $\mathit{settings}: \text{SettingsT},$
 $\mathit{strokes}: \text{seq of StrokeT},$ $\mathit{endedAt}:
 \text{DateTimeT})$, one attempt (FR-REC-001 to FR-REC-005). An interrupted
 attempt has no result, so its $\mathit{result}$ is not used.
-\item NotedT = tuple of $(\mathit{difficulty}: \text{DifficultyT},$
-$\mathit{corrected}: \mathbb{B})$, a difficulty seen in an attempt and whether
-the child corrected it in the same attempt (FR-REC-003).
-\item SuggestionT = tuple of $(\mathit{stage}: \text{DrawingStageT},$
-$\mathit{offeredAt}: \text{DateTimeT},$ $\mathit{response}: \text{ResponseT})$.
+\item SuggestionT = tuple of $(\mathit{from}: \text{DrawingStageT},$
+$\mathit{offeredAt}: \text{DateTimeT},$ $\mathit{response}: \text{ResponseT},$
+$\mathit{stage}: \text{DrawingStageT} \cup \{\bot\})$, where
+$\mathit{from}$ is the stage at which the failed attempts were made and
+$\mathit{stage}$ is the earlier stage the adult chose on acceptance, or $\bot$
+if the suggestion was not accepted (FR-REC-010).
 \item LessonRecordT = tuple of $(\mathit{id}: \text{LessonRecordIdT},$
 $\mathit{learner}: \text{LearnerIdT},$ $\mathit{lesson}: \text{LessonIdT},$
 $\mathit{start}: \text{StageT},$ $\mathit{furthest}: \text{StageT},$
@@ -65,8 +66,8 @@ lessonEnded \\
 offerSuggestion & $a$: AdultIdT, $r$: LessonRecordIdT, $l$: DrawingStageT &
 $\mathbb{N}_0$ & unknownRecord, lessonEnded \\
 answerSuggestion & $a$: AdultIdT, $r$: LessonRecordIdT, $i$: $\mathbb{N}_0$,
-$\mathit{resp}$: ResponseT & SaveT & unknownRecord, unknownSuggestion,
-alreadyAnswered \\
+$\mathit{resp}$: ResponseT, $l$: DrawingStageT $\cup$ $\{\bot\}$ & SaveT &
+unknownRecord, unknownSuggestion, alreadyAnswered, lessonEnded \\
 endLesson & $a$: AdultIdT, $r$: LessonRecordIdT, $e$: EndingT, $f$: StageT &
 SaveT & unknownRecord, lessonEnded \\
 lessonRecords & $a$: AdultIdT, $p$: LearnerIdT & seq of LessonRecordT &
@@ -115,9 +116,12 @@ the device (SAF-RAY-003).
 \item \texttt{recordExtension}, \texttt{offerSuggestion} and
 \texttt{answerSuggestion} add an extension, a suggestion and the adult's
 response to the lesson record (SAF-RAY-006, FR-REC-010).
-\texttt{offerSuggestion} gives the index of the new suggestion.
+\texttt{offerSuggestion} gives the index of the new suggestion, offered at
+stage $l$. \texttt{answerSuggestion} keeps $l$ as the chosen stage when
+$\mathit{resp} = \mathit{accepted}$, and $\bot$ otherwise.
 \item \texttt{endLesson} sets the ending and the furthest stage. After it, the
-lesson record and its attempts never change (FR-REC-009).
+lesson record and its attempts never change (FR-REC-009), so every program that
+writes to the record raises \texttt{lessonEnded}.
 \item \texttt{lessonRecords} and \texttt{attempts} read back a learner's
 records, oldest first.
 \end{itemize}

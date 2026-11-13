@@ -184,10 +184,14 @@ signature followed by their specification.
 
 The symbolic constants of the SRS keep their names, written in typewriter font,
 for example \texttt{STAGE\_PASS}. A module whose behaviour depends on an
-adult-set value (the nine values of BR-008 in the SRS) does not read it itself.
-It takes the value as an input from its caller, which gets it from the Learner
-Settings Module (\mref{mSettings}). A constant that the team fixes, such as
-\texttt{TRACE\_TOL}, is an exported constant of the one module that uses it.
+adult-set value (the nine values of BR-008 in the SRS) is given the value as
+an input. Only the Guided Lesson Control Module (\mref{mLessonControl}) reads
+these values from the Learner Settings Module (\mref{mSettings}), when a lesson
+is chosen, and it passes them on to the modules it calls, so that those modules
+never read the Learner Settings Module themselves. A constant that the team
+fixes belongs to the one module that uses it. It is an exported constant of
+that module when its value is known, as \texttt{TRACE\_TOL} is, and part of the
+module's secret while the SRS still leaves its value to be decided.
 
 \subsection{Types Shared Between Modules}
 \label{sec:shared-types}
@@ -199,8 +203,9 @@ column names the module whose data the type describes and which decides its
 values. StrokeT is the exception: it is an abstract data type, so a module that
 calls its access programs uses the Stroke Module (\mref{mStroke}). A module
 that only passes a stroke on, as the Guided Lesson Control Module
-(\mref{mLessonControl}) does, does not. A type that only one module
-uses is defined in that module's section.
+(\mref{mLessonControl}) does, does not. A type that one module defines and
+other modules only name is defined in that module's Exported Types, and the
+others refer to it there.
 
 {\small
 \renewcommand{\arraystretch}{1.2}
@@ -250,14 +255,22 @@ EvaluationT & tuple of $(\mathit{class}: \text{ClassT}, \mathit{guidance}:
 \mathit{difficulties}: \text{set of DifficultyT})$, the outcome of evaluating
 the strokes of an attempt. The result is on the 0--100 scale of the SRS. &
 \mref{mEvaluation}\\
+ObservedT & tuple of $(\mathit{difficulty}: \text{DifficultyT},
+\mathit{corrected}: \mathbb{B})$, a predefined difficulty seen during an
+attempt and whether the child corrected it later in the same attempt
+(FR-REC-003) & \mref{mAttempt}\\
 FeedbackKindT & $\{\mathit{stagePassed},$ $\mathit{lessonComplete},$
 $\mathit{keepTrying},$ $\mathit{notEvaluable},$ $\mathit{checkIn},$
 $\mathit{lessonEnded}\}$, the kinds of message the child can be given during a
 guided lesson, other than the feedback on a predefined difficulty &
 \mref{mFeedback}\\
 FeedbackT & tuple of $(\mathit{message}: \text{string}, \mathit{image}:
-\text{ImageIdT}, \mathit{sound}: \text{SoundIdT})$, the content of one message
-to the child & \mref{mFeedback}\\
+\text{ImageIdT}, \mathit{colour}: \text{ColourIdT}, \mathit{sound}:
+\text{SoundIdT})$, the content of one message to the child. The colour is the
+one used to show the message and to mark where a missed part or endpoint is &
+\mref{mFeedback}\\
+ColourIdT & Identifies one colour that \progname{} uses for feedback &
+\mref{mFeedback}\\
 ImageIdT & Identifies one image that \progname{} shows the child &
 \mref{mFeedback}\\
 SoundIdT & Identifies one sound that \progname{} can play & \mref{mFeedback}\\
@@ -323,7 +336,7 @@ Software Decision & \mdef{mStroke} & Stroke Module & \#265\\
 }
 
 Each module's section below follows the same layout: Module, Uses, Syntax
-(exported constants and access programs), and Semantics (state variables,
+(exported constants, exported types and access programs), and Semantics (state variables,
 environment variables, assumptions, access routine semantics and local
 functions). In Design Revision~$-1$ the access routine semantics are left for
 Revision~0. The Uses of each module are those of the uses hierarchy in the MG.

@@ -5674,8 +5674,7 @@ one-second window. Pass when no window has more than three flashes.\\
 
 \begin{srsrequirement}{NFR-PERF-004}{Stage result scoring accuracy}
   \reqshall{Squigglr shall compute a deterministic stage result score for all
-attempts: the same strokes and stage criteria shall produce the same
-evaluation.} \reqrationale{Adults use stage results to monitor a child's
+attempts.} \reqrationale{Adults use stage results to monitor a child's
 progress (G.5, G.6). Nondeterministic scoring may produce arbitrary or
 difficult-to- interpret results that are unsuitable for progress tracking.
 Deterministic scoring is also easier to implement and non-deterministic scoring
@@ -5690,8 +5689,7 @@ ten consecutive runs.}
 
 \begin{srsrequirement}{NFR-PERF-010}{Stage result and completeness agree with their definition}
   \reqshall{For every evaluable attempt, Squigglr's stage result shall differ by
-at most 1 point from the value defined in Section~\ref{sec:fr-formal}, and its
-complete or incomplete classification shall equal the one defined there.}
+at most 1 point from the value defined in Section~\ref{sec:fr-formal}}
 \reqrationale{A threshold of 70 or 90 only means something if the result
 measures what the SRS says it does. Determinism (NFR-PERF-004) alone would allow
 a result that is repeatable but wrong (G.2).} \reqfit{For prepared attempts at
@@ -5798,8 +5796,22 @@ HTTPS or is blocked.}
 \subsection{Requirements for Interfacing with Adjacent Systems}
 
 \begin{srsrequirement}{NFR-OPS-002}{Adjacent system interfaces}
-  \reqshall{Squigglr shall interact with the following external systems:
-\begin{description}
+  \reqshall{Squigglr shall interact with standard external backend systems
+  for data handling}
+  \reqrationale{The adjacent systems are described by their
+  role, not by vendor, so that a provider can be replaced without changing the
+  requirements (LC-004). The candidate providers are compared in the
+  Off-the-Shelf Solutions section.} 
+  \reqfit{Confirm that the error message displays for a mock outage for each 
+  of the authentication, hosting, data storage, and refinement services. (For 
+  AI refinement, provider unavailability protocol is described in
+  \reqref{FR-CRT-020})}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{ASM-005}
+  \reqtraces{ASM-005; \reqref{FR-CRT-020}; \ucref{001}}
+\end{srsrequirement}
+
   \item[Authentication and session provider.] Squigglr shall delegate account
   creation, login, and session management to a third-party authentication
   provider.
@@ -5811,29 +5823,18 @@ HTTPS or is blocked.}
   records kept, by a managed hosting and data storage service. For
   authentication and hosting, Squigglr shall display an error message in the
   event of provider unavailability until the availability returns.
-  \end{description}} \reqrationale{The adjacent systems are described by their
-  role, not by vendor, so that a provider can be replaced without changing the
-  requirements (LC-004). The candidate providers are compared in the
-  Off-the-Shelf Solutions section.} \reqfit{Confirm that the error message
-  displays for a mock outage of the authentication and hosting services. (For AI
-  refinement, provider unavailability protocol is described in
-  \reqref{FR-CRT-020})}
-  \reqpriority{Must}
-  \reqphase{PH-2}
-  \reqsources{ASM-005}
-  \reqtraces{ASM-005; \reqref{FR-CRT-020}; \ucref{001}}
-\end{srsrequirement}
 
 \subsection{Productization Requirements}
 
 \begin{srsrequirement}{NFR-OPS-003}{No installation required}
-  \reqshall{Squigglr shall require no download, plugin, or browser extension and
-  shall be usable directly from a supported browser.} \reqrationale{Installing
+  \reqshall{Squigglr shall be usable directly from a supported browser without
+  prerequisite downloads.} \reqrationale{Installing
   applications on centrally administered device ecosystems is difficult or
   impossible without administrator approval (CON-001, CON-002) while a website
-  URL is much easier to access.} \reqfit{Pass when lesson and account features
+  URL is much easier to access.} 
+  \reqfit{Pass when lesson and account features
   on Squigglr can be opened on each supported browser and device combination
-  (OI-09) without installation}.
+  (OI-09) without installation, plugins, or browser extensions}.
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{CON-001; CON-002; \srcref{003}; \srcref{004}}
@@ -5853,8 +5854,7 @@ and its lesson catalogue.
 
 \begin{srsrequirement}{NFR-MAINT-001}{Lesson catalogue update without code change}
   \reqshall{Squigglr shall require no change to the source code to add, remove,
-or edit a lesson from the lesson catalogue; all lessons shall be stored as data
-read at runtime.} \reqrationale{Lessons will need to be updated and the
+or edit a lesson from the lesson catalogue.} \reqrationale{Lessons will need to be updated and the
 catalogue will need to be added to as the user base grows and the development
 team learns from previous experience. An extensible catalogue should be
 data-driven to make lessons easier to upload and eventually allow content
@@ -5994,14 +5994,12 @@ single-instance capstone project like Squigglr.
 
 \begin{srsrequirement}{NFR-SEC-005}{Server-side logging of authentication events}
   \reqshall{Squigglr shall record every failed login and session timeout event
-in a server-side audit log; the log entries shall not be accessible to adult
-users through any application interface.} \reqrationale{Audit logs are useful
+in a server-side audit log.} \reqrationale{Audit logs are useful
 for security as they provide diagnostics after abnormal behavior like
 brute-force attacks. Logs are hidden from users because they reveal personal
 information and users have no legitimate use for them in most cases.}
 \reqfit{Trigger ten failed login attempts and ten logouts by inactivity. Confirm
-that all events are recorded in the audit log with a time stamp and that a mock
-adult account is denied access to the audit log through request.}
+that all events are recorded in the audit log with a time stamp.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\goalref{5}} \reqtraces{\reqref{SAF-SHA-001}}

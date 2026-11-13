@@ -233,6 +233,21 @@ the past project (\#287).\\
 rationale counts the attempt in progress when a child stops, Section~4.2 rejects
 values that break any cross-setting inequality, and Section~26 counts 143
 requirements (\#290).\\
+11 November 2026 & Ahmed Elzaria & The SRS spells proof of concept as
+``POC'' everywhere, including the glossary (\#304).\\
+11 November 2026 & Ahmed Elzaria & Section~9.1 now goes from lower to higher
+level: drawing input and attempts, guidance stages, evaluation and feedback,
+the lesson catalogue, then adult control and progression. No ID changed, and
+the other functional subsections were checked and already build up the same
+way (\#308).\\
+11 November 2026 & Ahmed Elzaria & The Section~9.1 group headings are now
+subsubsections, so each starts its own line and is listed in the contents
+(\#307).\\
+11 November 2026 & Ahmed Elzaria & Split FR-LRN-003 to 006, 009, 010, 019, 020
+and 024 so each has one ``shall'', adding FR-LRN-025 to 039. Each stage-specific
+requirement now names its stage first. The phase table, the use cases, the
+traceability tables and the requirement count (now 158) list the new IDs
+(\#309).\\
 11 November 2026 & Muhammad Huzaifah & Added ASM-018, that each learner profile is used by one child with an adult present, and told adults so in the user documentation (\#279).\\
 \end{longtable}
 
@@ -295,7 +310,7 @@ renumbered. Each requirement contains a short title, one testable ``shall''
 statement, rationale where needed, a fit criterion, a priority, a phase,
 evidence sources and links to related use cases, requirements or hazards.
 \emph{Must}, \emph{Should} and \emph{Could} identify delivery priority. Delivery
-phases are \emph{PH-1} (PoC demo: Nov.~23, 2026), \emph{PH-2} (Rev~0: Feb.~1,
+phases are \emph{PH-1} (POC demo: Nov.~23, 2026), \emph{PH-2} (Rev~0: Feb.~1,
 2027), \emph{PH-3} (final demo: Mar.~15, 2027), and \emph{Future}. These phase
 identifiers are distinct from the interview participant codes; the
 requirement-by-phase plan belongs in Section~\ref{sec:tasks}. Symbolic constants
@@ -1217,7 +1232,7 @@ interviewed as part of requirements elicitation; not delivery phases. &
 \textbf{PII} & Personally identifiable information. & Section 15\\
 \textbf{PIPEDA} & Personal Information Protection and Electronic Documents Act
 (Canada). & Section 17\\
-\textbf{POC / PoC} & Proof of concept; the planned capstone feasibility
+\textbf{POC} & Proof of concept; the planned capstone feasibility
 demonstration, not a production release. &
 \hyperref[sec:constraints]{Schedule}\\
 \textbf{PSG} & Problem Statement and Goals project document. &
@@ -2140,7 +2155,7 @@ by inspecting saved data prepared by adults.
   \item Within one lesson record, the evaluable attempts at one stage never
   exceed \texttt{ATTEMPT\_LIMIT\_MAX} (BR-002). An interrupted attempt, or one
   whose input is invalid or too ambiguous to evaluate, is not an evaluable
-  attempt and is not counted (FR-LRN-009, FR-LRN-010).
+  attempt and is not counted (FR-LRN-031, FR-LRN-032).
   \item The actual strokes of an attempt record are the strokes the child drew;
   they are never replaced by a corrected, ideal or refined shape (BR-004,
   BR-005).
@@ -2204,7 +2219,7 @@ difficulty\} + [Outcome \textbar{} Interrupted mark] + (Stage result) + Attempt
 end time + Adult-set values in use. & Class & One for each attempt that ends
 with an outcome, or that an adult interrupts after at least one stroke; belongs
 to exactly one lesson record. An interrupted attempt does not count towards an
-attempt limit. & G.5; UC-008; FR-LRN-009; FR-REC-001 to FR-REC-009; FR-PRG-006
+attempt limit. & G.5; UC-008; FR-LRN-009, FR-LRN-031; FR-REC-001 to FR-REC-009; FR-PRG-006
 \\
 \addlinespace
 Creative drawing & One drawing in the creative space. Creative drawing =
@@ -2301,8 +2316,8 @@ difficulty. & G.5; FR-REC-003; FR-PRG-004 \\
 Extension count & The number of times the attempt limit of a lesson record was
 extended because the child was improving. & Attribute & Count of extensions, at
 most one at each stage; evaluable attempts at one stage never exceed
-\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002; FR-LRN-020;
-SAF-RAY-006 \\
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & BR-002; FR-LRN-020,
+FR-LRN-037; SAF-RAY-006 \\
 \addlinespace
 Furthest stage reached & The latest stage of the lesson that the learner reached
 in a lesson record. & Attribute & A stage of the lesson. & G.5; BR-002;
@@ -2315,7 +2330,7 @@ Attribute & Part of exactly one lesson record; made only after
 \texttt{DIFFICULTY\_\allowbreak STREAK} failed attempts in a row at one stage,
 and not while the child is improving; changes the stage only if an adult accepts
 it; a declined suggestion is made again only after another full streak, and
-an unanswered one stays pending, so no second suggestion is made. & G.3; BR-003; CON-007; UC-005; F8, F10; FR-LRN-019; FR-REC-010;
+an unanswered one stays pending, so no second suggestion is made. & G.3; BR-003; CON-007; UC-005; F8, F10; FR-LRN-019, FR-LRN-033 to FR-LRN-036; FR-REC-010;
 SAF-RAY-001, SAF-RAY-007 \\
 \addlinespace
 Interrupted mark & Marks an attempt that an adult stopped, by ending the session
@@ -2411,7 +2426,8 @@ third stages are made with a guide and at the fourth without one (FR-LRN-012
 calls them assisted and independent). & Attribute & Demonstration; tracing a
 full outline; drawing between endpoints only; or drawing with no guide, in that
 order. Attempts are made only at the three drawing stages, not at the
-demonstration. & G.1, G.2, G.6; BR-002; FR-LRN-002, FR-LRN-003, FR-LRN-012;
+demonstration. & G.1, G.2, G.6; BR-002; FR-LRN-002, FR-LRN-003, FR-LRN-012,
+FR-LRN-025;
 FR-PRG-003; \texttt{STAGE\_PASS} \\
 \addlinespace
 Stage result & The result of an evaluable attempt on the normalized scale of
@@ -2597,10 +2613,10 @@ unsupported device or browser, the adult sees a notice that results may be
 unreliable (SAF-RAY-002). \\
 \addlinespace
 Stylus strokes for an attempt in a guided lesson & Child & \ucref{003},
-\ucref{008} & \mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}} & An
+\ucref{008} & \mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}}, \mbox{\reqref{FR-LRN-026}}, \mbox{\reqref{FR-LRN-028}}, \mbox{\reqref{FR-LRN-029}} & An
 interrupted or unfinished attempt is not passed and does not count toward the
-attempt limits (\mbox{\reqref{FR-LRN-009}}). Missing, invalid or ambiguous input
-is not passed and is not counted (\mbox{\reqref{FR-LRN-010}}). \\
+attempt limits (\mbox{\reqref{FR-LRN-030}}, \mbox{\reqref{FR-LRN-031}}). Missing, invalid or ambiguous input
+is not passed and is not counted (\mbox{\reqref{FR-LRN-010}}, \mbox{\reqref{FR-LRN-032}}). \\
 \addlinespace
 Strokes and edits in the creative space: draw, move, resize, recolour, erase,
 undo & Child & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-008} & To be
@@ -2612,7 +2628,7 @@ supporting adult & \ucref{007}, \ucref{010} &
 refinement leaves the drawing unchanged (\goalref{4}). \\
 \addlinespace
 Decision on a suggestion to go back a stage & Supporting adult & \ucref{005} &
-\mbox{\reqref{FR-LRN-018}}, \mbox{\reqref{FR-LRN-019}}, SAF-RAY-001 & A declined
+\mbox{\reqref{FR-LRN-018}}, \mbox{\reqref{FR-LRN-019}}, \mbox{\reqref{FR-LRN-033}}, \mbox{\reqref{FR-LRN-034}}, SAF-RAY-001 & A declined
 suggestion changes nothing. An unanswered suggestion stays pending without
 blocking practice until an adult decides (SAF-RAY-001; BR-003); if a pass or the
 end of the lesson clears it first, it is recorded as ignored. Only an adult can
@@ -2659,7 +2675,7 @@ be saved (SAF-RAY-003). \\
 \endlastfoot
 Demonstration and guidance for each stage: full outline, endpoints only, or no
 guide & Child & \ucref{003} &
-\mbox{\reqref{FR-LRN-002}}--\mbox{\reqref{FR-LRN-006}} \\
+\mbox{\reqref{FR-LRN-002}}--\mbox{\reqref{FR-LRN-006}}, \mbox{\reqref{FR-LRN-027}} \\
 \addlinespace
 The active learner, shown in a form a child who cannot read can recognize &
 Child & \ucref{003} & SAF-RAY-007 \\
@@ -2669,8 +2685,8 @@ Feedback on an attempt, its result, and moving on to the next stage & Child &
 \mbox{\reqref{FR-LRN-023}} \\
 \addlinespace
 Suggestion to go back a stage, or an extension while the child improves &
-Supporting adult & \ucref{005} & \mbox{\reqref{FR-LRN-019}},
-\mbox{\reqref{FR-LRN-020}} \\
+Supporting adult & \ucref{005} & \mbox{\reqref{FR-LRN-019}}, \mbox{\reqref{FR-LRN-020}},
+\mbox{\reqref{FR-LRN-036}} \\
 \addlinespace
 End of a lesson at \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, with
 progress saved & Child; supporting adult & \ucref{003} &
@@ -2885,15 +2901,15 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
 \noindent\textit{Main flow:}
 \begin{enumerate}[nosep, leftmargin=2.2em]
   \item Squigglr shows the demonstration, which is not an attempt
-  (\mbox{\reqref{FR-LRN-003}}), then moves to the starting stage.
+  (\mbox{\reqref{FR-LRN-003}}, \mbox{\reqref{FR-LRN-025}}), then moves to the starting stage.
   \item Squigglr shows the stage's guidance: the full outline, the endpoints
-  only, or no guide (\mbox{\reqref{FR-LRN-004}}--\mbox{\reqref{FR-LRN-006}}).
+  only, or no guide (\mbox{\reqref{FR-LRN-004}}, \mbox{\reqref{FR-LRN-005}}, \mbox{\reqref{FR-LRN-006}}, \mbox{\reqref{FR-LRN-027}}).
   \item The child draws one or more strokes. Each time the child lifts the
   stylus, Squigglr checks the strokes so far; lifting the stylus alone does not
-  end the attempt (\mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}}).
+  end the attempt (\mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}}, \mbox{\reqref{FR-LRN-038}}).
   \item The attempt ends when the strokes so far are complete and meet
   \texttt{STAGE\_PASS}, or, if they do not, after \texttt{ATTEMPT\_IDLE} with
-  no input (\mbox{\reqref{FR-LRN-024}}). Squigglr classifies it as complete or
+  no input (\mbox{\reqref{FR-LRN-039}}, \mbox{\reqref{FR-LRN-024}}). Squigglr classifies it as complete or
   incomplete and as assisted or independent, and passes it only if it is
   complete and meets \texttt{STAGE\_PASS}
   (\mbox{\reqref{FR-LRN-011}}--\mbox{\reqref{FR-LRN-013}}).
@@ -2909,20 +2925,20 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
   child retries from step 3 (\mbox{\reqref{FR-LRN-015}}).
   \item[6b.] The child has \texttt{DIFFICULTY\_STREAK} non-passing attempts in a
   row and is not improving. Squigglr offers the adult a suggestion to go back a
-  stage (\ucref{005}); practice continues meanwhile (\mbox{\reqref{FR-LRN-019}},
+  stage (\ucref{005}); practice continues meanwhile (\mbox{\reqref{FR-LRN-019}}, \mbox{\reqref{FR-LRN-034}},
   \mbox{SAF-RAY-001}).
   \item[6c.] The unsuccessful attempts reach \texttt{ATTEMPT\_LIMIT} while the
   child is improving. Squigglr allows up to \texttt{ATTEMPT\_EXTENSION} more
   attempts, never more than \texttt{ATTEMPT\_LIMIT\_MAX} in total, and the child
-  continues from step 3 (\mbox{\reqref{FR-LRN-020}}).
+  continues from step 3 (\mbox{\reqref{FR-LRN-020}}, \mbox{\reqref{FR-LRN-037}}).
 \end{description}
 \noindent\textit{Failure flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
   \item[3a.] The attempt is interrupted or unfinished. It is not passed and does
-  not count toward the limits (\mbox{\reqref{FR-LRN-009}}).
+  not count toward the limits (\mbox{\reqref{FR-LRN-009}}, \mbox{\reqref{FR-LRN-030}}, \mbox{\reqref{FR-LRN-031}}).
   \item[3b.] The input is missing, invalid, too ambiguous to evaluate, or cannot
   be mapped reliably to the drawing surface. It is not passed and does not count
-  (\mbox{\reqref{FR-LRN-010}}, \mbox{SAF-AHM-002}).
+  (\mbox{\reqref{FR-LRN-010}}, \mbox{\reqref{FR-LRN-032}}, \mbox{SAF-AHM-002}).
   \item[3c.] The same stylus event is reported more than once. It counts once
   (\mbox{SAF-AHM-001}).
   \item[6d.] The unsuccessful attempts reach \texttt{ATTEMPT\_LIMIT} without an
@@ -2942,7 +2958,7 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
 \reqfield{Postconditions}{Every evaluable attempt is recorded, the furthest
 stage reached is saved, and no stage moved back without an adult's acceptance.}
 \reqfield{Requirements}{\mbox{\reqref{FR-LRN-002}}--\mbox{\reqref{FR-LRN-015}},
-\mbox{\reqref{FR-LRN-019}}--\mbox{\reqref{FR-LRN-024}}; \mbox{SAF-RAY-003},
+\mbox{\reqref{FR-LRN-019}}--\mbox{\reqref{FR-LRN-039}}; \mbox{SAF-RAY-003},
 \mbox{SAF-RAY-005}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-007}; \mbox{SAF-AHM-001},
 \mbox{SAF-AHM-002}.} \reqfield{Sources}{\goalref{1}, \goalref{2}, \goalref{3};
 \mbox{SRC-005.01}.}
@@ -2992,10 +3008,10 @@ without improving.} \reqfield{Trigger}{Squigglr suggests going back a stage
 \noindent\textit{Alternative flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
   \item[2a.] The adult declines. Nothing changes, and a new suggestion needs a
-  new full streak (\mbox{\reqref{FR-LRN-019}}).
+  new full streak (\mbox{\reqref{FR-LRN-033}}).
   \item[2b.] The adult does not respond. The suggestion stays pending, nothing
   changes, and no second suggestion is offered while it is pending
-  (\mbox{SAF-RAY-001}, BR-003). If the child passes the stage or the lesson
+  (\mbox{\reqref{FR-LRN-034}}, \mbox{\reqref{FR-LRN-035}}, \mbox{SAF-RAY-001}, BR-003). If the child passes the stage or the lesson
   ends first, the suggestion is cleared and recorded as ignored
   (\mbox{\reqref{FR-REC-010}}).
 \end{description}
@@ -3005,7 +3021,7 @@ without improving.} \reqfield{Trigger}{Squigglr suggests going back a stage
   completed, and nothing changes (\mbox{SAF-RAY-001}).
 \end{description}
 \reqfield{Postconditions}{The stage has changed only if an adult accepted.}
-\reqfield{Requirements}{\mbox{\reqref{FR-LRN-018}}--\mbox{\reqref{FR-LRN-020}};
+\reqfield{Requirements}{\mbox{\reqref{FR-LRN-018}}--\mbox{\reqref{FR-LRN-020}}, \mbox{\reqref{FR-LRN-033}}--\mbox{\reqref{FR-LRN-037}};
 \mbox{SAF-RAY-001}; BR-003.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-005.01}.}
 
 \subsubsection{UC-006: Create and edit artwork}
@@ -3090,7 +3106,7 @@ record (BR-004, BR-005).}
 \noindent\textit{Failure flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
   \item[1b.] The attempt is interrupted or its input is invalid. It is not
-  recorded as passed and does not count (\mbox{\reqref{FR-LRN-009}},
+  recorded as passed and does not count (\mbox{\reqref{FR-LRN-030}}--\mbox{\reqref{FR-LRN-032}},
   \mbox{\reqref{FR-LRN-010}}).
   \item[1c.] A stylus event is reported more than once. It is recorded once
   (\mbox{SAF-AHM-001}).
@@ -3102,7 +3118,7 @@ record (BR-004, BR-005).}
 overall score, diagnosis or comparison (\mbox{SAF-RAY-004}).}
 \reqfield{Requirements}{\reqref{FR-REC-001},
 \reqref{FR-REC-005}--\reqref{FR-REC-008};
-\mbox{\reqref{FR-LRN-009}}--\mbox{\reqref{FR-LRN-012}}; \mbox{SAF-RAY-003},
+\mbox{\reqref{FR-LRN-009}}--\mbox{\reqref{FR-LRN-012}}, \mbox{\reqref{FR-LRN-030}}--\mbox{\reqref{FR-LRN-032}}; \mbox{SAF-RAY-003},
 \mbox{SAF-RAY-004}, \mbox{SAF-RAY-006}, \mbox{SAF-RAY-007}; \mbox{SAF-AHM-001}.}
 \reqfield{Sources}{\goalref{5}; \mbox{SRC-001}.}
 
@@ -3190,127 +3206,12 @@ shapes and simple drawings; letter tracing is deferred (ASM-010, LC-001).
 Delivery phase identifiers follow the conventions in the Introduction and the
 phase plan in Section~\ref{sec:tasks}.
 
-\paragraph{Progression within lessons and adult control.}
-A supporting adult selects each lesson and its starting stage and authorizes
-skips or backward changes (G.3, CON-007). Within the selected lesson, a passing
-drawing attempt automatically advances to the next guidance stage (G.2, BR-002).
-Passing the independent stage completes the current lesson; Squigglr does not
-automatically select another lesson.
+The requirements below build from lower to higher level. They say how drawing
+input is taken and when an attempt ends, then the guidance stages an attempt is
+made in, how an attempt is evaluated and what feedback follows, which lessons
+are offered, and finally how an adult controls a lesson and how it progresses.
 
-\paragraph{Lesson content and guidance.}
-\begin{srsrequirement}{FR-LRN-001}{Approved lesson catalogue}
-  \reqshall{Squigglr shall offer guided lessons for the approved catalogue of
-lines, basic shapes and simple drawings, excluding letter tracing activities
-from the core catalogue.} \reqrationale{These are the agreed categories for
-structured practice; letters are deferred (G.1, ASM-010). The lesson catalogue
-is maintained separately from the stage rules (LC-001).} \reqfit{Inspect the
-lesson catalogue and verify that every approved catalogue entry is selectable,
-classified as a line, shape or simple drawing, and has the stages in FR-LRN-002;
-verify that no letter activity is required to complete the core catalogue.}
-  \reqpriority{Must}
-  \reqphase{PH-1}
-  \reqsources{\goalref{1}; \srcref{001}; \hyperref[src:009.04]{SRC-009.04}}
-  \reqtraces{ASM-010; LC-001; \ucref{002}}
-\end{srsrequirement}
-
-Table~\ref{tab:lesson-catalogue} lists the initial catalogue. The team chose it
-from the agreed categories; it can change (LC-001), and each lesson is stored
-as data (NFR-MAINT-001). The PoC (PH-1) offers the line, circle and square
-lessons, and the full catalogue is offered from PH-2. The required parts and
-endpoints define a complete attempt (Section~\ref{sec:fr-formal}).
-
-{\small
-\begin{longtable}{@{}l l >{\raggedright\arraybackslash}p{0.55\textwidth}@{}}
-\caption{Initial lesson catalogue}\label{tab:lesson-catalogue}\\
-\toprule
-\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-Horizontal line & Line & One straight segment; its two endpoints.\\
-Vertical line & Line & One straight segment; its two endpoints.\\
-Diagonal line & Line & One straight segment; its two endpoints.\\
-Circle & Basic shape & Four quarter arcs, which together close the circle.\\
-Square & Basic shape & Four sides; four corners.\\
-Triangle & Basic shape & Three sides; three corners.\\
-House & Simple drawing & The four sides of the walls and the two sides of the
-roof; the two roof corners where the roof meets the walls, and its top.\\
-Sun & Simple drawing & The four quarter arcs of the circle and eight short
-straight rays; the outer end of each ray.\\
-\end{longtable}
-}
-
-\begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
-  \reqshall{Squigglr shall make the following ordered guidance stages available
-for each guided lesson: demonstration, full outline tracing, endpoint-only
-guidance and independent drawing.} \reqrationale{The activity described to
-specialists removes guidance in this order (G.1--G.2).} \reqfit{For every
-approved lesson, inspect all four stages in the specified order; confirm that
-the stage chosen by an adult is the stage presented when practice begins.}
-  \reqpriority{Must}
-  \reqphase{PH-1}
-  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
-  \reqtraces{BR-003; \ucref{003}; \ucref{004}}
-\end{srsrequirement}
-
-\begin{srsrequirement}{FR-LRN-003}{Demonstration}
-  \reqshall{Squigglr shall show an example of the intended drawing during a
-lesson's demonstration stage without treating that demonstration as a learner
-attempt.} \reqrationale{A demonstration provides an example before guided
-practice and must not inflate the learner's records.} \reqfit{Start each
-approved lesson in its demonstration stage; verify that the intended drawing can
-be viewed and that watching it adds no learner attempt or passed stage record.}
-  \reqpriority{Must}
-  \reqphase{PH-1}
-  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}} \reqtraces{BR-004;
-  \ucref{003}; \ucref{008}}
-\end{srsrequirement}
-
-\begin{srsrequirement}{FR-LRN-004}{Full-outline guidance}
-  \reqshall{Squigglr shall display the lesson's complete reference outline
-during the full-outline tracing stage and accept stylus strokes drawn against
-it.} \reqrationale{Outline tracing is the first guided drawing stage in the
-approved progression.} \reqfit{For each lesson, enter the full-outline stage,
-verify that the complete reference shape is visible, and draw an attempt using
-stylus input.}
-  \reqpriority{Must}
-  \reqphase{PH-1}
-  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}} \reqtraces{CON-003;
-  \ucref{003}}
-\end{srsrequirement}
-
-\begin{srsrequirement}{FR-LRN-005}{Endpoint-only guidance}
-  \reqshall{Squigglr shall show the specified start and end points, without the
-full reference outline, during the endpoint-only stage and accept stylus strokes
-between those points.} \reqrationale{The middle drawing stage reduces visual
-assistance while retaining the destination cues.} \reqfit{For each lesson, enter
-endpoint-only guidance; verify that the relevant endpoints are shown, the full
-outline is absent, and stylus drawing is accepted.}
-  \reqpriority{Must}
-  \reqphase{PH-1}
-  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
-  \reqtraces{CON-003; \ucref{003}}
-\end{srsrequirement}
-
-\begin{srsrequirement}{FR-LRN-006}{Independent drawing}
-  \reqshall{Squigglr shall permit the drawing task to be attempted in the
-independent stage without displaying tracing outlines or endpoint guides.}
-\reqrationale{The final stage needs to be distinguishable from assisted practice
-(G.2, G.6).} \reqfit{Enter the independent stage for each lesson; verify that
-neither an outline nor endpoint guides appear and that an attempt can still be
-made using the stylus.}
-  \reqpriority{Must}
-  \reqphase{PH-1}
-  \reqsources{\goalref{2}; \srcref{001}} \reqtraces{BR-004; \ucref{003};
-  \ucref{008}}
-\end{srsrequirement}
-
-\paragraph{Input, classification and feedback.}
+\subsubsection{Drawing input and attempts}
 \begin{srsrequirement}{FR-LRN-007}{Stylus stroke acquisition}
   \reqshall{Squigglr shall accept stylus-drawn strokes as ordered sequences of
 input points for the active lesson attempt and preserve their order and stroke
@@ -3341,15 +3242,56 @@ two independently completed attempts.}
   H-AHM-002}
 \end{srsrequirement}
 
-\begin{srsrequirement}{FR-LRN-009}{Interrupted attempt handling}
+\begin{srsrequirement}{FR-LRN-038}{Evaluate at each stylus lift}
+  \reqshall{Each time the child lifts the stylus in a guided lesson, Squigglr
+shall evaluate the strokes of the attempt so far.} \reqrationale{The child
+cannot read and should not have to decide when a drawing is done, so Squigglr
+checks the drawing itself after every stroke.} \reqfit{For a prepared
+multi-stroke attempt, verify that the attempt is evaluated after each stylus
+lift and that no control is needed to submit it.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{2}; ASM-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-008}; \reqref{FR-LRN-013}; \ucref{003}; H-AHM-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-039}{End a passing attempt at once}
+  \reqshall{Squigglr shall end an attempt as passed at the stylus lift after
+which its strokes are complete and meet \texttt{STAGE\_PASS}.}
+\reqrationale{A child who has finished a correct drawing should not have to
+wait or press anything to move on.} \reqfit{For prepared passing attempts,
+verify that each ends as passed at the stylus lift that completes it, with no
+further input.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{2}; ASM-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-013}; \reqref{FR-LRN-038}; \ucref{003}; H-AHM-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-024}{End an attempt that does not pass}
+  \reqshall{Squigglr shall end an attempt that has not passed as not passed
+after \texttt{ATTEMPT\_IDLE} with no input, and by no other event except an
+interruption (FR-LRN-009).} \reqrationale{Lines and shapes can take several
+strokes (FR-LRN-008), so a non-passing attempt waits for a pause longer than the
+child's usual pause between strokes. Children draw at different speeds, so the
+adult sets \texttt{ATTEMPT\_IDLE} for each child (BR-008).} \reqfit{For
+prepared attempts, verify that a two-stroke figure is not ended after its first
+stroke while the pause is shorter than \texttt{ATTEMPT\_IDLE}, and that a
+non-passing attempt ends as not passed at \texttt{ATTEMPT\_IDLE} after its last
+stroke.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{2}; ASM-004; BR-008; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-008}; \reqref{FR-LRN-009}; \reqref{FR-LRN-038};
+  \ucref{003}; H-AHM-001}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-009}{Interrupted attempt kept apart}
   \reqshall{Squigglr shall distinguish an interrupted or unfinished drawing
-attempt from a completed drawing attempt, shall not record it as passed, and
-shall not consume an evaluable attempt from the stage limit.} \reqrationale{An
-input interruption or unfinished drawing is not evidence of a correctly
-completed task.} \reqfit{Interrupt known partial attempts between and during
-strokes; verify that none is reported as passed, that the active stage does not
-advance, and that unfinished attempts are distinguishable from finalized
-attempts and that stage attempt counters are unchanged.}
+attempt from a completed drawing attempt.} \reqrationale{An input interruption
+or unfinished drawing is not evidence of a correctly completed task.}
+\reqfit{Interrupt known partial attempts between and during strokes; verify that
+each is distinguishable from finalized attempts.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{2}, \goalref{5}; ASM-004; \srcref{001}}
@@ -3357,22 +3299,179 @@ attempts and that stage attempt counters are unchanged.}
   H-AHM-006}
 \end{srsrequirement}
 
-\begin{srsrequirement}{FR-LRN-010}{Invalid and ambiguous input}
+\begin{srsrequirement}{FR-LRN-030}{Interrupted attempt not passed}
+  \reqshall{Squigglr shall not record an interrupted or unfinished drawing
+attempt as passed.} \reqrationale{An unfinished drawing is not evidence of a
+completed task, so it cannot advance the stage.} \reqfit{Interrupt known
+partial attempts between and during strokes; verify that none is reported as
+passed and that the active stage does not advance.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{2}, \goalref{5}; ASM-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-009}; \ucref{003}; \ucref{008}; H-AHM-001,
+  H-AHM-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-031}{Interrupted attempt not counted}
+  \reqshall{Squigglr shall not count an interrupted or unfinished drawing
+attempt toward the stage's attempt limits.} \reqrationale{An interruption is
+not a failed try, so it should not bring the lesson closer to its end.}
+\reqfit{Interrupt known partial attempts between and during strokes; verify
+that the stage's attempt counters are unchanged.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{2}, \goalref{5}; ASM-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-009}; \reqref{FR-LRN-021}; \ucref{003};
+  H-AHM-001, H-AHM-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-010}{Invalid input not passed}
   \reqshall{Squigglr shall withhold passing status from an attempt whose
 required stylus input is missing, invalid or too ambiguous to evaluate against
-the stage criteria, and shall not count such input toward the stage's evaluable
-attempt or unsuccessful attempt limits.} \reqrationale{Unreliable acquisition
-must not silently turn a malformed drawing into a successful result (ASM-004).}
-\reqfit{Submit empty input, input with missing coordinate data and data for
-which the intended stroke order cannot be established; confirm that none passes,
-that a non-success status is available, and that the stage's attempt counters
-are unchanged.}
+the stage criteria.} \reqrationale{Unreliable acquisition must not silently
+turn a malformed drawing into a successful result (ASM-004).} \reqfit{Submit
+empty input, input with missing coordinate data and data for which the intended
+stroke order cannot be established; confirm that none passes and that a
+non-success status is available.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{2}; ASM-004; BR-004; \srcref{001}}
   \reqtraces{\reqref{FR-LRN-007}; \ucref{003}; H-AHM-001; H-AHM-003}
 \end{srsrequirement}
 
+\begin{srsrequirement}{FR-LRN-032}{Invalid input not counted}
+  \reqshall{Squigglr shall not count input that is missing, invalid or too
+ambiguous to evaluate toward the stage's evaluable attempt or unsuccessful
+attempt limits.} \reqrationale{The child should not lose an attempt because
+the input could not be read (ASM-004).} \reqfit{Submit the three kinds of input
+of FR-LRN-010; confirm that the stage's attempt counters are unchanged.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{2}; ASM-004; BR-004; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-010}; \reqref{FR-LRN-021}; \ucref{003}; H-AHM-001,
+  H-AHM-003, H-AHM-006}
+\end{srsrequirement}
+
+\subsubsection{Guidance stages}
+\begin{srsrequirement}{FR-LRN-002}{Ordered guidance stages}
+  \reqshall{Squigglr shall make the following ordered guidance stages available
+for each guided lesson: demonstration, full outline tracing, endpoint-only
+guidance and independent drawing.} \reqrationale{The activity described to
+specialists removes guidance in this order (G.1--G.2).} \reqfit{For every
+approved lesson, inspect all four stages in the specified order; confirm that
+the stage chosen by an adult is the stage presented when practice begins.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
+  \reqtraces{BR-003; \ucref{003}; \ucref{004}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-003}{Demonstration stage: show the drawing}
+  \reqshall{In the demonstration stage, Squigglr shall show an example of the
+intended drawing.} \reqrationale{A demonstration gives the child an example
+before guided practice.} \reqfit{Start each approved lesson in its
+demonstration stage; verify that the intended drawing can be viewed.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}} \reqtraces{\ucref{003};
+  \ucref{008}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-025}{Demonstration stage: not an attempt}
+  \reqshall{In the demonstration stage, Squigglr shall not record the
+demonstration as a learner attempt.} \reqrationale{Watching a demonstration is
+not practice, and counting it would inflate the learner's records.}
+\reqfit{Start each approved lesson in its demonstration stage and watch the
+demonstration; verify that it adds no learner attempt and no passed stage
+record.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}}
+  \reqtraces{\reqref{FR-LRN-003}; BR-004; \ucref{003}; \ucref{008}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-004}{Full-outline stage: show the outline}
+  \reqshall{In the full-outline tracing stage, Squigglr shall display the
+lesson's complete reference outline.} \reqrationale{Outline tracing is the first
+guided drawing stage in the approved progression.} \reqfit{For each lesson,
+enter the full-outline stage and verify that the complete reference shape is
+visible.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}} \reqtraces{CON-003;
+  \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-026}{Full-outline stage: accept strokes}
+  \reqshall{In the full-outline tracing stage, Squigglr shall accept stylus
+strokes drawn against the outline.} \reqrationale{The child practises by
+tracing over the outline.} \reqfit{For each lesson, enter the full-outline
+stage, draw an attempt over the outline with the stylus, and verify that the
+strokes are accepted into the attempt.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{001}; \srcref{005}}
+  \reqtraces{\reqref{FR-LRN-004}; \reqref{FR-LRN-007}; CON-003; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-005}{Endpoint-only stage: show the endpoints}
+  \reqshall{In the endpoint-only stage, Squigglr shall show the lesson's
+specified start and end points.} \reqrationale{The middle drawing stage keeps
+the destination cues while it removes the outline.} \reqfit{For each lesson,
+enter the endpoint-only stage and verify that the relevant endpoints are shown.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
+  \reqtraces{CON-003; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-027}{Endpoint-only stage: hide the outline}
+  \reqshall{In the endpoint-only stage, Squigglr shall not display the lesson's
+reference outline.} \reqrationale{Removing the outline reduces visual
+assistance (G.2).} \reqfit{For each lesson, enter the endpoint-only stage and
+verify that no part of the reference outline is shown.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
+  \reqtraces{\reqref{FR-LRN-005}; CON-003; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-028}{Endpoint-only stage: accept strokes}
+  \reqshall{In the endpoint-only stage, Squigglr shall accept stylus strokes
+drawn between the endpoints.} \reqrationale{The child practises by joining the
+endpoints without the outline.} \reqfit{For each lesson, enter the
+endpoint-only stage, draw between the endpoints with the stylus, and verify that
+the strokes are accepted into the attempt.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
+  \reqtraces{\reqref{FR-LRN-005}; \reqref{FR-LRN-007}; CON-003; \ucref{003}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-006}{Independent stage: no guides}
+  \reqshall{In the independent stage, Squigglr shall display neither a tracing
+outline nor endpoint guides.} \reqrationale{The final stage needs to be
+distinguishable from assisted practice (G.2, G.6).} \reqfit{Enter the
+independent stage for each lesson; verify that neither an outline nor endpoint
+guides appear.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{2}; \srcref{001}} \reqtraces{BR-004; \ucref{003};
+  \ucref{008}}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-029}{Independent stage: accept strokes}
+  \reqshall{In the independent stage, Squigglr shall accept a drawing attempt
+made with the stylus.} \reqrationale{The child draws the figure with no guide.}
+\reqfit{Enter the independent stage for each lesson, draw an attempt with the
+stylus, and verify that the strokes are accepted into the attempt.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{2}; \srcref{001}}
+  \reqtraces{\reqref{FR-LRN-006}; \reqref{FR-LRN-007}; \ucref{003}}
+\end{srsrequirement}
+
+\subsubsection{Evaluation and feedback}
 \begin{srsrequirement}{FR-LRN-011}{Completeness classification}
   \reqshall{Squigglr shall classify every evaluable drawing attempt as complete
 or incomplete relative to the selected lesson and guidance stage.}
@@ -3446,7 +3545,61 @@ the lesson-end rule is followed instead.}
   \reqtraces{\reqref{FR-LRN-021}; \ucref{003}}
 \end{srsrequirement}
 
-\paragraph{Adult control, suggestions and stopping rules.}
+\subsubsection{Lesson catalogue}
+\begin{srsrequirement}{FR-LRN-001}{Approved lesson catalogue}
+  \reqshall{Squigglr shall offer guided lessons for the approved catalogue of
+lines, basic shapes and simple drawings, excluding letter tracing activities
+from the core catalogue.} \reqrationale{These are the agreed categories for
+structured practice; letters are deferred (G.1, ASM-010). The lesson catalogue
+is maintained separately from the stage rules (LC-001).} \reqfit{Inspect the
+lesson catalogue and verify that every approved catalogue entry is selectable,
+classified as a line, shape or simple drawing, and has the stages in FR-LRN-002;
+verify that no letter activity is required to complete the core catalogue.}
+  \reqpriority{Must}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; \srcref{001}; \hyperref[src:009.04]{SRC-009.04}}
+  \reqtraces{ASM-010; LC-001; \ucref{002}}
+\end{srsrequirement}
+
+Table~\ref{tab:lesson-catalogue} lists the initial catalogue. The team chose it
+from the agreed categories; it can change (LC-001), and each lesson is stored
+as data (NFR-MAINT-001). The POC (PH-1) offers the line, circle and square
+lessons, and the full catalogue is offered from PH-2. The required parts and
+endpoints define a complete attempt (Section~\ref{sec:fr-formal}).
+
+{\small
+\begin{longtable}{@{}l l >{\raggedright\arraybackslash}p{0.55\textwidth}@{}}
+\caption{Initial lesson catalogue}\label{tab:lesson-catalogue}\\
+\toprule
+\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Lesson} & \textbf{Category} & \textbf{Required parts and endpoints}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Horizontal line & Line & One straight segment; its two endpoints.\\
+Vertical line & Line & One straight segment; its two endpoints.\\
+Diagonal line & Line & One straight segment; its two endpoints.\\
+Circle & Basic shape & Four quarter arcs, which together close the circle.\\
+Square & Basic shape & Four sides; four corners.\\
+Triangle & Basic shape & Three sides; three corners.\\
+House & Simple drawing & The four sides of the walls and the two sides of the
+roof; the two roof corners where the roof meets the walls, and its top.\\
+Sun & Simple drawing & The four quarter arcs of the circle and eight short
+straight rays; the outer end of each ray.\\
+\end{longtable}
+}
+
+\subsubsection{Adult control and progression}
+A supporting adult selects each lesson and its starting stage and authorizes
+skips or backward changes (G.3, CON-007). Within the selected lesson, a passing
+drawing attempt automatically advances to the next guidance stage (G.2, BR-002).
+Passing the independent stage completes the current lesson; Squigglr does not
+automatically select another lesson.
+
 \begin{srsrequirement}{FR-LRN-016}{Adult lesson and starting stage selection}
   \reqshall{Squigglr shall use the lesson and starting guidance stage selected
 by the supporting adult for the learner's session, including an adult-selected
@@ -3504,47 +3657,104 @@ without an additional adult action (FR-LRN-023).}
 return to an earlier drawing stage when the learner reaches
 \texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing evaluable
 attempts at an eligible stage and the improvement rule does not suppress
-suggestions. When an adult declines the suggestion, another suggestion shall
-require a new full failure streak. A suggestion that no adult answers shall stay
-pending, without blocking practice, and no second suggestion shall be offered
-while it is pending.} \reqrationale{A supporting adult should decide whether
-earlier guidance is appropriate (G.3, BR-003).}
-\reqfit{Replay known failing sequences immediately below and at the selected
-streak threshold at both eligible stages, including sequences with fewer than
-twice the configured \texttt{IMPROVE\_WINDOW} results and sequences with
-qualifying improvement; verify that insufficient history does not delay the
-first suggestion, that qualifying improvement suppresses it, that a declined
-suggestion reappears only after another full failure streak, and that while a
-suggestion is unanswered, further failed attempts are counted but no second
-suggestion is offered.}
+suggestions (FR-LRN-036).} \reqrationale{A supporting adult should decide
+whether earlier guidance is appropriate (G.3, BR-003).} \reqfit{Replay known
+failing sequences immediately below and at the selected streak threshold at
+both eligible stages, including sequences with fewer than twice the configured
+\texttt{IMPROVE\_WINDOW} results; verify that the suggestion is offered exactly
+at the threshold, that insufficient history does not delay it, and that the
+stage does not change until an adult answers.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{3}; BR-003; \hyperref[src:005.01]{SRC-005.01};
-  \srcref{008}} \reqtraces{\reqref{FR-LRN-018}; \reqref{FR-LRN-020};
+  \srcref{008}} \reqtraces{\reqref{FR-LRN-018}; \reqref{FR-LRN-036};
   \ucref{005}; H-AHM-006, H-AHM-007}
 \end{srsrequirement}
 
+\begin{srsrequirement}{FR-LRN-033}{Declined suggestion needs a new streak}
+  \reqshall{After an adult declines a difficulty suggestion, Squigglr shall
+offer another only after a new full streak of
+\texttt{DIFFICULTY\_\allowbreak STREAK} non-passing evaluable attempts.}
+\reqrationale{A declined suggestion that came straight back would pressure the
+adult to accept it (G.3).} \reqfit{Decline a suggestion, then replay failing
+attempts; verify that the next suggestion appears only after another full
+streak.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}; BR-003; \hyperref[src:005.01]{SRC-005.01}}
+  \reqtraces{\reqref{FR-LRN-019}; \ucref{005}; H-AHM-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-034}{Unanswered suggestion stays pending}
+  \reqshall{Squigglr shall keep a difficulty suggestion that no adult answers
+pending, without blocking practice.} \reqrationale{The adult may not be
+watching, and the child should be able to keep practising (G.3, BR-003).}
+\reqfit{Leave a suggestion unanswered and continue making attempts; verify that
+practice continues, that failed attempts are counted, and that the suggestion
+can still be answered.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}; BR-003; \hyperref[src:005.01]{SRC-005.01}}
+  \reqtraces{\reqref{FR-LRN-019}; \ucref{005}; H-AHM-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-035}{One pending suggestion at a time}
+  \reqshall{Squigglr shall not offer a second difficulty suggestion while one is
+pending.} \reqrationale{Repeated suggestions would interrupt the child and tell
+the adult nothing new.} \reqfit{Leave a suggestion unanswered and replay
+another full failure streak; verify that no second suggestion is offered.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}; BR-003; \hyperref[src:005.01]{SRC-005.01}}
+  \reqtraces{\reqref{FR-LRN-019}; \reqref{FR-LRN-034}; \ucref{005}; H-AHM-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-036}{Improvement suppresses suggestions}
+  \reqshall{Squigglr shall not offer a difficulty suggestion while the learner
+qualifies as improving, that is, while the average result of the most recent
+\texttt{IMPROVE\_\allowbreak WINDOW} evaluable attempts at the stage exceeds the
+average of the \texttt{IMPROVE\_\allowbreak WINDOW} attempts before them by at
+least \texttt{IMPROVE\_\allowbreak MARGIN}.} \reqrationale{A child who is
+improving is making progress at the current stage, so going back is not needed
+(G.3, BR-002).} \reqfit{Replay sequences at the streak threshold whose
+improvement is just below, at and above \texttt{IMPROVE\_MARGIN}; verify that
+the suggestion is suppressed only for qualifying improvement.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}; BR-002--003; \srcref{008}}
+  \reqtraces{\reqref{FR-LRN-019}; OI-05; \ucref{003}; H-AHM-006}
+\end{srsrequirement}
+
 \begin{srsrequirement}{FR-LRN-020}{Improvement-based extension}
-  \reqshall{Squigglr shall suppress a difficulty suggestion while the learner
-qualifies as improving, and, when the unsuccessful-attempt count first reaches
-\texttt{ATTEMPT\_\allowbreak LIMIT}, grant up to \texttt{ATTEMPT\_\allowbreak
-EXTENSION} additional evaluable stage attempts if the average result of the most
-recent \texttt{IMPROVE\_\allowbreak WINDOW} attempts exceeds the average of the
-preceding equally sized window by at least \texttt{IMPROVE\_\allowbreak MARGIN},
-subject to \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. The extension
-shall be granted at most once per stage and expire after the allotted additional
-evaluable attempts, even if results continue to improve.} \reqrationale{The
-agreed improvement rule reduces premature interruption while retaining a hard
-cap (G.3, BR-002).} \reqfit{Evaluate prepared improving and non-improving
-sequences exactly at the margin boundary and at the applicable limit; verify
-extension and suggestion suppression only for qualifying improvement, exactly
-the permitted number of extension attempts without regranting, and no attempt
-beyond the maximum.}
+  \reqshall{When the unsuccessful-attempt count first reaches
+\texttt{ATTEMPT\_\allowbreak LIMIT} and the learner qualifies as improving
+(FR-LRN-036), Squigglr shall grant up to \texttt{ATTEMPT\_\allowbreak
+EXTENSION} additional evaluable stage attempts, subject to
+\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}.} \reqrationale{The agreed
+improvement rule reduces premature interruption while retaining a hard cap
+(G.3, BR-002).} \reqfit{Evaluate prepared improving and non-improving sequences
+exactly at the margin boundary and at the applicable limit; verify that the
+extension is granted only for qualifying improvement, that it gives exactly the
+permitted number of extra attempts, and that no attempt goes beyond the
+maximum.}
   \reqpriority{Must}
   \reqphase{PH-2}
   \reqsources{\goalref{3}; BR-002--003; \srcref{001}; \srcref{008}}
-  \reqtraces{\reqref{FR-LRN-019}; \reqref{FR-LRN-021}; OI-05; \ucref{003};
+  \reqtraces{\reqref{FR-LRN-021}; \reqref{FR-LRN-036}; OI-05; \ucref{003};
   H-AHM-006}
+\end{srsrequirement}
+
+\begin{srsrequirement}{FR-LRN-037}{One extension per stage}
+  \reqshall{Squigglr shall grant the improvement-based extension at most once
+per stage, even if results continue to improve after its attempts are used.}
+\reqrationale{The cap keeps a lesson from going on indefinitely (G.3, BR-002).}
+\reqfit{Replay an improving sequence through a granted extension; verify that
+once its attempts are used no second extension is granted and the lesson-end
+rule (FR-LRN-021) applies.}
+  \reqpriority{Must}
+  \reqphase{PH-2}
+  \reqsources{\goalref{3}; BR-002; \srcref{001}; \srcref{008}}
+  \reqtraces{\reqref{FR-LRN-020}; \reqref{FR-LRN-021}; \ucref{003}; H-AHM-006}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-021}{Stage attempt limit and lesson end}
@@ -3601,30 +3811,7 @@ stage is skipped automatically.}
   \ucref{003}; \ucref{004}; OI-04 (TA confirmation); H-AHM-004, H-MOU-004}
 \end{srsrequirement}
 
-\begin{srsrequirement}{FR-LRN-024}{Ending an attempt}
-  \reqshall{Each time the child lifts the stylus in a guided lesson, Squigglr
-shall evaluate the strokes of the attempt so far, and shall end the attempt as
-passed as soon as they are complete and meet \texttt{STAGE\_PASS}. If they do
-not, Squigglr shall end the attempt as not passed after \texttt{ATTEMPT\_IDLE}
-with no input. No other event ends an attempt, except an interruption
-(FR-LRN-009).} \reqrationale{The child cannot read and should not have to
-decide when a drawing is done, so Squigglr ends a passing attempt by itself.
-Lines and shapes can take several strokes (FR-LRN-008), so a non-passing
-attempt waits for a pause longer than the child's usual pause between strokes.
-Children draw at different speeds, so the adult sets \texttt{ATTEMPT\_IDLE} for
-each child (BR-008).} \reqfit{For prepared attempts, a passing figure ends as
-passed at the stylus lift that completes it, with no further input; a
-two-stroke figure is not ended after its first stroke while the pause is
-shorter than \texttt{ATTEMPT\_IDLE}; and a non-passing attempt ends as not
-passed at \texttt{ATTEMPT\_IDLE} after its last stroke.}
-  \reqpriority{Must}
-  \reqphase{PH-1}
-  \reqsources{\goalref{2}; ASM-004; BR-008; \srcref{001}}
-  \reqtraces{\reqref{FR-LRN-008}; \reqref{FR-LRN-009}; \reqref{FR-LRN-013};
-  \ucref{003}; H-AHM-001}
-\end{srsrequirement}
-
-\paragraph{Source-to-requirement traceability.}
+\subsubsection{Source-to-requirement traceability}
 Table~\ref{tab:lrn-traces} provides source-side links for the most important
 learning-activity decisions; each requirement also links back to its evidence in
 its \emph{Sources} field. The full system-wide traceability matrix is maintained
@@ -3646,19 +3833,19 @@ by the owner of Section~\ref{sec:traceability}.
 \endlastfoot
 G.1, \srcref{001} & \reqref{FR-LRN-001}, \reqref{FR-LRN-002},
 \reqref{FR-LRN-003}, \reqref{FR-LRN-004}, \reqref{FR-LRN-014},
-\reqref{FR-LRN-015}\\
+\reqref{FR-LRN-015}, \reqref{FR-LRN-025}, \reqref{FR-LRN-026}\\
 G.2, BR-002 & \reqref{FR-LRN-005}, \reqref{FR-LRN-006}, \reqref{FR-LRN-011},
 \reqref{FR-LRN-013}, \reqref{FR-LRN-020}, \reqref{FR-LRN-021},
-\reqref{FR-LRN-023}\\
+\reqref{FR-LRN-023}, \reqref{FR-LRN-027}, \reqref{FR-LRN-028}, \reqref{FR-LRN-029}, \reqref{FR-LRN-036}, \reqref{FR-LRN-037}\\
 G.3, BR-003, CON-007 & \reqref{FR-LRN-016}, \reqref{FR-LRN-018},
-\reqref{FR-LRN-019}, \reqref{FR-LRN-023}; OI-04\\
+\reqref{FR-LRN-019}, \reqref{FR-LRN-023}, \reqref{FR-LRN-033}, \reqref{FR-LRN-034}, \reqref{FR-LRN-035}; OI-04\\
 BR-008, \srcref{008} & \reqref{FR-LRN-013}, \reqref{FR-LRN-017},
-\reqref{FR-LRN-019}, \reqref{FR-LRN-020}, \reqref{FR-LRN-024}\\
+\reqref{FR-LRN-019}, \reqref{FR-LRN-020}, \reqref{FR-LRN-024}, \reqref{FR-LRN-036}, \reqref{FR-LRN-037}\\
 ASM-004, BR-004 & \reqref{FR-LRN-007}, \reqref{FR-LRN-008}, \reqref{FR-LRN-009},
-\reqref{FR-LRN-010}, \reqref{FR-LRN-024}\\
+\reqref{FR-LRN-010}, \reqref{FR-LRN-024}, \reqref{FR-LRN-025}, \reqref{FR-LRN-030}, \reqref{FR-LRN-031}, \reqref{FR-LRN-032}, \reqref{FR-LRN-038}, \reqref{FR-LRN-039}\\
 BR-006--007 & \reqref{FR-LRN-014}, \reqref{FR-LRN-022}\\
 \hyperref[src:005.01]{SRC-005.01}, \hyperref[src:005.05]{SRC-005.05} &
-\reqref{FR-LRN-016}, \reqref{FR-LRN-018}, \reqref{FR-LRN-019}\\
+\reqref{FR-LRN-016}, \reqref{FR-LRN-018}, \reqref{FR-LRN-019}, \reqref{FR-LRN-033}, \reqref{FR-LRN-034}, \reqref{FR-LRN-035}\\
 \hyperref[src:009.02]{SRC-009.02}, \hyperref[src:009.04]{SRC-009.04} &
 \reqref{FR-LRN-001}, \reqref{FR-LRN-014}\\
 \end{longtable}
@@ -3715,9 +3902,9 @@ where every $x_i$ is an ordered list of reported points. Lifting the stylus
 closes one $x_i$, not the attempt. The terminal event
 $\operatorname{Finalize}(X)$ denotes the end of input collection for an attempt.
 It occurs at a stylus lift after which the strokes so far pass, or after
-\texttt{ATTEMPT\_IDLE} with no input (FR-LRN-024); the child uses no control. A
+\texttt{ATTEMPT\_IDLE} with no input (FR-LRN-039, FR-LRN-024); the child uses no control. A
 stylus lift alone does not finalize the attempt; interruption before
-finalization cannot produce a passed result (FR-LRN-008--010).
+finalization cannot produce a passed result (FR-LRN-008--010, FR-LRN-030).
 
 Each lesson has a \emph{figure}: the reference drawing shown as the outline at
 stage $T$, made of the \emph{required parts} and \emph{required endpoints}
@@ -4553,7 +4740,7 @@ exactly the known lesson, stage, result and outcome, and the records are in the
 order the attempts ended.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{\goalref{2}, \goalref{5}; BR-002; \srcref{001}; \srcref{002} (PoC
+  \reqsources{\goalref{2}, \goalref{5}; BR-002; \srcref{001}; \srcref{002} (POC
 plan, adaptive guidance experiment)} \reqtraces{\ucref{003}, \ucref{008};
 \reqref{SAF-RAY-007}, \reqref{FR-LRN-013}, \reqref{FR-LRN-020},
 \reqref{FR-PRG-002}, \reqref{FR-PRG-003}; H-MUH-003}
@@ -4594,7 +4781,7 @@ attempt record lists every known difficulty once, with the correct mark, and
 lists no other difficulty.}
   \reqpriority{Must}
   \reqphase{PH-1}
-  \reqsources{\goalref{5}; BR-007; \srcref{001}; \srcref{002} (PoC plan,
+  \reqsources{\goalref{5}; BR-007; \srcref{001}; \srcref{002} (POC plan,
 adaptive guidance experiment); \srcref{005}, \intref{Moustafa}{6:03}}
 \reqtraces{\ucref{003}, \ucref{008}; \reqref{FR-PRG-004}, \reqref{FR-PRG-006};
 H-MUH-007}
@@ -4628,7 +4815,7 @@ strokes and predefined difficulties up to that point and no outcome.}
 shared device (ASM-008) in the middle of an attempt. The strokes drawn are still
 practice the adult may want to see, but the attempt has no outcome, so it must
 not appear as passed or failed. An interrupted attempt does not consume an
-evaluable attempt from the stage limit (FR-LRN-009). An attempt cut off by
+evaluable attempt from the stage limit (FR-LRN-031). An attempt cut off by
 closing the page or losing the connection may not reach Squigglr; completed
 attempts are protected by SAF-RAY-003.} \reqfit{For prepared attempts stopped by
 an adult action after one or more strokes, every saved attempt record is marked
@@ -4637,7 +4824,7 @@ before any stroke leaves no attempt record.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\goalref{5}; ASM-008, ASM-015; CA-003, CA-004}
-  \reqtraces{\ucref{003}, \ucref{008}; \reqref{FR-LRN-009}, \reqref{FR-PRG-009};
+  \reqtraces{\ucref{003}, \ucref{008}; \reqref{FR-LRN-009}, \reqref{FR-LRN-031}, \reqref{FR-PRG-009};
   H-MUH-004}
 \end{srsrequirement}
 
@@ -4726,7 +4913,7 @@ suggestion once, with the known response, and lists no other suggestion.}
   \reqpriority{Should}
   \reqphase{PH-2}
   \reqsources{\goalref{3}; BR-003} \reqtraces{\ucref{005}; \ucref{008};
-  \reqref{FR-LRN-019}; \reqref{SAF-RAY-001}, \reqref{SAF-RAY-007}}
+  \reqref{FR-LRN-019}, \reqref{FR-LRN-033}, \reqref{FR-LRN-034}; \reqref{SAF-RAY-001}, \reqref{SAF-RAY-007}}
 \end{srsrequirement}
 
 \subsection{Progress Summary Requirements}
@@ -5599,7 +5786,7 @@ resizing the drawing surface or changing supported device orientation; verify
 equivalent relative point positions, stroke order and pass classifications.
 Supply invalid or unmappable coordinate values and verify that none is
 classified as passing or counted as an evaluable attempt.\\
-\emph{Related SRS requirements:} FR-LRN-007, FR-LRN-010.\\
+\emph{Related SRS requirements:} FR-LRN-007, FR-LRN-010, FR-LRN-032.\\
 \emph{Hazards:} H-AHM-003.
 
 \item[SAF-SHA-001]\phantomsection\label{req:SAF-SHA-001} Squigglr shall
@@ -7078,7 +7265,7 @@ delivery phases; the course deadlines also appear under CON-004
 
 The delivery plan distinguishes the following requirement targets:
 \begin{description}[style=nextline]
-  \item[PH-1 --- Proof of Concept (PoC), November 23, 2026.]
+  \item[PH-1 --- Proof of Concept (POC), November 23, 2026.]
   A demonstration of the core guided lesson flow, input capture, stage
   classification and pass-based progression using prepared examples.
   \item[PH-2 --- Revision 0, February 1, 2027.]
@@ -7104,7 +7291,7 @@ requirement, including the safety requirements derived from the Hazard Analysis.
 The functional requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements are
 classified here as \emph{Must} and assigned to the phase containing the
-behaviour they protect. The 143 identified requirements in this SRS are
+behaviour they protect. The 158 identified requirements in this SRS are
 scheduled in PH-1 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7130,27 +7317,45 @@ Section~\ref{sec:waiting-room}.
 \endlastfoot
 \multicolumn{4}{@{}l}{\textbf{Learning activity requirements (Section 9.1)}}\\
 \addlinespace
-\reqref{FR-LRN-001} & Approved lesson catalogue & Must & PH-1 \\
-\addlinespace
-\reqref{FR-LRN-002} & Ordered guidance stages & Must & PH-1 \\
-\addlinespace
-\reqref{FR-LRN-003} & Demonstration & Must & PH-1 \\
-\addlinespace
-\reqref{FR-LRN-004} & Full-outline guidance & Must & PH-1 \\
-\addlinespace
-\reqref{FR-LRN-005} & Endpoint-only guidance & Must & PH-1 \\
-\addlinespace
-\reqref{FR-LRN-006} & Independent drawing & Must & PH-1 \\
-\addlinespace
 \reqref{FR-LRN-007} & Stylus stroke acquisition & Must & PH-1 \\
 \addlinespace
 \reqref{FR-LRN-008} & Multi-stroke attempts & Must & PH-2 \\
 \addlinespace
-\reqref{FR-LRN-009} & Interrupted attempt handling & Must & PH-2 \\
+\reqref{FR-LRN-038} & Evaluate at each stylus lift & Must & PH-1 \\
 \addlinespace
-\reqref{FR-LRN-010} & Invalid and ambiguous input & Must & PH-1 \\
+\reqref{FR-LRN-039} & End a passing attempt at once & Must & PH-1 \\
 \addlinespace
-\reqref{FR-LRN-024} & Ending an attempt & Must & PH-1 \\
+\reqref{FR-LRN-024} & End an attempt that does not pass & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-009} & Interrupted attempt kept apart & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-030} & Interrupted attempt not passed & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-031} & Interrupted attempt not counted & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-010} & Invalid input not passed & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-032} & Invalid input not counted & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-002} & Ordered guidance stages & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-003} & Demonstration stage: show the drawing & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-025} & Demonstration stage: not an attempt & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-004} & Full-outline stage: show the outline & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-026} & Full-outline stage: accept strokes & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-005} & Endpoint-only stage: show the endpoints & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-027} & Endpoint-only stage: hide the outline & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-028} & Endpoint-only stage: accept strokes & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-006} & Independent stage: no guides & Must & PH-1 \\
+\addlinespace
+\reqref{FR-LRN-029} & Independent stage: accept strokes & Must & PH-1 \\
 \addlinespace
 \reqref{FR-LRN-011} & Completeness classification & Must & PH-1 \\
 \addlinespace
@@ -7162,16 +7367,27 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \reqref{FR-LRN-015} & Retry after non-passing attempts & Must & PH-1 \\
 \addlinespace
+\reqref{FR-LRN-001} & Approved lesson catalogue & Must & PH-1 \\
+\addlinespace
 \reqref{FR-LRN-016} & Adult lesson and starting stage selection & Must & PH-1 \\
 \addlinespace
 \reqref{FR-LRN-017} & Adult-selected practice parameters & Must & PH-2 \\
 \addlinespace
-\reqref{FR-LRN-018} & Adult authorization for discretionary changes & Must &
-PH-2 \\
+\reqref{FR-LRN-018} & Adult authorization for discretionary changes & Must & PH-2 \\
 \addlinespace
 \reqref{FR-LRN-019} & Difficulty suggestion & Must & PH-2 \\
 \addlinespace
+\reqref{FR-LRN-033} & Declined suggestion needs a new streak & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-034} & Unanswered suggestion stays pending & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-035} & One pending suggestion at a time & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-036} & Improvement suppresses suggestions & Must & PH-2 \\
+\addlinespace
 \reqref{FR-LRN-020} & Improvement-based extension & Must & PH-2 \\
+\addlinespace
+\reqref{FR-LRN-037} & One extension per stage & Must & PH-2 \\
 \addlinespace
 \reqref{FR-LRN-021} & Stage attempt limit and lesson end & Must & PH-2 \\
 \addlinespace
@@ -8062,14 +8278,14 @@ G.1, G.3; SRC-005.01 & \ucref{002} & \reqref{FR-LRN-001}; \reqref{FR-LRN-016};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-009}; \reqref{NFR-UX-014} \\
 \addlinespace
 G.1--G.3; SRC-005.01 & \ucref{003} & \reqref{FR-LRN-002}--\reqref{FR-LRN-015};
-\reqref{FR-LRN-020}--\reqref{FR-LRN-024}; \reqref{NFR-UX-001};
+\reqref{FR-LRN-020}--\reqref{FR-LRN-032}; \reqref{FR-LRN-036}--\reqref{FR-LRN-039}; \reqref{NFR-UX-001};
 \reqref{NFR-UX-002}; \reqref{NFR-UX-004}; \reqref{NFR-UX-008};
 \reqref{NFR-UX-013}; \reqref{NFR-UX-015}; \reqref{NFR-PERF-001} \\
 \addlinespace
 G.3; SRC-005.01 & \ucref{004} & \reqref{FR-LRN-016}; \reqref{FR-LRN-018};
 \reqref{FR-LRN-023} \\
 \addlinespace
-G.3; SRC-005.01 & \ucref{005} & \reqref{FR-LRN-018}; \reqref{FR-LRN-019};
+G.3; SRC-005.01 & \ucref{005} & \reqref{FR-LRN-018}; \reqref{FR-LRN-019}; \reqref{FR-LRN-033}--\reqref{FR-LRN-035};
 \reqref{NFR-UX-008}; \reqref{NFR-UX-014} \\
 \addlinespace
 G.4; SRC-009.01 & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-030} \\
@@ -8079,7 +8295,7 @@ G.4; SRC-009.01 & \ucref{007} & \reqref{NFR-UX-011}; \reqref{NFR-PERF-002};
 \addlinespace
 G.5; SRC-001 & \ucref{008} & \reqref{FR-REC-001}--\reqref{FR-REC-010};
 \reqref{FR-PRG-006}; \reqref{FR-LRN-007}; \reqref{FR-LRN-009};
-\reqref{FR-LRN-021} \\
+\reqref{FR-LRN-021}; \reqref{FR-LRN-025}; \reqref{FR-LRN-030} \\
 \addlinespace
 G.6; SRC-005.02 & \ucref{009} & \reqref{FR-PRG-001}--\reqref{FR-PRG-012};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-014}; \reqref{NFR-PERF-003};
@@ -8193,14 +8409,14 @@ H-RAY-006 & SAF-RAY-001; SAF-RAY-007; SAF-RAY-009; \reqref{FR-REC-008};
 \addlinespace
 H-RAY-007 & SAF-RAY-008 & SAF-RAY-008 \\
 \addlinespace
-H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024} &
-\reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024} \\
+H-AHM-001 & \reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024}; \reqref{FR-LRN-030}--\reqref{FR-LRN-032}; \reqref{FR-LRN-038}; \reqref{FR-LRN-039} &
+\reqref{FR-LRN-007}--\reqref{FR-LRN-010}; \reqref{FR-LRN-024}; \reqref{FR-LRN-030}--\reqref{FR-LRN-032}; \reqref{FR-LRN-038}; \reqref{FR-LRN-039} \\
 \addlinespace
 H-AHM-002 & \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 &
 \reqref{FR-LRN-007}; \reqref{FR-LRN-008}; SAF-AHM-001 \\
 \addlinespace
-H-AHM-003 & \reqref{FR-LRN-007}; \reqref{FR-LRN-010}; SAF-AHM-002 &
-\reqref{FR-LRN-007}; \reqref{FR-LRN-010}; SAF-AHM-002 \\
+H-AHM-003 & \reqref{FR-LRN-007}; \reqref{FR-LRN-010}; \reqref{FR-LRN-032}; SAF-AHM-002 &
+\reqref{FR-LRN-007}; \reqref{FR-LRN-010}; \reqref{FR-LRN-032}; SAF-AHM-002 \\
 \addlinespace
 H-AHM-004 & \reqref{FR-LRN-011}; \reqref{FR-LRN-013}; \reqref{FR-LRN-023} &
 \reqref{FR-LRN-011}; \reqref{FR-LRN-013}; \reqref{FR-LRN-023} \\
@@ -8210,8 +8426,8 @@ H-AHM-005 & \reqref{FR-LRN-011}; \reqref{FR-LRN-013}; \reqref{FR-LRN-014};
 \reqref{FR-LRN-013}; \reqref{FR-LRN-014}; \reqref{NFR-UX-004};
 \reqref{NFR-UX-015} \\
 \addlinespace
-H-AHM-006 & \reqref{FR-LRN-009}; \reqref{FR-LRN-018}-- \reqref{FR-LRN-020} &
-\reqref{FR-LRN-009}; \reqref{FR-LRN-018}-- \reqref{FR-LRN-020} \\
+H-AHM-006 & \reqref{FR-LRN-009}; \reqref{FR-LRN-018}--\reqref{FR-LRN-020}; \reqref{FR-LRN-030}--\reqref{FR-LRN-037} &
+\reqref{FR-LRN-009}; \reqref{FR-LRN-018}--\reqref{FR-LRN-020}; \reqref{FR-LRN-030}--\reqref{FR-LRN-037} \\
 \addlinespace
 H-AHM-007 & \reqref{FR-LRN-016}; \reqref{FR-LRN-017}; \reqref{FR-LRN-019};
 \reqref{FR-LRN-021} & \reqref{FR-LRN-016}; \reqref{FR-LRN-017};

@@ -1,0 +1,548 @@
+\documentclass{article}
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[margin=1in]{geometry}
+
+\title{Specialist Interview Report\\\progname}
+
+\author{\authname}
+
+\date{}
+
+\input{../../Comments.text}
+\input{../../Common.text}
+
+% Links into the transcript appendix, as in the SRS.
+\newcommand{\intlink}[3]{\hyperref[int:#1-#2]{#3}}
+\newcommand{\intref}[2]{\intlink{#1}{#2}{#1, #2}}
+
+\begin{document}
+
+\maketitle
+
+\begin{table}[hp]
+\caption{Revision History} \label{TblRevisionHistory}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
+\midrule
+11 November 2026 & Rayan Nasrallah & First version: methodology, questions,
+subjects, empathy map analysis, results and limitations, with the transcript
+as an appendix (\#262).\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Purpose}
+
+This report is the fall custom document for \progname{}. It describes the
+interview we held with three domain specialists on October 1, 2026, and
+analyses what they told us with an empathy map. The Software Requirements
+Specification (SRS) already traces each interview statement to the
+requirements it shaped (SRS Appendix A, SRC-005). This report does not repeat
+that trace. Instead, it looks at the interview as a whole: what the
+specialists said, thought, did and felt, which themes run across their
+answers, and what we still need to ask them. Those open questions feed the
+next session, where the same specialists will try the proof of concept.
+
+\section{Methodology}
+
+\subsection{Interview type}
+
+We ran one semi-structured group interview. A semi-structured interview gives
+a fixed core of questions, so every topic we needed gets raised, while
+follow-up probes let the specialists take the discussion where their
+experience points. A structured interview would have lost the reasoning
+behind each answer, and an unstructured one would have been hard to keep on
+track with three people in 43 minutes.
+
+\subsection{Procedure}
+
+\begin{itemize}
+\item \textbf{Format:} a remote video call of 43 minutes, recorded and
+  transcribed automatically.
+\item \textbf{Interviewers:} Rayan Nasrallah (facilitator) and Moustafa
+  Moustafa.
+\item \textbf{Structure:} a 10-minute presentation of the planned application
+  (guided lessons, creative drawing space, practice history for adults, and
+  two possible future features), then the questions in
+  Section~\ref{sec:questions}.
+\item \textbf{Consent:} all three specialists agreed verbally at the end of
+  the session to the use of the transcript for eliciting requirements
+  (\intlink{Rayan}{41:51}{41:51--42:48}), and signed consent forms sent to them
+  by email after the session.
+\item \textbf{Follow-up:} the questions we ran out of time for went into a
+  short written questionnaire, answered by two of the three specialists on
+  October 2 and 4, 2026 (SRS Appendix, SRC-009).
+\end{itemize}
+
+\subsection{Data preparation}
+
+The automatic transcript was de-identified at the specialists' request:
+names, institutions, locations and a personal health detail were removed or
+replaced with bracketed placeholders. Mis-heard words were corrected and
+filler words removed. Each turn keeps its timestamp from the recording, so
+every claim in this report can be checked against the transcript in
+Appendix~\ref{app:interview}.
+
+\subsection{Analysis method: empathy map}
+
+We analysed the transcript with an empathy map, a design thinking tool that
+sorts what is known about a group of people into four quadrants
+\cite{gray2010gamestorming, gibbons2018empathy}:
+
+\begin{itemize}
+\item \textbf{Says:} what they stated directly.
+\item \textbf{Thinks:} the beliefs and priorities behind what they said.
+\item \textbf{Does:} what they reported doing in their own work.
+\item \textbf{Feels:} the reactions and concerns they expressed.
+\end{itemize}
+
+We chose an empathy map for two reasons. First, the SRS already links single
+statements to requirements, so a second statement-by-statement coding would
+add nothing. An empathy map instead shows the specialists' point of view as a
+whole, which is what we need to plan the next session with them. Second, it
+separates what was said from what was reported as practice, which matters
+because the specialists' experience comes from their own projects, not from
+observing our users.
+
+The steps were:
+\begin{enumerate}
+\item Read the full transcript and mark every turn by a specialist that
+  carries content (not greetings or audio checks).
+\item Place each marked turn in one or more quadrants, keeping its
+  timestamp. ``Says'' holds paraphrases of direct statements. ``Thinks'' and
+  ``Feels'' only hold beliefs and reactions the specialists put into words; we
+  did not guess at unspoken ones.
+\item Group the entries into themes, then lay the map out with one row per
+  theme, so each statement sits beside the belief, practice and reaction
+  behind it.
+\item For each theme, note where the specialists disagreed, and what we still
+  need to ask.
+\end{enumerate}
+
+We built one map for the group rather than one per specialist; the empathy
+map section explains why.
+
+\section{Subjects}
+\label{sec:subjects}
+
+Three domain specialists took part. They research and develop software for
+children with autism, ADHD and other learning needs, and hold doctorates in
+human-computer interaction and related engineering fields. They work at the
+same research centre outside Canada. They preferred not to be named, so this
+report refers to them as P1, P2 and P3 and gives no further detail that could
+identify them. With only three people from one centre, we report their
+background as a group rather than per person.
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Code} & \textbf{Role in the session} \\
+\midrule
+P1 & Specialist. Asked the first questions after the presentation and led the
+answers on progression, child independence and input. \\
+P2 & Specialist. Led the answers on population, accessibility guidelines and
+audio feedback. \\
+P3 & Specialist. Raised the question of pen or finger input. \\
+\bottomrule
+\end{tabularx}
+\caption{Subjects}
+\end{table}
+
+\section{Questions}
+\label{sec:questions}
+
+\subsection{Questions asked in the session}
+
+We had prepared a guide of 16 main questions. After the presentation, the
+specialists raised their own questions first, and the discussion followed
+them. Table~\ref{tbl:asked} lists the questions as they were actually asked,
+by us or by the specialists, in order.
+
+\begin{longtable}{p{0.08\textwidth}p{0.15\textwidth}p{0.68\textwidth}}
+\toprule
+\textbf{Time} & \textbf{Asked by} & \textbf{Question} \\
+\midrule
+\endhead
+\intlink{P1}{12:07}{12:07} & P1 & Did you co-design the app with educators,
+therapists or other end users? \\
+\intlink{P1}{13:42}{13:42} & P1 & (Comment) Camera finger tracing may target a
+different skill. \\
+\intlink{Moustafa}{14:55}{14:55} & Moustafa & Is camera finger tracing helpful
+if we do implement it? \\
+\intlink{Rayan}{15:48}{15:48} & Rayan & With limited time, should we focus on
+shapes and tracing before the camera feature? \\
+\intlink{P2}{16:45}{16:45} & P2 & Are you targeting specific groups of
+children, or a broader population? \\
+\intlink{Moustafa}{20:14}{20:14} & Moustafa & So the app should not be limited
+to children with autism or ADHD? \\
+\intlink{Rayan}{22:07}{22:07} & Rayan & Would you take the app further in your
+own research, or help observe children using it? \\
+\intlink{P3}{24:34}{24:34} & P3 & Will children draw with a pen or with their
+finger? \\
+\intlink{Rayan}{27:31}{27:31} & Rayan & Should the app decide when a child is
+ready to move to the next level, or leave that to the supervising adult? What
+determines readiness? \\
+\intlink{Rayan}{31:10}{31:10} & Rayan & What progress information would help a
+parent or caregiver judge whether the child is ready to move on? \\
+\intlink{Rayan}{32:12}{32:12} & Rayan & Can you connect us with occupational
+therapists or educational specialists? \\
+\intlink{Moustafa}{33:34}{33:34} & Moustafa & Should a child be able to use the
+app alone, or should we assume an adult is present? How should the app give
+feedback and instructions? \\
+\intlink{Rayan}{37:18}{37:18} & Rayan & Is spoken audio feedback a good
+idea? \\
+\intlink{Rayan}{38:58}{38:58} & Rayan & Which design choices cause problems for
+autistic children or children with ADHD, and which practices should we
+follow? \\
+\intlink{Rayan}{40:44}{40:44} & Rayan & Any other comments or patterns we
+should know about? \\
+\bottomrule
+\caption{Questions asked in the session}
+\label{tbl:asked}
+\end{longtable}
+
+\subsection{Coverage of the prepared guide}
+
+Table~\ref{tbl:coverage} shows which topics of the prepared guide were covered
+in the session, which went to the follow-up questionnaire, and which were not
+covered.
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{Xl}
+\toprule
+\textbf{Guide topic} & \textbf{Covered by} \\
+\midrule
+First reactions & Session \\
+Whether and how children practise these skills now & Not covered \\
+Existing apps and tools & Not covered \\
+What adults find hardest when guiding a child & Not covered \\
+School tool, home tool or both & Partly (P2, 35:36) \\
+Adult present or child alone & Session \\
+Devices and input methods & Session (pen or finger) \\
+What motivates or frustrates children & Questionnaire \\
+How to give feedback & Session (audio) and questionnaire \\
+How adults decide a child is ready for less support & Session \\
+Design choices that cause problems & Session \\
+Whether cleaning up free drawings helps & Questionnaire \\
+Useful practice information for adults & Session \\
+Camera finger tracing & Session \\
+Letter tracing & Questionnaire \\
+Top priorities & Not covered \\
+\bottomrule
+\end{tabularx}
+\caption{Coverage of the prepared interview guide}
+\label{tbl:coverage}
+\end{table}
+
+\section{Raw Data}
+
+The de-identified transcript is in Appendix~\ref{app:interview}.
+
+\section{Analysis}
+
+\subsection{Empathy map}
+
+Table~\ref{tbl:map} is the empathy map. Empathy maps are often built for
+one user at a time and then combined into one map for a user type
+\cite{gibbons2018empathy}. Instead, we built a single map for all three
+specialists, for two reasons. First, they answered as a group: they built on each other's
+answers, so splitting the session by person would separate points that were
+made together. Second, the specialists did not speak equally. P3 spoke on one
+topic (pen or finger input), so a map for P3 alone would have about two
+entries. Keeping one map, with every entry labelled by speaker, shows who said
+what without three thin maps. Section~\ref{sec:themes} shows who led each
+theme.
+
+A classic empathy map has four quadrants. Here each row is one theme, so a statement sits beside the belief
+behind it, what the specialists do in their own work, and how they felt about
+it. Each entry is a short paraphrase with the speaker and a link to the
+transcript. A dash marks a quadrant the interview gave no evidence for; those
+gaps are discussed in Section~\ref{sec:results}.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{*{4}{>{\raggedright\arraybackslash}p{0.22\textwidth}}}
+\toprule
+\textbf{Says} & \textbf{Thinks} & \textbf{Does} & \textbf{Feels} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\multicolumn{4}{l}{\textbf{Theme 1: Adults decide, the app supports}} \\*
+An adult who knows the child should choose the level
+(\intref{P1}{28:37}). Let the teacher or caregiver change the activity and
+see progress (\intref{P2}{29:18}).
+& Having the app decide means assessment, and a progress view raises the
+question of what assessment it applies (\intref{P1}{28:37};
+\intref{P2}{29:18}).
+& Built a vocabulary app where the teacher personalized each child's path
+through a separate adult view (\intref{P2}{29:18}).
+& Cautious: automatic progression is ``more advanced'' and too complex for
+now (\intref{P1}{28:37}). \\
+\midrule
+\multicolumn{4}{l}{\textbf{Theme 2: The child should not need an adult in the room}} \\*
+A child who cannot read should be able to enter a lesson, practise, restart
+and move around using images and icons (\intref{P1}{34:13}).
+& Children are used to icon-based games; adults handle setup
+(\intref{P1}{34:13}). The child-and-caregiver workflow is the team's choice
+(\intref{P2}{35:36}).
+& --
+& Concern that parents get annoyed if they must keep stepping in
+(\intref{P1}{34:13}). \\
+\midrule
+\multicolumn{4}{l}{\textbf{Theme 3: Design the details with the people who know the children}} \\*
+Which progress measures help should be decided with occupational therapists
+or educators (\intref{P2}{31:42}). Use spoken audio that can be turned off
+(\intref{P2}{37:39}).
+& Educators and therapists, not designers, know the children day to day
+(\intref{P1}{36:26}). Offering more than one modality is good inclusive
+design (\intref{P2}{37:39}).
+& Design praise wording and colours from the literature and therapists'
+feedback, bit by bit (\intref{P1}{36:26}). Gave their app voice input that
+users can turn off (\intref{P2}{37:39}).
+& -- \\
+\midrule
+\multicolumn{4}{l}{\textbf{Theme 4: Accessible and broad from the start}} \\*
+Start with WCAG, then autism design heuristics (\intref{P2}{39:26}). Don't
+limit the app to one diagnosis (\intref{P1}{20:27}).
+& Designing for disability serves everyone; the skills apply to all children,
+at different stages (\intref{P2}{19:05}; \intref{P2}{20:47}).
+& Teaches accessible design using WCAG (\intref{P2}{39:26}).
+& P2 related to the problem from their own difficulty drawing lines as a
+child (\intref{P2}{16:45}). \\
+\midrule
+\multicolumn{4}{l}{\textbf{Theme 5: The input tool shapes the skill}} \\*
+A finger is fine if the goal is the drawing rather than fine motor skills
+(\intref{P3}{25:36}). A finger is easiest, but fine motor practice needs a held
+tool, from large to small (\intref{P1}{26:46}).
+& How a child holds a pen affects their drawing and the app's usability
+(\intref{P3}{25:36}).
+& --
+& -- \\
+\midrule
+\multicolumn{4}{l}{\textbf{Theme 6: Core first, with care around children}} \\*
+Focus on touchscreen tracing and add camera tracing later
+(\intref{P1}{16:13}; \intref{P2}{16:45}). Testing with children needs ethics
+approval; meeting experts does not (\intref{P2}{22:56}; \intref{P1}{33:00}).
+& Camera tracing trains gross rather than fine motor skills, but can help a
+child visualize the shape (\intref{P1}{13:42}; \intref{P1}{15:12}).
+& Obtains ethics approval for studies with children, which takes about three
+to four months (\intref{P2}{22:56}).
+& Willing to keep helping: to meet again, guide a pilot and share contacts
+(\intref{P1}{24:03}; \intref{P1}{41:08}; \intref{P2}{22:56}). \\
+\midrule
+\multicolumn{4}{l}{\textbf{Overall}} \\*
+-- & -- & --
+& Positive about the project: ``very nice'', ``inspiring'', ``much needed'',
+``timely'' (\intref{P2}{16:45}; \intref{P1}{24:03}; \intref{P1}{41:08}). \\
+\caption{Empathy map of the three specialists, by theme}
+\label{tbl:map}
+\end{longtable}
+\endgroup
+
+\subsection{Themes}
+\label{sec:themes}
+
+\begin{enumerate}
+\item \textbf{Adults decide, the app supports.} Every quadrant agrees: the
+  adult chooses the level, because anything else becomes an assessment.
+\item \textbf{The child should not need an adult in the room.} This pulls
+  against theme 1: the adult controls progression but must not have to sit
+  through every session.
+\item \textbf{Design the details with the people who know the children.}
+  Feedback wording, colours, audio and progress measures should come from
+  occupational therapists and educators.
+\item \textbf{Accessible and broad from the start.} WCAG first, then autism
+  heuristics, for all children rather than one diagnosis.
+\item \textbf{The input tool shapes the skill.} The choice depends on the
+  goal: P3 favoured a finger if the goal is the drawing itself, and P1 agreed a
+  finger is the easiest start but said fine motor practice needs a held tool.
+\item \textbf{Core first, with care around children.} Touchscreen tracing
+  before camera tracing, and expert feedback rather than testing with
+  children.
+\end{enumerate}
+
+Table~\ref{tbl:leads} shows which specialist led each theme.
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Theme} & \textbf{Who led it} \\
+\midrule
+1. Adults decide & P1 first, then P2 from a past project \\
+2. Child without an adult & P1; P2 added that the workflow is the team's choice \\
+3. Design with those who know the children & P1 (feedback wording and colours) and P2 (audio, progress measures) \\
+4. Accessible and broad & P2; P1 agreed \\
+5. Input tool & P3 raised it; P1 answered \\
+6. Core first, care around children & P1 (camera tracing, ethics); P2 agreed and gave the ethics timeline \\
+\bottomrule
+\end{tabularx}
+\caption{Who led each theme}
+\label{tbl:leads}
+\end{table}
+
+\subsection{How the themes were used}
+
+We built what the specialists told us, as our supervisor advised. Themes 1, 2,
+4 and 6 became requirements and constraints in the SRS. For theme 5 we
+followed P1: the stylus is the main input because fine motor practice is the
+goal, and a finger still works. Theme 3 is only partly met, and here we
+consulted our supervisor. The specialists suggested deciding progress measures
+with occupational therapists (\intref{P2}{31:42}). Our supervisor advised
+against waiting on one for the values that depend on the child, such as how
+accurate a drawing must be to pass a stage and how many failed attempts end a
+lesson, because these differ from child to child, so an occupational therapist
+could not give one right value either (supervisor meeting, October 14, 2026).
+Instead, the adult who knows the child sets these values for that child, within
+a minimum and maximum the team defines and shows with example drawings, and
+the midpoint is the default. This avoids the risk of the team fixing values
+that suit some children but not others, which we are not qualified to judge.
+It also follows theme 1, since the adult already decides the child's level. In
+the same way, the adult chooses which recorded values their progress view
+shows. Feedback wording and colours will be reviewed with the specialists in
+the follow-up session. The SRS records the trace from each
+statement to its requirements (SRS Appendix A, SRC-005.01 to SRC-005.13).
+
+\section{Results and Next Steps}
+\label{sec:results}
+
+The map shows that the specialists' view is consistent: a child-friendly app
+that the child can use alone, controlled by the adult who knows the child,
+accessible from the start, and designed with the people who work with
+children every day. Their main reservation is any feature that looks like an
+assessment.
+
+The dashes in the map show what we did not learn. The ``Does'' column is empty
+for child independence and input, because the guide's questions on how
+children practise now and which tools exist were not reached. The ``Feels''
+column says little about feedback and input, and nothing about how children
+react, because the specialists spoke from their own projects.
+
+We will return to the same specialists with the proof of concept, a working
+lesson they can try on their own time. That session will check our reading of
+each theme, and ask about the gaps:
+\begin{itemize}
+\item Can a child who cannot read get through the lesson with the icons and
+  audio we chose (themes 1 and 2)?
+\item Are the feedback wording, colours and sounds suitable (theme 3)?
+\item With the stylus and a finger both available, does the stylus still seem
+  the right main input (theme 5)?
+\item Does the adult's progress view read as an assessment (themes 1 and 3)?
+\item How do children practise these skills now, and which existing tools fall
+  short (not covered in the first session)?
+\end{itemize}
+In that session we will run the demo first and explain our decisions only
+after it ends, so the specialists react to the app rather than to our
+reasoning.
+
+\section{Limitations}
+
+\begin{itemize}
+\item \textbf{Specialists only.} We interviewed three specialists. We did not
+  interview parents, teachers or occupational therapists directly, and we did
+  not involve children.
+\item \textbf{Expert opinion, not observation.} The specialists described
+  their own experience and projects. Nothing here comes from observing
+  children use \progname{}.
+\item \textbf{One session, one centre.} All three work at the same centre, in
+  one 43-minute session, so their views may share a common background.
+\item \textbf{Group and presentation effects.} In a group, one answer can
+  shape the next, and presenting our design first may have led the
+  specialists to react to our features rather than raise needs we missed.
+\item \textbf{Inferred quadrants.} ``Thinks'' and ``Feels'' rely on what the
+  specialists put into words. We did not infer unspoken feelings, so these
+  quadrants are incomplete.
+\item \textbf{Coverage.} Four topics of the guide were not covered (see
+  Table~\ref{tbl:coverage}), and only two of three specialists answered the
+  follow-up questionnaire.
+\end{itemize}
+
+\begin{thebibliography}{9}
+\bibitem{gray2010gamestorming} D.~Gray, S.~Brown and J.~Macanufo,
+  \emph{Gamestorming: A Playbook for Innovators, Rulebreakers, and
+  Changemakers}. Sebastopol, CA: O'Reilly Media, 2010.
+\bibitem{gibbons2018empathy} S.~Gibbons, ``Empathy mapping: The first step in
+  design thinking,'' Nielsen Norman Group, Jan.~2018. [Online]. Available:
+  \url{https://www.nngroup.com/articles/empathy-mapping/}
+\end{thebibliography}
+
+\newpage
+\appendix
+
+\section{Generative AI Use Disclosure}
+\label{app:ai-use}
+
+This appendix describes how generative AI tools assisted in preparing and
+reviewing this document. The decisions in this report came from the specialist
+interview, which Moustafa and I conducted, and from our meetings with our
+supervisor and teaching assistant, including the choice of an empathy map as
+the analysis method. AI tools helped carry out and express that work; they did
+not make decisions for us. The author remains responsible for the content of
+the final document.
+
+\subsection{AI Tools Used}
+
+\begin{itemize}
+  \item \textbf{Anthropic's Claude Opus 5.5}, accessed through Claude Code at
+  low effort.
+\end{itemize}
+
+\subsection{How and Where Used}
+
+The uses below materially contributed to this document.
+
+\begin{itemize}
+  \item \textbf{Organizing the interview data.} AI helped sort through the
+  interview transcript and locate the specific statements, with their
+  timestamps, behind each empathy map entry, each question in
+  Table~\ref{tbl:asked} and each theme. This affected Sections 4 and 6.
+
+  \item \textbf{Drafting and wording.} AI turned my notes and decisions into
+  draft wording for each section, and helped improve sentence structure,
+  clarity and flow. I then directed changes, such as laying the empathy map out
+  with one row per theme, explaining why we built one map for all three
+  specialists, and adding the supervisor's advice in Section 6.3.
+
+  \item \textbf{Formatting.} AI helped with the \LaTeX{} formatting, including
+  the tables and the links into the transcript.
+
+  \item \textbf{Repository management.} Through Claude Code, AI helped prepare
+  the branch and commit for this document.
+\end{itemize}
+
+\subsection{Verification of AI-Generated Content}
+
+Every AI-assisted passage was reviewed against my intended meaning and the
+decisions the team had agreed on before it was included. Any wording that
+introduced claims the specialists did not make, or commitments the team had
+not agreed on, was removed or rewritten.
+
+Each empathy map entry and each listed question was checked against the
+original transcript to confirm that the cited statement and timestamp say what
+this report claims. The ``Thinks'' and ``Feels'' columns only hold beliefs and
+reactions the specialists put into words. The references were checked against
+their sources, and the report was checked for details that could identify the
+specialists.
+
+\textbf{The author is responsible for the accuracy, completeness, consistency,
+and appropriateness of this document, regardless of whether material was
+written by a team member or with the help of an AI system.}
+
+\newpage
+\input{../../SRS/InterviewTranscript.text}
+
+\end{document}

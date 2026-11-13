@@ -71,6 +71,9 @@ timeline, and set the year of the MG and MIS references to 2026 (\#302).\\
 every way a lesson ends in the Guided Lesson Control services, let Storage
 delete records, added the Attempt Record Module to SAF-RAY-004, and reworded
 AC25 and the introduction (\#302).\\
+11 November 2026 & Ahmed Elzaria & Added FR-LRN-025 to FR-LRN-039, which
+the SRS split from FR-LRN-003 to 006, 009, 010, 019, 020 and 024, to the
+trace between requirements and modules, now 158 requirements (SRS \#309).\\
 \bottomrule
 \end{tabularx}
 
@@ -819,7 +822,7 @@ to be implemented.
 
 This section shows two traceability matrices: between the modules and the
 requirements and between the modules and the anticipated changes.
-Table~\ref{TblRT} covers all 143 requirements in the SRS~\citep{SRS}: the
+Table~\ref{TblRT} covers all 158 requirements in the SRS~\citep{SRS}: the
 functional requirements (FR), the non-functional requirements (NFR) and the
 safety-critical requirements (SAF). Every requirement is met by at least one
 module, and every module meets at least one requirement. NFR-MAINT-003 and
@@ -842,149 +845,164 @@ p{0.24\textwidth}@{}}
 \bottomrule
 \endlastfoot
 FR-LRN-001 & \mref{mCatalogue} &
-  FR-PRG-009 & \mref{mSummary}\\
+  FR-PRG-001 & \mref{mProfile}, \mref{mSummary}\\
 FR-LRN-002 & \mref{mLessonControl}, \mref{mCatalogue} &
-  FR-PRG-010 & \mref{mSummary}\\
+  FR-PRG-002 & \mref{mSummary}\\
 FR-LRN-003 & \mref{mDisplay}, \mref{mLessonControl} &
-  FR-PRG-011 & \mref{mSummary}\\
+  FR-PRG-003 & \mref{mSummary}\\
 FR-LRN-004 & \mref{mDisplay}, \mref{mLessonControl} &
-  FR-PRG-012 & \mref{mSummary}\\
+  FR-PRG-004 & \mref{mSummary}\\
 FR-LRN-005 & \mref{mDisplay}, \mref{mLessonControl} &
-  NFR-UX-001 & \mref{mChildScreen}\\
+  FR-PRG-005 & \mref{mSummary}, \mref{mAdultView}\\
 FR-LRN-006 & \mref{mDisplay}, \mref{mLessonControl} &
-  NFR-UX-002 & \mref{mChildScreen}\\
+  FR-PRG-006 & \mref{mSummary}, \mref{mAdultView}\\
 FR-LRN-007 & \mref{mInputDevice}, \mref{mAttempt}, \mref{mStroke} &
-  NFR-UX-003 & \mref{mChildScreen}, \mref{mAdultView}\\
+  FR-PRG-007 & \mref{mSummary}, \mref{mAdultView}\\
 FR-LRN-008 & \mref{mAttempt}, \mref{mStroke} &
-  NFR-UX-004 & \mref{mFeedback}\\
+  FR-PRG-008 & \mref{mSummary}\\
 FR-LRN-009 & \mref{mLessonControl}, \mref{mAttempt}, \mref{mRecord} &
-  NFR-UX-005 & \mref{mChildScreen}\\
+  FR-PRG-009 & \mref{mSummary}\\
 FR-LRN-010 & \mref{mAttempt}, \mref{mEvaluation} &
-  NFR-UX-006 & \mref{mFeedback}, \mref{mChildScreen}\\
+  FR-PRG-010 & \mref{mSummary}\\
 FR-LRN-011 & \mref{mEvaluation}, \mref{mGeometry} &
-  NFR-UX-007 & \mref{mFeedback}, \mref{mChildScreen}\\
+  FR-PRG-011 & \mref{mSummary}\\
 FR-LRN-012 & \mref{mEvaluation} &
-  NFR-UX-008 & \mref{mLessonControl}, \mref{mChildScreen}\\
+  FR-PRG-012 & \mref{mSummary}\\
 FR-LRN-013 & \mref{mEvaluation}, \mref{mGeometry} &
-  NFR-UX-009 & \mref{mProfile}, \mref{mAdultView}\\
+  NFR-UX-001 & \mref{mChildScreen}\\
 FR-LRN-014 & \mref{mLessonControl}, \mref{mEvaluation}, \mref{mFeedback} &
-  NFR-UX-010 & \mref{mAudio}, \mref{mSettings}\\
+  NFR-UX-002 & \mref{mChildScreen}\\
 FR-LRN-015 & \mref{mLessonControl} &
-  NFR-UX-011 & \mref{mRefineControl}, \mref{mSettings}\\
+  NFR-UX-003 & \mref{mChildScreen}, \mref{mAdultView}\\
 FR-LRN-016 & \mref{mLessonControl}, \mref{mAccess}, \mref{mAdultView} &
-  NFR-UX-012 & \mref{mChildScreen}, \mref{mAdultView}\\
+  NFR-UX-004 & \mref{mFeedback}\\
 FR-LRN-017 & \mref{mSettings}, \mref{mAdultView} &
-  NFR-UX-013 & \mref{mDisplay}, \mref{mCatalogue}\\
+  NFR-UX-005 & \mref{mChildScreen}\\
 FR-LRN-018 & \mref{mLessonControl}, \mref{mAccess} &
-  NFR-UX-014 & \mref{mAdultView}\\
+  NFR-UX-006 & \mref{mFeedback}, \mref{mChildScreen}\\
 FR-LRN-019 & \mref{mLessonControl}, \mref{mRecord} &
-  NFR-UX-015 & \mref{mFeedback}\\
+  NFR-UX-007 & \mref{mFeedback}, \mref{mChildScreen}\\
 FR-LRN-020 & \mref{mLessonControl}, \mref{mImprovement} &
-  NFR-UX-016 & \mref{mFeedback}\\
+  NFR-UX-008 & \mref{mLessonControl}, \mref{mChildScreen}\\
 FR-LRN-021 & \mref{mLessonControl}, \mref{mSettings} &
-  NFR-UX-017 & \mref{mSummary}, \mref{mAdultView}\\
+  NFR-UX-009 & \mref{mProfile}, \mref{mAdultView}\\
 FR-LRN-022 & \mref{mFeedback}, \mref{mSummary} &
-  NFR-UX-018 & \mref{mChildScreen}\\
+  NFR-UX-010 & \mref{mAudio}, \mref{mSettings}\\
 FR-LRN-023 & \mref{mLessonControl} &
-  NFR-UX-019 & \mref{mChildScreen}, \mref{mAdultView}\\
+  NFR-UX-011 & \mref{mRefineControl}, \mref{mSettings}\\
 FR-LRN-024 & \mref{mLessonControl}, \mref{mAttempt}, \mref{mEvaluation} &
+  NFR-UX-012 & \mref{mChildScreen}, \mref{mAdultView}\\
+FR-LRN-025 & \mref{mLessonControl} &
+  NFR-UX-013 & \mref{mDisplay}, \mref{mCatalogue}\\
+FR-LRN-026 & \mref{mLessonControl}, \mref{mAttempt} &
+  NFR-UX-014 & \mref{mAdultView}\\
+FR-LRN-027 & \mref{mDisplay}, \mref{mLessonControl} &
+  NFR-UX-015 & \mref{mFeedback}\\
+FR-LRN-028 & \mref{mLessonControl}, \mref{mAttempt} &
+  NFR-UX-016 & \mref{mFeedback}\\
+FR-LRN-029 & \mref{mLessonControl}, \mref{mAttempt} &
+  NFR-UX-017 & \mref{mSummary}, \mref{mAdultView}\\
+FR-LRN-030 & \mref{mLessonControl}, \mref{mAttempt} &
+  NFR-UX-018 & \mref{mChildScreen}\\
+FR-LRN-031 & \mref{mLessonControl} &
+  NFR-UX-019 & \mref{mChildScreen}, \mref{mAdultView}\\
+FR-LRN-032 & \mref{mAttempt}, \mref{mLessonControl} &
   NFR-UX-020 & \mref{mChildScreen}, \mref{mAdultView}\\
-FR-CRT-001 & \mref{mInputDevice}, \mref{mCreative}, \mref{mStroke} &
+FR-LRN-033 & \mref{mLessonControl} &
   NFR-UX-021 & \mref{mDisplay}, \mref{mFeedback}\\
-FR-CRT-002 & \mref{mCreative} &
+FR-LRN-034 & \mref{mLessonControl}, \mref{mRecord} &
   NFR-UX-022 & \mref{mAudio}\\
-FR-CRT-003 & \mref{mCreative} &
+FR-LRN-035 & \mref{mLessonControl} &
   NFR-UX-023 & \mref{mAdultView}\\
-FR-CRT-004 & \mref{mCreative} &
+FR-LRN-036 & \mref{mLessonControl}, \mref{mImprovement} &
   NFR-UX-024 & \mref{mAdultView}\\
-FR-CRT-005 & \mref{mCreative} &
+FR-LRN-037 & \mref{mLessonControl} &
   NFR-PERF-001 & \mref{mInputDevice}, \mref{mDisplay}\\
-FR-CRT-006 & \mref{mCreative} &
+FR-LRN-038 & \mref{mAttempt}, \mref{mEvaluation} &
   NFR-PERF-002 & \mref{mRefineControl}, \mref{mRefineEngine}\\
-FR-CRT-007 & \mref{mCreative}, \mref{mHistory} &
+FR-LRN-039 & \mref{mAttempt}, \mref{mEvaluation} &
   NFR-PERF-003 & \mref{mSummary}, \mref{mAdultView}, \mref{mStorage}\\
-FR-CRT-008 & \mref{mCreative}, \mref{mHistory} &
+FR-CRT-001 & \mref{mInputDevice}, \mref{mCreative}, \mref{mStroke} &
   NFR-PERF-004 & \mref{mEvaluation}, \mref{mGeometry}\\
-FR-CRT-009 & \mref{mCreative} &
+FR-CRT-002 & \mref{mCreative} &
   NFR-PERF-010 & \mref{mEvaluation}\\
-FR-CRT-010 & \mref{mRefineControl}, \mref{mRefineEngine} &
+FR-CRT-003 & \mref{mCreative} &
   NFR-PERF-005 & \mref{mStorage}, \mref{mRecovery}\\
-FR-CRT-011 & \mref{mRefineControl} &
+FR-CRT-004 & \mref{mCreative} &
   NFR-PERF-008 & \mref{mStorage}\\
-FR-CRT-012 & \mref{mRefineControl}, \mref{mGeometry} &
+FR-CRT-005 & \mref{mCreative} &
   NFR-PERF-009 & \mref{mInputDevice}, \mref{mDisplay}, \mref{mStorage}\\
-FR-CRT-013 & \mref{mCreative}, \mref{mRefineControl} &
+FR-CRT-006 & \mref{mCreative} &
   NFR-OPS-001 & \mref{mAccess}, \mref{mRefineEngine}, \mref{mStorage}\\
-FR-CRT-014 & \mref{mRefineControl} &
+FR-CRT-007 & \mref{mCreative}, \mref{mHistory} &
   NFR-OPS-002 & \mref{mAccess}, \mref{mRefineEngine}, \mref{mStorage}\\
-FR-CRT-015 & \mref{mRefineControl}, \mref{mRefineEngine} &
+FR-CRT-008 & \mref{mCreative}, \mref{mHistory} &
   NFR-OPS-003 & \mref{mChildScreen}, \mref{mAdultView}\\
-FR-CRT-016 & \mref{mRefineControl}, \mref{mChildScreen} &
+FR-CRT-009 & \mref{mCreative} &
   NFR-MAINT-001 & \mref{mCatalogue}\\
-FR-CRT-017 & \mref{mRefineControl} &
+FR-CRT-010 & \mref{mRefineControl}, \mref{mRefineEngine} &
   NFR-MAINT-002 & \mref{mLessonControl}\\
-FR-CRT-018 & \mref{mRefineControl}, \mref{mChildScreen} &
+FR-CRT-011 & \mref{mRefineControl} &
   NFR-MAINT-003 & All\\
-FR-CRT-019 & \mref{mRefineControl}, \mref{mAccess}, \mref{mAdultView} &
+FR-CRT-012 & \mref{mRefineControl}, \mref{mGeometry} &
   NFR-MAINT-004 & All\\
-FR-CRT-020 & \mref{mRefineControl} &
+FR-CRT-013 & \mref{mCreative}, \mref{mRefineControl} &
   NFR-SEC-001 & \mref{mAccess}, \mref{mStorage}\\
-FR-CRT-021 & \mref{mRefineControl} &
+FR-CRT-014 & \mref{mRefineControl} &
   NFR-SEC-002 & \mref{mAccess}\\
-FR-CRT-022 & \mref{mCreative}, \mref{mRefineControl} &
+FR-CRT-015 & \mref{mRefineControl}, \mref{mRefineEngine} &
   NFR-SEC-003 & \mref{mStorage}, \mref{mLog}\\
-FR-CRT-023 & \mref{mCreative}, \mref{mProfile}, \mref{mStorage} &
+FR-CRT-016 & \mref{mRefineControl}, \mref{mChildScreen} &
   NFR-SEC-004 & \mref{mProfile}\\
-FR-CRT-024 & \mref{mCreative}, \mref{mStorage} &
+FR-CRT-017 & \mref{mRefineControl} &
   NFR-SEC-005 & \mref{mAccess}, \mref{mLog}\\
-FR-CRT-025 & \mref{mCreative}, \mref{mRecovery} &
+FR-CRT-018 & \mref{mRefineControl}, \mref{mChildScreen} &
   NFR-SEC-006 & \mref{mStorage}\\
-FR-CRT-026 & \mref{mCreative}, \mref{mProfile} &
+FR-CRT-019 & \mref{mRefineControl}, \mref{mAccess}, \mref{mAdultView} &
   NFR-CULT-002 & \mref{mFeedback}, \mref{mChildScreen}\\
-FR-CRT-027 & \mref{mLessonControl}, \mref{mRefineControl} &
+FR-CRT-020 & \mref{mRefineControl} &
   NFR-COMP-001 & \mref{mAccess}, \mref{mProfile}, \mref{mStorage}\\
-FR-CRT-028 & \mref{mRecord}, \mref{mCreative} &
+FR-CRT-021 & \mref{mRefineControl} &
   NFR-COMP-002 & \mref{mProfile}, \mref{mStorage}\\
-FR-CRT-029 & \mref{mCreative}, \mref{mChildScreen} &
+FR-CRT-022 & \mref{mCreative}, \mref{mRefineControl} &
   NFR-COMP-005 & \mref{mChildScreen}, \mref{mAdultView}\\
-FR-CRT-030 & \mref{mRefineControl}, \mref{mSettings} &
+FR-CRT-023 & \mref{mCreative}, \mref{mProfile}, \mref{mStorage} &
   SAF-RAY-001 & \mref{mLessonControl}, \mref{mAccess}\\
-FR-REC-001 & \mref{mRecord} &
+FR-CRT-024 & \mref{mCreative}, \mref{mStorage} &
   SAF-RAY-002 & \mref{mInputDevice}, \mref{mLessonControl}, \mref{mAdultView}\\
-FR-REC-002 & \mref{mRecord}, \mref{mStroke} &
+FR-CRT-025 & \mref{mCreative}, \mref{mRecovery} &
   SAF-RAY-003 & \mref{mAdultView}, \mref{mStorage}, \mref{mRecovery}\\
-FR-REC-003 & \mref{mRecord} &
+FR-CRT-026 & \mref{mCreative}, \mref{mProfile} &
   SAF-RAY-004 & \mref{mRecord}, \mref{mSummary}\\
-FR-REC-004 & \mref{mRecord}, \mref{mSettings} &
+FR-CRT-027 & \mref{mLessonControl}, \mref{mRefineControl} &
   SAF-RAY-005 & \mref{mLessonControl}, \mref{mSettings}\\
-FR-REC-005 & \mref{mAttempt}, \mref{mRecord} &
+FR-CRT-028 & \mref{mRecord}, \mref{mCreative} &
   SAF-RAY-006 & \mref{mLessonControl}, \mref{mRecord}, \mref{mSummary},
     \mref{mAdultView}\\
-FR-REC-006 & \mref{mRecord} &
+FR-CRT-029 & \mref{mCreative}, \mref{mChildScreen} &
   SAF-RAY-007 & \mref{mRecord}, \mref{mChildScreen}, \mref{mProfile}\\
-FR-REC-007 & \mref{mLessonControl}, \mref{mRecord} &
+FR-CRT-030 & \mref{mRefineControl}, \mref{mSettings} &
   SAF-RAY-008 & \mref{mSettings}\\
-FR-REC-008 & \mref{mRecord}, \mref{mStorage}, \mref{mRecovery} &
+FR-REC-001 & \mref{mRecord} &
   SAF-RAY-009 & \mref{mLessonControl}, \mref{mAttempt}\\
-FR-REC-009 & \mref{mRecord}, \mref{mStorage}, \mref{mLog} &
+FR-REC-002 & \mref{mRecord}, \mref{mStroke} &
   SAF-AHM-001 & \mref{mInputDevice}\\
-FR-REC-010 & \mref{mLessonControl}, \mref{mRecord} &
+FR-REC-003 & \mref{mRecord} &
   SAF-AHM-002 & \mref{mInputDevice}\\
-FR-PRG-001 & \mref{mProfile}, \mref{mSummary} &
+FR-REC-004 & \mref{mRecord}, \mref{mSettings} &
   SAF-SHA-001 & \mref{mAccess}, \mref{mStorage}\\
-FR-PRG-002 & \mref{mSummary} &
+FR-REC-005 & \mref{mAttempt}, \mref{mRecord} &
   SAF-SHA-002 & \mref{mAccess}, \mref{mRefineEngine}, \mref{mStorage}\\
-FR-PRG-003 & \mref{mSummary} &
+FR-REC-006 & \mref{mRecord} &
   SAF-SHA-003 & \mref{mAdultView}, \mref{mStorage}, \mref{mRecovery}\\
-FR-PRG-004 & \mref{mSummary} &
+FR-REC-007 & \mref{mLessonControl}, \mref{mRecord} &
   SAF-SHA-006 & \mref{mAccess}\\
-FR-PRG-005 & \mref{mSummary}, \mref{mAdultView} &
+FR-REC-008 & \mref{mRecord}, \mref{mStorage}, \mref{mRecovery} &
   SAF-MOU-001 & \mref{mDisplay}, \mref{mFeedback}\\
-FR-PRG-006 & \mref{mSummary}, \mref{mAdultView} &
+FR-REC-009 & \mref{mRecord}, \mref{mStorage}, \mref{mLog} &
   SAF-MOU-002 & \mref{mRecord}, \mref{mSummary}\\
-FR-PRG-007 & \mref{mSummary}, \mref{mAdultView} &
+FR-REC-010 & \mref{mLessonControl}, \mref{mRecord} &
   SAF-MOU-003 & \mref{mDisplay}\\
-FR-PRG-008 & \mref{mSummary} & & \\
 \end{longtable}
 }
 

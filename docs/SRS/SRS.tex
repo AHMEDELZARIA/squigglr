@@ -6049,18 +6049,6 @@ This section identifies legal and standards obligations that apply to Squigglr,
 including conditions relevant to adoption.
 
 \subsection{Legal Requirements}
-\begin{srsrequirement}{NFR-COMP-001}{PIPEDA}
-  \reqshall{Squigglr shall comply with applicable obligations under
-PIPEDA~\cite{pipeda}.} \reqrationale{PIPEDA applies because Squigglr is a
-Canadian project hosted for Canadian schools that collects personal information
-in the course of commercial-like activity.} \reqfit{A review of every
-personal-information field Squigglr collects, and of every place it is stored or
-sent, against each of the ten PIPEDA fair information principles records each
-principle as met or not applicable, with none unmet.}
-  \reqpriority{Must}
-  \reqphase{PH-3}
-  \reqsources{\cite{pipeda}} \reqtraces{PIPEDA~\cite{pipeda}}
-\end{srsrequirement}
 
 \begin{srsrequirement}{NFR-COMP-002}{Ontario MFIPPA Applicability}
   \reqshall{Squigglr shall be compliant with the Ontario Freedom of Information
@@ -8925,9 +8913,9 @@ that talking to stakeholders establishes the direction, but turning their needs
 into a complete specification also requires careful engineering judgement about
 failure cases and edge conditions.
 
-\textbf{Shamil:} I contributed nine performance, four safety-critical, three
-operational and environmental, four maintainability and support, six security,
-two cultural, and two compliance requirements for a total of 30 requirements. I
+\textbf{Shamil:} I contributed performance, safety-critical,
+operational and environmental, maintainability and support, security, cultural, 
+and compliance requirements. I
 did not personally consult any clients or proxies to generate my requirements,
 but some of my requirements are traceable from other sections that were
 solicited from stakeholders. For example, \reqref{NFR-OPS-003} (no installation

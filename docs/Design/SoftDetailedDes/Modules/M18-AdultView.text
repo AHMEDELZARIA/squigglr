@@ -115,7 +115,9 @@ Module, which run the check themselves.
 the Guided Lesson Control Module. \texttt{signOut} also clears the active
 learner.
 \item \texttt{addLearner} creates the profile and saves its settings, so a new
-adult can set up a learner in one view (NFR-UX-009). \texttt{saveSettings}
+adult can set up a learner in one view (NFR-UX-009). It runs no adult check,
+because it saves the first values of a new profile and changes no saved value
+(SAF-RAY-008). \texttt{saveSettings}
 shows the values that \texttt{check} of the Learner Settings Module gives,
 and saves only when there are none.
 \item The lesson choice view lists the lessons of the Lesson Catalogue Module

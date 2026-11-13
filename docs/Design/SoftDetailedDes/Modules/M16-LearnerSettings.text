@@ -72,8 +72,11 @@ None.
 \begin{itemize}
 \item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
 signed in.
-\item Before \texttt{save} and \texttt{setAudio}, the caller has had the adult
-pass the adult check for $\mathit{settingsChange}$ (SAF-RAY-008).
+\item Before \texttt{setAudio}, and before a \texttt{save} that changes values
+already saved for $p$, the caller has had the adult pass the adult check for
+$\mathit{settingsChange}$ (SAF-RAY-008). The first \texttt{save} for a new
+profile needs no adult check, because it changes no saved value and the SRS
+has no adult check when a profile is created (use case UC-001).
 \texttt{setRefinement} needs no adult check, because the child may turn
 refinement off and on in the creative space (FR-CRT-030).
 \item The team-set ranges keep \texttt{LESSON\_IDLE\_END} below

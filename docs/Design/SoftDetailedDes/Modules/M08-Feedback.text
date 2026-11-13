@@ -38,8 +38,8 @@ None.
 \begin{itemize}
 \item The Guided Lesson Control Module (\mref{mLessonControl}) decides which
 kind of feedback is given after an attempt. This module decides only what that
-feedback says, shows and plays, so the wording, images and sounds can change
-without a change to the rules that pick them (LC-005).
+feedback says, shows and plays, so the wording, images, colours and sounds can
+change without a change to the rules that pick them (LC-005).
 \item On an attempt that does not pass, the caller gives the
 $\mathit{keepTrying}$ feedback, which acknowledges the child's effort, before
 the feedback on any difficulty (NFR-UX-016).
@@ -52,7 +52,7 @@ and shows where a missed part or endpoint is without drawing it
 \subsubsection{Access Routine Semantics}
 
 The full semantics are given in Revision~0. In brief: \texttt{feedback} gives
-the approved message, image and sound for a kind of feedback;
+the approved message, image, colour and sound for a kind of feedback;
 \texttt{difficultyFeedback} gives the approved feedback for the kind of a
 predefined difficulty (BR-007, FR-LRN-014); \texttt{allFeedback}
 gives every approved message, so that the wording can be checked against

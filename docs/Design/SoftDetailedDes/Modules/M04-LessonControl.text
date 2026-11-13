@@ -33,8 +33,9 @@ attempt that just ended.
 \subsubsection{Exported Access Programs}
 
 \begin{accessprograms}
+deviceSupported & -- & $\mathbb{B}$ & -- \\
 select & $a$: AdultIdT, $p$: LearnerIdT, $\ell$: LessonIdT, $l$: StageT & -- &
-adultCheckFailed, unsupportedDevice, unknownLesson \\
+adultCheckFailed, unknownLesson, notOwner, unavailable \\
 beginPractice & -- & -- & notAtDemonstration \\
 addStroke & $s$: StrokeT & ReportT & noAttempt \\
 tick & -- & ReportT & -- \\
@@ -56,6 +57,8 @@ guide & -- & GuideT & noLesson, notAtDrawingStage \\
 
 The state follows the state $\sigma$ of SRS Section~9.2:
 \begin{itemize}
+\item $a$: AdultIdT, the adult who chose the lesson, given to every call to
+the Attempt Record Module (\mref{mRecord}).
 \item $\ell$: LessonIdT, $p$: LearnerIdT and $l$: StageT, the lesson, the
 learner and the current stage.
 \item $q$: StatusT, initially $\mathit{noLesson}$.
@@ -77,7 +80,10 @@ was chosen.
 
 \subsubsection{Environment Variables}
 
-None. The time of the child's last input is read from the Input Device Module
+\begin{itemize}
+\item $\mathit{clock}$: DateTimeT, the current time.
+\end{itemize}
+The time of the child's last input is read from the Input Device Module
 (\mref{mInputDevice}).
 
 \subsubsection{Assumptions}
@@ -87,7 +93,10 @@ None. The time of the child's last input is read from the Input Device Module
 to \texttt{addStroke}, calls \texttt{tick} about once a second while a lesson
 is showing, and shows each ReportT with the Feedback Module (\mref{mFeedback}).
 \item The Adult View Module (\mref{mAdultView}) calls \texttt{stop} before the
-adult switches learner or ends the session.
+adult switches learner or ends the session. Before \texttt{select}, it calls
+\texttt{deviceSupported}, and when that gives false it shows the adult a notice
+that results may be unreliable and calls \texttt{select} only if the adult goes
+on (SAF-RAY-002, UC-002).
 \item One lesson runs at a time on a device.
 \end{itemize}
 
@@ -97,28 +106,35 @@ The full semantics are given in Revision~0, as a transition for each row of the
 SRS table of guided lesson state transitions (SRS Table~\ref{tab:lrn-transitions}).
 In brief:
 \begin{itemize}
-\item \texttt{select} runs the adult check of the Adult Access Module and the
-device check of the Input Device Module, ends any lesson in progress as
-unfinished, reads the learner's settings, starts a new lesson record, and sets
+\item \texttt{deviceSupported} gives the result of the device check of the
+Input Device Module (SAF-RAY-002).
+\item \texttt{select} runs the adult check of the Adult Access Module for
+$\mathit{lessonChoice}$, ends any lesson in progress as unfinished, reads the
+learner's settings, starts a new lesson record, and sets $a$, $p$ and
 $(\ell, l)$ with all stage counts, the history, the suggestion and the
-extension reset (AdultSelect; FR-LRN-016, FR-LRN-018, SAF-RAY-001,
-SAF-RAY-002).
+extension reset (AdultSelect; FR-LRN-016, FR-LRN-018, SAF-RAY-001). It raises \texttt{notOwner} if $p$ is not one of $a$'s
+learners, and \texttt{unavailable} if the learner's settings cannot be read.
 \item \texttt{beginPractice} moves from stage $D$ to stage $T$ and starts the
 first attempt.
-\item \texttt{addStroke} gives the stroke to the current attempt. If the
-attempt ends, it saves the attempt record, updates the counts, and applies the
-first of these that holds, in this order: a pass moves to the next stage or
-completes the lesson (FR-LRN-023); the end-at-limit rule ends the lesson
-(FR-LRN-021, SAF-RAY-005); the extension rule grants the one extension
-(FR-LRN-020, SAF-RAY-006); a go-back suggestion is offered if
-SuggestBack holds (FR-LRN-019). Otherwise a new attempt starts at the same
-stage (FR-LRN-015). The report gives the feedback for what happened.
-\item \texttt{tick} lets an open attempt end after \texttt{ATTEMPT\_IDLE}, with
-the same rules as \texttt{addStroke}, shows the check-in after
-\texttt{LESSON\_IDLE\_PROMPT} with no input, and ends the lesson after
-\texttt{LESSON\_IDLE\_END} (SAF-RAY-009).
-\item \texttt{answerSuggestion} runs the adult check. Declining clears $s$ and
-resets $k$; accepting moves to the earlier stage $l$. Both are saved in the
+\item \texttt{addStroke} gives the stroke to the current attempt. An attempt
+ends at a stylus lift only when it passes (FR-LRN-039). Then
+\texttt{addStroke} saves the attempt record, updates the counts, and moves to
+the next stage or completes the lesson (FR-LRN-023). The report gives the
+feedback for what happened.
+\item \texttt{tick} lets an open attempt end as not passed or invalid after
+\texttt{ATTEMPT\_IDLE} (FR-LRN-024). It then saves the attempt record and updates
+the counts, except for an attempt that ends as invalid, which is neither saved
+nor counted (FR-LRN-010, FR-LRN-032). After a counted attempt, it applies the
+first of these that holds, in this order: the end-at-limit rule ends the lesson (FR-LRN-021, SAF-RAY-005); the extension rule
+grants the one extension (FR-LRN-020, SAF-RAY-006); a go-back suggestion is
+offered if SuggestBack holds (FR-LRN-019). Unless the lesson ends or the stage
+changes, a new attempt then starts at the same stage (FR-LRN-015).
+\texttt{tick} also shows the check-in after \texttt{LESSON\_IDLE\_PROMPT}
+with no input, and ends the lesson after \texttt{LESSON\_IDLE\_END}
+(SAF-RAY-009). The report gives the feedback for what happened.
+\item \texttt{answerSuggestion} runs the adult check for
+$\mathit{suggestionAnswer}$. Declining clears $s$ and resets $k$, and $l$ is not
+used; accepting moves to the earlier stage $l$. Both are saved in the
 lesson record (FR-REC-010). A suggestion that is never answered stays pending
 and blocks nothing.
 \item \texttt{stop} interrupts the current attempt and ends the lesson as
@@ -127,7 +143,8 @@ unfinished (FR-REC-005, FR-REC-007).
 guide of the current lesson and stage from the Lesson Catalogue.
 \end{itemize}
 A pending suggestion that a pass, \texttt{select} or the end of the lesson
-clears is saved as ignored (FR-REC-010).
+clears is saved as ignored (FR-REC-010), before \texttt{endLesson} of the
+Attempt Record Module is called.
 
 Table~\ref{tab:m4-transitions} shows the access program that carries out each
 transition of the SRS table, so that no transition is left without one.
@@ -154,16 +171,18 @@ Finalize evaluable attempt & \texttt{addStroke} (a pass at a stylus lift) or
 \texttt{tick} (after \texttt{ATTEMPT\_IDLE})\\
 Interrupted or invalid input & \texttt{tick} (an invalid attempt) or
 \texttt{stop} (an interruption)\\
-Offer suggestion & \texttt{addStroke} or \texttt{tick}, after the attempt
-ends\\
+Offer suggestion & \texttt{tick}, after the attempt ends at
+\texttt{ATTEMPT\_IDLE}\\
 Adult declines suggestion & \texttt{answerSuggestion} with
 $\mathit{accept} = \mathit{false}$\\
 Suggestion not answered & None needed: the suggestion stays pending until
 \texttt{addStroke}, \texttt{tick}, \texttt{select} or \texttt{stop} clears it\\
 Adult accepts suggestion & \texttt{answerSuggestion} with $\mathit{accept} =
 \mathit{true}$\\
-End at limit & \texttt{addStroke} or \texttt{tick}\\
-Extend at base limit & \texttt{addStroke} or \texttt{tick}\\
+End at limit & \texttt{tick}, after the attempt ends at
+\texttt{ATTEMPT\_IDLE}\\
+Extend at base limit & \texttt{tick}, after the attempt ends at
+\texttt{ATTEMPT\_IDLE}\\
 Passing a nonfinal drawing stage & \texttt{addStroke}\\
 Passing the final drawing stage & \texttt{addStroke}\\
 \end{longtable}

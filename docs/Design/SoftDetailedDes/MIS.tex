@@ -253,6 +253,10 @@ EvaluationT & tuple of $(\mathit{class}: \text{ClassT}, \mathit{guidance}:
 \mathit{difficulties}: \text{set of DifficultyT})$, the outcome of evaluating
 the strokes of an attempt. The result is on the 0--100 scale of the SRS. &
 \mref{mEvaluation}\\
+ObservedT & tuple of $(\mathit{difficulty}: \text{DifficultyT},
+\mathit{corrected}: \mathbb{B})$, a predefined difficulty seen during an
+attempt and whether the child corrected it later in the same attempt
+(FR-REC-003) & \mref{mAttempt}\\
 FeedbackKindT & $\{\mathit{stagePassed},$ $\mathit{lessonComplete},$
 $\mathit{keepTrying},$ $\mathit{notEvaluable},$ $\mathit{checkIn},$
 $\mathit{lessonEnded}\}$, the kinds of message the child can be given during a

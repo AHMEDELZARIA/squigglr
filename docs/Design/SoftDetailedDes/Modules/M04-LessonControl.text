@@ -122,9 +122,10 @@ ends at a stylus lift only when it passes (FR-LRN-039). Then
 the next stage or completes the lesson (FR-LRN-023). The report gives the
 feedback for what happened.
 \item \texttt{tick} lets an open attempt end as not passed or invalid after
-\texttt{ATTEMPT\_IDLE} (FR-LRN-024). It then saves the attempt record, updates
-the counts, and applies the first of these that holds, in this order: the
-end-at-limit rule ends the lesson (FR-LRN-021, SAF-RAY-005); the extension rule
+\texttt{ATTEMPT\_IDLE} (FR-LRN-024). It then saves the attempt record and updates
+the counts, except for an attempt that ends as invalid, which is neither saved
+nor counted (FR-LRN-010, FR-LRN-032). After a counted attempt, it applies the
+first of these that holds, in this order: the end-at-limit rule ends the lesson (FR-LRN-021, SAF-RAY-005); the extension rule
 grants the one extension (FR-LRN-020, SAF-RAY-006); a go-back suggestion is
 offered if SuggestBack holds (FR-LRN-019). Unless the lesson ends or the stage
 changes, a new attempt then starts at the same stage (FR-LRN-015).
@@ -142,7 +143,8 @@ unfinished (FR-REC-005, FR-REC-007).
 guide of the current lesson and stage from the Lesson Catalogue.
 \end{itemize}
 A pending suggestion that a pass, \texttt{select} or the end of the lesson
-clears is saved as ignored (FR-REC-010).
+clears is saved as ignored (FR-REC-010), before \texttt{endLesson} of the
+Attempt Record Module is called.
 
 Table~\ref{tab:m4-transitions} shows the access program that carries out each
 transition of the SRS table, so that no transition is left without one.

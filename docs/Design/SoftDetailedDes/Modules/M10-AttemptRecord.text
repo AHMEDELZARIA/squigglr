@@ -1,0 +1,136 @@
+\section{MIS of the Attempt Record Module (\mref{mRecord})}
+\label{sec:mRecord}
+
+\subsection{Module}
+
+AttemptRecord
+
+\subsection{Uses}
+
+Stroke Module (\mref{mStroke}), Storage Module (\mref{mStorage}), Connection
+Recovery Module (\mref{mRecovery}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item LessonRecordIdT, which identifies one lesson record.
+\item RecordOutcomeT $= \{\mathit{passed}, \mathit{notPassed},
+\mathit{interrupted}\}$.
+\item EndingT $= \{\mathit{inProgress},$ $\mathit{completed},$
+$\mathit{endedAtLimit},$ $\mathit{endedAtMax},$ $\mathit{endedIdle},$
+$\mathit{unfinished}\}$, how a lesson ended (the lesson ending of the SRS data
+dictionary, with SAF-RAY-009's ending for inactivity).
+\item ResponseT $= \{\mathit{pending}, \mathit{accepted}, \mathit{declined},
+\mathit{ignored}\}$, the adult's response to a go-back suggestion.
+\item SaveT $= \{\mathit{saved}, \mathit{pending}\}$, whether the server has
+confirmed a save, or the record is kept on the device until it does.
+\item AttemptRecordT = tuple of $(\mathit{lesson}: \text{LessonIdT},$
+$\mathit{stage}: \text{DrawingStageT},$ $\mathit{outcome}:
+\text{RecordOutcomeT},$ $\mathit{result}: \mathbb{R},$ $\mathit{difficulties}: \text{set of ObservedT},$ $\mathit{settings}: \text{SettingsT},$
+$\mathit{strokes}: \text{seq of StrokeT},$ $\mathit{endedAt}:
+\text{DateTimeT})$, one attempt (FR-REC-001 to FR-REC-005). An interrupted
+attempt has no result, so its $\mathit{result}$ is not used.
+\item SuggestionT = tuple of $(\mathit{from}: \text{DrawingStageT},$
+$\mathit{offeredAt}: \text{DateTimeT},$ $\mathit{response}: \text{ResponseT},$
+$\mathit{stage}: \text{DrawingStageT} \cup \{\bot\})$, where
+$\mathit{from}$ is the stage at which the failed attempts were made and
+$\mathit{stage}$ is the earlier stage the adult chose on acceptance, or $\bot$
+if the suggestion was not accepted (FR-REC-010).
+\item LessonRecordT = tuple of $(\mathit{id}: \text{LessonRecordIdT},$
+$\mathit{learner}: \text{LearnerIdT},$ $\mathit{lesson}: \text{LessonIdT},$
+$\mathit{start}: \text{StageT},$ $\mathit{furthest}: \text{StageT},$
+$\mathit{passes}: \text{DrawingStageT} \rightarrow \mathbb{N}_0,$
+$\mathit{extensions}: \mathbb{N}_0,$ $\mathit{ending}: \text{EndingT},$
+$\mathit{suggestions}: \text{seq of SuggestionT},$ $\mathit{startedAt}:
+\text{DateTimeT})$, one start of a lesson (FR-REC-006, FR-REC-007,
+FR-REC-010).
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+startLesson & $a$: AdultIdT, $p$: LearnerIdT, $\ell$: LessonIdT, $l$: StageT &
+LessonRecord\-IdT & notOwner \\
+saveAttempt & $a$: AdultIdT, $r$: LessonRecordIdT, $x$: AttemptRecordT & SaveT
+& unknownRecord, lessonEnded \\
+recordExtension & $a$: AdultIdT, $r$: LessonRecordIdT & SaveT & unknownRecord,
+lessonEnded \\
+offerSuggestion & $a$: AdultIdT, $r$: LessonRecordIdT, $l$: DrawingStageT &
+$\mathbb{N}_0$ & unknownRecord, lessonEnded \\
+answerSuggestion & $a$: AdultIdT, $r$: LessonRecordIdT, $i$: $\mathbb{N}_0$,
+$\mathit{resp}$: ResponseT, $l$: DrawingStageT $\cup$ $\{\bot\}$ & SaveT &
+unknownRecord, unknownSuggestion, alreadyAnswered, lessonEnded \\
+endLesson & $a$: AdultIdT, $r$: LessonRecordIdT, $e$: EndingT, $f$: StageT &
+SaveT & unknownRecord, lessonEnded \\
+lessonRecords & $a$: AdultIdT, $p$: LearnerIdT & seq of LessonRecordT &
+notOwner, unavailable \\
+attempts & $a$: AdultIdT, $r$: LessonRecordIdT & seq of AttemptRecordT &
+unknownRecord, unavailable \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. The saved records are kept by the Storage Module (\mref{mStorage}), and
+the records the server has not yet confirmed are kept on the device by the
+Connection Recovery Module (\mref{mRecovery}).
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item The Guided Lesson Control Module (\mref{mLessonControl}) is the only
+module that writes records, and the Progress Summary Module (\mref{mSummary})
+is the only module that reads them. The Adult View Module (\mref{mAdultView})
+gets records from the Progress Summary, and gets the records not yet saved from
+the Connection Recovery Module.
+\item Who may delete records is still an open issue in the SRS (OI-02), so
+deletion is left to the Storage Module and is not part of this interface yet.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{startLesson} starts a new lesson record for learner $p$, with
+ending $\mathit{inProgress}$, even when the same lesson was started before, so
+earlier attempts are kept (SAF-RAY-006). It raises \texttt{notOwner} if $p$ is
+not one of $a$'s learners.
+\item \texttt{saveAttempt} saves $x$ under the lesson record $r$, and so to the
+learner of $r$ only (SAF-RAY-007, FR-REC-008). Each attempt is saved exactly
+once, even when the Connection Recovery Module sends it again after the
+connection is lost. The output is $\mathit{pending}$ while the record is kept on
+the device (SAF-RAY-003).
+\item \texttt{recordExtension}, \texttt{offerSuggestion} and
+\texttt{answerSuggestion} add an extension, a suggestion and the adult's
+response to the lesson record (SAF-RAY-006, FR-REC-010).
+\texttt{offerSuggestion} gives the index of the new suggestion, offered at
+stage $l$. \texttt{answerSuggestion} keeps $l$ as the chosen stage when
+$\mathit{resp} = \mathit{accepted}$, and $\bot$ otherwise.
+\item \texttt{endLesson} sets the ending and the furthest stage. After it, the
+lesson record and its attempts never change (FR-REC-009), so every program that
+writes to the record raises \texttt{lessonEnded}.
+\item \texttt{lessonRecords} and \texttt{attempts} read back a learner's
+records, oldest first.
+\end{itemize}
+Records hold only guided practice, never a creative drawing (FR-CRT-028), keep each
+attempt's stage so that attempts with and without a guide stay apart
+(SAF-MOU-002), and hold no label or judgement of the child (SAF-RAY-004).
+
+\subsubsection{Local Functions}
+
+None.
+
+\newpage

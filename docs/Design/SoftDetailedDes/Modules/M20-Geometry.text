@@ -1,0 +1,87 @@
+\section{MIS of the Geometry Module (\mref{mGeometry})}
+\label{sec:mGeometry}
+
+\subsection{Module}
+
+Geometry
+
+\subsection{Uses}
+
+Stroke Module (\mref{mStroke}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+\begin{itemize}
+\item BoxT = tuple of $(\mathit{minX}: \mathbb{R}, \mathit{minY}: \mathbb{R},
+\mathit{maxX}: \mathbb{R}, \mathit{maxY}: \mathbb{R})$, the smallest rectangle,
+with sides parallel to the drawing area, that holds a set of paths.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+toPath & $s$: StrokeT & PathT & -- \\
+length & $P$: PathT & $\mathbb{R}$ & -- \\
+distance & $p$: PointT, $Q$: seq of PathT & $\mathbb{R}$ & emptyPath \\
+lengthWithin & $P$: PathT, $Q$: seq of PathT, $d$: $\mathbb{R}$ &
+$\mathbb{R}$ & emptyPath, negativeDistance \\
+boundingBox & $Q$: seq of PathT & BoxT & emptyPath \\
+diagonal & $b$: BoxT & $\mathbb{R}$ & -- \\
+fitToBox & $Q$: seq of PathT, $b$: BoxT & seq of PathT & emptyPath \\
+smooth & $P$: PathT & PathT & -- \\
+simplify & $P$: PathT, $d$: $\mathbb{R}$ & PathT & negativeDistance \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+None. Every distance is in the units of the drawing area, and no access program
+depends on the drawing library, so the library can be replaced without changing
+this interface.
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief:
+\begin{itemize}
+\item \texttt{toPath} gives the points of a stroke, in order, as a path.
+\item \texttt{length} gives the length of a path, and 0 for a path with fewer
+than two points.
+\item \texttt{distance} gives the smallest distance from $p$ to any of the
+paths in $Q$.
+\item \texttt{lengthWithin} gives the length of the parts of $P$ that are
+within distance $d$ of a path in $Q$. The Attempt Evaluation Module uses it for
+how much of a required part is drawn and how much of a stroke lies on the
+figure.
+\item \texttt{boundingBox} and \texttt{diagonal} give the bounding box of $Q$
+and the length of its diagonal, which sets the size of a figure for
+\texttt{TRACE\_TOL}.
+\item \texttt{fitToBox} moves and uniformly scales $Q$ so that its bounding box
+is centred on $b$ and its longer side matches $b$'s (SRS Section~9.2, stage
+$I$).
+\item \texttt{smooth} and \texttt{simplify} give a smoother path and a path
+with fewer points that stays within $d$ of $P$, for the Refinement Control
+Module (\mref{mRefineControl}).
+\end{itemize}
+Each raises \texttt{emptyPath} when $Q$ has no point, and
+\texttt{negativeDistance} when $d < 0$.
+
+\subsubsection{Local Functions}
+
+None.
+
+\newpage

@@ -1,0 +1,67 @@
+\section{MIS of the Feedback Module (\mref{mFeedback})}
+\label{sec:mFeedback}
+
+\subsection{Module}
+
+Feedback
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+feedback & $k$: FeedbackKindT & FeedbackT & -- \\
+difficultyFeedback & $d$: DifficultyT & FeedbackT & -- \\
+allFeedback & -- & set of FeedbackT & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item The Guided Lesson Control Module (\mref{mLessonControl}) decides which
+kind of feedback is given after an attempt. This module decides only what that
+feedback says, shows and plays, so the wording, images, colours and sounds can
+change without a change to the rules that pick them (LC-005).
+\item On an attempt that does not pass, the caller gives the
+$\mathit{keepTrying}$ feedback, which acknowledges the child's effort, before
+the feedback on any difficulty (NFR-UX-016).
+\item The Child Screen Module (\mref{mChildScreen}) shows the message and image
+on screen and plays the sound through the Audio Output Module (\mref{mAudio}),
+and shows where a missed part or endpoint is without drawing it
+(SAF-MOU-001).
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+The full semantics are given in Revision~0. In brief: \texttt{feedback} gives
+the approved message, image, colour and sound for a kind of feedback;
+\texttt{difficultyFeedback} gives the approved feedback for the kind of a
+predefined difficulty (BR-007, FR-LRN-014); \texttt{allFeedback}
+gives every approved message, so that the wording can be checked against
+NFR-UX-004 and NFR-UX-015. Every message describes the drawing and not the
+child (FR-LRN-022), and no image or sound marks the drawing as wrong
+(NFR-UX-004). All three are total, so no exception is needed.
+
+\subsubsection{Local Functions}
+
+None.
+
+\newpage

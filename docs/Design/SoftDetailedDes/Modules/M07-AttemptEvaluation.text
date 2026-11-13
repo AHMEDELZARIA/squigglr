@@ -1,9 +1,93 @@
 \section{MIS of the Attempt Evaluation Module (\mref{mEvaluation})}
 \label{sec:mEvaluation}
 
-\wss{This module's interface is written in \#264. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Access
-Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+AttemptEvaluation
+
+\subsection{Uses}
+
+Stroke Module (\mref{mStroke}), Geometry Module (\mref{mGeometry}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\begin{itemize}
+\item $\texttt{TRACE\_TOL} = 5$, in percent of the figure's size (the diagonal
+of its bounding box). This is the value proposed in the SRS; the team confirms
+it in PH-1, before the first evaluation test.
+\item $\texttt{PART\_COVER} = 90$, in percent. Proposed in the SRS and
+confirmed with \texttt{TRACE\_TOL}.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+evaluate & $X$: seq of StrokeT, $f$: FigureT, $l$: DrawingStageT,
+$\mathit{ds}$: set of DifficultyT, $\mathit{stagePass}$: $\mathbb{R}$ &
+EvaluationT & emptyFigure \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $\mathit{stagePass}$ is in the range of \texttt{STAGE\_PASS}, 70 to 90,
+because the Learner Settings Module (\mref{mSettings}) does not save a value
+outside it.
+\item $\mathit{ds}$ holds only difficulties whose index is a part or endpoint
+of $f$, because the Lesson Catalogue (\mref{mCatalogue}) does not offer a
+lesson that breaks this.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{evaluate}($X, f, l, \mathit{ds}, \mathit{stagePass}$): the
+full semantics are given in Revision~0, following SRS Section~9.2. In brief:
+\begin{itemize}
+\item output: $\mathit{out} := (C, G(l), v, C = \mathit{complete} \land v \geq
+\mathit{stagePass}, \mathit{obs})$, where $C$ is the class of $X$ against $f$
+($\mathit{invalid}$ if $X$ cannot be interpreted, $\mathit{complete}$ if every
+required part has at least \texttt{PART\_COVER} of its length within
+\texttt{TRACE\_TOL} of a stroke and every required endpoint has a drawn point
+within \texttt{TRACE\_TOL} of it, and $\mathit{incomplete}$ otherwise), $G(l)$
+is $\mathit{assisted}$ at $T$ and $E$ and $\mathit{independent}$ at $I$
+(FR-LRN-012), $v$ is the stage result $100 \cdot \min(\mathit{drawn},
+\mathit{onFigure})$, and $\mathit{obs}$ is the set of difficulties in
+$\mathit{ds}$ that the strokes show (FR-LRN-014). At stage $I$, the strokes are
+first fitted to the figure's bounding box with \texttt{fitToBox} of the Geometry
+Module (\mref{mGeometry}): moved and uniformly scaled, as in SRS Section~9.2.
+The result is the same
+every time for the same inputs (NFR-PERF-004) and matches the definition in SRS
+Section~9.2 (NFR-PERF-010).
+\item exception: $\mathit{exc} := (f.\mathit{parts} = \langle\rangle
+\Rightarrow \text{emptyFigure})$.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+These are defined in Revision~0, from SRS Section~9.2:
+\begin{itemize}
+\item $\mathit{valid}$: seq of StrokeT $\rightarrow \mathbb{B}$
+\item $\mathit{complete}$: seq of PathT $\times$ FigureT $\rightarrow
+\mathbb{B}$
+\item $\mathit{drawn}$: seq of PathT $\times$ FigureT $\rightarrow \mathbb{R}$,
+the share of the figure's length within \texttt{TRACE\_TOL} of a stroke
+\item $\mathit{onFigure}$: seq of PathT $\times$ FigureT $\rightarrow
+\mathbb{R}$, the share of the drawn length within \texttt{TRACE\_TOL} of the
+figure
+\item $\mathit{tol}$: FigureT $\rightarrow \mathbb{R}$, \texttt{TRACE\_TOL} as
+a distance on the drawing area for this figure
+\end{itemize}
 
 \newpage

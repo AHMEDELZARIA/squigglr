@@ -174,6 +174,10 @@ through an attempt; the SRS verification counts 143 requirements (\#290).\\
 10 November 2026 & Moustafa Moustafa & Set the year of the MG and MIS
 references to 2026, since both are first submitted in November 2026
 (\#302).\\
+15 November 2026 & Muhammad Huzaifah & Named the adult check form chosen in
+the MIS in the safety-critical tests and the Symbolic Parameters, and added
+random wrong answers, three wrong answers in a row and a reload to T-SAF-001
+(\#343).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -5665,8 +5669,9 @@ having a child tap adult-only controls, cutting the connection during an
 attempt, or switching between children on a shared device. All tests use
 test accounts and prepared data only; no child takes part (SRS CON-006).
 In these tests, ``the adult'' means the parent or educator responsible for
-the child, and ``the adult check'' means the check in \texttt{ADULT\_CHECK}
-(for example a PIN or password) that only the adult can complete.
+the child, and ``the adult check'' means the check in \texttt{ADULT\_CHECK}:
+the adult types the digits of a number shown in words, which a child cannot
+complete by tapping icons.
 
 \paragraph{Safety inspection (SI).} Before each revision (Rev~0 and
 Rev~1), the code that implements each requirement below is inspected by two
@@ -5749,13 +5754,19 @@ Input: on the lesson screen, the tester (acting as the child) taps every
 visible control, taps the screen 50 times at random positions, opens the
 web address of each adult-only action directly, uses the browser's back
 and forward buttons and reloads the page. Each time the adult check
-appears, the tester leaves it or enters a wrong answer. Finally, the tester
-(acting as the adult) completes the adult check and accepts the suggestion.
+appears, the tester leaves it or types three random digits that are not the
+number shown. After three wrong answers in a row, the tester at once tries
+an adult-only action again, then reloads the page and tries again. Finally,
+the tester (acting as the adult) waits 5 minutes, completes the adult check
+and accepts the suggestion.
 
 Output: every adult-only action asks for the adult check, and none completes
-until the check is passed. The suggestion stays waiting and the child can
-keep drawing at the current stage. After the adult passes the check and
-accepts, the child moves back to the earlier stage the adult chose.
+until the check is passed. The check shows its number only in words and
+never speaks it. After three wrong answers in a row, no check is shown for 5
+minutes, including after the reload, and no adult-only action completes.
+The suggestion stays waiting and the child can keep drawing at the current
+stage. After the adult passes the check and accepts, the child moves back to
+the earlier stage the adult chose.
 
 Example: child A fails three attempts in a row at the endpoints stage, and a
 go-back suggestion appears. Child A taps ``accept''; Squigglr asks for the
@@ -5764,7 +5775,8 @@ endpoints stage and keeps practising. The adult then completes the check and
 accepts, and child A moves back to the tracing stage.
 
 Test Case Derivation: SAF-RAY-001 and its hazards H-RAY-001 and H-RAY-006.
-Random taps imitate a child who cannot read exploring the screen.
+Random taps imitate a child who cannot read exploring the screen, and random
+wrong answers a child guessing at the digit pad.
 
 How test will be performed: a Playwright script performs the taps, web
 addresses and navigation and checks the lesson state after each one; a
@@ -7137,11 +7149,11 @@ Section~\ref{sec:software-validation}) and recorded in the SRS constants table.\
 90. Confirmed by the team in PH-1, before the first evaluation test, on
 adult-made drawings (NFR-PERF-010).\\
 \addlinespace
-\texttt{ADULT\_CHECK} & The SRS requires the check for adult-only actions and
-leaves its form open. The team chooses the form (for example a PIN or password,
-never something a child can pass by tapping icons) in the MIS, by Design
-Revision~$-1$, and records it in the SRS constants table. T-SAF-001 tests
-whichever form is chosen (SAF-RAY-001).\\
+\texttt{ADULT\_CHECK} & Chosen in the MIS (Adult Access Module) and recorded in
+the SRS constants table: the adult types the digits of a number from 100 to 999
+that is shown in words and never spoken; each check takes one answer, and no
+check is shown for 5 minutes after three wrong answers in a row. T-SAF-001
+tests that a child cannot pass it by tapping (SAF-RAY-001).\\
 \addlinespace
 \texttt{TARGET\_SIZE\_MIN}, \texttt{STAGE\_PASS},
 \texttt{ATTEMPT\_LIMIT}, \texttt{ATTEMPT\_LIMIT\_MAX},
@@ -7641,6 +7653,10 @@ tests in Section~\ref{sec:fr-tests}, the functional traceability table in Sectio
 functional symbolic parameters and test data in Section~\ref{sec:symbolic-parameters}, and my
 reflection answers. I reviewed every AI-assisted passage before including it.
 All decisions in my sections are my own.
+For the adult check in the safety-critical tests and the Symbolic Parameters
+(\#343), Claude Opus 5.5 through the omp coding agent made the edits from a plan
+I approved, and I checked each change against the SRS and the MIS before asking
+for review.
 
 \textbf{Ahmed:} I used Anthropic's Claude Opus 5.5, accessed through Claude
 Code, while preparing my sections of this document: the creative drawing and

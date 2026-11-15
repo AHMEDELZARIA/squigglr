@@ -3,7 +3,8 @@ import type { Evaluate } from "./evaluation";
 import { IDENTITY } from "./geometry";
 import { improving } from "./improvement";
 import { LessonControl } from "./lessonControl";
-import { check, defaults } from "./settings";
+import { check, defaults, load, save } from "./settings";
+import * as storage from "./storage";
 import { memoryRecords, stroke } from "./testHelpers";
 import type { Settings, Stage } from "./types";
 
@@ -276,6 +277,31 @@ describe("settings check (BR-008)", () => {
     expect(check({ ...defaults(), stagePass: 91 })).toEqual(["stagePass"]);
     expect(check({ ...defaults(), improveWindow: 1.5 })).toEqual(["improveWindow"]);
   });
+  it("a value saved under an older, wider range counts as not chosen and takes the default", () => {
+    // The pause that ends an attempt used to default to 10 seconds; today it goes from 3 to 7.
+    storage.put("settings", "old-child", { ...defaults(), attemptIdle: 10, stagePass: 70 }, "old-child");
+    const loaded = load("old-child");
+    expect(loaded.attemptIdle).toBe(defaults().attemptIdle);
+    expect(loaded.stagePass).toBe(70);
+    expect(check(loaded)).toEqual([]);
+  });
+
+  it("saved values that cannot be used at all fall back to the defaults", () => {
+    storage.put("settings", "odd-child", { attemptLimit: 6, attemptLimitMax: 8, stagePass: "high" }, "odd-child");
+    expect(load("odd-child")).toEqual({ ...defaults(), attemptLimit: 6, attemptLimitMax: 8 });
+    // 6 failed attempts with a cap of 8 is fine. A limit of 10 with a cap of 8 is not, so nothing saved is used.
+    storage.put("settings", "odd-child", { attemptLimit: 10, attemptLimitMax: 8 }, "odd-child");
+    expect(load("odd-child")).toEqual(defaults());
+  });
+
+  it("a child whose values were never changed is saved with nothing chosen", () => {
+    save("new-child", defaults());
+    expect(storage.get("settings", "new-child")).toEqual({});
+    save("new-child", { ...defaults(), stagePass: 90 });
+    expect(storage.get("settings", "new-child")).toEqual({ stagePass: 90 });
+    expect(load("new-child")).toEqual({ ...defaults(), stagePass: 90 });
+  });
+
   it("gives both values of a broken rule", () => {
     expect(check({ ...defaults(), attemptLimit: 10, attemptLimitMax: 8 }).sort()).toEqual([
       "attemptLimit",

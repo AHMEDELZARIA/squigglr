@@ -1,6 +1,6 @@
 # Squigglr POC: Implementation Plan and Code
 
-This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 53 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
+This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 56 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
 
 **What the POC is:** a website where an adult adds a child, sets that child's nine practice values, and starts the Square or Circle lesson. The child watches a demonstration, then draws through three stages with less help each time. Every attempt is scored against the adult's values and saved under that child.
 
@@ -208,6 +208,7 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | Decision | Requirements and sources | Why |
 | --- | --- | --- |
 | All nine values are set per child, on the Lesson ready screen | BR-008; FR-LRN-017; UC-001 | Three are up front, as in the prototype, and the rest under "More settings". A value outside its range, or one that breaks a rule between values, cannot be saved. |
+| A child starts on the recommended settings, and keeps only what an adult changed | BR-008 ("a value the adult does not choose is set to the middle of its range"); SAF-RAY-008 | Only changed values are saved. A saved value that is no longer in range counts as not chosen, so a change to a range can never leave a child unable to start a lesson. |
 | "Neatness" Low, Medium, High is the pass mark at 70, 80, 90, with an example drawing for each | BR-008 ("shows example drawings of what its minimum and maximum look like") | The examples are made from the scoring itself, and a test checks each one. |
 | Practice records show every lesson and attempt; there is no weekly summary | FR-REC-001 to FR-REC-010; Development Plan (POC plan: "no progress summary") | The POC must show that records keep the strokes, the stage and the outcome. The SRS's progress summary is specified separately and belongs to the final phase, so the prototype's weekly "practice story" is not built. |
 | The records screen says it shows practice, not an assessment | BR-006; SAF-RAY-004 | No diagnosis, judgement or comparison. |
@@ -1603,7 +1604,7 @@ export function newId(): string {
 ```
 
 <a id="f-settings"></a>
-**`lib/settings.ts`**. The ranges, the defaults (the middle of each range) and `check`, which names every value that cannot be saved. The Lesson ready screen and the tests both use `check`, so the screen cannot allow something the rules reject.
+**`lib/settings.ts`**. The ranges, the defaults (the middle of each range) and `check`, which names every value that cannot be saved. The Lesson ready screen and the tests both use `check`, so the screen cannot allow something the rules reject. Only the values an adult has set away from the recommended ones are saved, so a child whose values were never changed always gets the current recommended settings. A saved value that today's ranges no longer allow counts as not chosen: after the pause that ends an attempt was halved, children saved with the old value of 10 could not start a lesson until this was added.
 
 `src/lib/settings.ts`
 
@@ -1682,15 +1683,40 @@ export function check(s: Settings): SettingName[] {
   return [...bad];
 }
 
-/** The learner's saved values, with the default for any value not chosen. */
+/**
+ * The learner's saved values, with the default for any value not chosen.
+ *
+ * What comes back can always be used. A value saved by an earlier version
+ * of the app may lie outside today's range (the pause that ends an attempt
+ * used to go up to 15 seconds), and a lesson cannot start with it. A value
+ * that is not allowed today counts as not chosen, so it takes the default
+ * (BR-008). If the values then still break a rule between them, the defaults
+ * are used for all.
+ */
 export function load(learnerId: string): Settings {
-  return { ...defaults(), ...(storage.get<Partial<Settings>>("settings", learnerId) ?? {}) };
+  const saved = storage.get<Partial<Settings>>("settings", learnerId) ?? {};
+  const s = defaults();
+  for (const name of SETTING_NAMES) {
+    const value = saved[name];
+    const r = RANGES[name];
+    if (typeof value === "number" && Number.isInteger(value) && value >= r.min && value <= r.max) s[name] = value;
+  }
+  return check(s).length === 0 ? s : defaults();
 }
 
-/** Saves the values. Throws if any value fails `check`, so no bad value is ever saved. */
+/**
+ * Saves the values. Only the ones the adult set away from the default are
+ * kept, so a child whose values were never changed always gets the current
+ * recommended settings. Throws if any value fails `check`, so no bad value is
+ * ever saved.
+ */
 export function save(learnerId: string, s: Settings): void {
   if (check(s).length > 0) throw new Error("invalidSettings");
-  storage.put("settings", learnerId, s, learnerId);
+  const chosen: Partial<Settings> = {};
+  for (const name of SETTING_NAMES) {
+    if (s[name] !== RANGES[name].default) chosen[name] = s[name];
+  }
+  storage.put("settings", learnerId, chosen, learnerId);
 }
 ```
 
@@ -4076,7 +4102,7 @@ next-env.d.ts
 
 ## 9. Tests
 
-`npm test` runs 53 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
+`npm test` runs 56 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
 
 | Area | What is checked |
 | --- | --- |
@@ -4087,7 +4113,7 @@ next-env.d.ts
 | Stopping | The lesson ends at the limit. One extension when improving, then the end. A pass during the extension still moves on. The cap is never passed. The adult's limit is used. |
 | Suggestion | Offered at the streak, never at trace, held back while improving. Declining needs a new streak. Accepting moves to the chosen earlier stage and keeps the furthest stage. A pass records it as ignored. The adult's streak is used. |
 | Idle | The check-in appears once, then the lesson ends. |
-| Settings | The defaults are the middle of each range. Out of range is rejected. Both values of a broken rule are named. |
+| Settings | The defaults are the middle of each range. Out of range is rejected. Both values of a broken rule are named. A value saved under an older, wider range takes the default when loaded. Saved values that break a rule between them fall back to the defaults. Only values changed from the default are saved. |
 | No guide | A stray mark far away does not spoil the fit. A square a little wider than tall passes; a long thin rectangle does not. A very small drawing is incomplete and reported as too small. A rectangle or an oval is reported as stretched, not as missing parts; a rectangle with a side missing is still reported as missing a part. The wrong shape does not pass even at the lowest pass mark. A smaller circle drawn anywhere passes. |
 | Pass mark examples | For both lessons at 70, 80 and 90: the example drawing is complete, passes at its mark, and would not pass six points higher. |
 
@@ -4341,7 +4367,8 @@ import type { Evaluate } from "./evaluation";
 import { IDENTITY } from "./geometry";
 import { improving } from "./improvement";
 import { LessonControl } from "./lessonControl";
-import { check, defaults } from "./settings";
+import { check, defaults, load, save } from "./settings";
+import * as storage from "./storage";
 import { memoryRecords, stroke } from "./testHelpers";
 import type { Settings, Stage } from "./types";
 
@@ -4614,6 +4641,31 @@ describe("settings check (BR-008)", () => {
     expect(check({ ...defaults(), stagePass: 91 })).toEqual(["stagePass"]);
     expect(check({ ...defaults(), improveWindow: 1.5 })).toEqual(["improveWindow"]);
   });
+  it("a value saved under an older, wider range counts as not chosen and takes the default", () => {
+    // The pause that ends an attempt used to default to 10 seconds; today it goes from 3 to 7.
+    storage.put("settings", "old-child", { ...defaults(), attemptIdle: 10, stagePass: 70 }, "old-child");
+    const loaded = load("old-child");
+    expect(loaded.attemptIdle).toBe(defaults().attemptIdle);
+    expect(loaded.stagePass).toBe(70);
+    expect(check(loaded)).toEqual([]);
+  });
+
+  it("saved values that cannot be used at all fall back to the defaults", () => {
+    storage.put("settings", "odd-child", { attemptLimit: 6, attemptLimitMax: 8, stagePass: "high" }, "odd-child");
+    expect(load("odd-child")).toEqual({ ...defaults(), attemptLimit: 6, attemptLimitMax: 8 });
+    // 6 failed attempts with a cap of 8 is fine. A limit of 10 with a cap of 8 is not, so nothing saved is used.
+    storage.put("settings", "odd-child", { attemptLimit: 10, attemptLimitMax: 8 }, "odd-child");
+    expect(load("odd-child")).toEqual(defaults());
+  });
+
+  it("a child whose values were never changed is saved with nothing chosen", () => {
+    save("new-child", defaults());
+    expect(storage.get("settings", "new-child")).toEqual({});
+    save("new-child", { ...defaults(), stagePass: 90 });
+    expect(storage.get("settings", "new-child")).toEqual({ stagePass: 90 });
+    expect(load("new-child")).toEqual({ ...defaults(), stagePass: 90 });
+  });
+
   it("gives both values of a broken rule", () => {
     expect(check({ ...defaults(), attemptLimit: 10, attemptLimitMax: 8 }).sort()).toEqual([
       "attemptLimit",
@@ -4656,7 +4708,7 @@ Each step ends in something that can be checked. Steps 2 to 4 need no browser an
 
 1. **Set up the project.** In `src/`, add the [configuration files](#f-config) and `src/.gitignore`, then run `npm install`. Check: `npm run typecheck` runs.
 2. **Types, geometry, scoring, catalogue.** Add [`types.ts`](#f-types), [`geometry.ts`](#f-geometry), [`evaluation.ts`](#f-evaluation), [`catalogue.ts`](#f-catalogue), [`testHelpers.ts`](#f-test-helpers) and [`evaluation.test.ts`](#f-test-eval). Check: the scoring tests pass.
-3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 53 tests pass.
+3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 56 tests pass.
 4. **Data.** Add [`storage.ts`](#f-storage), [`settings.ts`](#f-settings), [`profiles.ts`](#f-profiles), [`records.ts`](#f-records). (Steps 3 and 4 share `records.ts` for its `RecordStore` type.)
 5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
 6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.

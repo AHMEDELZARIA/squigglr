@@ -72,13 +72,38 @@ export function check(s: Settings): SettingName[] {
   return [...bad];
 }
 
-/** The learner's saved values, with the default for any value not chosen. */
+/**
+ * The learner's saved values, with the default for any value not chosen.
+ *
+ * What comes back can always be used. A value saved by an earlier version
+ * of the app may lie outside today's range (the pause that ends an attempt
+ * used to go up to 15 seconds), and a lesson cannot start with it. A value
+ * that is not allowed today counts as not chosen, so it takes the default
+ * (BR-008). If the values then still break a rule between them, the defaults
+ * are used for all.
+ */
 export function load(learnerId: string): Settings {
-  return { ...defaults(), ...(storage.get<Partial<Settings>>("settings", learnerId) ?? {}) };
+  const saved = storage.get<Partial<Settings>>("settings", learnerId) ?? {};
+  const s = defaults();
+  for (const name of SETTING_NAMES) {
+    const value = saved[name];
+    const r = RANGES[name];
+    if (typeof value === "number" && Number.isInteger(value) && value >= r.min && value <= r.max) s[name] = value;
+  }
+  return check(s).length === 0 ? s : defaults();
 }
 
-/** Saves the values. Throws if any value fails `check`, so no bad value is ever saved. */
+/**
+ * Saves the values. Only the ones the adult set away from the default are
+ * kept, so a child whose values were never changed always gets the current
+ * recommended settings. Throws if any value fails `check`, so no bad value is
+ * ever saved.
+ */
 export function save(learnerId: string, s: Settings): void {
   if (check(s).length > 0) throw new Error("invalidSettings");
-  storage.put("settings", learnerId, s, learnerId);
+  const chosen: Partial<Settings> = {};
+  for (const name of SETTING_NAMES) {
+    if (s[name] !== RANGES[name].default) chosen[name] = s[name];
+  }
+  storage.put("settings", learnerId, chosen, learnerId);
 }

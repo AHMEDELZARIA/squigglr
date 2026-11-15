@@ -1,9 +1,104 @@
 \section{MIS of the Child Screen Module (\mref{mChildScreen})}
 \label{sec:mChildScreen}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+ChildScreen
+
+\subsection{Uses}
+
+Guided Lesson Control Module (\mref{mLessonControl}), Creative Drawing Module
+(\mref{mCreative}), Refinement Control Module (\mref{mRefineControl}), Learner
+Profile Module (\mref{mProfile}), Learner Settings Module (\mref{mSettings}),
+Display Module (\mref{mDisplay}), Audio Output Module (\mref{mAudio}), Feedback
+Module (\mref{mFeedback}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+\begin{itemize}
+\item ScreenT $= \{\mathit{lesson}, \mathit{creative}\}$, the child-facing
+screens.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+showLesson & -- & -- & noLesson \\
+addStroke & $s$: StrokeT & ReportT & noAttempt \\
+tick & -- & ReportT & noLesson \\
+showCreative & -- & -- & noActiveLearner, unavailable \\
+creativeInput & -- & DrawingT & noDrawing \\
+selectPart & $I$: PartT & -- & noDrawing, unknownStroke \\
+movePart & $\Delta$: PointT & -- & noSelection \\
+resizePart & $r$: $\mathbb{R}$ & -- & noSelection, nonPositiveScale \\
+recolourPart & $c$: ColourIdT & -- & noSelection \\
+erasePart & -- & -- & noSelection \\
+undo & -- & -- & noUndo \\
+redo & -- & -- & noRedo \\
+finishDrawing & -- & -- & noDrawing \\
+restoreDrawing & -- & -- & noDrawing, noOriginal \\
+setRefinement & $\mathit{on}$: $\mathbb{B}$ & -- & noActiveLearner,
+unavailable \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $\mathit{screen}$: ScreenT $\cup$ $\{\bot\}$, the child-facing screen
+shown, or $\bot$ before one is opened.
+\item $\mathit{avatar}$: AvatarT, the active learner's avatar.
+\item $\mathit{drawing}$: DrawingIdT $\cup$ $\{\bot\}$, the creative drawing
+shown, or $\bot$ when the creative space is closed.
+\item $\mathit{report}$: ReportT $\cup$ $\{\bot\}$, the latest guided-lesson
+report, or $\bot$ when none is showing.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{screenPixels}$: the pixels of the browser window.
+\item $\mathit{clock}$: DateTimeT, the current time used to tick a guided
+lesson.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item \texttt{tick} is called once a second.
+\item While a guided lesson is active, \texttt{showLesson} is called and the
+screen passes each finished stroke to the Guided Lesson Control Module
+(\mref{mLessonControl}) every \texttt{tick}.
+\item \texttt{showCreative} is called with an active learner. Drawing edits
+are sent to the Creative Drawing Module (\mref{mCreative}); finishing and
+restoring are sent to the Refinement Control Module (\mref{mRefineControl}).
+\texttt{creativeInput} is called while the creative space is open to
+show new stylus input.
+\item Every feedback report is shown with the Feedback Module
+(\mref{mFeedback}), rendered by the Display Module (\mref{mDisplay}), and its
+sound is played by the Audio Output Module (\mref{mAudio}).
+\item Child-facing controls use images and icons instead of text and have
+touch targets at least \texttt{TARGET\_SIZE\_MIN} (NFR-UX-002, NFR-UX-018).
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\texttt{showLesson} shows the active guided stage, its demonstration or guide, 
+the learner's strokes and avatar; \texttt{addStroke} and \texttt{tick} relay 
+lesson input and time checks and show the resulting feedback. 
+\texttt{showCreative} opens the active learner's editable drawing; 
+\texttt{creativeInput} relays new input to it. 
+The edit programs relay the child's
+selection and changes; \texttt{finishDrawing} asks for automatic refinement
+using the learner's current setting, and \texttt{restoreDrawing} restores the
+original. \texttt{setRefinement} saves the child's refinement choice for the
+active learner.
 
 \newpage

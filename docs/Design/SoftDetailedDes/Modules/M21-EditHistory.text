@@ -1,9 +1,63 @@
 \section{MIS of the Edit History Module (\mref{mHistory})}
 \label{sec:mHistory}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+EditHistory
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+HistoryT is an abstract data type that keeps the drawing states needed to undo
+and redo changes. Each state is a DrawingT of the Creative Drawing Module
+(\mref{mCreative}).
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+new HistoryT & $x$: DrawingT & HistoryT & -- \\
+record & $h$: HistoryT, $x$: DrawingT & -- & -- \\
+undo & $h$: HistoryT & DrawingT & noUndo \\
+redo & $h$: HistoryT & DrawingT & noRedo \\
+canUndo & $h$: HistoryT & $\mathbb{B}$ & -- \\
+canRedo & $h$: HistoryT & $\mathbb{B}$ & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None at the module level. Each HistoryT holds an ordered sequence of drawing
+states and the position of the current state in that sequence.
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item The Creative Drawing Module (\mref{mCreative}) records each completed
+change once, after it has taken effect.
+\item A new change after an undo discards the states that had been available
+for redo.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\texttt{record} appends the new drawing state; 
+\texttt{undo} and \texttt{redo} move one state backward
+or forward and return it for restoration. \texttt{canUndo} and \texttt{canRedo}
+tell whether those operations are available. History is kept for the open
+drawing only.
 
 \newpage

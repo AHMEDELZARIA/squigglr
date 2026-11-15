@@ -1,9 +1,82 @@
 \section{MIS of the Refinement Control Module (\mref{mRefineControl})}
 \label{sec:mRefineControl}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+RefinementControl
+
+\subsection{Uses}
+
+Creative Drawing Module (\mref{mCreative}), Geometry Module
+(\mref{mGeometry}), Refinement Engine Module (\mref{mRefineEngine}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None. The refinement tolerance is set by the team as 
+\texttt{REFINE\_TOLERANCE} in the SRS and the value is not
+fixed in this revision.
+
+\subsubsection{Exported Types}
+
+\begin{itemize}
+\item DrawingIdT, which identifies one saved creative drawing.
+\item RefineStatusT $= \{\mathit{notRefined}, \mathit{refining},
+\mathit{refined}\}$, the refinement state of a drawing.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+finish & $d$: DrawingIdT, $\mathit{on}$: $\mathbb{B}$ & -- & unknownDrawing \\
+restore & $d$: DrawingIdT & -- & unknownDrawing, noOriginal \\
+status & $d$: DrawingIdT & RefineStatusT & unknownDrawing \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $O$: partial map from DrawingIdT to seq of seq of DrawingStrokeT, the
+original strokes kept, in refinement order, for each drawing with an
+unrestored refinement.
+\item $R$: partial map from DrawingIdT to RefineStatusT.
+\item $V$: partial map from DrawingIdT to $\mathbb{N}_0$, the drawing version
+for which each pending result was requested.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{clock}$: DateTimeT, the current time, used to reject a result
+that arrives after the SRS refinement response limit.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item \texttt{finish} is called only for a finished creative drawing, never for
+a guided lesson. The caller passes the active learner's refinement setting
+(FR-CRT-027, FR-CRT-030).
+\item The original strokes are kept by this module and remain available until
+their refinement is undone or restored; the current editable drawing is held
+by the Creative Drawing Module (\mref{mCreative}).
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\texttt{finish} starts a refinement only when enabled in the learner's
+refinement setting; 
+the result is applied only if it is within \texttt{REFINE\_TOLERANCE} in both
+directions for every corresponding path. 
+A failure, late or stale result leaves the drawing unchanged
+(FR-CRT-012, FR-CRT-020, FR-CRT-022). Unchanged strokes are not refined a
+second time (FR-CRT-014).
+\texttt{restore} returns the original of the
+most recent unrestored refinement; successive restores step back through the
+saved originals and each restore is one editable change (FR-CRT-017, FR-CRT-018
+FR-CRT-019).
 
 \newpage

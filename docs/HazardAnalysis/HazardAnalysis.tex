@@ -131,6 +131,11 @@ tables and the roadmap (\#315).\\
 the H-SHA table and kept the last disclosure heading with its text (\#289).\\
 11 November 2026 & Muhammad Huzaifah & The roadmap now points to the SRS for
 the target dates of OI-05 and OI-09 (\#288).\\
+15 November 2026 & Muhammad Huzaifah & The introduction now keeps what
+supporting adults choose apart from the automatic move to the next stage
+(FR-LRN-023) and no longer says the team does not run the refinement model,
+which it may host itself; the list of template changes links the H-MUH table
+(\#344).\\
 \end{longtable}
 
 ~\newpage
@@ -173,7 +178,9 @@ and lets the child restore the original or, if the child cannot, an adult
 (BR-005); a record of every attempt; and progress summaries for supporting
 adults. Supporting adults are parents, guardians, caregivers, educators and
 learning-support staff. They hold the accounts, choose lessons and starting
-stages, and decide when a child moves on (BR-001, BR-003, CON-007). \progname{}
+stages, and decide whether a child goes back a stage (BR-001, BR-003, CON-007).
+A passing attempt moves the child on to the next stage of the same lesson
+without an adult (FR-LRN-023). \progname{}
 gives no diagnosis, no judgement of a child's abilities and no comparison with
 other children (BR-006).
 
@@ -182,7 +189,7 @@ without an adult watching (ASM-002), may not be able to read (FACT-007), and may
 share one device with other children (ASM-008). Adults decide on a child's
 practice from the records (ASM-006), so a record that misstates what the child
 did can mislead them (BR-004). Creative drawings may be refined with an existing
-pretrained model that the team does not train or run (Development Plan, SRC-002;
+pretrained model that the team does not train (Development Plan, SRC-002;
 LC-004). The website also depends on hosting, sign-in and network services
 outside the team's control and, at school, on information technology (IT) staff
 who manage the devices and networks (PER-3, ASM-013).
@@ -251,8 +258,8 @@ in its original order.
   integrity or Availability. Each team member's rows form a subsection with a
   table of their own, so each hazard ID carries its writer's prefix:
   Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM),
-  Table~\ref{tab:fmea-sha} (H-SHA), Table~\ref{tab:fmea-mou} (H-MOU) and the
-  Table~\ref{tab:fmea-mou} (H-MUH) table. True duplicates are combined by
+  Table~\ref{tab:fmea-sha} (H-SHA), Table~\ref{tab:fmea-mou} (H-MOU) and
+  Table~\ref{tab:fmea-muh} (H-MUH). True duplicates are combined by
   reference to one row. A coverage table then checks every component of
   Table~\ref{tab:components} against every category, across all the tables. Each
   recommended action begins with Eliminate, Mitigate or Document/Test. Rows are
@@ -671,7 +678,7 @@ may not be able to install software (CON-002); a school may block the site
 (ASM-013). & \progname{} unavailable or partly blocked at school (C7, C1). \\
 \addlinespace
 External refinement model and its provider & An existing pretrained model, if
-the team uses one for refinement, that the team does not train or run, from a
+the team uses one for refinement, that the team does not train, from a
 provider that may change (SRC-002; LC-004). & The service unavailable or slow,
 changes that are invalid or too large, or drawings sent to it kept by the
 provider (C4). \\
@@ -2668,6 +2675,9 @@ For the revisions made after the TA feedback and the team audit (\#288, \#289,
 \#315), I gave Claude Sonnet 5.5 agents written instructions through the omp
 coding agent; they made the edits, and I checked each change against its issue
 before asking for review.
+For \#344, Claude Opus 5.5 through the omp coding agent made the edits from a plan
+I approved, and I checked each change against its issue before asking for
+review.
 
 \newpage{}
 

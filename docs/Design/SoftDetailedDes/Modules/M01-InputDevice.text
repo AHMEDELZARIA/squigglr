@@ -1,9 +1,80 @@
 \section{MIS of the Input Device Module (\mref{mInputDevice})}
 \label{sec:mInputDevice}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+InputDevice
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None. The supported device and browser combinations are set by the team
+as \texttt{SUPPORTED\_DEVICES} in the SRS and the value is not fixed in 
+this revision.
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item InputKindT $= \{\mathit{down}, \mathit{move}, \mathit{up},
+\mathit{cancel}\}$, the phases of one pointer contact.
+\item InputEventT = tuple of $(\mathit{id}: \text{string}, \mathit{kind}:
+\text{InputKindT}, \mathit{point}: \text{PointT}, \mathit{time}:
+\text{DateTimeT})$, one position reported for a pointer contact, mapped to the
+drawing area. The identifier distinguishes duplicate reports.
+\end{itemize}
+}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+deviceSupported & -- & $\mathbb{B}$ & -- \\
+readEvents & -- & seq of InputEventT & -- \\
+lastInputAt & -- & DateTimeT $\cup$ $\{\bot\}$ & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $Q$: seq of InputEventT, the accepted input events not yet returned by
+\texttt{readEvents}.
+\item $t_{\mathit{last}}$: DateTimeT $\cup$ $\{\bot\}$, the time of the most
+recent accepted event, or $\bot$ before any input.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{pointerEvents}$: the browser's ordered pointer events, including
+their identifiers, coordinates and times.
+\item $\mathit{canvas}$: the current drawing area's position and dimensions in
+the browser window.
+\item $\mathit{device}$: the device and browser in use.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item Browsers report position and order of pointer events with enough detail 
+to identify stylus contacts (ASM-004).
+\item The mapping keeps a point in the same relative position on the canvas 
+when the canvas size or device orientation changes (SAF-AHM-002).
+\item Callers use \texttt{deviceSupported} before starting a guided lesson.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\texttt{deviceSupported} tells whether the current device and browser are in
+the supported set (SAF-RAY-002); \texttt{readEvents} gives each accepted event
+once and duplicate reports are discarded (SAF-AHM-001); 
+and \texttt{lastInputAt} gives the time of the latest accepted
+event for idle checks.
 
 \newpage

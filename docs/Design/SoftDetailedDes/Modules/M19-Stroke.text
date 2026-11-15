@@ -1,9 +1,64 @@
 \section{MIS of the Stroke Module (\mref{mStroke})}
 \label{sec:mStroke}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+Stroke
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+\begin{itemize}
+\item TimedPointT = tuple of $(\mathit{point}: \text{PointT},$
+$\mathit{time}: \text{DateTimeT})$, one position reported during a stroke and
+its time.
+\end{itemize}
+
+StrokeT is the abstract data type shared between modules in
+Table~\ref{tab:shared-types}; its representation is hidden here.
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+new StrokeT & -- & StrokeT & -- \\
+addPoint & $s$: StrokeT, $p$: PointT, $t$: DateTimeT & -- & strokeFinished \\
+finish & $s$: StrokeT & -- & strokeFinished \\
+points & $s$: StrokeT & seq of TimedPointT & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None at the module level. Each StrokeT holds its ordered timed points and
+whether it is finished.
+
+\subsubsection{Environment Variables}
+
+None.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item Points are in CSS pixels on the drawing area and times are in UTC.
+\item The Input Device Module (\mref{mInputDevice}) supplies points in contact
+order, with duplicate reports removed.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\texttt{newStroke} creates an empty stroke; \texttt{addPoint} appends a point 
+and its time;
+\texttt{finish} marks the contact complete; and \texttt{points} gives its
+samples in order.
 
 \newpage

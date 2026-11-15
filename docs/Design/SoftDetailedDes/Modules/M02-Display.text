@@ -1,9 +1,61 @@
 \section{MIS of the Display Module (\mref{mDisplay})}
 \label{sec:mDisplay}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+Display
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+\begin{itemize}
+\item LayerT $= \{\mathit{drawing}, \mathit{guide}, \mathit{feedback}\}$, the
+independently cleared layers of the drawing area.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+clear & $l$: LayerT & -- & -- \\
+drawPath & $l$: LayerT, $P$: PathT, $c$: ColourIdT, $w$: $\mathbb{R}$ & -- & -- \\
+drawEndpoint & $l$: LayerT, $p$: PointT, $c$: ColourIdT & -- & -- \\
+drawImage & $i$: ImageIdT, $p$: PointT & -- & -- \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{canvas}$: the browser canvas and its current dimensions.
+\item $\mathit{screen}$: the pixels shown by the browser.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item Coordinates and widths are in CSS pixels on the drawing area.
+\item The caller supplies the path, colour and width to draw.
+\item Images are supplied by the Feedback Module (\mref{mFeedback}) or the
+Lesson Catalogue Module (\mref{mCatalogue}) as an ImageIdT.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+Each program draws on or clears only its requested layer. The module 
+draws strokes and guides locally, without a server call.
 
 \newpage

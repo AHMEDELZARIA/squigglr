@@ -192,7 +192,7 @@ export default function LessonPage() {
       <Frame>
         <div className="flex items-start justify-between">
           <div>
-            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} />
+            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} avatar={avatar} />
             {/* With no guide, a small picture reminds the child what to draw. */}
             {running && c.stage === "I" && (
               <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">

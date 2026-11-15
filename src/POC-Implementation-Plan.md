@@ -166,7 +166,7 @@ The SRS schedules the suggestion, extension and limit rules for Revision 0. They
 | Idle ranges: 5 to 15 s, 30 to 60 s, 90 to 180 s | The SRS leaves them "TBD". Five seconds is the shortest pause that ends an attempt, and the default is 10. The three ranges do not overlap, so the rule "attempt idle < check-in < lesson end" can never be broken. | New values. The team should confirm them. |
 | The demonstration is always shown first | UC-003 says so. Practice then starts at the stage the adult chose. | The MIS says `beginPractice` goes from D to T only. |
 | A finished attempt stays on screen for 2.5 s with its feedback | Without it, a failed drawing would vanish the instant the attempt ends and the feedback would refer to nothing. | Not specified. |
-| The screens follow the team's lo-fi prototype | Same screens, same order, same words where they fit: who's practising, pick a lesson, lesson ready, the lesson with its footprints and helper, the sticker, the grown-ups area and the practice story. The prototype was tested with a parent and child, so its layout is the best evidence the team has. | See [where the prototype and the SRS differ](#where-the-prototype-and-the-srs-differ). The prototype's pictures could not be downloaded here, so the icons are redrawn. |
+| The screens follow the team's lo-fi prototype | Same screens, same order, same words where they fit: who's practising, pick a lesson, lesson ready, the lesson with its trail of prints and its helper, the sticker, the grown-ups area and the practice story. The prototype was tested with a parent and child, so its layout is the best evidence the team has. | See [where the prototype and the SRS differ](#where-the-prototype-and-the-srs-differ). The prototype's pictures could not be downloaded here, so the icons are redrawn. |
 | The colours and fonts follow the A-Sense presentation | The prototype is black and white on purpose. The colour comes from the slides: navy serif headings, a plain sans-serif body, lavender, mint, peach and butter panels, a purple accent, the pen's blue for strokes, and the squiggle mark. The colours are named once, in `app/globals.css`. | The slides use Cambria and Calibri, which cannot be shipped with a website. Devices that have them use them; others get Caladea and Carlito, open fonts with the same letter widths. |
 | "Neatness" is the pass mark | The prototype's Low, Medium and High are pass marks of 70, 80 and 90, the two ends and the middle of the SRS range. The exact value can still be set under "More settings". | None. |
 | A demo panel shows the result and counters | The teaching team can see the rules working. It is labelled for adults and can be closed. | The SRS does not want a score shown to the child. Remove or hide the panel before real use. |
@@ -2013,7 +2013,7 @@ export function Avatar({
 ```
 
 <a id="f-icons"></a>
-**`components/icons.tsx`**. The prototype's pictures, redrawn in the app's colours: the footprints that show progress, the helper, the practice sticker, and the small picture of what each step shows (drawn from the lesson's own figure).
+**`components/icons.tsx`**. The prototype's pictures, redrawn in the app's colours: the trail of prints that shows progress (the paw prints of the animal in the child's picture), the helper, the practice sticker, and the small picture of what each step shows (drawn from the lesson's own figure).
 
 `src/components/icons.tsx`
 
@@ -2085,32 +2085,105 @@ export const Helper = ({ className }: IconProps) => (
   </svg>
 );
 
-/** A pair of footprints: one step of the lesson, filled once the child has reached it. */
-function Feet({ done }: { done: boolean }) {
-  const fill = done ? BRAND : "#ffffff";
-  const foot = (x: number, y: number) => (
-    <g transform={`translate(${x} ${y})`} fill={fill} stroke={done ? BRAND : INK} strokeWidth={1.6}>
-      <ellipse cx="8" cy="19" rx="6" ry="9" />
-      <circle cx="3.5" cy="6" r="2" />
-      <circle cx="8" cy="4" r="2" />
-      <circle cx="12.5" cy="6" r="2" />
-    </g>
-  );
+// One print for each animal a child can have as their picture. Each is drawn
+// in a 20 x 26 box, toes at the top.
+const PRINTS: Record<string, React.ReactNode> = {
+  // Fox: a narrow dog-like paw with four toes and small claw marks.
+  "🦊": (
+    <>
+      <path d="M10 13c3.4 0 6 2.6 6 5.6 0 2.6-2.4 4.4-6 4.4s-6-1.8-6-4.400c0-3 2.6-5.6 6-5.600z" />
+      <ellipse cx="3.6" cy="11" rx="2" ry="2.8" transform="rotate(-18 3.6 11)" />
+      <ellipse cx="7.6" cy="7.4" rx="2" ry="3" />
+      <ellipse cx="12.4" cy="7.4" rx="2" ry="3" />
+      <ellipse cx="16.4" cy="11" rx="2" ry="2.8" transform="rotate(18 16.4 11)" />
+      <path d="M7.6 2.800v-2M12.4 2.800v-2M2.6 6.800l-.8-1.800M17.4 6.800l.8-1.8" fill="none" strokeLinecap="round" />
+    </>
+  ),
+  // Panda: a wide bear paw with five round toes.
+  "🐼": (
+    <>
+      <ellipse cx="10" cy="17.5" rx="7.5" ry="6" />
+      <circle cx="2.8" cy="10" r="2" />
+      <circle cx="6.2" cy="6.6" r="2.2" />
+      <circle cx="10" cy="5.4" r="2.3" />
+      <circle cx="13.8" cy="6.6" r="2.2" />
+      <circle cx="17.2" cy="10" r="2" />
+    </>
+  ),
+  // Frog: a small heel with three long toes that end in round pads.
+  "🐸": (
+    <>
+      <path d="M10 23L3.5 8M10 23V5M10 23l6.5-15" fill="none" strokeWidth={2.6} strokeLinecap="round" />
+      <circle cx="3.5" cy="7" r="2.6" />
+      <circle cx="10" cy="4" r="2.6" />
+      <circle cx="16.5" cy="7" r="2.6" />
+      <circle cx="10" cy="22" r="3.2" />
+    </>
+  ),
+  // Lion: a big round cat paw, four toes, no claws showing.
+  "🦁": (
+    <>
+      <path d="M10 12.500c4 0 7.5 2.7 7.5 6.2 0 2.9-3 4.8-7.5 4.800s-7.5-1.9-7.5-4.800c0-3.5 3.5-6.2 7.5-6.200z" />
+      <circle cx="3.2" cy="10" r="2.5" />
+      <circle cx="7.6" cy="6" r="2.7" />
+      <circle cx="12.4" cy="6" r="2.7" />
+      <circle cx="16.8" cy="10" r="2.5" />
+    </>
+  ),
+  // Octopus: the round marks of three suckers.
+  "🐙": (
+    <>
+      <circle cx="10" cy="6.5" r="4.5" />
+      <circle cx="5" cy="17" r="4" />
+      <circle cx="15" cy="18.5" r="3.4" />
+    </>
+  ),
+  // Unicorn: a hoof print, shaped like a horseshoe.
+  "🦄": (
+    <path d="M3.5 23C1 16 3 4.5 10 4.500S19 16 16.5 23h-3.600c1.8-5.5 1-12.5-2.9-12.500S5.3 17.5 7.1 23z" />
+  ),
+  // Turtle: a broad foot with short claws along the front.
+  "🐢": (
+    <>
+      <path d="M10 8.500c4.4 0 7.5 3.3 7.5 7.500s-3.1 7.5-7.5 7.5-7.5-3.3-7.5-7.5 3.1-7.5 7.5-7.500z" />
+      <path d="M3.6 8.600L2.4 5.200M7.4 6.200L6.8 2.600M12.6 6.200l.6-3.600M16.4 8.600l1.2-3.4" fill="none" strokeWidth={2.2} strokeLinecap="round" />
+    </>
+  ),
+  // Bee: six tiny feet, three on each side.
+  "🐝": (
+    <>
+      <circle cx="5.5" cy="5" r="2.2" />
+      <circle cx="14.5" cy="5" r="2.2" />
+      <circle cx="4" cy="13" r="2.2" />
+      <circle cx="16" cy="13" r="2.2" />
+      <circle cx="5.5" cy="21" r="2.2" />
+      <circle cx="14.5" cy="21" r="2.2" />
+    </>
+  ),
+};
+
+/** Two prints, one a step ahead of the other: one step of the lesson, filled once the child has reached it. */
+function Prints({ avatar, done }: { avatar: string; done: boolean }) {
+  const print = PRINTS[avatar] ?? PRINTS["🦊"];
+  const colour = done ? BRAND : "#c9cddb";
   return (
-    <svg viewBox="0 0 40 36" className="h-9 w-10" aria-hidden="true">
-      {foot(2, 0)}
-      {foot(22, 6)}
+    <svg viewBox="0 0 46 34" className="h-10 w-[3.4rem]" aria-hidden="true" fill={colour} stroke={colour} strokeWidth={1.2}>
+      <g transform="translate(1 7) rotate(-8 10 13)">{print}</g>
+      <g transform="translate(25 1) rotate(8 10 13)">{print}</g>
     </svg>
   );
 }
 
-/** Progress through the lesson as footprints: watch, then the three drawing steps. */
-export function Footprints({ reached, labels }: { reached: number; labels: string[] }) {
+/**
+ * Progress through the lesson as a trail of prints: watch, then the three
+ * drawing steps. The prints are those of the animal in the child's picture.
+ */
+export function Footprints({ reached, labels, avatar }: { reached: number; labels: string[]; avatar: string }) {
   return (
-    <ol className="flex gap-3" aria-label="Steps of the lesson">
+    <ol className="flex gap-2" aria-label="Steps of the lesson">
       {labels.map((label, i) => (
         <li key={label} aria-label={label} aria-current={i === reached ? "step" : undefined}>
-          <Feet done={i <= reached} />
+          <Prints avatar={avatar} done={i <= reached} />
         </li>
       ))}
     </ol>
@@ -3090,7 +3163,7 @@ export default function LessonPage() {
       <Frame>
         <div className="flex items-start justify-between">
           <div>
-            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} />
+            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} avatar={avatar} />
             {/* With no guide, a small picture reminds the child what to draw. */}
             {running && c.stage === "I" && (
               <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">

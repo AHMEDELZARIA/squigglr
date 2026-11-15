@@ -69,6 +69,10 @@ on it.
 on the page, each with its time. It is used to time inactivity (SAF-SHA-006)
 and to read the answer to the adult check.
 \item $\mathit{clock}$: DateTimeT, the current time.
+\item $\mathit{checkStore}$: tuple of $(\mathit{wrong}: \mathbb{N}_0,
+\mathit{closedUntil}: \text{DateTimeT})$, kept in the browser's storage so
+that reloading the page does not reset it: the number of wrong answers to the
+adult check in a row, and the time until which no adult check is shown.
 \end{itemize}
 
 \subsubsection{Assumptions}
@@ -87,7 +91,8 @@ exception. Callers use \texttt{isSignedIn} before the programs that raise
 The full semantics are given in Revision~0. In brief:
 \begin{itemize}
 \item \texttt{init} sets $\mathit{lastInput}$ to the current time. A session
-kept by the browser from an earlier visit stays open.
+kept by the browser from an earlier visit stays open. If $\mathit{checkStore}$
+is empty, it is set to $(0, \mathit{clock})$.
 \item \texttt{signUp} creates an account with the sign-in service and signs the
 adult in. It collects nothing but the email and password (NFR-SEC-004).
 \item \texttt{signIn} opens a session and gives true, or gives false and logs a
@@ -98,9 +103,16 @@ input for \texttt{IDLE\_TIMEOUT} is ended and the timeout is logged
 (SAF-SHA-006, NFR-SEC-005).
 \item \texttt{adult} gives the signed-in adult. Every module that reads or saves
 an adult's data is given this value by its caller (SAF-SHA-001).
-\item \texttt{adultCheck} shows a short check that a young child cannot pass
-alone and gives whether it was passed. When it gives false, the caller does
-not carry out $\mathit{act}$ (SAF-RAY-001, SAF-RAY-008).
+\item \texttt{adultCheck} shows a whole number from 100 to 999, drawn at random
+for each call and written in words in \texttt{INTERFACE\_LANGUAGE} (for example
+``four hundred and twelve''), and a pad of the digits 0 to 9. The number is
+never spoken. It gives true if the adult types the number's three digits, and
+false if the answer is wrong or the adult leaves the check. A right answer sets
+$\mathit{wrong}$ to 0. The third wrong answer in a row sets $\mathit{wrong}$ to
+0 and $\mathit{closedUntil}$ to 5 minutes later; until $\mathit{clock}$ reaches
+$\mathit{closedUntil}$, \texttt{adultCheck} gives false without showing a
+check. When it gives false, the caller does not carry out $\mathit{act}$
+(SAF-RAY-001, SAF-RAY-008).
 \end{itemize}
 \texttt{unavailable} is raised when the sign-in service does not answer.
 

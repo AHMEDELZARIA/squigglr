@@ -56,9 +56,13 @@ order, with duplicate reports removed.
 
 \subsubsection{Access Routine Semantics}
 
-\texttt{newStroke} creates an empty stroke; \texttt{addPoint} appends a point 
+\texttt{new StrokeT} creates an empty stroke; \texttt{addPoint} appends a point 
 and its time;
 \texttt{finish} marks the contact complete; and \texttt{points} gives its
 samples in order.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

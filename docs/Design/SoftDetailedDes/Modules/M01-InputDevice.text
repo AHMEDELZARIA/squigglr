@@ -13,9 +13,12 @@ Stroke Module (\mref{mStroke}).
 
 \subsubsection{Exported Constants}
 
+{\sloppy
 None. The supported device and browser combinations are set by the team
 as \texttt{SUPPORTED\_DEVICES} in the SRS and the value is not fixed in 
 this revision.
+
+}
 
 \subsubsection{Exported Types}
 
@@ -76,5 +79,9 @@ the supported set (SAF-RAY-002); \texttt{readEvents} gives each accepted event
 once and duplicate reports are discarded (SAF-AHM-001); 
 and \texttt{lastInputAt} gives the time of the latest accepted
 event for idle checks.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

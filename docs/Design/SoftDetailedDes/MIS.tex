@@ -69,6 +69,7 @@ urlcolor=cyan          % color of external links
 
 \section{Revision History}
 
+{\small
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3cm}
 >{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X}
 \toprule \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
@@ -104,12 +105,13 @@ SRS data dictionary (\#303).\\
 a clock in M6 and M4, a device check before \texttt{select}, the adult kept by
 M4, the stage chosen on accepting a suggestion, and missed parts noted only at
 the end of an attempt.\\
-14 November 2026 & Shamil Canbolat & Added 6 Input Device M1, 7 Display (M2), 
-16 Creative Drawing (M11), 17 Refinement Control (M12), 18 Child Screen (M13), 
-24 Stroke (M19), 26 Edit History (M21), Refinement Engine (M22), and AI 
-disclosure \\
+14 November 2026 & Shamil Canbolat & Wrote the MIS of the Input Device (M1),
+Display (M2), Creative Drawing (M11), Refinement Control (M12), Child Screen
+(M13), Stroke (M19), Edit History (M21) and Refinement Engine (M22) Modules,
+and added his AI disclosure (\#265)\\
 \bottomrule
 \end{tabularx}
+}
 
 ~\newpage
 
@@ -250,7 +252,6 @@ PathT & seq of PointT, a line through the points in order. The parts of a
 lesson's figure are paths. & Notation\\
 DateTimeT & A date and time, in Coordinated Universal Time & Notation\\
 PixelT & The colour of one pixel of the browser window & Notation\\
-InputEventT & One key press or pointer event received by the browser & Notation\\
 StageT & $\{D, T, E, I\}$, the stages of a guided lesson (the set $L$ of SRS
 Section~9.2) & \mref{mCatalogue}\\
 DrawingStageT & $\{T, E, I\}$, the stages at which the child draws (the set
@@ -484,6 +485,7 @@ The team used the following tools while preparing this document:
   (Huzaifah);
   \item \textbf{Anthropic's Claude Sonnet 5.5}, run as a helper agent through
   the omp coding agent (Huzaifah);
+  \item \textbf{VS Code Copilot} using ChatGPT 6 Luna (Shamil);
   \item \textbf{GitHub Copilot code review}, which the team uses to provide
   automated reviews on pull requests to the project repository.
 \end{itemize}
@@ -567,7 +569,7 @@ through the omp coding agent. It copied the constraints from the SRS data
 dictionary and matched them to the types already in this document, and I
 checked each row against the SRS before asking for review.
 
-\textbf{Shamil:} For Rev -1, I used VS Code Copilot which uses ChatGPT 6 Luna. 
+\textbf{Shamil:} For Rev~$-1$, I used VS Code Copilot which uses ChatGPT 6 Luna. 
 I used the chatbot to generate skeletons of my sections with starting text 
 based on analysis of the MG and MIS documents. I proofread, edited, rewrote, 
 or kept the prose sections, however for the tables and variable names 

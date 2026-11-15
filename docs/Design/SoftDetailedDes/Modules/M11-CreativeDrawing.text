@@ -109,8 +109,12 @@ stroke or edit action is counted as one change.
 The Edit History Module (\mref{mHistory}) keeps them undoable. Selection and
 editing affect only the selected strokes; move applies an offset and resize
 scales about the centre of the selected part's bounding box. A refinement 
-replacement only changes the parts paths but keeps stroke order, colour, and 
-width. The version of each part is incremented for each change and refinement
+replacement only changes the paths of the strokes but keeps stroke order, colour, and 
+width. The drawing's version is incremented for each change and refinement
 replacements with stale versions are rejected.
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

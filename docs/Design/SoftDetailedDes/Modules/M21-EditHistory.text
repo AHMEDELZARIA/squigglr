@@ -60,4 +60,8 @@ or forward and return it for restoration. \texttt{canUndo} and \texttt{canRedo}
 tell whether those operations are available. History is kept for the open
 drawing only.
 
+\subsubsection{Local Functions}
+
+None.
+
 \newpage

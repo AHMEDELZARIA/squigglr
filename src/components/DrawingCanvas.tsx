@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { erase } from "@/lib/geometry";
 import type { Guide, Path, Point, Stroke } from "@/lib/types";
 
 // M01 Input Device and M02 Display in one component. It turns the browser's
@@ -9,13 +10,21 @@ import type { Guide, Path, Point, Stroke } from "@/lib/types";
 // demonstration and the "look here" marks.
 
 const SIZE = 1000;
+/** How much the eraser rubs out around the stylus, in drawing units. */
+const ERASER = 34;
+
+export type Tool = "pencil" | "eraser";
 
 interface Props {
   guide: Guide;
   /** The finished strokes of the current attempt. */
   strokes: Stroke[];
+  /** Whether the stylus draws or rubs out. */
+  tool?: Tool;
   /** Called at each stylus lift with the finished stroke. */
   onStroke: (stroke: Stroke) => void;
+  /** Called when the eraser is lifted, with the strokes that are left, if any were rubbed out. */
+  onErase?: (strokes: Stroke[]) => void;
   /** Called when the browser cuts a contact off (pointercancel). */
   onCancel: () => void;
   /** Called with the time of every accepted input, for the idle rules. */
@@ -52,6 +61,10 @@ export function DrawingCanvas(props: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const current = useRef<Stroke | null>(null);
   const pointerId = useRef<number | null>(null);
+  /** While rubbing out: the strokes as they stand, and where the eraser is. */
+  const rubbing = useRef<{ strokes: Stroke[]; at: Point; changed: boolean } | null>(null);
+  /** Once a stylus has been used, finger and palm touches no longer draw. */
+  const penSeen = useRef(false);
   const latest = useRef(props);
   latest.current = props;
 
@@ -123,8 +136,17 @@ export function DrawingCanvas(props: Props) {
     // The child's strokes, exactly as drawn.
     ctx.strokeStyle = "#3a4fa0";
     ctx.lineWidth = 12;
-    strokes.forEach((s) => trace(ctx, s.points));
+    (rubbing.current?.strokes ?? strokes).forEach((s) => trace(ctx, s.points));
     if (current.current) trace(ctx, current.current.points);
+
+    // The eraser, shown as a ring where it is rubbing.
+    if (rubbing.current) {
+      ctx.strokeStyle = "#5b6478";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(rubbing.current.at.x, rubbing.current.at.y, ERASER, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   }, []);
 
   // Keep the canvas sharp at any size, and repaint when it is resized.
@@ -167,9 +189,19 @@ export function DrawingCanvas(props: Props) {
   };
 
   const add = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const p = toPoint(e);
+    const rub = rubbing.current;
+    if (rub) {
+      const left = erase(rub.strokes, p, ERASER);
+      rub.changed ||= left.length !== rub.strokes.length || left.some((s, i) => s !== rub.strokes[i]);
+      rub.strokes = left;
+      rub.at = p;
+      latest.current.onInput(p.t);
+      paint();
+      return;
+    }
     const stroke = current.current;
     if (!stroke) return;
-    const p = toPoint(e);
     const last = stroke.points[stroke.points.length - 1];
     // The same position reported twice counts once (SAF-AHM-001).
     if (last && last.x === p.x && last.y === p.y) return;
@@ -184,11 +216,24 @@ export function DrawingCanvas(props: Props) {
       aria-label="Drawing area"
       className="aspect-square w-full rounded-3xl border-2 border-dashed border-line bg-white"
       onPointerDown={(e) => {
-        // One contact at a time: a second finger or a resting palm is ignored.
-        if (props.disabled || pointerId.current !== null) return;
+        if (props.disabled) return;
+        const pen = e.pointerType === "pen";
+        if (pen) penSeen.current = true;
+        // A stylus wins over a resting palm: touches are ignored once a stylus
+        // has been used, and a stylus takes over from a touch already down.
+        if (e.pointerType === "touch" && penSeen.current) return;
+        if (pointerId.current !== null) {
+          if (!pen) return; // one contact at a time
+          current.current = null;
+          rubbing.current = null;
+        }
         pointerId.current = e.pointerId;
         e.currentTarget.setPointerCapture(e.pointerId);
-        current.current = { points: [] };
+        if (props.tool === "eraser") {
+          rubbing.current = { strokes: props.strokes, at: toPoint(e), changed: false };
+        } else {
+          current.current = { points: [] };
+        }
         add(e);
       }}
       onPointerMove={(e) => {
@@ -197,17 +242,26 @@ export function DrawingCanvas(props: Props) {
       onPointerUp={(e) => {
         if (e.pointerId !== pointerId.current) return;
         add(e);
+        pointerId.current = null;
+        const rub = rubbing.current;
+        if (rub) {
+          rubbing.current = null;
+          if (rub.changed) props.onErase?.(rub.strokes);
+          else paint();
+          return;
+        }
         const stroke = current.current!;
         current.current = null;
-        pointerId.current = null;
         props.onStroke(stroke);
       }}
       onPointerCancel={(e) => {
         if (e.pointerId !== pointerId.current) return;
+        const wasDrawing = current.current !== null;
         current.current = null;
+        rubbing.current = null;
         pointerId.current = null;
         paint();
-        props.onCancel();
+        if (wasDrawing) props.onCancel();
       }}
     />
   );

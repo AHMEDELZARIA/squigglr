@@ -30,9 +30,9 @@ export interface Guide {
   endpoints: Point[];
 }
 
-export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure";
+export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall";
 
-/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for offFigure. */
+/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for offFigure and tooSmall. */
 export interface Difficulty {
   kind: DifficultyKind;
   index: number;
@@ -57,6 +57,15 @@ export interface Evaluation {
   /** The two shares behind the result, kept for the demo panel. */
   drawn: number;
   onFigure: number;
+  /** How the drawing was laid over the figure before it was scored. */
+  fit: Fit;
+}
+
+/** Maps a point of the drawing onto the figure: scale it, then move it by (dx, dy). */
+export interface Fit {
+  scale: number;
+  dx: number;
+  dy: number;
 }
 
 /** The nine adult-set values of one learner (BR-008). Times are in seconds. */

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as catalogue from "./catalogue";
 import { evaluate } from "./evaluation";
+import { erase } from "./geometry";
 import { squareStroke, stroke, strokeOf } from "./testHelpers";
 import type { DrawingStage, Stroke } from "./types";
 
@@ -67,11 +68,54 @@ describe("evaluate: square", () => {
   });
 
   it("at the independent stage, position and size do not matter", () => {
-    const small = squareStroke(-200, 150, 0.4);
+    const small = squareStroke(-200, 150, 0.5);
     expect(run("square", [small], "E").passed).toBe(false);
     const e = run("square", [small], "I");
     expect(e.passed).toBe(true);
     expect(e.guidance).toBe("independent");
+  });
+
+  it("at the independent stage, a stray mark far from the square does not spoil the fit", () => {
+    const drawing = [squareStroke(-150, 100, 0.6), stroke({ x: 900, y: 80 }, { x: 960, y: 120 })];
+    const e = run("square", drawing, "I");
+    expect(e.class).toBe("complete");
+    expect(e.passed).toBe(true);
+  });
+
+  it("at the independent stage, a square drawn a little wider than tall still passes", () => {
+    const p = (x: number, y: number) => ({ x: 500 + (x - 500) * 1.14, y });
+    const wide = stroke(p(250, 250), p(750, 250), p(750, 750), p(250, 750), p(250, 250));
+    expect(run("square", [wide], "I").passed).toBe(true);
+  });
+
+  it("at the independent stage, a long thin rectangle is not a square", () => {
+    const thin = stroke({ x: 200, y: 400 }, { x: 800, y: 400 }, { x: 800, y: 600 }, { x: 200, y: 600 }, { x: 200, y: 400 });
+    expect(run("square", [thin], "I").passed).toBe(false);
+  });
+
+  it("at the independent stage, a very small drawing is incomplete and reported as too small", () => {
+    const e = run("square", [squareStroke(0, 0, 0.2)], "I");
+    expect(e.class).toBe("incomplete");
+    expect(e.passed).toBe(false);
+    expect(e.difficulties).toContainEqual({ kind: "tooSmall", index: 0 });
+    // With a guide, size is set by the guide, so "too small" is never reported there.
+    expect(run("square", [squareStroke(0, 0, 0.2)], "T").difficulties).not.toContainEqual({ kind: "tooSmall", index: 0 });
+  });
+
+  it("rubbing out a stray line turns a drawing that fails into one that passes", () => {
+    const stray = stroke({ x: 300, y: 500 }, { x: 700, y: 500 });
+    expect(run("square", [squareStroke(), stray], "T", 90).passed).toBe(false);
+    const after = erase([squareStroke(), stray], { x: 500, y: 500 }, 205);
+    expect(after).toHaveLength(1);
+    expect(run("square", after, "T", 90).passed).toBe(true);
+  });
+
+  it("rubbing through a line cuts it in two and leaves the rest as drawn", () => {
+    const [left, right] = erase([stroke({ x: 100, y: 100 }, { x: 500, y: 100 })], { x: 300, y: 100 }, 30);
+    expect(left.points[0]).toMatchObject({ x: 100, y: 100 });
+    expect(left.points.at(-1)!.x).toBeLessThan(271);
+    expect(right.points[0].x).toBeGreaterThan(329);
+    expect(right.points.at(-1)).toMatchObject({ x: 500, y: 100 });
   });
 
   it("is invalid for no strokes, a tap, or a missing coordinate, and never passes", () => {
@@ -105,5 +149,18 @@ describe("evaluate: circle", () => {
 
   it("does not pass a square drawn in the circle lesson", () => {
     expect(run("circle", [squareStroke()]).passed).toBe(false);
+  });
+
+  it("with no guide, the wrong shape does not pass even at the lowest pass mark", () => {
+    const triangle = stroke({ x: 500, y: 250 }, { x: 750, y: 750 }, { x: 250, y: 750 }, { x: 500, y: 250 });
+    expect(run("circle", [squareStroke()], "I", 70).passed).toBe(false);
+    expect(run("circle", [squareStroke(100, -80, 0.6)], "I", 70).passed).toBe(false);
+    expect(run("square", parts.map(strokeOf), "I", 70).passed).toBe(false);
+    expect(run("square", [triangle], "I", 70).passed).toBe(false);
+  });
+
+  it("with no guide, a smaller circle drawn anywhere passes", () => {
+    const small = parts.map((part) => strokeOf(part.map((p) => ({ x: p.x * 0.5 + 50, y: p.y * 0.5 + 300 }))));
+    expect(run("circle", small, "I").passed).toBe(true);
   });
 });

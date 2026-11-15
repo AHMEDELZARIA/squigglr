@@ -68,12 +68,18 @@ export function guide(id: string, stage: DrawingStage): Guide {
   return { outline: [], endpoints: [] };
 }
 
-/** The predefined difficulties of a stage: any missed part, any missed endpoint, or drawing off the figure. */
-export function difficulties(id: string, _stage: DrawingStage): Difficulty[] {
+/**
+ * The predefined difficulties of a stage: any missed part, any missed
+ * endpoint, or drawing off the figure. With no guide, a drawing can also be
+ * too small.
+ */
+export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
   const { figure } = lesson(id);
-  return [
+  const all: Difficulty[] = [
     ...figure.parts.map((_, index): Difficulty => ({ kind: "missedPart", index })),
     ...figure.endpoints.map((_, index): Difficulty => ({ kind: "missedEndpoint", index })),
     { kind: "offFigure", index: 0 },
   ];
+  if (stage === "I") all.push({ kind: "tooSmall", index: 0 });
+  return all;
 }

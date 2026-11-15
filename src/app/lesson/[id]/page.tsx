@@ -4,14 +4,24 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
 import { Avatar } from "@/components/Avatar";
-import { DrawingCanvas } from "@/components/DrawingCanvas";
-import { DoorIcon, Footprints, Helper, LockIcon, RestartIcon, StageGuide, Sticker } from "@/components/icons";
+import { DrawingCanvas, type Tool } from "@/components/DrawingCanvas";
+import {
+  DoorIcon,
+  EraserIcon,
+  Footprints,
+  Helper,
+  LockIcon,
+  PencilIcon,
+  RestartIcon,
+  StageGuide,
+  Sticker,
+} from "@/components/icons";
 import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { GET_A_GROWN_UP, difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
-import { distance, toPath } from "@/lib/geometry";
+import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
 import { records } from "@/lib/records";
@@ -31,12 +41,12 @@ const STEP: Record<DrawingStage, { number: number; name: string }> = {
   I: { number: 3, name: "On my own" },
 };
 const NO_GUIDE: Guide = { outline: [], endpoints: [] };
-/** How long a finished attempt stays on screen with its feedback. */
-const SHOW_MS = 2500;
+/** How long a finished attempt stays on screen with its feedback: longer when there is something to look at. */
+const SHOW_PASSED_MS = 2500;
+const SHOW_NOT_PASSED_MS = 5000;
 
-/** The stretches of a part of the figure that no stroke comes near. */
-function undrawn(part: Path, strokes: Stroke[], tol: number): Path[] {
-  const drawn = strokes.map(toPath);
+/** The stretches of a part of the figure that no drawn line comes near. */
+function undrawn(part: Path, drawn: Path[], tol: number): Path[] {
   const runs: Path[] = [];
   let run: Path = [];
   for (let i = 1; i < part.length; i++) {
@@ -72,6 +82,7 @@ export default function LessonPage() {
   const [showing, setShowing] = useState(false); // a finished attempt is on screen
   const [card, setCard] = useState(false); // the go-back card is open
   const [panel, setPanel] = useState(true);
+  const [tool, setTool] = useState<Tool>("pencil");
 
   const setStrokes = (next: Stroke[]) => {
     strokesRef.current = next;
@@ -101,25 +112,36 @@ export default function LessonPage() {
     if (r.feedback[0] === "checkIn") return;
     // An attempt just ended: leave it on screen for a moment, then clear it.
     const figure: Figure = catalogue.lesson(control.current!.lessonId).figure;
-    // With no guide, pointing at a place would give the figure away.
-    const point = stageOfAttempt !== "I";
+    // The glow is worked out on the figure, then laid back over the drawing
+    // where the child made it. (With a guide the two are the same place.)
+    const fit = control.current!.lastFinal?.fit ?? { scale: 1, dx: 0, dy: 0 };
+    const back = inverse(fit);
+    const drawn = applyAll(fit, strokesRef.current.map(toPath));
     setGlow(
-      point
-        ? r.difficulties
-            .filter((d) => d.kind === "missedPart")
-            .flatMap((d) => undrawn(figure.parts[d.index], strokesRef.current, tolerance(figure)))
-        : [],
+      applyAll(
+        back,
+        r.difficulties
+          .filter((d) => d.kind === "missedPart")
+          .flatMap((d) => undrawn(figure.parts[d.index], drawn, tolerance(figure))),
+      ),
     );
-    setMarks(point ? r.difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => figure.endpoints[d.index]) : []);
+    setMarks(
+      r.difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
+    );
+    const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
     setShowing(true);
-    setTimeout(() => {
-      setStrokes([]);
-      setMarks([]);
-      setGlow([]);
-      setShowing(false);
-      setReport((current) => (current === r ? null : current));
-      lastInput.current = Date.now(); // the idle clocks start again once the child can draw
-    }, SHOW_MS);
+    setTool("pencil");
+    setTimeout(
+      () => {
+        setStrokes([]);
+        setMarks([]);
+        setGlow([]);
+        setShowing(false);
+        setReport((current) => (current === r ? null : current));
+        lastInput.current = Date.now(); // the idle clocks start again once the child can draw
+      },
+      passed ? SHOW_PASSED_MS : SHOW_NOT_PASSED_MS,
+    );
   }, []);
 
   // Tick: lets an idle attempt end, and runs the lesson's idle rules.
@@ -156,6 +178,15 @@ export default function LessonPage() {
     const stage = c.stage;
     setStrokes([...strokesRef.current, stroke]);
     show(c.addStroke(stroke), stage);
+    refresh();
+  };
+
+  /** The eraser was lifted: the drawing that is left is checked like any other stylus lift. */
+  const onErase = (left: Stroke[]) => {
+    if (!running || c.stage === "D") return;
+    const stage = c.stage;
+    setStrokes(left);
+    show(c.replaceStrokes(left), stage);
     refresh();
   };
 
@@ -203,45 +234,71 @@ export default function LessonPage() {
           {avatar && <Avatar avatar={avatar} />}
         </div>
 
-        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,62vh)]">
-          <DrawingCanvas
-            guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
-            strokes={strokes}
-            marks={marks}
-            glow={glow}
-            demonstration={running && c.stage === "D" ? lesson.figure.parts : undefined}
-            disabled={!running || c.stage === "D" || showing}
-            onStroke={onStroke}
-            onCancel={() => {
-              c.interrupt();
-              setStrokes([]);
-              refresh();
-            }}
-            onInput={(t) => {
-              lastInput.current = t;
-              if (report?.feedback[0] === "checkIn") setReport(null);
-            }}
-          />
-
-          {running && c.stage === "D" && (
-            <button
-              onClick={() => {
-                c.beginPractice();
-                lastInput.current = Date.now();
+        <div className="relative mx-auto -mt-4 flex w-full max-w-[min(100%,calc(62vh+6rem))] items-center gap-3">
+          {/* The child's tools: draw, or rub out a part of the drawing. */}
+          <div className={`flex flex-col gap-3 ${running && c.stage !== "D" ? "" : "invisible"}`}>
+            {(
+              [
+                { value: "pencil", label: "Pencil", Icon: PencilIcon },
+                { value: "eraser", label: "Eraser", Icon: EraserIcon },
+              ] as const
+            ).map(({ value, label, Icon }) => (
+              <button
+                key={value}
+                onClick={() => setTool(value)}
+                aria-label={label}
+                aria-pressed={tool === value}
+                className={`flex h-16 w-16 items-center justify-center rounded-2xl border-[3px] ${
+                  tool === value ? "border-brand bg-lavender-deep text-brand" : "border-ink bg-white"
+                }`}
+              >
+                <Icon className="h-8 w-8" />
+              </button>
+            ))}
+          </div>
+          <div className="relative min-w-0 flex-1">
+            <DrawingCanvas
+              tool={tool}
+              onErase={onErase}
+              guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
+              strokes={strokes}
+              marks={marks}
+              glow={glow}
+              demonstration={running && c.stage === "D" ? lesson.figure.parts : undefined}
+              disabled={!running || c.stage === "D" || showing}
+              onStroke={onStroke}
+              onCancel={() => {
+                c.interrupt();
+                setStrokes([]);
                 refresh();
               }}
-              aria-label="Start drawing"
-              className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-5xl text-white"
-            >
-              ▶
-            </button>
-          )}
+              onInput={(t) => {
+                lastInput.current = t;
+                if (report?.feedback[0] === "checkIn") setReport(null);
+              }}
+            />
 
-          {!running && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white">
-              <Sticker className="h-3/5 w-3/5" />
-            </div>
-          )}
+            {running && c.stage === "D" && (
+              <button
+                onClick={() => {
+                  c.beginPractice();
+                  lastInput.current = Date.now();
+                  refresh();
+                }}
+                aria-label="Start drawing"
+                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-5xl text-white"
+              >
+                ▶
+              </button>
+            )}
+
+            {!running && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white">
+                <Sticker className="h-3/5 w-3/5" />
+              </div>
+            )}
+          </div>
+          <div className="w-16 shrink-0" aria-hidden="true" />
         </div>
 
         <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
@@ -265,7 +322,12 @@ export default function LessonPage() {
               </button>
             )}
             {running && c.stage !== "D" && (
-              <button onClick={startAgain} disabled={showing || strokes.length === 0} aria-label="Start again" className={childButton}>
+              <button
+                onClick={startAgain}
+                disabled={showing || strokes.length === 0}
+                aria-label="Start again"
+                className={childButton}
+              >
                 <RestartIcon className="h-8 w-8" />
               </button>
             )}
@@ -286,7 +348,11 @@ export default function LessonPage() {
 
       {/* The go-back card, for the grown-up. The child can keep practising until it is opened. */}
       {card && suggested && c.stage !== "D" && c.stage !== "T" && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Go back a step?">
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4"
+          role="dialog"
+          aria-label="Go back a step?"
+        >
           <div className="w-full max-w-2xl rounded-3xl border-4 border-ink bg-white p-6 sm:p-8">
             <p className="flex items-center gap-2 text-xl font-bold">
               <LockIcon className="h-6 w-6" />
@@ -306,15 +372,24 @@ export default function LessonPage() {
             </div>
             <p className="mt-5 text-2xl">Go back to an earlier step?</p>
             <div className="mt-3 flex flex-wrap gap-3">
-              <button onClick={() => answer(true, "T")} className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+              <button
+                onClick={() => answer(true, "T")}
+                className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+              >
                 Yes, go back to step 1
               </button>
               {c.stage === "I" && (
-                <button onClick={() => answer(true, "E")} className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+                <button
+                  onClick={() => answer(true, "E")}
+                  className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+                >
                   Yes, go back to step 2
                 </button>
               )}
-              <button onClick={() => answer(false)} className="rounded-2xl border-2 border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+              <button
+                onClick={() => answer(false)}
+                className="rounded-2xl border-2 border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+              >
                 No, keep trying step {STEP[c.stage].number}
               </button>
             </div>
@@ -367,7 +442,9 @@ function StepTile({
 }) {
   return (
     <div className="text-center">
-      <div className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-ink"}`}>
+      <div
+        className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-ink"}`}
+      >
         <span className="absolute top-1.5 left-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
           {STEP[stage].number}
         </span>

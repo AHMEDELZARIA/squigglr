@@ -24,6 +24,7 @@ const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
   missedPart: { message: "Look where it's glowing.", image: "🧩", colour: "#b84a30" },
   missedEndpoint: { message: "The line missed a dot.", image: "📍", colour: "#b84a30" },
   offFigure: { message: "Some lines went away from the shape.", image: "↗️", colour: "#b84a30" },
+  tooSmall: { message: "Try drawing it bigger.", image: "🔍", colour: "#b84a30" },
 };
 
 /** What the helper says at the start of each stage. */

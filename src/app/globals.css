@@ -42,6 +42,18 @@ h2 {
   font-family: var(--font-serif);
 }
 
+/* On a tablet: no grey flash on a tap, no wait for a double tap, and no
+   pop-up menu or text selection when a finger rests on a button. */
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* The drawing area must not scroll or zoom the page while the child draws. */
 canvas {
   touch-action: none;

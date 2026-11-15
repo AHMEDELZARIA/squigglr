@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Evaluate } from "./evaluation";
+import { IDENTITY } from "./geometry";
 import { improving } from "./improvement";
 import { LessonControl } from "./lessonControl";
 import { check, defaults } from "./settings";
@@ -19,7 +20,7 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
   const evaluate: Evaluate = (_x, _f, stage, _ds, stagePass) => {
     const guidance = stage === "I" ? "independent" : "assisted";
     if (next === "inv") {
-      return { class: "invalid", guidance, result: 0, passed: false, difficulties: [], drawn: 0, onFigure: 0 };
+      return { class: "invalid", guidance, result: 0, passed: false, difficulties: [], drawn: 0, onFigure: 0, fit: IDENTITY };
     }
     const result = typeof next === "number" ? next : next.result;
     const complete = typeof next === "number";
@@ -31,6 +32,7 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
       difficulties: [],
       drawn: result / 100,
       onFigure: result / 100,
+      fit: IDENTITY,
     };
   };
 
@@ -118,6 +120,16 @@ describe("attempts that do not count", () => {
     expect(h.control.evaluable).toBe(0);
     expect(h.records.attempts[0]).toMatchObject({ outcome: "interrupted", result: null });
     expect(h.control.stage).toBe("T");
+  });
+
+  it("rubbing everything out leaves the attempt open, with nothing to count", () => {
+    const h = harness();
+    h.control.addStroke(stroke({ x: 0, y: 0 }, { x: 100, y: 0 }));
+    expect(h.control.replaceStrokes([]).feedback).toEqual([]);
+    h.wait(h.settings.attemptIdle + 1);
+    expect(h.control.tick(h.time() - (h.settings.attemptIdle + 1) * 1000).feedback).toEqual([]);
+    expect(h.control.failed).toBe(0);
+    expect(h.records.attempts).toHaveLength(0);
   });
 
   it("a stylus lift alone does not end an attempt that has not passed", () => {

@@ -285,6 +285,7 @@ const DIFFICULTY = {
   missedPart: "A part of the shape was not drawn.",
   missedEndpoint: "The line did not reach an endpoint.",
   offFigure: difficultyFeedback("offFigure").message,
+  tooSmall: "The drawing was very small.",
 } as const;
 
 function Item({ label, value }: { label: string; value: string | number }) {

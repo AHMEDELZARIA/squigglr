@@ -90,8 +90,17 @@ export class LessonControl {
   /** A finished stroke. A pass ends the attempt here, at the stylus lift. */
   addStroke(stroke: Stroke): Report {
     if (!this.isRunning() || this.attempt === null) throw new Error("noAttempt");
+    return this.replaceStrokes([...this.attempt.strokes, stroke]);
+  }
+
+  /**
+   * The whole drawing after a stylus lift, whether the child drew or rubbed
+   * something out. A pass ends the attempt here.
+   */
+  replaceStrokes(strokes: Stroke[]): Report {
+    if (!this.isRunning() || this.attempt === null) throw new Error("noAttempt");
     const attempt = this.attempt;
-    attempt.addStroke(stroke, this.now());
+    attempt.replaceStrokes(strokes, this.now());
     if (attempt.outcome !== "passed") return NOTHING;
 
     const stage = attempt.stage;

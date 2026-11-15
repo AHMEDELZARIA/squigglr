@@ -44,6 +44,21 @@ export const RestartIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+export const PencilIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.2}>
+    <path d="M4 20l1-4.5L16.5 4a2.1 2.1 0 0 1 3 3L8 18.500z" />
+    <path d="M14.5 6l3 3" />
+  </svg>
+);
+
+export const EraserIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.2}>
+    <path d="M8.5 19.500L3.5 14.500a1.5 1.5 0 0 1 0-2.100l8.4-8.400a1.5 1.5 0 0 1 2.1 0l6 6a1.5 1.5 0 0 1 0 2.100l-7.4 7.400z" />
+    <path d="M8 8l8 8" />
+    <path d="M8.5 19.500H21" />
+  </svg>
+);
+
 export const DoorIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.4}>
     <path d="M6 20V4h8v16" />

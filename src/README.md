@@ -25,6 +25,8 @@ npm run dev
 
 Then open http://localhost:3000.
 
+To try it on a tablet, put the tablet on the same Wi-Fi as the laptop and open the "Network" address that `npm run dev` prints (for example `http://192.168.1.20:3000`).
+
 ## Checks
 
 ```bash

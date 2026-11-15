@@ -260,6 +260,10 @@ Unlikely Changes heading with its table (\#289).\\
 11 November 2026 & Muhammad Huzaifah & Brought the open issues up to date:
 closed OI-06 and OI-08 with what settled them, gave the seven open issues a
 current status and target date, and removed dates repeated elsewhere (\#288).\\
+15 November 2026 & Muhammad Huzaifah & Matched the UC-008 and UC-009 rows of the
+traceability table to the requirements whose Sources and Traceability fields
+name them, and said what happens to an edit in the creative space that cannot be
+applied, in the product inputs table (\#351).\\
 \end{longtable}
 
 ~\\
@@ -2607,8 +2611,10 @@ attempt limits (\mbox{\reqref{FR-LRN-030}}, \mbox{\reqref{FR-LRN-031}}). Missing
 is not passed and is not counted (\mbox{\reqref{FR-LRN-010}}, \mbox{\reqref{FR-LRN-032}}). \\
 \addlinespace
 Strokes and edits in the creative space: draw, move, resize, recolour, erase,
-undo & Child & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-008} & To be
-stated with the FR-CRT requirements. \\
+undo & Child & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-008} & An edit
+that cannot be applied leaves the drawing as it was (\ucref{006}, failure flow
+2a); undo goes back no further than the drawing as it was when the child opened
+it (\mbox{\reqref{FR-CRT-007}}). \\
 \addlinespace
 Request to turn refinement off or restore the original drawing & Child or
 supporting adult & \ucref{007}, \ucref{010} &
@@ -8301,13 +8307,13 @@ G.4; SRC-009.01 & \ucref{006} & \reqref{FR-CRT-001}--\reqref{FR-CRT-030} \\
 G.4; SRC-009.01 & \ucref{007} & \reqref{NFR-UX-011}; \reqref{NFR-PERF-002};
 \reqref{FR-CRT-010}; \reqref{FR-CRT-030} \\
 \addlinespace
-G.5; SRC-001 & \ucref{008} & \reqref{FR-REC-001}--\reqref{FR-REC-010};
-\reqref{FR-PRG-006}; \reqref{FR-LRN-007}; \reqref{FR-LRN-009};
-\reqref{FR-LRN-021}; \reqref{FR-LRN-025}; \reqref{FR-LRN-030} \\
+G.5; SRC-001 & \ucref{008} & \reqref{FR-LRN-007}; \reqref{FR-LRN-009};
+\reqref{FR-LRN-021}; \reqref{FR-LRN-030}; \reqref{FR-CRT-028};
+\reqref{FR-REC-001}--\reqref{FR-REC-009} \\
 \addlinespace
-G.6; SRC-005.02 & \ucref{009} & \reqref{FR-PRG-001}--\reqref{FR-PRG-012};
-\reqref{NFR-UX-003}; \reqref{NFR-UX-014}; \reqref{NFR-PERF-003};
-\reqref{NFR-SEC-001} \\
+G.6; SRC-005.02 & \ucref{009} & \reqref{FR-LRN-012}; \reqref{FR-CRT-028};
+\reqref{FR-PRG-001}--\reqref{FR-PRG-012}; \reqref{NFR-UX-003};
+\reqref{NFR-UX-014}; \reqref{NFR-PERF-003}; \reqref{NFR-SEC-001} \\
 \addlinespace
 G.3, G.6; SRC-008, SRC-009.01 & \ucref{010} & \reqref{FR-LRN-017};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-014}; \reqref{NFR-PERF-003};
@@ -8972,6 +8978,7 @@ branches and commits, merged main into my branches, fixed merge conflicts and
 wrote my pull request descriptions. In this document, this covered Sections 7,
 9.3 to 9.5, 19, 20, 22 to 24 and 26. All decisions in my sections are my own.
 For the revisions made after the TA and supervisor feedback and the team audit (\#279, \#288, \#289, \#303), I gave Claude Sonnet 5.5 agents written instructions through the omp coding agent; they made the edits, and I checked each change against its issue before asking for review.
+For \#351, Claude Opus 5.5 through the omp coding agent made the edits from a plan I approved, and I checked each change against its issue before asking for review.
 
 \newpage{}
 

@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/*
+ * The look follows the team's A-Sense presentation: a white page, navy serif
+ * headings, a plain sans-serif body, and soft lavender, mint, peach and
+ * butter panels with a purple accent.
+ *
+ * The slides use Cambria and Calibri. Those are used where the device has
+ * them; elsewhere Caladea and Carlito, open fonts with the same letter
+ * widths, are loaded in their place.
+ */
+@theme {
+  --font-serif: Cambria, Caladea, Georgia, "Times New Roman", serif;
+  --font-sans: Calibri, Carlito, "Segoe UI", system-ui, sans-serif;
+
+  --color-ink: #23304a;
+  --color-muted: #5b6478;
+  --color-brand: #5e51b8;
+  --color-stroke: #3a4fa0;
+  --color-panel: #f4f5f8;
+  --color-line: #e1e4ec;
+  --color-lavender: #f2f0fc;
+  --color-lavender-deep: #dcd7f5;
+  --color-mint: #edf7f2;
+  --color-mint-deep: #d3eee3;
+  --color-green: #24735b;
+  --color-peach: #fef3ec;
+  --color-peach-deep: #fde1d3;
+  --color-coral: #b84a30;
+  --color-butter: #fbf0c4;
+  --color-butter-ink: #7a5c00;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+}
+
+h1,
+h2 {
+  font-family: var(--font-serif);
+}
+
+/* The drawing area must not scroll or zoom the page while the child draws. */
+canvas {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}

@@ -101,4 +101,8 @@ using the learner's current setting, and \texttt{restoreDrawing} restores the
 original. \texttt{setRefinement} saves the child's refinement choice for the
 active learner.
 
+\subsubsection{Local Functions}
+
+None.
+
 \newpage

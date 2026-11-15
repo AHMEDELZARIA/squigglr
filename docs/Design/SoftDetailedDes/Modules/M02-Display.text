@@ -58,4 +58,8 @@ Lesson Catalogue Module (\mref{mCatalogue}) as an ImageIdT.
 Each program draws on or clears only its requested layer. The module 
 draws strokes and guides locally, without a server call.
 
+\subsubsection{Local Functions}
+
+None.
+
 \newpage

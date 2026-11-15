@@ -76,7 +76,11 @@ A failure, late or stale result leaves the drawing unchanged
 second time (FR-CRT-014).
 \texttt{restore} returns the original of the
 most recent unrestored refinement; successive restores step back through the
-saved originals and each restore is one editable change (FR-CRT-017, FR-CRT-018
+saved originals and each restore is one editable change (FR-CRT-017, FR-CRT-018,
 FR-CRT-019).
+
+\subsubsection{Local Functions}
+
+None.
 
 \newpage

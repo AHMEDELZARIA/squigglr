@@ -55,4 +55,8 @@ same scale. It reports failure or unavailability rather than substituting a
 successful looking result. The Refinement Control Module
 (\mref{mRefineControl}) checks the result before applying it.
 
+\subsubsection{Local Functions}
+
+None.
+
 \newpage

@@ -260,6 +260,10 @@ Unlikely Changes heading with its table (\#289).\\
 11 November 2026 & Muhammad Huzaifah & Brought the open issues up to date:
 closed OI-06 and OI-08 with what settled them, gave the seven open issues a
 current status and target date, and removed dates repeated elsewhere (\#288).\\
+15 November 2026 & Muhammad Huzaifah & Recorded in \texttt{ADULT\_CHECK} the
+form of the adult check chosen in the MIS: the adult types the digits of a
+number shown in words, and no check is shown for 5 minutes after three wrong
+answers in a row (\#343).\\
 \end{longtable}
 
 ~\\
@@ -1453,9 +1457,13 @@ child-facing screen. \emph{Unit:} CSS pixels. \emph{Value:} 44 by 44, from WCAG
 the session and logs out the user. \emph{Unit:} minutes. \emph{Value:}
 team-defined; TBD. \emph{Trace:} SAF-SHA-006.\\
 \addlinespace
-\texttt{ADULT\_CHECK} & Whether a supporting adult must confirm an adult-only
-action before it can be carried out. \emph{Unit:} Boolean. \emph{Value:}
-required for adult-only actions. \emph{Trace:} SAF-RAY-001, SAF-RAY-008.\\
+\texttt{ADULT\_CHECK} & The check a supporting adult passes before an
+adult-only action is carried out. \emph{Value:} the adult types the digits of a
+whole number from 100 to 999 that is shown written in words in
+\texttt{INTERFACE\_LANGUAGE}, for example ``four hundred and twelve'', and never
+spoken. Each check shows a new number and takes one answer; after three wrong
+answers in a row, no check is shown for 5 minutes. Chosen in the MIS (Adult
+Access Module). \emph{Trace:} SAF-RAY-001, SAF-RAY-008.\\
 \addlinespace
 \texttt{SUPPORTED\_DEVICES} & Supported browser and device combinations on which
 Squigglr is expected to function properly. \emph{Unit:} device/browser set.
@@ -5640,8 +5648,7 @@ until an adult accepts or declines it, or a pass or the end of the lesson
 clears it.\\
 \emph{Rationale:} children should be able to practise without constant adult
 help (SRC-005, \intref{P1}{34:13}), but progression belongs to adults (CON-007;
-SRC-005, \intref{P1}{28:37}). The form of the check is \texttt{ADULT\_CHECK},
-TBD.\\
+SRC-005, \intref{P1}{28:37}). The form of the check is \texttt{ADULT\_CHECK}.\\
 \emph{Fit criterion:} in prepared walkthroughs, no adult-only action completes
 without passing the adult check, and a pending suggestion changes nothing until
 an adult acts.\\
@@ -8972,6 +8979,7 @@ branches and commits, merged main into my branches, fixed merge conflicts and
 wrote my pull request descriptions. In this document, this covered Sections 7,
 9.3 to 9.5, 19, 20, 22 to 24 and 26. All decisions in my sections are my own.
 For the revisions made after the TA and supervisor feedback and the team audit (\#279, \#288, \#289, \#303), I gave Claude Sonnet 5.5 agents written instructions through the omp coding agent; they made the edits, and I checked each change against its issue before asking for review.
+For \#343, Claude Opus 5.5 through the omp coding agent made the edits from a plan I approved, and I checked each change against its issue before asking for review.
 
 \newpage{}
 

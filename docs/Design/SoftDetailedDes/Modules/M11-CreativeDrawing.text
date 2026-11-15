@@ -1,9 +1,116 @@
 \section{MIS of the Creative Drawing Module (\mref{mCreative})}
 \label{sec:mCreative}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+CreativeDrawing
+
+\subsection{Uses}
+
+Input Device Module (\mref{mInputDevice}), Display Module (\mref{mDisplay}),
+Stroke Module (\mref{mStroke}), Edit History Module (\mref{mHistory}), Storage
+Module (\mref{mStorage}), Connection Recovery Module (\mref{mRecovery}).
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+{\sloppy
+\begin{itemize}
+\item StrokeIdT, which identifies one stroke in a drawing.
+\item DrawingStrokeT = tuple of $(\mathit{id}: \text{StrokeIdT},$
+$\mathit{path}: \text{PathT}, \mathit{colour}: \text{ColourIdT},$
+$\mathit{width}: \mathbb{R})$, one editable stroke in a creative drawing.
+\item DrawingT = tuple of $(\mathit{strokes}: \text{seq of DrawingStrokeT},$
+$\mathit{refined}: \mathbb{B}, \mathit{version}: \mathbb{N}_0)$, the current
+editable drawing, whether it holds an unrestored refinement, and its change
+version.
+\item PartT $= \text{set of StrokeIdT}$, the selected strokes.
+\end{itemize}
+}
+
+DrawingIdT is defined by the Refinement Control Module
+(\mref{mRefineControl}), which identifies saved creative drawings.
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+newDrawing & $a$: AdultIdT, $p$: LearnerIdT & DrawingIdT & notOwner,
+unavailable \\
+drawings & $a$: AdultIdT, $p$: LearnerIdT & seq of DrawingIdT & notOwner,
+unavailable \\
+open & $a$: AdultIdT, $p$: LearnerIdT, $d$: DrawingIdT & DrawingT &
+notOwner, unknownDrawing, unavailable \\
+current & $d$: DrawingIdT & DrawingT & unknownDrawing \\
+processInput & -- & DrawingT & noDrawing \\
+setStyle & $c$: ColourIdT, $w$: $\mathbb{R}$ & -- & noDrawing,
+invalidWidth \\
+select & $I$: PartT & -- & noDrawing, unknownStroke \\
+move & $\Delta$: PointT & DrawingT & noSelection \\
+resize & $r$: $\mathbb{R}$ & DrawingT & noSelection, nonPositiveScale \\
+recolour & $c$: ColourIdT & DrawingT & noSelection \\
+erase & -- & DrawingT & noSelection \\
+undo & -- & DrawingT & noUndo \\
+redo & -- & DrawingT & noRedo \\
+replacePaths & $d$: DrawingIdT, $P$: seq of PathT, $v$: $\mathbb{N}_0$,
+$\mathit{refined}$: $\mathbb{B}$ & DrawingT & unknownDrawing, outOfDate,
+wrongStrokeCount \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+\item $\mathit{active}$: DrawingIdT $\cup$ $\{\bot\}$, the open drawing.
+\item $X$: seq of DrawingStrokeT, the strokes of the open drawing in order.
+\item $I$: PartT, the selected strokes.
+\item $v$: $\mathbb{N}_0$, the version of the open drawing.
+\item $\mathit{dirty}$: $\mathbb{B}$, whether the latest change has not yet
+been confirmed saved.
+\item $s$: StrokeT $\cup$ $\{\bot\}$, the contact currently being collected,
+or $\bot$ when no stylus contact is open.
+\item $c$: ColourIdT and $w$: $\mathbb{R}$, the style used for new strokes.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+None. Saved drawings are reached through the Storage Module
+(\mref{mStorage}); changes awaiting a successful save are kept by the
+Connection Recovery Module (\mref{mRecovery}).
+
+\subsubsection{Assumptions}
+
+{\sloppy
+\begin{itemize}
+\item $a$ is the signed in adult that the Adult Access Module (\mref{mAccess}) 
+gives.
+\item $p$ is the active learner.
+\item \texttt{processInput} drains the Input Device Module's
+(\mref{mInputDevice}) accepted events once, and the caller sets the colour and
+width for new strokes with \texttt{setStyle}.
+\item Refinement is applied only through the Refinement Control Module
+(\mref{mRefineControl}); \texttt{replacePaths} is used only after that module
+has checked the result or is restoring saved original paths.
+\end{itemize}
+}
+
+\subsubsection{Access Routine Semantics}
+
+Drawings are saved and reopened for the active learner while remaining 
+editable and are not counted as attempts (FR-CRT-023, FR-CRT-024, FR-CRT-028). 
+\texttt{processInput} builds a StrokeT from each down/move/up contact using 
+the Stroke Module (\mref{mStroke}) and draws it locally as it arrives. Each 
+stroke or edit action is counted as one change.
+The Edit History Module (\mref{mHistory}) keeps them undoable. Selection and
+editing affect only the selected strokes; move applies an offset and resize
+scales about the centre of the selected part's bounding box. A refinement 
+replacement only changes the parts paths but keeps stroke order, colour, and 
+width. The version of each part is incremented for each change and refinement
+replacements with stale versions are rejected.
 
 \newpage

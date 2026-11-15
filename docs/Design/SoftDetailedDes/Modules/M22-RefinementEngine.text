@@ -1,9 +1,58 @@
 \section{MIS of the Refinement Engine Module (\mref{mRefineEngine})}
 \label{sec:mRefineEngine}
 
-\wss{This module's interface is written in \#265. Follow the layout of
-the module template: Module, Uses, Syntax (Exported Constants, Exported Types,
-Exported Access Programs) and Semantics (State Variables, Environment Variables, Assumptions,
-Access Routine Semantics, Local Functions).}
+\subsection{Module}
+
+RefinementEngine
+
+\subsection{Uses}
+
+None.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Types}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{accessprograms}
+refine & $P$: seq of PathT & seq of PathT & refinementFailed, unavailable \\
+\end{accessprograms}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item $\mathit{service}$: the external refinement service, or its local
+replacement.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item $P$ contains paths from one creative drawing, in stroke order and at the
+scale of the drawing area.
+\item The caller sends coordinates only, without learner or account
+information (SAF-SHA-002).
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\texttt{refine} sends
+the input paths to the refinement service and returns adjusted paths at the
+same scale. It reports failure or unavailability rather than substituting a
+successful looking result. The Refinement Control Module
+(\mref{mRefineControl}) checks the result before applying it.
 
 \newpage

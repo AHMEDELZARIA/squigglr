@@ -1,36 +1,60 @@
 "use client";
 
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
+import { Avatar } from "@/components/Avatar";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
+import { DoorIcon, Footprints, Helper, LockIcon, RestartIcon, StageGuide, Sticker } from "@/components/icons";
+import { LessonIcon } from "@/components/LessonIcon";
+import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
-import { difficultyFeedback, feedback } from "@/lib/feedback";
+import { tolerance } from "@/lib/evaluation";
+import { GET_A_GROWN_UP, difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
+import { distance, toPath } from "@/lib/geometry";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
 import { records } from "@/lib/records";
 import * as settings from "@/lib/settings";
-import type { DrawingStage, Guide, Point, Report, Stage, Stroke } from "@/lib/types";
+import type { DrawingStage, Figure, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
 
-// M13 Child Screen. It shows the lesson and relays input: each finished
-// stroke goes to Lesson Control, which is also ticked twice a second. All
-// the rules live in lib/lessonControl.ts; nothing here decides a pass.
+// M13 Child Screen (prototype S6 to S11). It shows the lesson and relays
+// input: each finished stroke goes to Lesson Control, which is also ticked
+// twice a second. All the rules live in lib/lessonControl.ts; nothing here
+// decides a pass.
 
-/** The four stages, each with how much guidance it gives (the filled dots). */
-const STAGES: { stage: Stage; label: string; guidance: number }[] = [
-  { stage: "D", label: "See it", guidance: 4 },
-  { stage: "T", label: "Trace it", guidance: 3 },
-  { stage: "E", label: "Fewer guides", guidance: 2 },
-  { stage: "I", label: "On your own", guidance: 0 },
-];
+const ORDER: Stage[] = ["D", "T", "E", "I"];
+const STEP_LABELS = ["Watch", "Full outline", "Endpoints only", "On my own"];
+const STEP: Record<DrawingStage, { number: number; name: string }> = {
+  T: { number: 1, name: "Full outline" },
+  E: { number: 2, name: "Endpoints only" },
+  I: { number: 3, name: "On my own" },
+};
 const NO_GUIDE: Guide = { outline: [], endpoints: [] };
 /** How long a finished attempt stays on screen with its feedback. */
 const SHOW_MS = 2500;
 
-const middle = (path: Point[]) => path[Math.floor(path.length / 2)];
-const midpoint = (path: Point[]) =>
-  path.length === 2 ? { x: (path[0].x + path[1].x) / 2, y: (path[0].y + path[1].y) / 2 } : middle(path);
+/** The stretches of a part of the figure that no stroke comes near. */
+function undrawn(part: Path, strokes: Stroke[], tol: number): Path[] {
+  const drawn = strokes.map(toPath);
+  const runs: Path[] = [];
+  let run: Path = [];
+  for (let i = 1; i < part.length; i++) {
+    const a = part[i - 1];
+    const b = part[i];
+    const pieces = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 10));
+    for (let j = 0; j <= pieces; j++) {
+      const p = { x: a.x + ((b.x - a.x) * j) / pieces, y: a.y + ((b.y - a.y) * j) / pieces };
+      if (distance(p, drawn) > tol) run.push(p);
+      else if (run.length > 0) {
+        runs.push(run);
+        run = [];
+      }
+    }
+  }
+  if (run.length > 0) runs.push(run);
+  return runs.filter((r) => r.length > 1);
+}
 
 export default function LessonPage() {
   const { id } = useParams<{ id: string }>();
@@ -38,13 +62,21 @@ export default function LessonPage() {
   const { ask, dialog } = useAdultCheck();
   const control = useRef<LessonControl | null>(null);
   const lastInput = useRef<number | null>(null);
+  const strokesRef = useRef<Stroke[]>([]);
   const [, refresh] = useReducer((n: number) => n + 1, 0);
   const [avatar, setAvatar] = useState("");
-  const [strokes, setStrokes] = useState<Stroke[]>([]);
+  const [strokes, setStrokesState] = useState<Stroke[]>([]);
   const [report, setReport] = useState<Report | null>(null);
   const [marks, setMarks] = useState<Point[]>([]);
+  const [glow, setGlow] = useState<Path[]>([]);
   const [showing, setShowing] = useState(false); // a finished attempt is on screen
+  const [card, setCard] = useState(false); // the go-back card is open
   const [panel, setPanel] = useState(true);
+
+  const setStrokes = (next: Stroke[]) => {
+    strokesRef.current = next;
+    setStrokesState(next);
+  };
 
   // Start the lesson for the active child, with the child's settings as they are now.
   useEffect(() => {
@@ -68,23 +100,24 @@ export default function LessonPage() {
     setReport(r);
     if (r.feedback[0] === "checkIn") return;
     // An attempt just ended: leave it on screen for a moment, then clear it.
-    const figure = catalogue.lesson(control.current!.lessonId).figure;
-    setMarks(
-      stageOfAttempt === "I"
-        ? [] // with no guide, pointing at a place would give the figure away
-        : r.difficulties.flatMap((d) =>
-            d.kind === "missedPart"
-              ? [midpoint(figure.parts[d.index])]
-              : d.kind === "missedEndpoint"
-                ? [figure.endpoints[d.index]]
-                : [],
-          ),
+    const figure: Figure = catalogue.lesson(control.current!.lessonId).figure;
+    // With no guide, pointing at a place would give the figure away.
+    const point = stageOfAttempt !== "I";
+    setGlow(
+      point
+        ? r.difficulties
+            .filter((d) => d.kind === "missedPart")
+            .flatMap((d) => undrawn(figure.parts[d.index], strokesRef.current, tolerance(figure)))
+        : [],
     );
+    setMarks(point ? r.difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => figure.endpoints[d.index]) : []);
     setShowing(true);
     setTimeout(() => {
       setStrokes([]);
       setMarks([]);
+      setGlow([]);
       setShowing(false);
+      setReport((current) => (current === r ? null : current));
       lastInput.current = Date.now(); // the idle clocks start again once the child can draw
     }, SHOW_MS);
   }, []);
@@ -106,185 +139,198 @@ export default function LessonPage() {
   const lesson = catalogue.lesson(c.lessonId);
   const running = c.status === "active" || c.status === "suggested";
   const live = c.attempt?.last ?? (showing ? c.lastFinal : null);
+  const suggested = c.status === "suggested";
+
+  // What the helper says: the latest feedback, or else the line for this stage.
+  const bubble = !running
+    ? feedback(c.ending === "completed" ? "lessonComplete" : "lessonEnded").message
+    : report
+      ? feedback(report.feedback[0]).message
+      : suggested
+        ? GET_A_GROWN_UP
+        : stageLine(c.stage);
+  const hints = report && running ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
 
   const onStroke = (stroke: Stroke) => {
     if (!running || c.stage === "D") return;
     const stage = c.stage;
-    setStrokes((s) => [...s, stroke]);
+    setStrokes([...strokesRef.current, stroke]);
     show(c.addStroke(stroke), stage);
     refresh();
   };
 
-  const answer = async (accept: boolean, stage?: DrawingStage) => {
-    if (!(await ask())) return; // only an adult can answer (SAF-RAY-001)
-    c.answerSuggestion(accept, stage);
-    if (accept) setStrokes([]);
+  /** "Start again": wipes this try. The attempt is kept apart as interrupted and is not counted. */
+  const startAgain = () => {
+    c.interrupt();
+    setStrokes([]);
     setReport(null);
     refresh();
   };
 
-  const leave = async () => {
-    if (running && !(await ask())) return;
-    router.push("/lessons");
+  const openCard = async () => {
+    if (await ask()) setCard(true); // only an adult can answer (SAF-RAY-001)
   };
 
+  const answer = (accept: boolean, stage?: DrawingStage) => {
+    c.answerSuggestion(accept, stage);
+    if (accept) setStrokes([]);
+    setReport(null);
+    setCard(false);
+    lastInput.current = Date.now();
+    refresh();
+  };
+
+  const leave = async (to: string) => {
+    if (await ask()) router.push(to);
+  };
+
+  const childButton =
+    "flex h-16 w-16 items-center justify-center rounded-2xl border-[3px] border-ink bg-white hover:bg-lavender disabled:border-line disabled:text-line";
+
   return (
-    <div className="mx-auto max-w-xl">
-      {/* Where the child is in the lesson: pictures, no reading needed. */}
-      <div className="flex items-center gap-2">
-        <span className="text-4xl" aria-label="Child drawing now">
-          {avatar}
-        </span>
-        <ol className="grid flex-1 grid-cols-4 gap-2">
-          {STAGES.map(({ stage, label, guidance }, i) => {
-            const current = c.stage === stage;
-            return (
-              <li
-                key={stage}
-                aria-label={label}
-                aria-current={current ? "step" : undefined}
-                className={`rounded-xl px-2 py-2 ${current ? "bg-lavender ring-2 ring-brand" : "bg-panel"}`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                      current ? "bg-brand text-white" : "bg-lavender-deep text-brand"
-                    }`}
-                  >
-                    {i + 1}
-                  </span>
-                  <span className={`text-xs leading-tight font-bold ${current ? "text-ink" : "text-muted"}`}>{label}</span>
-                </div>
-                <div className="mt-1.5 flex gap-1" aria-hidden="true">
-                  {[0, 1, 2, 3].map((d) => (
-                    <span
-                      key={d}
-                      className={`h-2 w-2 rounded-full border border-brand ${d < guidance ? "bg-brand" : "bg-white"}`}
-                    />
-                  ))}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-        <button onClick={leave} aria-label="Leave the lesson (grown-ups)" className="rounded-full p-2 text-2xl">
-          🔒
-        </button>
-      </div>
+    <>
+      <Frame>
+        <div className="flex items-start justify-between">
+          <div>
+            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} />
+            {/* With no guide, a small picture reminds the child what to draw. */}
+            {running && c.stage === "I" && (
+              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">
+                <LessonIcon figure={lesson.figure} className="h-14 w-14" />
+              </div>
+            )}
+          </div>
+          {avatar && <Avatar avatar={avatar} />}
+        </div>
 
-      <div className="relative mt-4">
-        <DrawingCanvas
-          guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
-          strokes={strokes}
-          marks={marks}
-          demonstration={running && c.stage === "D" ? lesson.figure.parts : undefined}
-          disabled={!running || c.stage === "D" || showing}
-          onStroke={onStroke}
-          onCancel={() => {
-            c.interrupt();
-            setStrokes([]);
-            refresh();
-          }}
-          onInput={(t) => {
-            lastInput.current = t;
-            if (report?.feedback[0] === "checkIn") setReport(null);
-          }}
-        />
-
-        {running && c.stage === "D" && (
-          <button
-            onClick={() => {
-              c.beginPractice();
-              lastInput.current = Date.now();
+        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,62vh)]">
+          <DrawingCanvas
+            guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
+            strokes={strokes}
+            marks={marks}
+            glow={glow}
+            demonstration={running && c.stage === "D" ? lesson.figure.parts : undefined}
+            disabled={!running || c.stage === "D" || showing}
+            onStroke={onStroke}
+            onCancel={() => {
+              c.interrupt();
+              setStrokes([]);
               refresh();
             }}
-            aria-label="Start drawing"
-            className="absolute bottom-6 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full bg-green text-5xl text-white shadow-lg"
-          >
-            ▶
-          </button>
-        )}
+            onInput={(t) => {
+              lastInput.current = t;
+              if (report?.feedback[0] === "checkIn") setReport(null);
+            }}
+          />
 
-        {!running && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-white/90 text-center">
-            <span className="text-8xl">{c.ending === "completed" ? "🎉" : "🌈"}</span>
-            <p className="mt-4 font-serif text-3xl font-bold">
-              {feedback(c.ending === "completed" ? "lessonComplete" : "lessonEnded").message}
-            </p>
-            <div className="mt-6 flex gap-3">
-              <Link href="/lessons" className="rounded-full bg-brand px-5 py-3 font-bold text-white">
-                Lessons
-              </Link>
-              <Link href="/records" className="rounded-full border border-line bg-white px-5 py-3 font-bold">
-                See the records
-              </Link>
+          {running && c.stage === "D" && (
+            <button
+              onClick={() => {
+                c.beginPractice();
+                lastInput.current = Date.now();
+                refresh();
+              }}
+              aria-label="Start drawing"
+              className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-5xl text-white"
+            >
+              ▶
+            </button>
+          )}
+
+          {!running && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white">
+              <Sticker className="h-3/5 w-3/5" />
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3" aria-live="polite">
+            <Helper className="h-20 w-[4.25rem] shrink-0" />
+            <div>
+              <p className="rounded-[2rem] border-[3px] border-ink bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
+              {hints.map((kind) => (
+                <p key={kind} className="mt-1 pl-6 text-lg font-bold text-butter-ink">
+                  {difficultyFeedback(kind).message}
+                </p>
+              ))}
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Feedback: the effort first, then what was seen in the drawing. */}
-      <div className="mt-4 min-h-20" aria-live="polite">
-        {report &&
-          running &&
-          report.feedback.map((kind) => {
-            const f = feedback(kind);
-            return (
-              <p
-                key={kind}
-                className="flex w-fit items-center gap-3 rounded-full px-5 py-2 text-xl font-bold"
-                style={{ color: f.colour, backgroundColor: `${f.colour}1a` }}
-              >
-                <span className="text-3xl">{f.image}</span>
-                {f.message}
-              </p>
-            );
-          })}
-        {report &&
-          running &&
-          [...new Set(report.difficulties.map((d) => d.kind))].map((kind) => {
-            const f = difficultyFeedback(kind);
-            return (
-              <p key={kind} className="mt-2 flex items-center gap-3 pl-5 text-base font-bold" style={{ color: f.colour }}>
-                <span className="text-2xl">{f.image}</span>
-                {f.message}
-              </p>
-            );
-          })}
-      </div>
-
-      {/* For the adult: a go-back suggestion. The child keeps practising meanwhile. */}
-      {c.status === "suggested" && (
-        <div className="mt-2 rounded-2xl bg-lavender p-4 text-sm">
-          <p className="font-bold text-brand">For the grown-up: would an earlier stage help?</p>
-          <p className="text-muted">
-            There have been {c.streak} attempts in a row that did not pass at this stage. Nothing changes unless you
-            choose.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button onClick={() => answer(true, "T")} className="rounded-full bg-brand px-3 py-2 text-white">
-              Go back to tracing
-            </button>
-            {c.stage === "I" && (
-              <button onClick={() => answer(true, "E")} className="rounded-full bg-brand px-3 py-2 text-white">
-                Go back to corners only
+          <div className="flex items-center gap-3">
+            {running && suggested && (
+              <button onClick={openCard} className={`${buttonClass} animate-pulse border-brand text-brand`}>
+                <LockIcon className="h-5 w-5" />
+                Grown-ups
               </button>
             )}
-            <button onClick={() => answer(false)} className="rounded-full border border-line bg-white px-3 py-2">
-              Stay at this stage
-            </button>
+            {running && c.stage !== "D" && (
+              <button onClick={startAgain} disabled={showing || strokes.length === 0} aria-label="Start again" className={childButton}>
+                <RestartIcon className="h-8 w-8" />
+              </button>
+            )}
+            {running && (
+              <button onClick={() => leave("/")} aria-label="Leave the lesson (grown-ups)" className={childButton}>
+                <DoorIcon className="h-8 w-8" />
+              </button>
+            )}
+            {!running && (
+              <button onClick={() => leave("/grown-ups")} className={buttonClass}>
+                <LockIcon className="h-5 w-5" />
+                Grown-ups
+              </button>
+            )}
+          </div>
+        </div>
+      </Frame>
+
+      {/* The go-back card, for the grown-up. The child can keep practising until it is opened. */}
+      {card && suggested && c.stage !== "D" && c.stage !== "T" && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Go back a step?">
+          <div className="w-full max-w-2xl rounded-3xl border-4 border-ink bg-white p-6 sm:p-8">
+            <p className="flex items-center gap-2 text-xl font-bold">
+              <LockIcon className="h-6 w-6" />
+              Grown-ups
+            </p>
+            <p className="mt-3 text-2xl">
+              {avatar} has tried step {STEP[c.stage].number}, &ldquo;{STEP[c.stage].name}&rdquo;, {c.streak} times in a
+              row.
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-4">
+              <StepTile figure={lesson.figure} stage={c.stage} caption="Now" />
+              <span className="text-4xl" aria-hidden="true">
+                →
+              </span>
+              <StepTile figure={lesson.figure} stage="T" caption="Back to" strong />
+              {c.stage === "I" && <StepTile figure={lesson.figure} stage="E" caption="Or back to" strong />}
+            </div>
+            <p className="mt-5 text-2xl">Go back to an earlier step?</p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button onClick={() => answer(true, "T")} className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+                Yes, go back to step 1
+              </button>
+              {c.stage === "I" && (
+                <button onClick={() => answer(true, "E")} className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+                  Yes, go back to step 2
+                </button>
+              )}
+              <button onClick={() => answer(false)} className="rounded-2xl border-2 border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+                No, keep trying step {STEP[c.stage].number}
+              </button>
+            </div>
+            <p className="mt-4 text-muted">Either way, {avatar} carries on alone once you hand the tablet back.</p>
           </div>
         </div>
       )}
 
       {/* For the demonstration to the teaching team, not for the child. */}
-      <div className="mt-6 rounded-2xl bg-panel p-4 text-sm">
+      <div className="mx-auto mt-5 max-w-5xl rounded-3xl bg-white p-5 text-sm">
         <button onClick={() => setPanel((p) => !p)} className="flex items-center gap-2 font-bold">
           {panel ? "▾" : "▸"} Demo panel
           <span className="rounded-full bg-butter px-3 py-0.5 text-xs text-butter-ink">For adults</span>
         </button>
         {panel && (
-          <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 sm:grid-cols-3" data-testid="panel">
+          <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 sm:grid-cols-4" data-testid="panel">
             <Item label="Lesson status" value={c.status} />
             <Item label="Stage" value={c.stage} />
             <Item label="Pass mark" value={c.settings.stagePass} />
@@ -304,6 +350,32 @@ export default function LessonPage() {
         )}
       </div>
       {dialog}
+    </>
+  );
+}
+
+function StepTile({
+  figure,
+  stage,
+  caption,
+  strong = false,
+}: {
+  figure: Figure;
+  stage: DrawingStage;
+  caption: string;
+  strong?: boolean;
+}) {
+  return (
+    <div className="text-center">
+      <div className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-ink"}`}>
+        <span className="absolute top-1.5 left-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
+          {STEP[stage].number}
+        </span>
+        <StageGuide figure={figure} stage={stage} className="h-full w-full p-3" />
+      </div>
+      <p className="mt-1 text-muted">
+        {caption}: {STEP[stage].name}
+      </p>
     </div>
   );
 }

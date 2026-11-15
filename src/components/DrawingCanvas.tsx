@@ -25,6 +25,8 @@ interface Props {
   demonstration?: Path[];
   /** Places to point the child to, without drawing the missing line for them. */
   marks?: Point[];
+  /** Stretches of the figure that were not drawn, shown as a glow. */
+  glow?: Path[];
 }
 
 function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
@@ -57,20 +59,27 @@ export function DrawingCanvas(props: Props) {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const { guide, strokes, demonstration, marks } = latest.current;
+    const { guide, strokes, demonstration, marks, glow } = latest.current;
     const scale = canvas.width / SIZE;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.clearRect(0, 0, SIZE, SIZE);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
+    // The glow over a stretch that was not drawn: a wide pale band, under everything else.
+    for (const [colour, width] of [["#fdf8e6", 130], ["#f9e7a0", 80]] as const) {
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = width;
+      (glow ?? []).forEach((p) => trace(ctx, p));
+    }
+
     // Marks that show where something is missing: a soft glow, drawn under the strokes.
     (marks ?? []).forEach((p) => {
-      ctx.fillStyle = "#fde1d3";
+      ctx.fillStyle = "#f9e7a0";
       ctx.beginPath();
       ctx.arc(p.x, p.y, 60, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#e8623f";
+      ctx.strokeStyle = "#7a5c00";
       ctx.lineWidth = 5;
       ctx.setLineDash([14, 14]);
       ctx.stroke();
@@ -145,7 +154,7 @@ export function DrawingCanvas(props: Props) {
     };
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, [props.demonstration, props.guide, props.strokes, props.marks, paint]);
+  }, [props.demonstration, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   const toPoint = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -173,7 +182,7 @@ export function DrawingCanvas(props: Props) {
     <canvas
       ref={canvasRef}
       aria-label="Drawing area"
-      className="aspect-square w-full rounded-2xl border-2 border-line bg-white"
+      className="aspect-square w-full rounded-3xl border-2 border-dashed border-line bg-white"
       onPointerDown={(e) => {
         // One contact at a time: a second finger or a resting palm is ignored.
         if (props.disabled || pointerId.current !== null) return;

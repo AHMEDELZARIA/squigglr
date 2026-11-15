@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 /*
- * The look follows the team's A-Sense presentation: a white page, navy serif
+ * The colours and fonts follow the team's A-Sense presentation: navy serif
  * headings, a plain sans-serif body, and soft lavender, mint, peach and
- * butter panels with a purple accent.
+ * butter panels with a purple accent. The layout of the screens follows the
+ * team's lo-fi prototype.
  *
  * The slides use Cambria and Calibri. Those are used where the device has
  * them; elsewhere Caladea and Carlito, open fonts with the same letter
@@ -32,7 +33,7 @@
 }
 
 body {
-  background: #ffffff;
+  background: var(--color-panel);
   color: var(--color-ink);
 }
 

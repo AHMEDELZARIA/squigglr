@@ -1,5 +1,5 @@
 // M10 Attempt Record. Lesson records and attempt records, kept per learner.
-// Only Lesson Control writes here; the Records page reads.
+// Only Lesson Control writes here; the Practice story reads.
 
 import * as storage from "./storage";
 import type { AttemptRecord, DrawingStage, Ending, LessonRecord, Stage, SuggestionResponse } from "./types";

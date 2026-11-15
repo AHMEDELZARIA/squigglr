@@ -1,16 +1,18 @@
 # Squigglr POC: Implementation Plan and Code
 
-This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 39 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
+This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 45 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
 
 **What the POC is:** a website where an adult adds a child, sets that child's nine practice values, and starts the Square or Circle lesson. The child watches a demonstration, then draws through three stages with less help each time. Every attempt is scored against the adult's values and saved under that child.
 
-| Lesson, after an attempt that did not pass | Settings for one child |
+| Lesson ready: the child's settings | Lesson, after an attempt that did not pass |
 | --- | --- |
-| ![Lesson screen](plan-img/lesson.png) | ![Settings screen](plan-img/settings.png) |
+| ![Lesson ready screen](plan-img/ready.png) | ![Lesson screen](plan-img/lesson.png) |
 
-| Who is drawing | Records for one child |
+| Who's practising? | Practice story |
 | --- | --- |
-| ![Children screen](plan-img/children.png) | ![Records screen](plan-img/records.png) |
+| ![Who's practising screen](plan-img/who.png) | ![Practice story screen](plan-img/story.png) |
+
+The screens follow the team's lo-fi prototype (S1 to S11 in Figma), in the colours and fonts of the A-Sense presentation.
 
 ## Contents
 
@@ -38,11 +40,11 @@ The boxes are the modules of the Module Guide, with their numbers. An arrow mean
 ```mermaid
 flowchart TD
   subgraph Screens["Screens (React, Next.js)"]
-    Children["Children page<br/>who is drawing, switch, add"]
-    Lessons["Lessons page<br/>lesson and starting stage"]
-    SettingsPage["Settings page<br/>nine values per child"]
-    RecordsPage["Records page<br/>saved attempts"]
-    Lesson["Lesson page<br/>M13 Child Screen"]
+    Children["Who's practising? (S1)<br/>choose, switch, add a child"]
+    Lessons["Pick a lesson (S2)"]
+    SettingsPage["Lesson ready (S3)<br/>starting step, nine values"]
+    RecordsPage["Practice story (S5)<br/>the week, saved attempts"]
+    Lesson["Lesson (S6 to S11)<br/>M13 Child Screen"]
     Canvas["DrawingCanvas<br/>M01 Input, M02 Display"]
     Check["AdultCheck<br/>M14 (check only)"]
   end
@@ -72,9 +74,9 @@ flowchart TD
   Children --> Profiles
   Children --> Check
   Lessons --> Catalogue
-  Lessons --> Check
   SettingsPage --> Settings
   SettingsPage --> Check
+  SettingsPage --> Catalogue
   RecordsPage --> Records
 
   Control --> Attempt
@@ -128,20 +130,22 @@ sequenceDiagram
 
 **In:**
 
-- Guest mode: no sign-in. Several children, each a picture with no name. One is "drawing now", and an adult can switch.
+- Guest mode: no sign-in. Several children, each a picture with no name. One is "practising now", and an adult can switch.
 - Two lessons, Square and Circle, stored as data.
 - The full lesson flow: demonstration, trace the outline, corners only, no guide.
 - Scoring exactly as SRS Section 9.2 defines it, checked at every stylus lift.
 - All nine adult-set values per child, with their ranges and rules, and every one of them changes how a lesson runs.
 - Retry, the go-back suggestion, the one extension, the attempt limit, the hard cap and the two lesson idle timers.
 - A record of every attempt (actual strokes, stage, outcome, result, difficulties, the settings in use) and of every start of a lesson, saved per child.
+- Example drawings for each pass mark, made from the scoring itself (BR-008).
+- A practice sticker at the end of every lesson, and a practice story for the week.
 - A demo panel on the lesson screen that shows the live result and the counters, for showing the teaching team what the rules are doing.
 
 **Out, on purpose:**
 
 - Accounts and sign-in, the progress summary and the creative space (the Development Plan leaves these out of the POC).
 - A database. Records stay in one browser. See [After the POC](#14-after-the-poc).
-- Sound, the supported-device notice, the example drawings for the pass mark, and keeping unsaved records while offline.
+- Sound (the prototype's "Helper talks" switch), the supported-device notice, and keeping unsaved records while offline.
 - The two refinement experiments of the Development Plan. They are separate from the hosted app and are not covered here.
 
 The SRS schedules the suggestion, extension and limit rules for Revision 0. They are in the POC anyway, because without them most of the nine settings would change nothing, and showing that the settings drive the lesson is the point of the demo.
@@ -162,7 +166,9 @@ The SRS schedules the suggestion, extension and limit rules for Revision 0. They
 | Idle ranges: 5 to 15 s, 30 to 60 s, 90 to 180 s | The SRS leaves them "TBD". Five seconds is the shortest pause that ends an attempt, and the default is 10. The three ranges do not overlap, so the rule "attempt idle < check-in < lesson end" can never be broken. | New values. The team should confirm them. |
 | The demonstration is always shown first | UC-003 says so. Practice then starts at the stage the adult chose. | The MIS says `beginPractice` goes from D to T only. |
 | A finished attempt stays on screen for 2.5 s with its feedback | Without it, a failed drawing would vanish the instant the attempt ends and the feedback would refer to nothing. | Not specified. |
-| The look follows the team's A-Sense presentation | One look across the slides and the product: navy serif headings, a plain sans-serif body, lavender, mint, peach and butter panels, a purple accent, the pen's blue for strokes, and the squiggle mark. The colours are named once, in `app/globals.css`. | The slides use Cambria and Calibri, which cannot be shipped with a website. Devices that have them use them; others get Caladea and Carlito, open fonts with the same letter widths. |
+| The screens follow the team's lo-fi prototype | Same screens, same order, same words where they fit: who's practising, pick a lesson, lesson ready, the lesson with its footprints and helper, the sticker, the grown-ups area and the practice story. The prototype was tested with a parent and child, so its layout is the best evidence the team has. | See [where the prototype and the SRS differ](#where-the-prototype-and-the-srs-differ). The prototype's pictures could not be downloaded here, so the icons are redrawn. |
+| The colours and fonts follow the A-Sense presentation | The prototype is black and white on purpose. The colour comes from the slides: navy serif headings, a plain sans-serif body, lavender, mint, peach and butter panels, a purple accent, the pen's blue for strokes, and the squiggle mark. The colours are named once, in `app/globals.css`. | The slides use Cambria and Calibri, which cannot be shipped with a website. Devices that have them use them; others get Caladea and Carlito, open fonts with the same letter widths. |
+| "Neatness" is the pass mark | The prototype's Low, Medium and High are pass marks of 70, 80 and 90, the two ends and the middle of the SRS range. The exact value can still be set under "More settings". | None. |
 | A demo panel shows the result and counters | The teaching team can see the rules working. It is labelled for adults and can be closed. | The SRS does not want a score shown to the child. Remove or hide the panel before real use. |
 
 ## 4. How a drawing is scored
@@ -223,6 +229,8 @@ A suggestion that the adult declines resets the streak. One that is accepted mov
 | Pause before a check-in (`LESSON_IDLE_PROMPT`) | 30 to 60 s | 45 s | When "Still drawing?" appears. |
 | Pause that ends the lesson (`LESSON_IDLE_END`) | 90 to 180 s | 135 s | When an abandoned lesson ends. |
 
+On the Lesson ready screen, "Neatness" Low, Medium and High set the pass mark to 70, 80 and 90, and "Get a grown-up after" is the failed-attempts-before-a-suggestion value. The other seven are under "More settings".
+
 The first six ranges are the SRS's. The last three are proposed here. A value outside its range cannot be saved, nor can a limit that is not above the streak, or a cap below the limit. A lesson uses the values as they were when it started.
 
 ## 7. Project layout and file index
@@ -233,7 +241,7 @@ The app is the `src/` folder of this repository.
 src/
   package.json, tsconfig.json, next.config.ts, postcss.config.mjs, vitest.config.mts
   lib/          the rules and the data: no React
-  components/   the canvas, the adult check, the header
+  components/   the canvas, the adult check, the screen frame, the pictures
   app/          one folder per page
   plan-img/     the screenshots in this document
 ```
@@ -252,21 +260,26 @@ src/
 | [`lib/profiles.ts`](#f-profiles) | M15 Learner Profile | Children and the active child. |
 | [`lib/records.ts`](#f-records) | M10 Attempt Record | Lesson records and attempt records. |
 | [`lib/storage.ts`](#f-storage) | M23 Storage | The only file that touches `localStorage`. |
+| [`lib/examples.ts`](#f-examples) | part of M16 Learner Settings | Example drawings for each pass mark. |
 | [`components/DrawingCanvas.tsx`](#f-canvas) | M01 Input Device, M02 Display | Pointer events to strokes; paints everything. |
 | [`components/AdultCheck.tsx`](#f-adultcheck) | M14 Adult Access (check only) | The sum an adult answers. |
-| [`components/useActiveLearner.ts`](#f-useactive) | part of M18 Adult View | Reads the active child for a page. |
-| [`components/Header.tsx`](#f-header) | part of M18 Adult View | Navigation and "drawing now". |
-| [`components/StrokePreview.tsx`](#f-preview) | part of M02 Display | Redraws a saved attempt. |
+| [`components/Screen.tsx`](#f-screen) | part of M18 Adult View | The frame every screen sits in: Back, heading, avatar. |
+| [`components/Avatar.tsx`](#f-avatar) | part of M02 Display | A child's picture in a ring. |
+| [`components/icons.tsx`](#f-icons) | part of M02 Display | Footprints, helper, sticker, stage pictures, small icons. |
 | [`components/LessonIcon.tsx`](#f-lessonicon) | part of M02 Display | A lesson's figure as a small picture. |
-| [`components/Squiggle.tsx`](#f-squiggle) | part of M18 Adult View | The squiggle mark and the page title. |
-| [`app/page.tsx`](#f-page-children) | part of M18 Adult View | Who is drawing: switch and add a child. |
-| [`app/lessons/page.tsx`](#f-page-lessons) | part of M18 Adult View | Choose a lesson and a starting stage. |
-| [`app/lesson/[id]/page.tsx`](#f-page-lesson) | M13 Child Screen | The lesson itself. |
-| [`app/settings/page.tsx`](#f-page-settings) | part of M18 Adult View | The nine values. |
-| [`app/records/page.tsx`](#f-page-records) | part of M18 Adult View | The saved attempts. |
+| [`components/StrokePreview.tsx`](#f-preview) | part of M02 Display | Redraws a saved attempt. |
+| [`components/NeatnessInfo.tsx`](#f-neatness) | part of M18 Adult View | The pop-up that explains Neatness with examples. |
+| [`components/Squiggle.tsx`](#f-squiggle) | part of M18 Adult View | The squiggle mark. |
+| [`components/useActiveLearner.ts`](#f-useactive) | part of M18 Adult View | Reads the active child for a page. |
+| [`app/page.tsx`](#f-page-who) | part of M18 Adult View | S1 Who's practising: choose, switch, add a child. |
+| [`app/lessons/page.tsx`](#f-page-pick) | part of M18 Adult View | S2 Pick a lesson. |
+| [`app/lessons/[id]/page.tsx`](#f-page-ready) | part of M18 Adult View | S3 Lesson ready: starting step and the nine values. |
+| [`app/lesson/[id]/page.tsx`](#f-page-lesson) | M13 Child Screen | S6 to S11: the lesson itself. |
+| [`app/grown-ups/page.tsx`](#f-page-grownups) | part of M18 Adult View | S4 Grown-ups area. |
+| [`app/story/page.tsx`](#f-page-story) | part of M18 Adult View | S5 Practice story, and every saved attempt. |
 | [`app/layout.tsx`, `app/globals.css`](#f-layout) | | The page frame and styles. |
 | [Configuration files](#f-config) | | `package.json` and the tool settings. |
-| [`lib/evaluation.test.ts`](#f-test-eval), [`lib/rules.test.ts`](#f-test-rules), [`lib/testHelpers.ts`](#f-test-helpers) | | The unit tests. |
+| [`lib/evaluation.test.ts`](#f-test-eval), [`lib/rules.test.ts`](#f-test-rules), [`lib/examples.test.ts`](#f-test-examples), [`lib/testHelpers.ts`](#f-test-helpers) | | The unit tests. |
 
 Not in the POC: M03 Audio, M11 and M12 (creative space), M17 Progress Summary, M21, M22, M24 Connection Recovery, M25 Audit Log.
 
@@ -1161,7 +1174,7 @@ export class LessonControl {
 // either can change without the other. Every message describes the drawing,
 // never the child, and nothing marks a drawing as "wrong".
 
-import type { DifficultyKind, FeedbackKind } from "./types";
+import type { DifficultyKind, FeedbackKind, Stage } from "./types";
 
 export interface Feedback {
   message: string;
@@ -1171,23 +1184,40 @@ export interface Feedback {
 
 const KINDS: Record<FeedbackKind, Feedback> = {
   stagePassed: { message: "You did it! Here comes the next one.", image: "🌟", colour: "#24735b" },
-  lessonComplete: { message: "All done! What a drawing!", image: "🎉", colour: "#24735b" },
-  keepTrying: { message: "Nice try! Let's draw it again.", image: "💪", colour: "#5e51b8" },
+  lessonComplete: { message: "Great practising! Here's your sticker!", image: "🎉", colour: "#24735b" },
+  keepTrying: { message: "Great try! Let's draw it again.", image: "💪", colour: "#5e51b8" },
   notEvaluable: { message: "Let's try that one again.", image: "✏️", colour: "#5e51b8" },
   checkIn: { message: "Still drawing? Tap to keep going.", image: "👋", colour: "#5e51b8" },
-  lessonEnded: { message: "Good practice today!", image: "🌈", colour: "#5e51b8" },
+  lessonEnded: { message: "Great practising! Here's your sticker!", image: "🌈", colour: "#5e51b8" },
 };
 
 const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
-  missedPart: { message: "A piece of the shape is not drawn yet.", image: "🧩", colour: "#b84a30" },
-  missedEndpoint: { message: "The line did not reach a corner.", image: "📍", colour: "#b84a30" },
+  missedPart: { message: "Look where it's glowing.", image: "🧩", colour: "#b84a30" },
+  missedEndpoint: { message: "The line missed a dot.", image: "📍", colour: "#b84a30" },
   offFigure: { message: "Some lines went away from the shape.", image: "↗️", colour: "#b84a30" },
 };
 
+/** What the helper says at the start of each stage. */
+const STAGE_LINES: Record<Stage, string> = {
+  D: "Watch me!",
+  T: "Your turn!",
+  E: "Now join the dots!",
+  I: "Now draw it on your own!",
+};
+
+/** What the helper says while a go-back suggestion waits for an adult. */
+export const GET_A_GROWN_UP = "Let's get a grown-up!";
+
+export const stageLine = (stage: Stage): string => STAGE_LINES[stage];
 export const feedback = (kind: FeedbackKind): Feedback => KINDS[kind];
 export const difficultyFeedback = (kind: DifficultyKind): Feedback => DIFFICULTIES[kind];
 /** Every approved message, so the wording can be reviewed in one place. */
-export const allFeedback = (): Feedback[] => [...Object.values(KINDS), ...Object.values(DIFFICULTIES)];
+export const allFeedback = (): string[] => [
+  ...Object.values(KINDS).map((f) => f.message),
+  ...Object.values(DIFFICULTIES).map((f) => f.message),
+  ...Object.values(STAGE_LINES),
+  GET_A_GROWN_UP,
+];
 ```
 
 ### 8.4 Data
@@ -1270,7 +1300,7 @@ export function newId(): string {
 ```
 
 <a id="f-settings"></a>
-**`lib/settings.ts`**. The ranges, the defaults (the middle of each range) and `check`, which names every value that cannot be saved. The Settings page and the tests both use `check`, so the screen cannot allow something the rules reject.
+**`lib/settings.ts`**. The ranges, the defaults (the middle of each range) and `check`, which names every value that cannot be saved. The Lesson ready screen and the tests both use `check`, so the screen cannot allow something the rules reject.
 
 `src/lib/settings.ts`
 
@@ -1361,6 +1391,60 @@ export function save(learnerId: string, s: Settings): void {
 }
 ```
 
+<a id="f-examples"></a>
+**`lib/examples.ts`**. BR-008 asks for example drawings of what the pass mark's minimum and maximum look like. These are built from the lesson's own figure plus just as many stray lines as the mark allows, and a test checks each one against the scoring.
+
+`src/lib/examples.ts`
+
+```ts
+// Example drawings for the pass mark (BR-008): for a given mark, a complete
+// drawing of the figure with as many extra lines as that mark still lets
+// through. They are made here, not stored, so they always agree with the
+// scoring in evaluation.ts.
+
+import { boundingBox, length } from "./geometry";
+import type { Figure, Stroke } from "./types";
+
+const toStroke = (points: { x: number; y: number }[]): Stroke => ({
+  points: points.map((p, i) => ({ ...p, t: i })),
+});
+
+/**
+ * The figure drawn exactly, plus a zigzag in the middle of it that lies off
+ * the figure. The zigzag is just short enough that the share of the drawing
+ * on the figure stays at the mark.
+ */
+export function passingExample(figure: Figure, mark: number): Stroke[] {
+  const figureLength = figure.parts.reduce((sum, p) => sum + length(p), 0);
+  // onFigure = figureLength / (figureLength + extra) >= mark / 100, with a small margin.
+  const extra = figureLength * (100 / mark - 1) * 0.94;
+
+  const box = boundingBox(figure.parts);
+  const cx = (box.minX + box.maxX) / 2;
+  const cy = (box.minY + box.maxY) / 2;
+  const half = Math.min(box.maxX - box.minX, box.maxY - box.minY) * 0.28;
+  const rowGap = half / 3;
+
+  const zigzag = [{ x: cx - half, y: cy - half }];
+  let left = extra;
+  let row = 0;
+  while (left > 0 && row < 7) {
+    const y = cy - half + row * rowGap;
+    const fromLeft = row % 2 === 0;
+    const run = Math.min(left, 2 * half);
+    zigzag.push({ x: fromLeft ? cx - half + run : cx + half - run, y });
+    left -= run;
+    if (left <= 0) break;
+    const drop = Math.min(left, rowGap);
+    zigzag.push({ x: fromLeft ? cx + half : cx - half, y: y + drop });
+    left -= drop;
+    row += 1;
+  }
+
+  return [...figure.parts.map(toStroke), toStroke(zigzag)];
+}
+```
+
 <a id="f-profiles"></a>
 **`lib/profiles.ts`**. A child is a generated id and a picture.
 
@@ -1411,7 +1495,7 @@ export function active(): Learner | null {
 
 ```ts
 // M10 Attempt Record. Lesson records and attempt records, kept per learner.
-// Only Lesson Control writes here; the Records page reads.
+// Only Lesson Control writes here; the Practice story reads.
 
 import * as storage from "./storage";
 import type { AttemptRecord, DrawingStage, Ending, LessonRecord, Stage, SuggestionResponse } from "./types";
@@ -1517,7 +1601,7 @@ export function attempts(learner: string, recordId: string): AttemptRecord[] {
 ### 8.5 Components
 
 <a id="f-canvas"></a>
-**`components/DrawingCanvas.tsx`**. The only code that touches pointer events and the canvas. It hands finished strokes up and paints what it is given. It decides nothing about the lesson.
+**`components/DrawingCanvas.tsx`**. The only code that touches pointer events and the canvas. It hands finished strokes up and paints what it is given: the guide, the strokes, the demonstration, and the glow over a stretch that was not drawn. It decides nothing about the lesson.
 
 `src/components/DrawingCanvas.tsx`
 
@@ -1549,6 +1633,8 @@ interface Props {
   demonstration?: Path[];
   /** Places to point the child to, without drawing the missing line for them. */
   marks?: Point[];
+  /** Stretches of the figure that were not drawn, shown as a glow. */
+  glow?: Path[];
 }
 
 function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
@@ -1581,20 +1667,27 @@ export function DrawingCanvas(props: Props) {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const { guide, strokes, demonstration, marks } = latest.current;
+    const { guide, strokes, demonstration, marks, glow } = latest.current;
     const scale = canvas.width / SIZE;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.clearRect(0, 0, SIZE, SIZE);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
+    // The glow over a stretch that was not drawn: a wide pale band, under everything else.
+    for (const [colour, width] of [["#fdf8e6", 130], ["#f9e7a0", 80]] as const) {
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = width;
+      (glow ?? []).forEach((p) => trace(ctx, p));
+    }
+
     // Marks that show where something is missing: a soft glow, drawn under the strokes.
     (marks ?? []).forEach((p) => {
-      ctx.fillStyle = "#fde1d3";
+      ctx.fillStyle = "#f9e7a0";
       ctx.beginPath();
       ctx.arc(p.x, p.y, 60, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#e8623f";
+      ctx.strokeStyle = "#7a5c00";
       ctx.lineWidth = 5;
       ctx.setLineDash([14, 14]);
       ctx.stroke();
@@ -1669,7 +1762,7 @@ export function DrawingCanvas(props: Props) {
     };
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, [props.demonstration, props.guide, props.strokes, props.marks, paint]);
+  }, [props.demonstration, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   const toPoint = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -1697,7 +1790,7 @@ export function DrawingCanvas(props: Props) {
     <canvas
       ref={canvasRef}
       aria-label="Drawing area"
-      className="aspect-square w-full rounded-2xl border-2 border-line bg-white"
+      className="aspect-square w-full rounded-3xl border-2 border-dashed border-line bg-white"
       onPointerDown={(e) => {
         // One contact at a time: a second finger or a resting palm is ignored.
         if (props.disabled || pointerId.current !== null) return;
@@ -1738,6 +1831,7 @@ export function DrawingCanvas(props: Props) {
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { LockIcon } from "./icons";
 
 // M14 Adult Access, POC version. There are no accounts yet, so the only part
 // kept is the adult check: a short sum that a young child cannot pass alone
@@ -1773,16 +1867,19 @@ export function useAdultCheck() {
   const dialog = question && (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
       <form
-        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+        className="w-full max-w-sm rounded-3xl border-4 border-ink bg-white p-6"
         onSubmit={(e) => {
           e.preventDefault();
           if (Number(answer) === question.a + question.b) close(true);
           else setWrong(true);
         }}
       >
-        <h2 className="text-xl font-bold">Grown-ups only</h2>
-        <p className="mt-1 text-sm text-muted">Answer this to continue.</p>
-        <label className="mt-4 block text-2xl font-bold">
+        <h2 className="flex items-center gap-2 text-2xl font-bold">
+          <LockIcon className="h-6 w-6" />
+          Grown-ups
+        </h2>
+        <p className="mt-1 text-muted">Answer this to continue.</p>
+        <label className="mt-4 block text-3xl font-bold">
           {question.a} + {question.b} =
           <input
             autoFocus
@@ -1790,15 +1887,15 @@ export function useAdultCheck() {
             aria-label="Answer"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            className="ml-3 w-24 rounded-lg border border-line px-3 py-1"
+            className="ml-3 w-24 rounded-xl border-2 border-ink px-3 py-1"
           />
         </label>
-        {wrong && <p className="mt-2 text-sm text-coral">That is not it. Try again.</p>}
+        {wrong && <p className="mt-2 font-bold text-coral">That is not it. Try again.</p>}
         <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={() => close(false)} className="rounded-lg px-4 py-2 text-muted">
+          <button type="button" onClick={() => close(false)} className="rounded-2xl px-4 py-2 text-lg font-bold text-muted">
             Cancel
           </button>
-          <button type="submit" className="rounded-full bg-brand px-4 py-2 font-bold text-white">
+          <button type="submit" className="rounded-2xl border-2 border-brand bg-brand px-5 py-2 text-lg font-bold text-white">
             Continue
           </button>
         </div>
@@ -1807,6 +1904,406 @@ export function useAdultCheck() {
   );
 
   return { ask, dialog };
+}
+```
+
+<a id="f-screen"></a>
+**`components/Screen.tsx`**. The rounded "tablet" every screen sits in, as in the prototype: Back on the left, the heading in the middle, the child who is practising on the right.
+
+`src/components/Screen.tsx`
+
+```tsx
+import Link from "next/link";
+import { Avatar } from "./Avatar";
+import { BackIcon } from "./icons";
+import { Squiggle } from "./Squiggle";
+
+// The frame every screen sits in. It follows the lo-fi prototype: one
+// rounded "tablet" with the heading in the middle, Back on the left and the
+// child who is practising on the right.
+
+export const buttonClass =
+  "inline-flex items-center gap-2 rounded-2xl border-2 border-ink bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
+
+export function Frame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className="mx-auto max-w-5xl">
+      <div className="mb-3 flex items-center gap-2 px-2 font-serif text-xl font-bold">
+        Squigglr
+        <Squiggle className="w-9" />
+      </div>
+      <div className={`relative rounded-[2rem] border-4 border-ink bg-white p-5 sm:p-8 ${className}`}>{children}</div>
+    </div>
+  );
+}
+
+export function Screen({
+  title,
+  subtitle,
+  back,
+  avatar,
+  right,
+  children,
+}: {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  /** Where Back goes; no Back button when left out. */
+  back?: string;
+  /** The child who is practising, shown in the corner. */
+  avatar?: string;
+  /** Shown in the corner in place of the avatar. */
+  right?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <Frame className="min-h-[38rem]">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
+        <div>
+          {back && (
+            <Link href={back} className={buttonClass}>
+              <BackIcon className="h-5 w-5" />
+              Back
+            </Link>
+          )}
+        </div>
+        <div className="text-center">
+          <h1 className="text-3xl font-bold sm:text-4xl">{title}</h1>
+          {subtitle && <p className="mt-2 text-lg text-muted">{subtitle}</p>}
+        </div>
+        <div className="flex justify-end">{right ?? (avatar && <Avatar avatar={avatar} />)}</div>
+      </div>
+      {children}
+    </Frame>
+  );
+}
+```
+
+<a id="f-avatar"></a>
+**`components/Avatar.tsx`**
+
+`src/components/Avatar.tsx`
+
+```tsx
+const SIZES = {
+  sm: "h-12 w-12 text-2xl",
+  md: "h-16 w-16 text-4xl",
+  lg: "h-36 w-36 text-7xl",
+};
+
+/** A child's picture in a ring. A child has a picture and no name (BR-001). */
+export function Avatar({
+  avatar,
+  size = "md",
+  selected = false,
+}: {
+  avatar: string;
+  size?: keyof typeof SIZES;
+  selected?: boolean;
+}) {
+  return (
+    <span
+      className={`flex shrink-0 items-center justify-center rounded-full border-[3px] leading-none ${SIZES[size]} ${
+        selected ? "border-brand bg-lavender-deep" : "border-ink bg-lavender"
+      }`}
+    >
+      {avatar}
+    </span>
+  );
+}
+```
+
+<a id="f-icons"></a>
+**`components/icons.tsx`**. The prototype's pictures, redrawn in the app's colours: the footprints that show progress, the helper, the practice sticker, and the small picture of what each step shows (drawn from the lesson's own figure).
+
+`src/components/icons.tsx`
+
+```tsx
+// The small pictures used across the screens. They follow the lo-fi
+// prototype (footprints, helper, practice sticker, the grown-ups lock) and
+// are drawn here so they take the app's colours.
+
+import type { DrawingStage, Figure } from "@/lib/types";
+
+const INK = "#23304a";
+const BRAND = "#5e51b8";
+
+type IconProps = { className?: string };
+
+const line = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+
+export const LockIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
+    <rect x="5" y="11" width="14" height="9" rx="2" />
+    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+  </svg>
+);
+
+export const BackIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
+    <path d="M15 5l-7 7 7 7" />
+  </svg>
+);
+
+export const PlayIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+    <path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z" fill="currentColor" />
+  </svg>
+);
+
+export const BookIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
+    <rect x="3" y="5" width="8" height="14" rx="1" />
+    <rect x="13" y="5" width="8" height="14" rx="1" />
+  </svg>
+);
+
+export const RestartIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.4}>
+    <path d="M4 12a8 8 0 1 0 2.6-5.9" />
+    <path d="M4 4v5h5" />
+  </svg>
+);
+
+export const DoorIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.4}>
+    <path d="M6 20V4h8v16" />
+    <path d="M14 6l4 1.5v9L14 18" />
+    <path d="M3 20h18" />
+    <circle cx="11.2" cy="12" r="0.6" fill="currentColor" />
+  </svg>
+);
+
+/** The helper who speaks to the child: a friendly round face with an antenna. */
+export const Helper = ({ className }: IconProps) => (
+  <svg viewBox="0 0 72 84" className={className} aria-hidden="true">
+    <line x1="36" y1="6" x2="36" y2="18" stroke={INK} strokeWidth={3} strokeLinecap="round" />
+    <circle cx="36" cy="6" r="4" fill={BRAND} />
+    <circle cx="36" cy="50" r="30" fill="#f2f0fc" stroke={INK} strokeWidth={3} />
+    <circle cx="26" cy="45" r="3.5" fill={INK} />
+    <circle cx="46" cy="45" r="3.5" fill={INK} />
+    <path d="M24 58 Q36 69 48 58" fill="none" stroke={INK} strokeWidth={3} strokeLinecap="round" />
+  </svg>
+);
+
+/** A pair of footprints: one step of the lesson, filled once the child has reached it. */
+function Feet({ done }: { done: boolean }) {
+  const fill = done ? BRAND : "#ffffff";
+  const foot = (x: number, y: number) => (
+    <g transform={`translate(${x} ${y})`} fill={fill} stroke={done ? BRAND : INK} strokeWidth={1.6}>
+      <ellipse cx="8" cy="19" rx="6" ry="9" />
+      <circle cx="3.5" cy="6" r="2" />
+      <circle cx="8" cy="4" r="2" />
+      <circle cx="12.5" cy="6" r="2" />
+    </g>
+  );
+  return (
+    <svg viewBox="0 0 40 36" className="h-9 w-10" aria-hidden="true">
+      {foot(2, 0)}
+      {foot(22, 6)}
+    </svg>
+  );
+}
+
+/** Progress through the lesson as footprints: watch, then the three drawing steps. */
+export function Footprints({ reached, labels }: { reached: number; labels: string[] }) {
+  return (
+    <ol className="flex gap-3" aria-label="Steps of the lesson">
+      {labels.map((label, i) => (
+        <li key={label} aria-label={label} aria-current={i === reached ? "step" : undefined}>
+          <Feet done={i <= reached} />
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** The practice sticker: given for practising, whatever the result. */
+export const Sticker = ({ className }: IconProps) => (
+  <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
+    <circle cx="60" cy="60" r="55" fill="#fdf8e6" stroke={INK} strokeWidth={3} strokeDasharray="9 8" />
+    <path
+      d="M60 22l11.2 23.4 25.6 3.4-18.7 17.8 4.6 25.4L60 79.8 37.3 92l4.6-25.4-18.7-17.8 25.6-3.4z"
+      fill="#fbf0c4"
+      stroke={INK}
+      strokeWidth={3}
+      strokeLinejoin="round"
+    />
+    <circle cx="53" cy="56" r="2.6" fill={INK} />
+    <circle cx="67" cy="56" r="2.6" fill={INK} />
+    <path d="M52 65 Q60 72 68 65" fill="none" stroke={INK} strokeWidth={2.6} strokeLinecap="round" />
+  </svg>
+);
+
+const d = (points: { x: number; y: number }[]) =>
+  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+
+/** What the child sees at a drawing stage, as a small picture: the dotted outline, the dots, or a blank page. */
+export function StageGuide({ figure, stage, className }: { figure: Figure; stage: DrawingStage; className?: string }) {
+  return (
+    <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
+      {stage === "I" && (
+        <rect x="150" y="150" width="700" height="700" rx="90" fill="#ffffff" stroke="#e1e4ec" strokeWidth={28} />
+      )}
+      {stage === "T" &&
+        figure.parts.map((part, i) => (
+          <path key={i} d={d(part)} fill="none" stroke="#8e84d6" strokeWidth={36} strokeLinecap="round" strokeDasharray="4 78" />
+        ))}
+      {stage === "E" && figure.endpoints.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={56} fill="#8e84d6" />)}
+    </svg>
+  );
+}
+```
+
+<a id="f-lessonicon"></a>
+**`components/LessonIcon.tsx`**. Drawn from the lesson's own figure, so a new lesson gets its picture with no extra work.
+
+`src/components/LessonIcon.tsx`
+
+```tsx
+import type { Figure } from "@/lib/types";
+
+/** A lesson's figure as a small drawing, in the pen colour. */
+export function LessonIcon({ figure, className = "" }: { figure: Figure; className?: string }) {
+  return (
+    <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
+      {figure.parts.map((part, i) => (
+        <path
+          key={i}
+          d={part.map((p, j) => `${j === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ")}
+          fill="none"
+          stroke="#3a4fa0"
+          strokeWidth={40}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+    </svg>
+  );
+}
+```
+
+<a id="f-preview"></a>
+**`components/StrokePreview.tsx`**
+
+`src/components/StrokePreview.tsx`
+
+```tsx
+import type { Figure, Stroke } from "@/lib/types";
+
+const d = (points: { x: number; y: number }[]) =>
+  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+
+const SIZES = { sm: "h-24 w-24", md: "h-28 w-28", lg: "h-44 w-44" };
+
+/** A saved attempt, redrawn from its actual strokes, with the lesson's figure faintly behind it. */
+export function StrokePreview({
+  strokes,
+  figure,
+  size = "md",
+}: {
+  strokes: Stroke[];
+  figure: Figure;
+  size?: keyof typeof SIZES;
+}) {
+  return (
+    <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-ink bg-white ${SIZES[size]}`}>
+      {figure.parts.map((part, i) => (
+        <path key={`f${i}`} d={d(part)} fill="none" stroke="#dcd7f5" strokeWidth={30} strokeLinecap="round" />
+      ))}
+      {strokes.map((s, i) => (
+        <path
+          key={i}
+          d={d(s.points)}
+          fill="none"
+          stroke="#3a4fa0"
+          strokeWidth={26}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+    </svg>
+  );
+}
+```
+
+<a id="f-neatness"></a>
+**`components/NeatnessInfo.tsx`**. The pop-up behind the "i" (prototype S3-info).
+
+`src/components/NeatnessInfo.tsx`
+
+```tsx
+"use client";
+
+import { passingExample } from "@/lib/examples";
+import type { Figure } from "@/lib/types";
+import { StrokePreview } from "./StrokePreview";
+
+// The "i" pop-up beside Neatness (prototype S3-info). It shows, for each
+// choice, an example drawing that still moves the child on (BR-008). The
+// examples are made from the scoring itself, so they are always true to it.
+
+export const NEATNESS = [
+  { mark: 70, name: "Low", text: "Moves on even with a lot of extra lines. Good when just starting." },
+  { mark: 80, name: "Medium", text: "Moves on when most of the lines are on the shape." },
+  { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
+];
+
+export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avatar: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Neatness">
+      <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border-4 border-ink bg-white p-6 sm:p-8">
+        <h2 className="text-3xl font-bold">Neatness</h2>
+        <p className="mt-2 text-lg">
+          How neat {avatar}&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
+          shape always has to be drawn. Neatness sets how many lines may lie away from the shape.
+        </p>
+        <p className="mt-4 font-bold text-muted">The messiest drawing that still moves on:</p>
+        <div className="mt-3 grid gap-4 sm:grid-cols-3">
+          {NEATNESS.map(({ mark, name, text }) => (
+            <div key={mark} className="text-center">
+              <div className="flex justify-center">
+                <StrokePreview strokes={passingExample(figure, mark)} figure={figure} size="lg" />
+              </div>
+              <p className="mt-2 text-xl font-bold">
+                {name}
+                {mark === 80 && " (recommended)"}
+              </p>
+              <p className="text-muted">{text}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={onClose}
+            className="rounded-2xl border-[3px] border-ink bg-white px-8 py-2 text-xl font-bold hover:bg-lavender"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+<a id="f-squiggle"></a>
+**`components/Squiggle.tsx`**
+
+`src/components/Squiggle.tsx`
+
+```tsx
+/** The wavy line from the presentation: the mark beside the name. */
+export function Squiggle({ className = "", colour = "#5e51b8" }: { className?: string; colour?: string }) {
+  return (
+    <svg viewBox="0 0 64 20" className={className} aria-hidden="true" fill="none">
+      <path
+        d="M3 12 C 9 0, 15 0, 21 10 S 33 20, 39 10 S 51 0, 61 9"
+        stroke={colour}
+        strokeWidth={3}
+        strokeLinecap="round"
+      />
+    </svg>
+  );
 }
 ```
 
@@ -1850,159 +2347,6 @@ export function useActiveLearner() {
 export const activeChanged = () => window.dispatchEvent(new Event("squigglr:active"));
 ```
 
-<a id="f-header"></a>
-**`components/Header.tsx`**. Shows which child is drawing on every adult page. It is hidden during a lesson, where the child does not navigate.
-
-`src/components/Header.tsx`
-
-```tsx
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Squiggle } from "./Squiggle";
-import { useActiveLearner } from "./useActiveLearner";
-
-const LINKS = [
-  { href: "/", label: "Children" },
-  { href: "/lessons", label: "Lessons" },
-  { href: "/settings", label: "Settings" },
-  { href: "/records", label: "Records" },
-];
-
-export function Header() {
-  const pathname = usePathname();
-  const { learner } = useActiveLearner();
-  // The child's lesson screen has no navigation: the child does not navigate (G.1).
-  if (pathname.startsWith("/lesson/")) return null;
-
-  return (
-    <header className="border-b border-line bg-white">
-      <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-        <Link href="/" className="flex items-center gap-2 font-serif text-2xl font-bold text-ink">
-          Squigglr
-          <Squiggle className="w-10" />
-        </Link>
-        <nav className="flex gap-1 text-sm">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`rounded-full px-3 py-1 ${
-                pathname === l.href ? "bg-lavender font-bold text-brand" : "text-muted hover:text-ink"
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <Link href="/" className="ml-auto flex items-center gap-2 text-sm text-muted" title="Switch child">
-          <span>{learner ? "Drawing now:" : "No child chosen"}</span>
-          {learner && <span className="text-3xl leading-none">{learner.avatar}</span>}
-        </Link>
-      </div>
-    </header>
-  );
-}
-```
-
-<a id="f-preview"></a>
-**`components/StrokePreview.tsx`**
-
-`src/components/StrokePreview.tsx`
-
-```tsx
-import type { Figure, Stroke } from "@/lib/types";
-
-const d = (points: { x: number; y: number }[]) =>
-  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
-
-/** A saved attempt, redrawn from its actual strokes, with the lesson's figure faintly behind it. */
-export function StrokePreview({ strokes, figure }: { strokes: Stroke[]; figure: Figure }) {
-  return (
-    <svg viewBox="0 0 1000 1000" className="h-28 w-28 shrink-0 rounded-xl border border-line bg-white">
-      {figure.parts.map((part, i) => (
-        <path key={`f${i}`} d={d(part)} fill="none" stroke="#dcd7f5" strokeWidth={30} strokeLinecap="round" />
-      ))}
-      {strokes.map((s, i) => (
-        <path
-          key={i}
-          d={d(s.points)}
-          fill="none"
-          stroke="#3a4fa0"
-          strokeWidth={26}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      ))}
-    </svg>
-  );
-}
-```
-
-<a id="f-lessonicon"></a>
-**`components/LessonIcon.tsx`**. Drawn from the lesson's own figure, so a new lesson gets its picture with no extra work.
-
-`src/components/LessonIcon.tsx`
-
-```tsx
-import type { Figure } from "@/lib/types";
-
-/** A lesson's figure as a small drawing, in the pen colour, on a lavender circle. */
-export function LessonIcon({ figure, className = "" }: { figure: Figure; className?: string }) {
-  return (
-    <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
-      <circle cx={500} cy={500} r={480} fill="#dcd7f5" />
-      {figure.parts.map((part, i) => (
-        <path
-          key={i}
-          d={part.map((p, j) => `${j === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ")}
-          fill="none"
-          stroke="#3a4fa0"
-          strokeWidth={44}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      ))}
-    </svg>
-  );
-}
-```
-
-<a id="f-squiggle"></a>
-**`components/Squiggle.tsx`**
-
-`src/components/Squiggle.tsx`
-
-```tsx
-/** The wavy line from the presentation: the mark beside the name and on each page title. */
-export function Squiggle({ className = "", colour = "#5e51b8" }: { className?: string; colour?: string }) {
-  return (
-    <svg viewBox="0 0 64 20" className={className} aria-hidden="true" fill="none">
-      <path
-        d="M3 12 C 9 0, 15 0, 21 10 S 33 20, 39 10 S 51 0, 61 9"
-        stroke={colour}
-        strokeWidth={3}
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-/** A page title in the style of a slide: serif heading, grey subtitle, squiggle on the right. */
-export function PageTitle({ title, subtitle }: { title: React.ReactNode; subtitle: string }) {
-  return (
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <h1 className="text-3xl font-bold">{title}</h1>
-        <p className="mt-2 text-muted">{subtitle}</p>
-      </div>
-      <Squiggle className="mt-2 hidden w-16 shrink-0 sm:block" />
-    </div>
-  );
-}
-```
-
 ### 8.6 Pages
 
 <a id="f-layout"></a>
@@ -2012,7 +2356,6 @@ export function PageTitle({ title, subtitle }: { title: React.ReactNode; subtitl
 
 ```tsx
 import type { Metadata, Viewport } from "next";
-import { Header } from "@/components/Header";
 import "@fontsource/caladea/700.css";
 import "@fontsource/carlito/400.css";
 import "@fontsource/carlito/700.css";
@@ -2029,8 +2372,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="min-h-screen font-sans antialiased">
-        <Header />
-        <main className="mx-auto max-w-4xl px-5 py-8">{children}</main>
+        <main className="px-3 py-5 sm:px-6 sm:py-8">{children}</main>
       </body>
     </html>
   );
@@ -2043,9 +2385,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 @import "tailwindcss";
 
 /*
- * The look follows the team's A-Sense presentation: a white page, navy serif
+ * The colours and fonts follow the team's A-Sense presentation: navy serif
  * headings, a plain sans-serif body, and soft lavender, mint, peach and
- * butter panels with a purple accent.
+ * butter panels with a purple accent. The layout of the screens follows the
+ * team's lo-fi prototype.
  *
  * The slides use Cambria and Calibri. Those are used where the device has
  * them; elsewhere Caladea and Carlito, open fonts with the same letter
@@ -2074,7 +2417,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 
 body {
-  background: #ffffff;
+  background: var(--color-panel);
   color: var(--color-ink);
 }
 
@@ -2091,27 +2434,30 @@ canvas {
 }
 ```
 
-<a id="f-page-children"></a>
-**`app/page.tsx`**. Who is drawing. Adding a child needs no adult check (nothing saved is changed); switching away from a child does.
+<a id="f-page-who"></a>
+**`app/page.tsx`** (S1). The grown-up taps the child who is going to practise. Adding a child needs no adult check (nothing saved is changed); switching away from a child does. "Grown-ups" opens the grown-ups area through the adult check.
 
 `src/app/page.tsx`
 
 ```tsx
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
-import { PageTitle } from "@/components/Squiggle";
+import { Avatar } from "@/components/Avatar";
+import { LockIcon } from "@/components/icons";
+import { Screen, buttonClass } from "@/components/Screen";
 import { activeChanged, useActiveLearner } from "@/components/useActiveLearner";
 import * as profiles from "@/lib/profiles";
 import type { Learner } from "@/lib/types";
 
-// "Who is drawing?" Shows the child in use, lets an adult switch child and
-// add a child. Guest mode: there is no sign-in, and everything is kept in
-// this browser.
+// S1 "Who's practising?" The grown-up taps the child who is going to
+// practise. Guest mode: there is no sign-in, and everything is kept in this
+// browser.
 
-export default function ChildrenPage() {
+export default function WhoIsPractising() {
+  const router = useRouter();
   const { learner: active } = useActiveLearner();
   const { ask, dialog } = useAdultCheck();
   const [learners, setLearners] = useState<Learner[]>([]);
@@ -2120,93 +2466,90 @@ export default function ChildrenPage() {
   useEffect(() => setLearners(profiles.learners()), []);
 
   const choose = async (learner: Learner) => {
-    if (learner.id === active?.id) return;
-    // Switching away from a child needs the adult check (SAF-RAY-001).
-    if (active && !(await ask())) return;
+    // Switching away from the child in use needs the adult check (SAF-RAY-001).
+    if (active && learner.id !== active.id && !(await ask())) return;
     profiles.setActive(learner.id);
     activeChanged();
+    router.push("/lessons");
   };
 
   const add = (avatar: string) => {
     const learner = profiles.create(avatar);
-    // The first child becomes the active one; later ones are chosen by the adult.
+    // The first child becomes the one in use; later ones are chosen by the adult.
     if (!active) profiles.setActive(learner.id);
     setLearners(profiles.learners());
     setAdding(false);
     activeChanged();
   };
 
-  return (
-    <div>
-      <PageTitle title="Who is drawing?" subtitle="Choose the child who is practising. A child has a picture and no name." />
-      <p className="mt-4 inline-block rounded-full bg-butter px-4 py-1 text-sm font-bold text-butter-ink">
-        Guest mode: children, settings and attempts are saved in this browser only
-      </p>
+  const openGrownUps = async () => {
+    if (await ask()) router.push("/grown-ups");
+  };
 
-      <div className="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-5">
+  return (
+    <Screen title="Who's practising?" subtitle="Grown-ups: tap the child who is going to practise.">
+      <div className="mt-10 flex flex-wrap justify-center gap-x-10 gap-y-8">
         {learners.map((learner, i) => (
           <button
             key={learner.id}
             onClick={() => choose(learner)}
             aria-label={`Child ${i + 1}`}
             aria-pressed={learner.id === active?.id}
-            className={`flex aspect-square flex-col items-center justify-center rounded-2xl border-2 text-6xl ${
-              learner.id === active?.id ? "border-brand bg-lavender" : "border-transparent bg-panel"
-            }`}
+            className="flex flex-col items-center gap-2 rounded-3xl p-2 hover:bg-lavender"
           >
-            {learner.avatar}
-            <span className={`mt-2 text-sm font-bold ${learner.id === active?.id ? "text-brand" : "text-muted"}`}>
-              {learner.id === active?.id ? "Drawing now" : `Child ${i + 1}`}
+            <Avatar avatar={learner.avatar} size="lg" selected={learner.id === active?.id} />
+            <span className={`text-lg font-bold ${learner.id === active?.id ? "text-brand" : "text-muted"}`}>
+              {learner.id === active?.id ? "Practising now" : `Child ${i + 1}`}
             </span>
           </button>
         ))}
         <button
-          onClick={() => setAdding(true)}
-          className="flex aspect-square flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line text-4xl text-muted"
+          onClick={() => setAdding((a) => !a)}
+          className="flex flex-col items-center gap-2 rounded-3xl p-2 hover:bg-lavender"
         >
-          +<span className="mt-2 text-sm font-bold">Add a child</span>
+          <span className="flex h-36 w-36 items-center justify-center rounded-full border-[3px] border-dashed border-muted text-6xl text-muted">
+            +
+          </span>
+          <span className="text-lg font-bold text-muted">Add a child</span>
         </button>
       </div>
 
       {adding && (
-        <div className="mt-6 rounded-2xl bg-mint p-5">
-          <h2 className="font-sans font-bold text-green">Choose a picture</h2>
-          <div className="mt-3 flex flex-wrap gap-3">
+        <div className="mx-auto mt-8 max-w-xl rounded-3xl bg-mint p-5 text-center">
+          <h2 className="font-sans text-xl font-bold text-green">Choose a picture</h2>
+          <div className="mt-3 flex flex-wrap justify-center gap-3">
             {profiles.AVATARS.map((avatar) => (
               <button
                 key={avatar}
                 onClick={() => add(avatar)}
                 aria-label={`Picture ${avatar}`}
-                className="h-16 w-16 rounded-2xl border-2 border-transparent bg-white text-4xl hover:border-green"
+                className="h-16 w-16 rounded-full border-2 border-ink bg-white text-4xl hover:bg-mint-deep"
               >
                 {avatar}
               </button>
             ))}
           </div>
-          <p className="mt-3 text-sm text-muted">
-            The child starts with the default settings. Change them under Settings.
-          </p>
+          <p className="mt-3 text-muted">A child has a picture and no name. They start with the recommended settings.</p>
         </div>
       )}
 
-      {active && (
-        <div className="mt-8 flex gap-3">
-          <Link href="/lessons" className="rounded-full bg-brand px-5 py-3 font-bold text-white">
-            Choose a lesson
-          </Link>
-          <Link href="/settings" className="rounded-full border border-line bg-white px-5 py-3 font-bold">
-            Settings
-          </Link>
-        </div>
-      )}
+      <div className="mt-12 flex flex-wrap items-center justify-between gap-3">
+        <p className="rounded-full bg-butter px-4 py-1 text-sm font-bold text-butter-ink">
+          Guest mode: saved in this browser only
+        </p>
+        <button onClick={openGrownUps} className={buttonClass}>
+          <LockIcon className="h-5 w-5" />
+          Grown-ups
+        </button>
+      </div>
       {dialog}
-    </div>
+    </Screen>
   );
 }
 ```
 
-<a id="f-page-lessons"></a>
-**`app/lessons/page.tsx`**. The adult picks the starting stage and the lesson, passes the adult check, and the lesson opens.
+<a id="f-page-pick"></a>
+**`app/lessons/page.tsx`** (S2). One picture per lesson.
 
 `src/app/lessons/page.tsx`
 
@@ -2215,131 +2558,401 @@ export default function ChildrenPage() {
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useAdultCheck } from "@/components/AdultCheck";
+import { useEffect } from "react";
 import { LessonIcon } from "@/components/LessonIcon";
-import { PageTitle } from "@/components/Squiggle";
+import { Screen } from "@/components/Screen";
 import { useActiveLearner } from "@/components/useActiveLearner";
 import { LESSONS } from "@/lib/catalogue";
-import type { DrawingStage } from "@/lib/types";
 
-// The adult chooses the lesson and its starting stage (FR-LRN-016).
+// S2 "Pick a lesson". Each card is a picture of the shape. Only the grown-up
+// uses this screen, so the child never has to choose anything.
+
+export default function PickALesson() {
+  const router = useRouter();
+  const { learner, ready } = useActiveLearner();
+
+  useEffect(() => {
+    if (ready && !learner) router.replace("/");
+  }, [ready, learner, router]);
+
+  return (
+    <Screen
+      title="Pick a lesson"
+      subtitle={<>Tap a picture to choose {learner?.avatar}&apos;s lesson.</>}
+      back="/"
+      avatar={learner?.avatar}
+    >
+      <div className="mt-12 flex flex-wrap justify-center gap-8">
+        {LESSONS.map((lesson) => (
+          <Link
+            key={lesson.id}
+            href={`/lessons/${lesson.id}`}
+            aria-label={`${lesson.name} lesson`}
+            className="flex h-60 w-60 flex-col items-center justify-center rounded-3xl border-[3px] border-ink bg-white hover:bg-lavender"
+          >
+            <LessonIcon figure={lesson.figure} className="h-40 w-40" />
+            <span className="mt-2 text-lg font-bold text-muted">{lesson.name}</span>
+          </Link>
+        ))}
+      </div>
+    </Screen>
+  );
+}
+```
+
+<a id="f-page-ready"></a>
+**`app/lessons/[id]/page.tsx`** (S3). The lesson, where the child starts, and the child's values, each with a line saying what it changes. "Start lesson" runs the adult check once, saves any changed values, and opens the lesson.
+
+`src/app/lessons/[id]/page.tsx`
+
+```tsx
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAdultCheck } from "@/components/AdultCheck";
+import { PlayIcon, StageGuide } from "@/components/icons";
+import { LessonIcon } from "@/components/LessonIcon";
+import { NEATNESS, NeatnessInfo } from "@/components/NeatnessInfo";
+import { Screen } from "@/components/Screen";
+import { useActiveLearner } from "@/components/useActiveLearner";
+import { LESSONS } from "@/lib/catalogue";
+import * as settings from "@/lib/settings";
+import type { DrawingStage, SettingName, Settings } from "@/lib/types";
+
+// S3 "Lesson ready". The chosen lesson and this child's settings, each with
+// one line saying what it changes. The grown-up can start straight away or
+// change any of them first. The values are the nine adult-set values of
+// BR-008: three up front, as in the prototype, and the rest under "More
+// settings".
 
 const STAGES: { stage: DrawingStage; label: string }[] = [
-  { stage: "T", label: "Trace the outline" },
-  { stage: "E", label: "Corners only" },
-  { stage: "I", label: "No guide" },
+  { stage: "T", label: "Full outline" },
+  { stage: "E", label: "Endpoints only" },
+  { stage: "I", label: "On my own" },
 ];
 
-export default function LessonsPage() {
+const MORE: SettingName[] = [
+  "stagePass",
+  "attemptLimit",
+  "attemptLimitMax",
+  "improveWindow",
+  "attemptExtension",
+  "attemptIdle",
+  "lessonIdlePrompt",
+  "lessonIdleEnd",
+];
+
+const RULES: { names: [SettingName, SettingName]; text: string }[] = [
+  {
+    names: ["attemptLimit", "difficultyStreak"],
+    text: "The failed attempts before the lesson ends must be more than the tries before a grown-up is called.",
+  },
+  {
+    names: ["attemptLimitMax", "attemptLimit"],
+    text: "The most attempts at one step cannot be fewer than the failed attempts before the lesson ends.",
+  },
+];
+
+function Stepper({
+  name,
+  values,
+  set,
+  big = false,
+}: {
+  name: SettingName;
+  values: Settings;
+  set: (name: SettingName, value: number) => void;
+  big?: boolean;
+}) {
+  const r = settings.RANGES[name];
+  const box = big ? "h-14 w-14 text-3xl" : "h-11 w-11 text-2xl";
+  return (
+    <span className="inline-flex items-center gap-3">
+      <button
+        type="button"
+        aria-label={`Less: ${r.label}`}
+        disabled={values[name] <= r.min}
+        onClick={() => set(name, values[name] - 1)}
+        className={`${box} rounded-xl border-2 border-ink bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
+      >
+        −
+      </button>
+      <output id={name} className={`${big ? "text-4xl" : "text-2xl"} min-w-8 text-center font-bold`}>
+        {values[name]}
+      </output>
+      <button
+        type="button"
+        aria-label={`More: ${r.label}`}
+        disabled={values[name] >= r.max}
+        onClick={() => set(name, values[name] + 1)}
+        className={`${box} rounded-xl border-2 border-ink bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
+      >
+        +
+      </button>
+    </span>
+  );
+}
+
+export default function LessonReady() {
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { learner, ready } = useActiveLearner();
   const { ask, dialog } = useAdultCheck();
+  const lesson = LESSONS.find((l) => l.id === id);
   const [start, setStart] = useState<DrawingStage>("T");
+  const [saved, setSaved] = useState<Settings>(settings.defaults());
+  const [values, setValues] = useState<Settings>(settings.defaults());
+  const [info, setInfo] = useState(false);
 
-  if (ready && !learner) {
-    return (
-      <p>
-        Choose a child first, on the{" "}
-        <Link href="/" className="font-bold text-brand">
-          Children
-        </Link>{" "}
-        page.
-      </p>
-    );
-  }
+  useEffect(() => {
+    if (ready && (!learner || !lesson)) router.replace("/");
+    if (learner) {
+      const loaded = settings.load(learner.id);
+      setSaved(loaded);
+      setValues(loaded);
+    }
+  }, [ready, learner, lesson, router]);
 
-  const begin = async (lessonId: string) => {
-    if (await ask()) router.push(`/lesson/${lessonId}?start=${start}`);
+  if (!learner || !lesson) return null;
+
+  const set = (name: SettingName, value: number) => setValues((v) => ({ ...v, [name]: value }));
+  const bad = settings.check(values);
+  const brokenRules = RULES.filter((rule) => rule.names.every((n) => bad.includes(n)));
+  const changed = settings.SETTING_NAMES.some((n) => values[n] !== saved[n]);
+
+  const begin = async () => {
+    if (bad.length > 0) return;
+    // Starting a lesson, and changing saved values, need the adult check (SAF-RAY-001, SAF-RAY-008).
+    if (!(await ask())) return;
+    if (changed) settings.save(learner.id, values);
+    router.push(`/lesson/${lesson.id}?start=${start}`);
   };
 
   return (
-    <div>
-      <PageTitle
-        title="Lessons"
-        subtitle="Every lesson starts with a demonstration, then gives less help at each stage. A pass moves the child on."
-      />
+    <Screen title={<>{learner.avatar}&apos;s lesson is ready</>} back="/lessons" avatar={learner.avatar}>
+      <div className="mt-6 grid gap-8 md:grid-cols-[16rem_1fr]">
+        <div>
+          <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-3xl border-[3px] border-ink bg-white">
+            <LessonIcon figure={lesson.figure} className="h-32 w-32" />
+          </div>
+          <p className="mt-2 text-center text-2xl font-bold">{lesson.name} lesson</p>
 
-      <fieldset className="mt-6">
-        <legend className="font-bold text-brand">Start at</legend>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {STAGES.map(({ stage, label }) => (
-            <label
-              key={stage}
-              className={`cursor-pointer rounded-full px-4 py-2 text-sm font-bold ${
-                start === stage ? "bg-brand text-white" : "bg-panel text-ink"
-              }`}
+          <div className="mt-6 rounded-3xl bg-lavender p-5">
+            <h2 className="text-2xl font-bold">Hand the tablet to {learner.avatar}</h2>
+            <p className="mt-2 text-lg">
+              Tap &ldquo;Start lesson&rdquo;, then give {learner.avatar} the tablet and stylus. The helper shows what
+              to do.
+            </p>
+            <button
+              onClick={begin}
+              disabled={bad.length > 0}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border-[3px] border-brand bg-brand py-3 text-2xl font-bold text-white hover:opacity-90 disabled:border-line disabled:bg-line"
             >
-              <input
-                type="radio"
-                name="start"
-                className="sr-only"
-                checked={start === stage}
-                onChange={() => setStart(stage)}
-              />
-              {label}
-            </label>
+              <PlayIcon className="h-6 w-6" />
+              Start lesson
+            </button>
+            {changed && bad.length === 0 && <p className="mt-2 text-sm text-muted">Your changes are saved when the lesson starts.</p>}
+          </div>
+        </div>
+
+        <div className="divide-y-2 divide-line">
+          <section className="pb-5">
+            <h2 className="font-sans text-2xl font-bold">{learner.avatar} starts at:</h2>
+            <div className="mt-2 grid grid-cols-3 gap-3" role="radiogroup" aria-label="Starting step">
+              {STAGES.map(({ stage, label }, i) => {
+                const selected = start === stage;
+                return (
+                  <button
+                    key={stage}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => setStart(stage)}
+                    className={`relative rounded-2xl bg-white px-2 pt-2 pb-1 text-center ${
+                      selected ? "border-4 border-brand bg-lavender" : "border-2 border-ink"
+                    }`}
+                  >
+                    <span className="absolute top-2 left-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
+                      {i + 1}
+                    </span>
+                    {selected && (
+                      <span className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+                        ✓
+                      </span>
+                    )}
+                    <StageGuide figure={lesson.figure} stage={stage} className="mx-auto h-16 w-16" />
+                    <span className="text-lg font-bold">{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-muted">
+              Where {learner.avatar} begins. After that the lesson moves on by itself: 1, 2, then 3.
+            </p>
+          </section>
+
+          <section className="py-5">
+            <div className="flex flex-wrap items-center gap-3 text-2xl font-bold">
+              Get a grown-up after
+              <Stepper name="difficultyStreak" values={values} set={set} big />
+              tries in a row
+            </div>
+            <p className="mt-2 text-muted">
+              If {learner.avatar} gets stuck on step 2 or 3 this many times, the tablet calls you over.
+            </p>
+          </section>
+
+          <section className="py-5">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="font-sans text-2xl font-bold">Neatness</h2>
+              <button
+                type="button"
+                onClick={() => setInfo(true)}
+                aria-label="About neatness"
+                className="h-11 w-11 rounded-full border-2 border-ink bg-white font-serif text-xl font-bold hover:bg-lavender"
+              >
+                i
+              </button>
+              <div className="flex gap-2" role="radiogroup" aria-label="Neatness">
+                {NEATNESS.map(({ mark, name }) => {
+                  const selected = values.stagePass === mark;
+                  return (
+                    <button
+                      key={mark}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => set("stagePass", mark)}
+                      className={`rounded-full border-2 px-5 py-2 text-xl font-bold ${
+                        selected ? "border-brand bg-brand text-white" : "border-ink bg-white hover:bg-lavender"
+                      }`}
+                    >
+                      {name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <p className="mt-2 text-muted">
+              How neat a drawing must be before the lesson moves on. Tap i to learn more.
+              {!NEATNESS.some((n) => n.mark === values.stagePass) && ` Now set to a pass mark of ${values.stagePass}.`}
+            </p>
+          </section>
+
+          <details className="pt-5">
+            <summary className="cursor-pointer text-xl font-bold text-brand">More settings</summary>
+            <div className="mt-3 space-y-3">
+              {MORE.map((name) => {
+                const r = settings.RANGES[name];
+                return (
+                  <div
+                    key={name}
+                    className={`flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl p-3 ${
+                      bad.includes(name) ? "bg-peach" : "bg-panel"
+                    }`}
+                  >
+                    <div className="min-w-0 flex-1 basis-60">
+                      <p className="text-lg font-bold">{r.label}</p>
+                      <p className="text-muted">{r.help}</p>
+                    </div>
+                    <Stepper name={name} values={values} set={set} />
+                    <span className="w-24 text-sm text-muted">
+                      {r.unit}
+                      <br />
+                      {r.min} to {r.max}
+                    </span>
+                  </div>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => setValues(settings.defaults())}
+                className="rounded-2xl border-2 border-ink bg-white px-4 py-2 font-bold hover:bg-lavender"
+              >
+                Back to the recommended settings
+              </button>
+            </div>
+          </details>
+
+          {brokenRules.map((rule) => (
+            <p key={rule.text} role="alert" className="mt-3 rounded-2xl bg-peach px-4 py-3 font-bold text-coral">
+              {rule.text}
+            </p>
           ))}
         </div>
-      </fieldset>
-
-      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        {LESSONS.map((lesson) => (
-          <button
-            key={lesson.id}
-            onClick={() => begin(lesson.id)}
-            className="flex flex-col items-center rounded-2xl border-2 border-transparent bg-lavender p-6 hover:border-brand"
-          >
-            <LessonIcon figure={lesson.figure} className="h-28 w-28" />
-            <span className="mt-3 text-lg font-bold">{lesson.name}</span>
-          </button>
-        ))}
       </div>
+
+      {info && <NeatnessInfo figure={lesson.figure} avatar={learner.avatar} onClose={() => setInfo(false)} />}
       {dialog}
-    </div>
+    </Screen>
   );
 }
 ```
 
 <a id="f-page-lesson"></a>
-**`app/lesson/[id]/page.tsx`**. The child's screen. It creates one `LessonControl`, passes it strokes, ticks it twice a second and shows its reports. Leaving the page ends the lesson as unfinished.
+**`app/lesson/[id]/page.tsx`** (S6 to S11). The child's screen. It creates one `LessonControl`, passes it strokes, ticks it twice a second and shows its reports through the helper's speech bubble. Leaving the page ends the lesson as unfinished.
 
 `src/app/lesson/[id]/page.tsx`
 
 ```tsx
 "use client";
 
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
+import { Avatar } from "@/components/Avatar";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
+import { DoorIcon, Footprints, Helper, LockIcon, RestartIcon, StageGuide, Sticker } from "@/components/icons";
+import { LessonIcon } from "@/components/LessonIcon";
+import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
-import { difficultyFeedback, feedback } from "@/lib/feedback";
+import { tolerance } from "@/lib/evaluation";
+import { GET_A_GROWN_UP, difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
+import { distance, toPath } from "@/lib/geometry";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
 import { records } from "@/lib/records";
 import * as settings from "@/lib/settings";
-import type { DrawingStage, Guide, Point, Report, Stage, Stroke } from "@/lib/types";
+import type { DrawingStage, Figure, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
 
-// M13 Child Screen. It shows the lesson and relays input: each finished
-// stroke goes to Lesson Control, which is also ticked twice a second. All
-// the rules live in lib/lessonControl.ts; nothing here decides a pass.
+// M13 Child Screen (prototype S6 to S11). It shows the lesson and relays
+// input: each finished stroke goes to Lesson Control, which is also ticked
+// twice a second. All the rules live in lib/lessonControl.ts; nothing here
+// decides a pass.
 
-/** The four stages, each with how much guidance it gives (the filled dots). */
-const STAGES: { stage: Stage; label: string; guidance: number }[] = [
-  { stage: "D", label: "See it", guidance: 4 },
-  { stage: "T", label: "Trace it", guidance: 3 },
-  { stage: "E", label: "Fewer guides", guidance: 2 },
-  { stage: "I", label: "On your own", guidance: 0 },
-];
+const ORDER: Stage[] = ["D", "T", "E", "I"];
+const STEP_LABELS = ["Watch", "Full outline", "Endpoints only", "On my own"];
+const STEP: Record<DrawingStage, { number: number; name: string }> = {
+  T: { number: 1, name: "Full outline" },
+  E: { number: 2, name: "Endpoints only" },
+  I: { number: 3, name: "On my own" },
+};
 const NO_GUIDE: Guide = { outline: [], endpoints: [] };
 /** How long a finished attempt stays on screen with its feedback. */
 const SHOW_MS = 2500;
 
-const middle = (path: Point[]) => path[Math.floor(path.length / 2)];
-const midpoint = (path: Point[]) =>
-  path.length === 2 ? { x: (path[0].x + path[1].x) / 2, y: (path[0].y + path[1].y) / 2 } : middle(path);
+/** The stretches of a part of the figure that no stroke comes near. */
+function undrawn(part: Path, strokes: Stroke[], tol: number): Path[] {
+  const drawn = strokes.map(toPath);
+  const runs: Path[] = [];
+  let run: Path = [];
+  for (let i = 1; i < part.length; i++) {
+    const a = part[i - 1];
+    const b = part[i];
+    const pieces = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 10));
+    for (let j = 0; j <= pieces; j++) {
+      const p = { x: a.x + ((b.x - a.x) * j) / pieces, y: a.y + ((b.y - a.y) * j) / pieces };
+      if (distance(p, drawn) > tol) run.push(p);
+      else if (run.length > 0) {
+        runs.push(run);
+        run = [];
+      }
+    }
+  }
+  if (run.length > 0) runs.push(run);
+  return runs.filter((r) => r.length > 1);
+}
 
 export default function LessonPage() {
   const { id } = useParams<{ id: string }>();
@@ -2347,13 +2960,21 @@ export default function LessonPage() {
   const { ask, dialog } = useAdultCheck();
   const control = useRef<LessonControl | null>(null);
   const lastInput = useRef<number | null>(null);
+  const strokesRef = useRef<Stroke[]>([]);
   const [, refresh] = useReducer((n: number) => n + 1, 0);
   const [avatar, setAvatar] = useState("");
-  const [strokes, setStrokes] = useState<Stroke[]>([]);
+  const [strokes, setStrokesState] = useState<Stroke[]>([]);
   const [report, setReport] = useState<Report | null>(null);
   const [marks, setMarks] = useState<Point[]>([]);
+  const [glow, setGlow] = useState<Path[]>([]);
   const [showing, setShowing] = useState(false); // a finished attempt is on screen
+  const [card, setCard] = useState(false); // the go-back card is open
   const [panel, setPanel] = useState(true);
+
+  const setStrokes = (next: Stroke[]) => {
+    strokesRef.current = next;
+    setStrokesState(next);
+  };
 
   // Start the lesson for the active child, with the child's settings as they are now.
   useEffect(() => {
@@ -2377,23 +2998,24 @@ export default function LessonPage() {
     setReport(r);
     if (r.feedback[0] === "checkIn") return;
     // An attempt just ended: leave it on screen for a moment, then clear it.
-    const figure = catalogue.lesson(control.current!.lessonId).figure;
-    setMarks(
-      stageOfAttempt === "I"
-        ? [] // with no guide, pointing at a place would give the figure away
-        : r.difficulties.flatMap((d) =>
-            d.kind === "missedPart"
-              ? [midpoint(figure.parts[d.index])]
-              : d.kind === "missedEndpoint"
-                ? [figure.endpoints[d.index]]
-                : [],
-          ),
+    const figure: Figure = catalogue.lesson(control.current!.lessonId).figure;
+    // With no guide, pointing at a place would give the figure away.
+    const point = stageOfAttempt !== "I";
+    setGlow(
+      point
+        ? r.difficulties
+            .filter((d) => d.kind === "missedPart")
+            .flatMap((d) => undrawn(figure.parts[d.index], strokesRef.current, tolerance(figure)))
+        : [],
     );
+    setMarks(point ? r.difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => figure.endpoints[d.index]) : []);
     setShowing(true);
     setTimeout(() => {
       setStrokes([]);
       setMarks([]);
+      setGlow([]);
       setShowing(false);
+      setReport((current) => (current === r ? null : current));
       lastInput.current = Date.now(); // the idle clocks start again once the child can draw
     }, SHOW_MS);
   }, []);
@@ -2415,185 +3037,198 @@ export default function LessonPage() {
   const lesson = catalogue.lesson(c.lessonId);
   const running = c.status === "active" || c.status === "suggested";
   const live = c.attempt?.last ?? (showing ? c.lastFinal : null);
+  const suggested = c.status === "suggested";
+
+  // What the helper says: the latest feedback, or else the line for this stage.
+  const bubble = !running
+    ? feedback(c.ending === "completed" ? "lessonComplete" : "lessonEnded").message
+    : report
+      ? feedback(report.feedback[0]).message
+      : suggested
+        ? GET_A_GROWN_UP
+        : stageLine(c.stage);
+  const hints = report && running ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
 
   const onStroke = (stroke: Stroke) => {
     if (!running || c.stage === "D") return;
     const stage = c.stage;
-    setStrokes((s) => [...s, stroke]);
+    setStrokes([...strokesRef.current, stroke]);
     show(c.addStroke(stroke), stage);
     refresh();
   };
 
-  const answer = async (accept: boolean, stage?: DrawingStage) => {
-    if (!(await ask())) return; // only an adult can answer (SAF-RAY-001)
-    c.answerSuggestion(accept, stage);
-    if (accept) setStrokes([]);
+  /** "Start again": wipes this try. The attempt is kept apart as interrupted and is not counted. */
+  const startAgain = () => {
+    c.interrupt();
+    setStrokes([]);
     setReport(null);
     refresh();
   };
 
-  const leave = async () => {
-    if (running && !(await ask())) return;
-    router.push("/lessons");
+  const openCard = async () => {
+    if (await ask()) setCard(true); // only an adult can answer (SAF-RAY-001)
   };
 
+  const answer = (accept: boolean, stage?: DrawingStage) => {
+    c.answerSuggestion(accept, stage);
+    if (accept) setStrokes([]);
+    setReport(null);
+    setCard(false);
+    lastInput.current = Date.now();
+    refresh();
+  };
+
+  const leave = async (to: string) => {
+    if (await ask()) router.push(to);
+  };
+
+  const childButton =
+    "flex h-16 w-16 items-center justify-center rounded-2xl border-[3px] border-ink bg-white hover:bg-lavender disabled:border-line disabled:text-line";
+
   return (
-    <div className="mx-auto max-w-xl">
-      {/* Where the child is in the lesson: pictures, no reading needed. */}
-      <div className="flex items-center gap-2">
-        <span className="text-4xl" aria-label="Child drawing now">
-          {avatar}
-        </span>
-        <ol className="grid flex-1 grid-cols-4 gap-2">
-          {STAGES.map(({ stage, label, guidance }, i) => {
-            const current = c.stage === stage;
-            return (
-              <li
-                key={stage}
-                aria-label={label}
-                aria-current={current ? "step" : undefined}
-                className={`rounded-xl px-2 py-2 ${current ? "bg-lavender ring-2 ring-brand" : "bg-panel"}`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                      current ? "bg-brand text-white" : "bg-lavender-deep text-brand"
-                    }`}
-                  >
-                    {i + 1}
-                  </span>
-                  <span className={`text-xs leading-tight font-bold ${current ? "text-ink" : "text-muted"}`}>{label}</span>
-                </div>
-                <div className="mt-1.5 flex gap-1" aria-hidden="true">
-                  {[0, 1, 2, 3].map((d) => (
-                    <span
-                      key={d}
-                      className={`h-2 w-2 rounded-full border border-brand ${d < guidance ? "bg-brand" : "bg-white"}`}
-                    />
-                  ))}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-        <button onClick={leave} aria-label="Leave the lesson (grown-ups)" className="rounded-full p-2 text-2xl">
-          🔒
-        </button>
-      </div>
+    <>
+      <Frame>
+        <div className="flex items-start justify-between">
+          <div>
+            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} />
+            {/* With no guide, a small picture reminds the child what to draw. */}
+            {running && c.stage === "I" && (
+              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">
+                <LessonIcon figure={lesson.figure} className="h-14 w-14" />
+              </div>
+            )}
+          </div>
+          {avatar && <Avatar avatar={avatar} />}
+        </div>
 
-      <div className="relative mt-4">
-        <DrawingCanvas
-          guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
-          strokes={strokes}
-          marks={marks}
-          demonstration={running && c.stage === "D" ? lesson.figure.parts : undefined}
-          disabled={!running || c.stage === "D" || showing}
-          onStroke={onStroke}
-          onCancel={() => {
-            c.interrupt();
-            setStrokes([]);
-            refresh();
-          }}
-          onInput={(t) => {
-            lastInput.current = t;
-            if (report?.feedback[0] === "checkIn") setReport(null);
-          }}
-        />
-
-        {running && c.stage === "D" && (
-          <button
-            onClick={() => {
-              c.beginPractice();
-              lastInput.current = Date.now();
+        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,62vh)]">
+          <DrawingCanvas
+            guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
+            strokes={strokes}
+            marks={marks}
+            glow={glow}
+            demonstration={running && c.stage === "D" ? lesson.figure.parts : undefined}
+            disabled={!running || c.stage === "D" || showing}
+            onStroke={onStroke}
+            onCancel={() => {
+              c.interrupt();
+              setStrokes([]);
               refresh();
             }}
-            aria-label="Start drawing"
-            className="absolute bottom-6 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full bg-green text-5xl text-white shadow-lg"
-          >
-            ▶
-          </button>
-        )}
+            onInput={(t) => {
+              lastInput.current = t;
+              if (report?.feedback[0] === "checkIn") setReport(null);
+            }}
+          />
 
-        {!running && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-white/90 text-center">
-            <span className="text-8xl">{c.ending === "completed" ? "🎉" : "🌈"}</span>
-            <p className="mt-4 font-serif text-3xl font-bold">
-              {feedback(c.ending === "completed" ? "lessonComplete" : "lessonEnded").message}
-            </p>
-            <div className="mt-6 flex gap-3">
-              <Link href="/lessons" className="rounded-full bg-brand px-5 py-3 font-bold text-white">
-                Lessons
-              </Link>
-              <Link href="/records" className="rounded-full border border-line bg-white px-5 py-3 font-bold">
-                See the records
-              </Link>
+          {running && c.stage === "D" && (
+            <button
+              onClick={() => {
+                c.beginPractice();
+                lastInput.current = Date.now();
+                refresh();
+              }}
+              aria-label="Start drawing"
+              className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-5xl text-white"
+            >
+              ▶
+            </button>
+          )}
+
+          {!running && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white">
+              <Sticker className="h-3/5 w-3/5" />
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3" aria-live="polite">
+            <Helper className="h-20 w-[4.25rem] shrink-0" />
+            <div>
+              <p className="rounded-[2rem] border-[3px] border-ink bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
+              {hints.map((kind) => (
+                <p key={kind} className="mt-1 pl-6 text-lg font-bold text-butter-ink">
+                  {difficultyFeedback(kind).message}
+                </p>
+              ))}
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Feedback: the effort first, then what was seen in the drawing. */}
-      <div className="mt-4 min-h-20" aria-live="polite">
-        {report &&
-          running &&
-          report.feedback.map((kind) => {
-            const f = feedback(kind);
-            return (
-              <p
-                key={kind}
-                className="flex w-fit items-center gap-3 rounded-full px-5 py-2 text-xl font-bold"
-                style={{ color: f.colour, backgroundColor: `${f.colour}1a` }}
-              >
-                <span className="text-3xl">{f.image}</span>
-                {f.message}
-              </p>
-            );
-          })}
-        {report &&
-          running &&
-          [...new Set(report.difficulties.map((d) => d.kind))].map((kind) => {
-            const f = difficultyFeedback(kind);
-            return (
-              <p key={kind} className="mt-2 flex items-center gap-3 pl-5 text-base font-bold" style={{ color: f.colour }}>
-                <span className="text-2xl">{f.image}</span>
-                {f.message}
-              </p>
-            );
-          })}
-      </div>
-
-      {/* For the adult: a go-back suggestion. The child keeps practising meanwhile. */}
-      {c.status === "suggested" && (
-        <div className="mt-2 rounded-2xl bg-lavender p-4 text-sm">
-          <p className="font-bold text-brand">For the grown-up: would an earlier stage help?</p>
-          <p className="text-muted">
-            There have been {c.streak} attempts in a row that did not pass at this stage. Nothing changes unless you
-            choose.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button onClick={() => answer(true, "T")} className="rounded-full bg-brand px-3 py-2 text-white">
-              Go back to tracing
-            </button>
-            {c.stage === "I" && (
-              <button onClick={() => answer(true, "E")} className="rounded-full bg-brand px-3 py-2 text-white">
-                Go back to corners only
+          <div className="flex items-center gap-3">
+            {running && suggested && (
+              <button onClick={openCard} className={`${buttonClass} animate-pulse border-brand text-brand`}>
+                <LockIcon className="h-5 w-5" />
+                Grown-ups
               </button>
             )}
-            <button onClick={() => answer(false)} className="rounded-full border border-line bg-white px-3 py-2">
-              Stay at this stage
-            </button>
+            {running && c.stage !== "D" && (
+              <button onClick={startAgain} disabled={showing || strokes.length === 0} aria-label="Start again" className={childButton}>
+                <RestartIcon className="h-8 w-8" />
+              </button>
+            )}
+            {running && (
+              <button onClick={() => leave("/")} aria-label="Leave the lesson (grown-ups)" className={childButton}>
+                <DoorIcon className="h-8 w-8" />
+              </button>
+            )}
+            {!running && (
+              <button onClick={() => leave("/grown-ups")} className={buttonClass}>
+                <LockIcon className="h-5 w-5" />
+                Grown-ups
+              </button>
+            )}
+          </div>
+        </div>
+      </Frame>
+
+      {/* The go-back card, for the grown-up. The child can keep practising until it is opened. */}
+      {card && suggested && c.stage !== "D" && c.stage !== "T" && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Go back a step?">
+          <div className="w-full max-w-2xl rounded-3xl border-4 border-ink bg-white p-6 sm:p-8">
+            <p className="flex items-center gap-2 text-xl font-bold">
+              <LockIcon className="h-6 w-6" />
+              Grown-ups
+            </p>
+            <p className="mt-3 text-2xl">
+              {avatar} has tried step {STEP[c.stage].number}, &ldquo;{STEP[c.stage].name}&rdquo;, {c.streak} times in a
+              row.
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-4">
+              <StepTile figure={lesson.figure} stage={c.stage} caption="Now" />
+              <span className="text-4xl" aria-hidden="true">
+                →
+              </span>
+              <StepTile figure={lesson.figure} stage="T" caption="Back to" strong />
+              {c.stage === "I" && <StepTile figure={lesson.figure} stage="E" caption="Or back to" strong />}
+            </div>
+            <p className="mt-5 text-2xl">Go back to an earlier step?</p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button onClick={() => answer(true, "T")} className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+                Yes, go back to step 1
+              </button>
+              {c.stage === "I" && (
+                <button onClick={() => answer(true, "E")} className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+                  Yes, go back to step 2
+                </button>
+              )}
+              <button onClick={() => answer(false)} className="rounded-2xl border-2 border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender">
+                No, keep trying step {STEP[c.stage].number}
+              </button>
+            </div>
+            <p className="mt-4 text-muted">Either way, {avatar} carries on alone once you hand the tablet back.</p>
           </div>
         </div>
       )}
 
       {/* For the demonstration to the teaching team, not for the child. */}
-      <div className="mt-6 rounded-2xl bg-panel p-4 text-sm">
+      <div className="mx-auto mt-5 max-w-5xl rounded-3xl bg-white p-5 text-sm">
         <button onClick={() => setPanel((p) => !p)} className="flex items-center gap-2 font-bold">
           {panel ? "▾" : "▸"} Demo panel
           <span className="rounded-full bg-butter px-3 py-0.5 text-xs text-butter-ink">For adults</span>
         </button>
         {panel && (
-          <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 sm:grid-cols-3" data-testid="panel">
+          <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 sm:grid-cols-4" data-testid="panel">
             <Item label="Lesson status" value={c.status} />
             <Item label="Stage" value={c.stage} />
             <Item label="Pass mark" value={c.settings.stagePass} />
@@ -2613,6 +3248,32 @@ export default function LessonPage() {
         )}
       </div>
       {dialog}
+    </>
+  );
+}
+
+function StepTile({
+  figure,
+  stage,
+  caption,
+  strong = false,
+}: {
+  figure: Figure;
+  stage: DrawingStage;
+  caption: string;
+  strong?: boolean;
+}) {
+  return (
+    <div className="text-center">
+      <div className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-ink"}`}>
+        <span className="absolute top-1.5 left-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
+          {STEP[stage].number}
+        </span>
+        <StageGuide figure={figure} stage={stage} className="h-full w-full p-3" />
+      </div>
+      <p className="mt-1 text-muted">
+        {caption}: {STEP[stage].name}
+      </p>
     </div>
   );
 }
@@ -2627,200 +3288,93 @@ function Item({ label, value }: { label: string; value: string | number }) {
 }
 ```
 
-<a id="f-page-settings"></a>
-**`app/settings/page.tsx`**
+<a id="f-page-grownups"></a>
+**`app/grown-ups/page.tsx`** (S4)
 
-`src/app/settings/page.tsx`
+`src/app/grown-ups/page.tsx`
 
 ```tsx
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useAdultCheck } from "@/components/AdultCheck";
-import { PageTitle } from "@/components/Squiggle";
-import { useActiveLearner } from "@/components/useActiveLearner";
-import * as settings from "@/lib/settings";
-import type { SettingName, Settings } from "@/lib/types";
+import { BookIcon, LockIcon, PlayIcon } from "@/components/icons";
+import { Screen } from "@/components/Screen";
 
-// The nine adult-set values of the active child (BR-008). A value outside
-// its range, or one that breaks a rule between values, cannot be saved.
+// S4 "Grown-ups". Kept apart from the child's screens, with two large
+// buttons: start another lesson, or look back at the practice. It is
+// reached through the adult check, from "Who's practising?" or the end of a
+// lesson.
 
-const RULES: { names: [SettingName, SettingName]; text: string }[] = [
-  {
-    names: ["attemptLimit", "difficultyStreak"],
-    text: "The failed attempts before the lesson ends must be more than the failed attempts before a suggestion.",
-  },
-  {
-    names: ["attemptLimitMax", "attemptLimit"],
-    text: "The most attempts at one stage cannot be fewer than the failed attempts before the lesson ends.",
-  },
-  {
-    names: ["attemptIdle", "lessonIdlePrompt"],
-    text: "The pause that ends an attempt must be shorter than the pause before a check-in.",
-  },
-  {
-    names: ["lessonIdlePrompt", "lessonIdleEnd"],
-    text: "The pause before a check-in must be shorter than the pause that ends the lesson.",
-  },
+const CHOICES = [
+  { href: "/", title: "Start a lesson", text: "Choose a child and a lesson", Icon: PlayIcon, tint: "bg-lavender" },
+  { href: "/story", title: "Practice story", text: "See how this week's practice went", Icon: BookIcon, tint: "bg-mint" },
 ];
 
-export default function SettingsPage() {
-  const { learner, ready } = useActiveLearner();
-  const { ask, dialog } = useAdultCheck();
-  const [values, setValues] = useState<Settings>(settings.defaults());
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (learner) setValues(settings.load(learner.id));
-  }, [learner]);
-
-  if (ready && !learner) {
-    return (
-      <p>
-        Choose a child first, on the{" "}
-        <Link href="/" className="font-bold text-brand">
-          Children
-        </Link>{" "}
-        page.
-      </p>
-    );
-  }
-
-  const bad = settings.check(values);
-  const outOfRange = (name: SettingName) => {
-    const r = settings.RANGES[name];
-    return !Number.isInteger(values[name]) || values[name] < r.min || values[name] > r.max;
-  };
-  const brokenRules = RULES.filter((rule) => rule.names.every((n) => bad.includes(n) && !outOfRange(n)));
-
-  const set = (name: SettingName, value: number) => {
-    setValues((v) => ({ ...v, [name]: value }));
-    setSaved(false);
-  };
-
-  const save = async () => {
-    if (!learner || bad.length > 0) return;
-    // Changing saved values needs the adult check (SAF-RAY-008).
-    if (!(await ask())) return;
-    settings.save(learner.id, values);
-    setSaved(true);
-  };
-
+export default function GrownUps() {
   return (
-    <div>
-      <PageTitle
-        title={
-          <>
-            Settings for <span className="font-sans">{learner?.avatar}</span>
-          </>
-        }
-        subtitle="These values belong to this child only. A change applies to the next lesson that is started."
-      />
-
-      <div className="mt-6 space-y-3">
-        {settings.SETTING_NAMES.map((name) => {
-          const r = settings.RANGES[name];
-          const invalid = bad.includes(name);
-          return (
-            <div
-              key={name}
-              className={`rounded-2xl border-2 p-4 ${invalid ? "border-coral bg-peach" : "border-transparent bg-panel"}`}
-            >
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <label htmlFor={name} className="min-w-0 flex-1 basis-56">
-                  <span className="font-bold">{r.label}</span>
-                  <span className="block text-sm text-muted">{r.help}</span>
-                </label>
-                <input
-                  type="range"
-                  aria-label={`${r.label} slider`}
-                  min={r.min}
-                  max={r.max}
-                  step={1}
-                  value={values[name]}
-                  onChange={(e) => set(name, Number(e.target.value))}
-                  className="w-40 accent-brand"
-                />
-                <input
-                  id={name}
-                  type="number"
-                  min={r.min}
-                  max={r.max}
-                  step={1}
-                  value={Number.isNaN(values[name]) ? "" : values[name]}
-                  onChange={(e) => set(name, e.target.value === "" ? NaN : Number(e.target.value))}
-                  className="w-20 rounded-lg border border-line bg-white px-2 py-1 text-right"
-                />
-                <span className="w-16 text-sm text-muted">{r.unit}</span>
-              </div>
-              <p className={`mt-1 text-xs ${outOfRange(name) ? "font-bold text-coral" : "text-muted"}`}>
-                {outOfRange(name) ? "Choose a whole number from " : "From "}
-                {r.min} to {r.max}. Default {r.default}.
-              </p>
-            </div>
-          );
-        })}
+    <Screen
+      title={
+        <span className="inline-flex items-center gap-3">
+          <LockIcon className="h-8 w-8" />
+          Grown-ups
+        </span>
+      }
+      subtitle="What would you like to do?"
+    >
+      <div className="mx-auto mt-10 max-w-2xl space-y-8">
+        {CHOICES.map(({ href, title, text, Icon, tint }) => (
+          <Link
+            key={href}
+            href={href}
+            className="flex items-center gap-6 rounded-3xl border-[3px] border-ink bg-white p-8 hover:bg-lavender"
+          >
+            <span className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full ${tint}`}>
+              <Icon className="h-10 w-10" />
+            </span>
+            <span>
+              <span className="block font-serif text-3xl font-bold">{title}</span>
+              <span className="mt-1 block text-xl text-muted">{text}</span>
+            </span>
+          </Link>
+        ))}
       </div>
-
-      {brokenRules.map((rule) => (
-        <p key={rule.text} role="alert" className="mt-3 rounded-2xl bg-peach px-4 py-3 text-sm font-bold text-coral">
-          {rule.text}
-        </p>
-      ))}
-
-      <div className="mt-6 flex items-center gap-3">
-        <button
-          onClick={save}
-          disabled={bad.length > 0}
-          className="rounded-full bg-brand px-5 py-3 font-bold text-white disabled:bg-line"
-        >
-          Save
-        </button>
-        <button
-          onClick={() => {
-            setValues(settings.defaults());
-            setSaved(false);
-          }}
-          className="rounded-full border border-line bg-white px-5 py-3 font-bold"
-        >
-          Back to defaults
-        </button>
-        {saved && <span className="text-sm font-bold text-green">Saved.</span>}
-      </div>
-      {dialog}
-    </div>
+    </Screen>
   );
 }
 ```
 
-<a id="f-page-records"></a>
-**`app/records/page.tsx`**
+<a id="f-page-story"></a>
+**`app/story/page.tsx`** (S5). The week in stickers, the child's own drawings with and without a guide, and under "Every lesson and attempt" the full record of each attempt.
 
-`src/app/records/page.tsx`
+`src/app/story/page.tsx`
 
 ```tsx
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { LessonIcon } from "@/components/LessonIcon";
-import { PageTitle } from "@/components/Squiggle";
+import { Avatar } from "@/components/Avatar";
+import { Sticker } from "@/components/icons";
+import { Screen } from "@/components/Screen";
 import { StrokePreview } from "@/components/StrokePreview";
 import { useActiveLearner } from "@/components/useActiveLearner";
 import * as catalogue from "@/lib/catalogue";
 import { difficultyFeedback } from "@/lib/feedback";
+import * as profiles from "@/lib/profiles";
 import * as records from "@/lib/records";
-import type { AttemptRecord, Ending, LessonRecord, Stage } from "@/lib/types";
+import type { AttemptRecord, Ending, Learner, LessonRecord, Stage } from "@/lib/types";
 
-// What was saved for the active child: every start of a lesson, and under it
-// every attempt with its actual strokes.
+// S5 "Practice story: this week". A plain-words look at the week for one
+// child: the days they practised, and their real drawings with a guide and
+// without one. Under it, every saved attempt in full. It shows practice,
+// not an assessment.
+
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const STAGE: Record<Stage, string> = {
   D: "Demonstration",
-  T: "Trace the outline",
-  E: "Corners only",
-  I: "No guide",
+  T: "Full outline",
+  E: "Endpoints only",
+  I: "On my own",
 };
 
 const ENDING: Record<Ending, string> = {
@@ -2839,127 +3393,256 @@ const PILL = {
   interrupted: "bg-butter text-butter-ink",
 } as const;
 
-export default function RecordsPage() {
-  const { learner, ready } = useActiveLearner();
-  const [lessons, setLessons] = useState<{ record: LessonRecord; attempts: AttemptRecord[] }[]>([]);
+/** Monday of the current week, at midnight. */
+function weekStart(): number {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d.getTime();
+}
+
+/** 0 for Monday to 6 for Sunday, or -1 if the time is not in this week. */
+function dayOf(time: number, start: number): number {
+  const day = Math.floor((time - start) / 86_400_000);
+  return day >= 0 && day < 7 ? day : -1;
+}
+
+interface LessonStory {
+  record: LessonRecord;
+  attempts: AttemptRecord[];
+}
+
+export default function PracticeStory() {
+  const { learner: active, ready } = useActiveLearner();
+  const [learners, setLearners] = useState<Learner[]>([]);
+  const [shown, setShown] = useState<Learner | null>(null);
+  const [lessons, setLessons] = useState<LessonStory[]>([]);
 
   useEffect(() => {
-    if (!learner) return;
+    const all = profiles.learners();
+    setLearners(all);
+    if (ready) setShown((s) => s ?? active ?? all[0] ?? null);
+  }, [ready, active]);
+
+  useEffect(() => {
+    if (!shown) return;
     setLessons(
       records
-        .lessonRecords(learner.id)
+        .lessonRecords(shown.id)
         .reverse()
-        .map((record) => ({ record, attempts: records.attempts(learner.id, record.id) })),
+        .map((record) => ({ record, attempts: records.attempts(shown.id, record.id) })),
     );
-  }, [learner]);
+  }, [shown]);
 
-  if (ready && !learner) {
-    return (
-      <p>
-        Choose a child first, on the{" "}
-        <Link href="/" className="font-bold text-brand">
-          Children
-        </Link>{" "}
-        page.
-      </p>
-    );
-  }
+  const start = weekStart();
+  const practised = DAYS.map((_, day) => lessons.some(({ record }) => dayOf(record.startedAt, start) === day));
+  const daysPractised = practised.filter(Boolean).length;
+
+  // For each lesson practised this week: the last drawing of each day, with a guide and without one.
+  const lessonIds = [...new Set(lessons.map(({ record }) => record.lesson))];
+  const grids = lessonIds
+    .map((lessonId) => {
+      const attempts = lessons
+        .filter(({ record }) => record.lesson === lessonId)
+        .flatMap(({ attempts }) => attempts)
+        .filter((a) => dayOf(a.endedAt, start) >= 0 && a.strokes.length > 0)
+        .sort((a, b) => a.endedAt - b.endedAt);
+      const days = [...new Set(attempts.map((a) => dayOf(a.endedAt, start)))].sort();
+      const last = (day: number, guided: boolean) =>
+        attempts.filter((a) => dayOf(a.endedAt, start) === day && (a.stage !== "I") === guided).at(-1);
+      return { lesson: catalogue.lesson(lessonId), days, last };
+    })
+    .filter((g) => g.days.length > 0);
 
   return (
+    <Screen
+      title="Practice story: this week"
+      back="/grown-ups"
+      right={
+        <div className="flex gap-2">
+          {learners.map((learner, i) => (
+            <button
+              key={learner.id}
+              onClick={() => setShown(learner)}
+              aria-label={`Show child ${i + 1}`}
+              aria-pressed={learner.id === shown?.id}
+              className={`rounded-2xl p-1 ${learner.id === shown?.id ? "border-2 border-ink" : "border-2 border-transparent"}`}
+            >
+              <Avatar avatar={learner.avatar} size="sm" selected={learner.id === shown?.id} />
+            </button>
+          ))}
+        </div>
+      }
+    >
+      <section className="mt-6 rounded-3xl border-[3px] border-ink p-5">
+        <ol className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+          {DAYS.map((day, i) => (
+            <li key={day} className="flex flex-col items-center gap-1 text-lg font-bold">
+              {day}
+              {practised[i] ? (
+                <Sticker className="h-14 w-14" />
+              ) : (
+                <span className="h-14 w-14 rounded-full border-[3px] border-line" />
+              )}
+              <span className="sr-only">{practised[i] ? "practised" : "no practice"}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-4 text-center text-xl">
+          {shown?.avatar}{" "}
+          {daysPractised === 0
+            ? "has not practised yet this week."
+            : `practised on ${daysPractised} ${daysPractised === 1 ? "day" : "days"} this week.`}
+        </p>
+      </section>
+
+      {grids.map(({ lesson, days, last }) => (
+        <section key={lesson.id} className="mt-4 rounded-3xl border-[3px] border-ink p-5">
+          <div className="overflow-x-auto">
+            <table className="w-full border-separate border-spacing-x-4 border-spacing-y-2 text-center">
+              <thead>
+                <tr className="text-lg">
+                  <th className="text-left font-bold">{lesson.name} lesson</th>
+                  {days.map((day) => (
+                    <th key={day} className="font-bold">
+                      {DAYS[day]}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[true, false].map((guided) => (
+                  <tr key={String(guided)}>
+                    <th className="text-left text-xl font-bold">{guided ? "With a guide" : "Without a guide"}</th>
+                    {days.map((day) => {
+                      const attempt = last(day, guided);
+                      return (
+                        <td key={day}>
+                          <div className="flex justify-center">
+                            {attempt ? (
+                              <StrokePreview strokes={attempt.strokes} figure={lesson.figure} size="sm" />
+                            ) : (
+                              <span
+                                aria-label="Not yet"
+                                className="h-24 w-24 rounded-2xl border-[3px] border-dashed border-line"
+                              />
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-muted">
+            Key:
+            <span className="flex items-center gap-2">
+              <span className="h-6 w-6 rounded-md border-2 border-ink" />
+              {shown?.avatar}&apos;s last drawing from that day
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="h-6 w-6 rounded-md border-2 border-dashed border-line" />
+              Not yet
+            </span>
+          </p>
+        </section>
+      ))}
+
+      <p className="mt-4 flex items-center gap-3 rounded-2xl bg-panel px-5 py-4 text-xl">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink font-serif font-bold">
+          i
+        </span>
+        This shows practice, not an assessment.
+      </p>
+
+      <details className="mt-4">
+        <summary className="cursor-pointer text-xl font-bold text-brand">Every lesson and attempt</summary>
+        {lessons.length === 0 && <p className="mt-3 text-muted">No lessons yet.</p>}
+        {lessons.map(({ record, attempts }) => {
+          const lesson = catalogue.lesson(record.lesson);
+          return (
+            <section key={record.id} className="mt-4 rounded-2xl bg-panel p-4">
+              <h2 className="font-sans text-lg font-bold">
+                {lesson.name} lesson
+                <span className="ml-2 text-sm font-normal text-muted">
+                  {new Date(record.startedAt).toLocaleString()}
+                </span>
+              </h2>
+              <dl className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:grid-cols-3">
+                <Item label="How it ended" value={ENDING[record.ending]} />
+                <Item label="Started at" value={STAGE[record.start]} />
+                <Item label="Furthest step" value={STAGE[record.furthest]} />
+                <Item
+                  label="Passes (outline / endpoints / own)"
+                  value={`${record.passes.T} / ${record.passes.E} / ${record.passes.I}`}
+                />
+                <Item label="Extensions" value={record.extensions} />
+                <Item
+                  label="Go-back suggestions"
+                  value={
+                    record.suggestions.length === 0
+                      ? "None"
+                      : record.suggestions.map((s) => `${STAGE[s.from]}: ${s.response}`).join("; ")
+                  }
+                />
+              </dl>
+              <ol className="mt-3 space-y-2">
+                {attempts.map((attempt, i) => (
+                  <li key={attempt.id} className="flex gap-4 rounded-xl bg-white p-3">
+                    <StrokePreview strokes={attempt.strokes} figure={lesson.figure} size="sm" />
+                    <div className="text-sm">
+                      <p className="font-bold">
+                        Attempt {i + 1}: {STAGE[attempt.stage]}
+                      </p>
+                      <p className="mt-1">
+                        <span className={`rounded-full px-3 py-0.5 text-xs font-bold ${PILL[attempt.outcome]}`}>
+                          {OUTCOME[attempt.outcome]}
+                        </span>
+                        {attempt.result !== null &&
+                          ` Result ${Math.round(attempt.result)} (pass mark ${attempt.settings.stagePass})`}
+                      </p>
+                      <p className="text-muted">
+                        {attempt.stage === "I" ? "Drawn without a guide" : "Drawn with a guide"},{" "}
+                        {attempt.strokes.length} {attempt.strokes.length === 1 ? "stroke" : "strokes"},{" "}
+                        {new Date(attempt.endedAt).toLocaleTimeString()}
+                      </p>
+                      {attempt.difficulties.length > 0 && (
+                        <ul className="mt-1 list-disc pl-5 text-muted">
+                          {attempt.difficulties.map((o, j) => (
+                            <li key={j}>
+                              {DIFFICULTY[o.difficulty.kind]}
+                              {o.corrected && " (corrected later in the attempt)"}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </li>
+                ))}
+                {attempts.length === 0 && <li className="text-sm text-muted">No attempts were saved.</li>}
+              </ol>
+            </section>
+          );
+        })}
+      </details>
+    </Screen>
+  );
+}
+
+/** How a difficulty reads to an adult. The child's wording is in lib/feedback.ts. */
+const DIFFICULTY = {
+  missedPart: "A part of the shape was not drawn.",
+  missedEndpoint: "The line did not reach an endpoint.",
+  offFigure: difficultyFeedback("offFigure").message,
+} as const;
+
+function Item({ label, value }: { label: string; value: string | number }) {
+  return (
     <div>
-      <PageTitle
-        title={
-          <>
-            Records for <span className="font-sans">{learner?.avatar}</span>
-          </>
-        }
-        subtitle="Practice records only. A result describes one drawing against the lesson's figure, not the child."
-      />
-
-      {lessons.length === 0 && <p className="mt-6 text-muted">No lessons yet.</p>}
-
-      {lessons.map(({ record, attempts }) => {
-        const lesson = catalogue.lesson(record.lesson);
-        return (
-          <section key={record.id} className="mt-6 rounded-2xl border border-line bg-white p-4">
-            <h2 className="flex items-center gap-2 font-sans text-lg font-bold">
-              <LessonIcon figure={lesson.figure} className="h-8 w-8" />
-              {lesson.name}
-              <span className="ml-2 text-sm font-normal text-muted">
-                {new Date(record.startedAt).toLocaleString()}
-              </span>
-            </h2>
-            <dl className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:grid-cols-3">
-              <div>
-                <dt className="text-xs font-bold tracking-wide text-muted uppercase">How it ended</dt>
-                <dd className="font-bold">{ENDING[record.ending]}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-bold tracking-wide text-muted uppercase">Started at</dt>
-                <dd className="font-bold">{STAGE[record.start]}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-bold tracking-wide text-muted uppercase">Furthest stage</dt>
-                <dd className="font-bold">{STAGE[record.furthest]}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-bold tracking-wide text-muted uppercase">Passes (trace / corners / no guide)</dt>
-                <dd className="font-bold">
-                  {record.passes.T} / {record.passes.E} / {record.passes.I}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs font-bold tracking-wide text-muted uppercase">Extensions</dt>
-                <dd className="font-bold">{record.extensions}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-bold tracking-wide text-muted uppercase">Go-back suggestions</dt>
-                <dd className="font-bold">
-                  {record.suggestions.length === 0
-                    ? "None"
-                    : record.suggestions.map((s) => `${STAGE[s.from]}: ${s.response}`).join("; ")}
-                </dd>
-              </div>
-            </dl>
-
-            <ol className="mt-4 space-y-3">
-              {attempts.map((attempt, i) => (
-                <li key={attempt.id} className="flex gap-4 rounded-xl bg-panel p-3">
-                  <StrokePreview strokes={attempt.strokes} figure={lesson.figure} />
-                  <div className="text-sm">
-                    <p className="font-bold">
-                      Attempt {i + 1}: {STAGE[attempt.stage]}
-                    </p>
-                    <p className="mt-1">
-                      <span className={`rounded-full px-3 py-0.5 text-xs font-bold ${PILL[attempt.outcome]}`}>
-                        {OUTCOME[attempt.outcome]}
-                      </span>
-                      {attempt.result !== null &&
-                        ` Result ${Math.round(attempt.result)} (pass mark ${attempt.settings.stagePass})`}
-                    </p>
-                    <p className="text-muted">
-                      {attempt.stage === "I" ? "Drawn without a guide" : "Drawn with a guide"},{" "}
-                      {attempt.strokes.length} {attempt.strokes.length === 1 ? "stroke" : "strokes"},{" "}
-                      {new Date(attempt.endedAt).toLocaleTimeString()}
-                    </p>
-                    {attempt.difficulties.length > 0 && (
-                      <ul className="mt-1 list-disc pl-5 text-muted">
-                        {attempt.difficulties.map((o, j) => (
-                          <li key={j}>
-                            {difficultyFeedback(o.difficulty.kind).message}
-                            {o.corrected && " (corrected later in the attempt)"}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </li>
-              ))}
-              {attempts.length === 0 && <li className="text-sm text-muted">No attempts were saved.</li>}
-            </ol>
-          </section>
-        );
-      })}
+      <dt className="text-xs font-bold tracking-wide text-muted uppercase">{label}</dt>
+      <dd className="font-bold">{value}</dd>
     </div>
   );
 }
@@ -3091,7 +3774,7 @@ next-env.d.ts
 
 ## 9. Tests
 
-`npm test` runs 39 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
+`npm test` runs 45 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
 
 | Area | What is checked |
 | --- | --- |
@@ -3103,6 +3786,7 @@ next-env.d.ts
 | Suggestion | Offered at the streak, never at trace, held back while improving. Declining needs a new streak. Accepting moves to the chosen earlier stage and keeps the furthest stage. A pass records it as ignored. The adult's streak is used. |
 | Idle | The check-in appears once, then the lesson ends. |
 | Settings | The defaults are the middle of each range. Out of range is rejected. Both values of a broken rule are named. |
+| Pass mark examples | For both lessons at 70, 80 and 90: the example drawing is complete, passes at its mark, and would not pass six points higher. |
 
 <a id="f-test-helpers"></a>
 **`lib/testHelpers.ts`**
@@ -3573,17 +4257,44 @@ describe("settings check (BR-008)", () => {
 });
 ```
 
+<a id="f-test-examples"></a>
+**`lib/examples.test.ts`**
+
+`src/lib/examples.test.ts`
+
+```ts
+import { describe, expect, it } from "vitest";
+import * as catalogue from "./catalogue";
+import { evaluate } from "./evaluation";
+import { passingExample } from "./examples";
+
+describe("pass mark examples (BR-008)", () => {
+  for (const { id } of catalogue.LESSONS) {
+    for (const mark of [70, 80, 90]) {
+      it(`${id} at ${mark}: the example just passes, and would not pass 6 points higher`, () => {
+        const figure = catalogue.lesson(id).figure;
+        const strokes = passingExample(figure, mark);
+        const at = evaluate(strokes, figure, "T", catalogue.difficulties(id, "T"), mark);
+        expect(at.class).toBe("complete");
+        expect(at.passed).toBe(true);
+        expect(at.result).toBeLessThan(mark + 6);
+      });
+    }
+  }
+});
+```
+
 ## 10. Build order
 
 Each step ends in something that can be checked. Steps 2 to 4 need no browser and can be done by different people at the same time once step 1 is merged.
 
 1. **Set up the project.** In `src/`, add the [configuration files](#f-config) and `src/.gitignore`, then run `npm install`. Check: `npm run typecheck` runs.
 2. **Types, geometry, scoring, catalogue.** Add [`types.ts`](#f-types), [`geometry.ts`](#f-geometry), [`evaluation.ts`](#f-evaluation), [`catalogue.ts`](#f-catalogue), [`testHelpers.ts`](#f-test-helpers) and [`evaluation.test.ts`](#f-test-eval). Check: the scoring tests pass.
-3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 39 tests pass.
+3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 45 tests pass.
 4. **Data.** Add [`storage.ts`](#f-storage), [`settings.ts`](#f-settings), [`profiles.ts`](#f-profiles), [`records.ts`](#f-records). (Steps 3 and 4 share `records.ts` for its `RecordStore` type.)
-5. **Frame and adult pages.** Add the [layout](#f-layout), [header](#f-header), [squiggle and page title](#f-squiggle), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), and the [children](#f-page-children), [lessons](#f-page-lessons) and [settings](#f-page-settings) pages. Check: add two children, give them different settings, reload, and the values are still there.
+5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
 6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.
-7. **Records.** Add [`StrokePreview.tsx`](#f-preview) and the [records page](#f-page-records). Check: each child sees only their own attempts.
+7. **Practice story.** Add [`StrokePreview.tsx`](#f-preview) and the [practice story](#f-page-story). Check: each child sees only their own drawings.
 8. **Deploy** ([section 11](#11-deploying-and-the-domain)) and try it on the target tablet with a stylus. This is experiment 1 of the Development Plan, and it is the one thing this plan could not test: everything above was driven with a mouse.
 9. **Calibrate.** Have adults draw good and poor squares on the tablet, and decide whether `TRACE_TOL` = 5 is right ([finding 1](#13-findings-for-the-srs-and-mis)).
 10. **Rehearse** the [demo script](#12-demo-script), and fill in `src/TraceToDesign.md` from the [file index](#7-project-layout-and-file-index).
@@ -3619,14 +4330,15 @@ The repository and the documents spell the name **Squigglr**, with no "e". Check
 
 About eight minutes, with no slides. Before starting, set the first child's pause that ends an attempt to 5 seconds, so that nobody waits.
 
-1. **Children.** Add two children. Point out: a picture, no name, guest mode.
-2. **Settings.** Open the first child's settings. Type a pass mark of 95: Save turns off. Set the limit below the streak: the rule is named. Set a valid pass mark of 90 and save, answering the adult check.
-3. **Lesson, trace.** Start the Square. Watch the demonstration, press start. Draw three sides and stop. The demo panel shows a result near 79 and "incomplete". After the pause, the attempt ends, the missing side is marked, and "failed at this stage" goes to 1.
-4. **Pass.** Trace the whole square. It passes at the lift, with no button, and the outline is replaced by corner dots.
-5. **Corners, then no guide.** Pass corners. At no guide, draw a small square in a corner of the canvas: it still passes, and the lesson completes.
-6. **Records.** Open the records: four attempts, each with its strokes, stage, outcome, result and the pass mark in use.
-7. **Settings change the lesson.** Switch to the second child (adult check). Their records are empty. With their pass mark at 70, draw a square with a stray line across it: it passes. Switch back to the first child at 90 and draw the same: it does not.
-8. **Stopping rules,** if there is time. Start at corners only with a streak of 3 and scribble three times: the go-back suggestion appears for the adult, and the child's canvas keeps working.
+1. **Who's practising.** Add two children. Point out: a picture, no name, guest mode. Tap the first child.
+2. **Pick a lesson.** Tap the square.
+3. **Lesson ready.** Show the three settings up front, each with its line of explanation. Tap "i" beside Neatness: three example drawings, made from the scoring itself. Choose High. Open "More settings", set "Pause that ends an attempt" to 5, and show that − and + stop at the ends of each range. Tap "Start lesson" and answer the adult check.
+4. **Watch, then full outline.** Watch the demonstration and press start. Draw three sides and stop. The demo panel shows a result near 79 and "incomplete". After the pause the attempt ends, the missing side glows, and "failed at this stage" goes to 1.
+5. **Pass.** Trace the whole square. It passes at the lift, with no button, a footprint fills in, and the outline is replaced by dots.
+6. **Endpoints only, then on my own.** Pass the dots. With no guide, draw a small square in a corner of the canvas: it still passes, and the sticker appears.
+7. **Grown-ups and the practice story.** Tap "Grown-ups", answer the check, open the practice story: today's sticker, the drawings with and without a guide, and under "Every lesson and attempt" each attempt with its strokes, step, outcome, result and the pass mark in use. Tap the second child at the top: nothing yet.
+8. **Settings change the lesson.** Start the square for the second child with Neatness Low and draw a square with a stray line across it: it passes. Do the same for the first child at High: it does not.
+9. **Stopping rules,** if there is time. Start at "Endpoints only" with "Get a grown-up after" at 3 and scribble three times: the helper says "Let's get a grown-up!", the grown-up opens the card and chooses, and meanwhile the child's canvas keeps working.
 
 ## 13. Findings for the SRS and MIS
 
@@ -3641,11 +4353,25 @@ Building the rules turned up eight places where the documents are silent or do n
 7. **UC-003 and the MIS disagree on a later starting stage.** UC-003 shows the demonstration and then moves to the starting stage; the MIS has `beginPractice` go from D to T. The POC follows UC-003.
 8. **What happens on screen when an attempt ends is not specified.** The POC keeps the drawing and its feedback up for 2.5 seconds, during which input is off and the idle clocks do not run.
 
+### Where the prototype and the SRS differ
+
+The screens follow the lo-fi prototype, but where the prototype and the SRS disagree the app follows the SRS. The team should decide each of these before Rev 0:
+
+| Prototype | SRS | In the app |
+| --- | --- | --- |
+| Children have a first name (Mia, Omar). | A profile is an identifier and an avatar, no name (BR-001). | Pictures only. |
+| "Grown-ups" and "Leave" open by holding for 2 seconds. | A short check that a young child cannot pass alone (SAF-RAY-001). | The sum. A hold could replace it in one file, `AdultCheck.tsx`. |
+| After a gap, the child's line stays and "finishing where it glows" passes (S8). | An attempt that has not passed ends after `ATTEMPT_IDLE`, and a new attempt starts (FR-LRN-024). | The attempt ends, the gap glows for a moment, and the child draws again. The helper says "Let's draw it again", not "Finish where it's glowing". |
+| The go-back card covers the lesson (S9 + O11). | The child keeps practising while a suggestion waits (FR-LRN-034). | The helper says "Let's get a grown-up!" and a Grown-ups button appears; the card opens only when the adult taps it. |
+| Three settings: starting step, tries, neatness (plus the helper's voice). | Nine adult-set values (BR-008). | The prototype's three up front, the other values under "More settings". No voice yet. |
+| "Start again" wipes the try. | Not mentioned. | Kept. The wiped try is saved as interrupted and not counted, as the SRS treats any interruption. |
+| A small picture of the shape stays up at "On my own" (S10). | No outline or endpoint guides at the independent stage (FR-LRN-006). | Kept: it is a reminder beside the drawing area, not a guide inside it. |
+
 ## 14. After the POC
 
 - **Database.** Replace the inside of `lib/storage.ts` with Supabase calls, and make its four functions `async`. The callers then need `await`, which is the one change that reaches outside the file.
 - **Accounts.** Add sign-in to the adult check component and pass the adult's id to storage, as the MIS interfaces already do.
 - **The rest of the catalogue.** Lines, triangle, house and sun are new entries in `LESSONS`.
-- **Left out above:** sound, the supported-device notice, example drawings for the pass mark, offline keeping of unsaved records, the progress summary, the creative space.
+- **Left out above:** sound, the supported-device notice, offline keeping of unsaved records, the progress summary, the creative space.
 - **Checks in CI.** ESLint, Prettier and a Playwright run of the lesson, as the Development Plan lists.
 - **Hide the demo panel** before anyone uses the app with a child.

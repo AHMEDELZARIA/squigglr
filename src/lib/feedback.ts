@@ -36,9 +36,6 @@ const STAGE_LINES: Record<Stage, string> = {
   I: "Now draw it on your own!",
 };
 
-/** What the helper says while a go-back suggestion waits for an adult. */
-export const GET_A_GROWN_UP = "Let's get a grown-up!";
-
 export const stageLine = (stage: Stage): string => STAGE_LINES[stage];
 export const feedback = (kind: FeedbackKind): Feedback => KINDS[kind];
 export const difficultyFeedback = (kind: DifficultyKind): Feedback => DIFFICULTIES[kind];
@@ -47,5 +44,4 @@ export const allFeedback = (): string[] => [
   ...Object.values(KINDS).map((f) => f.message),
   ...Object.values(DIFFICULTIES).map((f) => f.message),
   ...Object.values(STAGE_LINES),
-  GET_A_GROWN_UP,
 ];

@@ -20,7 +20,7 @@ import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
-import { GET_A_GROWN_UP, difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
+import { difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
 import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
@@ -168,9 +168,7 @@ export default function LessonPage() {
     ? feedback(c.ending === "completed" ? "lessonComplete" : "lessonEnded").message
     : report
       ? feedback(report.feedback[0]).message
-      : suggested
-        ? GET_A_GROWN_UP
-        : stageLine(c.stage);
+      : stageLine(c.stage);
   const hints = report && running ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
 
   const onStroke = (stroke: Stroke) => {
@@ -319,7 +317,7 @@ export default function LessonPage() {
 
           <div className="flex items-center gap-3">
             {running && suggested && (
-              <button onClick={openCard} className={`${buttonClass} animate-pulse border-brand text-brand`}>
+              <button onClick={openCard} className={`${buttonClass} border-brand text-brand`}>
                 <LockIcon className="h-5 w-5" />
                 Grown-ups
               </button>
@@ -349,7 +347,8 @@ export default function LessonPage() {
         </div>
       </Frame>
 
-      {/* The go-back card, for the grown-up. The child can keep practising until it is opened. */}
+      {/* The go-back suggestion (UC-005). It waits behind the Grown-ups button, which appears when a
+          suggestion is pending, and never blocks practice. Nothing is said to the child about it. */}
       {card && suggested && c.stage !== "D" && c.stage !== "T" && (
         <div
           className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4"

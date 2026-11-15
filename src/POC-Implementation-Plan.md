@@ -1533,9 +1533,6 @@ const STAGE_LINES: Record<Stage, string> = {
   I: "Now draw it on your own!",
 };
 
-/** What the helper says while a go-back suggestion waits for an adult. */
-export const GET_A_GROWN_UP = "Let's get a grown-up!";
-
 export const stageLine = (stage: Stage): string => STAGE_LINES[stage];
 export const feedback = (kind: FeedbackKind): Feedback => KINDS[kind];
 export const difficultyFeedback = (kind: DifficultyKind): Feedback => DIFFICULTIES[kind];
@@ -1544,7 +1541,6 @@ export const allFeedback = (): string[] => [
   ...Object.values(KINDS).map((f) => f.message),
   ...Object.values(DIFFICULTIES).map((f) => f.message),
   ...Object.values(STAGE_LINES),
-  GET_A_GROWN_UP,
 ];
 ```
 
@@ -3411,7 +3407,7 @@ import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
-import { GET_A_GROWN_UP, difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
+import { difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
 import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
@@ -3559,9 +3555,7 @@ export default function LessonPage() {
     ? feedback(c.ending === "completed" ? "lessonComplete" : "lessonEnded").message
     : report
       ? feedback(report.feedback[0]).message
-      : suggested
-        ? GET_A_GROWN_UP
-        : stageLine(c.stage);
+      : stageLine(c.stage);
   const hints = report && running ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
 
   const onStroke = (stroke: Stroke) => {
@@ -3710,7 +3704,7 @@ export default function LessonPage() {
 
           <div className="flex items-center gap-3">
             {running && suggested && (
-              <button onClick={openCard} className={`${buttonClass} animate-pulse border-brand text-brand`}>
+              <button onClick={openCard} className={`${buttonClass} border-brand text-brand`}>
                 <LockIcon className="h-5 w-5" />
                 Grown-ups
               </button>
@@ -3740,7 +3734,8 @@ export default function LessonPage() {
         </div>
       </Frame>
 
-      {/* The go-back card, for the grown-up. The child can keep practising until it is opened. */}
+      {/* The go-back suggestion (UC-005). It waits behind the Grown-ups button, which appears when a
+          suggestion is pending, and never blocks practice. Nothing is said to the child about it. */}
       {card && suggested && c.stage !== "D" && c.stage !== "T" && (
         <div
           className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4"
@@ -5013,7 +5008,7 @@ About eight minutes, with no slides.
 6. **Endpoints only, then on my own.** Pass the dots. With no guide, draw a small square in a corner of the canvas: it still passes, and the sticker appears.
 7. **Grown-ups and the practice story.** Tap "Grown-ups", answer the check, open the practice story: today's sticker, the drawings with and without a guide, and under "Every lesson and attempt" each attempt with its strokes, step, outcome, result and the pass mark in use. Tap the second child at the top: nothing yet.
 8. **Settings change the lesson.** Start the square for the second child with Neatness Low and draw a square with a stray line across it: it passes. Do the same for the first child at High: it does not.
-9. **Stopping rules,** if there is time. Start at "Endpoints only" with "Get a grown-up after" at 3 and scribble three times: the helper says "Let's get a grown-up!", the grown-up opens the card and chooses, and meanwhile the child's canvas keeps working.
+9. **Stopping rules,** if there is time. Start at "Endpoints only" with "Get a grown-up after" at 3 and scribble three times: a Grown-ups button appears, the grown-up opens the card and chooses, and meanwhile the child's canvas keeps working.
 
 ## 13. Findings for the SRS and MIS
 
@@ -5039,7 +5034,7 @@ The screens follow the lo-fi prototype, but where the prototype and the SRS disa
 | Children have a first name (Mia, Omar). | A profile is an identifier and an avatar, no name (BR-001). | Pictures only. |
 | "Grown-ups" and "Leave" open by holding for 2 seconds. | A short check that a young child cannot pass alone (SAF-RAY-001). | The sum. A hold could replace it in one file, `AdultCheck.tsx`. |
 | After a gap, the child's line stays and "finishing where it glows" passes (S8). | An attempt that has not passed ends after `ATTEMPT_IDLE`, and a new attempt starts (FR-LRN-024). | The attempt ends, the gap glows for a moment, and the child draws again. The helper says "Let's draw it again", not "Finish where it's glowing". |
-| The go-back card covers the lesson (S9 + O11). | The child keeps practising while a suggestion waits (FR-LRN-034). | The helper says "Let's get a grown-up!" and a Grown-ups button appears; the card opens only when the adult taps it. |
+| The go-back card covers the lesson (S9 + O11). | The child keeps practising while a suggestion waits (FR-LRN-034). | A Grown-ups button appears while a suggestion is pending; the card opens only when the adult taps it and passes the adult check. Nothing is said to the child about it, and the button does not flash (NFR-UX-001). The prototype's "Let's get a grown-up!" line is not used: it is not in the SRS. |
 | Three settings: starting step, tries, neatness (plus the helper's voice). | Nine adult-set values (BR-008). | The prototype's three up front, the other values under "More settings". No voice yet. |
 | No eraser. | No eraser in guided lessons (the SRS has one in the creative space only). | A pencil and an eraser beside the drawing, added at the team's request after trying the app on a tablet. Rubbing out counts as a stylus lift: what is left is checked, and can pass. The record keeps the strokes as they stood when the attempt ended. |
 | Any size passes with no guide. | Position and size "do not affect the result". | A minimum size, also at the team's request. |

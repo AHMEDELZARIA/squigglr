@@ -110,6 +110,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   let fit: Fit = IDENTITY;
   let best = score(original, figure, tol);
   let tooSmall = false;
+  let stretched = false;
 
   if (stage === "I") {
     // With no guide, where and how big the child drew does not matter: the
@@ -142,6 +143,33 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
       }
     }
 
+    // If parts seem to be missing, check whether the drawing is the right
+    // shape pulled out of proportion, such as a rectangle for a square. Laid
+    // over the figure by width and height separately, such a drawing has
+    // every part. Then nothing is missing: the drawing is stretched, and the
+    // child is told that, not shown a glow beside lines they did draw.
+    if (best.found.length > 0) {
+      for (const box of [trimmedBox(points, 0.08), boundingBox(original)]) {
+        const w = box.maxX - box.minX;
+        const h = box.maxY - box.minY;
+        if (w === 0 || h === 0) continue;
+        const sx = (figureBox.maxX - figureBox.minX) / w;
+        const sy = (figureBox.maxY - figureBox.minY) / h;
+        const pulled = original.map((path) =>
+          path.map((p) => ({
+            x: figureBox.minX + (p.x - box.minX) * sx,
+            y: figureBox.minY + (p.y - box.minY) * sy,
+          })),
+        );
+        const asPulled = score(pulled, figure, tol);
+        if (asPulled.found.length === 0) {
+          stretched = true;
+          best = { ...best, found: [], onFigure: asPulled.onFigure };
+          break;
+        }
+      }
+    }
+
     // It must still be a real drawing of the shape, not a speck.
     const box = boundingBox(original);
     const longer = Math.max(box.maxX - box.minX, box.maxY - box.minY);
@@ -150,7 +178,8 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   }
 
   const found = [...best.found];
-  const complete = found.length === 0 && !tooSmall;
+  const complete = found.length === 0 && !tooSmall && !stretched;
+  if (stretched) found.push({ kind: "stretched", index: 0 });
   if (tooSmall) found.push({ kind: "tooSmall", index: 0 });
   if (100 * best.onFigure < stagePass) found.push({ kind: "offFigure", index: 0 });
 

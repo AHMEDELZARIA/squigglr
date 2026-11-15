@@ -220,7 +220,7 @@ export default function LessonPage() {
 
   return (
     <>
-      <Frame>
+      <Frame brand={false} className="!p-4 sm:!p-5">
         <div className="flex items-start justify-between">
           <div>
             <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} avatar={avatar} />
@@ -234,7 +234,7 @@ export default function LessonPage() {
           {avatar && <Avatar avatar={avatar} />}
         </div>
 
-        <div className="relative mx-auto -mt-4 flex w-full max-w-[min(100%,calc(62vh+6rem))] items-center gap-3">
+        <div className="relative mx-auto -mt-4 flex w-full max-w-[min(100%,max(26rem,calc(100vh-10.5rem)))] items-center gap-3">
           {/* The child's tools: draw, or rub out a part of the drawing. */}
           <div className={`flex flex-col gap-3 ${running && c.stage !== "D" ? "" : "invisible"}`}>
             {(
@@ -306,11 +306,14 @@ export default function LessonPage() {
             <Helper className="h-20 w-[4.25rem] shrink-0" />
             <div>
               <p className="rounded-[2rem] border-[3px] border-ink bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
-              {hints.map((kind) => (
-                <p key={kind} className="mt-1 pl-6 text-lg font-bold text-butter-ink">
-                  {difficultyFeedback(kind).message}
+              {hints.length > 0 && (
+                <p className="mt-1 pl-6 text-lg font-bold text-butter-ink">
+                  {hints
+                    .slice(0, 2)
+                    .map((kind) => difficultyFeedback(kind).message)
+                    .join(" ")}
                 </p>
-              ))}
+              )}
             </div>
           </div>
 

@@ -71,7 +71,7 @@ export function guide(id: string, stage: DrawingStage): Guide {
 /**
  * The predefined difficulties of a stage: any missed part, any missed
  * endpoint, or drawing off the figure. With no guide, a drawing can also be
- * too small.
+ * too small, or stretched (the right shape, but too wide or too tall).
  */
 export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
   const { figure } = lesson(id);
@@ -80,6 +80,6 @@ export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
     ...figure.endpoints.map((_, index): Difficulty => ({ kind: "missedEndpoint", index })),
     { kind: "offFigure", index: 0 },
   ];
-  if (stage === "I") all.push({ kind: "tooSmall", index: 0 });
+  if (stage === "I") all.push({ kind: "tooSmall", index: 0 }, { kind: "stretched", index: 0 });
   return all;
 }

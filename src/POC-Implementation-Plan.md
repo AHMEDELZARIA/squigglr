@@ -1,6 +1,6 @@
 # Squigglr POC: Implementation Plan and Code
 
-This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 54 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
+This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 56 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
 
 **What the POC is:** a website where an adult adds a child, sets that child's nine practice values, and starts the Square or Circle lesson. The child watches a demonstration, then draws through three stages with less help each time. Every attempt is scored against the adult's values and saved under that child.
 
@@ -168,6 +168,7 @@ The SRS schedules the suggestion, extension and limit rules for Revision 0. They
 | The demonstration is always shown first | UC-003 says so. Practice then starts at the stage the adult chose. | The MIS says `beginPractice` goes from D to T only. |
 | A finished attempt stays on screen with its feedback: 5 s if it did not pass, 2.5 s if it did | Without it, a failed drawing would vanish the instant the attempt ends and the feedback would refer to nothing. Five seconds gives the child time to see where the glow is. | Not specified. |
 | With no guide, the drawing is laid over the figure by a fit that ignores stray marks | Laying it over by its plain bounding box, as the SRS words it, fails a good square for one stray dot or a line that runs past a corner. See [section 4](#4-how-a-drawing-is-scored). | The SRS's own fit is still tried, and is used whenever it scores best. |
+| A rectangle drawn for a square is reported as "stretched" | Tried on a tablet, a rectangle was shown a glow where the "missing" sides of a square would be, right beside the lines the child had drawn. The feedback now says what is actually wrong. | New: a "stretched" observation. |
 | A minimum size with no guide | Any size passes once the drawing is scaled up, so a speck would count as a square. The drawing's longer side must be at least 40% of the figure's. | New: `MIN_DRAW_SCALE`, and a "too small" observation. |
 | Running on a tablet from a laptop | `npm run dev` only serves its scripts to the computer it runs on unless other hosts are allowed, so a tablet showed the page but no button worked. Private network addresses are now allowed in `next.config.ts`. A stylus takes priority over a resting palm. | None. |
 | The screens follow the team's lo-fi prototype | Same screens, same order, same words where they fit: who's practising, pick a lesson, lesson ready, the lesson with its trail of prints and its helper, the sticker, the grown-ups area and the practice story. The prototype was tested with a parent and child, so its layout is the best evidence the team has. | See [where the prototype and the SRS differ](#where-the-prototype-and-the-srs-differ). The prototype's pictures could not be downloaded here, so the icons are redrawn. |
@@ -186,6 +187,7 @@ Each lesson has a **figure**: its required parts and required endpoints. The squ
 - **Complete.** Every part has at least `PART_COVER` = 90% of its length drawn, and every endpoint has a stroke within the tolerance.
 - **Pass.** Complete, and the result is at least the child's pass mark.
 - **No guide.** At the last stage the whole drawing is first moved and uniformly scaled onto the figure, so where and how big the child drew does not matter. Three ways of laying it over are tried and the best-scoring one is kept: by its bounding box (the SRS's wording); by the box of the bulk of the drawing, leaving out the outermost 8% on each side, so a stray mark or an overshoot does not throw it off; and that second fit nudged by at most 5% in size and one tolerance in position. The nudge is kept small on purpose: with a free fit, a square could be shrunk until it sat inside a circle's tolerance and passed the circle lesson.
+- **Stretched.** With no guide, if parts seem to be missing, the drawing is also laid over the figure by width and height separately. If every part is then there, nothing is missing: the drawing is the right shape out of proportion, such as a rectangle for a square. It still does not pass, but the child is told "Try making it as tall as it is wide" and no glow is shown beside lines they did draw.
 - **Minimum size.** With no guide, the drawing's longer side must be at least `MIN_DRAW_SCALE` = 40% of the figure's. Smaller is incomplete, and reported as too small.
 - **Invalid.** No strokes, a missing coordinate, or less drawn than the tolerance (a tap). An invalid attempt is not saved and not counted.
 
@@ -208,7 +210,7 @@ Measured with no guide, at the lowest pass mark of 70:
 | A square at 60% size in a corner, plus a stray mark far away | Yes |
 | A square whose last side runs well past the corner | Yes |
 | A square 14% or 20% wider than tall | Yes |
-| A rectangle 25% wider than tall | No |
+| A rectangle 25% or 40% wider than tall | No, stretched |
 | A square at 20% size | No, too small |
 | Three sides only | No, a part is missing |
 | A triangle, or a circle, in the square lesson | No |
@@ -347,9 +349,9 @@ export interface Guide {
   endpoints: Point[];
 }
 
-export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall";
+export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall" | "stretched";
 
-/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for offFigure and tooSmall. */
+/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for the kinds that are about the whole drawing. */
 export interface Difficulty {
   kind: DifficultyKind;
   index: number;
@@ -856,6 +858,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   let fit: Fit = IDENTITY;
   let best = score(original, figure, tol);
   let tooSmall = false;
+  let stretched = false;
 
   if (stage === "I") {
     // With no guide, where and how big the child drew does not matter: the
@@ -888,6 +891,33 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
       }
     }
 
+    // If parts seem to be missing, check whether the drawing is the right
+    // shape pulled out of proportion, such as a rectangle for a square. Laid
+    // over the figure by width and height separately, such a drawing has
+    // every part. Then nothing is missing: the drawing is stretched, and the
+    // child is told that, not shown a glow beside lines they did draw.
+    if (best.found.length > 0) {
+      for (const box of [trimmedBox(points, 0.08), boundingBox(original)]) {
+        const w = box.maxX - box.minX;
+        const h = box.maxY - box.minY;
+        if (w === 0 || h === 0) continue;
+        const sx = (figureBox.maxX - figureBox.minX) / w;
+        const sy = (figureBox.maxY - figureBox.minY) / h;
+        const pulled = original.map((path) =>
+          path.map((p) => ({
+            x: figureBox.minX + (p.x - box.minX) * sx,
+            y: figureBox.minY + (p.y - box.minY) * sy,
+          })),
+        );
+        const asPulled = score(pulled, figure, tol);
+        if (asPulled.found.length === 0) {
+          stretched = true;
+          best = { ...best, found: [], onFigure: asPulled.onFigure };
+          break;
+        }
+      }
+    }
+
     // It must still be a real drawing of the shape, not a speck.
     const box = boundingBox(original);
     const longer = Math.max(box.maxX - box.minX, box.maxY - box.minY);
@@ -896,7 +926,8 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   }
 
   const found = [...best.found];
-  const complete = found.length === 0 && !tooSmall;
+  const complete = found.length === 0 && !tooSmall && !stretched;
+  if (stretched) found.push({ kind: "stretched", index: 0 });
   if (tooSmall) found.push({ kind: "tooSmall", index: 0 });
   if (100 * best.onFigure < stagePass) found.push({ kind: "offFigure", index: 0 });
 
@@ -993,7 +1024,7 @@ export function guide(id: string, stage: DrawingStage): Guide {
 /**
  * The predefined difficulties of a stage: any missed part, any missed
  * endpoint, or drawing off the figure. With no guide, a drawing can also be
- * too small.
+ * too small, or stretched (the right shape, but too wide or too tall).
  */
 export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
   const { figure } = lesson(id);
@@ -1002,7 +1033,7 @@ export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
     ...figure.endpoints.map((_, index): Difficulty => ({ kind: "missedEndpoint", index })),
     { kind: "offFigure", index: 0 },
   ];
-  if (stage === "I") all.push({ kind: "tooSmall", index: 0 });
+  if (stage === "I") all.push({ kind: "tooSmall", index: 0 }, { kind: "stretched", index: 0 });
   return all;
 }
 ```
@@ -1078,7 +1109,7 @@ export class Attempt {
       this.end("invalid", now);
       return;
     }
-    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall"]);
+    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
     this.end("notPassed", now);
   }
 
@@ -1491,6 +1522,7 @@ const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
   missedEndpoint: { message: "The line missed a dot.", image: "📍", colour: "#b84a30" },
   offFigure: { message: "Some lines went away from the shape.", image: "↗️", colour: "#b84a30" },
   tooSmall: { message: "Try drawing it bigger.", image: "🔍", colour: "#b84a30" },
+  stretched: { message: "Try making it as tall as it is wide.", image: "↔️", colour: "#b84a30" },
 };
 
 /** What the helper says at the start of each stage. */
@@ -2275,13 +2307,24 @@ import { Squiggle } from "./Squiggle";
 export const buttonClass =
   "inline-flex items-center gap-2 rounded-2xl border-2 border-ink bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
 
-export function Frame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function Frame({
+  children,
+  className = "",
+  brand = true,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /** The name above the frame. Left off the lesson, where the height is needed for drawing. */
+  brand?: boolean;
+}) {
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="mb-3 flex items-center gap-2 px-2 font-serif text-xl font-bold">
-        Squigglr
-        <Squiggle className="w-9" />
-      </div>
+      {brand && (
+        <div className="mb-3 flex items-center gap-2 px-2 font-serif text-xl font-bold">
+          Squigglr
+          <Squiggle className="w-9" />
+        </div>
+      )}
       <div className={`relative rounded-[2rem] border-4 border-ink bg-white p-5 sm:p-8 ${className}`}>{children}</div>
     </div>
   );
@@ -3568,7 +3611,7 @@ export default function LessonPage() {
 
   return (
     <>
-      <Frame>
+      <Frame brand={false} className="!p-4 sm:!p-5">
         <div className="flex items-start justify-between">
           <div>
             <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} avatar={avatar} />
@@ -3582,7 +3625,7 @@ export default function LessonPage() {
           {avatar && <Avatar avatar={avatar} />}
         </div>
 
-        <div className="relative mx-auto -mt-4 flex w-full max-w-[min(100%,calc(62vh+6rem))] items-center gap-3">
+        <div className="relative mx-auto -mt-4 flex w-full max-w-[min(100%,max(26rem,calc(100vh-10.5rem)))] items-center gap-3">
           {/* The child's tools: draw, or rub out a part of the drawing. */}
           <div className={`flex flex-col gap-3 ${running && c.stage !== "D" ? "" : "invisible"}`}>
             {(
@@ -3654,11 +3697,14 @@ export default function LessonPage() {
             <Helper className="h-20 w-[4.25rem] shrink-0" />
             <div>
               <p className="rounded-[2rem] border-[3px] border-ink bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
-              {hints.map((kind) => (
-                <p key={kind} className="mt-1 pl-6 text-lg font-bold text-butter-ink">
-                  {difficultyFeedback(kind).message}
+              {hints.length > 0 && (
+                <p className="mt-1 pl-6 text-lg font-bold text-butter-ink">
+                  {hints
+                    .slice(0, 2)
+                    .map((kind) => difficultyFeedback(kind).message)
+                    .join(" ")}
                 </p>
-              ))}
+              )}
             </div>
           </div>
 
@@ -4164,6 +4210,7 @@ const DIFFICULTY = {
   missedEndpoint: "The line did not reach an endpoint.",
   offFigure: difficultyFeedback("offFigure").message,
   tooSmall: "The drawing was very small.",
+  stretched: "The drawing was the right shape, but too wide or too tall.",
 } as const;
 
 function Item({ label, value }: { label: string; value: string | number }) {
@@ -4308,7 +4355,7 @@ next-env.d.ts
 
 ## 9. Tests
 
-`npm test` runs 54 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
+`npm test` runs 56 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
 
 | Area | What is checked |
 | --- | --- |
@@ -4321,7 +4368,7 @@ next-env.d.ts
 | Idle | The check-in appears once, then the lesson ends. |
 | Settings | The defaults are the middle of each range. Out of range is rejected. Both values of a broken rule are named. |
 | Eraser | Rubbing out a stray line turns a failing drawing into a passing one. Rubbing through a line cuts it in two and leaves the rest as drawn. Rubbing everything out leaves the attempt open, with nothing counted. |
-| No guide | A stray mark far away does not spoil the fit. A square a little wider than tall passes; a long thin rectangle does not. A very small drawing is incomplete and reported as too small. The wrong shape does not pass even at the lowest pass mark. A smaller circle drawn anywhere passes. |
+| No guide | A stray mark far away does not spoil the fit. A square a little wider than tall passes; a long thin rectangle does not. A very small drawing is incomplete and reported as too small. A rectangle or an oval is reported as stretched, not as missing parts; a rectangle with a side missing is still reported as missing a part. The wrong shape does not pass even at the lowest pass mark. A smaller circle drawn anywhere passes. |
 | Pass mark examples | For both lessons at 70, 80 and 90: the example drawing is complete, passes at its mark, and would not pass six points higher. |
 
 <a id="f-test-helpers"></a>
@@ -4481,9 +4528,30 @@ describe("evaluate: square", () => {
     expect(run("square", [wide], "I").passed).toBe(true);
   });
 
-  it("at the independent stage, a long thin rectangle is not a square", () => {
+  it("at the independent stage, a rectangle is not a square, and is reported as stretched, not as missing parts", () => {
+    // 435 wide and 316 tall, as drawn on a tablet by the team.
+    const wide = stroke({ x: 290, y: 240 }, { x: 725, y: 240 }, { x: 725, y: 556 }, { x: 290, y: 556 }, { x: 290, y: 240 });
     const thin = stroke({ x: 200, y: 400 }, { x: 800, y: 400 }, { x: 800, y: 600 }, { x: 200, y: 600 }, { x: 200, y: 400 });
-    expect(run("square", [thin], "I").passed).toBe(false);
+    for (const drawing of [wide, thin]) {
+      const e = run("square", [drawing], "I", 70);
+      expect(e.passed).toBe(false);
+      expect(e.class).toBe("incomplete");
+      expect(e.difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+    }
+  });
+
+  it("at the independent stage, an oval is reported as stretched in the circle lesson", () => {
+    const oval = catalogue
+      .lesson("circle")
+      .figure.parts.map((part) => strokeOf(part.map((p) => ({ x: 500 + (p.x - 500) * 1.5, y: p.y }))));
+    expect(run("circle", oval, "I", 70).difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+  });
+
+  it("at the independent stage, a rectangle with a side missing is still reported as missing a part", () => {
+    const open = stroke({ x: 290, y: 240 }, { x: 725, y: 240 }, { x: 725, y: 556 }, { x: 290, y: 556 });
+    const kinds = run("square", [open], "I", 70).difficulties.map((d) => d.kind);
+    expect(kinds).toContain("missedPart");
+    expect(kinds).not.toContain("stretched");
   });
 
   it("at the independent stage, a very small drawing is incomplete and reported as too small", () => {
@@ -4895,7 +4963,7 @@ Each step ends in something that can be checked. Steps 2 to 4 need no browser an
 
 1. **Set up the project.** In `src/`, add the [configuration files](#f-config) and `src/.gitignore`, then run `npm install`. Check: `npm run typecheck` runs.
 2. **Types, geometry, scoring, catalogue.** Add [`types.ts`](#f-types), [`geometry.ts`](#f-geometry), [`evaluation.ts`](#f-evaluation), [`catalogue.ts`](#f-catalogue), [`testHelpers.ts`](#f-test-helpers) and [`evaluation.test.ts`](#f-test-eval). Check: the scoring tests pass.
-3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 54 tests pass.
+3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 56 tests pass.
 4. **Data.** Add [`storage.ts`](#f-storage), [`settings.ts`](#f-settings), [`profiles.ts`](#f-profiles), [`records.ts`](#f-records). (Steps 3 and 4 share `records.ts` for its `RecordStore` type.)
 5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
 6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.
@@ -4975,6 +5043,7 @@ The screens follow the lo-fi prototype, but where the prototype and the SRS disa
 | Three settings: starting step, tries, neatness (plus the helper's voice). | Nine adult-set values (BR-008). | The prototype's three up front, the other values under "More settings". No voice yet. |
 | No eraser. | No eraser in guided lessons (the SRS has one in the creative space only). | A pencil and an eraser beside the drawing, added at the team's request after trying the app on a tablet. Rubbing out counts as a stylus lift: what is left is checked, and can pass. The record keeps the strokes as they stood when the attempt ended. |
 | Any size passes with no guide. | Position and size "do not affect the result". | A minimum size, also at the team's request. |
+| Not covered. | Three predefined difficulties: a missed part, a missed endpoint, drawing off the figure. | Two more, with no guide only: "too small" and "stretched". |
 | "Start again" wipes the try. | Not mentioned. | Kept. The wiped try is saved as interrupted and not counted, as the SRS treats any interruption. |
 | A small picture of the shape stays up at "On my own" (S10). | No outline or endpoint guides at the independent stage (FR-LRN-006). | Kept: it is a reminder beside the drawing area, not a guide inside it. |
 

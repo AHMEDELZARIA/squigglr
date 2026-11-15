@@ -61,7 +61,7 @@ export class Attempt {
       this.end("invalid", now);
       return;
     }
-    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall"]);
+    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
     this.end("notPassed", now);
   }
 

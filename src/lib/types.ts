@@ -30,9 +30,9 @@ export interface Guide {
   endpoints: Point[];
 }
 
-export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall";
+export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall" | "stretched";
 
-/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for offFigure and tooSmall. */
+/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for the kinds that are about the whole drawing. */
 export interface Difficulty {
   kind: DifficultyKind;
   index: number;

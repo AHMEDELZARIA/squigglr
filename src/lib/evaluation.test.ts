@@ -88,9 +88,30 @@ describe("evaluate: square", () => {
     expect(run("square", [wide], "I").passed).toBe(true);
   });
 
-  it("at the independent stage, a long thin rectangle is not a square", () => {
+  it("at the independent stage, a rectangle is not a square, and is reported as stretched, not as missing parts", () => {
+    // 435 wide and 316 tall, as drawn on a tablet by the team.
+    const wide = stroke({ x: 290, y: 240 }, { x: 725, y: 240 }, { x: 725, y: 556 }, { x: 290, y: 556 }, { x: 290, y: 240 });
     const thin = stroke({ x: 200, y: 400 }, { x: 800, y: 400 }, { x: 800, y: 600 }, { x: 200, y: 600 }, { x: 200, y: 400 });
-    expect(run("square", [thin], "I").passed).toBe(false);
+    for (const drawing of [wide, thin]) {
+      const e = run("square", [drawing], "I", 70);
+      expect(e.passed).toBe(false);
+      expect(e.class).toBe("incomplete");
+      expect(e.difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+    }
+  });
+
+  it("at the independent stage, an oval is reported as stretched in the circle lesson", () => {
+    const oval = catalogue
+      .lesson("circle")
+      .figure.parts.map((part) => strokeOf(part.map((p) => ({ x: 500 + (p.x - 500) * 1.5, y: p.y }))));
+    expect(run("circle", oval, "I", 70).difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+  });
+
+  it("at the independent stage, a rectangle with a side missing is still reported as missing a part", () => {
+    const open = stroke({ x: 290, y: 240 }, { x: 725, y: 240 }, { x: 725, y: 556 }, { x: 290, y: 556 });
+    const kinds = run("square", [open], "I", 70).difficulties.map((d) => d.kind);
+    expect(kinds).toContain("missedPart");
+    expect(kinds).not.toContain("stretched");
   });
 
   it("at the independent stage, a very small drawing is incomplete and reported as too small", () => {

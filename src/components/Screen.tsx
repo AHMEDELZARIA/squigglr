@@ -10,13 +10,24 @@ import { Squiggle } from "./Squiggle";
 export const buttonClass =
   "inline-flex items-center gap-2 rounded-2xl border-2 border-ink bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
 
-export function Frame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function Frame({
+  children,
+  className = "",
+  brand = true,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /** The name above the frame. Left off the lesson, where the height is needed for drawing. */
+  brand?: boolean;
+}) {
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="mb-3 flex items-center gap-2 px-2 font-serif text-xl font-bold">
-        Squigglr
-        <Squiggle className="w-9" />
-      </div>
+      {brand && (
+        <div className="mb-3 flex items-center gap-2 px-2 font-serif text-xl font-bold">
+          Squigglr
+          <Squiggle className="w-9" />
+        </div>
+      )}
       <div className={`relative rounded-[2rem] border-4 border-ink bg-white p-5 sm:p-8 ${className}`}>{children}</div>
     </div>
   );

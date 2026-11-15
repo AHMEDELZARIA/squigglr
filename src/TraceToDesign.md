@@ -17,7 +17,7 @@ Module numbers are those of the Module Guide and the MIS. Modules not listed are
 | M14 Adult Access | `components/AdultCheck.tsx` (the adult check only; there are no accounts yet) |
 | M15 Learner Profile | `lib/profiles.ts` |
 | M16 Learner Settings | `lib/settings.ts`, `lib/examples.ts` (example drawings for the pass mark) |
-| M18 Adult View | `app/page.tsx`, `app/lessons/page.tsx`, `app/lessons/[id]/page.tsx`, `app/grown-ups/page.tsx`, `app/story/page.tsx`, `components/Screen.tsx`, `components/NeatnessInfo.tsx`, `components/useActiveLearner.ts`, `components/Squiggle.tsx` |
+| M18 Adult View | `app/page.tsx`, `app/lessons/page.tsx`, `app/lessons/[id]/page.tsx`, `app/grown-ups/page.tsx`, `app/records/page.tsx`, `components/Screen.tsx`, `components/NeatnessInfo.tsx`, `components/useActiveLearner.ts`, `components/Squiggle.tsx` |
 | M19 Stroke | the `Stroke` type in `lib/types.ts` |
 | M20 Geometry | `lib/geometry.ts` |
 | M23 Storage | `lib/storage.ts` |

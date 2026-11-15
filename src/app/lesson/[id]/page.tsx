@@ -4,18 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
 import { Avatar } from "@/components/Avatar";
-import { DrawingCanvas, type Tool } from "@/components/DrawingCanvas";
-import {
-  DoorIcon,
-  EraserIcon,
-  Footprints,
-  Helper,
-  LockIcon,
-  PencilIcon,
-  RestartIcon,
-  StageGuide,
-  Sticker,
-} from "@/components/icons";
+import { DrawingCanvas } from "@/components/DrawingCanvas";
+import { DoorIcon, Footprints, Helper, LockIcon, StageGuide } from "@/components/icons";
 import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
@@ -28,7 +18,8 @@ import { records } from "@/lib/records";
 import * as settings from "@/lib/settings";
 import type { DrawingStage, Figure, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
 
-// M13 Child Screen (prototype S6 to S11). It shows the lesson and relays
+// M13 Child Screen (prototype S6 to S11, without its Start again button and
+// sticker, which the SRS does not have). It shows the lesson and relays
 // input: each finished stroke goes to Lesson Control, which is also ticked
 // twice a second. All the rules live in lib/lessonControl.ts; nothing here
 // decides a pass.
@@ -82,7 +73,6 @@ export default function LessonPage() {
   const [showing, setShowing] = useState(false); // a finished attempt is on screen
   const [card, setCard] = useState(false); // the go-back card is open
   const [panel, setPanel] = useState(true);
-  const [tool, setTool] = useState<Tool>("pencil");
 
   const setStrokes = (next: Stroke[]) => {
     strokesRef.current = next;
@@ -130,7 +120,6 @@ export default function LessonPage() {
     );
     const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
     setShowing(true);
-    setTool("pencil");
     setTimeout(
       () => {
         setStrokes([]);
@@ -179,23 +168,6 @@ export default function LessonPage() {
     refresh();
   };
 
-  /** The eraser was lifted: the drawing that is left is checked like any other stylus lift. */
-  const onErase = (left: Stroke[]) => {
-    if (!running || c.stage === "D") return;
-    const stage = c.stage;
-    setStrokes(left);
-    show(c.replaceStrokes(left), stage);
-    refresh();
-  };
-
-  /** "Start again": wipes this try. The attempt is kept apart as interrupted and is not counted. */
-  const startAgain = () => {
-    c.interrupt();
-    setStrokes([]);
-    setReport(null);
-    refresh();
-  };
-
   const openCard = async () => {
     if (await ask()) setCard(true); // only an adult can answer (SAF-RAY-001)
   };
@@ -232,32 +204,9 @@ export default function LessonPage() {
           {avatar && <Avatar avatar={avatar} />}
         </div>
 
-        <div className="relative mx-auto -mt-4 flex w-full max-w-[min(100%,max(26rem,calc(100vh-10.5rem)))] items-center gap-3">
-          {/* The child's tools: draw, or rub out a part of the drawing. */}
-          <div className={`flex flex-col gap-3 ${running && c.stage !== "D" ? "" : "invisible"}`}>
-            {(
-              [
-                { value: "pencil", label: "Pencil", Icon: PencilIcon },
-                { value: "eraser", label: "Eraser", Icon: EraserIcon },
-              ] as const
-            ).map(({ value, label, Icon }) => (
-              <button
-                key={value}
-                onClick={() => setTool(value)}
-                aria-label={label}
-                aria-pressed={tool === value}
-                className={`flex h-16 w-16 items-center justify-center rounded-2xl border-[3px] ${
-                  tool === value ? "border-brand bg-lavender-deep text-brand" : "border-ink bg-white"
-                }`}
-              >
-                <Icon className="h-8 w-8" />
-              </button>
-            ))}
-          </div>
+        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100vh-20rem)))]">
           <div className="relative min-w-0 flex-1">
             <DrawingCanvas
-              tool={tool}
-              onErase={onErase}
               guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
               strokes={strokes}
               marks={marks}
@@ -292,11 +241,10 @@ export default function LessonPage() {
 
             {!running && (
               <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white">
-                <Sticker className="h-3/5 w-3/5" />
+                <LessonIcon figure={lesson.figure} className="h-3/5 w-3/5" />
               </div>
             )}
           </div>
-          <div className="w-16 shrink-0" aria-hidden="true" />
         </div>
 
         <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
@@ -320,16 +268,6 @@ export default function LessonPage() {
               <button onClick={openCard} className={`${buttonClass} border-brand text-brand`}>
                 <LockIcon className="h-5 w-5" />
                 Grown-ups
-              </button>
-            )}
-            {running && c.stage !== "D" && (
-              <button
-                onClick={startAgain}
-                disabled={showing || strokes.length === 0}
-                aria-label="Start again"
-                className={childButton}
-              >
-                <RestartIcon className="h-8 w-8" />
               </button>
             )}
             {running && (

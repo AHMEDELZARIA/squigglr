@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Avatar } from "@/components/Avatar";
-import { Sticker } from "@/components/icons";
 import { Screen } from "@/components/Screen";
 import { StrokePreview } from "@/components/StrokePreview";
 import { useActiveLearner } from "@/components/useActiveLearner";
@@ -12,12 +11,10 @@ import * as profiles from "@/lib/profiles";
 import * as records from "@/lib/records";
 import type { AttemptRecord, Ending, Learner, LessonRecord, Stage } from "@/lib/types";
 
-// S5 "Practice story: this week". A plain-words look at the week for one
-// child: the days they practised, and their real drawings with a guide and
-// without one. Under it, every saved attempt in full. It shows practice,
-// not an assessment.
-
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+// "Practice records" (in the place of the prototype's S5). For one child:
+// every start of a lesson, and under it every attempt with its actual
+// strokes, step, outcome, result and the difficulties seen (FR-REC-001 to
+// FR-REC-010). The SRS's progress summary is a later phase and is not here.
 
 const STAGE: Record<Stage, string> = {
   D: "Demonstration",
@@ -42,26 +39,12 @@ const PILL = {
   interrupted: "bg-butter text-butter-ink",
 } as const;
 
-/** Monday of the current week, at midnight. */
-function weekStart(): number {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-  return d.getTime();
-}
-
-/** 0 for Monday to 6 for Sunday, or -1 if the time is not in this week. */
-function dayOf(time: number, start: number): number {
-  const day = Math.floor((time - start) / 86_400_000);
-  return day >= 0 && day < 7 ? day : -1;
-}
-
 interface LessonStory {
   record: LessonRecord;
   attempts: AttemptRecord[];
 }
 
-export default function PracticeStory() {
+export default function PracticeRecords() {
   const { learner: active, ready } = useActiveLearner();
   const [learners, setLearners] = useState<Learner[]>([]);
   const [shown, setShown] = useState<Learner | null>(null);
@@ -83,29 +66,9 @@ export default function PracticeStory() {
     );
   }, [shown]);
 
-  const start = weekStart();
-  const practised = DAYS.map((_, day) => lessons.some(({ record }) => dayOf(record.startedAt, start) === day));
-  const daysPractised = practised.filter(Boolean).length;
-
-  // For each lesson practised this week: the last drawing of each day, with a guide and without one.
-  const lessonIds = [...new Set(lessons.map(({ record }) => record.lesson))];
-  const grids = lessonIds
-    .map((lessonId) => {
-      const attempts = lessons
-        .filter(({ record }) => record.lesson === lessonId)
-        .flatMap(({ attempts }) => attempts)
-        .filter((a) => dayOf(a.endedAt, start) >= 0 && a.strokes.length > 0)
-        .sort((a, b) => a.endedAt - b.endedAt);
-      const days = [...new Set(attempts.map((a) => dayOf(a.endedAt, start)))].sort();
-      const last = (day: number, guided: boolean) =>
-        attempts.filter((a) => dayOf(a.endedAt, start) === day && (a.stage !== "I") === guided).at(-1);
-      return { lesson: catalogue.lesson(lessonId), days, last };
-    })
-    .filter((g) => g.days.length > 0);
-
   return (
     <Screen
-      title="Practice story: this week"
+      title="Practice records"
       back="/grown-ups"
       right={
         <div className="flex gap-2">
@@ -123,96 +86,21 @@ export default function PracticeStory() {
         </div>
       }
     >
-      <section className="mt-6 rounded-3xl border-[3px] border-ink p-5">
-        <ol className="flex flex-wrap justify-center gap-x-8 gap-y-3">
-          {DAYS.map((day, i) => (
-            <li key={day} className="flex flex-col items-center gap-1 text-lg font-bold">
-              {day}
-              {practised[i] ? (
-                <Sticker className="h-14 w-14" />
-              ) : (
-                <span className="h-14 w-14 rounded-full border-[3px] border-line" />
-              )}
-              <span className="sr-only">{practised[i] ? "practised" : "no practice"}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-4 text-center text-xl">
-          {shown?.avatar}{" "}
-          {daysPractised === 0
-            ? "has not practised yet this week."
-            : `practised on ${daysPractised} ${daysPractised === 1 ? "day" : "days"} this week.`}
-        </p>
-      </section>
-
-      {grids.map(({ lesson, days, last }) => (
-        <section key={lesson.id} className="mt-4 rounded-3xl border-[3px] border-ink p-5">
-          <div className="overflow-x-auto">
-            <table className="w-full border-separate border-spacing-x-4 border-spacing-y-2 text-center">
-              <thead>
-                <tr className="text-lg">
-                  <th className="text-left font-bold">{lesson.name} lesson</th>
-                  {days.map((day) => (
-                    <th key={day} className="font-bold">
-                      {DAYS[day]}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[true, false].map((guided) => (
-                  <tr key={String(guided)}>
-                    <th className="text-left text-xl font-bold">{guided ? "With a guide" : "Without a guide"}</th>
-                    {days.map((day) => {
-                      const attempt = last(day, guided);
-                      return (
-                        <td key={day}>
-                          <div className="flex justify-center">
-                            {attempt ? (
-                              <StrokePreview strokes={attempt.strokes} figure={lesson.figure} size="sm" />
-                            ) : (
-                              <span
-                                aria-label="Not yet"
-                                className="h-24 w-24 rounded-2xl border-[3px] border-dashed border-line"
-                              />
-                            )}
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-muted">
-            Key:
-            <span className="flex items-center gap-2">
-              <span className="h-6 w-6 rounded-md border-2 border-ink" />
-              {shown?.avatar}&apos;s last drawing from that day
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="h-6 w-6 rounded-md border-2 border-dashed border-line" />
-              Not yet
-            </span>
-          </p>
-        </section>
-      ))}
-
-      <p className="mt-4 flex items-center gap-3 rounded-2xl bg-panel px-5 py-4 text-xl">
+      <p className="mt-6 flex items-center gap-3 rounded-2xl bg-panel px-5 py-4 text-xl">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink font-serif font-bold">
           i
         </span>
         This shows practice, not an assessment.
       </p>
 
-      <details className="mt-4">
-        <summary className="cursor-pointer text-xl font-bold text-brand">Every lesson and attempt</summary>
-        {lessons.length === 0 && <p className="mt-3 text-muted">No lessons yet.</p>}
+      <div>
+        {lessons.length === 0 && (
+          <p className="mt-6 text-center text-xl text-muted">{shown?.avatar} has no lessons yet.</p>
+        )}
         {lessons.map(({ record, attempts }) => {
           const lesson = catalogue.lesson(record.lesson);
           return (
-            <section key={record.id} className="mt-4 rounded-2xl bg-panel p-4">
+            <section key={record.id} className="mt-4 rounded-3xl border-[3px] border-ink p-5">
               <h2 className="font-sans text-lg font-bold">
                 {lesson.name} lesson
                 <span className="ml-2 text-sm font-normal text-muted">
@@ -239,7 +127,7 @@ export default function PracticeStory() {
               </dl>
               <ol className="mt-3 space-y-2">
                 {attempts.map((attempt, i) => (
-                  <li key={attempt.id} className="flex gap-4 rounded-xl bg-white p-3">
+                  <li key={attempt.id} className="flex gap-4 rounded-2xl bg-panel p-3">
                     <StrokePreview strokes={attempt.strokes} figure={lesson.figure} size="sm" />
                     <div className="text-sm">
                       <p className="font-bold">
@@ -275,7 +163,7 @@ export default function PracticeStory() {
             </section>
           );
         })}
-      </details>
+      </div>
     </Screen>
   );
 }

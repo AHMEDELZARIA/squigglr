@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as catalogue from "./catalogue";
 import { evaluate } from "./evaluation";
-import { erase } from "./geometry";
 import { squareStroke, stroke, strokeOf } from "./testHelpers";
 import type { DrawingStage, Stroke } from "./types";
 
@@ -121,22 +120,6 @@ describe("evaluate: square", () => {
     expect(e.difficulties).toContainEqual({ kind: "tooSmall", index: 0 });
     // With a guide, size is set by the guide, so "too small" is never reported there.
     expect(run("square", [squareStroke(0, 0, 0.2)], "T").difficulties).not.toContainEqual({ kind: "tooSmall", index: 0 });
-  });
-
-  it("rubbing out a stray line turns a drawing that fails into one that passes", () => {
-    const stray = stroke({ x: 300, y: 500 }, { x: 700, y: 500 });
-    expect(run("square", [squareStroke(), stray], "T", 90).passed).toBe(false);
-    const after = erase([squareStroke(), stray], { x: 500, y: 500 }, 205);
-    expect(after).toHaveLength(1);
-    expect(run("square", after, "T", 90).passed).toBe(true);
-  });
-
-  it("rubbing through a line cuts it in two and leaves the rest as drawn", () => {
-    const [left, right] = erase([stroke({ x: 100, y: 100 }, { x: 500, y: 100 })], { x: 300, y: 100 }, 30);
-    expect(left.points[0]).toMatchObject({ x: 100, y: 100 });
-    expect(left.points.at(-1)!.x).toBeLessThan(271);
-    expect(right.points[0].x).toBeGreaterThan(329);
-    expect(right.points.at(-1)).toMatchObject({ x: 500, y: 100 });
   });
 
   it("is invalid for no strokes, a tap, or a missing coordinate, and never passes", () => {

@@ -1,5 +1,5 @@
 // The small pictures used across the screens. They follow the lo-fi
-// prototype (footprints, helper, practice sticker, the grown-ups lock) and
+// prototype (the trail of prints, the helper, the grown-ups lock) and
 // are drawn here so they take the app's colours.
 
 import type { DrawingStage, Figure } from "@/lib/types";
@@ -34,28 +34,6 @@ export const BookIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
     <rect x="3" y="5" width="8" height="14" rx="1" />
     <rect x="13" y="5" width="8" height="14" rx="1" />
-  </svg>
-);
-
-export const RestartIcon = ({ className }: IconProps) => (
-  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.4}>
-    <path d="M4 12a8 8 0 1 0 2.6-5.9" />
-    <path d="M4 4v5h5" />
-  </svg>
-);
-
-export const PencilIcon = ({ className }: IconProps) => (
-  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.2}>
-    <path d="M4 20l1-4.5L16.5 4a2.1 2.1 0 0 1 3 3L8 18.500z" />
-    <path d="M14.5 6l3 3" />
-  </svg>
-);
-
-export const EraserIcon = ({ className }: IconProps) => (
-  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line} strokeWidth={2.2}>
-    <path d="M8.5 19.500L3.5 14.500a1.5 1.5 0 0 1 0-2.100l8.4-8.400a1.5 1.5 0 0 1 2.1 0l6 6a1.5 1.5 0 0 1 0 2.100l-7.4 7.400z" />
-    <path d="M8 8l8 8" />
-    <path d="M8.5 19.500H21" />
   </svg>
 );
 
@@ -184,23 +162,6 @@ export function Footprints({ reached, labels, avatar }: { reached: number; label
     </ol>
   );
 }
-
-/** The practice sticker: given for practising, whatever the result. */
-export const Sticker = ({ className }: IconProps) => (
-  <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
-    <circle cx="60" cy="60" r="55" fill="#fdf8e6" stroke={INK} strokeWidth={3} strokeDasharray="9 8" />
-    <path
-      d="M60 22l11.2 23.4 25.6 3.4-18.7 17.8 4.6 25.4L60 79.8 37.3 92l4.6-25.4-18.7-17.8 25.6-3.4z"
-      fill="#fbf0c4"
-      stroke={INK}
-      strokeWidth={3}
-      strokeLinejoin="round"
-    />
-    <circle cx="53" cy="56" r="2.6" fill={INK} />
-    <circle cx="67" cy="56" r="2.6" fill={INK} />
-    <path d="M52 65 Q60 72 68 65" fill="none" stroke={INK} strokeWidth={2.6} strokeLinecap="round" />
-  </svg>
-);
 
 const d = (points: { x: number; y: number }[]) =>
   points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");

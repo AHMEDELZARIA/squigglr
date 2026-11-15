@@ -30,21 +30,8 @@ export class Attempt {
 
   /** Called at each stylus lift. Evaluates all strokes so far; a pass ends the attempt at once. */
   addStroke(stroke: Stroke, now: number): void {
-    this.replaceStrokes([...this.strokes, stroke], now);
-  }
-
-  /**
-   * The drawing as it stands after the child has drawn or rubbed something
-   * out. It is evaluated like any other stylus lift. With nothing left on
-   * the page, the attempt is simply open again.
-   */
-  replaceStrokes(strokes: Stroke[], now: number): void {
     if (this.outcome !== "open") throw new Error("attemptEnded");
-    this.strokes = strokes;
-    if (strokes.length === 0) {
-      this.last = null;
-      return;
-    }
+    this.strokes.push(stroke);
     this.last = this.evaluate(this.strokes, this.figure, this.stage, this.allowed, this.stagePass);
     // Something drawn off the figure is noted at every lift. A missed part or
     // endpoint, or a drawing that is still small, is not: the child may simply

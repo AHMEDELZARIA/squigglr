@@ -122,16 +122,6 @@ describe("attempts that do not count", () => {
     expect(h.control.stage).toBe("T");
   });
 
-  it("rubbing everything out leaves the attempt open, with nothing to count", () => {
-    const h = harness();
-    h.control.addStroke(stroke({ x: 0, y: 0 }, { x: 100, y: 0 }));
-    expect(h.control.replaceStrokes([]).feedback).toEqual([]);
-    h.wait(h.settings.attemptIdle + 1);
-    expect(h.control.tick(h.time() - (h.settings.attemptIdle + 1) * 1000).feedback).toEqual([]);
-    expect(h.control.failed).toBe(0);
-    expect(h.records.attempts).toHaveLength(0);
-  });
-
   it("a stylus lift alone does not end an attempt that has not passed", () => {
     const h = harness();
     h.control.addStroke(stroke({ x: 0, y: 0 }, { x: 100, y: 0 }));

@@ -29,8 +29,6 @@ fixed in this revision.
 \subsubsection{Exported Access Programs}
 
 \begin{accessprograms}
-drawings & $a$: AdultIdT, $p$: LearnerIdT & seq of DrawingIdT & notOwner,
-unavailable \\
 finish & $d$: DrawingIdT, $\mathit{on}$: $\mathbb{B}$ & -- & unknownDrawing \\
 restore & $d$: DrawingIdT & -- & unknownDrawing, noOriginal \\
 status & $d$: DrawingIdT & RefineStatusT & unknownDrawing \\
@@ -54,7 +52,6 @@ for which each pending result was requested.
 \begin{itemize}
 \item $\mathit{clock}$: DateTimeT, the current time, used to reject a result
 that arrives after the SRS refinement response limit.
-\item $\mathit{service}$: the Refinement Engine Module's external service.
 \end{itemize}
 
 \subsubsection{Assumptions}
@@ -70,9 +67,7 @@ by the Creative Drawing Module (\mref{mCreative}).
 
 \subsubsection{Access Routine Semantics}
 
-\texttt{drawings} gives
-the active learner's saved drawing identifiers; 
-\texttt{finish} starts a refinement only when enabled in the learner's 
+\texttt{finish} starts a refinement only when enabled in the learner's
 refinement setting; 
 the result is applied only if it is within \texttt{REFINE\_TOLERANCE} in both
 directions for every corresponding path. 

@@ -36,7 +36,12 @@ export class Attempt {
     // Something drawn off the figure is noted at every lift. A missed part or
     // endpoint, or a drawing that is still small, is not: the child may simply
     // not have finished yet.
-    this.note(this.last.difficulties.filter((d) => d.kind === "offFigure"), ["offFigure"]);
+    // With no guide the drawing is laid over the figure as a whole, so a
+    // half-finished one looks off the figure until it is done. There, nothing
+    // is noted until the attempt ends.
+    if (this.stage !== "I") {
+      this.note(this.last.difficulties.filter((d) => d.kind === "offFigure"), ["offFigure"]);
+    }
     if (this.last.passed) this.end("passed", now);
   }
 

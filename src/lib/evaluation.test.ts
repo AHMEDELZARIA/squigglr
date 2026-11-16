@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { Attempt } from "./attempt";
 import * as catalogue from "./catalogue";
 import { evaluate } from "./evaluation";
 import { squareStroke, stroke, strokeOf } from "./testHelpers";
@@ -135,6 +136,28 @@ describe("evaluate: square", () => {
   it("gives the same result every time for the same input", () => {
     const drawing = [squareStroke(15, -10)];
     expect(run("square", drawing)).toEqual(run("square", drawing));
+  });
+});
+
+describe("what an attempt notes about the drawing (FR-REC-003)", () => {
+  const sides = catalogue.lesson("square").figure.parts.map(strokeOf);
+  const attemptAt = (stage: DrawingStage) =>
+    new Attempt("square", stage, catalogue.lesson("square").figure, catalogue.difficulties("square", stage), 80, 5, evaluate);
+
+  it("with no guide, a square drawn one side at a time is not noted as off the shape along the way", () => {
+    const attempt = attemptAt("I");
+    sides.forEach((side, i) => attempt.addStroke(side, i));
+    expect(attempt.outcome).toBe("passed");
+    expect(attempt.seen).toEqual([]);
+  });
+
+  it("with a guide, a line off the shape is noted, and marked corrected once the drawing is mostly on it", () => {
+    const attempt = attemptAt("T");
+    attempt.addStroke(stroke({ x: 300, y: 500 }, { x: 700, y: 500 }), 0);
+    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: false }]);
+    sides.forEach((side, i) => attempt.addStroke(side, i + 1));
+    expect(attempt.outcome).toBe("passed");
+    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: true }]);
   });
 });
 

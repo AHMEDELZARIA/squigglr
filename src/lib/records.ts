@@ -29,6 +29,11 @@ export const records: RecordStore = {
   // A new record every time, even for a lesson started before, so earlier
   // attempts are kept.
   startLesson(learner, lesson, start) {
+    // One lesson runs at a time. A lesson still marked in progress was cut
+    // off (the page was closed or reloaded), so it is closed as unfinished.
+    for (const stale of storage.list<LessonRecord>("lessonRecord", learner)) {
+      if (stale.ending === "inProgress") write({ ...stale, ending: "unfinished" });
+    }
     const record: LessonRecord = {
       id: storage.newId(),
       learner,

@@ -1,6 +1,6 @@
 # Squigglr POC: Implementation Plan and Code
 
-This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 56 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
+This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 60 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
 
 **What the POC is:** a website where an adult adds a child, sets that child's nine practice values, and starts the Square or Circle lesson. The child watches a demonstration, then draws through three stages with less help each time. Every attempt is scored against the adult's values and saved under that child.
 
@@ -186,6 +186,8 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | --- | --- | --- |
 | The demonstration is always shown first, then practice starts at the adult's chosen step | UC-003 step 1; FR-LRN-003, FR-LRN-025 | The MIS has `beginPractice` go from the demonstration to tracing only; UC-003 is followed. |
 | The drawing is checked at every stylus lift; a pass ends the attempt at once | FR-LRN-038, FR-LRN-039 | The child should not have to decide when a drawing is done. |
+| A stylus held down, even held still, counts as drawing | FR-LRN-024 (the pause is "with no input after the last stroke") | Otherwise a child resting the stylus mid-line would have the attempt ended under them. |
+| The lesson waits while the adult check or the go-back card is open | SAF-RAY-001; FR-LRN-024 | The adult's time at the check is not the child's pause, so no attempt ends and no idle clock runs meanwhile. The card has a "Decide later" that leaves the suggestion pending (FR-LRN-034). |
 | An attempt that has not passed ends after a pause the adult sets: 3 to 7 s, default 5 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first; tried on a tablet, ten seconds of waiting was far too long, so it was halved. |
 | The lesson idle ranges are 30 to 60 s and 90 to 180 s | SAF-RAY-009; BR-008 | Also "TBD" in the SRS. The three ranges do not overlap, so the rule that each is shorter than the next can never be broken. |
 | A go-back suggestion waits behind a quiet Grown-ups button | FR-LRN-019, FR-LRN-034; UC-005; SAF-RAY-001; NFR-UX-001 | The SRS has the suggestion shown "without blocking practice" and answered only through the adult check. The prototype covers the lesson with a card and has the helper say "Let's get a grown-up!"; neither is in the SRS, and nothing flashes while the child draws. |
@@ -210,6 +212,9 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | All nine values are set per child, on the Lesson ready screen | BR-008; FR-LRN-017; UC-001 | Three are up front, as in the prototype, and the rest under "More settings". A value outside its range, or one that breaks a rule between values, cannot be saved. |
 | A child starts on the recommended settings, and keeps only what an adult changed | BR-008 ("a value the adult does not choose is set to the middle of its range"); SAF-RAY-008 | Only changed values are saved. A saved value that is no longer in range counts as not chosen, so a change to a range can never leave a child unable to start a lesson. |
 | "Neatness" Low, Medium, High is the pass mark at 70, 80, 90, with an example drawing for each | BR-008 ("shows example drawings of what its minimum and maximum look like") | The examples are made from the scoring itself, and a test checks each one. |
+| A save that fails never stops the lesson | SAF-RAY-003; FR-REC-008 | If the browser's storage is full, the lesson carries on and the demo panel says how many records were not saved. Keeping them for a later save is not built yet. |
+| A lesson that was cut off is closed as unfinished | FR-REC-005, FR-REC-007 | If the page is closed or reloaded mid-lesson, its record would stay "in progress" for ever. It is closed when the child's next lesson starts. |
+| Difficulties are noted as the SRS describes, with one exception | FR-REC-003 | With a guide, a line off the shape is noted at each stylus lift and marked corrected later. With no guide nothing is noted until the attempt ends, because a half-finished drawing laid over the figure always looks off it. |
 | Practice records show every lesson and attempt; there is no weekly summary | FR-REC-001 to FR-REC-010; Development Plan (POC plan: "no progress summary") | The POC must show that records keep the strokes, the stage and the outcome. The SRS's progress summary is specified separately and belongs to the final phase, so the prototype's weekly "practice story" is not built. |
 | The records screen says it shows practice, not an assessment | BR-006; SAF-RAY-004 | No diagnosis, judgement or comparison. |
 | No sticker or other reward | Not in the SRS; NFR-UX-001 | The prototype ends a lesson with a sticker. The SRS has no reward, so the lesson ends with the helper's closing line. |
@@ -1086,7 +1091,12 @@ export class Attempt {
     // Something drawn off the figure is noted at every lift. A missed part or
     // endpoint, or a drawing that is still small, is not: the child may simply
     // not have finished yet.
-    this.note(this.last.difficulties.filter((d) => d.kind === "offFigure"), ["offFigure"]);
+    // With no guide the drawing is laid over the figure as a whole, so a
+    // half-finished one looks off the figure until it is done. There, nothing
+    // is noted until the attempt ends.
+    if (this.stage !== "I") {
+      this.note(this.last.difficulties.filter((d) => d.kind === "offFigure"), ["offFigure"]);
+    }
     if (this.last.passed) this.end("passed", now);
   }
 
@@ -1208,6 +1218,8 @@ export class LessonControl {
   prompted = false;
   /** The evaluation of the attempt that ended last, for the demo panel. */
   lastFinal: Evaluation | null = null;
+  /** How many records could not be saved, for example because the browser's storage is full. */
+  unsaved = 0;
 
   private startAt: DrawingStage = "T";
   private recordId = "";
@@ -1242,7 +1254,7 @@ export class LessonControl {
     this.lastFinal = null;
     this.attempt = null;
     this.resetStage();
-    this.recordId = this.records.startLesson(learner, lessonId, start);
+    this.recordId = this.keep(() => this.records.startLesson(learner, lessonId, start)) ?? "";
   }
 
   /** The child continues after the demonstration. */
@@ -1261,7 +1273,7 @@ export class LessonControl {
     const stage = attempt.stage;
     this.lastFinal = attempt.last;
     this.save(attempt, "passed");
-    this.records.recordPass(this.recordId, stage);
+    this.keep(() => this.records.recordPass(this.recordId, stage));
     this.evaluable += 1;
     this.clearSuggestion("ignored");
 
@@ -1376,7 +1388,7 @@ export class LessonControl {
     if (!this.extended && this.failed >= s.attemptLimit && isImproving) {
       this.extended = true; // granted once per stage
       this.sinceExtension = 0;
-      this.records.recordExtension(this.recordId);
+      this.keep(() => this.records.recordExtension(this.recordId));
     } else if (
       this.status === "active" &&
       !this.suggestionPending &&
@@ -1387,13 +1399,28 @@ export class LessonControl {
       // The stage does not change; the child keeps practising while it is pending.
       this.suggestionPending = true;
       this.status = "suggested";
-      this.suggestionIndex = this.records.offerSuggestion(this.recordId, this.stage, this.now());
+      this.suggestionIndex =
+        this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now())) ?? 0;
     }
     this.newAttempt();
     return report;
   }
 
   // ----- helpers -----
+
+  /**
+   * Writes a record. If the write fails (the browser's storage is full, say),
+   * the lesson carries on and the failure is counted, so the screen can tell
+   * the adult. A child's practice is never stopped by a save.
+   */
+  private keep<T>(write: () => T): T | undefined {
+    try {
+      return write();
+    } catch {
+      this.unsaved += 1;
+      return undefined;
+    }
+  }
 
   private isRunning(): boolean {
     return this.status === "active" || this.status === "suggested";
@@ -1441,13 +1468,13 @@ export class LessonControl {
 
   private clearSuggestion(response: "accepted" | "declined" | "ignored", stage: DrawingStage | null = null): void {
     if (!this.suggestionPending) return;
-    this.records.answerSuggestion(this.recordId, this.suggestionIndex, response, stage);
+    this.keep(() => this.records.answerSuggestion(this.recordId, this.suggestionIndex, response, stage));
     this.suggestionPending = false;
     this.status = "active";
   }
 
   private save(attempt: Attempt, outcome: "passed" | "notPassed" | "interrupted"): void {
-    this.records.saveAttempt(this.recordId, {
+    const record = {
       lesson: attempt.lesson,
       stage: attempt.stage,
       outcome,
@@ -1456,7 +1483,8 @@ export class LessonControl {
       settings: this.settings,
       strokes: attempt.strokes, // the actual strokes, never a corrected shape (BR-004)
       endedAt: attempt.endedAt!,
-    });
+    };
+    this.keep(() => this.records.saveAttempt(this.recordId, record));
   }
 
   private finish(ending: Ending): void {
@@ -1464,7 +1492,7 @@ export class LessonControl {
     this.status = "ended";
     this.ending = ending;
     this.attempt = null;
-    this.records.endLesson(this.recordId, ending, this.furthest);
+    this.keep(() => this.records.endLesson(this.recordId, ending, this.furthest));
   }
 }
 ```
@@ -1854,6 +1882,11 @@ export const records: RecordStore = {
   // A new record every time, even for a lesson started before, so earlier
   // attempts are kept.
   startLesson(learner, lesson, start) {
+    // One lesson runs at a time. A lesson still marked in progress was cut
+    // off (the page was closed or reloaded), so it is closed as unfinished.
+    for (const stale of storage.list<LessonRecord>("lessonRecord", learner)) {
+      if (stale.ending === "inProgress") write({ ...stale, ending: "unfinished" });
+    }
     const record: LessonRecord = {
       id: storage.newId(),
       learner,
@@ -1930,7 +1963,7 @@ export function attempts(learner: string, recordId: string): AttemptRecord[] {
 ### 8.5 Components
 
 <a id="f-canvas"></a>
-**`components/DrawingCanvas.tsx`**. The only code that touches pointer events and the canvas. It hands finished strokes up and paints what it is given: the guide, the strokes, the demonstration, and the glow over a stretch that was not drawn. A stylus takes priority over a resting palm. It decides nothing about the lesson.
+**`components/DrawingCanvas.tsx`**. The only code that touches pointer events and the canvas. It hands finished strokes up and paints what it is given: the guide, the strokes, the demonstration, and the glow over a stretch that was not drawn. A stylus takes priority over a resting palm, a stylus held still still counts as drawing, positions off the drawing area are left out, and positions closer together than two units are thinned out. It decides nothing about the lesson.
 
 `src/components/DrawingCanvas.tsx`
 
@@ -1946,6 +1979,10 @@ import type { Guide, Path, Point, Stroke } from "@/lib/types";
 // demonstration and the "look here" marks.
 
 const SIZE = 1000;
+/** Positions closer together than this, in drawing units, are thinned out. */
+const MIN_STEP = 2;
+/** For this long after a stylus touches, finger and palm touches do not draw. */
+const PALM_MS = 1000;
 
 interface Props {
   guide: Guide;
@@ -1989,8 +2026,8 @@ export function DrawingCanvas(props: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const current = useRef<Stroke | null>(null);
   const pointerId = useRef<number | null>(null);
-  /** Once a stylus has been used, finger and palm touches no longer draw. */
-  const penSeen = useRef(false);
+  /** When a stylus last touched. A palm resting beside it must not draw. */
+  const penAt = useRef(0);
   const latest = useRef(props);
   latest.current = props;
 
@@ -2099,26 +2136,55 @@ export function DrawingCanvas(props: Props) {
   }, [props.demonstration, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
+  /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   const toPoint = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
+    const unit = (v: number) => Math.round(v * SIZE * 10) / 10; // a tenth of a unit is finer than any screen
     return {
-      x: ((e.clientX - rect.left) / rect.width) * SIZE,
-      y: ((e.clientY - rect.top) / rect.height) * SIZE,
+      x: unit((e.clientX - rect.left) / rect.width),
+      y: unit((e.clientY - rect.top) / rect.height),
       t: Date.now(),
     };
   };
 
-  const add = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  /** Adds the pointer's position to the stroke being drawn. `last` is the point at the stylus lift. */
+  const add = (e: React.PointerEvent<HTMLCanvasElement>, last = false) => {
     const stroke = current.current;
     if (!stroke) return;
     const p = toPoint(e);
-    const last = stroke.points[stroke.points.length - 1];
-    // The same position reported twice counts once (SAF-AHM-001).
-    if (last && last.x === p.x && last.y === p.y) return;
-    stroke.points.push(p);
     latest.current.onInput(p.t);
+    // A position that is not on the drawing area cannot be mapped to it, and is left out (SAF-AHM-002).
+    if (p.x < 0 || p.x > SIZE || p.y < 0 || p.y > SIZE) return;
+    const before = stroke.points[stroke.points.length - 1];
+    // The same position reported twice counts once (SAF-AHM-001). Positions
+    // closer together than the eye can tell are thinned out, which keeps a
+    // long drawing quick to check and small to save.
+    if (before) {
+      const moved = Math.hypot(p.x - before.x, p.y - before.y);
+      if (moved === 0 || (moved < MIN_STEP && !last)) return;
+    }
+    stroke.points.push(p);
     paint();
   };
+
+  // While the stylus is held down, even held still, the child is still
+  // drawing: that is input, and the pause that ends an attempt must not run.
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (pointerId.current !== null) latest.current.onInput(Date.now());
+    }, 250);
+    return () => clearInterval(timer);
+  }, []);
+
+  // If the drawing area is switched off in the middle of a stroke, the
+  // unfinished stroke is dropped. It belongs to no attempt.
+  useEffect(() => {
+    if (props.disabled && pointerId.current !== null) {
+      current.current = null;
+      pointerId.current = null;
+      paint();
+    }
+  }, [props.disabled, paint]);
 
   return (
     <canvas
@@ -2128,10 +2194,10 @@ export function DrawingCanvas(props: Props) {
       onPointerDown={(e) => {
         if (props.disabled) return;
         const pen = e.pointerType === "pen";
-        if (pen) penSeen.current = true;
-        // A stylus wins over a resting palm: touches are ignored once a stylus
-        // has been used, and a stylus takes over from a touch already down.
-        if (e.pointerType === "touch" && penSeen.current) return;
+        if (pen) penAt.current = Date.now();
+        // A stylus wins over a resting palm: a touch is ignored while a stylus
+        // is in use, and a stylus takes over from a touch already down.
+        if (e.pointerType === "touch" && Date.now() - penAt.current < PALM_MS) return;
         if (pointerId.current !== null) {
           if (!pen) return; // one contact at a time
           current.current = null;
@@ -2142,15 +2208,19 @@ export function DrawingCanvas(props: Props) {
         add(e);
       }}
       onPointerMove={(e) => {
-        if (e.pointerId === pointerId.current) add(e);
+        if (e.pointerId !== pointerId.current) return;
+        if (e.pointerType === "pen") penAt.current = Date.now();
+        add(e);
       }}
       onPointerUp={(e) => {
         if (e.pointerId !== pointerId.current) return;
-        add(e);
+        add(e, true);
         pointerId.current = null;
-        const stroke = current.current!;
+        const stroke = current.current;
         current.current = null;
-        props.onStroke(stroke);
+        // A contact that never touched the drawing area leaves no stroke.
+        if (stroke && stroke.points.length > 0) props.onStroke(stroke);
+        else paint();
       }}
       onPointerCancel={(e) => {
         if (e.pointerId !== pointerId.current) return;
@@ -3318,7 +3388,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
 import { Avatar } from "@/components/Avatar";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
-import { DoorIcon, Footprints, Helper, LockIcon, StageGuide } from "@/components/icons";
+import { DoorIcon, Footprints, Helper, LockIcon, PlayIcon, StageGuide } from "@/components/icons";
 import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
@@ -3386,6 +3456,11 @@ export default function LessonPage() {
   const [showing, setShowing] = useState(false); // a finished attempt is on screen
   const [card, setCard] = useState(false); // the go-back card is open
   const [panel, setPanel] = useState(true);
+  /** While a finished attempt is on screen: the stage it was made at, so its guide stays under it. */
+  const [shownStage, setShownStage] = useState<Stage | null>(null);
+  const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** True while the adult check or the go-back card is open. The lesson waits. */
+  const paused = useRef(false);
 
   const setStrokes = (next: Stroke[]) => {
     strokesRef.current = next;
@@ -3405,7 +3480,10 @@ export default function LessonPage() {
     control.current = c;
     setAvatar(learner.avatar);
     refresh();
-    return () => c.stop(); // leaving the screen ends the lesson as unfinished
+    return () => {
+      if (clearTimer.current) clearTimeout(clearTimer.current);
+      c.stop(); // leaving the screen ends the lesson as unfinished
+    };
   }, [id, router]);
 
   /** Shows what Lesson Control reported after an event. */
@@ -3433,12 +3511,14 @@ export default function LessonPage() {
     );
     const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
     setShowing(true);
-    setTimeout(
+    setShownStage(stageOfAttempt);
+    clearTimer.current = setTimeout(
       () => {
         setStrokes([]);
         setMarks([]);
         setGlow([]);
         setShowing(false);
+        setShownStage(null);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
       },
@@ -3450,7 +3530,7 @@ export default function LessonPage() {
   useEffect(() => {
     const timer = setInterval(() => {
       const c = control.current;
-      if (!c || showing) return;
+      if (!c || showing || paused.current) return;
       const stage = c.stage;
       show(c.tick(lastInput.current), stage);
       refresh();
@@ -3464,6 +3544,10 @@ export default function LessonPage() {
   const running = c.status === "active" || c.status === "suggested";
   const live = c.attempt?.last ?? (showing ? c.lastFinal : null);
   const suggested = c.status === "suggested";
+  // The guide on screen: the current stage's, or, while a finished attempt is
+  // still showing, the one that attempt was drawn over.
+  const guideStage = shownStage ?? (running ? c.stage : "D");
+  const guide = guideStage === "D" ? NO_GUIDE : catalogue.guide(c.lessonId, guideStage);
 
   // What the helper says: the latest feedback, or else the line for this stage.
   const bubble = !running
@@ -3481,8 +3565,23 @@ export default function LessonPage() {
     refresh();
   };
 
+  /**
+   * Runs the adult check. While it is open the lesson waits: the adult's time
+   * at the check is not the child's pause, so no attempt ends and no idle
+   * clock runs.
+   */
+  const adultCheck = async () => {
+    paused.current = true;
+    const passed = await ask();
+    paused.current = false;
+    lastInput.current = Date.now();
+    return passed;
+  };
+
   const openCard = async () => {
-    if (await ask()) setCard(true); // only an adult can answer (SAF-RAY-001)
+    if (!(await adultCheck())) return; // only an adult can answer (SAF-RAY-001)
+    paused.current = true;
+    setCard(true);
   };
 
   const answer = (accept: boolean, stage?: DrawingStage) => {
@@ -3490,12 +3589,13 @@ export default function LessonPage() {
     if (accept) setStrokes([]);
     setReport(null);
     setCard(false);
+    paused.current = false;
     lastInput.current = Date.now();
     refresh();
   };
 
   const leave = async (to: string) => {
-    if (await ask()) router.push(to);
+    if (await adultCheck()) router.push(to);
   };
 
   const childButton =
@@ -3506,7 +3606,11 @@ export default function LessonPage() {
       <Frame brand={false} className="!p-4 sm:!p-5">
         <div className="flex items-start justify-between">
           <div>
-            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} avatar={avatar} />
+            <Footprints
+              reached={c.ending === "completed" ? 3 : ORDER.indexOf(c.stage)}
+              labels={STEP_LABELS}
+              avatar={avatar}
+            />
             {/* With no guide, a small picture reminds the child what to draw. */}
             {running && c.stage === "I" && (
               <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">
@@ -3520,7 +3624,7 @@ export default function LessonPage() {
         <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100vh-20rem)))]">
           <div className="relative min-w-0 flex-1">
             <DrawingCanvas
-              guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
+              guide={guide}
               strokes={strokes}
               marks={marks}
               glow={glow}
@@ -3546,9 +3650,9 @@ export default function LessonPage() {
                   refresh();
                 }}
                 aria-label="Start drawing"
-                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-5xl text-white"
+                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-white"
               >
-                ▶
+                <PlayIcon className="h-12 w-12" />
               </button>
             )}
 
@@ -3647,6 +3751,16 @@ export default function LessonPage() {
               </button>
             </div>
             <p className="mt-4 text-muted">Either way, {avatar} carries on alone once you hand the tablet back.</p>
+            <button
+              onClick={() => {
+                setCard(false);
+                paused.current = false;
+                lastInput.current = Date.now();
+              }}
+              className="mt-3 font-bold text-brand underline"
+            >
+              Decide later
+            </button>
           </div>
         </div>
       )}
@@ -3674,6 +3788,9 @@ export default function LessonPage() {
               value={c.extended ? `${c.sinceExtension} of ${c.settings.attemptExtension} used` : "not given"}
             />
             <Item label="Attempt ends after" value={`${c.settings.attemptIdle} s with no drawing`} />
+            {c.unsaved > 0 && (
+              <Item label="Records not saved" value={`${c.unsaved} (this browser's storage is full)`} />
+            )}
           </dl>
         )}
       </div>
@@ -4102,13 +4219,14 @@ next-env.d.ts
 
 ## 9. Tests
 
-`npm test` runs 56 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
+`npm test` runs 60 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
 
 | Area | What is checked |
 | --- | --- |
 | Scoring, square | An exact square scores 100. Four separate strokes count as one attempt. A missing side or corner is incomplete and reported. Inside the tolerance passes, outside fails. A stray line lowers the result. The same drawing passes at a pass mark of 70 and fails at 90. With no guide, position and size do not matter. No strokes, a tap and a missing coordinate are invalid. The result is repeatable. |
 | Scoring, circle | An exact circle passes, an open one does not, a square does not. |
 | Progression | Trace to corners to no guide to complete. The adult's starting stage is used. Pass at the mark and not one point below, at 70, 80 and 90. Incomplete never passes. A retry follows a failed attempt. |
+| Records | A save that fails does not stop the lesson and is counted. Starting a lesson closes one that was cut off. With no guide, a square drawn one side at a time is not noted as off the shape; with a guide, a stray line is noted and later marked corrected. |
 | Not counted | Invalid input is neither saved nor counted. An interrupted attempt is saved as interrupted and not counted. A stylus lift alone does not end an attempt. |
 | Stopping | The lesson ends at the limit. One extension when improving, then the end. A pass during the extension still moves on. The cap is never passed. The adult's limit is used. |
 | Suggestion | Offered at the streak, never at trace, held back while improving. Declining needs a new streak. Accepting moves to the chosen earlier stage and keeps the furthest stage. A pass records it as ignored. The adult's streak is used. |
@@ -4185,6 +4303,7 @@ export function memoryRecords(): MemoryRecords {
 
 ```ts
 import { describe, expect, it } from "vitest";
+import { Attempt } from "./attempt";
 import * as catalogue from "./catalogue";
 import { evaluate } from "./evaluation";
 import { squareStroke, stroke, strokeOf } from "./testHelpers";
@@ -4324,6 +4443,28 @@ describe("evaluate: square", () => {
   });
 });
 
+describe("what an attempt notes about the drawing (FR-REC-003)", () => {
+  const sides = catalogue.lesson("square").figure.parts.map(strokeOf);
+  const attemptAt = (stage: DrawingStage) =>
+    new Attempt("square", stage, catalogue.lesson("square").figure, catalogue.difficulties("square", stage), 80, 5, evaluate);
+
+  it("with no guide, a square drawn one side at a time is not noted as off the shape along the way", () => {
+    const attempt = attemptAt("I");
+    sides.forEach((side, i) => attempt.addStroke(side, i));
+    expect(attempt.outcome).toBe("passed");
+    expect(attempt.seen).toEqual([]);
+  });
+
+  it("with a guide, a line off the shape is noted, and marked corrected once the drawing is mostly on it", () => {
+    const attempt = attemptAt("T");
+    attempt.addStroke(stroke({ x: 300, y: 500 }, { x: 700, y: 500 }), 0);
+    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: false }]);
+    sides.forEach((side, i) => attempt.addStroke(side, i + 1));
+    expect(attempt.outcome).toBe("passed");
+    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: true }]);
+  });
+});
+
 describe("evaluate: circle", () => {
   const parts = catalogue.lesson("circle").figure.parts;
 
@@ -4369,6 +4510,7 @@ import { improving } from "./improvement";
 import { LessonControl } from "./lessonControl";
 import { check, defaults, load, save } from "./settings";
 import * as storage from "./storage";
+import { lessonRecords, records as realRecords } from "./records";
 import { memoryRecords, stroke } from "./testHelpers";
 import type { Settings, Stage } from "./types";
 
@@ -4493,6 +4635,27 @@ describe("attempts that do not count", () => {
     h.wait(h.settings.attemptIdle - 1);
     expect(h.control.tick(h.time() - (h.settings.attemptIdle - 1) * 1000).feedback).toEqual([]);
     expect(h.control.failed).toBe(0);
+  });
+});
+
+describe("records are kept faithfully", () => {
+  it("a save that fails does not stop the lesson, and is counted", () => {
+    const h = harness();
+    h.records.saveAttempt = () => {
+      throw new Error("QuotaExceededError");
+    };
+    expect(h.attempt(40).feedback).toEqual(["keepTrying"]);
+    expect(h.attempt(85).feedback).toEqual(["stagePassed"]);
+    expect(h.control.stage).toBe("E");
+    expect(h.control.unsaved).toBe(2);
+  });
+
+  it("starting a lesson closes one that was cut off, as unfinished", () => {
+    const first = realRecords.startLesson("cut-off-child", "square", "T");
+    const second = realRecords.startLesson("cut-off-child", "circle", "T");
+    const all = lessonRecords("cut-off-child");
+    expect(all.find((r) => r.id === first)!.ending).toBe("unfinished");
+    expect(all.find((r) => r.id === second)!.ending).toBe("inProgress");
   });
 });
 
@@ -4708,7 +4871,7 @@ Each step ends in something that can be checked. Steps 2 to 4 need no browser an
 
 1. **Set up the project.** In `src/`, add the [configuration files](#f-config) and `src/.gitignore`, then run `npm install`. Check: `npm run typecheck` runs.
 2. **Types, geometry, scoring, catalogue.** Add [`types.ts`](#f-types), [`geometry.ts`](#f-geometry), [`evaluation.ts`](#f-evaluation), [`catalogue.ts`](#f-catalogue), [`testHelpers.ts`](#f-test-helpers) and [`evaluation.test.ts`](#f-test-eval). Check: the scoring tests pass.
-3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 56 tests pass.
+3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 60 tests pass.
 4. **Data.** Add [`storage.ts`](#f-storage), [`settings.ts`](#f-settings), [`profiles.ts`](#f-profiles), [`records.ts`](#f-records). (Steps 3 and 4 share `records.ts` for its `RecordStore` type.)
 5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
 6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.

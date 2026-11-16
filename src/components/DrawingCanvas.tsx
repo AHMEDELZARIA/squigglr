@@ -9,6 +9,10 @@ import type { Guide, Path, Point, Stroke } from "@/lib/types";
 // demonstration and the "look here" marks.
 
 const SIZE = 1000;
+/** Positions closer together than this, in drawing units, are thinned out. */
+const MIN_STEP = 2;
+/** For this long after a stylus touches, finger and palm touches do not draw. */
+const PALM_MS = 1000;
 
 interface Props {
   guide: Guide;
@@ -52,8 +56,8 @@ export function DrawingCanvas(props: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const current = useRef<Stroke | null>(null);
   const pointerId = useRef<number | null>(null);
-  /** Once a stylus has been used, finger and palm touches no longer draw. */
-  const penSeen = useRef(false);
+  /** When a stylus last touched. A palm resting beside it must not draw. */
+  const penAt = useRef(0);
   const latest = useRef(props);
   latest.current = props;
 
@@ -162,26 +166,55 @@ export function DrawingCanvas(props: Props) {
   }, [props.demonstration, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
+  /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   const toPoint = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
+    const unit = (v: number) => Math.round(v * SIZE * 10) / 10; // a tenth of a unit is finer than any screen
     return {
-      x: ((e.clientX - rect.left) / rect.width) * SIZE,
-      y: ((e.clientY - rect.top) / rect.height) * SIZE,
+      x: unit((e.clientX - rect.left) / rect.width),
+      y: unit((e.clientY - rect.top) / rect.height),
       t: Date.now(),
     };
   };
 
-  const add = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  /** Adds the pointer's position to the stroke being drawn. `last` is the point at the stylus lift. */
+  const add = (e: React.PointerEvent<HTMLCanvasElement>, last = false) => {
     const stroke = current.current;
     if (!stroke) return;
     const p = toPoint(e);
-    const last = stroke.points[stroke.points.length - 1];
-    // The same position reported twice counts once (SAF-AHM-001).
-    if (last && last.x === p.x && last.y === p.y) return;
-    stroke.points.push(p);
     latest.current.onInput(p.t);
+    // A position that is not on the drawing area cannot be mapped to it, and is left out (SAF-AHM-002).
+    if (p.x < 0 || p.x > SIZE || p.y < 0 || p.y > SIZE) return;
+    const before = stroke.points[stroke.points.length - 1];
+    // The same position reported twice counts once (SAF-AHM-001). Positions
+    // closer together than the eye can tell are thinned out, which keeps a
+    // long drawing quick to check and small to save.
+    if (before) {
+      const moved = Math.hypot(p.x - before.x, p.y - before.y);
+      if (moved === 0 || (moved < MIN_STEP && !last)) return;
+    }
+    stroke.points.push(p);
     paint();
   };
+
+  // While the stylus is held down, even held still, the child is still
+  // drawing: that is input, and the pause that ends an attempt must not run.
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (pointerId.current !== null) latest.current.onInput(Date.now());
+    }, 250);
+    return () => clearInterval(timer);
+  }, []);
+
+  // If the drawing area is switched off in the middle of a stroke, the
+  // unfinished stroke is dropped. It belongs to no attempt.
+  useEffect(() => {
+    if (props.disabled && pointerId.current !== null) {
+      current.current = null;
+      pointerId.current = null;
+      paint();
+    }
+  }, [props.disabled, paint]);
 
   return (
     <canvas
@@ -191,10 +224,10 @@ export function DrawingCanvas(props: Props) {
       onPointerDown={(e) => {
         if (props.disabled) return;
         const pen = e.pointerType === "pen";
-        if (pen) penSeen.current = true;
-        // A stylus wins over a resting palm: touches are ignored once a stylus
-        // has been used, and a stylus takes over from a touch already down.
-        if (e.pointerType === "touch" && penSeen.current) return;
+        if (pen) penAt.current = Date.now();
+        // A stylus wins over a resting palm: a touch is ignored while a stylus
+        // is in use, and a stylus takes over from a touch already down.
+        if (e.pointerType === "touch" && Date.now() - penAt.current < PALM_MS) return;
         if (pointerId.current !== null) {
           if (!pen) return; // one contact at a time
           current.current = null;
@@ -205,15 +238,19 @@ export function DrawingCanvas(props: Props) {
         add(e);
       }}
       onPointerMove={(e) => {
-        if (e.pointerId === pointerId.current) add(e);
+        if (e.pointerId !== pointerId.current) return;
+        if (e.pointerType === "pen") penAt.current = Date.now();
+        add(e);
       }}
       onPointerUp={(e) => {
         if (e.pointerId !== pointerId.current) return;
-        add(e);
+        add(e, true);
         pointerId.current = null;
-        const stroke = current.current!;
+        const stroke = current.current;
         current.current = null;
-        props.onStroke(stroke);
+        // A contact that never touched the drawing area leaves no stroke.
+        if (stroke && stroke.points.length > 0) props.onStroke(stroke);
+        else paint();
       }}
       onPointerCancel={(e) => {
         if (e.pointerId !== pointerId.current) return;

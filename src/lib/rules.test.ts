@@ -5,6 +5,7 @@ import { improving } from "./improvement";
 import { LessonControl } from "./lessonControl";
 import { check, defaults, load, save } from "./settings";
 import * as storage from "./storage";
+import { lessonRecords, records as realRecords } from "./records";
 import { memoryRecords, stroke } from "./testHelpers";
 import type { Settings, Stage } from "./types";
 
@@ -129,6 +130,27 @@ describe("attempts that do not count", () => {
     h.wait(h.settings.attemptIdle - 1);
     expect(h.control.tick(h.time() - (h.settings.attemptIdle - 1) * 1000).feedback).toEqual([]);
     expect(h.control.failed).toBe(0);
+  });
+});
+
+describe("records are kept faithfully", () => {
+  it("a save that fails does not stop the lesson, and is counted", () => {
+    const h = harness();
+    h.records.saveAttempt = () => {
+      throw new Error("QuotaExceededError");
+    };
+    expect(h.attempt(40).feedback).toEqual(["keepTrying"]);
+    expect(h.attempt(85).feedback).toEqual(["stagePassed"]);
+    expect(h.control.stage).toBe("E");
+    expect(h.control.unsaved).toBe(2);
+  });
+
+  it("starting a lesson closes one that was cut off, as unfinished", () => {
+    const first = realRecords.startLesson("cut-off-child", "square", "T");
+    const second = realRecords.startLesson("cut-off-child", "circle", "T");
+    const all = lessonRecords("cut-off-child");
+    expect(all.find((r) => r.id === first)!.ending).toBe("unfinished");
+    expect(all.find((r) => r.id === second)!.ending).toBe("inProgress");
   });
 });
 

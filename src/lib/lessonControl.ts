@@ -44,6 +44,8 @@ export class LessonControl {
   prompted = false;
   /** The evaluation of the attempt that ended last, for the demo panel. */
   lastFinal: Evaluation | null = null;
+  /** How many records could not be saved, for example because the browser's storage is full. */
+  unsaved = 0;
 
   private startAt: DrawingStage = "T";
   private recordId = "";
@@ -78,7 +80,7 @@ export class LessonControl {
     this.lastFinal = null;
     this.attempt = null;
     this.resetStage();
-    this.recordId = this.records.startLesson(learner, lessonId, start);
+    this.recordId = this.keep(() => this.records.startLesson(learner, lessonId, start)) ?? "";
   }
 
   /** The child continues after the demonstration. */
@@ -97,7 +99,7 @@ export class LessonControl {
     const stage = attempt.stage;
     this.lastFinal = attempt.last;
     this.save(attempt, "passed");
-    this.records.recordPass(this.recordId, stage);
+    this.keep(() => this.records.recordPass(this.recordId, stage));
     this.evaluable += 1;
     this.clearSuggestion("ignored");
 
@@ -212,7 +214,7 @@ export class LessonControl {
     if (!this.extended && this.failed >= s.attemptLimit && isImproving) {
       this.extended = true; // granted once per stage
       this.sinceExtension = 0;
-      this.records.recordExtension(this.recordId);
+      this.keep(() => this.records.recordExtension(this.recordId));
     } else if (
       this.status === "active" &&
       !this.suggestionPending &&
@@ -223,13 +225,28 @@ export class LessonControl {
       // The stage does not change; the child keeps practising while it is pending.
       this.suggestionPending = true;
       this.status = "suggested";
-      this.suggestionIndex = this.records.offerSuggestion(this.recordId, this.stage, this.now());
+      this.suggestionIndex =
+        this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now())) ?? 0;
     }
     this.newAttempt();
     return report;
   }
 
   // ----- helpers -----
+
+  /**
+   * Writes a record. If the write fails (the browser's storage is full, say),
+   * the lesson carries on and the failure is counted, so the screen can tell
+   * the adult. A child's practice is never stopped by a save.
+   */
+  private keep<T>(write: () => T): T | undefined {
+    try {
+      return write();
+    } catch {
+      this.unsaved += 1;
+      return undefined;
+    }
+  }
 
   private isRunning(): boolean {
     return this.status === "active" || this.status === "suggested";
@@ -277,13 +294,13 @@ export class LessonControl {
 
   private clearSuggestion(response: "accepted" | "declined" | "ignored", stage: DrawingStage | null = null): void {
     if (!this.suggestionPending) return;
-    this.records.answerSuggestion(this.recordId, this.suggestionIndex, response, stage);
+    this.keep(() => this.records.answerSuggestion(this.recordId, this.suggestionIndex, response, stage));
     this.suggestionPending = false;
     this.status = "active";
   }
 
   private save(attempt: Attempt, outcome: "passed" | "notPassed" | "interrupted"): void {
-    this.records.saveAttempt(this.recordId, {
+    const record = {
       lesson: attempt.lesson,
       stage: attempt.stage,
       outcome,
@@ -292,7 +309,8 @@ export class LessonControl {
       settings: this.settings,
       strokes: attempt.strokes, // the actual strokes, never a corrected shape (BR-004)
       endedAt: attempt.endedAt!,
-    });
+    };
+    this.keep(() => this.records.saveAttempt(this.recordId, record));
   }
 
   private finish(ending: Ending): void {
@@ -300,6 +318,6 @@ export class LessonControl {
     this.status = "ended";
     this.ending = ending;
     this.attempt = null;
-    this.records.endLesson(this.recordId, ending, this.furthest);
+    this.keep(() => this.records.endLesson(this.recordId, ending, this.furthest));
   }
 }

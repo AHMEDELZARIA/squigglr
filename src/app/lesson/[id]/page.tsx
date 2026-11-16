@@ -5,7 +5,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
 import { Avatar } from "@/components/Avatar";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
-import { DoorIcon, Footprints, Helper, LockIcon, StageGuide } from "@/components/icons";
+import { DoorIcon, Footprints, Helper, LockIcon, PlayIcon, StageGuide } from "@/components/icons";
 import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
 import * as catalogue from "@/lib/catalogue";
@@ -73,6 +73,11 @@ export default function LessonPage() {
   const [showing, setShowing] = useState(false); // a finished attempt is on screen
   const [card, setCard] = useState(false); // the go-back card is open
   const [panel, setPanel] = useState(true);
+  /** While a finished attempt is on screen: the stage it was made at, so its guide stays under it. */
+  const [shownStage, setShownStage] = useState<Stage | null>(null);
+  const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** True while the adult check or the go-back card is open. The lesson waits. */
+  const paused = useRef(false);
 
   const setStrokes = (next: Stroke[]) => {
     strokesRef.current = next;
@@ -92,7 +97,10 @@ export default function LessonPage() {
     control.current = c;
     setAvatar(learner.avatar);
     refresh();
-    return () => c.stop(); // leaving the screen ends the lesson as unfinished
+    return () => {
+      if (clearTimer.current) clearTimeout(clearTimer.current);
+      c.stop(); // leaving the screen ends the lesson as unfinished
+    };
   }, [id, router]);
 
   /** Shows what Lesson Control reported after an event. */
@@ -120,12 +128,14 @@ export default function LessonPage() {
     );
     const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
     setShowing(true);
-    setTimeout(
+    setShownStage(stageOfAttempt);
+    clearTimer.current = setTimeout(
       () => {
         setStrokes([]);
         setMarks([]);
         setGlow([]);
         setShowing(false);
+        setShownStage(null);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
       },
@@ -137,7 +147,7 @@ export default function LessonPage() {
   useEffect(() => {
     const timer = setInterval(() => {
       const c = control.current;
-      if (!c || showing) return;
+      if (!c || showing || paused.current) return;
       const stage = c.stage;
       show(c.tick(lastInput.current), stage);
       refresh();
@@ -151,6 +161,10 @@ export default function LessonPage() {
   const running = c.status === "active" || c.status === "suggested";
   const live = c.attempt?.last ?? (showing ? c.lastFinal : null);
   const suggested = c.status === "suggested";
+  // The guide on screen: the current stage's, or, while a finished attempt is
+  // still showing, the one that attempt was drawn over.
+  const guideStage = shownStage ?? (running ? c.stage : "D");
+  const guide = guideStage === "D" ? NO_GUIDE : catalogue.guide(c.lessonId, guideStage);
 
   // What the helper says: the latest feedback, or else the line for this stage.
   const bubble = !running
@@ -168,8 +182,23 @@ export default function LessonPage() {
     refresh();
   };
 
+  /**
+   * Runs the adult check. While it is open the lesson waits: the adult's time
+   * at the check is not the child's pause, so no attempt ends and no idle
+   * clock runs.
+   */
+  const adultCheck = async () => {
+    paused.current = true;
+    const passed = await ask();
+    paused.current = false;
+    lastInput.current = Date.now();
+    return passed;
+  };
+
   const openCard = async () => {
-    if (await ask()) setCard(true); // only an adult can answer (SAF-RAY-001)
+    if (!(await adultCheck())) return; // only an adult can answer (SAF-RAY-001)
+    paused.current = true;
+    setCard(true);
   };
 
   const answer = (accept: boolean, stage?: DrawingStage) => {
@@ -177,12 +206,13 @@ export default function LessonPage() {
     if (accept) setStrokes([]);
     setReport(null);
     setCard(false);
+    paused.current = false;
     lastInput.current = Date.now();
     refresh();
   };
 
   const leave = async (to: string) => {
-    if (await ask()) router.push(to);
+    if (await adultCheck()) router.push(to);
   };
 
   const childButton =
@@ -193,7 +223,11 @@ export default function LessonPage() {
       <Frame brand={false} className="!p-4 sm:!p-5">
         <div className="flex items-start justify-between">
           <div>
-            <Footprints reached={running ? ORDER.indexOf(c.stage) : 3} labels={STEP_LABELS} avatar={avatar} />
+            <Footprints
+              reached={c.ending === "completed" ? 3 : ORDER.indexOf(c.stage)}
+              labels={STEP_LABELS}
+              avatar={avatar}
+            />
             {/* With no guide, a small picture reminds the child what to draw. */}
             {running && c.stage === "I" && (
               <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">
@@ -207,7 +241,7 @@ export default function LessonPage() {
         <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100vh-20rem)))]">
           <div className="relative min-w-0 flex-1">
             <DrawingCanvas
-              guide={c.stage === "D" || !running ? NO_GUIDE : catalogue.guide(c.lessonId, c.stage)}
+              guide={guide}
               strokes={strokes}
               marks={marks}
               glow={glow}
@@ -233,9 +267,9 @@ export default function LessonPage() {
                   refresh();
                 }}
                 aria-label="Start drawing"
-                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-5xl text-white"
+                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-white"
               >
-                ▶
+                <PlayIcon className="h-12 w-12" />
               </button>
             )}
 
@@ -334,6 +368,16 @@ export default function LessonPage() {
               </button>
             </div>
             <p className="mt-4 text-muted">Either way, {avatar} carries on alone once you hand the tablet back.</p>
+            <button
+              onClick={() => {
+                setCard(false);
+                paused.current = false;
+                lastInput.current = Date.now();
+              }}
+              className="mt-3 font-bold text-brand underline"
+            >
+              Decide later
+            </button>
           </div>
         </div>
       )}
@@ -361,6 +405,9 @@ export default function LessonPage() {
               value={c.extended ? `${c.sinceExtension} of ${c.settings.attemptExtension} used` : "not given"}
             />
             <Item label="Attempt ends after" value={`${c.settings.attemptIdle} s with no drawing`} />
+            {c.unsaved > 0 && (
+              <Item label="Records not saved" value={`${c.unsaved} (this browser's storage is full)`} />
+            )}
           </dl>
         )}
       </div>

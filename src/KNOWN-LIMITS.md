@@ -27,6 +27,6 @@ Found in the audit of November 15, 2026. For how the app compares with the SRS, 
 
 | What | Why it matters |
 | --- | --- |
-| A stylus on the target tablet | Every automated run used a mouse, and the team's tablet runs used a finger. Palm rejection, pressure and the pencil's faster reporting are untried. This is experiment 1 of the POC plan. |
+| A stylus, in depth | The team drew with a stylus on an iPad on November 16, 2026 and it worked. That was a first try, not a test: experiment 1 of the POC plan asks for the hardware and browser versions to be recorded, a second device and browser, and notes on delays, broken strokes and a resting palm. Every automated run used a mouse. |
 | Browsers other than Chromium and Safari on iPad | The automated runs use Chromium only. |
 | Hand-drawn attempts at the pass mark | The scoring tests use prepared shapes. The calibration of `TRACE_TOL`, `PART_COVER` and `MIN_DRAW_SCALE` with adult-made drawings (OI-05) has not been done. |

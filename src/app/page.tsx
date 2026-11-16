@@ -65,7 +65,7 @@ export default function WhoIsPractising() {
           onClick={() => setAdding((a) => !a)}
           className="flex flex-col items-center gap-2 rounded-3xl p-2 hover:bg-lavender"
         >
-          <span className="flex h-36 w-36 items-center justify-center rounded-full border-[3px] border-dashed border-muted text-6xl text-muted">
+          <span className="flex h-36 w-36 items-center justify-center rounded-full border-2 border-dashed border-edge text-6xl text-muted">
             +
           </span>
           <span className="text-lg font-bold text-muted">Add a child</span>
@@ -81,7 +81,7 @@ export default function WhoIsPractising() {
                 key={avatar}
                 onClick={() => add(avatar)}
                 aria-label={`Picture ${avatar}`}
-                className="h-16 w-16 rounded-full border-2 border-ink bg-white text-4xl hover:bg-mint-deep"
+                className="h-16 w-16 rounded-full border-2 border-edge bg-white text-4xl hover:bg-mint-deep"
               >
                 {avatar}
               </button>

@@ -30,13 +30,13 @@ export default function GrownUps() {
           <Link
             key={href}
             href={href}
-            className="flex items-center gap-6 rounded-3xl border-[3px] border-ink bg-white p-8 hover:bg-lavender"
+            className="flex items-center gap-6 rounded-3xl border-2 border-edge bg-white p-8 hover:bg-lavender"
           >
             <span className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full ${tint}`}>
               <Icon className="h-10 w-10" />
             </span>
             <span>
-              <span className="block font-serif text-3xl font-bold">{title}</span>
+              <span className="block text-3xl font-bold">{title}</span>
               <span className="mt-1 block text-xl text-muted">{text}</span>
             </span>
           </Link>

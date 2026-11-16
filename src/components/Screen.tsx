@@ -8,7 +8,7 @@ import { Squiggle } from "./Squiggle";
 // child who is practising on the right.
 
 export const buttonClass =
-  "inline-flex items-center gap-2 rounded-2xl border-2 border-ink bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
+  "inline-flex items-center gap-2 rounded-2xl border-2 border-edge bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
 
 export function Frame({
   children,
@@ -23,12 +23,12 @@ export function Frame({
   return (
     <div className="mx-auto max-w-5xl">
       {brand && (
-        <div className="mb-3 flex items-center gap-2 px-2 font-serif text-xl font-bold">
+        <div className="mb-3 flex items-center gap-2 px-2 text-xl font-bold">
           Squigglr
           <Squiggle className="w-9" />
         </div>
       )}
-      <div className={`relative rounded-[2rem] border-4 border-ink bg-white p-5 sm:p-8 ${className}`}>{children}</div>
+      <div className={`relative rounded-[2rem] border border-edge shadow-card bg-white p-5 sm:p-8 ${className}`}>{children}</div>
     </div>
   );
 }

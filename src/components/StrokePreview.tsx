@@ -16,7 +16,7 @@ export function StrokePreview({
   size?: keyof typeof SIZES;
 }) {
   return (
-    <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-ink bg-white ${SIZES[size]}`}>
+    <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-edge bg-white ${SIZES[size]}`}>
       {figure.parts.map((part, i) => (
         <path key={`f${i}`} d={d(part)} fill="none" stroke="#dcd7f5" strokeWidth={30} strokeLinecap="round" />
       ))}

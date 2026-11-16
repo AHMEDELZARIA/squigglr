@@ -37,7 +37,7 @@ export function useAdultCheck() {
   const dialog = question && (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
       <form
-        className="w-full max-w-sm rounded-3xl border-4 border-ink bg-white p-6"
+        className="w-full max-w-sm rounded-3xl border border-edge shadow-card bg-white p-6"
         onSubmit={(e) => {
           e.preventDefault();
           if (Number(answer) === question.a + question.b) close(true);
@@ -57,7 +57,7 @@ export function useAdultCheck() {
             aria-label="Answer"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            className="ml-3 w-24 rounded-xl border-2 border-ink px-3 py-1"
+            className="ml-3 w-24 rounded-xl border-2 border-edge px-3 py-1"
           />
         </label>
         {wrong && <p className="mt-2 font-bold text-coral">That is not it. Try again.</p>}

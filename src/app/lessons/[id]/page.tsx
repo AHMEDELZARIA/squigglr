@@ -66,7 +66,7 @@ function Stepper({
         aria-label={`Less: ${r.label}`}
         disabled={values[name] <= r.min}
         onClick={() => set(name, values[name] - 1)}
-        className={`${box} rounded-xl border-2 border-ink bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
+        className={`${box} rounded-xl border-2 border-edge bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
       >
         −
       </button>
@@ -78,7 +78,7 @@ function Stepper({
         aria-label={`More: ${r.label}`}
         disabled={values[name] >= r.max}
         onClick={() => set(name, values[name] + 1)}
-        className={`${box} rounded-xl border-2 border-ink bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
+        className={`${box} rounded-xl border-2 border-edge bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
       >
         +
       </button>
@@ -125,7 +125,7 @@ export default function LessonReady() {
     <Screen title={<>{learner.avatar}&apos;s lesson is ready</>} back="/lessons" avatar={learner.avatar}>
       <div className="mt-6 grid gap-8 md:grid-cols-[16rem_1fr]">
         <div>
-          <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-3xl border-[3px] border-ink bg-white">
+          <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-3xl border-2 border-edge bg-white">
             <LessonIcon figure={lesson.figure} className="h-32 w-32" />
           </div>
           <p className="mt-2 text-center text-2xl font-bold">{lesson.name} lesson</p>
@@ -162,10 +162,10 @@ export default function LessonReady() {
                     aria-checked={selected}
                     onClick={() => setStart(stage)}
                     className={`relative rounded-2xl bg-white px-2 pt-2 pb-1 text-center ${
-                      selected ? "border-4 border-brand bg-lavender" : "border-2 border-ink"
+                      selected ? "border-4 border-brand bg-lavender" : "border-2 border-edge"
                     }`}
                   >
-                    <span className="absolute top-2 left-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
+                    <span className="absolute top-2 left-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-edge bg-white text-sm font-bold">
                       {i + 1}
                     </span>
                     {selected && (
@@ -202,7 +202,7 @@ export default function LessonReady() {
                 type="button"
                 onClick={() => setInfo(true)}
                 aria-label="About neatness"
-                className="h-11 w-11 rounded-full border-2 border-ink bg-white font-serif text-xl font-bold hover:bg-lavender"
+                className="h-11 w-11 rounded-full border-2 border-edge bg-white text-xl font-bold hover:bg-lavender"
               >
                 i
               </button>
@@ -217,7 +217,7 @@ export default function LessonReady() {
                       aria-checked={selected}
                       onClick={() => set("stagePass", mark)}
                       className={`rounded-full border-2 px-5 py-2 text-xl font-bold ${
-                        selected ? "border-brand bg-brand text-white" : "border-ink bg-white hover:bg-lavender"
+                        selected ? "border-brand bg-brand text-white" : "border-edge bg-white hover:bg-lavender"
                       }`}
                     >
                       {name}
@@ -260,7 +260,7 @@ export default function LessonReady() {
               <button
                 type="button"
                 onClick={() => setValues(settings.defaults())}
-                className="rounded-2xl border-2 border-ink bg-white px-4 py-2 font-bold hover:bg-lavender"
+                className="rounded-2xl border-2 border-edge bg-white px-4 py-2 font-bold hover:bg-lavender"
               >
                 Back to the recommended settings
               </button>

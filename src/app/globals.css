@@ -1,18 +1,17 @@
 @import "tailwindcss";
 
 /*
- * The colours and fonts follow the team's A-Sense presentation: navy serif
- * headings, a plain sans-serif body, and soft lavender, mint, peach and
- * butter panels with a purple accent. The layout of the screens follows the
- * team's lo-fi prototype.
+ * The look: one rounded sans-serif for everything, thin line icons, white
+ * cards with soft edges and a light shadow, and plenty of space, in the
+ * manner of a calm note-taking app. The colours are those of the team's
+ * A-Sense presentation. The layout of the screens follows the lo-fi
+ * prototype.
  *
- * The slides use Cambria and Calibri. Those are used where the device has
- * them; elsewhere Caladea and Carlito, open fonts with the same letter
- * widths, are loaded in their place.
+ * On an iPad or a Mac the font is the system's own rounded face. Elsewhere
+ * Nunito, an open rounded font, is loaded in its place.
  */
 @theme {
-  --font-serif: Cambria, Caladea, Georgia, "Times New Roman", serif;
-  --font-sans: Calibri, Carlito, "Segoe UI", system-ui, sans-serif;
+  --font-sans: ui-rounded, "SF Pro Rounded", Nunito, "Segoe UI", system-ui, sans-serif;
 
   --color-ink: #23304a;
   --color-muted: #5b6478;
@@ -20,6 +19,9 @@
   --color-stroke: #3a4fa0;
   --color-panel: #f4f5f8;
   --color-line: #e1e4ec;
+  /* The edge of a card or a button: light, but clear against white. */
+  --color-edge: #cdd2e0;
+  --shadow-card: 0 1px 2px rgb(35 48 74 / 0.06), 0 8px 24px rgb(35 48 74 / 0.07);
   --color-lavender: #f2f0fc;
   --color-lavender-deep: #dcd7f5;
   --color-mint: #edf7f2;
@@ -39,7 +41,8 @@ body {
 
 h1,
 h2 {
-  font-family: var(--font-serif);
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 /* On a tablet: no grey flash on a tap, no wait for a double tap, and no

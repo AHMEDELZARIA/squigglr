@@ -32,7 +32,7 @@ export default function PickALesson() {
             key={lesson.id}
             href={`/lessons/${lesson.id}`}
             aria-label={`${lesson.name} lesson`}
-            className="flex h-60 w-60 flex-col items-center justify-center rounded-3xl border-[3px] border-ink bg-white hover:bg-lavender"
+            className="flex h-60 w-60 flex-col items-center justify-center rounded-3xl border-2 border-edge bg-white hover:bg-lavender"
           >
             <LessonIcon figure={lesson.figure} className="h-40 w-40" />
             <span className="mt-2 text-lg font-bold text-muted">{lesson.name}</span>

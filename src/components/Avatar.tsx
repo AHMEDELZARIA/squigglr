@@ -17,7 +17,7 @@ export function Avatar({
   return (
     <span
       className={`flex shrink-0 items-center justify-center rounded-full border-[3px] leading-none ${SIZES[size]} ${
-        selected ? "border-brand bg-lavender-deep" : "border-ink bg-lavender"
+        selected ? "border-brand bg-lavender-deep" : "border-edge bg-lavender"
       }`}
     >
       {avatar}

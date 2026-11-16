@@ -12,7 +12,7 @@ This is the plan for the Proof of Concept due **November 23, 2026**, with all of
 | --- | --- |
 | ![Who's practising screen](plan-img/who.png) | ![Practice records screen](plan-img/records.png) |
 
-The screens follow the layout of the team's lo-fi prototype (S1 to S11 in Figma), in the colours and fonts of the A-Sense presentation. What the app does follows the SRS: wherever the prototype and the SRS disagree, the SRS wins. [Section 3](#3-design-decisions-and-the-requirements-behind-them) gives the requirement behind each decision, and [section 13](#13-how-the-app-compares-with-the-srs) lists every place the app and the SRS differ.
+The screens follow the layout of the team's lo-fi prototype (S1 to S11 in Figma), in the colours of the A-Sense presentation, with one rounded font and soft-edged cards. What the app does follows the SRS: wherever the prototype and the SRS disagree, the SRS wins. [Section 3](#3-design-decisions-and-the-requirements-behind-them) gives the requirement behind each decision, and [section 13](#13-how-the-app-compares-with-the-srs) lists every place the app and the SRS differ.
 
 ## Contents
 
@@ -219,7 +219,7 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | The records screen says it shows practice, not an assessment | BR-006; SAF-RAY-004 | No diagnosis, judgement or comparison. |
 | No sticker or other reward | Not in the SRS; NFR-UX-001 | The prototype ends a lesson with a sticker. The SRS has no reward, so the lesson ends with the helper's closing line. |
 | A demo panel shows the result and the counters | BR-006; FR-LRN-022 | It lets the teaching team see the rules working. The SRS does not want a result shown to the child, so the panel is labelled for adults and must be hidden before real use. |
-| Screen layouts follow the lo-fi prototype; colours and fonts follow the A-Sense presentation | NFR-UX-002, NFR-UX-004 | The prototype was tried with a parent and child, so its layout is the best evidence the team has. It is black and white on purpose; the colours come from the slides. The slides' fonts, Cambria and Calibri, cannot be shipped with a website, so devices without them get Caladea and Carlito, which have the same letter widths. |
+| Screen layouts follow the lo-fi prototype; colours follow the A-Sense presentation; the style is one rounded font, thin line icons and soft-edged white cards | NFR-UX-001, NFR-UX-002, NFR-UX-004 | The prototype was tried with a parent and child, so its layout is the best evidence the team has. It is black and white on purpose; the colours come from the slides. The team wanted the calm, plain feel of a note-taking app, which also suits the SRS's call for uncluttered child screens. On an iPad or a Mac the font is the system's rounded face; elsewhere Nunito, an open rounded font, is loaded in its place. |
 | Progress through the lesson is a trail of the child's animal paw prints | NFR-UX-002; G.1 | Pictures, not text, and nothing for the child to press. |
 
 ## 4. How a drawing is scored
@@ -2280,7 +2280,7 @@ export function useAdultCheck() {
   const dialog = question && (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
       <form
-        className="w-full max-w-sm rounded-3xl border-4 border-ink bg-white p-6"
+        className="w-full max-w-sm rounded-3xl border border-edge shadow-card bg-white p-6"
         onSubmit={(e) => {
           e.preventDefault();
           if (Number(answer) === question.a + question.b) close(true);
@@ -2300,7 +2300,7 @@ export function useAdultCheck() {
             aria-label="Answer"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            className="ml-3 w-24 rounded-xl border-2 border-ink px-3 py-1"
+            className="ml-3 w-24 rounded-xl border-2 border-edge px-3 py-1"
           />
         </label>
         {wrong && <p className="mt-2 font-bold text-coral">That is not it. Try again.</p>}
@@ -2336,7 +2336,7 @@ import { Squiggle } from "./Squiggle";
 // child who is practising on the right.
 
 export const buttonClass =
-  "inline-flex items-center gap-2 rounded-2xl border-2 border-ink bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
+  "inline-flex items-center gap-2 rounded-2xl border-2 border-edge bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
 
 export function Frame({
   children,
@@ -2351,12 +2351,12 @@ export function Frame({
   return (
     <div className="mx-auto max-w-5xl">
       {brand && (
-        <div className="mb-3 flex items-center gap-2 px-2 font-serif text-xl font-bold">
+        <div className="mb-3 flex items-center gap-2 px-2 text-xl font-bold">
           Squigglr
           <Squiggle className="w-9" />
         </div>
       )}
-      <div className={`relative rounded-[2rem] border-4 border-ink bg-white p-5 sm:p-8 ${className}`}>{children}</div>
+      <div className={`relative rounded-[2rem] border border-edge shadow-card bg-white p-5 sm:p-8 ${className}`}>{children}</div>
     </div>
   );
 }
@@ -2427,7 +2427,7 @@ export function Avatar({
   return (
     <span
       className={`flex shrink-0 items-center justify-center rounded-full border-[3px] leading-none ${SIZES[size]} ${
-        selected ? "border-brand bg-lavender-deep" : "border-ink bg-lavender"
+        selected ? "border-brand bg-lavender-deep" : "border-edge bg-lavender"
       }`}
     >
       {avatar}
@@ -2679,7 +2679,7 @@ export function StrokePreview({
   size?: keyof typeof SIZES;
 }) {
   return (
-    <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-ink bg-white ${SIZES[size]}`}>
+    <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-edge bg-white ${SIZES[size]}`}>
       {figure.parts.map((part, i) => (
         <path key={`f${i}`} d={d(part)} fill="none" stroke="#dcd7f5" strokeWidth={30} strokeLinecap="round" />
       ))}
@@ -2724,7 +2724,7 @@ export const NEATNESS = [
 export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avatar: string; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Neatness">
-      <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border-4 border-ink bg-white p-6 sm:p-8">
+      <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">
         <h2 className="text-3xl font-bold">Neatness</h2>
         <p className="mt-2 text-lg">
           How neat {avatar}&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
@@ -2748,7 +2748,7 @@ export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avat
         <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}
-            className="rounded-2xl border-[3px] border-ink bg-white px-8 py-2 text-xl font-bold hover:bg-lavender"
+            className="rounded-2xl border-2 border-edge bg-white px-8 py-2 text-xl font-bold hover:bg-lavender"
           >
             Got it
           </button>
@@ -2829,9 +2829,9 @@ export const activeChanged = () => window.dispatchEvent(new Event("squigglr:acti
 
 ```tsx
 import type { Metadata, Viewport } from "next";
-import "@fontsource/caladea/700.css";
-import "@fontsource/carlito/400.css";
-import "@fontsource/carlito/700.css";
+import "@fontsource/nunito/400.css";
+import "@fontsource/nunito/700.css";
+import "@fontsource/nunito/800.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -2858,18 +2858,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 @import "tailwindcss";
 
 /*
- * The colours and fonts follow the team's A-Sense presentation: navy serif
- * headings, a plain sans-serif body, and soft lavender, mint, peach and
- * butter panels with a purple accent. The layout of the screens follows the
- * team's lo-fi prototype.
+ * The look: one rounded sans-serif for everything, thin line icons, white
+ * cards with soft edges and a light shadow, and plenty of space, in the
+ * manner of a calm note-taking app. The colours are those of the team's
+ * A-Sense presentation. The layout of the screens follows the lo-fi
+ * prototype.
  *
- * The slides use Cambria and Calibri. Those are used where the device has
- * them; elsewhere Caladea and Carlito, open fonts with the same letter
- * widths, are loaded in their place.
+ * On an iPad or a Mac the font is the system's own rounded face. Elsewhere
+ * Nunito, an open rounded font, is loaded in its place.
  */
 @theme {
-  --font-serif: Cambria, Caladea, Georgia, "Times New Roman", serif;
-  --font-sans: Calibri, Carlito, "Segoe UI", system-ui, sans-serif;
+  --font-sans: ui-rounded, "SF Pro Rounded", Nunito, "Segoe UI", system-ui, sans-serif;
 
   --color-ink: #23304a;
   --color-muted: #5b6478;
@@ -2877,6 +2876,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   --color-stroke: #3a4fa0;
   --color-panel: #f4f5f8;
   --color-line: #e1e4ec;
+  /* The edge of a card or a button: light, but clear against white. */
+  --color-edge: #cdd2e0;
+  --shadow-card: 0 1px 2px rgb(35 48 74 / 0.06), 0 8px 24px rgb(35 48 74 / 0.07);
   --color-lavender: #f2f0fc;
   --color-lavender-deep: #dcd7f5;
   --color-mint: #edf7f2;
@@ -2896,7 +2898,8 @@ body {
 
 h1,
 h2 {
-  font-family: var(--font-serif);
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 /* On a tablet: no grey flash on a tap, no wait for a double tap, and no
@@ -2992,7 +2995,7 @@ export default function WhoIsPractising() {
           onClick={() => setAdding((a) => !a)}
           className="flex flex-col items-center gap-2 rounded-3xl p-2 hover:bg-lavender"
         >
-          <span className="flex h-36 w-36 items-center justify-center rounded-full border-[3px] border-dashed border-muted text-6xl text-muted">
+          <span className="flex h-36 w-36 items-center justify-center rounded-full border-2 border-dashed border-edge text-6xl text-muted">
             +
           </span>
           <span className="text-lg font-bold text-muted">Add a child</span>
@@ -3008,7 +3011,7 @@ export default function WhoIsPractising() {
                 key={avatar}
                 onClick={() => add(avatar)}
                 aria-label={`Picture ${avatar}`}
-                className="h-16 w-16 rounded-full border-2 border-ink bg-white text-4xl hover:bg-mint-deep"
+                className="h-16 w-16 rounded-full border-2 border-edge bg-white text-4xl hover:bg-mint-deep"
               >
                 {avatar}
               </button>
@@ -3073,7 +3076,7 @@ export default function PickALesson() {
             key={lesson.id}
             href={`/lessons/${lesson.id}`}
             aria-label={`${lesson.name} lesson`}
-            className="flex h-60 w-60 flex-col items-center justify-center rounded-3xl border-[3px] border-ink bg-white hover:bg-lavender"
+            className="flex h-60 w-60 flex-col items-center justify-center rounded-3xl border-2 border-edge bg-white hover:bg-lavender"
           >
             <LessonIcon figure={lesson.figure} className="h-40 w-40" />
             <span className="mt-2 text-lg font-bold text-muted">{lesson.name}</span>
@@ -3159,7 +3162,7 @@ function Stepper({
         aria-label={`Less: ${r.label}`}
         disabled={values[name] <= r.min}
         onClick={() => set(name, values[name] - 1)}
-        className={`${box} rounded-xl border-2 border-ink bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
+        className={`${box} rounded-xl border-2 border-edge bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
       >
         −
       </button>
@@ -3171,7 +3174,7 @@ function Stepper({
         aria-label={`More: ${r.label}`}
         disabled={values[name] >= r.max}
         onClick={() => set(name, values[name] + 1)}
-        className={`${box} rounded-xl border-2 border-ink bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
+        className={`${box} rounded-xl border-2 border-edge bg-white font-bold hover:bg-lavender disabled:border-line disabled:text-line`}
       >
         +
       </button>
@@ -3218,7 +3221,7 @@ export default function LessonReady() {
     <Screen title={<>{learner.avatar}&apos;s lesson is ready</>} back="/lessons" avatar={learner.avatar}>
       <div className="mt-6 grid gap-8 md:grid-cols-[16rem_1fr]">
         <div>
-          <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-3xl border-[3px] border-ink bg-white">
+          <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-3xl border-2 border-edge bg-white">
             <LessonIcon figure={lesson.figure} className="h-32 w-32" />
           </div>
           <p className="mt-2 text-center text-2xl font-bold">{lesson.name} lesson</p>
@@ -3255,10 +3258,10 @@ export default function LessonReady() {
                     aria-checked={selected}
                     onClick={() => setStart(stage)}
                     className={`relative rounded-2xl bg-white px-2 pt-2 pb-1 text-center ${
-                      selected ? "border-4 border-brand bg-lavender" : "border-2 border-ink"
+                      selected ? "border-4 border-brand bg-lavender" : "border-2 border-edge"
                     }`}
                   >
-                    <span className="absolute top-2 left-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
+                    <span className="absolute top-2 left-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-edge bg-white text-sm font-bold">
                       {i + 1}
                     </span>
                     {selected && (
@@ -3295,7 +3298,7 @@ export default function LessonReady() {
                 type="button"
                 onClick={() => setInfo(true)}
                 aria-label="About neatness"
-                className="h-11 w-11 rounded-full border-2 border-ink bg-white font-serif text-xl font-bold hover:bg-lavender"
+                className="h-11 w-11 rounded-full border-2 border-edge bg-white text-xl font-bold hover:bg-lavender"
               >
                 i
               </button>
@@ -3310,7 +3313,7 @@ export default function LessonReady() {
                       aria-checked={selected}
                       onClick={() => set("stagePass", mark)}
                       className={`rounded-full border-2 px-5 py-2 text-xl font-bold ${
-                        selected ? "border-brand bg-brand text-white" : "border-ink bg-white hover:bg-lavender"
+                        selected ? "border-brand bg-brand text-white" : "border-edge bg-white hover:bg-lavender"
                       }`}
                     >
                       {name}
@@ -3353,7 +3356,7 @@ export default function LessonReady() {
               <button
                 type="button"
                 onClick={() => setValues(settings.defaults())}
-                className="rounded-2xl border-2 border-ink bg-white px-4 py-2 font-bold hover:bg-lavender"
+                className="rounded-2xl border-2 border-edge bg-white px-4 py-2 font-bold hover:bg-lavender"
               >
                 Back to the recommended settings
               </button>
@@ -3599,7 +3602,7 @@ export default function LessonPage() {
   };
 
   const childButton =
-    "flex h-16 w-16 items-center justify-center rounded-2xl border-[3px] border-ink bg-white hover:bg-lavender disabled:border-line disabled:text-line";
+    "flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-edge bg-white hover:bg-lavender disabled:border-line disabled:text-line";
 
   return (
     <>
@@ -3613,7 +3616,7 @@ export default function LessonPage() {
             />
             {/* With no guide, a small picture reminds the child what to draw. */}
             {running && c.stage === "I" && (
-              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">
+              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
                 <LessonIcon figure={lesson.figure} className="h-14 w-14" />
               </div>
             )}
@@ -3650,7 +3653,7 @@ export default function LessonPage() {
                   refresh();
                 }}
                 aria-label="Start drawing"
-                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-white"
+                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-2 border-edge bg-green text-white"
               >
                 <PlayIcon className="h-12 w-12" />
               </button>
@@ -3668,7 +3671,7 @@ export default function LessonPage() {
           <div className="flex min-w-0 items-center gap-3" aria-live="polite">
             <Helper className="h-20 w-[4.25rem] shrink-0" />
             <div>
-              <p className="rounded-[2rem] border-[3px] border-ink bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
+              <p className="rounded-[2rem] border-2 border-edge bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
               {hints.length > 0 && (
                 <p className="mt-1 pl-6 text-lg font-bold text-butter-ink">
                   {hints
@@ -3710,7 +3713,7 @@ export default function LessonPage() {
           role="dialog"
           aria-label="Go back a step?"
         >
-          <div className="w-full max-w-2xl rounded-3xl border-4 border-ink bg-white p-6 sm:p-8">
+          <div className="w-full max-w-2xl rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">
             <p className="flex items-center gap-2 text-xl font-bold">
               <LockIcon className="h-6 w-6" />
               Grown-ups
@@ -3731,21 +3734,21 @@ export default function LessonPage() {
             <div className="mt-3 flex flex-wrap gap-3">
               <button
                 onClick={() => answer(true, "T")}
-                className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+                className="rounded-2xl border-2 border-edge bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
               >
                 Yes, go back to step 1
               </button>
               {c.stage === "I" && (
                 <button
                   onClick={() => answer(true, "E")}
-                  className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+                  className="rounded-2xl border-2 border-edge bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
                 >
                   Yes, go back to step 2
                 </button>
               )}
               <button
                 onClick={() => answer(false)}
-                className="rounded-2xl border-2 border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+                className="rounded-2xl border-2 border-edge bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
               >
                 No, keep trying step {STEP[c.stage].number}
               </button>
@@ -3813,9 +3816,9 @@ function StepTile({
   return (
     <div className="text-center">
       <div
-        className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-ink"}`}
+        className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-edge"}`}
       >
-        <span className="absolute top-1.5 left-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
+        <span className="absolute top-1.5 left-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-edge bg-white text-sm font-bold">
           {STEP[stage].number}
         </span>
         <StageGuide figure={figure} stage={stage} className="h-full w-full p-3" />
@@ -3875,13 +3878,13 @@ export default function GrownUps() {
           <Link
             key={href}
             href={href}
-            className="flex items-center gap-6 rounded-3xl border-[3px] border-ink bg-white p-8 hover:bg-lavender"
+            className="flex items-center gap-6 rounded-3xl border-2 border-edge bg-white p-8 hover:bg-lavender"
           >
             <span className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full ${tint}`}>
               <Icon className="h-10 w-10" />
             </span>
             <span>
-              <span className="block font-serif text-3xl font-bold">{title}</span>
+              <span className="block text-3xl font-bold">{title}</span>
               <span className="mt-1 block text-xl text-muted">{text}</span>
             </span>
           </Link>
@@ -3978,7 +3981,7 @@ export default function PracticeRecords() {
               onClick={() => setShown(learner)}
               aria-label={`Show child ${i + 1}`}
               aria-pressed={learner.id === shown?.id}
-              className={`rounded-2xl p-1 ${learner.id === shown?.id ? "border-2 border-ink" : "border-2 border-transparent"}`}
+              className={`rounded-2xl p-1 ${learner.id === shown?.id ? "border-2 border-edge" : "border-2 border-transparent"}`}
             >
               <Avatar avatar={learner.avatar} size="sm" selected={learner.id === shown?.id} />
             </button>
@@ -3987,7 +3990,7 @@ export default function PracticeRecords() {
       }
     >
       <p className="mt-6 flex items-center gap-3 rounded-2xl bg-panel px-5 py-4 text-xl">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink font-serif font-bold">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-edge font-bold">
           i
         </span>
         This shows practice, not an assessment.
@@ -4000,7 +4003,7 @@ export default function PracticeRecords() {
         {lessons.map(({ record, attempts }) => {
           const lesson = catalogue.lesson(record.lesson);
           return (
-            <section key={record.id} className="mt-4 rounded-3xl border-[3px] border-ink p-5">
+            <section key={record.id} className="mt-4 rounded-3xl border-2 border-edge p-5">
               <h2 className="font-sans text-lg font-bold">
                 {lesson.name} lesson
                 <span className="ml-2 text-sm font-normal text-muted">
@@ -4106,8 +4109,7 @@ function Item({ label, value }: { label: string; value: string | number }) {
     "test": "vitest run"
   },
   "dependencies": {
-    "@fontsource/caladea": "^5.3.0",
-    "@fontsource/carlito": "^5.3.0",
+    "@fontsource/nunito": "^5.3.0",
     "next": "^16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
@@ -4971,6 +4973,8 @@ Building the rules turned up ten places where the documents are silent or do not
 10. **Laying the drawing over the figure "by its bounding box" is fragile.** One stray dot changes the box and fails a good drawing. See the second row of the first table in this section.
 
 ## 14. After the POC
+
+[`KNOWN-LIMITS.md`](KNOWN-LIMITS.md) lists what the app does not do yet, with what it would take to close each one.
 
 - **Settle the three SRS changes** in [section 13](#13-how-the-app-compares-with-the-srs), the minimum size first.
 - **Database.** Replace the inside of `lib/storage.ts` with Supabase calls, and make its four functions `async`. The callers then need `await`, which is the one change that reaches outside the file.

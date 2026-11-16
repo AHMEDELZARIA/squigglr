@@ -216,7 +216,7 @@ export default function LessonPage() {
   };
 
   const childButton =
-    "flex h-16 w-16 items-center justify-center rounded-2xl border-[3px] border-ink bg-white hover:bg-lavender disabled:border-line disabled:text-line";
+    "flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-edge bg-white hover:bg-lavender disabled:border-line disabled:text-line";
 
   return (
     <>
@@ -230,7 +230,7 @@ export default function LessonPage() {
             />
             {/* With no guide, a small picture reminds the child what to draw. */}
             {running && c.stage === "I" && (
-              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-[3px] border-ink bg-white">
+              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
                 <LessonIcon figure={lesson.figure} className="h-14 w-14" />
               </div>
             )}
@@ -267,7 +267,7 @@ export default function LessonPage() {
                   refresh();
                 }}
                 aria-label="Start drawing"
-                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-[3px] border-ink bg-green text-white"
+                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-2 border-edge bg-green text-white"
               >
                 <PlayIcon className="h-12 w-12" />
               </button>
@@ -285,7 +285,7 @@ export default function LessonPage() {
           <div className="flex min-w-0 items-center gap-3" aria-live="polite">
             <Helper className="h-20 w-[4.25rem] shrink-0" />
             <div>
-              <p className="rounded-[2rem] border-[3px] border-ink bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
+              <p className="rounded-[2rem] border-2 border-edge bg-white px-6 py-3 text-2xl font-bold">{bubble}</p>
               {hints.length > 0 && (
                 <p className="mt-1 pl-6 text-lg font-bold text-butter-ink">
                   {hints
@@ -327,7 +327,7 @@ export default function LessonPage() {
           role="dialog"
           aria-label="Go back a step?"
         >
-          <div className="w-full max-w-2xl rounded-3xl border-4 border-ink bg-white p-6 sm:p-8">
+          <div className="w-full max-w-2xl rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">
             <p className="flex items-center gap-2 text-xl font-bold">
               <LockIcon className="h-6 w-6" />
               Grown-ups
@@ -348,21 +348,21 @@ export default function LessonPage() {
             <div className="mt-3 flex flex-wrap gap-3">
               <button
                 onClick={() => answer(true, "T")}
-                className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+                className="rounded-2xl border-2 border-edge bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
               >
                 Yes, go back to step 1
               </button>
               {c.stage === "I" && (
                 <button
                   onClick={() => answer(true, "E")}
-                  className="rounded-2xl border-[3px] border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+                  className="rounded-2xl border-2 border-edge bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
                 >
                   Yes, go back to step 2
                 </button>
               )}
               <button
                 onClick={() => answer(false)}
-                className="rounded-2xl border-2 border-ink bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
+                className="rounded-2xl border-2 border-edge bg-white px-5 py-3 text-xl font-bold hover:bg-lavender"
               >
                 No, keep trying step {STEP[c.stage].number}
               </button>
@@ -430,9 +430,9 @@ function StepTile({
   return (
     <div className="text-center">
       <div
-        className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-ink"}`}
+        className={`relative h-28 w-28 rounded-2xl bg-white ${strong ? "border-4 border-brand" : "border-2 border-edge"}`}
       >
-        <span className="absolute top-1.5 left-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-white text-sm font-bold">
+        <span className="absolute top-1.5 left-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-edge bg-white text-sm font-bold">
           {STEP[stage].number}
         </span>
         <StageGuide figure={figure} stage={stage} className="h-full w-full p-3" />

@@ -78,7 +78,7 @@ export default function PracticeRecords() {
               onClick={() => setShown(learner)}
               aria-label={`Show child ${i + 1}`}
               aria-pressed={learner.id === shown?.id}
-              className={`rounded-2xl p-1 ${learner.id === shown?.id ? "border-2 border-ink" : "border-2 border-transparent"}`}
+              className={`rounded-2xl p-1 ${learner.id === shown?.id ? "border-2 border-edge" : "border-2 border-transparent"}`}
             >
               <Avatar avatar={learner.avatar} size="sm" selected={learner.id === shown?.id} />
             </button>
@@ -87,7 +87,7 @@ export default function PracticeRecords() {
       }
     >
       <p className="mt-6 flex items-center gap-3 rounded-2xl bg-panel px-5 py-4 text-xl">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink font-serif font-bold">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-edge font-bold">
           i
         </span>
         This shows practice, not an assessment.
@@ -100,7 +100,7 @@ export default function PracticeRecords() {
         {lessons.map(({ record, attempts }) => {
           const lesson = catalogue.lesson(record.lesson);
           return (
-            <section key={record.id} className="mt-4 rounded-3xl border-[3px] border-ink p-5">
+            <section key={record.id} className="mt-4 rounded-3xl border-2 border-edge p-5">
               <h2 className="font-sans text-lg font-bold">
                 {lesson.name} lesson
                 <span className="ml-2 text-sm font-normal text-muted">

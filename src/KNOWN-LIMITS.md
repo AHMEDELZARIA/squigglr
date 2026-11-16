@@ -1,0 +1,32 @@
+# Known limits of the proof of concept
+
+Things the app does not do yet, or does loosely, that the team has seen and chosen to leave for now. None of them is a bug in what the POC sets out to show. Each has what it would take to close it.
+
+Found in the audit of November 15, 2026. For how the app compares with the SRS, see section 13 of [`POC-Implementation-Plan.md`](POC-Implementation-Plan.md).
+
+## To close before a child uses the app
+
+| Limit | What happens | Requirement | What it would take |
+| --- | --- | --- | --- |
+| The browser's back button leaves a lesson | A child can swipe or tap back out of a lesson with no adult check. The lesson is saved as unfinished. | SAF-RAY-001, CON-007 | Catch the back navigation on the lesson screen and ask for the adult check first. |
+| Direct links skip the adult check | Typing `/grown-ups`, `/records` or `/lessons/square` into the address bar opens the screen with no check. | SAF-RAY-001, SAF-RAY-008 | Remember, for the session, that the adult check was passed, and send anyone without it back to "Who's practising?". Becomes moot once there are accounts. |
+| The demo panel shows a result | The live result and counters are on the lesson screen. | BR-006, FR-LRN-022 | Hide it by default, or remove it. |
+
+## To close before Revision 0
+
+| Limit | What happens | Requirement | What it would take |
+| --- | --- | --- | --- |
+| Nothing can be deleted | A child, or a child's records, cannot be removed except by clearing the browser's site data. | Open issue OI-02 (who may delete records) | Decide OI-02, then add delete to the Storage module and the grown-ups area. |
+| Everything is saved in one browser | A child's settings and records exist only on the device and browser they were made in. | Module Guide (hosted database) | Replace the inside of `lib/storage.ts` with the database. |
+| A record that cannot be saved is lost | If the browser's storage is full, the lesson carries on and the demo panel counts the records not saved, but they are not kept for later. | SAF-RAY-003 | Build the Connection Recovery module (M24). |
+| Switching apps ends the lesson | If the tablet goes to another app for longer than the lesson's idle end, the lesson ends for inactivity on return. | SAF-RAY-009 | Decide whether time in the background counts. If not, pause the idle clocks while the page is hidden. |
+| No sound | The helper's lines are text only. | NFR-UX-010, NFR-UX-002 | Record or generate one clip per line and add the per-child audio setting. |
+| No notice for an unsupported device | Any device and browser can start a lesson. | SAF-RAY-002 | Decide `SUPPORTED_DEVICES`, then check it on the Lesson ready screen. |
+
+## Not tested yet
+
+| What | Why it matters |
+| --- | --- |
+| A stylus on the target tablet | Every automated run used a mouse, and the team's tablet runs used a finger. Palm rejection, pressure and the pencil's faster reporting are untried. This is experiment 1 of the POC plan. |
+| Browsers other than Chromium and Safari on iPad | The automated runs use Chromium only. |
+| Hand-drawn attempts at the pass mark | The scoring tests use prepared shapes. The calibration of `TRACE_TOL`, `PART_COVER` and `MIN_DRAW_SCALE` with adult-made drawings (OI-05) has not been done. |

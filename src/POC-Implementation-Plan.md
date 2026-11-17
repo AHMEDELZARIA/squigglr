@@ -146,9 +146,33 @@ sequenceDiagram
 - Accounts and sign-in, the progress summary and the creative space (the Development Plan leaves these out of the POC).
 - A database. Records stay in one browser. See [After the POC](#14-after-the-poc).
 - Sound, the supported-device notice, and keeping unsaved records while offline. The SRS requires all three; they are not needed to show the lesson working.
-- The two refinement experiments of the Development Plan. They are separate from the hosted app and are not covered here.
+- The creative space, and with it the two refinement experiments of the Development Plan. See the scope decision below.
 
 **Tried and taken out again, because the SRS does not have them:** an eraser and pencil beside the drawing, a "Start again" button, a practice sticker at the end of a lesson, a weekly "practice story" with stickers for the days practised, and a "Let's get a grown-up!" line from the helper. The last four came from the lo-fi prototype. [Section 13](#13-how-the-app-compares-with-the-srs) gives the requirement each one ran against.
+
+### Scope decision: the creative space is left out of the POC
+
+The Development Plan's POC has four experiments. The team has decided to demonstrate two of them and to leave the two that belong to the creative space for after the POC.
+
+| Experiment in the Development Plan | In the POC? |
+| --- | --- |
+| 1. Capture drawing input on the target tablet | Yes. Drawing works with a finger and with a stylus on an iPad. |
+| 4. Run the square lesson end to end | Yes. This app. |
+| 2. Reversible geometric refinement (tidy a drawing with geometry, keep it editable, undo it exactly) | No. Deferred. |
+| 3. Model-based creative enhancement (a pretrained model returns drawing instructions for the app to apply) | No. Deferred. |
+
+Why:
+
+- **The two halves do not depend on each other.** The Development Plan says so itself: only experiments 2 and 3 concern creative drawing, the input experiment and the square lesson "do not depend on refinement", and a refinement risk that stays unresolved "does not hold back the other core goals". Guided practice, adult control and records (goals G.1, G.2, G.3 and G.5) can be shown working without it.
+- **The lesson is the larger part of the product, and the part the specialists can react to.** The supervisor suggested a hosted, working lesson as the form of the POC. Getting the scoring, the stopping rules and all nine settings right took the time there was.
+- **A rushed refinement experiment would prove little.** Both experiments need an agreed set of supported drawings, pass criteria written down before the run, and for the model a measured share of valid responses. Done in the days left before November 23, they would be a demo of a library call, not evidence about the risk.
+- **The creative space needs things the lesson does not.** A drawing library with editable paths (Paper.js in the Development Plan), an edit history for undo, and for experiment 3 a paid model service with a key to keep safe. None of that is in the app yet, by design.
+
+What this leaves open, and what the team owes:
+
+- **The main technical risk is still unanswered.** The Development Plan calls editable refinement "the main technical uncertainty". Nothing in this POC reduces it. It should be the first thing investigated after the POC, before Revision 0 work on the creative space starts. The plan's own fallbacks still stand: if geometric refinement fails, narrow the supported drawings; if the model fails, use geometric refinement only.
+- **Goal G.4 (editable creative drawing and refinement) has no evidence behind it yet.**
+- **The documents no longer match.** The Development Plan's POC section lists four experiments, and the SRS schedules the basic creative drawing requirements, FR-CRT-001 to FR-CRT-007, for PH-1. Both need updating, and the Development Plan says a change like this is to be agreed with the supervisor.
 
 The SRS schedules the suggestion, extension and limit rules for Revision 0 (PH-2). They are in the POC anyway, because without them most of the nine settings would change nothing, and showing that the settings drive the lesson is the point of the demo.
 
@@ -4878,7 +4902,7 @@ Each step ends in something that can be checked. Steps 2 to 4 need no browser an
 5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
 6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.
 7. **Practice records.** Add [`StrokePreview.tsx`](#f-preview) and the [practice records](#f-page-records). Check: each child's records show only their own attempts.
-8. **Deploy** ([section 11](#11-deploying-and-the-domain)) and try it on the target tablet with a stylus. This is experiment 1 of the Development Plan, and it is the one thing this plan could not test: everything above was driven with a mouse.
+8. **Deploy** ([section 11](#11-deploying-and-the-domain)) and try it on the target tablet with a stylus. This is experiment 1 of the Development Plan. The team has drawn with a finger and a stylus on an iPad; the automated runs used a mouse. Record the device and browser versions, and repeat on a second device or browser.
 9. **Calibrate.** Have adults draw good and poor squares on the tablet, and decide whether `TRACE_TOL` = 5 is right ([gap 1](#13-how-the-app-compares-with-the-srs)).
 10. **Rehearse** the [demo script](#12-demo-script), and fill in `src/TraceToDesign.md` from the [file index](#7-project-layout-and-file-index).
 
@@ -4955,7 +4979,7 @@ The screens follow the lo-fi prototype's layout. Where the prototype and the SRS
 
 ### What the SRS requires that the POC does not have yet
 
-All are outside the POC plan: sound for the helper (NFR-UX-010), the notice for an unsupported device (SAF-RAY-002), keeping attempts on the device while the connection is down (SAF-RAY-003), accounts, the progress summary and the creative space.
+Sound for the helper (NFR-UX-010), the notice for an unsupported device (SAF-RAY-002), keeping attempts on the device while the connection is down (SAF-RAY-003), accounts and the progress summary are outside the Development Plan's POC. The creative space was in it and has been left out by the team: see the [scope decision](#scope-decision-the-creative-space-is-left-out-of-the-poc).
 
 ### Gaps found in the SRS and MIS
 
@@ -4976,6 +5000,7 @@ Building the rules turned up ten places where the documents are silent or do not
 
 [`KNOWN-LIMITS.md`](KNOWN-LIMITS.md) lists what the app does not do yet, with what it would take to close each one.
 
+- **Investigate editable refinement**, the experiment left out of this POC (see the [scope decision](#scope-decision-the-creative-space-is-left-out-of-the-poc)), and update the Development Plan and the SRS phases to match.
 - **Settle the three SRS changes** in [section 13](#13-how-the-app-compares-with-the-srs), the minimum size first.
 - **Database.** Replace the inside of `lib/storage.ts` with Supabase calls, and make its four functions `async`. The callers then need `await`, which is the one change that reaches outside the file.
 - **Accounts.** Add sign-in to the adult check component and pass the adult's id to storage, as the MIS interfaces already do.

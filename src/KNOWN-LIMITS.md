@@ -4,6 +4,24 @@ Things the app does not do yet, or does loosely, that the team has seen and chos
 
 Found in the audit of November 15, 2026. For how the app compares with the SRS, see section 13 of [`POC-Implementation-Plan.md`](POC-Implementation-Plan.md).
 
+## Left out of the POC by decision: the creative space
+
+Decided by the team on November 16, 2026. The Development Plan's POC has four experiments; two are not being done for the POC:
+
+- **Experiment 2, reversible geometric refinement:** tidy a child's free drawing with geometry, keep the result editable, and undo it exactly.
+- **Experiment 3, model-based creative enhancement:** have a pretrained model return drawing instructions that the app applies to the child's strokes.
+
+Why: the guided lesson does not depend on either, the lesson took the time there was, and neither experiment can be run properly in the days left. The full reasoning is in section 2 of [`POC-Implementation-Plan.md`](POC-Implementation-Plan.md).
+
+What it leaves to do:
+
+| To do | Why |
+| --- | --- |
+| Investigate editable refinement first after the POC | The Development Plan calls it "the main technical uncertainty", and goal G.4 has no evidence behind it yet. |
+| Update the Development Plan's POC section | It still lists four experiments. |
+| Move FR-CRT-001 to FR-CRT-007 out of PH-1 in the SRS phase table | The SRS schedules basic creative drawing for the POC. |
+| Tell the supervisor and the TA | The Development Plan says a change to what the POC covers is agreed with the supervisor. |
+
 ## To close before a child uses the app
 
 | Limit | What happens | Requirement | What it would take |

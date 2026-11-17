@@ -6,6 +6,9 @@ import type { Difficulty, DrawingStage, Evaluation, Figure, Observed, Stroke } f
 
 export type Outcome = "open" | "passed" | "notPassed" | "invalid" | "interrupted";
 
+/** The most hints one attempt gives before it ends. */
+export const MAX_HINTS = 2;
+
 const same = (a: Difficulty, b: Difficulty) => a.kind === b.kind && a.index === b.index;
 
 export class Attempt {
@@ -16,6 +19,10 @@ export class Attempt {
   seen: Observed[] = [];
   outcome: Outcome = "open";
   endedAt: number | null = null;
+  /** How many times the child has been shown what is missing in this attempt. */
+  hints = 0;
+  private hintAt = 0;
+  private strokesAtHint = 0;
 
   constructor(
     readonly lesson: string,
@@ -40,21 +47,51 @@ export class Attempt {
     // half-finished one looks off the figure until it is done. There, nothing
     // is noted until the attempt ends.
     if (this.stage !== "I") {
-      this.note(this.last.difficulties.filter((d) => d.kind === "offFigure"), ["offFigure"]);
+      this.note(
+        this.last.difficulties.filter((d) => d.kind === "offFigure"),
+        ["offFigure"],
+      );
     }
+    // After a hint, what was missing and is now drawn is marked corrected.
+    if (this.hints > 0) this.note(this.missing(), ["missedPart", "missedEndpoint"]);
     if (this.last.passed) this.end("passed", now);
   }
 
-  /** Ends an open attempt that has strokes once attemptIdle has passed since the last input. */
-  checkIdle(now: number, lastInputAt: number): void {
-    if (this.outcome !== "open" || this.strokes.length === 0 || this.last === null) return;
-    if (now - lastInputAt < this.attemptIdle * 1000) return;
+  /**
+   * Called about once a second. Once attemptIdle has passed with no input,
+   * an attempt that has not passed either gets a hint or ends.
+   *
+   * A hint: if a part or an endpoint is missing, the child is shown where,
+   * the drawing stays, and the pause starts again, so they can finish it. The
+   * attempt gives at most MAX_HINTS, and a second one only if the child drew
+   * something after the first. Otherwise the attempt ends as not passed.
+   *
+   * Returns true when a hint was just given.
+   */
+  checkIdle(now: number, lastInputAt: number): boolean {
+    if (this.outcome !== "open" || this.strokes.length === 0 || this.last === null) return false;
+    if (now - Math.max(lastInputAt, this.hintAt) < this.attemptIdle * 1000) return false;
     if (this.last.class === "invalid") {
       this.end("invalid", now);
-      return;
+      return false;
+    }
+    const drewSinceHint = this.strokes.length > this.strokesAtHint;
+    if (this.missing().length > 0 && this.hints < MAX_HINTS && (this.hints === 0 || drewSinceHint)) {
+      this.hints += 1;
+      this.hintAt = now;
+      this.strokesAtHint = this.strokes.length;
+      // What is missing is now on record. If the child fills it in, it is marked corrected, not removed.
+      this.note(this.missing(), ["missedPart", "missedEndpoint"]);
+      return true;
     }
     this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
     this.end("notPassed", now);
+    return false;
+  }
+
+  /** The parts and endpoints the drawing still lacks: what the child could finish. */
+  missing(): Difficulty[] {
+    return (this.last?.difficulties ?? []).filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
   }
 
   /** Ends the attempt with no result, keeping its strokes and difficulties. */

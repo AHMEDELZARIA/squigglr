@@ -5,18 +5,20 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
 import { Avatar } from "@/components/Avatar";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
-import { DoorIcon, Footprints, Helper, LockIcon, PlayIcon, StageGuide } from "@/components/icons";
+import { DoorIcon, Footprints, Helper, LockIcon, StageGuide, Sticker } from "@/components/icons";
 import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
+import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
 import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
+import { MAX_HINTS } from "@/lib/attempt";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
 import { records } from "@/lib/records";
 import * as settings from "@/lib/settings";
-import type { DrawingStage, Figure, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
+import type { Difficulty, DrawingStage, Figure, Fit, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
 
 // M13 Child Screen (prototype S6 to S11, without its Start again button and
 // sticker, which the SRS does not have). It shows the lesson and relays
@@ -32,9 +34,14 @@ const STEP: Record<DrawingStage, { number: number; name: string }> = {
   I: { number: 3, name: "On my own" },
 };
 const NO_GUIDE: Guide = { outline: [], endpoints: [] };
+const NO_FIT: Fit = { scale: 1, dx: 0, dy: 0 };
 /** How long a finished attempt stays on screen with its feedback: longer when there is something to look at. */
 const SHOW_PASSED_MS = 2500;
 const SHOW_NOT_PASSED_MS = 5000;
+/** How long the demonstration plays before practice starts by itself. */
+const DEMO_MS = 5500;
+/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
+const FULL_ARROW_MS = 8000;
 
 /** The stretches of a part of the figure that no drawn line comes near. */
 function undrawn(part: Path, drawn: Path[], tol: number): Path[] {
@@ -78,6 +85,12 @@ export default function LessonPage() {
   const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** True while the adult check or the go-back card is open. The lesson waits. */
   const paused = useRef(false);
+  /** True once the child has been shown what is missing in the attempt on screen. */
+  const hinted = useRef(false);
+  /** When the current stage came up, for the demonstration and the arrow. */
+  const stageSince = useRef(Date.now());
+  const [arrowFull, setArrowFull] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
 
   const setStrokes = (next: Stroke[]) => {
     strokesRef.current = next;
@@ -95,53 +108,86 @@ export default function LessonPage() {
     const c = new LessonControl({ records });
     c.select(learner.id, id, start === "E" || start === "I" ? start : "T", settings.load(learner.id));
     control.current = c;
+    stageSince.current = Date.now();
+    audio.setEnabled(settings.audio(learner.id));
     setAvatar(learner.avatar);
     refresh();
     return () => {
+      audio.hush();
       if (clearTimer.current) clearTimeout(clearTimer.current);
       c.stop(); // leaving the screen ends the lesson as unfinished
     };
   }, [id, router]);
 
-  /** Shows what Lesson Control reported after an event. */
-  const show = useCallback((r: Report, stageOfAttempt: Stage) => {
-    if (r.feedback.length === 0) return;
-    setReport(r);
-    if (r.feedback[0] === "checkIn") return;
-    // An attempt just ended: leave it on screen for a moment, then clear it.
+  /**
+   * Lights up what the drawing on screen still lacks. The glow is worked out
+   * on the figure, then laid back over the drawing where the child made it.
+   * (With a guide the two are the same place.)
+   */
+  const highlight = useCallback((difficulties: Difficulty[], fit: Fit) => {
     const figure: Figure = catalogue.lesson(control.current!.lessonId).figure;
-    // The glow is worked out on the figure, then laid back over the drawing
-    // where the child made it. (With a guide the two are the same place.)
-    const fit = control.current!.lastFinal?.fit ?? { scale: 1, dx: 0, dy: 0 };
     const back = inverse(fit);
     const drawn = applyAll(fit, strokesRef.current.map(toPath));
     setGlow(
       applyAll(
         back,
-        r.difficulties
+        difficulties
           .filter((d) => d.kind === "missedPart")
           .flatMap((d) => undrawn(figure.parts[d.index], drawn, tolerance(figure))),
       ),
     );
     setMarks(
-      r.difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
+      difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
     );
-    const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
-    setShowing(true);
-    setShownStage(stageOfAttempt);
-    clearTimer.current = setTimeout(
-      () => {
+  }, []);
+
+  /** Shows what Lesson Control reported after an event. */
+  const show = useCallback(
+    (r: Report, stageOfAttempt: Stage) => {
+      if (r.feedback.length === 0) return;
+      setReport(r);
+      const c = control.current!;
+      if (r.feedback[0] === "checkIn") return;
+
+      if (r.feedback[0] === "fillIn") {
+        // A hint: the drawing stays and the child can go on drawing. What is
+        // missing glows until they finish it or the attempt ends.
+        hinted.current = true;
+        highlight(r.difficulties, c.attempt?.last?.fit ?? NO_FIT);
+        return;
+      }
+
+      // An attempt just ended: leave it on screen for a moment, then clear it.
+      const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
+      if (passed) {
+        setGlow([]);
+        setMarks([]);
+        audio.chime();
+      } else {
+        highlight(r.difficulties, c.lastFinal?.fit ?? NO_FIT);
+      }
+      if (r.feedback.includes("lessonComplete") || r.feedback.includes("lessonEnded")) audio.tune();
+      // A child who has already been shown the glow does not need it held up as long again.
+      const hold = passed || hinted.current ? SHOW_PASSED_MS : SHOW_NOT_PASSED_MS;
+      hinted.current = false;
+      setCelebrate(passed);
+      setShowing(true);
+      setShownStage(stageOfAttempt);
+      clearTimer.current = setTimeout(() => {
         setStrokes([]);
         setMarks([]);
         setGlow([]);
         setShowing(false);
         setShownStage(null);
+        setCelebrate(false);
+        setArrowFull(false);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
-      },
-      passed ? SHOW_PASSED_MS : SHOW_NOT_PASSED_MS,
-    );
-  }, []);
+        stageSince.current = Date.now();
+      }, hold);
+    },
+    [highlight],
+  );
 
   // Tick: lets an idle attempt end, and runs the lesson's idle rules.
   useEffect(() => {
@@ -149,11 +195,34 @@ export default function LessonPage() {
       const c = control.current;
       if (!c || showing || paused.current) return;
       const stage = c.stage;
+      const running = c.status === "active" || c.status === "suggested";
+      // The demonstration plays, then practice starts by itself (UC-003 step 1).
+      if (running && stage === "D" && Date.now() - stageSince.current >= DEMO_MS) {
+        c.beginPractice();
+        lastInput.current = Date.now();
+        stageSince.current = Date.now();
+        refresh();
+        return;
+      }
+      // With only the dots to go by and nothing drawn for a while, the arrow goes all the way round.
+      if (running && stage === "E" && strokesRef.current.length === 0) {
+        setArrowFull(Date.now() - Math.max(lastInput.current ?? 0, stageSince.current) >= FULL_ARROW_MS);
+      }
       show(c.tick(lastInput.current), stage);
       refresh();
     }, 500);
     return () => clearInterval(timer);
   }, [show, showing]);
+
+  // The helper says its line aloud whenever the line changes.
+  const line = useRef("");
+  const spoken = useRef("");
+  useEffect(() => {
+    if (line.current && line.current !== spoken.current) {
+      spoken.current = line.current;
+      audio.say(line.current);
+    }
+  });
 
   const c = control.current;
   if (!c) return null;
@@ -172,13 +241,27 @@ export default function LessonPage() {
     : report
       ? feedback(report.feedback[0]).message
       : stageLine(c.stage);
-  const hints = report && running ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
+  line.current = bubble;
+  // Under the bubble: what was seen in the drawing. Not after a hint, where the bubble already says it.
+  const hints =
+    report && running && report.feedback[0] !== "fillIn" ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
+  // With a guide: a green dot where the drawing starts, as in the demonstration.
+  const drawing = running && !showing && c.stage !== "D";
+  const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
+  // With only the dots to go by, an arrow shows which way to go, until the child starts drawing.
+  const outline = lesson.figure.parts.flat();
+  const arrowOn = drawing && c.stage === "E" && strokes.length === 0;
 
   const onStroke = (stroke: Stroke) => {
     if (!running || c.stage === "D") return;
     const stage = c.stage;
     setStrokes([...strokesRef.current, stroke]);
-    show(c.addStroke(stroke), stage);
+    const r = c.addStroke(stroke);
+    // After a hint, the glow follows the drawing: what has been filled in stops glowing.
+    if (r.feedback.length === 0 && hinted.current && c.attempt?.last) {
+      highlight(c.attempt.missing(), c.attempt.last.fit);
+    }
+    show(r, stage);
     refresh();
   };
 
@@ -228,8 +311,8 @@ export default function LessonPage() {
               labels={STEP_LABELS}
               avatar={avatar}
             />
-            {/* With no guide, a small picture reminds the child what to draw. */}
-            {running && c.stage === "I" && (
+            {/* Without the outline, a small picture reminds the child what to draw. */}
+            {running && (c.stage === "E" || c.stage === "I") && (
               <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
                 <LessonIcon figure={lesson.figure} className="h-14 w-14" />
               </div>
@@ -239,9 +322,11 @@ export default function LessonPage() {
         </div>
 
         <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100vh-20rem)))]">
-          <div className="relative min-w-0 flex-1">
+          <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}
+              startDot={startDot}
+              arrow={arrowOn ? { path: outline, full: arrowFull } : undefined}
               strokes={strokes}
               marks={marks}
               glow={glow}
@@ -250,7 +335,11 @@ export default function LessonPage() {
               onStroke={onStroke}
               onCancel={() => {
                 c.interrupt();
+                hinted.current = false;
                 setStrokes([]);
+                setGlow([]);
+                setMarks([]);
+                setReport(null);
                 refresh();
               }}
               onInput={(t) => {
@@ -259,23 +348,9 @@ export default function LessonPage() {
               }}
             />
 
-            {running && c.stage === "D" && (
-              <button
-                onClick={() => {
-                  c.beginPractice();
-                  lastInput.current = Date.now();
-                  refresh();
-                }}
-                aria-label="Start drawing"
-                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-2 border-edge bg-green text-white"
-              >
-                <PlayIcon className="h-12 w-12" />
-              </button>
-            )}
-
             {!running && (
               <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white">
-                <LessonIcon figure={lesson.figure} className="h-3/5 w-3/5" />
+                <Sticker className="pop h-3/5 w-3/5" />
               </div>
             )}
           </div>
@@ -405,6 +480,7 @@ export default function LessonPage() {
               value={c.extended ? `${c.sinceExtension} of ${c.settings.attemptExtension} used` : "not given"}
             />
             <Item label="Attempt ends after" value={`${c.settings.attemptIdle} s with no drawing`} />
+            <Item label="Hints this attempt" value={`${c.attempt?.hints ?? 0} of ${MAX_HINTS}`} />
             {c.unsaved > 0 && (
               <Item label="Records not saved" value={`${c.unsaved} (this browser's storage is full)`} />
             )}

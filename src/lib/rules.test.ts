@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import * as catalogue from "./catalogue";
 import type { Evaluate } from "./evaluation";
 import { IDENTITY } from "./geometry";
 import { improving } from "./improvement";
@@ -6,8 +7,8 @@ import { LessonControl } from "./lessonControl";
 import { check, defaults, load, save } from "./settings";
 import * as storage from "./storage";
 import { lessonRecords, records as realRecords } from "./records";
-import { memoryRecords, stroke } from "./testHelpers";
-import type { Settings, Stage } from "./types";
+import { memoryRecords, stroke, strokeOf } from "./testHelpers";
+import type { Settings, Stage, Stroke } from "./types";
 
 // As the V&V Plan does for its rule tests, each attempt's completeness and
 // result are given directly, so exact boundary values can be set.
@@ -130,6 +131,96 @@ describe("attempts that do not count", () => {
     h.wait(h.settings.attemptIdle - 1);
     expect(h.control.tick(h.time() - (h.settings.attemptIdle - 1) * 1000).feedback).toEqual([]);
     expect(h.control.failed).toBe(0);
+  });
+});
+
+describe("a chance to finish what is missing", () => {
+  // The real scoring is used here, with a square drawn one side at a time.
+  const sides = catalogue.lesson("square").figure.parts.map(strokeOf);
+  const stray = stroke({ x: 400, y: 450 }, { x: 600, y: 550 });
+
+  function lesson() {
+    const settings = defaults();
+    const records = memoryRecords();
+    let now = 1_000_000;
+    let lastInput = now;
+    const control = new LessonControl({ records, now: () => now });
+    control.select("p1", "square", "T", settings);
+    control.beginPractice();
+    return {
+      control,
+      records,
+      draw: (s: Stroke) => {
+        now += 1000;
+        lastInput = now;
+        return control.addStroke(s);
+      },
+      /** Waits out the pause that ends an attempt, then lets the lesson look. */
+      pause: () => {
+        now += settings.attemptIdle * 1000;
+        return control.tick(lastInput);
+      },
+    };
+  }
+
+  it("after the pause, a drawing with a side missing is kept and the child is shown what to finish", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    const report = l.pause();
+    expect(report.feedback).toEqual(["fillIn"]);
+    expect(report.difficulties).toEqual([{ kind: "missedPart", index: 3 }]);
+    expect(l.control.attempt?.outcome).toBe("open");
+    expect(l.control.attempt?.strokes).toHaveLength(3);
+    expect(l.control.failed).toBe(0);
+    expect(l.records.attempts).toHaveLength(0);
+  });
+
+  it("finishing the missing side passes, as one attempt, with the side recorded as corrected", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    l.pause();
+    expect(l.draw(sides[3]).feedback).toEqual(["stagePassed"]);
+    expect(l.control.stage).toBe("E");
+    expect(l.records.attempts).toHaveLength(1);
+    expect(l.records.attempts[0]).toMatchObject({ outcome: "passed", stage: "T" });
+    expect(l.records.attempts[0].strokes).toHaveLength(4);
+    expect(l.records.attempts[0].difficulties).toEqual([
+      { difficulty: { kind: "missedPart", index: 3 }, corrected: true },
+    ]);
+  });
+
+  it("if nothing is drawn after the hint, the attempt ends at the next pause and counts as one failed attempt", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    l.pause();
+    expect(l.pause().feedback).toEqual(["keepTrying"]);
+    expect(l.control.failed).toBe(1);
+    expect(l.control.attempt?.strokes).toHaveLength(0);
+    expect(l.records.attempts[0]).toMatchObject({ outcome: "notPassed" });
+    expect(l.records.attempts[0].difficulties).toEqual([
+      { difficulty: { kind: "missedPart", index: 3 }, corrected: false },
+    ]);
+  });
+
+  it("gives a second hint if the child drew but the side is still missing, and then ends the attempt", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    expect(l.pause().feedback).toEqual(["fillIn"]);
+    l.draw(stray);
+    expect(l.pause().feedback).toEqual(["fillIn"]);
+    l.draw(stray);
+    expect(l.pause().feedback).toEqual(["keepTrying"]); // two hints is the most
+    expect(l.control.failed).toBe(1);
+    expect(l.records.attempts).toHaveLength(1);
+  });
+
+  it("gives no hint when nothing is missing: a complete drawing with too many stray lines just ends", () => {
+    const l = lesson();
+    l.draw(stroke({ x: 300, y: 300 }, { x: 700, y: 700 }, { x: 300, y: 700 }, { x: 700, y: 300 }));
+    sides.forEach(l.draw);
+    expect(l.control.attempt?.last?.class).toBe("complete");
+    expect(l.pause().feedback).toEqual(["keepTrying"]);
+    expect(l.control.failed).toBe(1);
   });
 });
 

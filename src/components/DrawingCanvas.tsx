@@ -31,6 +31,14 @@ interface Props {
   marks?: Point[];
   /** Stretches of the figure that were not drawn, shown as a glow. */
   glow?: Path[];
+  /** Where the drawing starts, shown as a green dot, as in the demonstration. */
+  startDot?: Point;
+  /**
+   * A moving arrow that shows which way to go from the start. It runs a short
+   * way along the path, or all the way round when `full`. It is only shown
+   * while the child is not drawing.
+   */
+  arrow?: { path: Path; full: boolean };
 }
 
 function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
@@ -49,6 +57,22 @@ function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
   ctx.stroke();
 }
 
+/** The point a distance `d` along the path, and the direction of travel there. */
+function along(path: Point[], d: number): { at: Point; angle: number } {
+  let left = d;
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1];
+    const b = path[i];
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    if (left <= len || i === path.length - 1) {
+      const t = len === 0 ? 0 : Math.min(1, left / len);
+      return { at: { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }, angle: Math.atan2(b.y - a.y, b.x - a.x) };
+    }
+    left -= len;
+  }
+  return { at: path[0], angle: 0 };
+}
+
 const pathLength = (path: Point[]) =>
   path.reduce((sum, p, i) => (i === 0 ? 0 : sum + Math.hypot(p.x - path[i - 1].x, p.y - path[i - 1].y)), 0);
 
@@ -61,11 +85,11 @@ export function DrawingCanvas(props: Props) {
   const latest = useRef(props);
   latest.current = props;
 
-  const paint = useCallback((demoProgress?: number) => {
+  const paint = useCallback((demoProgress?: number, arrowProgress?: number) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const { guide, strokes, demonstration, marks, glow } = latest.current;
+    const { guide, strokes, demonstration, marks, glow, startDot, arrow } = latest.current;
     const scale = canvas.width / SIZE;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.clearRect(0, 0, SIZE, SIZE);
@@ -107,6 +131,34 @@ export function DrawingCanvas(props: Props) {
       ctx.arc(p.x, p.y, 20, 0, Math.PI * 2);
       ctx.fill();
     });
+
+    // Where to start, and which way to go.
+    if (startDot) {
+      ctx.fillStyle = "#2e8b6e";
+      ctx.beginPath();
+      ctx.arc(startDot.x, startDot.y, 24, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (arrow && arrowProgress !== undefined && current.current === null) {
+      const total = pathLength(arrow.path);
+      const reach = (arrow.full ? 1 : 0.22) * total * arrowProgress;
+      const head = along(arrow.path, reach);
+      ctx.strokeStyle = "#2e8b6e";
+      ctx.fillStyle = "#2e8b6e";
+      ctx.lineWidth = 9;
+      ctx.globalAlpha = 0.75;
+      trace(ctx, arrow.path, reach);
+      ctx.translate(head.at.x, head.at.y);
+      ctx.rotate(head.angle);
+      ctx.beginPath();
+      ctx.moveTo(26, 0);
+      ctx.lineTo(-14, -22);
+      ctx.lineTo(-14, 22);
+      ctx.closePath();
+      ctx.fill();
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.globalAlpha = 1;
+    }
 
     // The demonstration: each part drawn in turn.
     if (demonstration && demoProgress !== undefined) {
@@ -153,17 +205,24 @@ export function DrawingCanvas(props: Props) {
 
   // Repaint when what should be shown changes, and run the demonstration.
   useEffect(() => {
-    if (!props.demonstration) return void paint();
+    if (!props.demonstration && !props.arrow) return void paint();
     let frame = 0;
     const start = performance.now();
+    const full = props.arrow?.full ?? false;
     const loop = (now: number) => {
-      const cycle = ((now - start) % 5000) / 4000; // 4 s of drawing, 1 s of rest
-      paint(Math.min(1, cycle));
+      if (props.demonstration) {
+        const cycle = ((now - start) % 5000) / 4000; // 4 s of drawing, 1 s of rest
+        paint(Math.min(1, cycle));
+      } else {
+        // A short arrow every 2 s, or a slow trip all the way round every 4.5 s.
+        const [period, moving] = full ? [4500, 3600] : [2000, 1300];
+        paint(undefined, Math.min(1, ((now - start) % period) / moving));
+      }
       frame = requestAnimationFrame(loop);
     };
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, [props.demonstration, props.guide, props.strokes, props.marks, props.glow, paint]);
+  }, [props.demonstration, props.arrow, props.startDot, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */

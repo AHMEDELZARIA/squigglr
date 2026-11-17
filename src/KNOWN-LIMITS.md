@@ -22,6 +22,18 @@ What it leaves to do:
 | Move FR-CRT-001 to FR-CRT-007 out of PH-1 in the SRS phase table | The SRS schedules basic creative drawing for the POC. |
 | Tell the supervisor and the TA | The Development Plan says a change to what the POC covers is agreed with the supervisor. |
 
+## Changed on the evidence of the peer session, against the SRS
+
+Decided on November 16, 2026, after running the paper prototype with a member of another group. Each needs the SRS changed to match, or the app changed back. Section 13 of the plan has the detail.
+
+| In the app | SRS |
+| --- | --- |
+| After the pause, a drawing with a part missing is kept and the child can finish it, up to two hints an attempt. | FR-LRN-024 ends the attempt at the first pause. |
+| A practice sticker ends the lesson. | No reward is specified. |
+| A moving arrow and a picture of the shape at the dots. | FR-LRN-005 and FR-LRN-027 show only the endpoints. |
+
+Liked in the session but not changed, because the SRS or the POC plan says otherwise: the child's first name on the avatar (BR-001), and the weekly page with stickers for the days practised (the progress summary is outside the POC).
+
 ## To close before a child uses the app
 
 | Limit | What happens | Requirement | What it would take |
@@ -38,7 +50,7 @@ What it leaves to do:
 | Everything is saved in one browser | A child's settings and records exist only on the device and browser they were made in. | Module Guide (hosted database) | Replace the inside of `lib/storage.ts` with the database. |
 | A record that cannot be saved is lost | If the browser's storage is full, the lesson carries on and the demo panel counts the records not saved, but they are not kept for later. | SAF-RAY-003 | Build the Connection Recovery module (M24). |
 | Switching apps ends the lesson | If the tablet goes to another app for longer than the lesson's idle end, the lesson ends for inactivity on return. | SAF-RAY-009 | Decide whether time in the background counts. If not, pause the idle clocks while the page is hidden. |
-| No sound | The helper's lines are text only. | NFR-UX-010, NFR-UX-002 | Record or generate one clip per line and add the per-child audio setting. |
+| The helper's voice is the browser's own | The lines are spoken by whatever voice the device has, which differs between devices and can sound flat. The chime and the tune are made by the browser too. | NFR-UX-010, NFR-UX-002 | Record or generate one clip per line. Try it on the target tablet: sound has only been checked in an automated run, by counting what the page asked to play. |
 | No notice for an unsupported device | Any device and browser can start a lesson. | SAF-RAY-002 | Decide `SUPPORTED_DEVICES`, then check it on the Lesson ready screen. |
 
 ## Not tested yet

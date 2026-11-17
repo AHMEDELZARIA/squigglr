@@ -2,7 +2,7 @@
 // saves and reads through these four functions, so moving to a hosted
 // database (Supabase, in the Development Plan) changes only this file.
 
-export type Kind = "learner" | "settings" | "lessonRecord" | "attempt" | "active";
+export type Kind = "learner" | "settings" | "options" | "lessonRecord" | "attempt" | "active";
 
 interface Item<T> {
   id: string;

@@ -129,7 +129,10 @@ export class LessonControl {
 
     const attempt = this.attempt;
     if (attempt !== null) {
-      attempt.checkIdle(now, lastActivity);
+      if (attempt.checkIdle(now, lastActivity)) {
+        // The drawing stays, and the child is shown what to finish.
+        return { feedback: ["fillIn"], difficulties: attempt.missing() };
+      }
       if (attempt.outcome === "invalid") {
         // Not saved and not counted (FR-LRN-010, FR-LRN-032).
         this.newAttempt();

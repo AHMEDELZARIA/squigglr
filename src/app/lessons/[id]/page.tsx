@@ -8,6 +8,7 @@ import { LessonIcon } from "@/components/LessonIcon";
 import { NEATNESS, NeatnessInfo } from "@/components/NeatnessInfo";
 import { Screen } from "@/components/Screen";
 import { useActiveLearner } from "@/components/useActiveLearner";
+import * as audio from "@/lib/audio";
 import { LESSONS } from "@/lib/catalogue";
 import * as settings from "@/lib/settings";
 import type { DrawingStage, SettingName, Settings } from "@/lib/types";
@@ -96,6 +97,7 @@ export default function LessonReady() {
   const [saved, setSaved] = useState<Settings>(settings.defaults());
   const [values, setValues] = useState<Settings>(settings.defaults());
   const [info, setInfo] = useState(false);
+  const [talks, setTalks] = useState(true);
 
   useEffect(() => {
     if (ready && (!learner || !lesson)) router.replace("/");
@@ -103,6 +105,7 @@ export default function LessonReady() {
       const loaded = settings.load(learner.id);
       setSaved(loaded);
       setValues(loaded);
+      setTalks(settings.audio(learner.id));
     }
   }, [ready, learner, lesson, router]);
 
@@ -118,6 +121,9 @@ export default function LessonReady() {
     // Starting a lesson, and changing saved values, need the adult check (SAF-RAY-001, SAF-RAY-008).
     if (!(await ask())) return;
     if (changed) settings.save(learner.id, values);
+    if (talks !== settings.audio(learner.id)) settings.setAudio(learner.id, talks);
+    audio.setEnabled(talks);
+    audio.unlock(); // sound is only allowed after a tap, and this is the last one before the lesson
     router.push(`/lesson/${lesson.id}?start=${start}`);
   };
 
@@ -133,8 +139,8 @@ export default function LessonReady() {
           <div className="mt-6 rounded-3xl bg-lavender p-5">
             <h2 className="text-2xl font-bold">Hand the tablet to {learner.avatar}</h2>
             <p className="mt-2 text-lg">
-              Tap &ldquo;Start lesson&rdquo;, then give {learner.avatar} the tablet and stylus. The helper shows what
-              to do.
+              Tap &ldquo;Start lesson&rdquo;, then give {learner.avatar} the tablet and stylus. The helper shows what to
+              do.
             </p>
             <button
               onClick={begin}
@@ -144,7 +150,9 @@ export default function LessonReady() {
               <PlayIcon className="h-6 w-6" />
               Start lesson
             </button>
-            {changed && bad.length === 0 && <p className="mt-2 text-sm text-muted">Your changes are saved when the lesson starts.</p>}
+            {changed && bad.length === 0 && (
+              <p className="mt-2 text-sm text-muted">Your changes are saved when the lesson starts.</p>
+            )}
           </div>
         </div>
 
@@ -181,6 +189,32 @@ export default function LessonReady() {
             </div>
             <p className="mt-2 text-muted">
               Where {learner.avatar} begins. After that the lesson moves on by itself: 1, 2, then 3.
+            </p>
+          </section>
+
+          <section className="py-5">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="font-sans text-2xl font-bold">Helper talks</h2>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={talks}
+                aria-label="Helper talks"
+                onClick={() => setTalks((t) => !t)}
+                className={`relative h-10 w-[4.5rem] rounded-full border-2 ${
+                  talks ? "border-brand bg-brand" : "border-edge bg-panel"
+                }`}
+              >
+                <span
+                  className={`absolute top-1 h-7 w-7 rounded-full bg-white shadow-card transition-all ${
+                    talks ? "left-9" : "left-1"
+                  }`}
+                />
+              </button>
+              <span className="text-2xl font-bold">{talks ? "On" : "Off"}</span>
+            </div>
+            <p className="mt-2 text-muted">
+              The helper says each step out loud, with a sound when a step is done. {learner.avatar} may not read yet.
             </p>
           </section>
 

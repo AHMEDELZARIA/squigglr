@@ -11,7 +11,7 @@ import * as profiles from "@/lib/profiles";
 import * as records from "@/lib/records";
 import type { AttemptRecord, Ending, Learner, LessonRecord, Stage } from "@/lib/types";
 
-// "Practice records" (in the place of the prototype's S5). For one child:
+// "Practice history" (in the place of the prototype's S5). For one child:
 // every start of a lesson, and under it every attempt with its actual
 // strokes, step, outcome, result and the difficulties seen (FR-REC-001 to
 // FR-REC-010). The SRS's progress summary is a later phase and is not here.
@@ -68,7 +68,7 @@ export default function PracticeRecords() {
 
   return (
     <Screen
-      title="Practice records"
+      title="Practice history"
       back="/grown-ups"
       right={
         <div className="flex gap-2">
@@ -86,12 +86,8 @@ export default function PracticeRecords() {
         </div>
       }
     >
-      <p className="mt-6 flex items-center gap-3 rounded-2xl bg-panel px-5 py-4 text-xl">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-edge font-bold">
-          i
-        </span>
-        This shows practice, not an assessment.
-      </p>
+      {/* A plain note. It has no "i" in a ring, which on the Lesson ready screen is a button. */}
+      <p className="mt-6 rounded-2xl bg-panel px-5 py-4 text-xl">This shows practice, not an assessment.</p>
 
       <div>
         {lessons.length === 0 && (

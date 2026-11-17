@@ -6,6 +6,7 @@ Module numbers are those of the Module Guide and the MIS. Modules not listed are
 | --- | --- |
 | M01 Input Device | `components/DrawingCanvas.tsx` (pointer events to strokes) |
 | M02 Display | `components/DrawingCanvas.tsx` (painting), `components/StrokePreview.tsx`, `components/LessonIcon.tsx`, `components/Avatar.tsx`, `components/icons.tsx` |
+| M03 Audio Output | `lib/audio.ts` |
 | M04 Guided Lesson Control | `lib/lessonControl.ts` |
 | M05 Lesson Catalogue | `lib/catalogue.ts` |
 | M06 Attempt | `lib/attempt.ts` |
@@ -22,6 +23,6 @@ Module numbers are those of the Module Guide and the MIS. Modules not listed are
 | M20 Geometry | `lib/geometry.ts` |
 | M23 Storage | `lib/storage.ts` |
 
-Not in the proof of concept: M03 Audio Output, M11 Creative Drawing, M12 Refinement Control, M17 Progress Summary, M21 Edit History, M22 Refinement Engine, M24 Connection Recovery, M25 Audit Log.
+Not in the proof of concept: M11 Creative Drawing, M12 Refinement Control, M17 Progress Summary, M21 Edit History, M22 Refinement Engine, M24 Connection Recovery, M25 Audit Log.
 
 The types shared between modules are in `lib/types.ts`. The unit tests are `lib/evaluation.test.ts`, `lib/rules.test.ts` and `lib/examples.test.ts`, with their helpers in `lib/testHelpers.ts`.

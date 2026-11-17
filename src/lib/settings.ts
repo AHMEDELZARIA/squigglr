@@ -107,3 +107,12 @@ export function save(learnerId: string, s: Settings): void {
   }
   storage.put("settings", learnerId, chosen, learnerId);
 }
+
+/** Whether the helper talks and plays sounds for this learner (the audio setting, NFR-UX-010). On unless turned off. */
+export function audio(learnerId: string): boolean {
+  return storage.get<{ audio: boolean }>("options", learnerId)?.audio ?? true;
+}
+
+export function setAudio(learnerId: string, on: boolean): void {
+  storage.put("options", learnerId, { audio: on }, learnerId);
+}

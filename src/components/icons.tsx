@@ -1,5 +1,5 @@
 // The small pictures used across the screens. They follow the lo-fi
-// prototype (the trail of prints, the helper, the grown-ups lock) and
+// prototype (the trail of prints, the helper, the sticker, the grown-ups lock) and
 // are drawn here so they take the app's colours.
 
 import type { DrawingStage, Figure } from "@/lib/types";
@@ -9,7 +9,13 @@ const BRAND = "#5e51b8";
 
 type IconProps = { className?: string };
 
-const line = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+const line = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+} as const;
 
 export const LockIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
@@ -30,10 +36,12 @@ export const PlayIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-export const BookIcon = ({ className }: IconProps) => (
+/** History: a clock with an arrow running backwards. */
+export const HistoryIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
-    <rect x="3" y="5" width="8" height="14" rx="1" />
-    <rect x="13" y="5" width="8" height="14" rx="1" />
+    <path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" />
+    <path d="M3.5 4.5v4.6h4.6" />
+    <path d="M12 7.5V12l3 2" />
   </svg>
 );
 
@@ -112,14 +120,17 @@ const PRINTS: Record<string, React.ReactNode> = {
     </>
   ),
   // Unicorn: a hoof print, shaped like a horseshoe.
-  "🦄": (
-    <path d="M3.5 23C1 16 3 4.5 10 4.500S19 16 16.5 23h-3.600c1.8-5.5 1-12.5-2.9-12.500S5.3 17.5 7.1 23z" />
-  ),
+  "🦄": <path d="M3.5 23C1 16 3 4.5 10 4.500S19 16 16.5 23h-3.600c1.8-5.5 1-12.5-2.9-12.500S5.3 17.5 7.1 23z" />,
   // Turtle: a broad foot with short claws along the front.
   "🐢": (
     <>
       <path d="M10 8.500c4.4 0 7.5 3.3 7.5 7.500s-3.1 7.5-7.5 7.5-7.5-3.3-7.5-7.5 3.1-7.5 7.5-7.500z" />
-      <path d="M3.6 8.600L2.4 5.200M7.4 6.200L6.8 2.600M12.6 6.200l.6-3.600M16.4 8.600l1.2-3.4" fill="none" strokeWidth={2.2} strokeLinecap="round" />
+      <path
+        d="M3.6 8.600L2.4 5.200M7.4 6.200L6.8 2.600M12.6 6.200l.6-3.600M16.4 8.600l1.2-3.4"
+        fill="none"
+        strokeWidth={2.2}
+        strokeLinecap="round"
+      />
     </>
   ),
   // Bee: six tiny feet, three on each side.
@@ -135,33 +146,69 @@ const PRINTS: Record<string, React.ReactNode> = {
   ),
 };
 
-/** Two prints, one a step ahead of the other: one step of the lesson, filled once the child has reached it. */
-function Prints({ avatar, done }: { avatar: string; done: boolean }) {
+/**
+ * One step of the trail: a left and a right print, toes pointing the way the
+ * trail goes, the second a pace ahead of the first.
+ */
+function Step({ avatar, done }: { avatar: string; done: boolean }) {
   const print = PRINTS[avatar] ?? PRINTS["🦊"];
   const colour = done ? BRAND : "#c9cddb";
+  // A print is drawn toes-up in a 20 x 26 box. Turned a quarter turn, its toes point right.
+  const walking = (x: number, y: number) => `translate(${x + 26} ${y}) rotate(90)`;
   return (
-    <svg viewBox="0 0 46 34" className="h-10 w-[3.4rem]" aria-hidden="true" fill={colour} stroke={colour} strokeWidth={1.2}>
-      <g transform="translate(1 7) rotate(-8 10 13)">{print}</g>
-      <g transform="translate(25 1) rotate(8 10 13)">{print}</g>
+    <svg
+      viewBox="0 0 56 44"
+      className="h-14 w-[4.5rem]"
+      aria-hidden="true"
+      fill={colour}
+      stroke={colour}
+      strokeWidth={1.2}
+    >
+      <g transform={walking(0, 0)}>{print}</g>
+      <g transform={walking(28, 22)}>{print}</g>
     </svg>
   );
 }
 
 /**
- * Progress through the lesson as a trail of prints: watch, then the three
- * drawing steps. The prints are those of the animal in the child's picture.
+ * Progress through the lesson as a trail of prints walking across the
+ * screen: watch, then the three drawing steps. The prints are those of the
+ * animal in the child's picture. The step just reached grows for a moment,
+ * so the child sees the trail move on.
  */
 export function Footprints({ reached, labels, avatar }: { reached: number; labels: string[]; avatar: string }) {
   return (
-    <ol className="flex gap-2" aria-label="Steps of the lesson">
+    <ol className="flex" aria-label="Steps of the lesson">
       {labels.map((label, i) => (
-        <li key={label} aria-label={label} aria-current={i === reached ? "step" : undefined}>
-          <Prints avatar={avatar} done={i <= reached} />
+        <li
+          key={i === reached ? `${label}-now-${reached}` : label}
+          aria-label={label}
+          aria-current={i === reached ? "step" : undefined}
+          className={i === reached && reached > 0 ? "pop" : undefined}
+        >
+          <Step avatar={avatar} done={i <= reached} />
         </li>
       ))}
     </ol>
   );
 }
+
+/** The practice sticker: given at the end of a lesson for practising, whatever the result. */
+export const Sticker = ({ className }: IconProps) => (
+  <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
+    <circle cx="60" cy="60" r="55" fill="#fdf8e6" stroke={INK} strokeWidth={2.5} strokeDasharray="9 8" />
+    <path
+      d="M60 22l11.2 23.4 25.6 3.4-18.7 17.8 4.6 25.4L60 79.8 37.3 92l4.6-25.4-18.7-17.8 25.6-3.4z"
+      fill="#fbf0c4"
+      stroke={INK}
+      strokeWidth={2.5}
+      strokeLinejoin="round"
+    />
+    <circle cx="53" cy="56" r="2.6" fill={INK} />
+    <circle cx="67" cy="56" r="2.6" fill={INK} />
+    <path d="M52 65 Q60 72 68 65" fill="none" stroke={INK} strokeWidth={2.6} strokeLinecap="round" />
+  </svg>
+);
 
 const d = (points: { x: number; y: number }[]) =>
   points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
@@ -175,7 +222,15 @@ export function StageGuide({ figure, stage, className }: { figure: Figure; stage
       )}
       {stage === "T" &&
         figure.parts.map((part, i) => (
-          <path key={i} d={d(part)} fill="none" stroke="#8e84d6" strokeWidth={36} strokeLinecap="round" strokeDasharray="4 78" />
+          <path
+            key={i}
+            d={d(part)}
+            fill="none"
+            stroke="#8e84d6"
+            strokeWidth={36}
+            strokeLinecap="round"
+            strokeDasharray="4 78"
+          />
         ))}
       {stage === "E" && figure.endpoints.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={56} fill="#8e84d6" />)}
     </svg>

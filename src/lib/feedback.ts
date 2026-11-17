@@ -13,11 +13,12 @@ export interface Feedback {
 
 const KINDS: Record<FeedbackKind, Feedback> = {
   stagePassed: { message: "You did it! Here comes the next one.", image: "🌟", colour: "#24735b" },
-  lessonComplete: { message: "All done! Great practising!", image: "🎉", colour: "#24735b" },
+  lessonComplete: { message: "Great practising! Here's your sticker!", image: "🎉", colour: "#24735b" },
+  fillIn: { message: "Great try! Finish where it's glowing!", image: "✨", colour: "#5e51b8" },
   keepTrying: { message: "Great try! Let's draw it again.", image: "💪", colour: "#5e51b8" },
   notEvaluable: { message: "Let's try that one again.", image: "✏️", colour: "#5e51b8" },
   checkIn: { message: "Still drawing? Tap to keep going.", image: "👋", colour: "#5e51b8" },
-  lessonEnded: { message: "Great practising today!", image: "🌈", colour: "#5e51b8" },
+  lessonEnded: { message: "Great practising! Here's your sticker!", image: "🌈", colour: "#5e51b8" },
 };
 
 const DIFFICULTIES: Record<DifficultyKind, Feedback> = {

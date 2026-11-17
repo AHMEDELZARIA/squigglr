@@ -87,6 +87,7 @@ export type FeedbackKind =
   | "stagePassed"
   | "lessonComplete"
   | "keepTrying"
+  | "fillIn"
   | "notEvaluable"
   | "checkIn"
   | "lessonEnded";

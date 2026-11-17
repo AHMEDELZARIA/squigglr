@@ -8,7 +8,7 @@ The proof of concept: a Next.js app, written in TypeScript, in which a child pra
 
 - `lib/`: the lesson rules, the scoring and the data, as plain TypeScript with unit tests
 - `components/`: the drawing canvas, the adult check, the screen frame and the pictures
-- `app/`: one folder per screen (who's practising, pick a lesson, lesson ready, the lesson, grown-ups, practice records)
+- `app/`: one folder per screen (who's practising, pick a lesson, lesson ready, the lesson, grown-ups, practice history)
 - `plan-img/`: screenshots used by the plan
 
 ## Running it

@@ -1,6 +1,6 @@
 # Squigglr POC: Implementation Plan and Code
 
-This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 60 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
+This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 65 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
 
 **What the POC is:** a website where an adult adds a child, sets that child's nine practice values, and starts the Square or Circle lesson. The child watches a demonstration, then draws through three stages with less help each time. Every attempt is scored against the adult's values and saved under that child.
 
@@ -8,9 +8,9 @@ This is the plan for the Proof of Concept due **November 23, 2026**, with all of
 | --- | --- |
 | ![Lesson ready screen](plan-img/ready.png) | ![Lesson screen](plan-img/lesson.png) |
 
-| Who's practising? | Practice records |
+| Who's practising? | Practice history |
 | --- | --- |
-| ![Who's practising screen](plan-img/who.png) | ![Practice records screen](plan-img/records.png) |
+| ![Who's practising screen](plan-img/who.png) | ![Practice history screen](plan-img/records.png) |
 
 The screens follow the layout of the team's lo-fi prototype (S1 to S11 in Figma), in the colours of the A-Sense presentation, with one rounded font and soft-edged cards. What the app does follows the SRS: wherever the prototype and the SRS disagree, the SRS wins. [Section 3](#3-design-decisions-and-the-requirements-behind-them) gives the requirement behind each decision, and [section 13](#13-how-the-app-compares-with-the-srs) lists every place the app and the SRS differ.
 
@@ -43,7 +43,7 @@ flowchart TD
     Children["Who's practising? (S1)<br/>choose, switch, add a child"]
     Lessons["Pick a lesson (S2)"]
     SettingsPage["Lesson ready (S3)<br/>starting step, nine values"]
-    RecordsPage["Practice records<br/>every saved attempt"]
+    RecordsPage["Practice history<br/>every saved attempt"]
     Lesson["Lesson (S6 to S11)<br/>M13 Child Screen"]
     Canvas["DrawingCanvas<br/>M01 Input, M02 Display"]
     Check["AdultCheck<br/>M14 (check only)"]
@@ -137,7 +137,10 @@ sequenceDiagram
 - All nine adult-set values per child, with their ranges and rules, and every one of them changes how a lesson runs.
 - Retry, the go-back suggestion, the one extension, the attempt limit, the hard cap and the two lesson idle timers.
 - Feedback from a fixed list: the effort acknowledged first, then what was seen in the drawing, with a glow where a part is missing.
-- A record of every attempt (actual strokes, stage, outcome, result, difficulties, the settings in use) and of every start of a lesson, saved per child, on a Practice records screen.
+- A chance to finish: when a part is missing, the drawing stays and the child can fill it in, up to twice in an attempt.
+- Sound: the helper's lines spoken by the browser's voice, a chime when a step is done and a short tune at the end, with an on/off switch per child.
+- A practice sticker at the end of a lesson.
+- A record of every attempt (actual strokes, stage, outcome, result, difficulties, the settings in use) and of every start of a lesson, saved per child, on a Practice history screen.
 - Example drawings for each pass mark, made from the scoring itself.
 - A demo panel on the lesson screen that shows the live result and the counters, for showing the teaching team what the rules are doing.
 
@@ -148,7 +151,9 @@ sequenceDiagram
 - Sound, the supported-device notice, and keeping unsaved records while offline. The SRS requires all three; they are not needed to show the lesson working.
 - The creative space, and with it the two refinement experiments of the Development Plan. See the scope decision below.
 
-**Tried and taken out again, because the SRS does not have them:** an eraser and pencil beside the drawing, a "Start again" button, a practice sticker at the end of a lesson, a weekly "practice story" with stickers for the days practised, and a "Let's get a grown-up!" line from the helper. The last four came from the lo-fi prototype. [Section 13](#13-how-the-app-compares-with-the-srs) gives the requirement each one ran against.
+**Tried and taken out again, because the SRS does not have them:** an eraser and pencil beside the drawing, a "Start again" button, a weekly "practice story" with stickers for the days practised, and a "Let's get a grown-up!" line from the helper. The last three came from the lo-fi prototype. [Section 13](#13-how-the-app-compares-with-the-srs) gives the requirement each one ran against.
+
+**Put back after the peer session:** the practice sticker at the end of a lesson, and finishing a missing part on the same drawing. Both are in the prototype, both were taken out for the SRS, and both were restored on the evidence of the session. See [the next section](#after-the-paper-prototype-session-with-another-group).
 
 ### Scope decision: the creative space is left out of the POC
 
@@ -202,20 +207,21 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | Guest mode, with the adult check kept | SAF-RAY-001, SAF-RAY-008; Development Plan (POC plan) | Sign-in adds nothing to what the POC must prove. The adult check stays, because choosing a lesson, switching child, changing saved values and answering a suggestion must not be possible for a child. |
 | The adult check is a sum | SAF-RAY-001 ("a check that a child cannot complete by tapping icons") | The prototype uses a two-second hold, which a child can do by resting a finger. |
 | The adult chooses the lesson and the starting step; a pass moves on by itself | CON-007; BR-002, BR-003; FR-LRN-016, FR-LRN-018, FR-LRN-023 | The child never chooses, skips or goes back. |
-| On the lesson screen the child has one control, the start button after the demonstration; Leave is for the adult | FR-LRN-024; FACT-007; NFR-UX-001, NFR-UX-002 | An attempt that has not passed ends after a pause "and by no other event except an interruption", the team did not accept the child restarting, and child screens are to be calm with few controls. So there is no eraser, no "Start again" and no submit button. |
+| On the lesson screen the child has no control at all; Leave is for the adult | FR-LRN-024; FACT-007; NFR-UX-001, NFR-UX-002 | The team did not accept the child restarting, and child screens are to be calm with few controls. So there is no eraser, no "Start again", no submit button and no start button: the child only draws. |
 
 ### How a lesson runs
 
 | Decision | Requirements and sources | Why |
 | --- | --- | --- |
-| The demonstration is always shown first, then practice starts at the adult's chosen step | UC-003 step 1; FR-LRN-003, FR-LRN-025 | The MIS has `beginPractice` go from the demonstration to tracing only; UC-003 is followed. |
+| The demonstration plays once, then practice starts by itself at the adult's chosen step | UC-003 step 1 ("shows the demonstration ... then moves to the starting stage"); FR-LRN-003, FR-LRN-025 | The app used to wait for the child to press a start button. In the peer session the tester began drawing during the demonstration; a clear "Your turn!" with a chime marks the change. Drawing during the demonstration does nothing. The MIS has `beginPractice` go from the demonstration to tracing only; UC-003 is followed. |
 | The drawing is checked at every stylus lift; a pass ends the attempt at once | FR-LRN-038, FR-LRN-039 | The child should not have to decide when a drawing is done. |
 | A stylus held down, even held still, counts as drawing | FR-LRN-024 (the pause is "with no input after the last stroke") | Otherwise a child resting the stylus mid-line would have the attempt ended under them. |
 | The lesson waits while the adult check or the go-back card is open | SAF-RAY-001; FR-LRN-024 | The adult's time at the check is not the child's pause, so no attempt ends and no idle clock runs meanwhile. The card has a "Decide later" that leaves the suggestion pending (FR-LRN-034). |
-| An attempt that has not passed ends after a pause the adult sets: 3 to 7 s, default 5 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first; tried on a tablet, ten seconds of waiting was far too long, so it was halved. |
+| After the pause, a drawing with a part missing is kept and the child is shown what to finish | FR-LRN-024 (**goes against it**); SAF-MOU-001; FR-REC-003; NFR-UX-016 | The SRS ends the attempt at the first pause. The app first gives a hint: the missing part glows, the drawing stays, and the pause starts again. If the child finishes it, the attempt passes. An attempt gives at most two hints, and the second only if the child drew something after the first; then it ends as one not-passed attempt. This is the prototype's S8, which the peer tester followed without help. A drawing with nothing missing (too messy, too small, stretched) gets no hint, because drawing more cannot fix it. |
+| The pause that ends an attempt is set by the adult: 3 to 7 s, default 5 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first; tried on a tablet, ten seconds of waiting was far too long, so it was halved. |
 | The lesson idle ranges are 30 to 60 s and 90 to 180 s | SAF-RAY-009; BR-008 | Also "TBD" in the SRS. The three ranges do not overlap, so the rule that each is shorter than the next can never be broken. |
 | A go-back suggestion waits behind a quiet Grown-ups button | FR-LRN-019, FR-LRN-034; UC-005; SAF-RAY-001; NFR-UX-001 | The SRS has the suggestion shown "without blocking practice" and answered only through the adult check. The prototype covers the lesson with a card and has the helper say "Let's get a grown-up!"; neither is in the SRS, and nothing flashes while the child draws. |
-| A finished attempt stays on screen with its feedback: 5 s if it did not pass, 2.5 s if it did | FR-LRN-014; NFR-UX-016; SAF-MOU-001 | The SRS does not say what happens on screen when an attempt ends. Without a pause the drawing would vanish and the feedback would refer to nothing. |
+| A finished attempt stays on screen with its feedback: 5 s if it did not pass, 2.5 s if it passed or the child had already been given a hint | FR-LRN-014; NFR-UX-016; SAF-MOU-001 | The SRS does not say what happens on screen when an attempt ends. Without a pause the drawing would vanish and the feedback would refer to nothing. |
 | Feedback is a fixed list in one file, effort first, never "wrong" | BR-007; FR-LRN-014, FR-LRN-022; NFR-UX-004, NFR-UX-016 | Every message describes the drawing, not the child. |
 | A missing part is shown by a glow where it should be, not drawn in | SAF-MOU-001; NFR-UX-004 | The child is shown where, and still has to draw it. |
 
@@ -227,7 +233,8 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | With no guide, the drawing is laid over the figure by a fit that ignores stray marks | SRS Section 9.2 (stage I); FR-LRN-013 | The SRS lays it over by its bounding box. One stray dot, or a line that runs past a corner, stretches that box and fails a good drawing. The SRS's fit is still tried, and is used whenever it scores best. **Goes beyond the SRS wording.** |
 | With no guide, a drawing must be at least 40% of the figure's size | SRS Section 9.2 says size does "not affect the result"; FR-LRN-011 | Once any size is scaled up to the figure, a speck passes as a square. The team decided, after trying it on a tablet, that position and size should not matter only down to a minimum. **Contradicts the SRS sentence; the team is asked to change it** (see [section 13](#13-how-the-app-compares-with-the-srs)). |
 | Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the difficulties in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of difficulty; these two need adding to it. |
-| A small picture of the shape stays up when there is no guide | FR-LRN-006 | The SRS forbids a tracing outline and endpoint guides at this step. The picture is neither, and sits beside the drawing area, but a strict reading could object. The team should confirm it with the specialists. |
+| A small picture of the shape stays up at the dots and with no guide | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at both steps and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture, so it is now at the dots too. The team should confirm it with the specialists. |
+| At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A short arrow now runs from the start dot along the first stretch of the shape, and after eight seconds with nothing drawn it goes all the way round. It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
 
 ### What the adult sees
 
@@ -239,12 +246,33 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | A save that fails never stops the lesson | SAF-RAY-003; FR-REC-008 | If the browser's storage is full, the lesson carries on and the demo panel says how many records were not saved. Keeping them for a later save is not built yet. |
 | A lesson that was cut off is closed as unfinished | FR-REC-005, FR-REC-007 | If the page is closed or reloaded mid-lesson, its record would stay "in progress" for ever. It is closed when the child's next lesson starts. |
 | Difficulties are noted as the SRS describes, with one exception | FR-REC-003 | With a guide, a line off the shape is noted at each stylus lift and marked corrected later. With no guide nothing is noted until the attempt ends, because a half-finished drawing laid over the figure always looks off it. |
-| Practice records show every lesson and attempt; there is no weekly summary | FR-REC-001 to FR-REC-010; Development Plan (POC plan: "no progress summary") | The POC must show that records keep the strokes, the stage and the outcome. The SRS's progress summary is specified separately and belongs to the final phase, so the prototype's weekly "practice story" is not built. |
+| "Practice history" shows every lesson and attempt; there is no weekly summary | FR-REC-001 to FR-REC-010; Development Plan (POC plan: "no progress summary") | The POC must show that records keep the strokes, the stage and the outcome. The SRS's progress summary is specified separately and belongs to the final phase, so the prototype's weekly "practice story" is not built. The peer tester could not tell what "Practice story" meant without its description, and suggested "history" and a history icon. |
 | The records screen says it shows practice, not an assessment | BR-006; SAF-RAY-004 | No diagnosis, judgement or comparison. |
-| No sticker or other reward | Not in the SRS; NFR-UX-001 | The prototype ends a lesson with a sticker. The SRS has no reward, so the lesson ends with the helper's closing line. |
+| A practice sticker ends the lesson | Not in the SRS; BR-006; NFR-UX-004 | The prototype ends a lesson with a sticker, given for practising whatever the result. It was taken out because the SRS has no reward, and put back after the peer session, where the tester called it right for the end of a lesson. It judges nothing, so it does not go against BR-006. The SRS should say whether a reward is wanted. |
+| The helper's lines are spoken, with a chime when a step is done | NFR-UX-010; NFR-UX-002 | A child who cannot read gets nothing from a speech bubble, and the peer session was run with the lines read aloud. The voice is the browser's own for now, and each child has an on/off switch. |
 | A demo panel shows the result and the counters | BR-006; FR-LRN-022 | It lets the teaching team see the rules working. The SRS does not want a result shown to the child, so the panel is labelled for adults and must be hidden before real use. |
 | Screen layouts follow the lo-fi prototype; colours follow the A-Sense presentation; the style is one rounded font, thin line icons and soft-edged white cards | NFR-UX-001, NFR-UX-002, NFR-UX-004 | The prototype was tried with a parent and child, so its layout is the best evidence the team has. It is black and white on purpose; the colours come from the slides. The team wanted the calm, plain feel of a note-taking app, which also suits the SRS's call for uncluttered child screens. On an iPad or a Mac the font is the system's rounded face; elsewhere Nunito, an open rounded font, is loaded in its place. |
-| Progress through the lesson is a trail of the child's animal paw prints | NFR-UX-002; G.1 | Pictures, not text, and nothing for the child to press. |
+| Progress through the lesson is a trail of the child's animal paw prints, walking across the screen | NFR-UX-002; NFR-UX-001; G.1 | Pictures, not text, and nothing for the child to press. The peer tester saw the prototype's footprints filling in but did not read them as progress, and asked for prints that walk along a path and move when a step is done. The step just reached grows for a moment, while input is paused, so nothing moves while the child draws. |
+
+### After the paper-prototype session with another group
+
+The team ran the lo-fi prototype with a member of another group, who played a parent and then a five-year-old. This is what was said and what was done about it.
+
+| What the session showed | What changed |
+| --- | --- |
+| The tester started drawing during the demonstration ("I guess I wasn't supposed to draw yet"). | Drawing during the demonstration does nothing. Practice now starts by itself with "Your turn!" and a chime, with no button. |
+| "Great try! Finish where it's glowing" was followed without help. | The app now works this way: the drawing stays, the gap glows, and finishing it passes. Before, the drawing was cleared and the child started again. |
+| At the dots, a five-year-old might draw a straight line from one dot to the next. An arrow that moves a little way in a curve would show the direction, and a longer one after a while with no input. | A green start dot and a short moving arrow; after eight seconds with nothing drawn the arrow goes all the way round. |
+| The last step was clearer than the dots, because of the picture in the corner. A picture at the dots would help too. | The picture of the shape is shown at the dots as well. |
+| More dots for the circle would show where a wrong shape misses. | Already the case: the circle has four dots, where the prototype had two. |
+| The footprints were noticed but not read as progress. Prints pointing along a path, moving when a step is done, with the screen paused and a sound, would draw the eye. | The trail now walks across the screen, and the step just reached grows for a moment while input is paused and a chime plays. The drawing that passed also grows slightly. |
+| Not too many of these effects. | One movement and one sound per step, and none while the child draws. |
+| The star at the end is right for the end of a lesson; between steps a word or a sound is enough. | The sticker is back at the end. Between steps: the helper's line and a chime. |
+| "Practice story" was not understood from its name and icon alone. "History" and a history icon were suggested. | Renamed "Practice history", with a clock-and-arrow icon. |
+| The "i" beside "This shows practice, not an assessment" looked like the tappable "i" beside Neatness, and was tapped. | The note has no "i". Only the tappable one keeps it. |
+| The Neatness pop-up and the settings were understood at once. "Helper talks" was read as a voice-over for a child who cannot read. | Kept. "Helper talks" is now a real switch. |
+| The child's name on the avatar was "very helpful". | Not changed: the SRS allows no name (BR-001). The team should weigh this. |
+| The weekly page with stickers for days and the drawings was liked. | Not changed: it is the progress summary, which is outside the POC. It is one screen to restore if the team wants it. |
 
 ## 4. How a drawing is scored
 
@@ -297,6 +325,7 @@ The state and the rules are those of SRS Section 9.2. In order, after each attem
 | --- | --- |
 | The drawing passes, at trace or corners | Saves it, moves to the next stage, resets the stage's counts. |
 | The drawing passes with no guide | Saves it and completes the lesson. No other lesson starts. |
+| It does not pass, a part or endpoint is missing, and the pause runs out | A hint: the missing part glows, the drawing stays, and the pause starts again. At most two in an attempt, the second only if the child drew after the first. Nothing is counted yet. |
 | The attempt is invalid or interrupted | Starts a new attempt. Nothing is counted. An interrupted attempt (the browser cuts the contact off, or the adult leaves) is saved, marked interrupted. |
 | It does not pass, the failed attempts have reached the limit, and the child is not improving | Ends the lesson. |
 | It does not pass, the limit is reached, the child is improving, and the cap is not reached | Gives the one extension. |
@@ -349,6 +378,7 @@ src/
 | [`lib/improvement.ts`](#f-improvement) | M09 Improvement Measure | The "improving" rule. |
 | [`lib/lessonControl.ts`](#f-control) | M04 Lesson Control | The lesson's state machine. |
 | [`lib/feedback.ts`](#f-feedback) | M08 Feedback | The wording and look of every message. |
+| [`lib/audio.ts`](#f-audio) | M03 Audio Output | The chime, the closing tune and the helper's spoken lines. |
 | [`lib/settings.ts`](#f-settings) | M16 Learner Settings | Ranges, defaults, checks, load and save. |
 | [`lib/profiles.ts`](#f-profiles) | M15 Learner Profile | Children and the active child. |
 | [`lib/records.ts`](#f-records) | M10 Attempt Record | Lesson records and attempt records. |
@@ -369,12 +399,12 @@ src/
 | [`app/lessons/[id]/page.tsx`](#f-page-ready) | part of M18 Adult View | S3 Lesson ready: starting step and the nine values. |
 | [`app/lesson/[id]/page.tsx`](#f-page-lesson) | M13 Child Screen | S6 to S10: the lesson itself. |
 | [`app/grown-ups/page.tsx`](#f-page-grownups) | part of M18 Adult View | S4 Grown-ups area. |
-| [`app/records/page.tsx`](#f-page-records) | part of M18 Adult View | Practice records: every lesson and attempt. |
+| [`app/records/page.tsx`](#f-page-records) | part of M18 Adult View | Practice history: every lesson and attempt. |
 | [`app/layout.tsx`, `app/globals.css`](#f-layout) | | The page frame and styles. |
 | [Configuration files](#f-config) | | `package.json` and the tool settings. |
 | [`lib/evaluation.test.ts`](#f-test-eval), [`lib/rules.test.ts`](#f-test-rules), [`lib/examples.test.ts`](#f-test-examples), [`lib/testHelpers.ts`](#f-test-helpers) | | The unit tests. |
 
-Not in the POC: M03 Audio, M11 and M12 (creative space), M17 Progress Summary, M21, M22, M24 Connection Recovery, M25 Audit Log.
+Not in the POC: M11 and M12 (creative space), M17 Progress Summary, M21, M22, M24 Connection Recovery, M25 Audit Log.
 
 ## 8. The code, part by part
 
@@ -475,6 +505,7 @@ export type FeedbackKind =
   | "stagePassed"
   | "lessonComplete"
   | "keepTrying"
+  | "fillIn"
   | "notEvaluable"
   | "checkIn"
   | "lessonEnded";
@@ -1085,6 +1116,9 @@ import type { Difficulty, DrawingStage, Evaluation, Figure, Observed, Stroke } f
 
 export type Outcome = "open" | "passed" | "notPassed" | "invalid" | "interrupted";
 
+/** The most hints one attempt gives before it ends. */
+export const MAX_HINTS = 2;
+
 const same = (a: Difficulty, b: Difficulty) => a.kind === b.kind && a.index === b.index;
 
 export class Attempt {
@@ -1095,6 +1129,10 @@ export class Attempt {
   seen: Observed[] = [];
   outcome: Outcome = "open";
   endedAt: number | null = null;
+  /** How many times the child has been shown what is missing in this attempt. */
+  hints = 0;
+  private hintAt = 0;
+  private strokesAtHint = 0;
 
   constructor(
     readonly lesson: string,
@@ -1119,21 +1157,51 @@ export class Attempt {
     // half-finished one looks off the figure until it is done. There, nothing
     // is noted until the attempt ends.
     if (this.stage !== "I") {
-      this.note(this.last.difficulties.filter((d) => d.kind === "offFigure"), ["offFigure"]);
+      this.note(
+        this.last.difficulties.filter((d) => d.kind === "offFigure"),
+        ["offFigure"],
+      );
     }
+    // After a hint, what was missing and is now drawn is marked corrected.
+    if (this.hints > 0) this.note(this.missing(), ["missedPart", "missedEndpoint"]);
     if (this.last.passed) this.end("passed", now);
   }
 
-  /** Ends an open attempt that has strokes once attemptIdle has passed since the last input. */
-  checkIdle(now: number, lastInputAt: number): void {
-    if (this.outcome !== "open" || this.strokes.length === 0 || this.last === null) return;
-    if (now - lastInputAt < this.attemptIdle * 1000) return;
+  /**
+   * Called about once a second. Once attemptIdle has passed with no input,
+   * an attempt that has not passed either gets a hint or ends.
+   *
+   * A hint: if a part or an endpoint is missing, the child is shown where,
+   * the drawing stays, and the pause starts again, so they can finish it. The
+   * attempt gives at most MAX_HINTS, and a second one only if the child drew
+   * something after the first. Otherwise the attempt ends as not passed.
+   *
+   * Returns true when a hint was just given.
+   */
+  checkIdle(now: number, lastInputAt: number): boolean {
+    if (this.outcome !== "open" || this.strokes.length === 0 || this.last === null) return false;
+    if (now - Math.max(lastInputAt, this.hintAt) < this.attemptIdle * 1000) return false;
     if (this.last.class === "invalid") {
       this.end("invalid", now);
-      return;
+      return false;
+    }
+    const drewSinceHint = this.strokes.length > this.strokesAtHint;
+    if (this.missing().length > 0 && this.hints < MAX_HINTS && (this.hints === 0 || drewSinceHint)) {
+      this.hints += 1;
+      this.hintAt = now;
+      this.strokesAtHint = this.strokes.length;
+      // What is missing is now on record. If the child fills it in, it is marked corrected, not removed.
+      this.note(this.missing(), ["missedPart", "missedEndpoint"]);
+      return true;
     }
     this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
     this.end("notPassed", now);
+    return false;
+  }
+
+  /** The parts and endpoints the drawing still lacks: what the child could finish. */
+  missing(): Difficulty[] {
+    return (this.last?.difficulties ?? []).filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
   }
 
   /** Ends the attempt with no result, keeping its strokes and difficulties. */
@@ -1327,7 +1395,10 @@ export class LessonControl {
 
     const attempt = this.attempt;
     if (attempt !== null) {
-      attempt.checkIdle(now, lastActivity);
+      if (attempt.checkIdle(now, lastActivity)) {
+        // The drawing stays, and the child is shown what to finish.
+        return { feedback: ["fillIn"], difficulties: attempt.missing() };
+      }
       if (attempt.outcome === "invalid") {
         // Not saved and not counted (FR-LRN-010, FR-LRN-032).
         this.newAttempt();
@@ -1521,6 +1592,105 @@ export class LessonControl {
 }
 ```
 
+<a id="f-audio"></a>
+**`lib/audio.ts`**. Sound, made by the browser with no sound files: two short tunes from the Web Audio API and the helper's lines from the browser's own voice. The rules know nothing about it; the lesson screen calls it. Browsers only allow sound after a tap, so "Start lesson" unlocks it.
+
+`src/lib/audio.ts`
+
+```ts
+// M03 Audio Output. A soft chime when a step is done, a short tune when the
+// lesson ends, and the helper's lines spoken aloud. Everything is made by
+// the browser: there are no sound files. Lesson Control and the rules know
+// nothing about sound; the lesson screen decides when to call these.
+
+let context: AudioContext | null = null;
+let on = true;
+
+/** Turns sound on or off, from the learner's audio setting (NFR-UX-010). */
+export function setEnabled(enabled: boolean): void {
+  on = enabled;
+  if (!enabled && typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+}
+
+/**
+ * Browsers only allow sound after a tap. Call this from a tap (the adult's
+ * "Start lesson") so the lesson can make sound from then on.
+ */
+export function unlock(): void {
+  try {
+    const Ctx =
+      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!context && Ctx) context = new Ctx();
+    void context?.resume();
+    // An empty line wakes the browser's voice, which also needs a tap first.
+    if (typeof speechSynthesis !== "undefined") speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+  } catch {
+    // No sound on this device. The lesson works without it.
+  }
+}
+
+/** One soft note. `at` is seconds from now. */
+function note(frequency: number, at: number, length: number): void {
+  if (!context) return;
+  const start = context.currentTime + at;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = "sine";
+  oscillator.frequency.value = frequency;
+  gain.gain.setValueAtTime(0, start);
+  gain.gain.linearRampToValueAtTime(0.18, start + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, start + length);
+  oscillator.connect(gain).connect(context.destination);
+  oscillator.start(start);
+  oscillator.stop(start + length);
+}
+
+function play(notes: [frequency: number, at: number, length: number][]): void {
+  if (!on) return;
+  try {
+    void context?.resume();
+    notes.forEach((n) => note(...n));
+  } catch {
+    // Sound is a help, never a need.
+  }
+}
+
+/** A step is done. */
+export const chime = () =>
+  play([
+    [784, 0, 0.35],
+    [1047, 0.12, 0.5],
+  ]);
+
+/** The lesson is over. */
+export const tune = () =>
+  play([
+    [523, 0, 0.3],
+    [659, 0.15, 0.3],
+    [784, 0.3, 0.3],
+    [1047, 0.45, 0.7],
+  ]);
+
+/** Says one of the helper's lines, in place of whatever it was saying. */
+export function say(text: string): void {
+  if (!on || typeof speechSynthesis === "undefined") return;
+  try {
+    speechSynthesis.cancel();
+    const line = new SpeechSynthesisUtterance(text);
+    line.rate = 0.9;
+    line.pitch = 1.2;
+    speechSynthesis.speak(line);
+  } catch {
+    // The text is still on screen.
+  }
+}
+
+/** Stops anything being said, for when the lesson screen is left. */
+export function hush(): void {
+  if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+}
+```
+
 <a id="f-feedback"></a>
 **`lib/feedback.ts`**. What each message says. Lesson Control picks the kind of feedback; this file owns the words, so the specialists' wording changes can be made here without touching a rule.
 
@@ -1542,11 +1712,12 @@ export interface Feedback {
 
 const KINDS: Record<FeedbackKind, Feedback> = {
   stagePassed: { message: "You did it! Here comes the next one.", image: "🌟", colour: "#24735b" },
-  lessonComplete: { message: "All done! Great practising!", image: "🎉", colour: "#24735b" },
+  lessonComplete: { message: "Great practising! Here's your sticker!", image: "🎉", colour: "#24735b" },
+  fillIn: { message: "Great try! Finish where it's glowing!", image: "✨", colour: "#5e51b8" },
   keepTrying: { message: "Great try! Let's draw it again.", image: "💪", colour: "#5e51b8" },
   notEvaluable: { message: "Let's try that one again.", image: "✏️", colour: "#5e51b8" },
   checkIn: { message: "Still drawing? Tap to keep going.", image: "👋", colour: "#5e51b8" },
-  lessonEnded: { message: "Great practising today!", image: "🌈", colour: "#5e51b8" },
+  lessonEnded: { message: "Great practising! Here's your sticker!", image: "🌈", colour: "#5e51b8" },
 };
 
 const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
@@ -1588,7 +1759,7 @@ export const allFeedback = (): string[] => [
 // saves and reads through these four functions, so moving to a hosted
 // database (Supabase, in the Development Plan) changes only this file.
 
-export type Kind = "learner" | "settings" | "lessonRecord" | "attempt" | "active";
+export type Kind = "learner" | "settings" | "options" | "lessonRecord" | "attempt" | "active";
 
 interface Item<T> {
   id: string;
@@ -1769,6 +1940,15 @@ export function save(learnerId: string, s: Settings): void {
     if (s[name] !== RANGES[name].default) chosen[name] = s[name];
   }
   storage.put("settings", learnerId, chosen, learnerId);
+}
+
+/** Whether the helper talks and plays sounds for this learner (the audio setting, NFR-UX-010). On unless turned off. */
+export function audio(learnerId: string): boolean {
+  return storage.get<{ audio: boolean }>("options", learnerId)?.audio ?? true;
+}
+
+export function setAudio(learnerId: string, on: boolean): void {
+  storage.put("options", learnerId, { audio: on }, learnerId);
 }
 ```
 
@@ -2025,6 +2205,14 @@ interface Props {
   marks?: Point[];
   /** Stretches of the figure that were not drawn, shown as a glow. */
   glow?: Path[];
+  /** Where the drawing starts, shown as a green dot, as in the demonstration. */
+  startDot?: Point;
+  /**
+   * A moving arrow that shows which way to go from the start. It runs a short
+   * way along the path, or all the way round when `full`. It is only shown
+   * while the child is not drawing.
+   */
+  arrow?: { path: Path; full: boolean };
 }
 
 function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
@@ -2043,6 +2231,22 @@ function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
   ctx.stroke();
 }
 
+/** The point a distance `d` along the path, and the direction of travel there. */
+function along(path: Point[], d: number): { at: Point; angle: number } {
+  let left = d;
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1];
+    const b = path[i];
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    if (left <= len || i === path.length - 1) {
+      const t = len === 0 ? 0 : Math.min(1, left / len);
+      return { at: { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }, angle: Math.atan2(b.y - a.y, b.x - a.x) };
+    }
+    left -= len;
+  }
+  return { at: path[0], angle: 0 };
+}
+
 const pathLength = (path: Point[]) =>
   path.reduce((sum, p, i) => (i === 0 ? 0 : sum + Math.hypot(p.x - path[i - 1].x, p.y - path[i - 1].y)), 0);
 
@@ -2055,11 +2259,11 @@ export function DrawingCanvas(props: Props) {
   const latest = useRef(props);
   latest.current = props;
 
-  const paint = useCallback((demoProgress?: number) => {
+  const paint = useCallback((demoProgress?: number, arrowProgress?: number) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const { guide, strokes, demonstration, marks, glow } = latest.current;
+    const { guide, strokes, demonstration, marks, glow, startDot, arrow } = latest.current;
     const scale = canvas.width / SIZE;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.clearRect(0, 0, SIZE, SIZE);
@@ -2101,6 +2305,34 @@ export function DrawingCanvas(props: Props) {
       ctx.arc(p.x, p.y, 20, 0, Math.PI * 2);
       ctx.fill();
     });
+
+    // Where to start, and which way to go.
+    if (startDot) {
+      ctx.fillStyle = "#2e8b6e";
+      ctx.beginPath();
+      ctx.arc(startDot.x, startDot.y, 24, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (arrow && arrowProgress !== undefined && current.current === null) {
+      const total = pathLength(arrow.path);
+      const reach = (arrow.full ? 1 : 0.22) * total * arrowProgress;
+      const head = along(arrow.path, reach);
+      ctx.strokeStyle = "#2e8b6e";
+      ctx.fillStyle = "#2e8b6e";
+      ctx.lineWidth = 9;
+      ctx.globalAlpha = 0.75;
+      trace(ctx, arrow.path, reach);
+      ctx.translate(head.at.x, head.at.y);
+      ctx.rotate(head.angle);
+      ctx.beginPath();
+      ctx.moveTo(26, 0);
+      ctx.lineTo(-14, -22);
+      ctx.lineTo(-14, 22);
+      ctx.closePath();
+      ctx.fill();
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.globalAlpha = 1;
+    }
 
     // The demonstration: each part drawn in turn.
     if (demonstration && demoProgress !== undefined) {
@@ -2147,17 +2379,24 @@ export function DrawingCanvas(props: Props) {
 
   // Repaint when what should be shown changes, and run the demonstration.
   useEffect(() => {
-    if (!props.demonstration) return void paint();
+    if (!props.demonstration && !props.arrow) return void paint();
     let frame = 0;
     const start = performance.now();
+    const full = props.arrow?.full ?? false;
     const loop = (now: number) => {
-      const cycle = ((now - start) % 5000) / 4000; // 4 s of drawing, 1 s of rest
-      paint(Math.min(1, cycle));
+      if (props.demonstration) {
+        const cycle = ((now - start) % 5000) / 4000; // 4 s of drawing, 1 s of rest
+        paint(Math.min(1, cycle));
+      } else {
+        // A short arrow every 2 s, or a slow trip all the way round every 4.5 s.
+        const [period, moving] = full ? [4500, 3600] : [2000, 1300];
+        paint(undefined, Math.min(1, ((now - start) % period) / moving));
+      }
       frame = requestAnimationFrame(loop);
     };
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, [props.demonstration, props.guide, props.strokes, props.marks, props.glow, paint]);
+  }, [props.demonstration, props.arrow, props.startDot, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
@@ -2467,7 +2706,7 @@ export function Avatar({
 
 ```tsx
 // The small pictures used across the screens. They follow the lo-fi
-// prototype (the trail of prints, the helper, the grown-ups lock) and
+// prototype (the trail of prints, the helper, the sticker, the grown-ups lock) and
 // are drawn here so they take the app's colours.
 
 import type { DrawingStage, Figure } from "@/lib/types";
@@ -2477,7 +2716,13 @@ const BRAND = "#5e51b8";
 
 type IconProps = { className?: string };
 
-const line = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+const line = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+} as const;
 
 export const LockIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
@@ -2498,10 +2743,12 @@ export const PlayIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-export const BookIcon = ({ className }: IconProps) => (
+/** History: a clock with an arrow running backwards. */
+export const HistoryIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
-    <rect x="3" y="5" width="8" height="14" rx="1" />
-    <rect x="13" y="5" width="8" height="14" rx="1" />
+    <path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" />
+    <path d="M3.5 4.5v4.6h4.6" />
+    <path d="M12 7.5V12l3 2" />
   </svg>
 );
 
@@ -2580,14 +2827,17 @@ const PRINTS: Record<string, React.ReactNode> = {
     </>
   ),
   // Unicorn: a hoof print, shaped like a horseshoe.
-  "🦄": (
-    <path d="M3.5 23C1 16 3 4.5 10 4.500S19 16 16.5 23h-3.600c1.8-5.5 1-12.5-2.9-12.500S5.3 17.5 7.1 23z" />
-  ),
+  "🦄": <path d="M3.5 23C1 16 3 4.5 10 4.500S19 16 16.5 23h-3.600c1.8-5.5 1-12.5-2.9-12.500S5.3 17.5 7.1 23z" />,
   // Turtle: a broad foot with short claws along the front.
   "🐢": (
     <>
       <path d="M10 8.500c4.4 0 7.5 3.3 7.5 7.500s-3.1 7.5-7.5 7.5-7.5-3.3-7.5-7.5 3.1-7.5 7.5-7.500z" />
-      <path d="M3.6 8.600L2.4 5.200M7.4 6.200L6.8 2.600M12.6 6.200l.6-3.600M16.4 8.600l1.2-3.4" fill="none" strokeWidth={2.2} strokeLinecap="round" />
+      <path
+        d="M3.6 8.600L2.4 5.200M7.4 6.200L6.8 2.600M12.6 6.200l.6-3.600M16.4 8.600l1.2-3.4"
+        fill="none"
+        strokeWidth={2.2}
+        strokeLinecap="round"
+      />
     </>
   ),
   // Bee: six tiny feet, three on each side.
@@ -2603,33 +2853,69 @@ const PRINTS: Record<string, React.ReactNode> = {
   ),
 };
 
-/** Two prints, one a step ahead of the other: one step of the lesson, filled once the child has reached it. */
-function Prints({ avatar, done }: { avatar: string; done: boolean }) {
+/**
+ * One step of the trail: a left and a right print, toes pointing the way the
+ * trail goes, the second a pace ahead of the first.
+ */
+function Step({ avatar, done }: { avatar: string; done: boolean }) {
   const print = PRINTS[avatar] ?? PRINTS["🦊"];
   const colour = done ? BRAND : "#c9cddb";
+  // A print is drawn toes-up in a 20 x 26 box. Turned a quarter turn, its toes point right.
+  const walking = (x: number, y: number) => `translate(${x + 26} ${y}) rotate(90)`;
   return (
-    <svg viewBox="0 0 46 34" className="h-10 w-[3.4rem]" aria-hidden="true" fill={colour} stroke={colour} strokeWidth={1.2}>
-      <g transform="translate(1 7) rotate(-8 10 13)">{print}</g>
-      <g transform="translate(25 1) rotate(8 10 13)">{print}</g>
+    <svg
+      viewBox="0 0 56 44"
+      className="h-14 w-[4.5rem]"
+      aria-hidden="true"
+      fill={colour}
+      stroke={colour}
+      strokeWidth={1.2}
+    >
+      <g transform={walking(0, 0)}>{print}</g>
+      <g transform={walking(28, 22)}>{print}</g>
     </svg>
   );
 }
 
 /**
- * Progress through the lesson as a trail of prints: watch, then the three
- * drawing steps. The prints are those of the animal in the child's picture.
+ * Progress through the lesson as a trail of prints walking across the
+ * screen: watch, then the three drawing steps. The prints are those of the
+ * animal in the child's picture. The step just reached grows for a moment,
+ * so the child sees the trail move on.
  */
 export function Footprints({ reached, labels, avatar }: { reached: number; labels: string[]; avatar: string }) {
   return (
-    <ol className="flex gap-2" aria-label="Steps of the lesson">
+    <ol className="flex" aria-label="Steps of the lesson">
       {labels.map((label, i) => (
-        <li key={label} aria-label={label} aria-current={i === reached ? "step" : undefined}>
-          <Prints avatar={avatar} done={i <= reached} />
+        <li
+          key={i === reached ? `${label}-now-${reached}` : label}
+          aria-label={label}
+          aria-current={i === reached ? "step" : undefined}
+          className={i === reached && reached > 0 ? "pop" : undefined}
+        >
+          <Step avatar={avatar} done={i <= reached} />
         </li>
       ))}
     </ol>
   );
 }
+
+/** The practice sticker: given at the end of a lesson for practising, whatever the result. */
+export const Sticker = ({ className }: IconProps) => (
+  <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
+    <circle cx="60" cy="60" r="55" fill="#fdf8e6" stroke={INK} strokeWidth={2.5} strokeDasharray="9 8" />
+    <path
+      d="M60 22l11.2 23.4 25.6 3.4-18.7 17.8 4.6 25.4L60 79.8 37.3 92l4.6-25.4-18.7-17.8 25.6-3.4z"
+      fill="#fbf0c4"
+      stroke={INK}
+      strokeWidth={2.5}
+      strokeLinejoin="round"
+    />
+    <circle cx="53" cy="56" r="2.6" fill={INK} />
+    <circle cx="67" cy="56" r="2.6" fill={INK} />
+    <path d="M52 65 Q60 72 68 65" fill="none" stroke={INK} strokeWidth={2.6} strokeLinecap="round" />
+  </svg>
+);
 
 const d = (points: { x: number; y: number }[]) =>
   points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
@@ -2643,7 +2929,15 @@ export function StageGuide({ figure, stage, className }: { figure: Figure; stage
       )}
       {stage === "T" &&
         figure.parts.map((part, i) => (
-          <path key={i} d={d(part)} fill="none" stroke="#8e84d6" strokeWidth={36} strokeLinecap="round" strokeDasharray="4 78" />
+          <path
+            key={i}
+            d={d(part)}
+            fill="none"
+            stroke="#8e84d6"
+            strokeWidth={36}
+            strokeLinecap="round"
+            strokeDasharray="4 78"
+          />
         ))}
       {stage === "E" && figure.endpoints.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={56} fill="#8e84d6" />)}
     </svg>
@@ -2938,6 +3232,44 @@ summary {
   -webkit-user-select: none;
 }
 
+/* A brief "pop": a step of the trail that was just reached, and a drawing
+   that just passed. It runs once, while the child is not drawing. */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.pop {
+  animation: pop 700ms ease-out 1;
+}
+.pop-gently {
+  animation: pop 700ms ease-out 1;
+  animation-name: pop-gently;
+}
+@keyframes pop-gently {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pop,
+  .pop-gently {
+    animation: none;
+  }
+}
+
 /* The drawing area must not scroll or zoom the page while the child draws. */
 canvas {
   touch-action: none;
@@ -3128,6 +3460,7 @@ import { LessonIcon } from "@/components/LessonIcon";
 import { NEATNESS, NeatnessInfo } from "@/components/NeatnessInfo";
 import { Screen } from "@/components/Screen";
 import { useActiveLearner } from "@/components/useActiveLearner";
+import * as audio from "@/lib/audio";
 import { LESSONS } from "@/lib/catalogue";
 import * as settings from "@/lib/settings";
 import type { DrawingStage, SettingName, Settings } from "@/lib/types";
@@ -3216,6 +3549,7 @@ export default function LessonReady() {
   const [saved, setSaved] = useState<Settings>(settings.defaults());
   const [values, setValues] = useState<Settings>(settings.defaults());
   const [info, setInfo] = useState(false);
+  const [talks, setTalks] = useState(true);
 
   useEffect(() => {
     if (ready && (!learner || !lesson)) router.replace("/");
@@ -3223,6 +3557,7 @@ export default function LessonReady() {
       const loaded = settings.load(learner.id);
       setSaved(loaded);
       setValues(loaded);
+      setTalks(settings.audio(learner.id));
     }
   }, [ready, learner, lesson, router]);
 
@@ -3238,6 +3573,9 @@ export default function LessonReady() {
     // Starting a lesson, and changing saved values, need the adult check (SAF-RAY-001, SAF-RAY-008).
     if (!(await ask())) return;
     if (changed) settings.save(learner.id, values);
+    if (talks !== settings.audio(learner.id)) settings.setAudio(learner.id, talks);
+    audio.setEnabled(talks);
+    audio.unlock(); // sound is only allowed after a tap, and this is the last one before the lesson
     router.push(`/lesson/${lesson.id}?start=${start}`);
   };
 
@@ -3253,8 +3591,8 @@ export default function LessonReady() {
           <div className="mt-6 rounded-3xl bg-lavender p-5">
             <h2 className="text-2xl font-bold">Hand the tablet to {learner.avatar}</h2>
             <p className="mt-2 text-lg">
-              Tap &ldquo;Start lesson&rdquo;, then give {learner.avatar} the tablet and stylus. The helper shows what
-              to do.
+              Tap &ldquo;Start lesson&rdquo;, then give {learner.avatar} the tablet and stylus. The helper shows what to
+              do.
             </p>
             <button
               onClick={begin}
@@ -3264,7 +3602,9 @@ export default function LessonReady() {
               <PlayIcon className="h-6 w-6" />
               Start lesson
             </button>
-            {changed && bad.length === 0 && <p className="mt-2 text-sm text-muted">Your changes are saved when the lesson starts.</p>}
+            {changed && bad.length === 0 && (
+              <p className="mt-2 text-sm text-muted">Your changes are saved when the lesson starts.</p>
+            )}
           </div>
         </div>
 
@@ -3301,6 +3641,32 @@ export default function LessonReady() {
             </div>
             <p className="mt-2 text-muted">
               Where {learner.avatar} begins. After that the lesson moves on by itself: 1, 2, then 3.
+            </p>
+          </section>
+
+          <section className="py-5">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="font-sans text-2xl font-bold">Helper talks</h2>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={talks}
+                aria-label="Helper talks"
+                onClick={() => setTalks((t) => !t)}
+                className={`relative h-10 w-[4.5rem] rounded-full border-2 ${
+                  talks ? "border-brand bg-brand" : "border-edge bg-panel"
+                }`}
+              >
+                <span
+                  className={`absolute top-1 h-7 w-7 rounded-full bg-white shadow-card transition-all ${
+                    talks ? "left-9" : "left-1"
+                  }`}
+                />
+              </button>
+              <span className="text-2xl font-bold">{talks ? "On" : "Off"}</span>
+            </div>
+            <p className="mt-2 text-muted">
+              The helper says each step out loud, with a sound when a step is done. {learner.avatar} may not read yet.
             </p>
           </section>
 
@@ -3415,18 +3781,20 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useAdultCheck } from "@/components/AdultCheck";
 import { Avatar } from "@/components/Avatar";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
-import { DoorIcon, Footprints, Helper, LockIcon, PlayIcon, StageGuide } from "@/components/icons";
+import { DoorIcon, Footprints, Helper, LockIcon, StageGuide, Sticker } from "@/components/icons";
 import { LessonIcon } from "@/components/LessonIcon";
 import { Frame, buttonClass } from "@/components/Screen";
+import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
 import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
+import { MAX_HINTS } from "@/lib/attempt";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
 import { records } from "@/lib/records";
 import * as settings from "@/lib/settings";
-import type { DrawingStage, Figure, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
+import type { Difficulty, DrawingStage, Figure, Fit, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
 
 // M13 Child Screen (prototype S6 to S11, without its Start again button and
 // sticker, which the SRS does not have). It shows the lesson and relays
@@ -3442,9 +3810,14 @@ const STEP: Record<DrawingStage, { number: number; name: string }> = {
   I: { number: 3, name: "On my own" },
 };
 const NO_GUIDE: Guide = { outline: [], endpoints: [] };
+const NO_FIT: Fit = { scale: 1, dx: 0, dy: 0 };
 /** How long a finished attempt stays on screen with its feedback: longer when there is something to look at. */
 const SHOW_PASSED_MS = 2500;
 const SHOW_NOT_PASSED_MS = 5000;
+/** How long the demonstration plays before practice starts by itself. */
+const DEMO_MS = 5500;
+/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
+const FULL_ARROW_MS = 8000;
 
 /** The stretches of a part of the figure that no drawn line comes near. */
 function undrawn(part: Path, drawn: Path[], tol: number): Path[] {
@@ -3488,6 +3861,12 @@ export default function LessonPage() {
   const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** True while the adult check or the go-back card is open. The lesson waits. */
   const paused = useRef(false);
+  /** True once the child has been shown what is missing in the attempt on screen. */
+  const hinted = useRef(false);
+  /** When the current stage came up, for the demonstration and the arrow. */
+  const stageSince = useRef(Date.now());
+  const [arrowFull, setArrowFull] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
 
   const setStrokes = (next: Stroke[]) => {
     strokesRef.current = next;
@@ -3505,53 +3884,86 @@ export default function LessonPage() {
     const c = new LessonControl({ records });
     c.select(learner.id, id, start === "E" || start === "I" ? start : "T", settings.load(learner.id));
     control.current = c;
+    stageSince.current = Date.now();
+    audio.setEnabled(settings.audio(learner.id));
     setAvatar(learner.avatar);
     refresh();
     return () => {
+      audio.hush();
       if (clearTimer.current) clearTimeout(clearTimer.current);
       c.stop(); // leaving the screen ends the lesson as unfinished
     };
   }, [id, router]);
 
-  /** Shows what Lesson Control reported after an event. */
-  const show = useCallback((r: Report, stageOfAttempt: Stage) => {
-    if (r.feedback.length === 0) return;
-    setReport(r);
-    if (r.feedback[0] === "checkIn") return;
-    // An attempt just ended: leave it on screen for a moment, then clear it.
+  /**
+   * Lights up what the drawing on screen still lacks. The glow is worked out
+   * on the figure, then laid back over the drawing where the child made it.
+   * (With a guide the two are the same place.)
+   */
+  const highlight = useCallback((difficulties: Difficulty[], fit: Fit) => {
     const figure: Figure = catalogue.lesson(control.current!.lessonId).figure;
-    // The glow is worked out on the figure, then laid back over the drawing
-    // where the child made it. (With a guide the two are the same place.)
-    const fit = control.current!.lastFinal?.fit ?? { scale: 1, dx: 0, dy: 0 };
     const back = inverse(fit);
     const drawn = applyAll(fit, strokesRef.current.map(toPath));
     setGlow(
       applyAll(
         back,
-        r.difficulties
+        difficulties
           .filter((d) => d.kind === "missedPart")
           .flatMap((d) => undrawn(figure.parts[d.index], drawn, tolerance(figure))),
       ),
     );
     setMarks(
-      r.difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
+      difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
     );
-    const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
-    setShowing(true);
-    setShownStage(stageOfAttempt);
-    clearTimer.current = setTimeout(
-      () => {
+  }, []);
+
+  /** Shows what Lesson Control reported after an event. */
+  const show = useCallback(
+    (r: Report, stageOfAttempt: Stage) => {
+      if (r.feedback.length === 0) return;
+      setReport(r);
+      const c = control.current!;
+      if (r.feedback[0] === "checkIn") return;
+
+      if (r.feedback[0] === "fillIn") {
+        // A hint: the drawing stays and the child can go on drawing. What is
+        // missing glows until they finish it or the attempt ends.
+        hinted.current = true;
+        highlight(r.difficulties, c.attempt?.last?.fit ?? NO_FIT);
+        return;
+      }
+
+      // An attempt just ended: leave it on screen for a moment, then clear it.
+      const passed = r.feedback[0] === "stagePassed" || r.feedback[0] === "lessonComplete";
+      if (passed) {
+        setGlow([]);
+        setMarks([]);
+        audio.chime();
+      } else {
+        highlight(r.difficulties, c.lastFinal?.fit ?? NO_FIT);
+      }
+      if (r.feedback.includes("lessonComplete") || r.feedback.includes("lessonEnded")) audio.tune();
+      // A child who has already been shown the glow does not need it held up as long again.
+      const hold = passed || hinted.current ? SHOW_PASSED_MS : SHOW_NOT_PASSED_MS;
+      hinted.current = false;
+      setCelebrate(passed);
+      setShowing(true);
+      setShownStage(stageOfAttempt);
+      clearTimer.current = setTimeout(() => {
         setStrokes([]);
         setMarks([]);
         setGlow([]);
         setShowing(false);
         setShownStage(null);
+        setCelebrate(false);
+        setArrowFull(false);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
-      },
-      passed ? SHOW_PASSED_MS : SHOW_NOT_PASSED_MS,
-    );
-  }, []);
+        stageSince.current = Date.now();
+      }, hold);
+    },
+    [highlight],
+  );
 
   // Tick: lets an idle attempt end, and runs the lesson's idle rules.
   useEffect(() => {
@@ -3559,11 +3971,34 @@ export default function LessonPage() {
       const c = control.current;
       if (!c || showing || paused.current) return;
       const stage = c.stage;
+      const running = c.status === "active" || c.status === "suggested";
+      // The demonstration plays, then practice starts by itself (UC-003 step 1).
+      if (running && stage === "D" && Date.now() - stageSince.current >= DEMO_MS) {
+        c.beginPractice();
+        lastInput.current = Date.now();
+        stageSince.current = Date.now();
+        refresh();
+        return;
+      }
+      // With only the dots to go by and nothing drawn for a while, the arrow goes all the way round.
+      if (running && stage === "E" && strokesRef.current.length === 0) {
+        setArrowFull(Date.now() - Math.max(lastInput.current ?? 0, stageSince.current) >= FULL_ARROW_MS);
+      }
       show(c.tick(lastInput.current), stage);
       refresh();
     }, 500);
     return () => clearInterval(timer);
   }, [show, showing]);
+
+  // The helper says its line aloud whenever the line changes.
+  const line = useRef("");
+  const spoken = useRef("");
+  useEffect(() => {
+    if (line.current && line.current !== spoken.current) {
+      spoken.current = line.current;
+      audio.say(line.current);
+    }
+  });
 
   const c = control.current;
   if (!c) return null;
@@ -3582,13 +4017,27 @@ export default function LessonPage() {
     : report
       ? feedback(report.feedback[0]).message
       : stageLine(c.stage);
-  const hints = report && running ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
+  line.current = bubble;
+  // Under the bubble: what was seen in the drawing. Not after a hint, where the bubble already says it.
+  const hints =
+    report && running && report.feedback[0] !== "fillIn" ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
+  // With a guide: a green dot where the drawing starts, as in the demonstration.
+  const drawing = running && !showing && c.stage !== "D";
+  const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
+  // With only the dots to go by, an arrow shows which way to go, until the child starts drawing.
+  const outline = lesson.figure.parts.flat();
+  const arrowOn = drawing && c.stage === "E" && strokes.length === 0;
 
   const onStroke = (stroke: Stroke) => {
     if (!running || c.stage === "D") return;
     const stage = c.stage;
     setStrokes([...strokesRef.current, stroke]);
-    show(c.addStroke(stroke), stage);
+    const r = c.addStroke(stroke);
+    // After a hint, the glow follows the drawing: what has been filled in stops glowing.
+    if (r.feedback.length === 0 && hinted.current && c.attempt?.last) {
+      highlight(c.attempt.missing(), c.attempt.last.fit);
+    }
+    show(r, stage);
     refresh();
   };
 
@@ -3638,8 +4087,8 @@ export default function LessonPage() {
               labels={STEP_LABELS}
               avatar={avatar}
             />
-            {/* With no guide, a small picture reminds the child what to draw. */}
-            {running && c.stage === "I" && (
+            {/* Without the outline, a small picture reminds the child what to draw. */}
+            {running && (c.stage === "E" || c.stage === "I") && (
               <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
                 <LessonIcon figure={lesson.figure} className="h-14 w-14" />
               </div>
@@ -3649,9 +4098,11 @@ export default function LessonPage() {
         </div>
 
         <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100vh-20rem)))]">
-          <div className="relative min-w-0 flex-1">
+          <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}
+              startDot={startDot}
+              arrow={arrowOn ? { path: outline, full: arrowFull } : undefined}
               strokes={strokes}
               marks={marks}
               glow={glow}
@@ -3660,7 +4111,11 @@ export default function LessonPage() {
               onStroke={onStroke}
               onCancel={() => {
                 c.interrupt();
+                hinted.current = false;
                 setStrokes([]);
+                setGlow([]);
+                setMarks([]);
+                setReport(null);
                 refresh();
               }}
               onInput={(t) => {
@@ -3669,23 +4124,9 @@ export default function LessonPage() {
               }}
             />
 
-            {running && c.stage === "D" && (
-              <button
-                onClick={() => {
-                  c.beginPractice();
-                  lastInput.current = Date.now();
-                  refresh();
-                }}
-                aria-label="Start drawing"
-                className="absolute bottom-5 left-1/2 flex h-24 w-24 -translate-x-1/2 items-center justify-center rounded-full border-2 border-edge bg-green text-white"
-              >
-                <PlayIcon className="h-12 w-12" />
-              </button>
-            )}
-
             {!running && (
               <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white">
-                <LessonIcon figure={lesson.figure} className="h-3/5 w-3/5" />
+                <Sticker className="pop h-3/5 w-3/5" />
               </div>
             )}
           </div>
@@ -3815,6 +4256,7 @@ export default function LessonPage() {
               value={c.extended ? `${c.sinceExtension} of ${c.settings.attemptExtension} used` : "not given"}
             />
             <Item label="Attempt ends after" value={`${c.settings.attemptIdle} s with no drawing`} />
+            <Item label="Hints this attempt" value={`${c.attempt?.hints ?? 0} of ${MAX_HINTS}`} />
             {c.unsaved > 0 && (
               <Item label="Records not saved" value={`${c.unsaved} (this browser's storage is full)`} />
             )}
@@ -3873,17 +4315,17 @@ function Item({ label, value }: { label: string; value: string | number }) {
 "use client";
 
 import Link from "next/link";
-import { BookIcon, LockIcon, PlayIcon } from "@/components/icons";
+import { HistoryIcon, LockIcon, PlayIcon } from "@/components/icons";
 import { Screen } from "@/components/Screen";
 
 // S4 "Grown-ups". Kept apart from the child's screens, with two large
-// buttons: start another lesson, or look at the practice records. It is
+// buttons: start another lesson, or look at the practice history. It is
 // reached through the adult check, from "Who's practising?" or the end of a
 // lesson.
 
 const CHOICES = [
   { href: "/", title: "Start a lesson", text: "Choose a child and a lesson", Icon: PlayIcon, tint: "bg-lavender" },
-  { href: "/records", title: "Practice records", text: "See every lesson and attempt", Icon: BookIcon, tint: "bg-mint" },
+  { href: "/records", title: "Practice history", text: "See past lessons and every attempt", Icon: HistoryIcon, tint: "bg-mint" },
 ];
 
 export default function GrownUps() {
@@ -3938,7 +4380,7 @@ import * as profiles from "@/lib/profiles";
 import * as records from "@/lib/records";
 import type { AttemptRecord, Ending, Learner, LessonRecord, Stage } from "@/lib/types";
 
-// "Practice records" (in the place of the prototype's S5). For one child:
+// "Practice history" (in the place of the prototype's S5). For one child:
 // every start of a lesson, and under it every attempt with its actual
 // strokes, step, outcome, result and the difficulties seen (FR-REC-001 to
 // FR-REC-010). The SRS's progress summary is a later phase and is not here.
@@ -3995,7 +4437,7 @@ export default function PracticeRecords() {
 
   return (
     <Screen
-      title="Practice records"
+      title="Practice history"
       back="/grown-ups"
       right={
         <div className="flex gap-2">
@@ -4013,12 +4455,8 @@ export default function PracticeRecords() {
         </div>
       }
     >
-      <p className="mt-6 flex items-center gap-3 rounded-2xl bg-panel px-5 py-4 text-xl">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-edge font-bold">
-          i
-        </span>
-        This shows practice, not an assessment.
-      </p>
+      {/* A plain note. It has no "i" in a ring, which on the Lesson ready screen is a button. */}
+      <p className="mt-6 rounded-2xl bg-panel px-5 py-4 text-xl">This shows practice, not an assessment.</p>
 
       <div>
         {lessons.length === 0 && (
@@ -4245,7 +4683,7 @@ next-env.d.ts
 
 ## 9. Tests
 
-`npm test` runs 60 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
+`npm test` runs 65 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
 
 | Area | What is checked |
 | --- | --- |
@@ -4253,6 +4691,7 @@ next-env.d.ts
 | Scoring, circle | An exact circle passes, an open one does not, a square does not. |
 | Progression | Trace to corners to no guide to complete. The adult's starting stage is used. Pass at the mark and not one point below, at 70, 80 and 90. Incomplete never passes. A retry follows a failed attempt. |
 | Records | A save that fails does not stop the lesson and is counted. Starting a lesson closes one that was cut off. With no guide, a square drawn one side at a time is not noted as off the shape; with a guide, a stray line is noted and later marked corrected. |
+| A chance to finish | After the pause, a drawing with a side missing is kept and the child is shown what to finish. Finishing it passes, as one attempt, with the side recorded as corrected. With nothing drawn after the hint, the attempt ends at the next pause. A second hint is given only if the child drew, and then the attempt ends. A complete but messy drawing gets no hint. |
 | Not counted | Invalid input is neither saved nor counted. An interrupted attempt is saved as interrupted and not counted. A stylus lift alone does not end an attempt. |
 | Stopping | The lesson ends at the limit. One extension when improving, then the end. A pass during the extension still moves on. The cap is never passed. The adult's limit is used. |
 | Suggestion | Offered at the streak, never at trace, held back while improving. Declining needs a new streak. Accepting moves to the chosen earlier stage and keeps the furthest stage. A pass records it as ignored. The adult's streak is used. |
@@ -4530,6 +4969,7 @@ describe("evaluate: circle", () => {
 
 ```ts
 import { describe, expect, it } from "vitest";
+import * as catalogue from "./catalogue";
 import type { Evaluate } from "./evaluation";
 import { IDENTITY } from "./geometry";
 import { improving } from "./improvement";
@@ -4537,8 +4977,8 @@ import { LessonControl } from "./lessonControl";
 import { check, defaults, load, save } from "./settings";
 import * as storage from "./storage";
 import { lessonRecords, records as realRecords } from "./records";
-import { memoryRecords, stroke } from "./testHelpers";
-import type { Settings, Stage } from "./types";
+import { memoryRecords, stroke, strokeOf } from "./testHelpers";
+import type { Settings, Stage, Stroke } from "./types";
 
 // As the V&V Plan does for its rule tests, each attempt's completeness and
 // result are given directly, so exact boundary values can be set.
@@ -4661,6 +5101,96 @@ describe("attempts that do not count", () => {
     h.wait(h.settings.attemptIdle - 1);
     expect(h.control.tick(h.time() - (h.settings.attemptIdle - 1) * 1000).feedback).toEqual([]);
     expect(h.control.failed).toBe(0);
+  });
+});
+
+describe("a chance to finish what is missing", () => {
+  // The real scoring is used here, with a square drawn one side at a time.
+  const sides = catalogue.lesson("square").figure.parts.map(strokeOf);
+  const stray = stroke({ x: 400, y: 450 }, { x: 600, y: 550 });
+
+  function lesson() {
+    const settings = defaults();
+    const records = memoryRecords();
+    let now = 1_000_000;
+    let lastInput = now;
+    const control = new LessonControl({ records, now: () => now });
+    control.select("p1", "square", "T", settings);
+    control.beginPractice();
+    return {
+      control,
+      records,
+      draw: (s: Stroke) => {
+        now += 1000;
+        lastInput = now;
+        return control.addStroke(s);
+      },
+      /** Waits out the pause that ends an attempt, then lets the lesson look. */
+      pause: () => {
+        now += settings.attemptIdle * 1000;
+        return control.tick(lastInput);
+      },
+    };
+  }
+
+  it("after the pause, a drawing with a side missing is kept and the child is shown what to finish", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    const report = l.pause();
+    expect(report.feedback).toEqual(["fillIn"]);
+    expect(report.difficulties).toEqual([{ kind: "missedPart", index: 3 }]);
+    expect(l.control.attempt?.outcome).toBe("open");
+    expect(l.control.attempt?.strokes).toHaveLength(3);
+    expect(l.control.failed).toBe(0);
+    expect(l.records.attempts).toHaveLength(0);
+  });
+
+  it("finishing the missing side passes, as one attempt, with the side recorded as corrected", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    l.pause();
+    expect(l.draw(sides[3]).feedback).toEqual(["stagePassed"]);
+    expect(l.control.stage).toBe("E");
+    expect(l.records.attempts).toHaveLength(1);
+    expect(l.records.attempts[0]).toMatchObject({ outcome: "passed", stage: "T" });
+    expect(l.records.attempts[0].strokes).toHaveLength(4);
+    expect(l.records.attempts[0].difficulties).toEqual([
+      { difficulty: { kind: "missedPart", index: 3 }, corrected: true },
+    ]);
+  });
+
+  it("if nothing is drawn after the hint, the attempt ends at the next pause and counts as one failed attempt", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    l.pause();
+    expect(l.pause().feedback).toEqual(["keepTrying"]);
+    expect(l.control.failed).toBe(1);
+    expect(l.control.attempt?.strokes).toHaveLength(0);
+    expect(l.records.attempts[0]).toMatchObject({ outcome: "notPassed" });
+    expect(l.records.attempts[0].difficulties).toEqual([
+      { difficulty: { kind: "missedPart", index: 3 }, corrected: false },
+    ]);
+  });
+
+  it("gives a second hint if the child drew but the side is still missing, and then ends the attempt", () => {
+    const l = lesson();
+    sides.slice(0, 3).forEach(l.draw);
+    expect(l.pause().feedback).toEqual(["fillIn"]);
+    l.draw(stray);
+    expect(l.pause().feedback).toEqual(["fillIn"]);
+    l.draw(stray);
+    expect(l.pause().feedback).toEqual(["keepTrying"]); // two hints is the most
+    expect(l.control.failed).toBe(1);
+    expect(l.records.attempts).toHaveLength(1);
+  });
+
+  it("gives no hint when nothing is missing: a complete drawing with too many stray lines just ends", () => {
+    const l = lesson();
+    l.draw(stroke({ x: 300, y: 300 }, { x: 700, y: 700 }, { x: 300, y: 700 }, { x: 700, y: 300 }));
+    sides.forEach(l.draw);
+    expect(l.control.attempt?.last?.class).toBe("complete");
+    expect(l.pause().feedback).toEqual(["keepTrying"]);
+    expect(l.control.failed).toBe(1);
   });
 });
 
@@ -4897,11 +5427,11 @@ Each step ends in something that can be checked. Steps 2 to 4 need no browser an
 
 1. **Set up the project.** In `src/`, add the [configuration files](#f-config) and `src/.gitignore`, then run `npm install`. Check: `npm run typecheck` runs.
 2. **Types, geometry, scoring, catalogue.** Add [`types.ts`](#f-types), [`geometry.ts`](#f-geometry), [`evaluation.ts`](#f-evaluation), [`catalogue.ts`](#f-catalogue), [`testHelpers.ts`](#f-test-helpers) and [`evaluation.test.ts`](#f-test-eval). Check: the scoring tests pass.
-3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 60 tests pass.
+3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 65 tests pass.
 4. **Data.** Add [`storage.ts`](#f-storage), [`settings.ts`](#f-settings), [`profiles.ts`](#f-profiles), [`records.ts`](#f-records). (Steps 3 and 4 share `records.ts` for its `RecordStore` type.)
 5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
 6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.
-7. **Practice records.** Add [`StrokePreview.tsx`](#f-preview) and the [practice records](#f-page-records). Check: each child's records show only their own attempts.
+7. **Practice history.** Add [`StrokePreview.tsx`](#f-preview) and the [practice history](#f-page-records). Check: each child's records show only their own attempts.
 8. **Deploy** ([section 11](#11-deploying-and-the-domain)) and try it on the target tablet with a stylus. This is experiment 1 of the Development Plan. The team has drawn with a finger and a stylus on an iPad; the automated runs used a mouse. Record the device and browser versions, and repeat on a second device or browser.
 9. **Calibrate.** Have adults draw good and poor squares on the tablet, and decide whether `TRACE_TOL` = 5 is right ([gap 1](#13-how-the-app-compares-with-the-srs)).
 10. **Rehearse** the [demo script](#12-demo-script), and fill in `src/TraceToDesign.md` from the [file index](#7-project-layout-and-file-index).
@@ -4942,10 +5472,10 @@ About eight minutes, with no slides.
 1. **Who's practising.** Add two children. Point out: a picture, no name, guest mode. Tap the first child.
 2. **Pick a lesson.** Tap the square.
 3. **Lesson ready.** Show the three settings up front, each with its line of explanation. Tap "i" beside Neatness: three example drawings, made from the scoring itself. Choose High. Open "More settings", set "Pause that ends an attempt" to 3, and show that − and + stop at the ends of each range. Tap "Start lesson" and answer the adult check.
-4. **Watch, then full outline.** Watch the demonstration and press start. Draw three sides and stop. The demo panel shows a result near 79 and "incomplete". After the pause the attempt ends, the missing side glows for five seconds, and "failed at this stage" goes to 1.
-5. **Pass.** Trace the whole square. It passes at the lift, with no button, a paw print fills in, and the outline is replaced by dots.
-6. **Endpoints only, then on my own.** Pass the dots. With no guide, draw a small square in a corner of the canvas: it still passes, and the lesson ends. Then show the two things that do not pass with no guide: a tiny square ("Try drawing it bigger") and a rectangle ("Try making it as tall as it is wide").
-7. **Grown-ups and the records.** Tap "Grown-ups", answer the check, open "Practice records": each attempt with its strokes, step, outcome, result and the pass mark in use. Tap the second child at the top: nothing yet.
+4. **Watch, then full outline.** The demonstration plays and the helper says "Watch me!". Practice starts by itself with "Your turn!" and a chime. Draw three sides and stop. The demo panel shows a result near 79 and "incomplete". After the pause the missing side glows, the helper says "Great try! Finish where it's glowing!", and the drawing stays.
+5. **Finish it.** Draw the missing side. It passes at the lift, with no button: a chime, a paw print steps forward, and the outline is replaced by dots.
+6. **Endpoints only, then on my own.** At the dots, point out the green start dot, the moving arrow and the picture of the shape in the corner. Pass the dots. With no guide, draw a small square in a corner of the canvas: it still passes, the tune plays and the sticker appears. In a second lesson, show the two things that do not pass with no guide: a tiny square ("Try drawing it bigger") and a rectangle ("Try making it as tall as it is wide").
+7. **Grown-ups and the records.** Tap "Grown-ups", answer the check, open "Practice history": each attempt with its strokes, step, outcome, result and the pass mark in use. Tap the second child at the top: nothing yet.
 8. **Settings change the lesson.** Start the square for the second child with Neatness Low and draw a square with a stray line across it: it passes. Do the same for the first child at High: it does not.
 9. **Stopping rules,** if there is time. Start at "Endpoints only" with "Get a grown-up after" at 3 and scribble three times: a Grown-ups button appears, the grown-up opens the card and chooses, and meanwhile the child's canvas keeps working.
 
@@ -4953,12 +5483,14 @@ About eight minutes, with no slides.
 
 ### Where the app goes beyond or against the SRS
 
-Three things in the app are not what the SRS says. Each is a change the team asked for after trying the app on a tablet, or one that makes the SRS's own rule sturdier. The SRS should be changed to match, or the app changed back.
+Five things in the app are not what the SRS says. Each is a change the team asked for after trying the app on a tablet, or one that makes the SRS's own rule sturdier. The SRS should be changed to match, or the app changed back.
 
 | In the app | What the SRS says | What to change |
 | --- | --- | --- |
 | With no guide, a drawing smaller than 40% of the figure does not pass, and the child is told "Try drawing it bigger" (`MIN_DRAW_SCALE` in `lib/evaluation.ts`). | Section 9.2: at the independent stage "position and size on the screen therefore do not affect the result". | **Change the requirement.** Reword it so that position does not affect the result, and size does not above a minimum, and add `MIN_DRAW_SCALE` to the symbolic constants. Without a minimum, a speck passes as a square. |
 | With no guide, the drawing is laid over the figure in three ways and the best is kept. | Section 9.2: the attempt is "moved and uniformly scaled so that its bounding box is centred on the figure's and its longer side matches". | Loosen the wording to "moved and uniformly scaled onto the figure", leaving the method to the design. The SRS's own fit is one of the three. |
+| After the pause, a drawing with a part missing is not ended. The child is shown what to finish, up to twice. | FR-LRN-024: an attempt that has not passed ends "after `ATTEMPT_IDLE` with no input, and by no other event except an interruption". | **Change the requirement** to allow a hint before the attempt ends, and say how many. Add a feedback kind for it to `FeedbackKindT` in the MIS. |
+| A practice sticker at the end of a lesson. | No reward is specified. | Say whether a reward is wanted. |
 | Two more predefined difficulties, with no guide only: "too small" and "stretched". | BR-007 lets the team define difficulties; the MIS type `DifficultyT` lists three kinds. | Add the two kinds to `DifficultyT` in the MIS. |
 
 ### Where the prototype and the SRS differ
@@ -4969,17 +5501,18 @@ The screens follow the lo-fi prototype's layout. Where the prototype and the SRS
 | --- | --- | --- |
 | Children have a first name (Mia, Omar). | A profile is an identifier and an avatar, no name (BR-001). | Pictures only. |
 | "Grown-ups" and "Leave" open by holding for 2 seconds. | A check that a child cannot complete by tapping icons (SAF-RAY-001). | A sum. |
-| After a gap, the child's line stays and "finishing where it glows" passes (S8). | An attempt that has not passed ends after `ATTEMPT_IDLE`, and a new attempt starts (FR-LRN-024, FR-LRN-015). | The attempt ends, the gap glows for five seconds, and the child draws again. |
+| After a gap, the child's line stays and "finishing where it glows" passes (S8). | An attempt that has not passed ends after `ATTEMPT_IDLE`, and a new attempt starts (FR-LRN-024, FR-LRN-015). | As the prototype, since the peer session: the line stays and the gap glows, up to twice, before the attempt ends. See the first table. |
 | The helper says "Let's get a grown-up!" and a card covers the lesson (S9 + O11). | The suggestion is shown without blocking practice (FR-LRN-034, UC-005). | A quiet Grown-ups button; the card opens only for the adult. The line is not used. |
 | "Start again" wipes the try (S7 to S10). | The child never restarts (FACT-007), and an attempt ends by a pass, a pause or an interruption only (FR-LRN-024). | No such button. |
-| A practice sticker ends the lesson (S11). | No reward is specified. | No sticker. |
-| A weekly "practice story" with a sticker for each day practised (S5). | The progress summary is specified separately, for the final phase; the POC plan has none. | Practice records only. |
-| Three settings, plus the helper's voice. | Nine adult-set values (BR-008). | The prototype's three up front, the other values under "More settings". No voice yet. |
-| A small picture of the shape stays up at "On my own" (S10). | No outline or endpoint guides at the independent stage (FR-LRN-006). | Kept, to be confirmed with the specialists. |
+| A practice sticker ends the lesson (S11). | No reward is specified. | Kept, since the peer session. See the first table. |
+| A weekly "practice story" with a sticker for each day practised (S5). | The progress summary is specified separately, for the final phase; the POC plan has none. | Practice history only: every lesson and attempt. |
+| Three settings, plus the helper's voice. | Nine adult-set values (BR-008), and an audio setting (NFR-UX-010). | The prototype's three and the voice switch up front, the other values under "More settings". |
+| A small picture of the shape stays up at "On my own" (S10). | No outline at the endpoint stage (FR-LRN-027), no outline or endpoint guides at the independent stage (FR-LRN-006). | Kept, and shown at the dots too, to be confirmed with the specialists. |
+| The demonstration moves on by itself (S6). | The child "continues after viewing the example" (Section 9.2); UC-003 has Squigglr move on. | By itself, after one play. |
 
 ### What the SRS requires that the POC does not have yet
 
-Sound for the helper (NFR-UX-010), the notice for an unsupported device (SAF-RAY-002), keeping attempts on the device while the connection is down (SAF-RAY-003), accounts and the progress summary are outside the Development Plan's POC. The creative space was in it and has been left out by the team: see the [scope decision](#scope-decision-the-creative-space-is-left-out-of-the-poc).
+A recorded voice for the helper (the POC uses the browser's own; NFR-UX-010), the notice for an unsupported device (SAF-RAY-002), keeping attempts on the device while the connection is down (SAF-RAY-003), accounts and the progress summary are outside the Development Plan's POC. The creative space was in it and has been left out by the team: see the [scope decision](#scope-decision-the-creative-space-is-left-out-of-the-poc).
 
 ### Gaps found in the SRS and MIS
 

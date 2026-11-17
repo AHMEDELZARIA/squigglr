@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { BookIcon, LockIcon, PlayIcon } from "@/components/icons";
+import { HistoryIcon, LockIcon, PlayIcon } from "@/components/icons";
 import { Screen } from "@/components/Screen";
 
 // S4 "Grown-ups". Kept apart from the child's screens, with two large
-// buttons: start another lesson, or look at the practice records. It is
+// buttons: start another lesson, or look at the practice history. It is
 // reached through the adult check, from "Who's practising?" or the end of a
 // lesson.
 
 const CHOICES = [
   { href: "/", title: "Start a lesson", text: "Choose a child and a lesson", Icon: PlayIcon, tint: "bg-lavender" },
-  { href: "/records", title: "Practice records", text: "See every lesson and attempt", Icon: BookIcon, tint: "bg-mint" },
+  { href: "/records", title: "Practice history", text: "See past lessons and every attempt", Icon: HistoryIcon, tint: "bg-mint" },
 ];
 
 export default function GrownUps() {

@@ -12,7 +12,7 @@ import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
-import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
+import { apply, applyAll, distance, inverse, length, toPath } from "@/lib/geometry";
 import { MAX_HINTS } from "@/lib/attempt";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
@@ -248,7 +248,8 @@ export default function LessonPage() {
   // With a guide: a green dot where the drawing starts, as in the demonstration.
   const drawing = running && !showing && c.stage !== "D";
   const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
-  // With only the dots to go by, an arrow shows which way to go, until the child starts drawing.
+  // With only the dots to go by, an arrow travels from the start dot to the next dot, to show which
+  // way to go. If nothing is drawn for a while, it goes on round the whole shape, dot to dot.
   const outline = lesson.figure.parts.flat();
   const arrowOn = drawing && c.stage === "E" && strokes.length === 0;
 
@@ -326,7 +327,11 @@ export default function LessonPage() {
             <DrawingCanvas
               guide={guide}
               startDot={startDot}
-              arrow={arrowOn ? { path: outline, full: arrowFull } : undefined}
+              arrow={
+                arrowOn
+                  ? { path: outline, reach: arrowFull ? length(outline) : length(lesson.figure.parts[0]) }
+                  : undefined
+              }
               strokes={strokes}
               marks={marks}
               glow={glow}

@@ -22,55 +22,97 @@ This document summarizes the contributions of each team member up to the POC
 Demo.  The time period of interest is the time between the beginning of the term
 and the POC demo.
 
-\wss{Please do not delete sections or modify the table formats.  Standardization
-helps the instructors and TAs to review these documents. You may add sections to
-the report.}
+\medskip
 
-\wss{Remove the instructor guidelines/comments in the final version.}
+\noindent \textbf{Project URL:}
+\url{https://github.com/AHMEDELZARIA/squigglr}
 
-\wss{Fill in the requested information, like project url, TA name, supervisor name, etc.}
+\noindent \textbf{Data collected:} November 19, 2026, from the issues, pull
+requests and \texttt{main} branch of the project repository. The counts
+exclude the issue and the pull request that deliver this report.
 
 \section{Demo Plans}
 
-\wss{What is your feasibility risk?}
+\subsection*{Feasibility risk}
 
-\wss{What will you be demonstrating}
+The Proof of Concept Demonstration Plan in the
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/pdfs/DevelopmentPlan/DevelopmentPlan.pdf}
+{Development Plan} names five implementation risks. The demo addresses three
+of them:
+
+\begin{itemize}
+    \item \textbf{Drawing evaluation.} The fixed criteria must tell a
+    complete square from an incomplete or inaccurate one at every drawing
+    stage, and the attempt records must keep what happened. If they cannot,
+    no lesson can advance a child correctly.
+    \item \textbf{Touchscreen and stylus interaction.} Input coordinates,
+    stroke continuity and responsiveness may differ between devices and
+    browsers.
+    \item \textbf{Fit with practice.} The domain specialists may find that
+    the lesson flow does not suit the children they work with.
+\end{itemize}
+
+The other two risks, editable drawing refinement and model-based creative
+enhancement, belong to the creative space. On November 16 the team deferred
+both until after the POC, because the guided lesson does not depend on them
+and neither experiment could be run properly in the time left. The decision
+is recorded in \texttt{src/KNOWN-LIMITS.md} on the \texttt{POC} branch (pull
+request \#366). The supervisor agreed on November 18 that this scope is
+enough for a proof of concept (issue \#370). The Development Plan calls
+editable refinement the main technical uncertainty, so that risk stays open
+after the demo. The Development Plan still lists four experiments. Updating
+it is an open task in the same file.
+
+\subsection*{What the team will demonstrate}
+
+The demo shows the guided lesson running in a web browser on a tablet. It
+covers experiments 1 (drawing input) and 4 (square lesson end to end) of the
+Development Plan:
+
+\begin{itemize}
+    \item An adult adds a child, sets that child's nine practice values and
+    starts the Square or Circle lesson.
+    \item The child watches a demonstration, then draws through three stages
+    with less guidance at each stage: trace the outline, endpoints only and
+    no guide.
+    \item Passing, failing and incomplete attempts show that each attempt is
+    scored against the adult's values and that a pass moves the child to the
+    next stage.
+    \item The practice history shows the saved attempts for each child, with
+    the strokes redrawn.
+    \item Drawing works with a finger and with a stylus.
+\end{itemize}
+
+The POC has no accounts, no progress summary and no creative space. It
+stores its data in the browser.
 
 \section{Team Meeting Attendance}
 
-\wss{For each team member how many team meetings have they attended over the
-time period of interest.  This number should be determined from the meeting
-issues in the team's repo.  The first entry in the table should be the total
-number of team meetings held by the team.}
-
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
 \toprule
 \textbf{Student} & \textbf{Meetings}\\
 \midrule
-Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Total & 11\\
+Rayan Nasrallah & 11\\
+Ahmed Elzaria & 11\\
+Muhammad Huzaifah & 10\\
+Shamil Canbolat & 7\\
+Moustafa Moustafa & 11\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.}
+The counts come from the 11 team meeting issues: \#6, \#7, \#8, \#9, \#11,
+\#32, \#33, \#68, \#77, \#202 and \#323. The attendance for the meeting of
+November 11 (\#323) was entered on November 19, when this report was
+written. Every absence was announced in advance or had a reason that the
+charter accepts.
 
 \section{Supervisor/Stakeholder Meeting Attendance}
 
-\wss{For each team member how many supervisor/stakeholder team meetings have
-they attended over the time period of interest.  This number should be determined
-from the supervisor meeting issues in the team's repo.  The first entry in the
-table should be the total number of supervisor and team meetings held by the
-team.  If there is no supervisor, there will usually be meetings with
-stakeholders (potential users) that can serve a similar purpose.}
-
-\noindent \textbf{Supervisor's Name: } [fill in this information]
+\noindent \textbf{Supervisor's Name: } Dr.~Christopher Anand
 
 \begin{table}[H]
 \centering
@@ -78,30 +120,24 @@ stakeholders (potential users) that can serve a similar purpose.}
 \toprule
 \textbf{Student} & \textbf{Meetings}\\
 \midrule
-Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Total & 5\\
+Rayan Nasrallah & 5\\
+Ahmed Elzaria & 4\\
+Muhammad Huzaifah & 4\\
+Shamil Canbolat & 4\\
+Moustafa Moustafa & 4\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.}
+The counts come from the 5 supervisor meeting issues: \#21, \#107, \#201,
+\#321 and \#370. All five members attended the first four meetings. For the
+meeting of November 18 (\#370), the team agreed in advance that Rayan would
+attend alone and present the POC. The team also interviewed three domain
+specialists on October 1 (\#73). That issue has no attendance list, so the
+table does not count it.
 
 \section{Lecture Attendance}
-
-\wss{For each team member how many lectures have they attended over the time
-period of interest.  This number should be determined from the lecture issues in
-the team's repo. You can find the number of lectures in the time period of
-interest by looking at the
-\href{https://calendar.google.com/calendar/u/0/embed?src=rnboqiaki1k2la7rpu3bn0um58@group.calendar.google.com&ctz=America/Toronto}
-{Google calendar} for the capstone course. The first entry in the
-table should be the total number of lectures held for the class during the period of interest.}
-
-\wss{NOTE: There will be approximately 13 lectures between the start of class
-and the POC demos}
 
 \begin{table}[H]
 \centering
@@ -109,25 +145,25 @@ and the POC demos}
 \toprule
 \textbf{Student} & \textbf{Lectures}\\
 \midrule
-Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Total & 12\\
+Rayan Nasrallah & 5\\
+Ahmed Elzaria & 7\\
+Muhammad Huzaifah & 3\\
+Shamil Canbolat & 4\\
+Moustafa Moustafa & 5\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the lecture attendance can be provided here.}
+The total is the instructor's figure of 12 lectures between the start of
+classes and the POC. The counts come from the 8 lecture issues: \#1, \#2,
+\#3, \#4, \#5, \#12, \#22 and \#76. Issue \#5 (September 17) records no
+attendee. The team opened no lecture issue after October 1, so the table
+counts every member as absent from the 4 lectures after that date.
 
 \section{TA Document Discussion Attendance}
 
-\wss{For each team member how many of the informal document discussion meetings
-with the TA were attended over the time period of interest. The first row is the
-total number of discussion meetings scheduled by the TA with the team.}
-
-\noindent \textbf{TA's Name: } [fill in this information]
+\noindent \textbf{TA's Name: } Christopher Schankula
 
 \begin{table}[H]
 \centering
@@ -135,63 +171,66 @@ total number of discussion meetings scheduled by the TA with the team.}
 \toprule
 \textbf{Student} & \textbf{Meetings}\\
 \midrule
-Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Total & 4\\
+Rayan Nasrallah & 4\\
+Ahmed Elzaria & 4\\
+Muhammad Huzaifah & 4\\
+Shamil Canbolat & 4\\
+Moustafa Moustafa & 3\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the attendance can be provided here.}
+The counts come from the 4 TA meeting issues: \#10, \#78, \#203 and \#322.
+The one absence was announced in advance or had a reason that the charter
+accepts.
 
 \section{Commits, Lines Added and Lines Deleted, Pull Requests}
 
-\wss{For each team member how many commits to the main branch have been made
-over the time period of interest.  The total is the total number of commits for
-the entire team since the beginning of the term.  The percentage is the
-percentage of the total commits made by each team member.}
-
-\wss{There are also columns for lines added and lines deleted to give a sense of
-the magnitude of each team member's contributions.  Note that these numbers can
-be somewhat misleading, as a team member who does refactoring may have high
-numbers in both columns, while a team member who implements a large new feature
-may have a high number of lines added, but few lines deleted.  As for all commit
-information, these numbers will be interpreted with care.}
-
-\wss{The pull requests column counts the number of pull requests created by each
-team member.  This is a measure of how many contributions were made in branches,
-which may not be reflected in the commit counts for the main branch.}
-
 \begin{table}[H]
 \centering
+\makebox[\textwidth][c]{%
 \begin{tabular}{lllllll}
 \toprule
 \textbf{Student} & \textbf{Commits} & \textbf{Percent} & \textbf{Lines Added} &
 \textbf{Lines Deleted} & \textbf{Pull Requests}\\
 \midrule
-Total & Num & 100\% & total added & total deleted & total PRs\\
-Name 1 & Num & \% & num & num & num\\
-Name 2 & Num & \% & num & num & num\\
-Name 3 & Num & \% & num & num & num\\
-Name 4 & Num & \% & num & num & num\\
-Name 5 & Num & \% & num & num & num\\
+Total & 334 & 100\% & 54602 & 17126 & 146\\
+Rayan Nasrallah & 90 & 26.9\% & 6114 & 2600 & 36\\
+Ahmed Elzaria & 68 & 20.4\% & 21148 & 2343 & 33\\
+Muhammad Huzaifah & 68 & 20.4\% & 10976 & 1503 & 34\\
+Shamil Canbolat & 38 & 11.4\% & 10729 & 9043 & 16\\
+Moustafa Moustafa & 70 & 21.0\% & 5635 & 1637 & 27\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.  For
-instance, if a team member has more commits to unmerged branches, these numbers
-can be provided here.  If multiple people contribute to a commit, git allows for
-multi-author commits.}
+How the team counted:
+
+\begin{itemize}
+    \item Commits are the commits on \texttt{main} that are not merge
+    commits. The table leaves out 202 merge commits and the 100 commits that
+    the documentation workflow made to publish PDFs.
+    \item Lines come from \texttt{git log --numstat} over the same commits.
+    Binary files do not count.
+    \item Pull requests are all pull requests that each member opened:
+    125 merged, 10 open and 11 closed without a merge.
+\end{itemize}
+
+Two commits distort the line counts. Ahmed's first commit added the course
+template (11354 lines added). One of Shamil's commits wrapped the SRS text at
+80 columns (7088 lines added, 7953 deleted).
+
+The POC application is not on \texttt{main} yet. It is in pull request
+\#366 from the \texttt{POC} branch, which Rayan opened: 16 commits and
+13332 lines added. Nine more pull requests with documentation fixes are
+open: six from Shamil (6 commits) and three from Muhammad (6 commits).
+
+No commit on \texttt{main} names two team members as authors. Eight commits
+name an AI tool as co-author: five name Copilot Autofix and three name
+Claude.
 
 \section{Issue Tracker}
-
-\wss{For each team member how many issues have they authored (including open and
-closed issues (O+C)) and how many have they been assigned (only counting closed
-issues (C only)) over the time period of interest.}
 
 \begin{table}[H]
 \centering
@@ -199,53 +238,187 @@ issues (C only)) over the time period of interest.}
 \toprule
 \textbf{Student} & \textbf{Authored (O+C)} & \textbf{Assigned (C only)}\\
 \midrule
-Name 1 & Num & Num \\
-Name 2 & Num & Num \\
-Name 3 & Num & Num \\
-Name 4 & Num & Num \\
-Name 5 & Num & Num \\
+Rayan Nasrallah & 30 & 38 \\
+Ahmed Elzaria & 30 & 45 \\
+Muhammad Huzaifah & 57 & 36 \\
+Shamil Canbolat & 0 & 13 \\
+Moustafa Moustafa & 75 & 62 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.}
+The repository has 228 issues. Team members authored 192 of them. Members of
+two other teams authored the other 36 as peer reviews. The authored counts
+include the meeting and lecture issues. An issue with several assignees
+counts once for each assignee.
 
 \section{CICD via GitHub Actions}
 
-\wss{Say how CICD technology is used and will be used in your project.}
+The team uses one GitHub Actions workflow today,
+\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/.github/workflows/latex-pages.yml}
+{\texttt{latex-pages.yml}}, in the folder \texttt{.github/workflows}.
 
-\wss{Provide links to your CICD yaml files}
+\begin{itemize}
+    \item On each pull request into \texttt{main}, the workflow compiles the
+    documents that the change affects. A LaTeX error fails the check before
+    review.
+    \item On each push to \texttt{main}, the workflow compiles the same
+    documents, commits the PDFs to \texttt{pdfs/} and publishes them on
+    \href{https://ahmedelzaria.github.io/squigglr/}{GitHub Pages}.
+    \item Three scripts in
+    \href{https://github.com/AHMEDELZARIA/squigglr/tree/main/.github/scripts}
+    {\texttt{.github/scripts}} choose the documents to build and build the
+    index page.
+\end{itemize}
+
+The workflow has run 444 times: 318 runs on pull requests, 125 on pushes and
+1 manual run. 406 runs succeeded and 38 failed.
+
+The POC application has 65 unit tests (Vitest), a type check and a
+production build. The team runs them by hand for now. After the application
+merges, the team will add the checks that the Development Plan lists:
+formatting (Prettier), lint (ESLint), type checking (TypeScript), unit and
+component tests with a coverage report (Vitest), a production build
+(Next.js) and browser smoke tests (Playwright). GitHub Actions will run
+these checks on pull requests. The team also plans preview deployments on
+Vercel and a manual promotion to production.
 
 \section{Custom Documents (CDs)}
 
-\wss{What is the plan (as documented in TeamComposition.csv) for the team's
-CDs?  Should the CDs be modified now that the team knows more about the
-project?}
+\texttt{TeamComposition.csv} first listed a Literature Review Report for the
+fall term and a Usability Report for the winter term.
+
+The team replaced the fall document with a Specialist Interview Report. The
+team interviewed three domain specialists on October 1, and the report
+analyses which findings shaped which requirements and hazards. The
+instructor approved the change through merge request 554 on the course
+GitLab (issue \#164). The report was due with the Design Document Rev~$-1$
+on November 16 and is in the repository
+(\href{https://github.com/AHMEDELZARIA/squigglr/blob/main/pdfs/CDs/Interviews/InterviewReport.pdf}
+{\texttt{InterviewReport.pdf}}).
+
+The team keeps the Usability Report for the winter term and sees no reason
+to change it. The POC gives the team a working lesson for the usability
+sessions that the report plans.
 
 \section{Team Charter Trigger Items}
 
-\wss{Provide a summary of the quantified triggers identified in the team's
-charter.}
+\subsection*{Quantified triggers}
 
-\wss{Provide a list of any violations of the triggers.  If the team wishes, the
-violations can be summarized on aggregate, instead of naming specific team
-members.}
+The charter is an appendix of the Development Plan. The team added it to the
+repository on September 26. Any one of these four events triggers a workload
+and accountability discussion:
 
-\wss{Provide a plan to address the violations.  This could include revising the
-triggers, if they are found to be too weak, strong or ambiguous.}
+\begin{enumerate}
+    \item Two unexcused meeting absences within four weeks.
+    \item Three arrivals more than ten minutes late within four weeks,
+    without prior notice or an acceptable reason.
+    \item Two missed internal deadlines within four weeks, without an agreed
+    extension or an acceptable reason.
+    \item No substantive progress on assigned work across two consecutive
+    weekly reviews, without a communicated blocker or an agreed adjustment.
+\end{enumerate}
+
+The charter also sets these measurable expectations:
+
+\begin{itemize}
+    \item All five members attend every team, supervisor and teaching team
+    meeting.
+    \item Another member reviews each substantial contribution.
+    \item Review-ready work is complete 48 hours before each course deadline.
+    \item Each member contributes about ten hours a week.
+    \item Fairness is judged on completed work, review participation,
+    attendance and outstanding tasks. Commit counts alone do not decide it.
+\end{itemize}
+
+\subsection*{Violations}
+
+The team's records show no violation of a trigger.
+
+\begin{itemize}
+    \item \textbf{Trigger 1.} Since September 26 the issues record 13
+    meetings and 8 absences across the five members. Four of those absences
+    are the supervisor meeting of November 18, which the team agreed that
+    one member would attend. Every other absence was announced in advance
+    or had a reason that the charter accepts.
+    \item \textbf{Triggers 2 and 3.} The meeting issues do not record late
+    arrivals, and the repository does not record internal deadlines apart
+    from course deadlines. The team cannot count these two triggers from its
+    records.
+    \item \textbf{Trigger 4.} No issue records a workload and accountability
+    discussion, which is the step that follows any trigger.
+\end{itemize}
+
+The metrics in this report also show three gaps against the charter and the
+Development Plan. None of them is a trigger.
+
+\begin{itemize}
+    \item \textbf{Review participation is uneven.} Teammates reviewed 109 of
+    the 125 merged pull requests (87\%), but one member did 51 of the
+    reviews and another did 1. The other 16 pull requests merged without a
+    teammate's review. The charter asks for a review of each substantial
+    contribution.
+    \item \textbf{The repository records fewer meetings than the Development
+    Plan schedules.} The plan schedules three team meetings and one
+    supervisor meeting each week. The repository records 11 team meetings
+    and 5 supervisor meetings since the start of term.
+    \item \textbf{The lecture record stops on October 1.} The charter sets
+    no trigger for lectures, but this report needs the record.
+\end{itemize}
+
+\subsection*{Plan}
+
+No violation needs a recovery plan. The team will close the gaps in its
+records and in its reviews:
+
+\begin{itemize}
+    \item The notetaker will mark each absence in a meeting issue as excused
+    or unexcused, and will note each arrival more than ten minutes late.
+    The team can then count triggers 1 and 2 from the issues.
+    \item Each task issue will state its internal deadline, as the charter
+    already requires. The milestone QA coordinator will list missed internal
+    deadlines in the milestone's tracking issue, so that the team can count
+    trigger 3.
+    \item The team will open a lecture issue for each remaining lecture and
+    tick attendance on the same day.
+    \item Authors will request reviews from the members with the fewest
+    reviews first, and no pull request will merge without a teammate's
+    review.
+    \item At its next meeting, the team will decide whether to record every
+    scheduled meeting or to change the meeting schedule in the Development
+    Plan.
+\end{itemize}
+
+The team keeps the four triggers as they are. The triggers were not
+ambiguous. The records were too thin to check them.
 
 \section{Additional Productivity Metrics}
 
-\wss{If your team has additional metrics of productivity, please feel free to
-add them to this report.  If not, please explicitly state that there are no additional
-metrics.}
+The team tracks code review as an additional metric, because the charter
+names review participation as a measure of fair contribution.
 
-\wss{Additional metrics can include things like code reviews done, pull requests
-created, count of joining meetings late, count of number of times contributions
-had to be corrected, number of internal deadlines missed, test cases written, etc.}
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Student} & \textbf{PRs Merged} & \textbf{Teammates' PRs Reviewed}\\
+\midrule
+Total & 125 & 118\\
+Rayan Nasrallah & 31 & 18\\
+Ahmed Elzaria & 31 & 28\\
+Muhammad Huzaifah & 30 & 20\\
+Shamil Canbolat & 8 & 1\\
+Moustafa Moustafa & 25 & 51\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\wss{We are looking for data on these metrics, not just a list of additional
-metrics the team is planning on tracking.  However, if all you have is a plan,
-please share it here.}
+PR means pull request. The review column counts each pull request once for
+each teammate who submitted a review on it. Reviews from the Copilot review
+tool do not count.
+
+The team also tracks feedback issues, which carry the \texttt{review} label.
+They hold the findings from peer reviews, the TA and the supervisor. Of 72
+feedback issues, 40 are closed and 32 are open.
 
 \end{document}

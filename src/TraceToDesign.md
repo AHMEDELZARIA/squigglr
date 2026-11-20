@@ -1,4 +1,28 @@
 # Traceability between code files and design modules
 
-Explicitly identify what code provides the interfaces and services documented in the design
-...
+Module numbers are those of the Module Guide and the MIS. Modules not listed are not part of the proof of concept.
+
+| Module | Code |
+| --- | --- |
+| M01 Input Device | `components/DrawingCanvas.tsx` (pointer events to strokes) |
+| M02 Display | `components/DrawingCanvas.tsx` (painting), `components/StrokePreview.tsx`, `components/LessonIcon.tsx`, `components/Avatar.tsx`, `components/icons.tsx` |
+| M03 Audio Output | `lib/audio.ts` |
+| M04 Guided Lesson Control | `lib/lessonControl.ts` |
+| M05 Lesson Catalogue | `lib/catalogue.ts` |
+| M06 Attempt | `lib/attempt.ts` |
+| M07 Attempt Evaluation | `lib/evaluation.ts` |
+| M08 Feedback | `lib/feedback.ts` |
+| M09 Improvement Measure | `lib/improvement.ts` |
+| M10 Attempt Record | `lib/records.ts` |
+| M13 Child Screen | `app/lesson/[id]/page.tsx` |
+| M14 Adult Access | `components/AdultCheck.tsx` (the adult check only; there are no accounts yet) |
+| M15 Learner Profile | `lib/profiles.ts` |
+| M16 Learner Settings | `lib/settings.ts`, `lib/examples.ts` (example drawings for the pass mark) |
+| M18 Adult View | `app/page.tsx`, `app/lessons/page.tsx`, `app/lessons/[id]/page.tsx`, `app/grown-ups/page.tsx`, `app/records/page.tsx`, `components/Screen.tsx`, `components/NeatnessInfo.tsx`, `components/useActiveLearner.ts`, `components/Squiggle.tsx` |
+| M19 Stroke | the `Stroke` type in `lib/types.ts` |
+| M20 Geometry | `lib/geometry.ts` |
+| M23 Storage | `lib/storage.ts` |
+
+Not in the proof of concept: M11 Creative Drawing, M12 Refinement Control, M17 Progress Summary, M21 Edit History, M22 Refinement Engine, M24 Connection Recovery, M25 Audit Log.
+
+The types shared between modules are in `lib/types.ts`. The unit tests are `lib/evaluation.test.ts`, `lib/rules.test.ts` and `lib/examples.test.ts`, with their helpers in `lib/testHelpers.ts`.

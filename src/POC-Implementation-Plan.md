@@ -1,10 +1,10 @@
-# Squigglr POC: Implementation Plan and Code
+# Squigglr POC: how it works, with all of its code
 
-This is the plan for the Proof of Concept due **November 23, 2026**, with all of its code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 65 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
+This document explains the Proof of Concept due **November 23, 2026**: what it does, how the code does it, and why it was built this way. It holds all of the code. It sits in `src/` beside the app, and every listing below is a copy of the file of that name in this folder. The app's 65 unit tests pass, it compiles as a production Next.js build, and the square lesson was driven from start to finish in a real browser (the screenshots below come from that run).
 
 **What the POC is:** a website where an adult adds a child, sets that child's nine practice values, and starts the Square or Circle lesson. The child watches a demonstration, then draws through three stages with less help each time. Every attempt is scored against the adult's values and saved under that child.
 
-| Lesson ready: the child's settings | Lesson, after an attempt that did not pass |
+| Lesson ready: the child's settings | Lesson: a part is missing, so it glows and the drawing stays |
 | --- | --- |
 | ![Lesson ready screen](plan-img/ready.png) | ![Lesson screen](plan-img/lesson.png) |
 
@@ -12,30 +12,50 @@ This is the plan for the Proof of Concept due **November 23, 2026**, with all of
 | --- | --- |
 | ![Who's practising screen](plan-img/who.png) | ![Practice history screen](plan-img/records.png) |
 
-The screens follow the layout of the team's lo-fi prototype (S1 to S11 in Figma), in the colours of the A-Sense presentation, with one rounded font and soft-edged cards. What the app does follows the SRS: wherever the prototype and the SRS disagree, the SRS wins. [Section 3](#3-design-decisions-and-the-requirements-behind-them) gives the requirement behind each decision, and [section 13](#13-how-the-app-compares-with-the-srs) lists every place the app and the SRS differ.
+The screens follow the layout of the team's lo-fi prototype (S1 to S11 in Figma), in the colours of the A-Sense presentation, with one rounded font and soft-edged cards. What the app does follows the SRS, except in five places where the team chose otherwise. [Reference B](#decisions) gives the requirement behind each decision, and [Reference C](#srs) lists every place the app and the SRS differ.
 
-## Contents
+## How to read this
 
-1. [Solution diagram](#1-solution-diagram)
-2. [What is in the POC and what is not](#2-what-is-in-the-poc-and-what-is-not)
-3. [Design decisions and the requirements behind them](#3-design-decisions-and-the-requirements-behind-them)
-4. [How a drawing is scored](#4-how-a-drawing-is-scored)
-5. [How a lesson moves](#5-how-a-lesson-moves)
-6. [The nine settings](#6-the-nine-settings)
-7. [Project layout and file index](#7-project-layout-and-file-index)
-8. [The code, part by part](#8-the-code-part-by-part)
-9. [Tests](#9-tests)
-10. [Build order](#10-build-order)
-11. [Deploying and the domain](#11-deploying-and-the-domain)
-12. [Demo script](#12-demo-script)
-13. [How the app compares with the SRS](#13-how-the-app-compares-with-the-srs)
-14. [After the POC](#14-after-the-poc)
+This document is written to be read from top to bottom. It follows one lesson from the first tap to the saved record, and brings in each file of code at the point where it does its job. Each part says what problem it solves, what to look for in the code, and then shows the code.
 
-## 1. Solution diagram
+The **tour** (parts 1 to 12) explains the code. The **reference** (A to F) at the end holds what you look things up in: what is in scope, why each decision was made and which requirement is behind it, how the app compares with the SRS, and how to build, deploy and demo it.
 
-Everything runs in the browser. There is no server code and no database in the POC: Vercel only serves the pages, and the data lives in the browser's `localStorage`.
+**The tour**
 
-The boxes are the modules of the Module Guide, with their numbers. An arrow means "uses".
+1. [The app in one picture](#p-picture)
+2. [The words and the data shapes](#p-words)
+3. [A lesson is data](#p-lesson-data)
+4. [Capturing a stroke](#p-stroke)
+5. [Scoring a drawing](#scoring)
+6. [One attempt](#p-attempt)
+7. [The whole lesson](#lesson-moves)
+8. [What the child sees and hears](#p-feedback)
+9. [What the adult sets](#settings)
+10. [What is kept](#p-kept)
+11. [The screens](#p-screens)
+12. [How we know it works](#p-tests)
+
+**Reference**
+
+- A. [What is in the POC and what is not](#scope)
+- B. [Design decisions and the requirements behind them](#decisions)
+- C. [How the app compares with the SRS](#srs)
+- D. [Where everything is: the file index](#file-index)
+- E. [Setting up, building, deploying and demoing](#run)
+- F. [After the POC](#after)
+
+<a id="p-picture"></a>
+## 1. The app in one picture
+
+Five ideas explain how the whole app is put together. Everything later is one of these in detail.
+
+1. **Everything runs in the browser.** There is no server code and no database. Vercel only serves the pages, and the data lives in the browser's `localStorage`.
+2. **The rules and the screens are kept apart.** Everything that decides something (is this drawing a square, does the lesson move on, is this setting allowed) is plain TypeScript in `lib/`, with no React in it. The screens in `app/` and `components/` only show what the rules decide. That is why the rules can be tested without a browser.
+3. **One file per design module.** Each file in `lib/` is one module of the Module Guide and the MIS, with the same name. If you know the design, you know where the code is.
+4. **The drawing area is always 1000 by 1000 units**, whatever the size of the screen. A stroke means the same thing on a phone, a tablet and a laptop.
+5. **A lesson is a small machine that is fed two things:** a stroke each time the child lifts the stylus, and a "tick" twice a second so it can notice a pause. It answers with a report of what to tell the child.
+
+The boxes below are the modules of the Module Guide, with their numbers. An arrow means "uses". The tour goes through them roughly from the bottom of the middle box upwards, then the data, then the screens.
 
 ```mermaid
 flowchart TD
@@ -92,326 +112,26 @@ flowchart TD
   Storage --> LS
 ```
 
-What happens when the child lifts the stylus:
+<a id="p-words"></a>
+## 2. The words and the data shapes
 
-```mermaid
-sequenceDiagram
-  participant Child
-  participant Canvas as DrawingCanvas
-  participant Page as Lesson page
-  participant Control as Lesson Control
-  participant Attempt
-  participant Eval as Evaluation
-  participant Records
+A few words are used everywhere in the code, with the meanings the SRS gives them.
 
-  Child->>Canvas: draws, then lifts the stylus
-  Canvas->>Page: onStroke(stroke)
-  Page->>Control: addStroke(stroke)
-  Control->>Attempt: addStroke(stroke)
-  Attempt->>Eval: evaluate(all strokes so far)
-  Eval-->>Attempt: class, result, passed, difficulties
-  alt the drawing passes
-    Control->>Records: save the attempt as passed
-    Control-->>Page: stagePassed (or lessonComplete)
-    Note over Control: moves to the next stage
-  else it does not pass yet
-    Control-->>Page: nothing
-    Note over Page: the attempt stays open
-    loop twice a second
-      Page->>Control: tick(time of last input)
-    end
-    Note over Control: after ATTEMPT_IDLE with no input, the attempt ends
-    Control->>Records: save the attempt as not passed
-    Control-->>Page: keepTrying and the difficulties seen
-  end
-```
-
-## 2. What is in the POC and what is not
-
-**In:**
-
-- Guest mode: no sign-in. Several children, each a picture with no name. One is "practising now", and an adult can switch.
-- Two lessons, Square and Circle, stored as data.
-- The full lesson flow: demonstration, full outline, endpoints only, on my own.
-- Scoring as SRS Section 9.2 defines it, checked at every stylus lift.
-- All nine adult-set values per child, with their ranges and rules, and every one of them changes how a lesson runs.
-- Retry, the go-back suggestion, the one extension, the attempt limit, the hard cap and the two lesson idle timers.
-- Feedback from a fixed list: the effort acknowledged first, then what was seen in the drawing, with a glow where a part is missing.
-- A chance to finish: when a part is missing, the drawing stays and the child can fill it in, up to twice in an attempt.
-- Sound: the helper's lines spoken by the browser's voice, a chime when a step is done and a short tune at the end, with an on/off switch per child.
-- A practice sticker at the end of a lesson.
-- A record of every attempt (actual strokes, stage, outcome, result, difficulties, the settings in use) and of every start of a lesson, saved per child, on a Practice history screen.
-- Example drawings for each pass mark, made from the scoring itself.
-- A demo panel on the lesson screen that shows the live result and the counters, for showing the teaching team what the rules are doing.
-
-**Out, on purpose:**
-
-- Accounts and sign-in, the progress summary and the creative space (the Development Plan leaves these out of the POC).
-- A database. Records stay in one browser. See [After the POC](#14-after-the-poc).
-- Sound, the supported-device notice, and keeping unsaved records while offline. The SRS requires all three; they are not needed to show the lesson working.
-- The creative space, and with it the two refinement experiments of the Development Plan. See the scope decision below.
-
-**Tried and taken out again, because the SRS does not have them:** an eraser and pencil beside the drawing, a "Start again" button, a weekly "practice story" with stickers for the days practised, and a "Let's get a grown-up!" line from the helper. The last three came from the lo-fi prototype. [Section 13](#13-how-the-app-compares-with-the-srs) gives the requirement each one ran against.
-
-**Put back after the peer session:** the practice sticker at the end of a lesson, and finishing a missing part on the same drawing. Both are in the prototype, both were taken out for the SRS, and both were restored on the evidence of the session. See [the next section](#after-the-paper-prototype-session-with-another-group).
-
-### Scope decision: the creative space is left out of the POC
-
-The Development Plan's POC has four experiments. The team has decided to demonstrate two of them and to leave the two that belong to the creative space for after the POC.
-
-| Experiment in the Development Plan | In the POC? |
-| --- | --- |
-| 1. Capture drawing input on the target tablet | Yes. Drawing works with a finger and with a stylus on an iPad. |
-| 4. Run the square lesson end to end | Yes. This app. |
-| 2. Reversible geometric refinement (tidy a drawing with geometry, keep it editable, undo it exactly) | No. Deferred. |
-| 3. Model-based creative enhancement (a pretrained model returns drawing instructions for the app to apply) | No. Deferred. |
-
-Why:
-
-- **The two halves do not depend on each other.** The Development Plan says so itself: only experiments 2 and 3 concern creative drawing, the input experiment and the square lesson "do not depend on refinement", and a refinement risk that stays unresolved "does not hold back the other core goals". Guided practice, adult control and records (goals G.1, G.2, G.3 and G.5) can be shown working without it.
-- **The lesson is the larger part of the product, and the part the specialists can react to.** The supervisor suggested a hosted, working lesson as the form of the POC. Getting the scoring, the stopping rules and all nine settings right took the time there was.
-- **A rushed refinement experiment would prove little.** Both experiments need an agreed set of supported drawings, pass criteria written down before the run, and for the model a measured share of valid responses. Done in the days left before November 23, they would be a demo of a library call, not evidence about the risk.
-- **The creative space needs things the lesson does not.** A drawing library with editable paths (Paper.js in the Development Plan), an edit history for undo, and for experiment 3 a paid model service with a key to keep safe. None of that is in the app yet, by design.
-
-What this leaves open, and what the team owes:
-
-- **The main technical risk is still unanswered.** The Development Plan calls editable refinement "the main technical uncertainty". Nothing in this POC reduces it. It should be the first thing investigated after the POC, before Revision 0 work on the creative space starts. The plan's own fallbacks still stand: if geometric refinement fails, narrow the supported drawings; if the model fails, use geometric refinement only.
-- **Goal G.4 (editable creative drawing and refinement) has no evidence behind it yet.**
-- **The documents no longer match.** The Development Plan's POC section lists four experiments, and the SRS schedules the basic creative drawing requirements, FR-CRT-001 to FR-CRT-007, for PH-1. Both need updating, and the Development Plan says a change like this is to be agreed with the supervisor.
-
-The SRS schedules the suggestion, extension and limit rules for Revision 0 (PH-2). They are in the POC anyway, because without them most of the nine settings would change nothing, and showing that the settings drive the lesson is the point of the demo.
-
-## 3. Design decisions and the requirements behind them
-
-Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different document is named. "UC" is a product use case, "FR" a functional requirement, "NFR" a nonfunctional one, "SAF" a safety requirement from the Hazard Analysis, "BR" a business rule, "CON" a constraint.
-
-### What the app is built from
-
-| Decision | Requirements and sources | Why |
+| Word | Meaning | In the code |
 | --- | --- | --- |
-| A website: Next.js, React, TypeScript (strict), Tailwind, Vitest, Vercel | CON-001, CON-002; Development Plan (technology table) | A website that needs no installation is a mandated constraint. The stack is the one the Development Plan chose. |
-| The rules are plain TypeScript in `lib/`, with no React in them | V&V Plan ("in Vitest against the module that applies the lesson rules"); NFR-PERF-004 | The rules can be unit tested without a browser, and the same input always gives the same result. The screens only show what the rules decide. |
-| One file per design module, same names | Module Guide; MIS; NFR-MAINT-002 | Anyone holding the MIS can find the code for a module. `src/TraceToDesign.md` lists the mapping. |
-| Lessons are data in `catalogue.ts` | NFR-MAINT-001; FR-LRN-001; LC-001 | A lesson is added, changed or removed without touching a rule. |
-| `localStorage` behind the Storage module | Development Plan (POC plan: "no adult accounts"); FR-REC-008, FR-REC-009 | No backend to build before the demo. Only `lib/storage.ts` touches it, so a database replaces one file later. A saved attempt is saved once and never changed. The Module Guide plans a hosted database; this is the POC's stand-in. |
-| Plain canvas and our own Geometry module, no drawing library | MIS M20 ("no access program depends on the drawing library"); FR-LRN-007 | A guided lesson needs to draw lines and measure them. Paper.js, named in the Development Plan, is for the creative space and comes in with it. |
-| The drawing area is always 1000 by 1000 units | SAF-AHM-002 | A point keeps its place when the canvas is resized or the tablet is turned, and a saved attempt can be redrawn at any size. The MIS says CSS pixels; units meet the same requirement with less work. |
-| Stylus, finger and mouse all draw; a stylus wins over a palm | CON-003; SAF-AHM-001 | CON-003 asks for a stylus, with finger input as a stretch goal. Accepting a mouse lets the demo run on a laptop. One contact is followed at a time, and the same position reported twice counts once. |
-| A tablet on the same Wi-Fi can open the laptop's dev server | CON-003 | `npm run dev` serves its scripts only to its own computer unless other hosts are allowed, so a tablet showed the page but no button worked. Private network addresses are allowed in `next.config.ts`. |
+| Stage | Where the child is in a lesson: **D** demonstration, **T** trace the full outline, **E** endpoints (dots) only, **I** independent, with no guide. | `Stage`, `DrawingStage` |
+| Figure | What a lesson teaches: its required parts (lines) and required endpoints (dots). | `Figure` |
+| Stroke | One contact of the stylus, from touching down to lifting: a list of points, each with its time. | `Stroke` |
+| Attempt | One try at one stage. It can be many strokes. | `Attempt` (part 6) |
+| Evaluation | What the scoring says about a drawing: complete or not, a result from 0 to 100, passed or not, and what was seen in it. | `Evaluation` |
+| Difficulty | One thing seen in a drawing, from a fixed list: a missed part, a missed endpoint, lines off the figure, too small, stretched. | `Difficulty` |
+| Settings | The nine values an adult sets for one child. | `Settings` |
+| Report | What the lesson says after an event: which feedback to give, in order, and which difficulties. | `Report` |
+| Record | What is saved: one lesson record for each start of a lesson, and one attempt record for each attempt that ended. | `LessonRecord`, `AttemptRecord` |
 
-### Who can do what
-
-| Decision | Requirements and sources | Why |
-| --- | --- | --- |
-| A child is a picture and a generated identifier, no name | BR-001 | The prototype shows first names ("Mia", "Omar"). The SRS collects no name. |
-| Guest mode, with the adult check kept | SAF-RAY-001, SAF-RAY-008; Development Plan (POC plan) | Sign-in adds nothing to what the POC must prove. The adult check stays, because choosing a lesson, switching child, changing saved values and answering a suggestion must not be possible for a child. |
-| The adult check is a sum | SAF-RAY-001 ("a check that a child cannot complete by tapping icons") | The prototype uses a two-second hold, which a child can do by resting a finger. |
-| The adult chooses the lesson and the starting step; a pass moves on by itself | CON-007; BR-002, BR-003; FR-LRN-016, FR-LRN-018, FR-LRN-023 | The child never chooses, skips or goes back. |
-| On the lesson screen the child has no control at all; Leave is for the adult | FR-LRN-024; FACT-007; NFR-UX-001, NFR-UX-002 | The team did not accept the child restarting, and child screens are to be calm with few controls. So there is no eraser, no "Start again", no submit button and no start button: the child only draws. |
-
-### How a lesson runs
-
-| Decision | Requirements and sources | Why |
-| --- | --- | --- |
-| The demonstration plays once, then practice starts by itself at the adult's chosen step | UC-003 step 1 ("shows the demonstration ... then moves to the starting stage"); FR-LRN-003, FR-LRN-025 | The app used to wait for the child to press a start button. In the peer session the tester began drawing during the demonstration; a clear "Your turn!" with a chime marks the change. Drawing during the demonstration does nothing. The MIS has `beginPractice` go from the demonstration to tracing only; UC-003 is followed. |
-| The drawing is checked at every stylus lift; a pass ends the attempt at once | FR-LRN-038, FR-LRN-039 | The child should not have to decide when a drawing is done. |
-| A stylus held down, even held still, counts as drawing | FR-LRN-024 (the pause is "with no input after the last stroke") | Otherwise a child resting the stylus mid-line would have the attempt ended under them. |
-| The lesson waits while the adult check or the go-back card is open | SAF-RAY-001; FR-LRN-024 | The adult's time at the check is not the child's pause, so no attempt ends and no idle clock runs meanwhile. The card has a "Decide later" that leaves the suggestion pending (FR-LRN-034). |
-| After the pause, a drawing with a part missing is kept and the child is shown what to finish | FR-LRN-024 (**goes against it**); SAF-MOU-001; FR-REC-003; NFR-UX-016 | The SRS ends the attempt at the first pause. The app first gives a hint: the missing part glows, the drawing stays, and the pause starts again. If the child finishes it, the attempt passes. An attempt gives at most two hints, and the second only if the child drew something after the first; then it ends as one not-passed attempt. This is the prototype's S8, which the peer tester followed without help. A drawing with nothing missing (too messy, too small, stretched) gets no hint, because drawing more cannot fix it. |
-| The pause that ends an attempt is set by the adult: 3 to 7 s, default 5 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first; tried on a tablet, ten seconds of waiting was far too long, so it was halved. |
-| The lesson idle ranges are 30 to 60 s and 90 to 180 s | SAF-RAY-009; BR-008 | Also "TBD" in the SRS. The three ranges do not overlap, so the rule that each is shorter than the next can never be broken. |
-| A go-back suggestion waits behind a quiet Grown-ups button | FR-LRN-019, FR-LRN-034; UC-005; SAF-RAY-001; NFR-UX-001 | The SRS has the suggestion shown "without blocking practice" and answered only through the adult check. The prototype covers the lesson with a card and has the helper say "Let's get a grown-up!"; neither is in the SRS, and nothing flashes while the child draws. |
-| A finished attempt stays on screen with its feedback: 5 s if it did not pass, 2.5 s if it passed or the child had already been given a hint | FR-LRN-014; NFR-UX-016; SAF-MOU-001 | The SRS does not say what happens on screen when an attempt ends. Without a pause the drawing would vanish and the feedback would refer to nothing. |
-| Feedback is a fixed list in one file, effort first, never "wrong" | BR-007; FR-LRN-014, FR-LRN-022; NFR-UX-004, NFR-UX-016 | Every message describes the drawing, not the child. |
-| A missing part is shown by a glow where it should be, not drawn in | SAF-MOU-001; NFR-UX-004 | The child is shown where, and still has to draw it. |
-
-### How a drawing is judged
-
-| Decision | Requirements and sources | Why |
-| --- | --- | --- |
-| Scoring is the SRS's: tolerance band, 90% of every part, result = the lower of two shares | SRS Section 9.2; FR-LRN-011, FR-LRN-013 | See [section 4](#4-how-a-drawing-is-scored). |
-| With no guide, the drawing is laid over the figure by a fit that ignores stray marks | SRS Section 9.2 (stage I); FR-LRN-013 | The SRS lays it over by its bounding box. One stray dot, or a line that runs past a corner, stretches that box and fails a good drawing. The SRS's fit is still tried, and is used whenever it scores best. **Goes beyond the SRS wording.** |
-| With no guide, a drawing must be at least 40% of the figure's size | SRS Section 9.2 says size does "not affect the result"; FR-LRN-011 | Once any size is scaled up to the figure, a speck passes as a square. The team decided, after trying it on a tablet, that position and size should not matter only down to a minimum. **Contradicts the SRS sentence; the team is asked to change it** (see [section 13](#13-how-the-app-compares-with-the-srs)). |
-| Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the difficulties in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of difficulty; these two need adding to it. |
-| A small picture of the shape stays up at the dots and with no guide | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at both steps and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture, so it is now at the dots too. The team should confirm it with the specialists. |
-| At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot, rests, and sets off again; after eight seconds with nothing drawn it carries on round the whole shape, dot to dot. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
-
-### What the adult sees
-
-| Decision | Requirements and sources | Why |
-| --- | --- | --- |
-| All nine values are set per child, on the Lesson ready screen | BR-008; FR-LRN-017; UC-001 | Three are up front, as in the prototype, and the rest under "More settings". A value outside its range, or one that breaks a rule between values, cannot be saved. |
-| A child starts on the recommended settings, and keeps only what an adult changed | BR-008 ("a value the adult does not choose is set to the middle of its range"); SAF-RAY-008 | Only changed values are saved. A saved value that is no longer in range counts as not chosen, so a change to a range can never leave a child unable to start a lesson. |
-| "Neatness" Low, Medium, High is the pass mark at 70, 80, 90, with an example drawing for each | BR-008 ("shows example drawings of what its minimum and maximum look like") | The examples are made from the scoring itself, and a test checks each one. |
-| A save that fails never stops the lesson | SAF-RAY-003; FR-REC-008 | If the browser's storage is full, the lesson carries on and the demo panel says how many records were not saved. Keeping them for a later save is not built yet. |
-| A lesson that was cut off is closed as unfinished | FR-REC-005, FR-REC-007 | If the page is closed or reloaded mid-lesson, its record would stay "in progress" for ever. It is closed when the child's next lesson starts. |
-| Difficulties are noted as the SRS describes, with one exception | FR-REC-003 | With a guide, a line off the shape is noted at each stylus lift and marked corrected later. With no guide nothing is noted until the attempt ends, because a half-finished drawing laid over the figure always looks off it. |
-| "Practice history" shows every lesson and attempt; there is no weekly summary | FR-REC-001 to FR-REC-010; Development Plan (POC plan: "no progress summary") | The POC must show that records keep the strokes, the stage and the outcome. The SRS's progress summary is specified separately and belongs to the final phase, so the prototype's weekly "practice story" is not built. The peer tester could not tell what "Practice story" meant without its description, and suggested "history" and a history icon. |
-| The records screen says it shows practice, not an assessment | BR-006; SAF-RAY-004 | No diagnosis, judgement or comparison. |
-| A practice sticker ends the lesson | Not in the SRS; BR-006; NFR-UX-004 | The prototype ends a lesson with a sticker, given for practising whatever the result. It was taken out because the SRS has no reward, and put back after the peer session, where the tester called it right for the end of a lesson. It judges nothing, so it does not go against BR-006. The SRS should say whether a reward is wanted. |
-| The helper's lines are spoken, with a chime when a step is done | NFR-UX-010; NFR-UX-002 | A child who cannot read gets nothing from a speech bubble, and the peer session was run with the lines read aloud. The voice is the browser's own for now, and each child has an on/off switch. |
-| A demo panel shows the result and the counters | BR-006; FR-LRN-022 | It lets the teaching team see the rules working. The SRS does not want a result shown to the child, so the panel is labelled for adults and must be hidden before real use. |
-| Screen layouts follow the lo-fi prototype; colours follow the A-Sense presentation; the style is one rounded font, thin line icons and soft-edged white cards | NFR-UX-001, NFR-UX-002, NFR-UX-004 | The prototype was tried with a parent and child, so its layout is the best evidence the team has. It is black and white on purpose; the colours come from the slides. The team wanted the calm, plain feel of a note-taking app, which also suits the SRS's call for uncluttered child screens. On an iPad or a Mac the font is the system's rounded face; elsewhere Nunito, an open rounded font, is loaded in its place. |
-| Progress through the lesson is a trail of the child's animal paw prints, walking across the screen | NFR-UX-002; NFR-UX-001; G.1 | Pictures, not text, and nothing for the child to press. The peer tester saw the prototype's footprints filling in but did not read them as progress, and asked for prints that walk along a path and move when a step is done. The step just reached grows for a moment, while input is paused, so nothing moves while the child draws. |
-
-### After the paper-prototype session with another group
-
-The team ran the lo-fi prototype with a member of another group, who played a parent and then a five-year-old. This is what was said and what was done about it.
-
-| What the session showed | What changed |
-| --- | --- |
-| The tester started drawing during the demonstration ("I guess I wasn't supposed to draw yet"). | Drawing during the demonstration does nothing. Practice now starts by itself with "Your turn!" and a chime, with no button. |
-| "Great try! Finish where it's glowing" was followed without help. | The app now works this way: the drawing stays, the gap glows, and finishing it passes. Before, the drawing was cleared and the child started again. |
-| At the dots, a five-year-old might draw a straight line from one dot to the next. An arrow that moves a little way in a curve would show the direction, and a longer one after a while with no input. | A green start dot and a small arrow that travels slowly from it to the next dot; after eight seconds with nothing drawn it goes on round the whole shape. |
-| The last step was clearer than the dots, because of the picture in the corner. A picture at the dots would help too. | The picture of the shape is shown at the dots as well. |
-| More dots for the circle would show where a wrong shape misses. | Already the case: the circle has four dots, where the prototype had two. |
-| The footprints were noticed but not read as progress. Prints pointing along a path, moving when a step is done, with the screen paused and a sound, would draw the eye. | The trail now walks across the screen, and the step just reached grows for a moment while input is paused and a chime plays. The drawing that passed also grows slightly. |
-| Not too many of these effects. | One movement and one sound per step, and none while the child draws. |
-| The star at the end is right for the end of a lesson; between steps a word or a sound is enough. | The sticker is back at the end. Between steps: the helper's line and a chime. |
-| "Practice story" was not understood from its name and icon alone. "History" and a history icon were suggested. | Renamed "Practice history", with a clock-and-arrow icon. |
-| The "i" beside "This shows practice, not an assessment" looked like the tappable "i" beside Neatness, and was tapped. | The note has no "i". Only the tappable one keeps it. |
-| The Neatness pop-up and the settings were understood at once. "Helper talks" was read as a voice-over for a child who cannot read. | Kept. "Helper talks" is now a real switch. |
-| The child's name on the avatar was "very helpful". | Not changed: the SRS allows no name (BR-001). The team should weigh this. |
-| The weekly page with stickers for days and the drawings was liked. | Not changed: it is the progress summary, which is outside the POC. It is one screen to restore if the team wants it. |
-
-## 4. How a drawing is scored
-
-Each lesson has a **figure**: its required parts and required endpoints. The square has four sides and four corners.
-
-- **Tolerance.** A point is "on" a line when it is within `TRACE_TOL` = 5% of the figure's diagonal. For the square that is about 35 units, 7% of a side.
-- **Drawn.** The share of the figure's length that has a stroke within the tolerance.
-- **On figure.** The share of the child's drawn length that is within the tolerance of the figure.
-- **Result.** `100 × min(drawn, on figure)`.
-- **Complete.** Every part has at least `PART_COVER` = 90% of its length drawn, and every endpoint has a stroke within the tolerance.
-- **Pass.** Complete, and the result is at least the child's pass mark.
-- **No guide.** At the last stage the whole drawing is first moved and uniformly scaled onto the figure, so where and how big the child drew does not matter. Three ways of laying it over are tried and the best-scoring one is kept: by its bounding box (the SRS's wording); by the box of the bulk of the drawing, leaving out the outermost 8% on each side, so a stray mark or an overshoot does not throw it off; and that second fit nudged by at most 5% in size and one tolerance in position. The nudge is kept small on purpose: with a free fit, a square could be shrunk until it sat inside a circle's tolerance and passed the circle lesson.
-- **Stretched.** With no guide, if parts seem to be missing, the drawing is also laid over the figure by width and height separately. If every part is then there, nothing is missing: the drawing is the right shape out of proportion, such as a rectangle for a square. It still does not pass, but the child is told "Try making it as tall as it is wide" and no glow is shown beside lines they did draw.
-- **Minimum size.** With no guide, the drawing's longer side must be at least `MIN_DRAW_SCALE` = 40% of the figure's. Smaller is incomplete, and reported as too small.
-- **Invalid.** No strokes, a missing coordinate, or less drawn than the tolerance (a tap). An invalid attempt is not saved and not counted.
-
-Measured on prepared squares:
-
-| Drawing | Result | Class | Passes at 80? |
-| --- | --- | --- | --- |
-| Exact square | 100 | complete | Yes |
-| Square drawn 20 units off | 100 | complete | Yes |
-| Wobble of up to 30 units | 100 | complete | Yes |
-| Wobble of up to 40 units | 71 | incomplete | No |
-| Three sides only | 79 | incomplete | No |
-| Square plus one stray line across it | 83 | complete | Yes (no at a pass mark of 90) |
-| Square plus a large scribble | below 70 | complete | No |
-
-Measured with no guide, at the lowest pass mark of 70:
-
-| Drawing | Passes? |
-| --- | --- |
-| A square at 60% size in a corner, plus a stray mark far away | Yes |
-| A square whose last side runs well past the corner | Yes |
-| A square 14% or 20% wider than tall | Yes |
-| A rectangle 25% or 40% wider than tall | No, stretched |
-| A square at 20% size | No, too small |
-| Three sides only | No, a part is missing |
-| A triangle, or a circle, in the square lesson | No |
-| A square in the circle lesson, any size | No |
-| A circle at half size, anywhere | Yes |
-
-The measuring is our own code (`lib/geometry.ts`), not a drawing library. A library such as Paper.js would not make it more accurate: the lengths and distances are exact for straight pieces, and curves are checked every 4 units of a 1000-unit canvas. What decides a pass is the rule (the tolerance, the 90% cover, the fit), not the arithmetic.
-
-## 5. How a lesson moves
-
-The state and the rules are those of SRS Section 9.2. In order, after each attempt that ends:
-
-| What happened | What the lesson does |
-| --- | --- |
-| The drawing passes, at trace or corners | Saves it, moves to the next stage, resets the stage's counts. |
-| The drawing passes with no guide | Saves it and completes the lesson. No other lesson starts. |
-| It does not pass, a part or endpoint is missing, and the pause runs out | A hint: the missing part glows, the drawing stays, and the pause starts again. At most two in an attempt, the second only if the child drew after the first. Nothing is counted yet. |
-| The attempt is invalid or interrupted | Starts a new attempt. Nothing is counted. An interrupted attempt (the browser cuts the contact off, or the adult leaves) is saved, marked interrupted. |
-| It does not pass, the failed attempts have reached the limit, and the child is not improving | Ends the lesson. |
-| It does not pass, the limit is reached, the child is improving, and the cap is not reached | Gives the one extension. |
-| The extension is used up, or the cap is reached | Ends the lesson. |
-| It does not pass, the streak has reached the streak setting, the child is not improving, at corners or no guide | Offers the adult a go-back suggestion. The stage does not change and the child keeps practising. |
-| Anything else | A new attempt at the same stage. |
-
-"Improving" means the average of the last `IMPROVE_WINDOW` results is at least 5 points above the average of the same number of results before them.
-
-A suggestion that the adult declines resets the streak. One that is accepted moves to the earlier stage the adult picks. One that is never answered stays pending and is recorded as ignored if a pass or the end of the lesson clears it.
-
-## 6. The nine settings
-
-| Setting | Range | Default | What it changes |
-| --- | --- | --- | --- |
-| Pass mark (`STAGE_PASS`) | 70 to 90 | 80 | How accurate a complete drawing must be. |
-| Failed attempts before a suggestion (`DIFFICULTY_STREAK`) | 3 to 5 | 4 | When a go-back suggestion is offered. |
-| Failed attempts before the lesson ends (`ATTEMPT_LIMIT`) | 6 to 10 | 8 | When the lesson ends or is extended. |
-| Improvement window (`IMPROVE_WINDOW`) | 1 to 3 | 2 | How many attempts are compared to decide "improving". |
-| Extra attempts when improving (`ATTEMPT_EXTENSION`) | 1 to 3 | 2 | The size of the one extension. |
-| Most attempts at one stage (`ATTEMPT_LIMIT_MAX`) | 8 to 12 | 10 | The hard cap. |
-| Pause that ends an attempt (`ATTEMPT_IDLE`) | 3 to 7 s | 5 s | How long the app waits after the last stroke before ending an attempt that has not passed. |
-| Pause before a check-in (`LESSON_IDLE_PROMPT`) | 30 to 60 s | 45 s | When "Still drawing?" appears. |
-| Pause that ends the lesson (`LESSON_IDLE_END`) | 90 to 180 s | 135 s | When an abandoned lesson ends. |
-
-On the Lesson ready screen, "Neatness" Low, Medium and High set the pass mark to 70, 80 and 90, and "Get a grown-up after" is the failed-attempts-before-a-suggestion value. The other seven are under "More settings".
-
-The first six ranges are the SRS's. The last three are proposed here. A value outside its range cannot be saved, nor can a limit that is not above the streak, or a cap below the limit. A lesson uses the values as they were when it started.
-
-## 7. Project layout and file index
-
-The app is the `src/` folder of this repository.
-
-```
-src/
-  package.json, tsconfig.json, next.config.ts, postcss.config.mjs, vitest.config.mts
-  lib/          the rules and the data: no React
-  components/   the canvas, the adult check, the screen frame, the pictures
-  app/          one folder per page
-  plan-img/     the screenshots in this document
-```
-
-| File | MIS module | What it does |
-| --- | --- | --- |
-| [`lib/types.ts`](#f-types) | Shared types | The data shapes every module uses. |
-| [`lib/geometry.ts`](#f-geometry) | M20 Geometry | Lengths, distances, bounding boxes, fit to a box. |
-| [`lib/evaluation.ts`](#f-evaluation) | M07 Attempt Evaluation | Scores strokes against a figure. |
-| [`lib/catalogue.ts`](#f-catalogue) | M05 Lesson Catalogue | The square and the circle, as data. |
-| [`lib/attempt.ts`](#f-attempt) | M06 Attempt | One attempt: strokes, evaluation at each lift, when it ends. |
-| [`lib/improvement.ts`](#f-improvement) | M09 Improvement Measure | The "improving" rule. |
-| [`lib/lessonControl.ts`](#f-control) | M04 Lesson Control | The lesson's state machine. |
-| [`lib/feedback.ts`](#f-feedback) | M08 Feedback | The wording and look of every message. |
-| [`lib/audio.ts`](#f-audio) | M03 Audio Output | The chime, the closing tune and the helper's spoken lines. |
-| [`lib/settings.ts`](#f-settings) | M16 Learner Settings | Ranges, defaults, checks, load and save. |
-| [`lib/profiles.ts`](#f-profiles) | M15 Learner Profile | Children and the active child. |
-| [`lib/records.ts`](#f-records) | M10 Attempt Record | Lesson records and attempt records. |
-| [`lib/storage.ts`](#f-storage) | M23 Storage | The only file that touches `localStorage`. |
-| [`lib/examples.ts`](#f-examples) | part of M16 Learner Settings | Example drawings for each pass mark. |
-| [`components/DrawingCanvas.tsx`](#f-canvas) | M01 Input Device, M02 Display | Pointer events to strokes; paints everything. |
-| [`components/AdultCheck.tsx`](#f-adultcheck) | M14 Adult Access (check only) | The sum an adult answers. |
-| [`components/Screen.tsx`](#f-screen) | part of M18 Adult View | The frame every screen sits in: Back, heading, avatar. |
-| [`components/Avatar.tsx`](#f-avatar) | part of M02 Display | A child's picture in a ring. |
-| [`components/icons.tsx`](#f-icons) | part of M02 Display | The trail of prints, the helper, stage pictures, small icons. |
-| [`components/LessonIcon.tsx`](#f-lessonicon) | part of M02 Display | A lesson's figure as a small picture. |
-| [`components/StrokePreview.tsx`](#f-preview) | part of M02 Display | Redraws a saved attempt. |
-| [`components/NeatnessInfo.tsx`](#f-neatness) | part of M18 Adult View | The pop-up that explains Neatness with examples. |
-| [`components/Squiggle.tsx`](#f-squiggle) | part of M18 Adult View | The squiggle mark. |
-| [`components/useActiveLearner.ts`](#f-useactive) | part of M18 Adult View | Reads the active child for a page. |
-| [`app/page.tsx`](#f-page-who) | part of M18 Adult View | S1 Who's practising: choose, switch, add a child. |
-| [`app/lessons/page.tsx`](#f-page-pick) | part of M18 Adult View | S2 Pick a lesson. |
-| [`app/lessons/[id]/page.tsx`](#f-page-ready) | part of M18 Adult View | S3 Lesson ready: starting step and the nine values. |
-| [`app/lesson/[id]/page.tsx`](#f-page-lesson) | M13 Child Screen | S6 to S10: the lesson itself. |
-| [`app/grown-ups/page.tsx`](#f-page-grownups) | part of M18 Adult View | S4 Grown-ups area. |
-| [`app/records/page.tsx`](#f-page-records) | part of M18 Adult View | Practice history: every lesson and attempt. |
-| [`app/layout.tsx`, `app/globals.css`](#f-layout) | | The page frame and styles. |
-| [Configuration files](#f-config) | | `package.json` and the tool settings. |
-| [`lib/evaluation.test.ts`](#f-test-eval), [`lib/rules.test.ts`](#f-test-rules), [`lib/examples.test.ts`](#f-test-examples), [`lib/testHelpers.ts`](#f-test-helpers) | | The unit tests. |
-
-Not in the POC: M11 and M12 (creative space), M17 Progress Summary, M21, M22, M24 Connection Recovery, M25 Audit Log.
-
-## 8. The code, part by part
-
-### 8.1 Shared types
+`lib/types.ts` declares these shapes and nothing else. They are plain data, with no functions, so a stroke or a record can be saved as it is. Read it once now; every later file uses these names.
 
 <a id="f-types"></a>
-**`lib/types.ts`**. Every module speaks in these shapes, taken from the MIS table of shared types. They are plain data, so a stroke or a record can be saved as JSON as it is.
 
 `src/lib/types.ts`
 
@@ -570,445 +290,20 @@ export interface LessonRecord {
 }
 ```
 
-### 8.2 Scoring
+<a id="p-lesson-data"></a>
+## 3. A lesson is data
 
-<a id="f-geometry"></a>
-**`lib/geometry.ts`**. The measuring tools. `lengthWithin` is the one the scoring leans on: it cuts a path into short pieces and adds up the pieces that lie near another set of paths. It is used both ways round, for "how much of the figure was drawn" and "how much of the drawing is on the figure".
+**The problem.** The app must teach a square and a circle now and six more shapes later, without a rule being rewritten each time.
 
-`src/lib/geometry.ts`
+**How.** A lesson is an entry in a list: a name, and a figure made of parts and endpoints in drawing units. The square is four sides and four corners. The circle is four quarter arcs and the four points where they meet. Everything else is worked out from the figure: the demonstration draws its parts in order, the guide at each stage is the outline, the dots or nothing, and the scoring compares the drawing with the same figure. A lesson therefore cannot show one shape and score another.
 
-```ts
-// M20 Geometry. Pure functions on points and paths. Nothing here knows about
-// the canvas, the browser or a drawing library.
+**What to look for.**
 
-import type { Fit, Path, Point, Stroke } from "./types";
-
-export interface Box {
-  minX: number;
-  minY: number;
-  maxX: number;
-  maxY: number;
-}
-
-export function toPath(stroke: Stroke): Path {
-  return stroke.points.map(({ x, y }) => ({ x, y }));
-}
-
-function dist(a: Point, b: Point): number {
-  return Math.hypot(a.x - b.x, a.y - b.y);
-}
-
-/** Length of a path; 0 for a path with fewer than two points. */
-export function length(path: Path): number {
-  let total = 0;
-  for (let i = 1; i < path.length; i++) total += dist(path[i - 1], path[i]);
-  return total;
-}
-
-function distanceToSegment(p: Point, a: Point, b: Point): number {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const len2 = dx * dx + dy * dy;
-  if (len2 === 0) return dist(p, a);
-  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
-  return dist(p, { x: a.x + t * dx, y: a.y + t * dy });
-}
-
-/** Smallest distance from p to any of the paths. Infinity if there is no point. */
-export function distance(p: Point, paths: Path[]): number {
-  let best = Infinity;
-  for (const path of paths) {
-    if (path.length === 1) best = Math.min(best, dist(p, path[0]));
-    for (let i = 1; i < path.length; i++) {
-      best = Math.min(best, distanceToSegment(p, path[i - 1], path[i]));
-    }
-  }
-  return best;
-}
-
-/**
- * Length of the parts of `path` that are within distance d of a path in
- * `others`. The path is cut into pieces no longer than `step`; a piece counts
- * when its midpoint is within d.
- */
-export function lengthWithin(path: Path, others: Path[], d: number, step = 4): number {
-  let total = 0;
-  for (let i = 1; i < path.length; i++) {
-    const a = path[i - 1];
-    const b = path[i];
-    const segLen = dist(a, b);
-    if (segLen === 0) continue;
-    const pieces = Math.max(1, Math.ceil(segLen / step));
-    const pieceLen = segLen / pieces;
-    for (let j = 0; j < pieces; j++) {
-      const t = (j + 0.5) / pieces;
-      const mid = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-      if (distance(mid, others) <= d) total += pieceLen;
-    }
-  }
-  return total;
-}
-
-export function boundingBox(paths: Path[]): Box {
-  const box = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
-  for (const path of paths) {
-    for (const p of path) {
-      box.minX = Math.min(box.minX, p.x);
-      box.minY = Math.min(box.minY, p.y);
-      box.maxX = Math.max(box.maxX, p.x);
-      box.maxY = Math.max(box.maxY, p.y);
-    }
-  }
-  return box;
-}
-
-export function diagonal(box: Box): number {
-  return Math.hypot(box.maxX - box.minX, box.maxY - box.minY);
-}
-
-/** The move and uniform scale that lay `box` over `target`: centres together, longer sides equal. */
-export function boxFit(box: Box, target: Box): Fit {
-  const longer = Math.max(box.maxX - box.minX, box.maxY - box.minY);
-  const targetLonger = Math.max(target.maxX - target.minX, target.maxY - target.minY);
-  const scale = longer > 0 ? targetLonger / longer : 1;
-  return {
-    scale,
-    dx: (target.minX + target.maxX) / 2 - ((box.minX + box.maxX) / 2) * scale,
-    dy: (target.minY + target.maxY) / 2 - ((box.minY + box.maxY) / 2) * scale,
-  };
-}
-
-/**
- * The bounding box of the bulk of the points: on each side, the outermost
- * `trim` share of the points is left out. A short stray mark, or a line that
- * runs on past a corner, then no longer stretches the box.
- */
-export function trimmedBox(points: Point[], trim: number): Box {
-  const xs = points.map((p) => p.x).sort((a, b) => a - b);
-  const ys = points.map((p) => p.y).sort((a, b) => a - b);
-  const at = (sorted: number[], share: number) => sorted[Math.round(share * (sorted.length - 1))];
-  return { minX: at(xs, trim), minY: at(ys, trim), maxX: at(xs, 1 - trim), maxY: at(ys, 1 - trim) };
-}
-
-export const IDENTITY: Fit = { scale: 1, dx: 0, dy: 0 };
-
-export const apply = (fit: Fit, p: Point): Point => ({ x: p.x * fit.scale + fit.dx, y: p.y * fit.scale + fit.dy });
-export const applyAll = (fit: Fit, paths: Path[]): Path[] => paths.map((path) => path.map((p) => apply(fit, p)));
-/** The Fit that undoes `fit`. */
-export const inverse = (fit: Fit): Fit => ({ scale: 1 / fit.scale, dx: -fit.dx / fit.scale, dy: -fit.dy / fit.scale });
-
-/** Points along the paths, no more than `step` apart. */
-export function sample(paths: Path[], step: number): Point[] {
-  const out: Point[] = [];
-  for (const path of paths) {
-    if (path.length === 1) out.push(path[0]);
-    for (let i = 1; i < path.length; i++) {
-      const a = path[i - 1];
-      const b = path[i];
-      const pieces = Math.max(1, Math.ceil(dist(a, b) / step));
-      for (let j = i === 1 ? 0 : 1; j <= pieces; j++) {
-        out.push({ x: a.x + ((b.x - a.x) * j) / pieces, y: a.y + ((b.y - a.y) * j) / pieces });
-      }
-    }
-  }
-  return out;
-}
-
-/**
- * Nudges a Fit so that the drawing lies more closely over the figure. Each
- * round pairs every drawn point with its nearest figure point, and every
- * figure point with its nearest drawn point, leaves out pairs further apart
- * than `reach`, and solves for the scale and move that bring the pairs
- * closest together.
- *
- * It is only a nudge: the scale may change by at most `maxScale` (1.05 is 5%)
- * and the drawing may move by at most `maxShift`. Without those limits the
- * search could shrink a square until it sat inside a circle's tolerance.
- */
-export function refineFit(
-  drawn: Point[],
-  figure: Point[],
-  start: Fit,
-  reach: number,
-  maxScale: number,
-  maxShift: number,
-): Fit {
-  if (drawn.length === 0) return start;
-  const centre = {
-    x: drawn.reduce((sum, p) => sum + p.x, 0) / drawn.length,
-    y: drawn.reduce((sum, p) => sum + p.y, 0) / drawn.length,
-  };
-  const home = apply(start, centre);
-  const nearest = (p: Point, among: Point[]) => {
-    let index = 0;
-    let d = Infinity;
-    for (let i = 0; i < among.length; i++) {
-      const di = dist(p, among[i]);
-      if (di < d) {
-        d = di;
-        index = i;
-      }
-    }
-    return { index, d };
-  };
-
-  let fit = start;
-  for (let round = 0; round < 10; round++) {
-    const moved = drawn.map((p) => apply(fit, p));
-    const from: Point[] = [];
-    const to: Point[] = [];
-    moved.forEach((q, i) => {
-      const n = nearest(q, figure);
-      if (n.d <= reach) {
-        from.push(drawn[i]);
-        to.push(figure[n.index]);
-      }
-    });
-    figure.forEach((f) => {
-      const n = nearest(f, moved);
-      if (n.d <= reach) {
-        from.push(drawn[n.index]);
-        to.push(f);
-      }
-    });
-    if (from.length < 3) break;
-
-    const mean = (ps: Point[]) => ({
-      x: ps.reduce((sum, p) => sum + p.x, 0) / ps.length,
-      y: ps.reduce((sum, p) => sum + p.y, 0) / ps.length,
-    });
-    const a = mean(from);
-    const b = mean(to);
-    let num = 0;
-    let den = 0;
-    for (let i = 0; i < from.length; i++) {
-      num += (from[i].x - a.x) * (to[i].x - b.x) + (from[i].y - a.y) * (to[i].y - b.y);
-      den += (from[i].x - a.x) ** 2 + (from[i].y - a.y) ** 2;
-    }
-    if (den === 0) break;
-    const scale = Math.min(start.scale * maxScale, Math.max(start.scale / maxScale, num / den));
-    let next: Fit = { scale, dx: b.x - scale * a.x, dy: b.y - scale * a.y };
-    // Keep the drawing's centre within maxShift of where the starting fit put it.
-    const at = apply(next, centre);
-    const moved2 = dist(at, home);
-    if (moved2 > maxShift) {
-      const k = maxShift / moved2;
-      const target = { x: home.x + (at.x - home.x) * k, y: home.y + (at.y - home.y) * k };
-      next = { scale, dx: target.x - scale * centre.x, dy: target.y - scale * centre.y };
-    }
-    fit = next;
-  }
-  return fit;
-}
-```
-
-<a id="f-evaluation"></a>
-**`lib/evaluation.ts`**. One function, `evaluate`, that turns strokes and a figure into a class, a result and a pass or no pass. It keeps no state and gives the same answer every time for the same input. `TRACE_TOL` and `PART_COVER` live here and nowhere else, so the team's calibration changes two lines.
-
-`src/lib/evaluation.ts`
-
-```ts
-// M07 Attempt Evaluation. Scores the strokes of an attempt against a lesson's
-// figure, as SRS Section 9.2 defines it. Stateless and deterministic.
-
-import {
-  IDENTITY,
-  applyAll,
-  boundingBox,
-  boxFit,
-  diagonal,
-  distance,
-  length,
-  lengthWithin,
-  refineFit,
-  sample,
-  toPath,
-  trimmedBox,
-} from "./geometry";
-import type { Difficulty, DrawingStage, Evaluation, Figure, Fit, Path, Stroke } from "./types";
-
-/** Largest distance that counts as "on the figure", in percent of the figure's diagonal. */
-export const TRACE_TOL = 5;
-/** Share of a required part that must be drawn for the part to count, in percent. */
-export const PART_COVER = 90;
-/**
- * With no guide, the smallest a drawing may be: its longer side, in percent
- * of the figure's longer side. Smaller than this and it is not a complete
- * attempt, however neat.
- */
-export const MIN_DRAW_SCALE = 40;
-
-export type Evaluate = (
-  strokes: Stroke[],
-  figure: Figure,
-  stage: DrawingStage,
-  allowed: Difficulty[],
-  stagePass: number,
-) => Evaluation;
-
-export function tolerance(figure: Figure): number {
-  return (TRACE_TOL / 100) * diagonal(boundingBox(figure.parts));
-}
-
-function isValid(strokes: Stroke[], tol: number): boolean {
-  if (strokes.length === 0) return false;
-  for (const s of strokes) {
-    if (s.points.length === 0) return false;
-    for (const p of s.points) {
-      if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return false;
-    }
-  }
-  // A tap or a mark shorter than the tolerance is too little to judge.
-  const total = strokes.reduce((sum, s) => sum + length(toPath(s)), 0);
-  return total >= tol;
-}
-
-interface Score {
-  found: Difficulty[];
-  drawn: number;
-  onFigure: number;
-  result: number;
-}
-
-/** Scores paths that already lie where they are to be compared with the figure. */
-function score(paths: Path[], figure: Figure, tol: number): Score {
-  const found: Difficulty[] = [];
-
-  // Share of the figure that was drawn, and which required parts are missing.
-  let figureLength = 0;
-  let figureCovered = 0;
-  figure.parts.forEach((part, index) => {
-    const partLength = length(part);
-    const covered = lengthWithin(part, paths, tol);
-    figureLength += partLength;
-    figureCovered += covered;
-    if (covered < (PART_COVER / 100) * partLength) found.push({ kind: "missedPart", index });
-  });
-
-  figure.endpoints.forEach((endpoint, index) => {
-    if (distance(endpoint, paths) > tol) found.push({ kind: "missedEndpoint", index });
-  });
-
-  // Share of what was drawn that lies on the figure.
-  const drawnLength = paths.reduce((sum, p) => sum + length(p), 0);
-  const drawnOnFigure = paths.reduce((sum, p) => sum + lengthWithin(p, figure.parts, tol), 0);
-
-  const drawn = figureCovered / figureLength;
-  const onFigure = drawnOnFigure / drawnLength;
-  return { found, drawn, onFigure, result: 100 * Math.min(drawn, onFigure) };
-}
-
-export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) => {
-  if (figure.parts.length === 0) throw new Error("emptyFigure");
-  const guidance = stage === "I" ? "independent" : "assisted";
-  const tol = tolerance(figure);
-
-  if (!isValid(strokes, tol)) {
-    return {
-      class: "invalid",
-      guidance,
-      result: 0,
-      passed: false,
-      difficulties: [],
-      drawn: 0,
-      onFigure: 0,
-      fit: IDENTITY,
-    };
-  }
-
-  const original = strokes.map(toPath);
-  let fit: Fit = IDENTITY;
-  let best = score(original, figure, tol);
-  let tooSmall = false;
-  let stretched = false;
-
-  if (stage === "I") {
-    // With no guide, where and how big the child drew does not matter: the
-    // whole drawing is moved and uniformly scaled onto the figure before it
-    // is scored. Three ways of laying it over the figure are tried, and the
-    // one that scores best is kept:
-    //  1. by its bounding box, exactly as the SRS states it;
-    //  2. by the box of the bulk of the drawing, so that a short stray mark or
-    //     a line that runs on past a corner does not throw everything off;
-    //  3. the second, nudged a little (at most 5% in size and one tolerance
-    //     in position) towards the closest fit.
-    const figureBox = boundingBox(figure.parts);
-    const points = sample(original, 12);
-    const byBulk = boxFit(trimmedBox(points, 0.08), figureBox);
-    const candidates = [
-      boxFit(boundingBox(original), figureBox),
-      byBulk,
-      refineFit(points, sample(figure.parts, 12), byBulk, 3 * tol, 1.05, tol),
-    ];
-    const better = (a: Score, b: Score) =>
-      a.found.length !== b.found.length ? a.found.length < b.found.length : a.result > b.result;
-
-    fit = candidates[0];
-    best = score(applyAll(fit, original), figure, tol);
-    for (const candidate of candidates.slice(1)) {
-      const other = score(applyAll(candidate, original), figure, tol);
-      if (better(other, best)) {
-        fit = candidate;
-        best = other;
-      }
-    }
-
-    // If parts seem to be missing, check whether the drawing is the right
-    // shape pulled out of proportion, such as a rectangle for a square. Laid
-    // over the figure by width and height separately, such a drawing has
-    // every part. Then nothing is missing: the drawing is stretched, and the
-    // child is told that, not shown a glow beside lines they did draw.
-    if (best.found.length > 0) {
-      for (const box of [trimmedBox(points, 0.08), boundingBox(original)]) {
-        const w = box.maxX - box.minX;
-        const h = box.maxY - box.minY;
-        if (w === 0 || h === 0) continue;
-        const sx = (figureBox.maxX - figureBox.minX) / w;
-        const sy = (figureBox.maxY - figureBox.minY) / h;
-        const pulled = original.map((path) =>
-          path.map((p) => ({
-            x: figureBox.minX + (p.x - box.minX) * sx,
-            y: figureBox.minY + (p.y - box.minY) * sy,
-          })),
-        );
-        const asPulled = score(pulled, figure, tol);
-        if (asPulled.found.length === 0) {
-          stretched = true;
-          best = { ...best, found: [], onFigure: asPulled.onFigure };
-          break;
-        }
-      }
-    }
-
-    // It must still be a real drawing of the shape, not a speck.
-    const box = boundingBox(original);
-    const longer = Math.max(box.maxX - box.minX, box.maxY - box.minY);
-    const figureLonger = Math.max(figureBox.maxX - figureBox.minX, figureBox.maxY - figureBox.minY);
-    tooSmall = longer < (MIN_DRAW_SCALE / 100) * figureLonger;
-  }
-
-  const found = [...best.found];
-  const complete = found.length === 0 && !tooSmall && !stretched;
-  if (stretched) found.push({ kind: "stretched", index: 0 });
-  if (tooSmall) found.push({ kind: "tooSmall", index: 0 });
-  if (100 * best.onFigure < stagePass) found.push({ kind: "offFigure", index: 0 });
-
-  return {
-    class: complete ? "complete" : "incomplete",
-    guidance,
-    result: best.result,
-    passed: complete && best.result >= stagePass,
-    // Only the difficulties the team predefined for this stage are reported.
-    difficulties: found.filter((d) => allowed.some((a) => a.kind === d.kind && a.index === d.index)),
-    drawn: best.drawn,
-    onFigure: best.onFigure,
-    fit,
-  };
-};
-```
+- `LESSONS`: the whole catalogue. Adding the triangle is one more entry.
+- `guide()`: what the child is shown at each stage.
+- `difficulties()`: what may be said about a drawing at each stage. "Too small" and "stretched" exist only where there is no guide.
 
 <a id="f-catalogue"></a>
-**`lib/catalogue.ts`**. The lessons, as data. To add the triangle, add an entry: no rule changes. The guide for each stage is derived from the figure, so a lesson cannot show an outline that differs from what it is scored against.
 
 `src/lib/catalogue.ts`
 
@@ -1100,1074 +395,26 @@ export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
 }
 ```
 
-### 8.3 The lesson rules
+<a id="p-stroke"></a>
+## 4. Capturing a stroke
 
-<a id="f-attempt"></a>
-**`lib/attempt.ts`**. One attempt. It is evaluated at every stylus lift and ends at once on a pass. Otherwise it stays open until `checkIdle` finds that the pause has run out. It also keeps the list of difficulties seen, marking one as corrected rather than removing it.
+**The problem.** Turn a stylus, a finger or a mouse moving on glass into a stroke the rules can use, the same on every device.
 
-`src/lib/attempt.ts`
+**How.** `DrawingCanvas.tsx` is the only code that touches the browser's pointer events and the canvas. It does two separate jobs.
 
-```ts
-// M06 Attempt. One attempt at one drawing stage: it collects strokes, has
-// them evaluated at every stylus lift, and decides when it has ended.
+*Input.* On touch-down it starts a stroke, on each move it adds a point, and on lift it hands the finished stroke up through `onStroke`. It decides nothing about the lesson. Along the way it:
 
-import type { Evaluate } from "./evaluation";
-import type { Difficulty, DrawingStage, Evaluation, Figure, Observed, Stroke } from "./types";
+- maps each position into the 1000 by 1000 drawing area, so a point keeps its place if the canvas is resized;
+- leaves out a position that is off the drawing area, and one that repeats the last;
+- thins out positions closer together than two units, which keeps a long drawing quick to score;
+- follows one contact at a time, and lets a stylus take over from a resting palm;
+- reports every input through `onInput`, and keeps reporting while the stylus is held down, so a child resting the stylus mid-line is not taken to have paused.
 
-export type Outcome = "open" | "passed" | "notPassed" | "invalid" | "interrupted";
+*Display.* The `paint` function draws whatever it is given, in this order: the glow over a missing stretch, the guide, the start dot and the moving arrow, the demonstration, and the child's strokes on top.
 
-/** The most hints one attempt gives before it ends. */
-export const MAX_HINTS = 2;
-
-const same = (a: Difficulty, b: Difficulty) => a.kind === b.kind && a.index === b.index;
-
-export class Attempt {
-  strokes: Stroke[] = [];
-  /** The evaluation after the most recent stylus lift. */
-  last: Evaluation | null = null;
-  /** Every difficulty seen so far. A correction marks it; it is never removed. */
-  seen: Observed[] = [];
-  outcome: Outcome = "open";
-  endedAt: number | null = null;
-  /** How many times the child has been shown what is missing in this attempt. */
-  hints = 0;
-  private hintAt = 0;
-  private strokesAtHint = 0;
-
-  constructor(
-    readonly lesson: string,
-    readonly stage: DrawingStage,
-    private figure: Figure,
-    private allowed: Difficulty[],
-    private stagePass: number,
-    /** Seconds. */
-    private attemptIdle: number,
-    private evaluate: Evaluate,
-  ) {}
-
-  /** Called at each stylus lift. Evaluates all strokes so far; a pass ends the attempt at once. */
-  addStroke(stroke: Stroke, now: number): void {
-    if (this.outcome !== "open") throw new Error("attemptEnded");
-    this.strokes.push(stroke);
-    this.last = this.evaluate(this.strokes, this.figure, this.stage, this.allowed, this.stagePass);
-    // Something drawn off the figure is noted at every lift. A missed part or
-    // endpoint, or a drawing that is still small, is not: the child may simply
-    // not have finished yet.
-    // With no guide the drawing is laid over the figure as a whole, so a
-    // half-finished one looks off the figure until it is done. There, nothing
-    // is noted until the attempt ends.
-    if (this.stage !== "I") {
-      this.note(
-        this.last.difficulties.filter((d) => d.kind === "offFigure"),
-        ["offFigure"],
-      );
-    }
-    // After a hint, what was missing and is now drawn is marked corrected.
-    if (this.hints > 0) this.note(this.missing(), ["missedPart", "missedEndpoint"]);
-    if (this.last.passed) this.end("passed", now);
-  }
-
-  /**
-   * Called about once a second. Once attemptIdle has passed with no input,
-   * an attempt that has not passed either gets a hint or ends.
-   *
-   * A hint: if a part or an endpoint is missing, the child is shown where,
-   * the drawing stays, and the pause starts again, so they can finish it. The
-   * attempt gives at most MAX_HINTS, and a second one only if the child drew
-   * something after the first. Otherwise the attempt ends as not passed.
-   *
-   * Returns true when a hint was just given.
-   */
-  checkIdle(now: number, lastInputAt: number): boolean {
-    if (this.outcome !== "open" || this.strokes.length === 0 || this.last === null) return false;
-    if (now - Math.max(lastInputAt, this.hintAt) < this.attemptIdle * 1000) return false;
-    if (this.last.class === "invalid") {
-      this.end("invalid", now);
-      return false;
-    }
-    const drewSinceHint = this.strokes.length > this.strokesAtHint;
-    if (this.missing().length > 0 && this.hints < MAX_HINTS && (this.hints === 0 || drewSinceHint)) {
-      this.hints += 1;
-      this.hintAt = now;
-      this.strokesAtHint = this.strokes.length;
-      // What is missing is now on record. If the child fills it in, it is marked corrected, not removed.
-      this.note(this.missing(), ["missedPart", "missedEndpoint"]);
-      return true;
-    }
-    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
-    this.end("notPassed", now);
-    return false;
-  }
-
-  /** The parts and endpoints the drawing still lacks: what the child could finish. */
-  missing(): Difficulty[] {
-    return (this.last?.difficulties ?? []).filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
-  }
-
-  /** Ends the attempt with no result, keeping its strokes and difficulties. */
-  interrupt(now: number): void {
-    if (this.outcome !== "open") throw new Error("attemptEnded");
-    this.last = null;
-    this.end("interrupted", now);
-  }
-
-  private end(outcome: Outcome, now: number): void {
-    this.outcome = outcome;
-    this.endedAt = now;
-  }
-
-  private note(observedNow: Difficulty[], kinds: Difficulty["kind"][]): void {
-    for (const entry of this.seen) {
-      if (kinds.includes(entry.difficulty.kind)) {
-        entry.corrected = !observedNow.some((d) => same(d, entry.difficulty));
-      }
-    }
-    for (const d of observedNow) {
-      if (!this.seen.some((entry) => same(entry.difficulty, d))) {
-        this.seen.push({ difficulty: d, corrected: false });
-      }
-    }
-  }
-}
-```
-
-<a id="f-improvement"></a>
-**`lib/improvement.ts`**. The "improving" rule on its own, so a different measure later changes only this file.
-
-`src/lib/improvement.ts`
-
-```ts
-// M09 Improvement Measure. The measure is this module's secret, so a different
-// way of deciding "improving" changes only this file.
-
-/** Smallest rise in the average stage result that counts as improvement. */
-export const IMPROVE_MARGIN = 5;
-
-/**
- * True when the average of the last `window` results is at least
- * IMPROVE_MARGIN above the average of the `window` results before them.
- * False when there are fewer than 2 * window results.
- */
-export function improving(history: number[], window: number): boolean {
-  const m = history.length;
-  if (m < 2 * window) return false;
-  const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
-  const recent = avg(history.slice(m - window));
-  const before = avg(history.slice(m - 2 * window, m - window));
-  return recent - before >= IMPROVE_MARGIN;
-}
-```
-
-<a id="f-control"></a>
-**`lib/lessonControl.ts`**. The centre of the app. Its fields are the state of SRS Section 9.2 (the comments give the SRS's letters), and `afterFailedAttempt` is the transition table, in the table's order. It has no timers and no screen: the page calls `addStroke` and `tick`, and shows the report that comes back.
-
-`src/lib/lessonControl.ts`
-
-```ts
-// M04 Guided Lesson Control. The state machine of SRS Section 9.2: which stage
-// the child is at, when an attempt counts, and when the lesson moves on,
-// offers a go-back suggestion, grants its one extension or ends.
-// It has no UI and no timers of its own: the screen calls addStroke at each
-// stylus lift and tick about once a second.
-
-import { Attempt } from "./attempt";
-import * as catalogue from "./catalogue";
-import { evaluate as realEvaluate, type Evaluate } from "./evaluation";
-import { improving } from "./improvement";
-import type { RecordStore } from "./records";
-import type { DrawingStage, Ending, Evaluation, Report, Settings, Stage, Stroke } from "./types";
-
-export type Status = "noLesson" | "active" | "suggested" | "ended";
-
-const ORDER: Stage[] = ["D", "T", "E", "I"];
-const later = (a: Stage, b: Stage): Stage => (ORDER.indexOf(a) >= ORDER.indexOf(b) ? a : b);
-const NOTHING: Report = { feedback: [], difficulties: [] };
-
-export interface Deps {
-  records: RecordStore;
-  /** Tests replace these to give each attempt's result and the time directly. */
-  evaluate?: Evaluate;
-  now?: () => number;
-}
-
-export class LessonControl {
-  status: Status = "noLesson"; // q
-  lessonId = ""; // l (the lesson)
-  learner = ""; // p
-  stage: Stage = "D"; // l (the stage)
-  furthest: Stage = "D"; // f
-  failed = 0; // n_f: failed attempts at this stage
-  evaluable = 0; // n_a: counted attempts at this stage
-  streak = 0; // k: failed attempts in a row
-  history: number[] = []; // H: results of the counted attempts at this stage
-  suggestionPending = false; // s
-  extended = false; // z
-  sinceExtension = 0; // x
-  settings!: Settings;
-  attempt: Attempt | null = null;
-  ending: Ending = "inProgress";
-  /** Whether the idle check-in is showing. */
-  prompted = false;
-  /** The evaluation of the attempt that ended last, for the demo panel. */
-  lastFinal: Evaluation | null = null;
-  /** How many records could not be saved, for example because the browser's storage is full. */
-  unsaved = 0;
-
-  private startAt: DrawingStage = "T";
-  private recordId = "";
-  private suggestionIndex = 0;
-  private activityBase = 0;
-  private records: RecordStore;
-  private evaluate: Evaluate;
-  private now: () => number;
-
-  constructor(deps: Deps) {
-    this.records = deps.records;
-    this.evaluate = deps.evaluate ?? realEvaluate;
-    this.now = deps.now ?? Date.now;
-  }
-
-  /**
-   * The adult chooses a lesson and its starting stage. The demonstration is
-   * always shown first (UC-003 step 1); practice then starts at the chosen stage.
-   * The settings are read once, here: a later change applies to the next lesson.
-   */
-  select(learner: string, lessonId: string, start: Stage, settings: Settings): void {
-    catalogue.lesson(lessonId); // throws unknownLesson
-    if (this.status === "active" || this.status === "suggested") this.stop();
-    this.learner = learner;
-    this.lessonId = lessonId;
-    this.settings = { ...settings };
-    this.startAt = start === "D" ? "T" : start;
-    this.stage = "D";
-    this.furthest = start;
-    this.status = "active";
-    this.ending = "inProgress";
-    this.lastFinal = null;
-    this.attempt = null;
-    this.resetStage();
-    this.recordId = this.keep(() => this.records.startLesson(learner, lessonId, start)) ?? "";
-  }
-
-  /** The child continues after the demonstration. */
-  beginPractice(): void {
-    if (this.status !== "active" || this.stage !== "D") throw new Error("notAtDemonstration");
-    this.enterStage(this.startAt);
-  }
-
-  /** A finished stroke. A pass ends the attempt here, at the stylus lift. */
-  addStroke(stroke: Stroke): Report {
-    if (!this.isRunning() || this.attempt === null) throw new Error("noAttempt");
-    const attempt = this.attempt;
-    attempt.addStroke(stroke, this.now());
-    if (attempt.outcome !== "passed") return NOTHING;
-
-    const stage = attempt.stage;
-    this.lastFinal = attempt.last;
-    this.save(attempt, "passed");
-    this.keep(() => this.records.recordPass(this.recordId, stage));
-    this.evaluable += 1;
-    this.clearSuggestion("ignored");
-
-    if (stage === "I") {
-      this.finish("completed");
-      return { feedback: ["lessonComplete"], difficulties: [] };
-    }
-    this.enterStage(stage === "T" ? "E" : "I");
-    return { feedback: ["stagePassed"], difficulties: [] };
-  }
-
-  /**
-   * Called about once a second with the time of the child's last input.
-   * Ends an idle attempt, applies the stopping rules, and handles the
-   * lesson's own idle check-in and idle end.
-   */
-  tick(lastInputAt: number | null): Report {
-    if (!this.isRunning()) return NOTHING;
-    const now = this.now();
-    const lastActivity = Math.max(lastInputAt ?? 0, this.activityBase);
-    const idleSeconds = (now - lastActivity) / 1000;
-
-    if (idleSeconds >= this.settings.lessonIdleEnd) {
-      this.finish("endedIdle");
-      return { feedback: ["lessonEnded"], difficulties: [] };
-    }
-
-    const attempt = this.attempt;
-    if (attempt !== null) {
-      if (attempt.checkIdle(now, lastActivity)) {
-        // The drawing stays, and the child is shown what to finish.
-        return { feedback: ["fillIn"], difficulties: attempt.missing() };
-      }
-      if (attempt.outcome === "invalid") {
-        // Not saved and not counted (FR-LRN-010, FR-LRN-032).
-        this.newAttempt();
-        return { feedback: ["notEvaluable"], difficulties: [] };
-      }
-      if (attempt.outcome === "notPassed") return this.afterFailedAttempt(attempt);
-    }
-
-    if (idleSeconds >= this.settings.lessonIdlePrompt) {
-      if (!this.prompted) {
-        this.prompted = true;
-        return { feedback: ["checkIn"], difficulties: [] };
-      }
-    } else {
-      this.prompted = false;
-    }
-    return NOTHING;
-  }
-
-  /** The input was cut off (for example a pointercancel). Kept apart, never counted. */
-  interrupt(): void {
-    if (!this.isRunning() || this.attempt === null) return;
-    if (this.attempt.strokes.length > 0) {
-      this.attempt.interrupt(this.now());
-      this.save(this.attempt, "interrupted");
-    }
-    this.newAttempt();
-  }
-
-  /** The adult answers a go-back suggestion. Accepting needs an earlier stage. */
-  answerSuggestion(accept: boolean, stage?: DrawingStage): void {
-    if (!this.suggestionPending) throw new Error("noSuggestion");
-    if (!accept) {
-      this.clearSuggestion("declined");
-      this.streak = 0; // a new suggestion needs a whole new streak
-      return;
-    }
-    if (stage === undefined || ORDER.indexOf(stage) >= ORDER.indexOf(this.stage)) {
-      throw new Error("notEarlierStage");
-    }
-    this.clearSuggestion("accepted", stage);
-    this.interruptOpenAttempt();
-    this.enterStage(stage);
-  }
-
-  /** The adult leaves the lesson. It ends as unfinished. */
-  stop(): void {
-    if (!this.isRunning()) return;
-    this.interruptOpenAttempt();
-    this.finish("unfinished");
-  }
-
-  // ----- the rules -----
-
-  private afterFailedAttempt(attempt: Attempt): Report {
-    const s = this.settings;
-    this.lastFinal = attempt.last;
-    this.save(attempt, "notPassed");
-    this.evaluable += 1;
-    this.failed += 1;
-    this.streak += 1;
-    this.history.push(attempt.last!.result);
-    if (this.extended) this.sinceExtension += 1;
-
-    const report: Report = {
-      feedback: ["keepTrying"], // the effort is acknowledged first (NFR-UX-016)
-      difficulties: attempt.seen.filter((o) => !o.corrected).map((o) => o.difficulty),
-    };
-    const isImproving = improving(this.history, s.improveWindow);
-    const atCap = this.evaluable >= s.attemptLimitMax;
-
-    // The first rule that holds applies, in this order (SRS Table "Guided lesson state transitions").
-    const endAtLimit = this.extended
-      ? this.sinceExtension >= s.attemptExtension || atCap
-      : this.failed >= s.attemptLimit && (!isImproving || atCap);
-
-    if (endAtLimit) {
-      this.finish(atCap ? "endedAtMax" : "endedAtLimit");
-      report.feedback.push("lessonEnded");
-      return report;
-    }
-    if (!this.extended && this.failed >= s.attemptLimit && isImproving) {
-      this.extended = true; // granted once per stage
-      this.sinceExtension = 0;
-      this.keep(() => this.records.recordExtension(this.recordId));
-    } else if (
-      this.status === "active" &&
-      !this.suggestionPending &&
-      (this.stage === "E" || this.stage === "I") &&
-      this.streak >= s.difficultyStreak &&
-      !isImproving
-    ) {
-      // The stage does not change; the child keeps practising while it is pending.
-      this.suggestionPending = true;
-      this.status = "suggested";
-      this.suggestionIndex =
-        this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now())) ?? 0;
-    }
-    this.newAttempt();
-    return report;
-  }
-
-  // ----- helpers -----
-
-  /**
-   * Writes a record. If the write fails (the browser's storage is full, say),
-   * the lesson carries on and the failure is counted, so the screen can tell
-   * the adult. A child's practice is never stopped by a save.
-   */
-  private keep<T>(write: () => T): T | undefined {
-    try {
-      return write();
-    } catch {
-      this.unsaved += 1;
-      return undefined;
-    }
-  }
-
-  private isRunning(): boolean {
-    return this.status === "active" || this.status === "suggested";
-  }
-
-  private resetStage(): void {
-    this.failed = 0;
-    this.evaluable = 0;
-    this.streak = 0;
-    this.history = [];
-    this.suggestionPending = false;
-    this.extended = false;
-    this.sinceExtension = 0;
-    this.prompted = false;
-    this.activityBase = this.now();
-  }
-
-  private enterStage(stage: DrawingStage): void {
-    this.stage = stage;
-    this.furthest = later(this.furthest, stage);
-    this.resetStage();
-    this.newAttempt();
-  }
-
-  private newAttempt(): void {
-    const stage = this.stage as DrawingStage;
-    this.attempt = new Attempt(
-      this.lessonId,
-      stage,
-      catalogue.lesson(this.lessonId).figure,
-      catalogue.difficulties(this.lessonId, stage),
-      this.settings.stagePass,
-      this.settings.attemptIdle,
-      this.evaluate,
-    );
-  }
-
-  private interruptOpenAttempt(): void {
-    if (this.attempt !== null && this.attempt.outcome === "open" && this.attempt.strokes.length > 0) {
-      this.attempt.interrupt(this.now());
-      this.save(this.attempt, "interrupted");
-    }
-    this.attempt = null;
-  }
-
-  private clearSuggestion(response: "accepted" | "declined" | "ignored", stage: DrawingStage | null = null): void {
-    if (!this.suggestionPending) return;
-    this.keep(() => this.records.answerSuggestion(this.recordId, this.suggestionIndex, response, stage));
-    this.suggestionPending = false;
-    this.status = "active";
-  }
-
-  private save(attempt: Attempt, outcome: "passed" | "notPassed" | "interrupted"): void {
-    const record = {
-      lesson: attempt.lesson,
-      stage: attempt.stage,
-      outcome,
-      result: outcome === "interrupted" ? null : attempt.last!.result,
-      difficulties: attempt.seen,
-      settings: this.settings,
-      strokes: attempt.strokes, // the actual strokes, never a corrected shape (BR-004)
-      endedAt: attempt.endedAt!,
-    };
-    this.keep(() => this.records.saveAttempt(this.recordId, record));
-  }
-
-  private finish(ending: Ending): void {
-    this.clearSuggestion("ignored");
-    this.status = "ended";
-    this.ending = ending;
-    this.attempt = null;
-    this.keep(() => this.records.endLesson(this.recordId, ending, this.furthest));
-  }
-}
-```
-
-<a id="f-audio"></a>
-**`lib/audio.ts`**. Sound, made by the browser with no sound files: two short tunes from the Web Audio API and the helper's lines from the browser's own voice. The rules know nothing about it; the lesson screen calls it. Browsers only allow sound after a tap, so "Start lesson" unlocks it.
-
-`src/lib/audio.ts`
-
-```ts
-// M03 Audio Output. A soft chime when a step is done, a short tune when the
-// lesson ends, and the helper's lines spoken aloud. Everything is made by
-// the browser: there are no sound files. Lesson Control and the rules know
-// nothing about sound; the lesson screen decides when to call these.
-
-let context: AudioContext | null = null;
-let on = true;
-
-/** Turns sound on or off, from the learner's audio setting (NFR-UX-010). */
-export function setEnabled(enabled: boolean): void {
-  on = enabled;
-  if (!enabled && typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
-}
-
-/**
- * Browsers only allow sound after a tap. Call this from a tap (the adult's
- * "Start lesson") so the lesson can make sound from then on.
- */
-export function unlock(): void {
-  try {
-    const Ctx =
-      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!context && Ctx) context = new Ctx();
-    void context?.resume();
-    // An empty line wakes the browser's voice, which also needs a tap first.
-    if (typeof speechSynthesis !== "undefined") speechSynthesis.speak(new SpeechSynthesisUtterance(""));
-  } catch {
-    // No sound on this device. The lesson works without it.
-  }
-}
-
-/** One soft note. `at` is seconds from now. */
-function note(frequency: number, at: number, length: number): void {
-  if (!context) return;
-  const start = context.currentTime + at;
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  oscillator.type = "sine";
-  oscillator.frequency.value = frequency;
-  gain.gain.setValueAtTime(0, start);
-  gain.gain.linearRampToValueAtTime(0.18, start + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.001, start + length);
-  oscillator.connect(gain).connect(context.destination);
-  oscillator.start(start);
-  oscillator.stop(start + length);
-}
-
-function play(notes: [frequency: number, at: number, length: number][]): void {
-  if (!on) return;
-  try {
-    void context?.resume();
-    notes.forEach((n) => note(...n));
-  } catch {
-    // Sound is a help, never a need.
-  }
-}
-
-/** A step is done. */
-export const chime = () =>
-  play([
-    [784, 0, 0.35],
-    [1047, 0.12, 0.5],
-  ]);
-
-/** The lesson is over. */
-export const tune = () =>
-  play([
-    [523, 0, 0.3],
-    [659, 0.15, 0.3],
-    [784, 0.3, 0.3],
-    [1047, 0.45, 0.7],
-  ]);
-
-/** Says one of the helper's lines, in place of whatever it was saying. */
-export function say(text: string): void {
-  if (!on || typeof speechSynthesis === "undefined") return;
-  try {
-    speechSynthesis.cancel();
-    const line = new SpeechSynthesisUtterance(text);
-    line.rate = 0.9;
-    line.pitch = 1.2;
-    speechSynthesis.speak(line);
-  } catch {
-    // The text is still on screen.
-  }
-}
-
-/** Stops anything being said, for when the lesson screen is left. */
-export function hush(): void {
-  if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
-}
-```
-
-<a id="f-feedback"></a>
-**`lib/feedback.ts`**. What each message says. Lesson Control picks the kind of feedback; this file owns the words, so the specialists' wording changes can be made here without touching a rule.
-
-`src/lib/feedback.ts`
-
-```ts
-// M08 Feedback. What each message says and shows. Lesson Control decides
-// which feedback is given; this file decides only its wording and look, so
-// either can change without the other. Every message describes the drawing,
-// never the child, and nothing marks a drawing as "wrong".
-
-import type { DifficultyKind, FeedbackKind, Stage } from "./types";
-
-export interface Feedback {
-  message: string;
-  image: string;
-  colour: string;
-}
-
-const KINDS: Record<FeedbackKind, Feedback> = {
-  stagePassed: { message: "You did it! Here comes the next one.", image: "🌟", colour: "#24735b" },
-  lessonComplete: { message: "Great practising! Here's your sticker!", image: "🎉", colour: "#24735b" },
-  fillIn: { message: "Great try! Finish where it's glowing!", image: "✨", colour: "#5e51b8" },
-  keepTrying: { message: "Great try! Let's draw it again.", image: "💪", colour: "#5e51b8" },
-  notEvaluable: { message: "Let's try that one again.", image: "✏️", colour: "#5e51b8" },
-  checkIn: { message: "Still drawing? Tap to keep going.", image: "👋", colour: "#5e51b8" },
-  lessonEnded: { message: "Great practising! Here's your sticker!", image: "🌈", colour: "#5e51b8" },
-};
-
-const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
-  missedPart: { message: "Look where it's glowing.", image: "🧩", colour: "#b84a30" },
-  missedEndpoint: { message: "The line missed a dot.", image: "📍", colour: "#b84a30" },
-  offFigure: { message: "Some lines went away from the shape.", image: "↗️", colour: "#b84a30" },
-  tooSmall: { message: "Try drawing it bigger.", image: "🔍", colour: "#b84a30" },
-  stretched: { message: "Try making it as tall as it is wide.", image: "↔️", colour: "#b84a30" },
-};
-
-/** What the helper says at the start of each stage. */
-const STAGE_LINES: Record<Stage, string> = {
-  D: "Watch me!",
-  T: "Your turn!",
-  E: "Now join the dots!",
-  I: "Now draw it on your own!",
-};
-
-export const stageLine = (stage: Stage): string => STAGE_LINES[stage];
-export const feedback = (kind: FeedbackKind): Feedback => KINDS[kind];
-export const difficultyFeedback = (kind: DifficultyKind): Feedback => DIFFICULTIES[kind];
-/** Every approved message, so the wording can be reviewed in one place. */
-export const allFeedback = (): string[] => [
-  ...Object.values(KINDS).map((f) => f.message),
-  ...Object.values(DIFFICULTIES).map((f) => f.message),
-  ...Object.values(STAGE_LINES),
-];
-```
-
-### 8.4 Data
-
-<a id="f-storage"></a>
-**`lib/storage.ts`**. Four functions: `get`, `put`, `list`, `remove`. Nothing else in the app knows where data is kept. A saved attempt cannot be changed.
-
-`src/lib/storage.ts`
-
-```ts
-// M23 Storage. The only file that touches localStorage. Every other module
-// saves and reads through these four functions, so moving to a hosted
-// database (Supabase, in the Development Plan) changes only this file.
-
-export type Kind = "learner" | "settings" | "options" | "lessonRecord" | "attempt" | "active";
-
-interface Item<T> {
-  id: string;
-  owner: string | null; // the learner the item belongs to, or null
-  value: T;
-}
-
-const PREFIX = "squigglr:v1";
-const key = (kind: Kind, id: string) => `${PREFIX}:${kind}:${id}`;
-
-// On the server (and in unit tests) there is no localStorage; use memory.
-const memory = new Map<string, string>();
-const store = {
-  get: (k: string) => (typeof localStorage === "undefined" ? (memory.get(k) ?? null) : localStorage.getItem(k)),
-  set: (k: string, v: string) => (typeof localStorage === "undefined" ? void memory.set(k, v) : localStorage.setItem(k, v)),
-  remove: (k: string) => (typeof localStorage === "undefined" ? void memory.delete(k) : localStorage.removeItem(k)),
-  keys: () =>
-    typeof localStorage === "undefined"
-      ? [...memory.keys()]
-      : Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i)!),
-};
-
-export function get<T>(kind: Kind, id: string): T | null {
-  const raw = store.get(key(kind, id));
-  return raw === null ? null : (JSON.parse(raw) as Item<T>).value;
-}
-
-/**
- * Saves an item, creating or replacing it. A saved attempt is never replaced
- * (FR-REC-009): saving the same attempt again changes nothing, and saving a
- * different one under the same id is refused.
- */
-export function put<T>(kind: Kind, id: string, value: T, owner: string | null = null): void {
-  const next = JSON.stringify({ id, owner, value } satisfies Item<T>);
-  if (kind === "attempt") {
-    const existing = store.get(key(kind, id));
-    if (existing !== null) {
-      if (existing === next) return;
-      throw new Error("unchangeable");
-    }
-  }
-  store.set(key(kind, id), next);
-}
-
-/** Every item of a kind, or only those of one learner. */
-export function list<T>(kind: Kind, owner?: string): T[] {
-  const start = `${PREFIX}:${kind}:`;
-  return store
-    .keys()
-    .filter((k) => k.startsWith(start))
-    .map((k) => JSON.parse(store.get(k)!) as Item<T>)
-    .filter((item) => owner === undefined || item.owner === owner)
-    .map((item) => item.value);
-}
-
-export function remove(kind: Kind, id: string): void {
-  store.remove(key(kind, id));
-}
-
-export function newId(): string {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-}
-```
-
-<a id="f-settings"></a>
-**`lib/settings.ts`**. The ranges, the defaults (the middle of each range) and `check`, which names every value that cannot be saved. The Lesson ready screen and the tests both use `check`, so the screen cannot allow something the rules reject. Only the values an adult has set away from the recommended ones are saved, so a child whose values were never changed always gets the current recommended settings. A saved value that today's ranges no longer allow counts as not chosen: after the pause that ends an attempt was halved, children saved with the old value of 10 could not start a lesson until this was added.
-
-`src/lib/settings.ts`
-
-```ts
-// M16 Learner Settings. Ranges, defaults and the rules between values.
-// Saving goes through the Storage module.
-
-import * as storage from "./storage";
-import type { SettingName, Settings } from "./types";
-
-export interface Range {
-  min: number;
-  max: number;
-  default: number;
-  label: string;
-  unit: string;
-  help: string;
-}
-
-const range = (min: number, max: number, label: string, unit: string, help: string): Range => ({
-  min,
-  max,
-  default: Math.round((min + max) / 2), // BR-008: the default is the middle of the range
-  label,
-  unit,
-  help,
-});
-
-/**
- * The first six ranges are the SRS's. The SRS leaves the three idle ranges
- * "TBD", so those are this POC's proposal. They are chosen so that
- * attemptIdle < lessonIdlePrompt < lessonIdleEnd holds for every allowed value.
- */
-export const RANGES: Record<SettingName, Range> = {
-  stagePass: range(70, 90, "Pass mark", "points", "How accurate a complete drawing must be to pass a stage."),
-  difficultyStreak: range(3, 5, "Failed attempts before a suggestion", "attempts", "Failed attempts in a row before Squigglr suggests going back a stage."),
-  attemptLimit: range(6, 10, "Failed attempts before the lesson ends", "attempts", "Failed attempts at one stage before the lesson ends or is extended."),
-  improveWindow: range(1, 3, "Improvement window", "attempts", "How many recent attempts are compared with the ones before them."),
-  attemptExtension: range(1, 3, "Extra attempts when improving", "attempts", "Extra attempts given once if the child is improving at the limit."),
-  attemptLimitMax: range(8, 12, "Most attempts at one stage", "attempts", "The hard cap on attempts at one stage, extension included."),
-  attemptIdle: range(3, 7, "Pause that ends an attempt", "seconds", "Time with no drawing after which an attempt that has not passed ends."),
-  lessonIdlePrompt: range(30, 60, "Pause before a check-in", "seconds", "Time with no drawing before the child sees a check-in."),
-  lessonIdleEnd: range(90, 180, "Pause that ends the lesson", "seconds", "Time with no drawing after which the lesson ends."),
-};
-
-export const SETTING_NAMES = Object.keys(RANGES) as SettingName[];
-
-export function defaults(): Settings {
-  const s = {} as Settings;
-  for (const name of SETTING_NAMES) s[name] = RANGES[name].default;
-  return s;
-}
-
-/**
- * The values that cannot be saved: outside their range, not whole numbers, or
- * breaking a rule between values (both values of a broken rule are given).
- * An empty list means the settings can be saved.
- */
-export function check(s: Settings): SettingName[] {
-  const bad = new Set<SettingName>();
-  for (const name of SETTING_NAMES) {
-    const v = s[name];
-    const r = RANGES[name];
-    if (!Number.isInteger(v) || v < r.min || v > r.max) bad.add(name);
-  }
-  const rule = (ok: boolean, a: SettingName, b: SettingName) => {
-    if (!ok) {
-      bad.add(a);
-      bad.add(b);
-    }
-  };
-  rule(s.attemptLimit > s.difficultyStreak, "attemptLimit", "difficultyStreak");
-  rule(s.attemptLimitMax >= s.attemptLimit, "attemptLimitMax", "attemptLimit");
-  rule(s.attemptIdle < s.lessonIdlePrompt, "attemptIdle", "lessonIdlePrompt");
-  rule(s.lessonIdlePrompt < s.lessonIdleEnd, "lessonIdlePrompt", "lessonIdleEnd");
-  return [...bad];
-}
-
-/**
- * The learner's saved values, with the default for any value not chosen.
- *
- * What comes back can always be used. A value saved by an earlier version
- * of the app may lie outside today's range (the pause that ends an attempt
- * used to go up to 15 seconds), and a lesson cannot start with it. A value
- * that is not allowed today counts as not chosen, so it takes the default
- * (BR-008). If the values then still break a rule between them, the defaults
- * are used for all.
- */
-export function load(learnerId: string): Settings {
-  const saved = storage.get<Partial<Settings>>("settings", learnerId) ?? {};
-  const s = defaults();
-  for (const name of SETTING_NAMES) {
-    const value = saved[name];
-    const r = RANGES[name];
-    if (typeof value === "number" && Number.isInteger(value) && value >= r.min && value <= r.max) s[name] = value;
-  }
-  return check(s).length === 0 ? s : defaults();
-}
-
-/**
- * Saves the values. Only the ones the adult set away from the default are
- * kept, so a child whose values were never changed always gets the current
- * recommended settings. Throws if any value fails `check`, so no bad value is
- * ever saved.
- */
-export function save(learnerId: string, s: Settings): void {
-  if (check(s).length > 0) throw new Error("invalidSettings");
-  const chosen: Partial<Settings> = {};
-  for (const name of SETTING_NAMES) {
-    if (s[name] !== RANGES[name].default) chosen[name] = s[name];
-  }
-  storage.put("settings", learnerId, chosen, learnerId);
-}
-
-/** Whether the helper talks and plays sounds for this learner (the audio setting, NFR-UX-010). On unless turned off. */
-export function audio(learnerId: string): boolean {
-  return storage.get<{ audio: boolean }>("options", learnerId)?.audio ?? true;
-}
-
-export function setAudio(learnerId: string, on: boolean): void {
-  storage.put("options", learnerId, { audio: on }, learnerId);
-}
-```
-
-<a id="f-examples"></a>
-**`lib/examples.ts`**. BR-008 asks for example drawings of what the pass mark's minimum and maximum look like. These are built from the lesson's own figure plus just as many stray lines as the mark allows, and a test checks each one against the scoring.
-
-`src/lib/examples.ts`
-
-```ts
-// Example drawings for the pass mark (BR-008): for a given mark, a complete
-// drawing of the figure with as many extra lines as that mark still lets
-// through. They are made here, not stored, so they always agree with the
-// scoring in evaluation.ts.
-
-import { boundingBox, length } from "./geometry";
-import type { Figure, Stroke } from "./types";
-
-const toStroke = (points: { x: number; y: number }[]): Stroke => ({
-  points: points.map((p, i) => ({ ...p, t: i })),
-});
-
-/**
- * The figure drawn exactly, plus a zigzag in the middle of it that lies off
- * the figure. The zigzag is just short enough that the share of the drawing
- * on the figure stays at the mark.
- */
-export function passingExample(figure: Figure, mark: number): Stroke[] {
-  const figureLength = figure.parts.reduce((sum, p) => sum + length(p), 0);
-  // onFigure = figureLength / (figureLength + extra) >= mark / 100, with a small margin.
-  const extra = figureLength * (100 / mark - 1) * 0.94;
-
-  const box = boundingBox(figure.parts);
-  const cx = (box.minX + box.maxX) / 2;
-  const cy = (box.minY + box.maxY) / 2;
-  const half = Math.min(box.maxX - box.minX, box.maxY - box.minY) * 0.28;
-  const rowGap = half / 3;
-
-  const zigzag = [{ x: cx - half, y: cy - half }];
-  let left = extra;
-  let row = 0;
-  while (left > 0 && row < 7) {
-    const y = cy - half + row * rowGap;
-    const fromLeft = row % 2 === 0;
-    const run = Math.min(left, 2 * half);
-    zigzag.push({ x: fromLeft ? cx - half + run : cx + half - run, y });
-    left -= run;
-    if (left <= 0) break;
-    const drop = Math.min(left, rowGap);
-    zigzag.push({ x: fromLeft ? cx + half : cx - half, y: y + drop });
-    left -= drop;
-    row += 1;
-  }
-
-  return [...figure.parts.map(toStroke), toStroke(zigzag)];
-}
-```
-
-<a id="f-profiles"></a>
-**`lib/profiles.ts`**. A child is a generated id and a picture.
-
-`src/lib/profiles.ts`
-
-```ts
-// M15 Learner Profile. A profile is a generated id and an avatar, nothing
-// else: no name and no photo (BR-001).
-
-import * as settings from "./settings";
-import * as storage from "./storage";
-import type { Learner } from "./types";
-
-export const AVATARS = ["🦊", "🐼", "🐸", "🦁", "🐙", "🦄", "🐢", "🐝"];
-
-/** Creates a profile and saves the default settings for it. */
-export function create(avatar: string): Learner {
-  const learner: Learner = { id: storage.newId(), avatar, createdAt: Date.now() };
-  storage.put("learner", learner.id, learner);
-  settings.save(learner.id, settings.defaults());
-  return learner;
-}
-
-/** Every profile, in the order they were created. */
-export function learners(): Learner[] {
-  return storage.list<Learner>("learner").sort((a, b) => a.createdAt - b.createdAt);
-}
-
-export function setActive(learnerId: string): void {
-  storage.put("active", "current", learnerId);
-}
-
-export function clearActive(): void {
-  storage.remove("active", "current");
-}
-
-/** The active learner, or null when no child has been chosen. */
-export function active(): Learner | null {
-  const id = storage.get<string>("active", "current");
-  return id === null ? null : storage.get<Learner>("learner", id);
-}
-```
-
-<a id="f-records"></a>
-**`lib/records.ts`**. A lesson record for every start of a lesson, and an attempt record under it for every attempt that ended. `RecordStore` is the interface Lesson Control writes to; the tests give it an in-memory one.
-
-`src/lib/records.ts`
-
-```ts
-// M10 Attempt Record. Lesson records and attempt records, kept per learner.
-// Only Lesson Control writes here; the Practice story reads.
-
-import * as storage from "./storage";
-import type { AttemptRecord, DrawingStage, Ending, LessonRecord, Stage, SuggestionResponse } from "./types";
-
-/** The interface Lesson Control needs. Tests pass an in-memory version. */
-export interface RecordStore {
-  startLesson(learner: string, lesson: string, start: Stage): string;
-  saveAttempt(recordId: string, attempt: Omit<AttemptRecord, "id" | "lessonRecordId">): void;
-  recordPass(recordId: string, stage: DrawingStage): void;
-  recordExtension(recordId: string): void;
-  offerSuggestion(recordId: string, from: DrawingStage, at: number): number;
-  answerSuggestion(recordId: string, index: number, response: SuggestionResponse, stage: DrawingStage | null): void;
-  endLesson(recordId: string, ending: Ending, furthest: Stage): void;
-}
-
-function open(recordId: string): LessonRecord {
-  const record = storage.get<LessonRecord>("lessonRecord", recordId);
-  if (record === null) throw new Error("unknownRecord");
-  // After a lesson ends, its record never changes (FR-REC-009).
-  if (record.ending !== "inProgress") throw new Error("lessonEnded");
-  return record;
-}
-
-const write = (record: LessonRecord) => storage.put("lessonRecord", record.id, record, record.learner);
-
-export const records: RecordStore = {
-  // A new record every time, even for a lesson started before, so earlier
-  // attempts are kept.
-  startLesson(learner, lesson, start) {
-    // One lesson runs at a time. A lesson still marked in progress was cut
-    // off (the page was closed or reloaded), so it is closed as unfinished.
-    for (const stale of storage.list<LessonRecord>("lessonRecord", learner)) {
-      if (stale.ending === "inProgress") write({ ...stale, ending: "unfinished" });
-    }
-    const record: LessonRecord = {
-      id: storage.newId(),
-      learner,
-      lesson,
-      start,
-      furthest: start,
-      passes: { T: 0, E: 0, I: 0 },
-      extensions: 0,
-      ending: "inProgress",
-      suggestions: [],
-      startedAt: Date.now(),
-    };
-    write(record);
-    return record.id;
-  },
-
-  saveAttempt(recordId, attempt) {
-    const record = open(recordId);
-    const id = storage.newId();
-    storage.put("attempt", id, { ...attempt, id, lessonRecordId: recordId }, record.learner);
-  },
-
-  recordPass(recordId, stage) {
-    const record = open(recordId);
-    record.passes[stage] += 1;
-    write(record);
-  },
-
-  recordExtension(recordId) {
-    const record = open(recordId);
-    record.extensions += 1;
-    write(record);
-  },
-
-  offerSuggestion(recordId, from, at) {
-    const record = open(recordId);
-    record.suggestions.push({ from, offeredAt: at, response: "pending", stage: null });
-    write(record);
-    return record.suggestions.length - 1;
-  },
-
-  answerSuggestion(recordId, index, response, stage) {
-    const record = open(recordId);
-    const suggestion = record.suggestions[index];
-    if (!suggestion) throw new Error("unknownSuggestion");
-    if (suggestion.response !== "pending") throw new Error("alreadyAnswered");
-    suggestion.response = response;
-    suggestion.stage = response === "accepted" ? stage : null;
-    write(record);
-  },
-
-  endLesson(recordId, ending, furthest) {
-    const record = open(recordId);
-    record.ending = ending;
-    record.furthest = furthest;
-    write(record);
-  },
-};
-
-/** A learner's lesson records, oldest first. */
-export function lessonRecords(learner: string): LessonRecord[] {
-  return storage.list<LessonRecord>("lessonRecord", learner).sort((a, b) => a.startedAt - b.startedAt);
-}
-
-/** The attempts of one lesson record, oldest first. */
-export function attempts(learner: string, recordId: string): AttemptRecord[] {
-  return storage
-    .list<AttemptRecord>("attempt", learner)
-    .filter((a) => a.lessonRecordId === recordId)
-    .sort((a, b) => a.endedAt - b.endedAt);
-}
-```
-
-### 8.5 Components
+**What to look for.** `toPoint` (the mapping), `add` (one point), the four `onPointer...` handlers at the bottom, and `paint`.
 
 <a id="f-canvas"></a>
-**`components/DrawingCanvas.tsx`**. The only code that touches pointer events and the canvas. It hands finished strokes up and paints what it is given: the guide, the strokes, the demonstration, and the glow over a stretch that was not drawn. A stylus takes priority over a resting palm, a stylus held still still counts as drawing, positions off the drawing area are left out, and positions closer together than two units are thinned out. It decides nothing about the lesson.
 
 `src/components/DrawingCanvas.tsx`
 
@@ -2517,93 +764,1852 @@ export function DrawingCanvas(props: Props) {
 }
 ```
 
-<a id="f-adultcheck"></a>
-**`components/AdultCheck.tsx`**. `const { ask, dialog } = useAdultCheck()`, then `if (await ask()) { ... }` before any adult-only action.
+<a id="scoring"></a>
+## 5. Scoring a drawing
 
-`src/components/AdultCheck.tsx`
+**The problem.** Given the strokes so far and the lesson's figure, say whether the drawing is complete, how good it is, and whether it passes for this child.
 
-```tsx
-"use client";
+### The rule
 
-import { useCallback, useRef, useState } from "react";
-import { LockIcon } from "./icons";
+Each lesson has a **figure**: its required parts and required endpoints. The square has four sides and four corners.
 
-// M14 Adult Access, POC version. There are no accounts yet, so the only part
-// kept is the adult check: a short sum that a young child cannot pass alone
-// (SAF-RAY-001). `ask()` resolves to true only if the sum is answered correctly.
+- **Tolerance.** A point is "on" a line when it is within `TRACE_TOL` = 5% of the figure's diagonal. For the square that is about 35 units, 7% of a side.
+- **Drawn.** The share of the figure's length that has a stroke within the tolerance.
+- **On figure.** The share of the child's drawn length that is within the tolerance of the figure.
+- **Result.** `100 × min(drawn, on figure)`.
+- **Complete.** Every part has at least `PART_COVER` = 90% of its length drawn, and every endpoint has a stroke within the tolerance.
+- **Pass.** Complete, and the result is at least the child's pass mark.
+- **No guide.** At the last stage the whole drawing is first moved and uniformly scaled onto the figure, so where and how big the child drew does not matter. Three ways of laying it over are tried and the best-scoring one is kept: by its bounding box (the SRS's wording); by the box of the bulk of the drawing, leaving out the outermost 8% on each side, so a stray mark or an overshoot does not throw it off; and that second fit nudged by at most 5% in size and one tolerance in position. The nudge is kept small on purpose: with a free fit, a square could be shrunk until it sat inside a circle's tolerance and passed the circle lesson.
+- **Stretched.** With no guide, if parts seem to be missing, the drawing is also laid over the figure by width and height separately. If every part is then there, nothing is missing: the drawing is the right shape out of proportion, such as a rectangle for a square. It still does not pass, but the child is told "Try making it as tall as it is wide" and no glow is shown beside lines they did draw.
+- **Minimum size.** With no guide, the drawing's longer side must be at least `MIN_DRAW_SCALE` = 40% of the figure's. Smaller is incomplete, and reported as too small.
+- **Invalid.** No strokes, a missing coordinate, or less drawn than the tolerance (a tap). An invalid attempt is not saved and not counted.
 
-interface Question {
-  a: number;
-  b: number;
+Measured on prepared squares:
+
+| Drawing | Result | Class | Passes at 80? |
+| --- | --- | --- | --- |
+| Exact square | 100 | complete | Yes |
+| Square drawn 20 units off | 100 | complete | Yes |
+| Wobble of up to 30 units | 100 | complete | Yes |
+| Wobble of up to 40 units | 71 | incomplete | No |
+| Three sides only | 79 | incomplete | No |
+| Square plus one stray line across it | 83 | complete | Yes (no at a pass mark of 90) |
+| Square plus a large scribble | below 70 | complete | No |
+
+Measured with no guide, at the lowest pass mark of 70:
+
+| Drawing | Passes? |
+| --- | --- |
+| A square at 60% size in a corner, plus a stray mark far away | Yes |
+| A square whose last side runs well past the corner | Yes |
+| A square 14% or 20% wider than tall | Yes |
+| A rectangle 25% or 40% wider than tall | No, stretched |
+| A square at 20% size | No, too small |
+| Three sides only | No, a part is missing |
+| A triangle, or a circle, in the square lesson | No |
+| A square in the circle lesson, any size | No |
+| A circle at half size, anywhere | Yes |
+
+The measuring is our own code (`lib/geometry.ts`), not a drawing library. A library such as Paper.js would not make it more accurate: the lengths and distances are exact for straight pieces, and curves are checked every 4 units of a 1000-unit canvas. What decides a pass is the rule (the tolerance, the 90% cover, the fit), not the arithmetic.
+
+### The code
+
+Two files. `geometry.ts` is the measuring kit: lengths, distances, boxes, and the fits used when there is no guide. `evaluation.ts` uses it to apply the rule above.
+
+**What to look for in `geometry.ts`.** `lengthWithin` is the function the scoring leans on. It cuts a path into short pieces and adds up the pieces that lie near another set of paths. It is used both ways round: how much of the figure has drawing near it, and how much of the drawing is near the figure. `boxFit`, `trimmedBox` and `refineFit` are the three ways of laying a drawing over the figure.
+
+<a id="f-geometry"></a>
+
+`src/lib/geometry.ts`
+
+```ts
+// M20 Geometry. Pure functions on points and paths. Nothing here knows about
+// the canvas, the browser or a drawing library.
+
+import type { Fit, Path, Point, Stroke } from "./types";
+
+export interface Box {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
 }
 
-export function useAdultCheck() {
-  const [question, setQuestion] = useState<Question | null>(null);
-  const [answer, setAnswer] = useState("");
-  const [wrong, setWrong] = useState(false);
-  const resolver = useRef<((passed: boolean) => void) | null>(null);
+export function toPath(stroke: Stroke): Path {
+  return stroke.points.map(({ x, y }) => ({ x, y }));
+}
 
-  const ask = useCallback(() => {
-    const n = () => 11 + Math.floor(Math.random() * 19);
-    setQuestion({ a: n(), b: n() });
-    setAnswer("");
-    setWrong(false);
-    return new Promise<boolean>((resolve) => {
-      resolver.current = resolve;
-    });
-  }, []);
+function dist(a: Point, b: Point): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
 
-  const close = (passed: boolean) => {
-    setQuestion(null);
-    resolver.current?.(passed);
-    resolver.current = null;
+/** Length of a path; 0 for a path with fewer than two points. */
+export function length(path: Path): number {
+  let total = 0;
+  for (let i = 1; i < path.length; i++) total += dist(path[i - 1], path[i]);
+  return total;
+}
+
+function distanceToSegment(p: Point, a: Point, b: Point): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len2 = dx * dx + dy * dy;
+  if (len2 === 0) return dist(p, a);
+  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
+  return dist(p, { x: a.x + t * dx, y: a.y + t * dy });
+}
+
+/** Smallest distance from p to any of the paths. Infinity if there is no point. */
+export function distance(p: Point, paths: Path[]): number {
+  let best = Infinity;
+  for (const path of paths) {
+    if (path.length === 1) best = Math.min(best, dist(p, path[0]));
+    for (let i = 1; i < path.length; i++) {
+      best = Math.min(best, distanceToSegment(p, path[i - 1], path[i]));
+    }
+  }
+  return best;
+}
+
+/**
+ * Length of the parts of `path` that are within distance d of a path in
+ * `others`. The path is cut into pieces no longer than `step`; a piece counts
+ * when its midpoint is within d.
+ */
+export function lengthWithin(path: Path, others: Path[], d: number, step = 4): number {
+  let total = 0;
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1];
+    const b = path[i];
+    const segLen = dist(a, b);
+    if (segLen === 0) continue;
+    const pieces = Math.max(1, Math.ceil(segLen / step));
+    const pieceLen = segLen / pieces;
+    for (let j = 0; j < pieces; j++) {
+      const t = (j + 0.5) / pieces;
+      const mid = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+      if (distance(mid, others) <= d) total += pieceLen;
+    }
+  }
+  return total;
+}
+
+export function boundingBox(paths: Path[]): Box {
+  const box = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+  for (const path of paths) {
+    for (const p of path) {
+      box.minX = Math.min(box.minX, p.x);
+      box.minY = Math.min(box.minY, p.y);
+      box.maxX = Math.max(box.maxX, p.x);
+      box.maxY = Math.max(box.maxY, p.y);
+    }
+  }
+  return box;
+}
+
+export function diagonal(box: Box): number {
+  return Math.hypot(box.maxX - box.minX, box.maxY - box.minY);
+}
+
+/** The move and uniform scale that lay `box` over `target`: centres together, longer sides equal. */
+export function boxFit(box: Box, target: Box): Fit {
+  const longer = Math.max(box.maxX - box.minX, box.maxY - box.minY);
+  const targetLonger = Math.max(target.maxX - target.minX, target.maxY - target.minY);
+  const scale = longer > 0 ? targetLonger / longer : 1;
+  return {
+    scale,
+    dx: (target.minX + target.maxX) / 2 - ((box.minX + box.maxX) / 2) * scale,
+    dy: (target.minY + target.maxY) / 2 - ((box.minY + box.maxY) / 2) * scale,
+  };
+}
+
+/**
+ * The bounding box of the bulk of the points: on each side, the outermost
+ * `trim` share of the points is left out. A short stray mark, or a line that
+ * runs on past a corner, then no longer stretches the box.
+ */
+export function trimmedBox(points: Point[], trim: number): Box {
+  const xs = points.map((p) => p.x).sort((a, b) => a - b);
+  const ys = points.map((p) => p.y).sort((a, b) => a - b);
+  const at = (sorted: number[], share: number) => sorted[Math.round(share * (sorted.length - 1))];
+  return { minX: at(xs, trim), minY: at(ys, trim), maxX: at(xs, 1 - trim), maxY: at(ys, 1 - trim) };
+}
+
+export const IDENTITY: Fit = { scale: 1, dx: 0, dy: 0 };
+
+export const apply = (fit: Fit, p: Point): Point => ({ x: p.x * fit.scale + fit.dx, y: p.y * fit.scale + fit.dy });
+export const applyAll = (fit: Fit, paths: Path[]): Path[] => paths.map((path) => path.map((p) => apply(fit, p)));
+/** The Fit that undoes `fit`. */
+export const inverse = (fit: Fit): Fit => ({ scale: 1 / fit.scale, dx: -fit.dx / fit.scale, dy: -fit.dy / fit.scale });
+
+/** Points along the paths, no more than `step` apart. */
+export function sample(paths: Path[], step: number): Point[] {
+  const out: Point[] = [];
+  for (const path of paths) {
+    if (path.length === 1) out.push(path[0]);
+    for (let i = 1; i < path.length; i++) {
+      const a = path[i - 1];
+      const b = path[i];
+      const pieces = Math.max(1, Math.ceil(dist(a, b) / step));
+      for (let j = i === 1 ? 0 : 1; j <= pieces; j++) {
+        out.push({ x: a.x + ((b.x - a.x) * j) / pieces, y: a.y + ((b.y - a.y) * j) / pieces });
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * Nudges a Fit so that the drawing lies more closely over the figure. Each
+ * round pairs every drawn point with its nearest figure point, and every
+ * figure point with its nearest drawn point, leaves out pairs further apart
+ * than `reach`, and solves for the scale and move that bring the pairs
+ * closest together.
+ *
+ * It is only a nudge: the scale may change by at most `maxScale` (1.05 is 5%)
+ * and the drawing may move by at most `maxShift`. Without those limits the
+ * search could shrink a square until it sat inside a circle's tolerance.
+ */
+export function refineFit(
+  drawn: Point[],
+  figure: Point[],
+  start: Fit,
+  reach: number,
+  maxScale: number,
+  maxShift: number,
+): Fit {
+  if (drawn.length === 0) return start;
+  const centre = {
+    x: drawn.reduce((sum, p) => sum + p.x, 0) / drawn.length,
+    y: drawn.reduce((sum, p) => sum + p.y, 0) / drawn.length,
+  };
+  const home = apply(start, centre);
+  const nearest = (p: Point, among: Point[]) => {
+    let index = 0;
+    let d = Infinity;
+    for (let i = 0; i < among.length; i++) {
+      const di = dist(p, among[i]);
+      if (di < d) {
+        d = di;
+        index = i;
+      }
+    }
+    return { index, d };
   };
 
-  const dialog = question && (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
-      <form
-        className="w-full max-w-sm rounded-3xl border border-edge shadow-card bg-white p-6"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (Number(answer) === question.a + question.b) close(true);
-          else setWrong(true);
-        }}
-      >
-        <h2 className="flex items-center gap-2 text-2xl font-bold">
-          <LockIcon className="h-6 w-6" />
-          Grown-ups
-        </h2>
-        <p className="mt-1 text-muted">Answer this to continue.</p>
-        <label className="mt-4 block text-3xl font-bold">
-          {question.a} + {question.b} =
-          <input
-            autoFocus
-            inputMode="numeric"
-            aria-label="Answer"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            className="ml-3 w-24 rounded-xl border-2 border-edge px-3 py-1"
-          />
-        </label>
-        {wrong && <p className="mt-2 font-bold text-coral">That is not it. Try again.</p>}
-        <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={() => close(false)} className="rounded-2xl px-4 py-2 text-lg font-bold text-muted">
-            Cancel
-          </button>
-          <button type="submit" className="rounded-2xl border-2 border-brand bg-brand px-5 py-2 text-lg font-bold text-white">
-            Continue
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+  let fit = start;
+  for (let round = 0; round < 10; round++) {
+    const moved = drawn.map((p) => apply(fit, p));
+    const from: Point[] = [];
+    const to: Point[] = [];
+    moved.forEach((q, i) => {
+      const n = nearest(q, figure);
+      if (n.d <= reach) {
+        from.push(drawn[i]);
+        to.push(figure[n.index]);
+      }
+    });
+    figure.forEach((f) => {
+      const n = nearest(f, moved);
+      if (n.d <= reach) {
+        from.push(drawn[n.index]);
+        to.push(f);
+      }
+    });
+    if (from.length < 3) break;
 
-  return { ask, dialog };
+    const mean = (ps: Point[]) => ({
+      x: ps.reduce((sum, p) => sum + p.x, 0) / ps.length,
+      y: ps.reduce((sum, p) => sum + p.y, 0) / ps.length,
+    });
+    const a = mean(from);
+    const b = mean(to);
+    let num = 0;
+    let den = 0;
+    for (let i = 0; i < from.length; i++) {
+      num += (from[i].x - a.x) * (to[i].x - b.x) + (from[i].y - a.y) * (to[i].y - b.y);
+      den += (from[i].x - a.x) ** 2 + (from[i].y - a.y) ** 2;
+    }
+    if (den === 0) break;
+    const scale = Math.min(start.scale * maxScale, Math.max(start.scale / maxScale, num / den));
+    let next: Fit = { scale, dx: b.x - scale * a.x, dy: b.y - scale * a.y };
+    // Keep the drawing's centre within maxShift of where the starting fit put it.
+    const at = apply(next, centre);
+    const moved2 = dist(at, home);
+    if (moved2 > maxShift) {
+      const k = maxShift / moved2;
+      const target = { x: home.x + (at.x - home.x) * k, y: home.y + (at.y - home.y) * k };
+      next = { scale, dx: target.x - scale * centre.x, dy: target.y - scale * centre.y };
+    }
+    fit = next;
+  }
+  return fit;
 }
 ```
 
+**What to look for in `evaluation.ts`.** One function, `evaluate`, with no memory: the same strokes always give the same answer. Read it in this order:
+
+1. `isValid`: is there anything to judge?
+2. `score`: the two shares and the list of missing parts and endpoints, for paths that already lie where they should be compared.
+3. In `evaluate`, the block for stage I: the three fits, the check for a stretched drawing, and the minimum size.
+4. The last lines: complete, passed, and the difficulties that are allowed at this stage.
+
+The three numbers the team will calibrate, `TRACE_TOL`, `PART_COVER` and `MIN_DRAW_SCALE`, are at the top and nowhere else.
+
+<a id="f-evaluation"></a>
+
+`src/lib/evaluation.ts`
+
+```ts
+// M07 Attempt Evaluation. Scores the strokes of an attempt against a lesson's
+// figure, as SRS Section 9.2 defines it. Stateless and deterministic.
+
+import {
+  IDENTITY,
+  applyAll,
+  boundingBox,
+  boxFit,
+  diagonal,
+  distance,
+  length,
+  lengthWithin,
+  refineFit,
+  sample,
+  toPath,
+  trimmedBox,
+} from "./geometry";
+import type { Difficulty, DrawingStage, Evaluation, Figure, Fit, Path, Stroke } from "./types";
+
+/** Largest distance that counts as "on the figure", in percent of the figure's diagonal. */
+export const TRACE_TOL = 5;
+/** Share of a required part that must be drawn for the part to count, in percent. */
+export const PART_COVER = 90;
+/**
+ * With no guide, the smallest a drawing may be: its longer side, in percent
+ * of the figure's longer side. Smaller than this and it is not a complete
+ * attempt, however neat.
+ */
+export const MIN_DRAW_SCALE = 40;
+
+export type Evaluate = (
+  strokes: Stroke[],
+  figure: Figure,
+  stage: DrawingStage,
+  allowed: Difficulty[],
+  stagePass: number,
+) => Evaluation;
+
+export function tolerance(figure: Figure): number {
+  return (TRACE_TOL / 100) * diagonal(boundingBox(figure.parts));
+}
+
+function isValid(strokes: Stroke[], tol: number): boolean {
+  if (strokes.length === 0) return false;
+  for (const s of strokes) {
+    if (s.points.length === 0) return false;
+    for (const p of s.points) {
+      if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return false;
+    }
+  }
+  // A tap or a mark shorter than the tolerance is too little to judge.
+  const total = strokes.reduce((sum, s) => sum + length(toPath(s)), 0);
+  return total >= tol;
+}
+
+interface Score {
+  found: Difficulty[];
+  drawn: number;
+  onFigure: number;
+  result: number;
+}
+
+/** Scores paths that already lie where they are to be compared with the figure. */
+function score(paths: Path[], figure: Figure, tol: number): Score {
+  const found: Difficulty[] = [];
+
+  // Share of the figure that was drawn, and which required parts are missing.
+  let figureLength = 0;
+  let figureCovered = 0;
+  figure.parts.forEach((part, index) => {
+    const partLength = length(part);
+    const covered = lengthWithin(part, paths, tol);
+    figureLength += partLength;
+    figureCovered += covered;
+    if (covered < (PART_COVER / 100) * partLength) found.push({ kind: "missedPart", index });
+  });
+
+  figure.endpoints.forEach((endpoint, index) => {
+    if (distance(endpoint, paths) > tol) found.push({ kind: "missedEndpoint", index });
+  });
+
+  // Share of what was drawn that lies on the figure.
+  const drawnLength = paths.reduce((sum, p) => sum + length(p), 0);
+  const drawnOnFigure = paths.reduce((sum, p) => sum + lengthWithin(p, figure.parts, tol), 0);
+
+  const drawn = figureCovered / figureLength;
+  const onFigure = drawnOnFigure / drawnLength;
+  return { found, drawn, onFigure, result: 100 * Math.min(drawn, onFigure) };
+}
+
+export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) => {
+  if (figure.parts.length === 0) throw new Error("emptyFigure");
+  const guidance = stage === "I" ? "independent" : "assisted";
+  const tol = tolerance(figure);
+
+  if (!isValid(strokes, tol)) {
+    return {
+      class: "invalid",
+      guidance,
+      result: 0,
+      passed: false,
+      difficulties: [],
+      drawn: 0,
+      onFigure: 0,
+      fit: IDENTITY,
+    };
+  }
+
+  const original = strokes.map(toPath);
+  let fit: Fit = IDENTITY;
+  let best = score(original, figure, tol);
+  let tooSmall = false;
+  let stretched = false;
+
+  if (stage === "I") {
+    // With no guide, where and how big the child drew does not matter: the
+    // whole drawing is moved and uniformly scaled onto the figure before it
+    // is scored. Three ways of laying it over the figure are tried, and the
+    // one that scores best is kept:
+    //  1. by its bounding box, exactly as the SRS states it;
+    //  2. by the box of the bulk of the drawing, so that a short stray mark or
+    //     a line that runs on past a corner does not throw everything off;
+    //  3. the second, nudged a little (at most 5% in size and one tolerance
+    //     in position) towards the closest fit.
+    const figureBox = boundingBox(figure.parts);
+    const points = sample(original, 12);
+    const byBulk = boxFit(trimmedBox(points, 0.08), figureBox);
+    const candidates = [
+      boxFit(boundingBox(original), figureBox),
+      byBulk,
+      refineFit(points, sample(figure.parts, 12), byBulk, 3 * tol, 1.05, tol),
+    ];
+    const better = (a: Score, b: Score) =>
+      a.found.length !== b.found.length ? a.found.length < b.found.length : a.result > b.result;
+
+    fit = candidates[0];
+    best = score(applyAll(fit, original), figure, tol);
+    for (const candidate of candidates.slice(1)) {
+      const other = score(applyAll(candidate, original), figure, tol);
+      if (better(other, best)) {
+        fit = candidate;
+        best = other;
+      }
+    }
+
+    // If parts seem to be missing, check whether the drawing is the right
+    // shape pulled out of proportion, such as a rectangle for a square. Laid
+    // over the figure by width and height separately, such a drawing has
+    // every part. Then nothing is missing: the drawing is stretched, and the
+    // child is told that, not shown a glow beside lines they did draw.
+    if (best.found.length > 0) {
+      for (const box of [trimmedBox(points, 0.08), boundingBox(original)]) {
+        const w = box.maxX - box.minX;
+        const h = box.maxY - box.minY;
+        if (w === 0 || h === 0) continue;
+        const sx = (figureBox.maxX - figureBox.minX) / w;
+        const sy = (figureBox.maxY - figureBox.minY) / h;
+        const pulled = original.map((path) =>
+          path.map((p) => ({
+            x: figureBox.minX + (p.x - box.minX) * sx,
+            y: figureBox.minY + (p.y - box.minY) * sy,
+          })),
+        );
+        const asPulled = score(pulled, figure, tol);
+        if (asPulled.found.length === 0) {
+          stretched = true;
+          best = { ...best, found: [], onFigure: asPulled.onFigure };
+          break;
+        }
+      }
+    }
+
+    // It must still be a real drawing of the shape, not a speck.
+    const box = boundingBox(original);
+    const longer = Math.max(box.maxX - box.minX, box.maxY - box.minY);
+    const figureLonger = Math.max(figureBox.maxX - figureBox.minX, figureBox.maxY - figureBox.minY);
+    tooSmall = longer < (MIN_DRAW_SCALE / 100) * figureLonger;
+  }
+
+  const found = [...best.found];
+  const complete = found.length === 0 && !tooSmall && !stretched;
+  if (stretched) found.push({ kind: "stretched", index: 0 });
+  if (tooSmall) found.push({ kind: "tooSmall", index: 0 });
+  if (100 * best.onFigure < stagePass) found.push({ kind: "offFigure", index: 0 });
+
+  return {
+    class: complete ? "complete" : "incomplete",
+    guidance,
+    result: best.result,
+    passed: complete && best.result >= stagePass,
+    // Only the difficulties the team predefined for this stage are reported.
+    difficulties: found.filter((d) => allowed.some((a) => a.kind === d.kind && a.index === d.index)),
+    drawn: best.drawn,
+    onFigure: best.onFigure,
+    fit,
+  };
+};
+```
+
+<a id="p-attempt"></a>
+## 6. One attempt
+
+**The problem.** A square can take four strokes, and the child has no "done" button. Something has to decide when a try is over.
+
+**How.** `attempt.ts` holds one try at one stage. It is given two things.
+
+- **A stroke, at each stylus lift** (`addStroke`). It scores all the strokes so far. If they pass, the attempt ends at once as passed. If not, it stays open: the child may simply not have finished.
+- **The time, about once a second** (`checkIdle`). Nothing happens until the child has paused for the adult's "pause that ends an attempt". Then one of three things:
+  - the drawing cannot be judged (a tap): the attempt ends as invalid, and is not counted;
+  - a part or an endpoint is missing, and there are hints left: the attempt stays open, and `checkIdle` answers "give a hint". The pause starts again. There are at most two hints, and the second only if the child drew something after the first;
+  - otherwise the attempt ends as not passed.
+
+It also keeps `seen`, the list of difficulties noticed along the way. A difficulty that the child later fixes is marked corrected, never removed, which is what the SRS asks of the record.
+
+**What to look for.** `MAX_HINTS`, `addStroke`, `checkIdle` and `note`.
+
+<a id="f-attempt"></a>
+
+`src/lib/attempt.ts`
+
+```ts
+// M06 Attempt. One attempt at one drawing stage: it collects strokes, has
+// them evaluated at every stylus lift, and decides when it has ended.
+
+import type { Evaluate } from "./evaluation";
+import type { Difficulty, DrawingStage, Evaluation, Figure, Observed, Stroke } from "./types";
+
+export type Outcome = "open" | "passed" | "notPassed" | "invalid" | "interrupted";
+
+/** The most hints one attempt gives before it ends. */
+export const MAX_HINTS = 2;
+
+const same = (a: Difficulty, b: Difficulty) => a.kind === b.kind && a.index === b.index;
+
+export class Attempt {
+  strokes: Stroke[] = [];
+  /** The evaluation after the most recent stylus lift. */
+  last: Evaluation | null = null;
+  /** Every difficulty seen so far. A correction marks it; it is never removed. */
+  seen: Observed[] = [];
+  outcome: Outcome = "open";
+  endedAt: number | null = null;
+  /** How many times the child has been shown what is missing in this attempt. */
+  hints = 0;
+  private hintAt = 0;
+  private strokesAtHint = 0;
+
+  constructor(
+    readonly lesson: string,
+    readonly stage: DrawingStage,
+    private figure: Figure,
+    private allowed: Difficulty[],
+    private stagePass: number,
+    /** Seconds. */
+    private attemptIdle: number,
+    private evaluate: Evaluate,
+  ) {}
+
+  /** Called at each stylus lift. Evaluates all strokes so far; a pass ends the attempt at once. */
+  addStroke(stroke: Stroke, now: number): void {
+    if (this.outcome !== "open") throw new Error("attemptEnded");
+    this.strokes.push(stroke);
+    this.last = this.evaluate(this.strokes, this.figure, this.stage, this.allowed, this.stagePass);
+    // Something drawn off the figure is noted at every lift. A missed part or
+    // endpoint, or a drawing that is still small, is not: the child may simply
+    // not have finished yet.
+    // With no guide the drawing is laid over the figure as a whole, so a
+    // half-finished one looks off the figure until it is done. There, nothing
+    // is noted until the attempt ends.
+    if (this.stage !== "I") {
+      this.note(
+        this.last.difficulties.filter((d) => d.kind === "offFigure"),
+        ["offFigure"],
+      );
+    }
+    // After a hint, what was missing and is now drawn is marked corrected.
+    if (this.hints > 0) this.note(this.missing(), ["missedPart", "missedEndpoint"]);
+    if (this.last.passed) this.end("passed", now);
+  }
+
+  /**
+   * Called about once a second. Once attemptIdle has passed with no input,
+   * an attempt that has not passed either gets a hint or ends.
+   *
+   * A hint: if a part or an endpoint is missing, the child is shown where,
+   * the drawing stays, and the pause starts again, so they can finish it. The
+   * attempt gives at most MAX_HINTS, and a second one only if the child drew
+   * something after the first. Otherwise the attempt ends as not passed.
+   *
+   * Returns true when a hint was just given.
+   */
+  checkIdle(now: number, lastInputAt: number): boolean {
+    if (this.outcome !== "open" || this.strokes.length === 0 || this.last === null) return false;
+    if (now - Math.max(lastInputAt, this.hintAt) < this.attemptIdle * 1000) return false;
+    if (this.last.class === "invalid") {
+      this.end("invalid", now);
+      return false;
+    }
+    const drewSinceHint = this.strokes.length > this.strokesAtHint;
+    if (this.missing().length > 0 && this.hints < MAX_HINTS && (this.hints === 0 || drewSinceHint)) {
+      this.hints += 1;
+      this.hintAt = now;
+      this.strokesAtHint = this.strokes.length;
+      // What is missing is now on record. If the child fills it in, it is marked corrected, not removed.
+      this.note(this.missing(), ["missedPart", "missedEndpoint"]);
+      return true;
+    }
+    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
+    this.end("notPassed", now);
+    return false;
+  }
+
+  /** The parts and endpoints the drawing still lacks: what the child could finish. */
+  missing(): Difficulty[] {
+    return (this.last?.difficulties ?? []).filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
+  }
+
+  /** Ends the attempt with no result, keeping its strokes and difficulties. */
+  interrupt(now: number): void {
+    if (this.outcome !== "open") throw new Error("attemptEnded");
+    this.last = null;
+    this.end("interrupted", now);
+  }
+
+  private end(outcome: Outcome, now: number): void {
+    this.outcome = outcome;
+    this.endedAt = now;
+  }
+
+  private note(observedNow: Difficulty[], kinds: Difficulty["kind"][]): void {
+    for (const entry of this.seen) {
+      if (kinds.includes(entry.difficulty.kind)) {
+        entry.corrected = !observedNow.some((d) => same(d, entry.difficulty));
+      }
+    }
+    for (const d of observedNow) {
+      if (!this.seen.some((entry) => same(entry.difficulty, d))) {
+        this.seen.push({ difficulty: d, corrected: false });
+      }
+    }
+  }
+}
+```
+
+<a id="lesson-moves"></a>
+## 7. The whole lesson
+
+**The problem.** Decide which stage the child is at, when an attempt counts, and when the lesson moves on, offers the adult a go-back suggestion, gives its one extension, or ends.
+
+### The rule
+
+The state and the rules are those of SRS Section 9.2. In order, after each attempt that ends:
+
+| What happened | What the lesson does |
+| --- | --- |
+| The drawing passes, at trace or corners | Saves it, moves to the next stage, resets the stage's counts. |
+| The drawing passes with no guide | Saves it and completes the lesson. No other lesson starts. |
+| It does not pass, a part or endpoint is missing, and the pause runs out | A hint: the missing part glows, the drawing stays, and the pause starts again. At most two in an attempt, the second only if the child drew after the first. Nothing is counted yet. |
+| The attempt is invalid or interrupted | Starts a new attempt. Nothing is counted. An interrupted attempt (the browser cuts the contact off, or the adult leaves) is saved, marked interrupted. |
+| It does not pass, the failed attempts have reached the limit, and the child is not improving | Ends the lesson. |
+| It does not pass, the limit is reached, the child is improving, and the cap is not reached | Gives the one extension. |
+| The extension is used up, or the cap is reached | Ends the lesson. |
+| It does not pass, the streak has reached the streak setting, the child is not improving, at corners or no guide | Offers the adult a go-back suggestion. The stage does not change and the child keeps practising. |
+| Anything else | A new attempt at the same stage. |
+
+"Improving" means the average of the last `IMPROVE_WINDOW` results is at least 5 points above the average of the same number of results before them.
+
+A suggestion that the adult declines resets the streak. One that is accepted moves to the earlier stage the adult picks. One that is never answered stays pending and is recorded as ignored if a pass or the end of the lesson clears it.
+
+### What happens at a stylus lift
+
+```mermaid
+sequenceDiagram
+  participant Child
+  participant Canvas as DrawingCanvas
+  participant Page as Lesson page
+  participant Control as Lesson Control
+  participant Attempt
+  participant Eval as Evaluation
+  participant Records
+
+  Child->>Canvas: draws, then lifts the stylus
+  Canvas->>Page: onStroke(stroke)
+  Page->>Control: addStroke(stroke)
+  Control->>Attempt: addStroke(stroke)
+  Attempt->>Eval: evaluate(all strokes so far)
+  Eval-->>Attempt: class, result, passed, difficulties
+  alt the drawing passes
+    Control->>Records: save the attempt as passed
+    Control-->>Page: stagePassed (or lessonComplete)
+    Note over Control: moves to the next stage
+  else it does not pass yet
+    Control-->>Page: nothing
+    Note over Page: the attempt stays open
+    loop twice a second
+      Page->>Control: tick(time of last input)
+    end
+    Note over Control: after ATTEMPT_IDLE with no input, the attempt ends
+    Control->>Records: save the attempt as not passed
+    Control-->>Page: keepTrying and the difficulties seen
+  end
+```
+
+### The code
+
+`improvement.ts` is the "improving" rule on its own, a few lines, so a different measure later changes only that file.
+
+<a id="f-improvement"></a>
+
+`src/lib/improvement.ts`
+
+```ts
+// M09 Improvement Measure. The measure is this module's secret, so a different
+// way of deciding "improving" changes only this file.
+
+/** Smallest rise in the average stage result that counts as improvement. */
+export const IMPROVE_MARGIN = 5;
+
+/**
+ * True when the average of the last `window` results is at least
+ * IMPROVE_MARGIN above the average of the `window` results before them.
+ * False when there are fewer than 2 * window results.
+ */
+export function improving(history: number[], window: number): boolean {
+  const m = history.length;
+  if (m < 2 * window) return false;
+  const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const recent = avg(history.slice(m - window));
+  const before = avg(history.slice(m - 2 * window, m - window));
+  return recent - before >= IMPROVE_MARGIN;
+}
+```
+
+`lessonControl.ts` is the centre of the app. It has no screen and no timers of its own.
+
+**What to look for.**
+
+- **The fields at the top** are the state of SRS Section 9.2. Each comment gives the SRS's letter: `failed` is n_f, `streak` is k, `history` is H, and so on.
+- **`select`** starts a lesson for a child, with the child's settings as they are at that moment. A later change to the settings does not reach a lesson already running.
+- **`addStroke`** passes the stroke to the attempt. On a pass it saves the attempt and moves to the next stage, or completes the lesson.
+- **`tick`** is called twice a second with the time of the child's last input. It lets the attempt notice a pause, then handles the lesson's own idle check-in and idle end.
+- **`afterFailedAttempt`** is the transition table of the SRS, in the table's order: end at the limit, or grant the extension, or offer a suggestion, or start a new attempt.
+- **`keep`** wraps every save, so a save that fails never stops the lesson.
+
+Every one of these returns a `Report`, or changes the state the screen reads. The class never touches the screen.
+
+<a id="f-control"></a>
+
+`src/lib/lessonControl.ts`
+
+```ts
+// M04 Guided Lesson Control. The state machine of SRS Section 9.2: which stage
+// the child is at, when an attempt counts, and when the lesson moves on,
+// offers a go-back suggestion, grants its one extension or ends.
+// It has no UI and no timers of its own: the screen calls addStroke at each
+// stylus lift and tick about once a second.
+
+import { Attempt } from "./attempt";
+import * as catalogue from "./catalogue";
+import { evaluate as realEvaluate, type Evaluate } from "./evaluation";
+import { improving } from "./improvement";
+import type { RecordStore } from "./records";
+import type { DrawingStage, Ending, Evaluation, Report, Settings, Stage, Stroke } from "./types";
+
+export type Status = "noLesson" | "active" | "suggested" | "ended";
+
+const ORDER: Stage[] = ["D", "T", "E", "I"];
+const later = (a: Stage, b: Stage): Stage => (ORDER.indexOf(a) >= ORDER.indexOf(b) ? a : b);
+const NOTHING: Report = { feedback: [], difficulties: [] };
+
+export interface Deps {
+  records: RecordStore;
+  /** Tests replace these to give each attempt's result and the time directly. */
+  evaluate?: Evaluate;
+  now?: () => number;
+}
+
+export class LessonControl {
+  status: Status = "noLesson"; // q
+  lessonId = ""; // l (the lesson)
+  learner = ""; // p
+  stage: Stage = "D"; // l (the stage)
+  furthest: Stage = "D"; // f
+  failed = 0; // n_f: failed attempts at this stage
+  evaluable = 0; // n_a: counted attempts at this stage
+  streak = 0; // k: failed attempts in a row
+  history: number[] = []; // H: results of the counted attempts at this stage
+  suggestionPending = false; // s
+  extended = false; // z
+  sinceExtension = 0; // x
+  settings!: Settings;
+  attempt: Attempt | null = null;
+  ending: Ending = "inProgress";
+  /** Whether the idle check-in is showing. */
+  prompted = false;
+  /** The evaluation of the attempt that ended last, for the demo panel. */
+  lastFinal: Evaluation | null = null;
+  /** How many records could not be saved, for example because the browser's storage is full. */
+  unsaved = 0;
+
+  private startAt: DrawingStage = "T";
+  private recordId = "";
+  private suggestionIndex = 0;
+  private activityBase = 0;
+  private records: RecordStore;
+  private evaluate: Evaluate;
+  private now: () => number;
+
+  constructor(deps: Deps) {
+    this.records = deps.records;
+    this.evaluate = deps.evaluate ?? realEvaluate;
+    this.now = deps.now ?? Date.now;
+  }
+
+  /**
+   * The adult chooses a lesson and its starting stage. The demonstration is
+   * always shown first (UC-003 step 1); practice then starts at the chosen stage.
+   * The settings are read once, here: a later change applies to the next lesson.
+   */
+  select(learner: string, lessonId: string, start: Stage, settings: Settings): void {
+    catalogue.lesson(lessonId); // throws unknownLesson
+    if (this.status === "active" || this.status === "suggested") this.stop();
+    this.learner = learner;
+    this.lessonId = lessonId;
+    this.settings = { ...settings };
+    this.startAt = start === "D" ? "T" : start;
+    this.stage = "D";
+    this.furthest = start;
+    this.status = "active";
+    this.ending = "inProgress";
+    this.lastFinal = null;
+    this.attempt = null;
+    this.resetStage();
+    this.recordId = this.keep(() => this.records.startLesson(learner, lessonId, start)) ?? "";
+  }
+
+  /** The child continues after the demonstration. */
+  beginPractice(): void {
+    if (this.status !== "active" || this.stage !== "D") throw new Error("notAtDemonstration");
+    this.enterStage(this.startAt);
+  }
+
+  /** A finished stroke. A pass ends the attempt here, at the stylus lift. */
+  addStroke(stroke: Stroke): Report {
+    if (!this.isRunning() || this.attempt === null) throw new Error("noAttempt");
+    const attempt = this.attempt;
+    attempt.addStroke(stroke, this.now());
+    if (attempt.outcome !== "passed") return NOTHING;
+
+    const stage = attempt.stage;
+    this.lastFinal = attempt.last;
+    this.save(attempt, "passed");
+    this.keep(() => this.records.recordPass(this.recordId, stage));
+    this.evaluable += 1;
+    this.clearSuggestion("ignored");
+
+    if (stage === "I") {
+      this.finish("completed");
+      return { feedback: ["lessonComplete"], difficulties: [] };
+    }
+    this.enterStage(stage === "T" ? "E" : "I");
+    return { feedback: ["stagePassed"], difficulties: [] };
+  }
+
+  /**
+   * Called about once a second with the time of the child's last input.
+   * Ends an idle attempt, applies the stopping rules, and handles the
+   * lesson's own idle check-in and idle end.
+   */
+  tick(lastInputAt: number | null): Report {
+    if (!this.isRunning()) return NOTHING;
+    const now = this.now();
+    const lastActivity = Math.max(lastInputAt ?? 0, this.activityBase);
+    const idleSeconds = (now - lastActivity) / 1000;
+
+    if (idleSeconds >= this.settings.lessonIdleEnd) {
+      this.finish("endedIdle");
+      return { feedback: ["lessonEnded"], difficulties: [] };
+    }
+
+    const attempt = this.attempt;
+    if (attempt !== null) {
+      if (attempt.checkIdle(now, lastActivity)) {
+        // The drawing stays, and the child is shown what to finish.
+        return { feedback: ["fillIn"], difficulties: attempt.missing() };
+      }
+      if (attempt.outcome === "invalid") {
+        // Not saved and not counted (FR-LRN-010, FR-LRN-032).
+        this.newAttempt();
+        return { feedback: ["notEvaluable"], difficulties: [] };
+      }
+      if (attempt.outcome === "notPassed") return this.afterFailedAttempt(attempt);
+    }
+
+    if (idleSeconds >= this.settings.lessonIdlePrompt) {
+      if (!this.prompted) {
+        this.prompted = true;
+        return { feedback: ["checkIn"], difficulties: [] };
+      }
+    } else {
+      this.prompted = false;
+    }
+    return NOTHING;
+  }
+
+  /** The input was cut off (for example a pointercancel). Kept apart, never counted. */
+  interrupt(): void {
+    if (!this.isRunning() || this.attempt === null) return;
+    if (this.attempt.strokes.length > 0) {
+      this.attempt.interrupt(this.now());
+      this.save(this.attempt, "interrupted");
+    }
+    this.newAttempt();
+  }
+
+  /** The adult answers a go-back suggestion. Accepting needs an earlier stage. */
+  answerSuggestion(accept: boolean, stage?: DrawingStage): void {
+    if (!this.suggestionPending) throw new Error("noSuggestion");
+    if (!accept) {
+      this.clearSuggestion("declined");
+      this.streak = 0; // a new suggestion needs a whole new streak
+      return;
+    }
+    if (stage === undefined || ORDER.indexOf(stage) >= ORDER.indexOf(this.stage)) {
+      throw new Error("notEarlierStage");
+    }
+    this.clearSuggestion("accepted", stage);
+    this.interruptOpenAttempt();
+    this.enterStage(stage);
+  }
+
+  /** The adult leaves the lesson. It ends as unfinished. */
+  stop(): void {
+    if (!this.isRunning()) return;
+    this.interruptOpenAttempt();
+    this.finish("unfinished");
+  }
+
+  // ----- the rules -----
+
+  private afterFailedAttempt(attempt: Attempt): Report {
+    const s = this.settings;
+    this.lastFinal = attempt.last;
+    this.save(attempt, "notPassed");
+    this.evaluable += 1;
+    this.failed += 1;
+    this.streak += 1;
+    this.history.push(attempt.last!.result);
+    if (this.extended) this.sinceExtension += 1;
+
+    const report: Report = {
+      feedback: ["keepTrying"], // the effort is acknowledged first (NFR-UX-016)
+      difficulties: attempt.seen.filter((o) => !o.corrected).map((o) => o.difficulty),
+    };
+    const isImproving = improving(this.history, s.improveWindow);
+    const atCap = this.evaluable >= s.attemptLimitMax;
+
+    // The first rule that holds applies, in this order (SRS Table "Guided lesson state transitions").
+    const endAtLimit = this.extended
+      ? this.sinceExtension >= s.attemptExtension || atCap
+      : this.failed >= s.attemptLimit && (!isImproving || atCap);
+
+    if (endAtLimit) {
+      this.finish(atCap ? "endedAtMax" : "endedAtLimit");
+      report.feedback.push("lessonEnded");
+      return report;
+    }
+    if (!this.extended && this.failed >= s.attemptLimit && isImproving) {
+      this.extended = true; // granted once per stage
+      this.sinceExtension = 0;
+      this.keep(() => this.records.recordExtension(this.recordId));
+    } else if (
+      this.status === "active" &&
+      !this.suggestionPending &&
+      (this.stage === "E" || this.stage === "I") &&
+      this.streak >= s.difficultyStreak &&
+      !isImproving
+    ) {
+      // The stage does not change; the child keeps practising while it is pending.
+      this.suggestionPending = true;
+      this.status = "suggested";
+      this.suggestionIndex =
+        this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now())) ?? 0;
+    }
+    this.newAttempt();
+    return report;
+  }
+
+  // ----- helpers -----
+
+  /**
+   * Writes a record. If the write fails (the browser's storage is full, say),
+   * the lesson carries on and the failure is counted, so the screen can tell
+   * the adult. A child's practice is never stopped by a save.
+   */
+  private keep<T>(write: () => T): T | undefined {
+    try {
+      return write();
+    } catch {
+      this.unsaved += 1;
+      return undefined;
+    }
+  }
+
+  private isRunning(): boolean {
+    return this.status === "active" || this.status === "suggested";
+  }
+
+  private resetStage(): void {
+    this.failed = 0;
+    this.evaluable = 0;
+    this.streak = 0;
+    this.history = [];
+    this.suggestionPending = false;
+    this.extended = false;
+    this.sinceExtension = 0;
+    this.prompted = false;
+    this.activityBase = this.now();
+  }
+
+  private enterStage(stage: DrawingStage): void {
+    this.stage = stage;
+    this.furthest = later(this.furthest, stage);
+    this.resetStage();
+    this.newAttempt();
+  }
+
+  private newAttempt(): void {
+    const stage = this.stage as DrawingStage;
+    this.attempt = new Attempt(
+      this.lessonId,
+      stage,
+      catalogue.lesson(this.lessonId).figure,
+      catalogue.difficulties(this.lessonId, stage),
+      this.settings.stagePass,
+      this.settings.attemptIdle,
+      this.evaluate,
+    );
+  }
+
+  private interruptOpenAttempt(): void {
+    if (this.attempt !== null && this.attempt.outcome === "open" && this.attempt.strokes.length > 0) {
+      this.attempt.interrupt(this.now());
+      this.save(this.attempt, "interrupted");
+    }
+    this.attempt = null;
+  }
+
+  private clearSuggestion(response: "accepted" | "declined" | "ignored", stage: DrawingStage | null = null): void {
+    if (!this.suggestionPending) return;
+    this.keep(() => this.records.answerSuggestion(this.recordId, this.suggestionIndex, response, stage));
+    this.suggestionPending = false;
+    this.status = "active";
+  }
+
+  private save(attempt: Attempt, outcome: "passed" | "notPassed" | "interrupted"): void {
+    const record = {
+      lesson: attempt.lesson,
+      stage: attempt.stage,
+      outcome,
+      result: outcome === "interrupted" ? null : attempt.last!.result,
+      difficulties: attempt.seen,
+      settings: this.settings,
+      strokes: attempt.strokes, // the actual strokes, never a corrected shape (BR-004)
+      endedAt: attempt.endedAt!,
+    };
+    this.keep(() => this.records.saveAttempt(this.recordId, record));
+  }
+
+  private finish(ending: Ending): void {
+    this.clearSuggestion("ignored");
+    this.status = "ended";
+    this.ending = ending;
+    this.attempt = null;
+    this.keep(() => this.records.endLesson(this.recordId, ending, this.furthest));
+  }
+}
+```
+
+<a id="p-feedback"></a>
+## 8. What the child sees and hears
+
+**The problem.** The lesson says *which* feedback to give ("keep trying", "a part is missing"). Something else must decide what that looks and sounds like, so that the specialists can change the wording without anyone touching a rule.
+
+**How.** `feedback.ts` maps each kind of feedback to its words, and holds the helper's line for each stage ("Watch me!", "Your turn!", "Now join the dots!", "Now draw it on your own!"). Every message describes the drawing, never the child.
+
+<a id="f-feedback"></a>
+
+`src/lib/feedback.ts`
+
+```ts
+// M08 Feedback. What each message says and shows. Lesson Control decides
+// which feedback is given; this file decides only its wording and look, so
+// either can change without the other. Every message describes the drawing,
+// never the child, and nothing marks a drawing as "wrong".
+
+import type { DifficultyKind, FeedbackKind, Stage } from "./types";
+
+export interface Feedback {
+  message: string;
+  image: string;
+  colour: string;
+}
+
+const KINDS: Record<FeedbackKind, Feedback> = {
+  stagePassed: { message: "You did it! Here comes the next one.", image: "🌟", colour: "#24735b" },
+  lessonComplete: { message: "Great practising! Here's your sticker!", image: "🎉", colour: "#24735b" },
+  fillIn: { message: "Great try! Finish where it's glowing!", image: "✨", colour: "#5e51b8" },
+  keepTrying: { message: "Great try! Let's draw it again.", image: "💪", colour: "#5e51b8" },
+  notEvaluable: { message: "Let's try that one again.", image: "✏️", colour: "#5e51b8" },
+  checkIn: { message: "Still drawing? Tap to keep going.", image: "👋", colour: "#5e51b8" },
+  lessonEnded: { message: "Great practising! Here's your sticker!", image: "🌈", colour: "#5e51b8" },
+};
+
+const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
+  missedPart: { message: "Look where it's glowing.", image: "🧩", colour: "#b84a30" },
+  missedEndpoint: { message: "The line missed a dot.", image: "📍", colour: "#b84a30" },
+  offFigure: { message: "Some lines went away from the shape.", image: "↗️", colour: "#b84a30" },
+  tooSmall: { message: "Try drawing it bigger.", image: "🔍", colour: "#b84a30" },
+  stretched: { message: "Try making it as tall as it is wide.", image: "↔️", colour: "#b84a30" },
+};
+
+/** What the helper says at the start of each stage. */
+const STAGE_LINES: Record<Stage, string> = {
+  D: "Watch me!",
+  T: "Your turn!",
+  E: "Now join the dots!",
+  I: "Now draw it on your own!",
+};
+
+export const stageLine = (stage: Stage): string => STAGE_LINES[stage];
+export const feedback = (kind: FeedbackKind): Feedback => KINDS[kind];
+export const difficultyFeedback = (kind: DifficultyKind): Feedback => DIFFICULTIES[kind];
+/** Every approved message, so the wording can be reviewed in one place. */
+export const allFeedback = (): string[] => [
+  ...Object.values(KINDS).map((f) => f.message),
+  ...Object.values(DIFFICULTIES).map((f) => f.message),
+  ...Object.values(STAGE_LINES),
+];
+```
+
+`audio.ts` makes the sound, with no sound files: a chime and a closing tune from the browser's Web Audio, and the helper's lines from the browser's own voice. Browsers only allow sound after a tap, so the adult's "Start lesson" tap calls `unlock`.
+
+<a id="f-audio"></a>
+
+`src/lib/audio.ts`
+
+```ts
+// M03 Audio Output. A soft chime when a step is done, a short tune when the
+// lesson ends, and the helper's lines spoken aloud. Everything is made by
+// the browser: there are no sound files. Lesson Control and the rules know
+// nothing about sound; the lesson screen decides when to call these.
+
+let context: AudioContext | null = null;
+let on = true;
+
+/** Turns sound on or off, from the learner's audio setting (NFR-UX-010). */
+export function setEnabled(enabled: boolean): void {
+  on = enabled;
+  if (!enabled && typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+}
+
+/**
+ * Browsers only allow sound after a tap. Call this from a tap (the adult's
+ * "Start lesson") so the lesson can make sound from then on.
+ */
+export function unlock(): void {
+  try {
+    const Ctx =
+      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!context && Ctx) context = new Ctx();
+    void context?.resume();
+    // An empty line wakes the browser's voice, which also needs a tap first.
+    if (typeof speechSynthesis !== "undefined") speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+  } catch {
+    // No sound on this device. The lesson works without it.
+  }
+}
+
+/** One soft note. `at` is seconds from now. */
+function note(frequency: number, at: number, length: number): void {
+  if (!context) return;
+  const start = context.currentTime + at;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = "sine";
+  oscillator.frequency.value = frequency;
+  gain.gain.setValueAtTime(0, start);
+  gain.gain.linearRampToValueAtTime(0.18, start + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, start + length);
+  oscillator.connect(gain).connect(context.destination);
+  oscillator.start(start);
+  oscillator.stop(start + length);
+}
+
+function play(notes: [frequency: number, at: number, length: number][]): void {
+  if (!on) return;
+  try {
+    void context?.resume();
+    notes.forEach((n) => note(...n));
+  } catch {
+    // Sound is a help, never a need.
+  }
+}
+
+/** A step is done. */
+export const chime = () =>
+  play([
+    [784, 0, 0.35],
+    [1047, 0.12, 0.5],
+  ]);
+
+/** The lesson is over. */
+export const tune = () =>
+  play([
+    [523, 0, 0.3],
+    [659, 0.15, 0.3],
+    [784, 0.3, 0.3],
+    [1047, 0.45, 0.7],
+  ]);
+
+/** Says one of the helper's lines, in place of whatever it was saying. */
+export function say(text: string): void {
+  if (!on || typeof speechSynthesis === "undefined") return;
+  try {
+    speechSynthesis.cancel();
+    const line = new SpeechSynthesisUtterance(text);
+    line.rate = 0.9;
+    line.pitch = 1.2;
+    speechSynthesis.speak(line);
+  } catch {
+    // The text is still on screen.
+  }
+}
+
+/** Stops anything being said, for when the lesson screen is left. */
+export function hush(): void {
+  if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+}
+```
+
+<a id="settings"></a>
+## 9. What the adult sets
+
+**The problem.** Nine values per child control the lesson. Each has a range, some have rules between them, and a bad value must never reach a lesson.
+
+### The values
+
+| Setting | Range | Default | What it changes |
+| --- | --- | --- | --- |
+| Pass mark (`STAGE_PASS`) | 70 to 90 | 80 | How accurate a complete drawing must be. |
+| Failed attempts before a suggestion (`DIFFICULTY_STREAK`) | 3 to 5 | 4 | When a go-back suggestion is offered. |
+| Failed attempts before the lesson ends (`ATTEMPT_LIMIT`) | 6 to 10 | 8 | When the lesson ends or is extended. |
+| Improvement window (`IMPROVE_WINDOW`) | 1 to 3 | 2 | How many attempts are compared to decide "improving". |
+| Extra attempts when improving (`ATTEMPT_EXTENSION`) | 1 to 3 | 2 | The size of the one extension. |
+| Most attempts at one stage (`ATTEMPT_LIMIT_MAX`) | 8 to 12 | 10 | The hard cap. |
+| Pause that ends an attempt (`ATTEMPT_IDLE`) | 3 to 7 s | 5 s | How long the app waits after the last stroke before ending an attempt that has not passed. |
+| Pause before a check-in (`LESSON_IDLE_PROMPT`) | 30 to 60 s | 45 s | When "Still drawing?" appears. |
+| Pause that ends the lesson (`LESSON_IDLE_END`) | 90 to 180 s | 135 s | When an abandoned lesson ends. |
+
+On the Lesson ready screen, "Neatness" Low, Medium and High set the pass mark to 70, 80 and 90, and "Get a grown-up after" is the failed-attempts-before-a-suggestion value. The other seven are under "More settings".
+
+The first six ranges are the SRS's. The last three are proposed here. A value outside its range cannot be saved, nor can a limit that is not above the streak, or a cap below the limit. A lesson uses the values as they were when it started.
+
+### The code
+
+**What to look for in `settings.ts`.**
+
+- `RANGES`: every range in one table. The default is always the middle of the range.
+- `check`: names every value that cannot be saved. The Lesson ready screen and the tests both use it, so the screen cannot allow what the rules reject.
+- `save` keeps only the values the adult moved away from the default, and `load` fills in the rest. A child nobody has changed therefore always gets the current recommended settings, and a saved value that is no longer in range counts as not chosen.
+- `audio` and `setAudio`: the "Helper talks" switch.
+
+<a id="f-settings"></a>
+
+`src/lib/settings.ts`
+
+```ts
+// M16 Learner Settings. Ranges, defaults and the rules between values.
+// Saving goes through the Storage module.
+
+import * as storage from "./storage";
+import type { SettingName, Settings } from "./types";
+
+export interface Range {
+  min: number;
+  max: number;
+  default: number;
+  label: string;
+  unit: string;
+  help: string;
+}
+
+const range = (min: number, max: number, label: string, unit: string, help: string): Range => ({
+  min,
+  max,
+  default: Math.round((min + max) / 2), // BR-008: the default is the middle of the range
+  label,
+  unit,
+  help,
+});
+
+/**
+ * The first six ranges are the SRS's. The SRS leaves the three idle ranges
+ * "TBD", so those are this POC's proposal. They are chosen so that
+ * attemptIdle < lessonIdlePrompt < lessonIdleEnd holds for every allowed value.
+ */
+export const RANGES: Record<SettingName, Range> = {
+  stagePass: range(70, 90, "Pass mark", "points", "How accurate a complete drawing must be to pass a stage."),
+  difficultyStreak: range(3, 5, "Failed attempts before a suggestion", "attempts", "Failed attempts in a row before Squigglr suggests going back a stage."),
+  attemptLimit: range(6, 10, "Failed attempts before the lesson ends", "attempts", "Failed attempts at one stage before the lesson ends or is extended."),
+  improveWindow: range(1, 3, "Improvement window", "attempts", "How many recent attempts are compared with the ones before them."),
+  attemptExtension: range(1, 3, "Extra attempts when improving", "attempts", "Extra attempts given once if the child is improving at the limit."),
+  attemptLimitMax: range(8, 12, "Most attempts at one stage", "attempts", "The hard cap on attempts at one stage, extension included."),
+  attemptIdle: range(3, 7, "Pause that ends an attempt", "seconds", "Time with no drawing after which an attempt that has not passed ends."),
+  lessonIdlePrompt: range(30, 60, "Pause before a check-in", "seconds", "Time with no drawing before the child sees a check-in."),
+  lessonIdleEnd: range(90, 180, "Pause that ends the lesson", "seconds", "Time with no drawing after which the lesson ends."),
+};
+
+export const SETTING_NAMES = Object.keys(RANGES) as SettingName[];
+
+export function defaults(): Settings {
+  const s = {} as Settings;
+  for (const name of SETTING_NAMES) s[name] = RANGES[name].default;
+  return s;
+}
+
+/**
+ * The values that cannot be saved: outside their range, not whole numbers, or
+ * breaking a rule between values (both values of a broken rule are given).
+ * An empty list means the settings can be saved.
+ */
+export function check(s: Settings): SettingName[] {
+  const bad = new Set<SettingName>();
+  for (const name of SETTING_NAMES) {
+    const v = s[name];
+    const r = RANGES[name];
+    if (!Number.isInteger(v) || v < r.min || v > r.max) bad.add(name);
+  }
+  const rule = (ok: boolean, a: SettingName, b: SettingName) => {
+    if (!ok) {
+      bad.add(a);
+      bad.add(b);
+    }
+  };
+  rule(s.attemptLimit > s.difficultyStreak, "attemptLimit", "difficultyStreak");
+  rule(s.attemptLimitMax >= s.attemptLimit, "attemptLimitMax", "attemptLimit");
+  rule(s.attemptIdle < s.lessonIdlePrompt, "attemptIdle", "lessonIdlePrompt");
+  rule(s.lessonIdlePrompt < s.lessonIdleEnd, "lessonIdlePrompt", "lessonIdleEnd");
+  return [...bad];
+}
+
+/**
+ * The learner's saved values, with the default for any value not chosen.
+ *
+ * What comes back can always be used. A value saved by an earlier version
+ * of the app may lie outside today's range (the pause that ends an attempt
+ * used to go up to 15 seconds), and a lesson cannot start with it. A value
+ * that is not allowed today counts as not chosen, so it takes the default
+ * (BR-008). If the values then still break a rule between them, the defaults
+ * are used for all.
+ */
+export function load(learnerId: string): Settings {
+  const saved = storage.get<Partial<Settings>>("settings", learnerId) ?? {};
+  const s = defaults();
+  for (const name of SETTING_NAMES) {
+    const value = saved[name];
+    const r = RANGES[name];
+    if (typeof value === "number" && Number.isInteger(value) && value >= r.min && value <= r.max) s[name] = value;
+  }
+  return check(s).length === 0 ? s : defaults();
+}
+
+/**
+ * Saves the values. Only the ones the adult set away from the default are
+ * kept, so a child whose values were never changed always gets the current
+ * recommended settings. Throws if any value fails `check`, so no bad value is
+ * ever saved.
+ */
+export function save(learnerId: string, s: Settings): void {
+  if (check(s).length > 0) throw new Error("invalidSettings");
+  const chosen: Partial<Settings> = {};
+  for (const name of SETTING_NAMES) {
+    if (s[name] !== RANGES[name].default) chosen[name] = s[name];
+  }
+  storage.put("settings", learnerId, chosen, learnerId);
+}
+
+/** Whether the helper talks and plays sounds for this learner (the audio setting, NFR-UX-010). On unless turned off. */
+export function audio(learnerId: string): boolean {
+  return storage.get<{ audio: boolean }>("options", learnerId)?.audio ?? true;
+}
+
+export function setAudio(learnerId: string, on: boolean): void {
+  storage.put("options", learnerId, { audio: on }, learnerId);
+}
+```
+
+`examples.ts` builds the example drawings for the Neatness pop-up from the lesson's own figure, with just as many stray lines as each pass mark allows. A test checks each one against the scoring.
+
+<a id="f-examples"></a>
+
+`src/lib/examples.ts`
+
+```ts
+// Example drawings for the pass mark (BR-008): for a given mark, a complete
+// drawing of the figure with as many extra lines as that mark still lets
+// through. They are made here, not stored, so they always agree with the
+// scoring in evaluation.ts.
+
+import { boundingBox, length } from "./geometry";
+import type { Figure, Stroke } from "./types";
+
+const toStroke = (points: { x: number; y: number }[]): Stroke => ({
+  points: points.map((p, i) => ({ ...p, t: i })),
+});
+
+/**
+ * The figure drawn exactly, plus a zigzag in the middle of it that lies off
+ * the figure. The zigzag is just short enough that the share of the drawing
+ * on the figure stays at the mark.
+ */
+export function passingExample(figure: Figure, mark: number): Stroke[] {
+  const figureLength = figure.parts.reduce((sum, p) => sum + length(p), 0);
+  // onFigure = figureLength / (figureLength + extra) >= mark / 100, with a small margin.
+  const extra = figureLength * (100 / mark - 1) * 0.94;
+
+  const box = boundingBox(figure.parts);
+  const cx = (box.minX + box.maxX) / 2;
+  const cy = (box.minY + box.maxY) / 2;
+  const half = Math.min(box.maxX - box.minX, box.maxY - box.minY) * 0.28;
+  const rowGap = half / 3;
+
+  const zigzag = [{ x: cx - half, y: cy - half }];
+  let left = extra;
+  let row = 0;
+  while (left > 0 && row < 7) {
+    const y = cy - half + row * rowGap;
+    const fromLeft = row % 2 === 0;
+    const run = Math.min(left, 2 * half);
+    zigzag.push({ x: fromLeft ? cx - half + run : cx + half - run, y });
+    left -= run;
+    if (left <= 0) break;
+    const drop = Math.min(left, rowGap);
+    zigzag.push({ x: fromLeft ? cx + half : cx - half, y: y + drop });
+    left -= drop;
+    row += 1;
+  }
+
+  return [...figure.parts.map(toStroke), toStroke(zigzag)];
+}
+```
+
+<a id="p-kept"></a>
+## 10. What is kept
+
+**The problem.** Keep children, their settings and their records, in a way that can move to a real database later without the rest of the app noticing.
+
+**How.** Three small modules sit on one. Only `storage.ts` knows where data lives.
+
+`storage.ts` has four functions: `get`, `put`, `list` and `remove`. Every item has a kind, an id and an owner (the child it belongs to). A saved attempt can never be changed. Moving to a database means rewriting the inside of this one file.
+
+<a id="f-storage"></a>
+
+`src/lib/storage.ts`
+
+```ts
+// M23 Storage. The only file that touches localStorage. Every other module
+// saves and reads through these four functions, so moving to a hosted
+// database (Supabase, in the Development Plan) changes only this file.
+
+export type Kind = "learner" | "settings" | "options" | "lessonRecord" | "attempt" | "active";
+
+interface Item<T> {
+  id: string;
+  owner: string | null; // the learner the item belongs to, or null
+  value: T;
+}
+
+const PREFIX = "squigglr:v1";
+const key = (kind: Kind, id: string) => `${PREFIX}:${kind}:${id}`;
+
+// On the server (and in unit tests) there is no localStorage; use memory.
+const memory = new Map<string, string>();
+const store = {
+  get: (k: string) => (typeof localStorage === "undefined" ? (memory.get(k) ?? null) : localStorage.getItem(k)),
+  set: (k: string, v: string) => (typeof localStorage === "undefined" ? void memory.set(k, v) : localStorage.setItem(k, v)),
+  remove: (k: string) => (typeof localStorage === "undefined" ? void memory.delete(k) : localStorage.removeItem(k)),
+  keys: () =>
+    typeof localStorage === "undefined"
+      ? [...memory.keys()]
+      : Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i)!),
+};
+
+export function get<T>(kind: Kind, id: string): T | null {
+  const raw = store.get(key(kind, id));
+  return raw === null ? null : (JSON.parse(raw) as Item<T>).value;
+}
+
+/**
+ * Saves an item, creating or replacing it. A saved attempt is never replaced
+ * (FR-REC-009): saving the same attempt again changes nothing, and saving a
+ * different one under the same id is refused.
+ */
+export function put<T>(kind: Kind, id: string, value: T, owner: string | null = null): void {
+  const next = JSON.stringify({ id, owner, value } satisfies Item<T>);
+  if (kind === "attempt") {
+    const existing = store.get(key(kind, id));
+    if (existing !== null) {
+      if (existing === next) return;
+      throw new Error("unchangeable");
+    }
+  }
+  store.set(key(kind, id), next);
+}
+
+/** Every item of a kind, or only those of one learner. */
+export function list<T>(kind: Kind, owner?: string): T[] {
+  const start = `${PREFIX}:${kind}:`;
+  return store
+    .keys()
+    .filter((k) => k.startsWith(start))
+    .map((k) => JSON.parse(store.get(k)!) as Item<T>)
+    .filter((item) => owner === undefined || item.owner === owner)
+    .map((item) => item.value);
+}
+
+export function remove(kind: Kind, id: string): void {
+  store.remove(key(kind, id));
+}
+
+export function newId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+```
+
+`profiles.ts`: a child is a generated id and a picture, with no name, and one child is "active" on this device.
+
+<a id="f-profiles"></a>
+
+`src/lib/profiles.ts`
+
+```ts
+// M15 Learner Profile. A profile is a generated id and an avatar, nothing
+// else: no name and no photo (BR-001).
+
+import * as settings from "./settings";
+import * as storage from "./storage";
+import type { Learner } from "./types";
+
+export const AVATARS = ["🦊", "🐼", "🐸", "🦁", "🐙", "🦄", "🐢", "🐝"];
+
+/** Creates a profile and saves the default settings for it. */
+export function create(avatar: string): Learner {
+  const learner: Learner = { id: storage.newId(), avatar, createdAt: Date.now() };
+  storage.put("learner", learner.id, learner);
+  settings.save(learner.id, settings.defaults());
+  return learner;
+}
+
+/** Every profile, in the order they were created. */
+export function learners(): Learner[] {
+  return storage.list<Learner>("learner").sort((a, b) => a.createdAt - b.createdAt);
+}
+
+export function setActive(learnerId: string): void {
+  storage.put("active", "current", learnerId);
+}
+
+export function clearActive(): void {
+  storage.remove("active", "current");
+}
+
+/** The active learner, or null when no child has been chosen. */
+export function active(): Learner | null {
+  const id = storage.get<string>("active", "current");
+  return id === null ? null : storage.get<Learner>("learner", id);
+}
+```
+
+`records.ts`: a lesson record for every start of a lesson, and an attempt record under it for every attempt that ended. `RecordStore` at the top is the list of things the lesson is allowed to write. The lesson is given a `RecordStore`, not this file, which is how the tests hand it one that keeps everything in memory.
+
+<a id="f-records"></a>
+
+`src/lib/records.ts`
+
+```ts
+// M10 Attempt Record. Lesson records and attempt records, kept per learner.
+// Only Lesson Control writes here; the Practice story reads.
+
+import * as storage from "./storage";
+import type { AttemptRecord, DrawingStage, Ending, LessonRecord, Stage, SuggestionResponse } from "./types";
+
+/** The interface Lesson Control needs. Tests pass an in-memory version. */
+export interface RecordStore {
+  startLesson(learner: string, lesson: string, start: Stage): string;
+  saveAttempt(recordId: string, attempt: Omit<AttemptRecord, "id" | "lessonRecordId">): void;
+  recordPass(recordId: string, stage: DrawingStage): void;
+  recordExtension(recordId: string): void;
+  offerSuggestion(recordId: string, from: DrawingStage, at: number): number;
+  answerSuggestion(recordId: string, index: number, response: SuggestionResponse, stage: DrawingStage | null): void;
+  endLesson(recordId: string, ending: Ending, furthest: Stage): void;
+}
+
+function open(recordId: string): LessonRecord {
+  const record = storage.get<LessonRecord>("lessonRecord", recordId);
+  if (record === null) throw new Error("unknownRecord");
+  // After a lesson ends, its record never changes (FR-REC-009).
+  if (record.ending !== "inProgress") throw new Error("lessonEnded");
+  return record;
+}
+
+const write = (record: LessonRecord) => storage.put("lessonRecord", record.id, record, record.learner);
+
+export const records: RecordStore = {
+  // A new record every time, even for a lesson started before, so earlier
+  // attempts are kept.
+  startLesson(learner, lesson, start) {
+    // One lesson runs at a time. A lesson still marked in progress was cut
+    // off (the page was closed or reloaded), so it is closed as unfinished.
+    for (const stale of storage.list<LessonRecord>("lessonRecord", learner)) {
+      if (stale.ending === "inProgress") write({ ...stale, ending: "unfinished" });
+    }
+    const record: LessonRecord = {
+      id: storage.newId(),
+      learner,
+      lesson,
+      start,
+      furthest: start,
+      passes: { T: 0, E: 0, I: 0 },
+      extensions: 0,
+      ending: "inProgress",
+      suggestions: [],
+      startedAt: Date.now(),
+    };
+    write(record);
+    return record.id;
+  },
+
+  saveAttempt(recordId, attempt) {
+    const record = open(recordId);
+    const id = storage.newId();
+    storage.put("attempt", id, { ...attempt, id, lessonRecordId: recordId }, record.learner);
+  },
+
+  recordPass(recordId, stage) {
+    const record = open(recordId);
+    record.passes[stage] += 1;
+    write(record);
+  },
+
+  recordExtension(recordId) {
+    const record = open(recordId);
+    record.extensions += 1;
+    write(record);
+  },
+
+  offerSuggestion(recordId, from, at) {
+    const record = open(recordId);
+    record.suggestions.push({ from, offeredAt: at, response: "pending", stage: null });
+    write(record);
+    return record.suggestions.length - 1;
+  },
+
+  answerSuggestion(recordId, index, response, stage) {
+    const record = open(recordId);
+    const suggestion = record.suggestions[index];
+    if (!suggestion) throw new Error("unknownSuggestion");
+    if (suggestion.response !== "pending") throw new Error("alreadyAnswered");
+    suggestion.response = response;
+    suggestion.stage = response === "accepted" ? stage : null;
+    write(record);
+  },
+
+  endLesson(recordId, ending, furthest) {
+    const record = open(recordId);
+    record.ending = ending;
+    record.furthest = furthest;
+    write(record);
+  },
+};
+
+/** A learner's lesson records, oldest first. */
+export function lessonRecords(learner: string): LessonRecord[] {
+  return storage.list<LessonRecord>("lessonRecord", learner).sort((a, b) => a.startedAt - b.startedAt);
+}
+
+/** The attempts of one lesson record, oldest first. */
+export function attempts(learner: string, recordId: string): AttemptRecord[] {
+  return storage
+    .list<AttemptRecord>("attempt", learner)
+    .filter((a) => a.lessonRecordId === recordId)
+    .sort((a, b) => a.endedAt - b.endedAt);
+}
+```
+
+<a id="p-screens"></a>
+## 11. The screens
+
+The screens are in the order an adult and a child meet them. They follow the lo-fi prototype, whose screen numbers are given.
+
+### Shared pieces
+
+Every screen sits in the same frame and uses the same few pieces, so these come first.
+
+`app/layout.tsx` and `app/globals.css`: the page shell, and the stylesheet that names every colour and the font once. The screens use those names.
+
+<a id="f-layout"></a>
+
+`src/app/layout.tsx`
+
+```tsx
+import type { Metadata, Viewport } from "next";
+import "@fontsource/nunito/400.css";
+import "@fontsource/nunito/700.css";
+import "@fontsource/nunito/800.css";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Squigglr",
+  description: "Guided drawing practice for young children.",
+};
+
+export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 1 };
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className="min-h-screen font-sans antialiased">
+        <main className="px-3 py-5 sm:px-6 sm:py-8">{children}</main>
+      </body>
+    </html>
+  );
+}
+```
+
+`src/app/globals.css`
+
+```css
+@import "tailwindcss";
+
+/*
+ * The look: one rounded sans-serif for everything, thin line icons, white
+ * cards with soft edges and a light shadow, and plenty of space, in the
+ * manner of a calm note-taking app. The colours are those of the team's
+ * A-Sense presentation. The layout of the screens follows the lo-fi
+ * prototype.
+ *
+ * On an iPad or a Mac the font is the system's own rounded face. Elsewhere
+ * Nunito, an open rounded font, is loaded in its place.
+ */
+@theme {
+  --font-sans: ui-rounded, "SF Pro Rounded", Nunito, "Segoe UI", system-ui, sans-serif;
+
+  --color-ink: #23304a;
+  --color-muted: #5b6478;
+  --color-brand: #5e51b8;
+  --color-stroke: #3a4fa0;
+  --color-panel: #f4f5f8;
+  --color-line: #e1e4ec;
+  /* The edge of a card or a button: light, but clear against white. */
+  --color-edge: #cdd2e0;
+  --shadow-card: 0 1px 2px rgb(35 48 74 / 0.06), 0 8px 24px rgb(35 48 74 / 0.07);
+  --color-lavender: #f2f0fc;
+  --color-lavender-deep: #dcd7f5;
+  --color-mint: #edf7f2;
+  --color-mint-deep: #d3eee3;
+  --color-green: #24735b;
+  --color-peach: #fef3ec;
+  --color-peach-deep: #fde1d3;
+  --color-coral: #b84a30;
+  --color-butter: #fbf0c4;
+  --color-butter-ink: #7a5c00;
+}
+
+body {
+  background: var(--color-panel);
+  color: var(--color-ink);
+}
+
+h1,
+h2 {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* On a tablet: no grey flash on a tap, no wait for a double tap, and no
+   pop-up menu or text selection when a finger rests on a button. */
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* A brief "pop": a step of the trail that was just reached, and a drawing
+   that just passed. It runs once, while the child is not drawing. */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.pop {
+  animation: pop 700ms ease-out 1;
+}
+.pop-gently {
+  animation: pop 700ms ease-out 1;
+  animation-name: pop-gently;
+}
+@keyframes pop-gently {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pop,
+  .pop-gently {
+    animation: none;
+  }
+}
+
+/* The drawing area must not scroll or zoom the page while the child draws. */
+canvas {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+```
+
+`Screen.tsx`: the rounded frame, with Back on the left, the heading in the middle and the child's picture on the right.
+
 <a id="f-screen"></a>
-**`components/Screen.tsx`**. The rounded "tablet" every screen sits in, as in the prototype: Back on the left, the heading in the middle, the child who is practising on the right.
 
 `src/components/Screen.tsx`
 
@@ -2684,8 +2690,9 @@ export function Screen({
 }
 ```
 
+`Avatar.tsx`, `icons.tsx`, `LessonIcon.tsx` and `Squiggle.tsx`: the pictures. `icons.tsx` has the trail of paw prints that shows progress (one print for each animal a child can be), the helper, the sticker, and the small picture of what each stage shows. `LessonIcon` and the stage pictures are drawn from the lesson's own figure, so a new lesson gets its pictures with no extra work.
+
 <a id="f-avatar"></a>
-**`components/Avatar.tsx`**
 
 `src/components/Avatar.tsx`
 
@@ -2719,7 +2726,6 @@ export function Avatar({
 ```
 
 <a id="f-icons"></a>
-**`components/icons.tsx`**. The prototype's pictures, redrawn in the app's colours: the trail of prints that shows progress (the paw prints of the animal in the child's picture), the helper, and the small picture of what each step shows (drawn from the lesson's own figure).
 
 `src/components/icons.tsx`
 
@@ -2965,7 +2971,6 @@ export function StageGuide({ figure, stage, className }: { figure: Figure; stage
 ```
 
 <a id="f-lessonicon"></a>
-**`components/LessonIcon.tsx`**. Drawn from the lesson's own figure, so a new lesson gets its picture with no extra work.
 
 `src/components/LessonIcon.tsx`
 
@@ -2992,112 +2997,7 @@ export function LessonIcon({ figure, className = "" }: { figure: Figure; classNa
 }
 ```
 
-<a id="f-preview"></a>
-**`components/StrokePreview.tsx`**
-
-`src/components/StrokePreview.tsx`
-
-```tsx
-import type { Figure, Stroke } from "@/lib/types";
-
-const d = (points: { x: number; y: number }[]) =>
-  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
-
-const SIZES = { sm: "h-24 w-24", md: "h-28 w-28", lg: "h-44 w-44" };
-
-/** A saved attempt, redrawn from its actual strokes, with the lesson's figure faintly behind it. */
-export function StrokePreview({
-  strokes,
-  figure,
-  size = "md",
-}: {
-  strokes: Stroke[];
-  figure: Figure;
-  size?: keyof typeof SIZES;
-}) {
-  return (
-    <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-edge bg-white ${SIZES[size]}`}>
-      {figure.parts.map((part, i) => (
-        <path key={`f${i}`} d={d(part)} fill="none" stroke="#dcd7f5" strokeWidth={30} strokeLinecap="round" />
-      ))}
-      {strokes.map((s, i) => (
-        <path
-          key={i}
-          d={d(s.points)}
-          fill="none"
-          stroke="#3a4fa0"
-          strokeWidth={26}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      ))}
-    </svg>
-  );
-}
-```
-
-<a id="f-neatness"></a>
-**`components/NeatnessInfo.tsx`**. The pop-up behind the "i" (prototype S3-info).
-
-`src/components/NeatnessInfo.tsx`
-
-```tsx
-"use client";
-
-import { passingExample } from "@/lib/examples";
-import type { Figure } from "@/lib/types";
-import { StrokePreview } from "./StrokePreview";
-
-// The "i" pop-up beside Neatness (prototype S3-info). It shows, for each
-// choice, an example drawing that still moves the child on (BR-008). The
-// examples are made from the scoring itself, so they are always true to it.
-
-export const NEATNESS = [
-  { mark: 70, name: "Low", text: "Moves on even with a lot of extra lines. Good when just starting." },
-  { mark: 80, name: "Medium", text: "Moves on when most of the lines are on the shape." },
-  { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
-];
-
-export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avatar: string; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Neatness">
-      <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">
-        <h2 className="text-3xl font-bold">Neatness</h2>
-        <p className="mt-2 text-lg">
-          How neat {avatar}&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
-          shape always has to be drawn. Neatness sets how many lines may lie away from the shape.
-        </p>
-        <p className="mt-4 font-bold text-muted">The messiest drawing that still moves on:</p>
-        <div className="mt-3 grid gap-4 sm:grid-cols-3">
-          {NEATNESS.map(({ mark, name, text }) => (
-            <div key={mark} className="text-center">
-              <div className="flex justify-center">
-                <StrokePreview strokes={passingExample(figure, mark)} figure={figure} size="lg" />
-              </div>
-              <p className="mt-2 text-xl font-bold">
-                {name}
-                {mark === 80 && " (recommended)"}
-              </p>
-              <p className="text-muted">{text}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 flex justify-end">
-          <button
-            onClick={onClose}
-            className="rounded-2xl border-2 border-edge bg-white px-8 py-2 text-xl font-bold hover:bg-lavender"
-          >
-            Got it
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
 <a id="f-squiggle"></a>
-**`components/Squiggle.tsx`**
 
 `src/components/Squiggle.tsx`
 
@@ -3117,8 +3017,9 @@ export function Squiggle({ className = "", colour = "#5e51b8" }: { className?: s
 }
 ```
 
+`useActiveLearner.ts`: how a screen finds out which child is practising. Storage only exists in the browser, so it reads after the page has loaded.
+
 <a id="f-useactive"></a>
-**`components/useActiveLearner.ts`**
 
 `src/components/useActiveLearner.ts`
 
@@ -3157,148 +3058,97 @@ export function useActiveLearner() {
 export const activeChanged = () => window.dispatchEvent(new Event("squigglr:active"));
 ```
 
-### 8.6 Pages
+`AdultCheck.tsx`: the sum a grown-up answers. A screen writes `if (await ask()) { ... }` before anything a child must not do.
 
-<a id="f-layout"></a>
-**`app/layout.tsx`** and **`app/globals.css`**. The stylesheet names every colour and font of the look once; the pages use those names.
+<a id="f-adultcheck"></a>
 
-`src/app/layout.tsx`
+`src/components/AdultCheck.tsx`
 
 ```tsx
-import type { Metadata, Viewport } from "next";
-import "@fontsource/nunito/400.css";
-import "@fontsource/nunito/700.css";
-import "@fontsource/nunito/800.css";
-import "./globals.css";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Squigglr",
-  description: "Guided drawing practice for young children.",
-};
+import { useCallback, useRef, useState } from "react";
+import { LockIcon } from "./icons";
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 1 };
+// M14 Adult Access, POC version. There are no accounts yet, so the only part
+// kept is the adult check: a short sum that a young child cannot pass alone
+// (SAF-RAY-001). `ask()` resolves to true only if the sum is answered correctly.
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body className="min-h-screen font-sans antialiased">
-        <main className="px-3 py-5 sm:px-6 sm:py-8">{children}</main>
-      </body>
-    </html>
+interface Question {
+  a: number;
+  b: number;
+}
+
+export function useAdultCheck() {
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [answer, setAnswer] = useState("");
+  const [wrong, setWrong] = useState(false);
+  const resolver = useRef<((passed: boolean) => void) | null>(null);
+
+  const ask = useCallback(() => {
+    const n = () => 11 + Math.floor(Math.random() * 19);
+    setQuestion({ a: n(), b: n() });
+    setAnswer("");
+    setWrong(false);
+    return new Promise<boolean>((resolve) => {
+      resolver.current = resolve;
+    });
+  }, []);
+
+  const close = (passed: boolean) => {
+    setQuestion(null);
+    resolver.current?.(passed);
+    resolver.current = null;
+  };
+
+  const dialog = question && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
+      <form
+        className="w-full max-w-sm rounded-3xl border border-edge shadow-card bg-white p-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (Number(answer) === question.a + question.b) close(true);
+          else setWrong(true);
+        }}
+      >
+        <h2 className="flex items-center gap-2 text-2xl font-bold">
+          <LockIcon className="h-6 w-6" />
+          Grown-ups
+        </h2>
+        <p className="mt-1 text-muted">Answer this to continue.</p>
+        <label className="mt-4 block text-3xl font-bold">
+          {question.a} + {question.b} =
+          <input
+            autoFocus
+            inputMode="numeric"
+            aria-label="Answer"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            className="ml-3 w-24 rounded-xl border-2 border-edge px-3 py-1"
+          />
+        </label>
+        {wrong && <p className="mt-2 font-bold text-coral">That is not it. Try again.</p>}
+        <div className="mt-6 flex justify-end gap-3">
+          <button type="button" onClick={() => close(false)} className="rounded-2xl px-4 py-2 text-lg font-bold text-muted">
+            Cancel
+          </button>
+          <button type="submit" className="rounded-2xl border-2 border-brand bg-brand px-5 py-2 text-lg font-bold text-white">
+            Continue
+          </button>
+        </div>
+      </form>
+    </div>
   );
+
+  return { ask, dialog };
 }
 ```
 
-`src/app/globals.css`
+### Who's practising? (S1)
 
-```css
-@import "tailwindcss";
-
-/*
- * The look: one rounded sans-serif for everything, thin line icons, white
- * cards with soft edges and a light shadow, and plenty of space, in the
- * manner of a calm note-taking app. The colours are those of the team's
- * A-Sense presentation. The layout of the screens follows the lo-fi
- * prototype.
- *
- * On an iPad or a Mac the font is the system's own rounded face. Elsewhere
- * Nunito, an open rounded font, is loaded in its place.
- */
-@theme {
-  --font-sans: ui-rounded, "SF Pro Rounded", Nunito, "Segoe UI", system-ui, sans-serif;
-
-  --color-ink: #23304a;
-  --color-muted: #5b6478;
-  --color-brand: #5e51b8;
-  --color-stroke: #3a4fa0;
-  --color-panel: #f4f5f8;
-  --color-line: #e1e4ec;
-  /* The edge of a card or a button: light, but clear against white. */
-  --color-edge: #cdd2e0;
-  --shadow-card: 0 1px 2px rgb(35 48 74 / 0.06), 0 8px 24px rgb(35 48 74 / 0.07);
-  --color-lavender: #f2f0fc;
-  --color-lavender-deep: #dcd7f5;
-  --color-mint: #edf7f2;
-  --color-mint-deep: #d3eee3;
-  --color-green: #24735b;
-  --color-peach: #fef3ec;
-  --color-peach-deep: #fde1d3;
-  --color-coral: #b84a30;
-  --color-butter: #fbf0c4;
-  --color-butter-ink: #7a5c00;
-}
-
-body {
-  background: var(--color-panel);
-  color: var(--color-ink);
-}
-
-h1,
-h2 {
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-/* On a tablet: no grey flash on a tap, no wait for a double tap, and no
-   pop-up menu or text selection when a finger rests on a button. */
-button,
-a,
-summary {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* A brief "pop": a step of the trail that was just reached, and a drawing
-   that just passed. It runs once, while the child is not drawing. */
-@keyframes pop {
-  0% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(1.3);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-.pop {
-  animation: pop 700ms ease-out 1;
-}
-.pop-gently {
-  animation: pop 700ms ease-out 1;
-  animation-name: pop-gently;
-}
-@keyframes pop-gently {
-  0% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(1.04);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .pop,
-  .pop-gently {
-    animation: none;
-  }
-}
-
-/* The drawing area must not scroll or zoom the page while the child draws. */
-canvas {
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-```
+The grown-up taps the child who is going to practise. Adding a child needs no adult check, because nothing saved is changed; switching away from a child does.
 
 <a id="f-page-who"></a>
-**`app/page.tsx`** (S1). The grown-up taps the child who is going to practise. Adding a child needs no adult check (nothing saved is changed); switching away from a child does. "Grown-ups" opens the grown-ups area through the adult check.
 
 `src/app/page.tsx`
 
@@ -3411,8 +3261,11 @@ export default function WhoIsPractising() {
 }
 ```
 
+### Pick a lesson (S2)
+
+One picture per lesson, read from the catalogue.
+
 <a id="f-page-pick"></a>
-**`app/lessons/page.tsx`** (S2). One picture per lesson.
 
 `src/app/lessons/page.tsx`
 
@@ -3463,8 +3316,11 @@ export default function PickALesson() {
 }
 ```
 
+### Lesson ready (S3)
+
+The lesson, where the child starts, and the child's values, each with a line saying what it changes. "Start lesson" runs the adult check once, saves anything that changed, unlocks sound, and opens the lesson. `NeatnessInfo.tsx` is the pop-up behind the "i".
+
 <a id="f-page-ready"></a>
-**`app/lessons/[id]/page.tsx`** (S3). The lesson, where the child starts, and the child's values, each with a line saying what it changes. "Start lesson" runs the adult check once, saves any changed values, and opens the lesson.
 
 `src/app/lessons/[id]/page.tsx`
 
@@ -3787,8 +3643,80 @@ export default function LessonReady() {
 }
 ```
 
+<a id="f-neatness"></a>
+
+`src/components/NeatnessInfo.tsx`
+
+```tsx
+"use client";
+
+import { passingExample } from "@/lib/examples";
+import type { Figure } from "@/lib/types";
+import { StrokePreview } from "./StrokePreview";
+
+// The "i" pop-up beside Neatness (prototype S3-info). It shows, for each
+// choice, an example drawing that still moves the child on (BR-008). The
+// examples are made from the scoring itself, so they are always true to it.
+
+export const NEATNESS = [
+  { mark: 70, name: "Low", text: "Moves on even with a lot of extra lines. Good when just starting." },
+  { mark: 80, name: "Medium", text: "Moves on when most of the lines are on the shape." },
+  { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
+];
+
+export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avatar: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Neatness">
+      <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">
+        <h2 className="text-3xl font-bold">Neatness</h2>
+        <p className="mt-2 text-lg">
+          How neat {avatar}&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
+          shape always has to be drawn. Neatness sets how many lines may lie away from the shape.
+        </p>
+        <p className="mt-4 font-bold text-muted">The messiest drawing that still moves on:</p>
+        <div className="mt-3 grid gap-4 sm:grid-cols-3">
+          {NEATNESS.map(({ mark, name, text }) => (
+            <div key={mark} className="text-center">
+              <div className="flex justify-center">
+                <StrokePreview strokes={passingExample(figure, mark)} figure={figure} size="lg" />
+              </div>
+              <p className="mt-2 text-xl font-bold">
+                {name}
+                {mark === 80 && " (recommended)"}
+              </p>
+              <p className="text-muted">{text}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={onClose}
+            className="rounded-2xl border-2 border-edge bg-white px-8 py-2 text-xl font-bold hover:bg-lavender"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### The lesson (S6 to S11)
+
+This is the one screen where everything from parts 3 to 8 meets. It is long, but it only does five things.
+
+1. **Starts the lesson.** When the screen opens, it creates one `LessonControl`, calls `select` with the active child and their settings, and keeps it for as long as the screen is open. Leaving the screen calls `stop`.
+2. **Feeds it.** `onStroke` passes each finished stroke to `addStroke`. A timer calls `tick` twice a second. The same timer starts practice when the demonstration has played, and makes the arrow at the dots go all the way round after eight seconds with nothing drawn.
+3. **Shows what comes back.** `show` takes each report. For a hint it lights up what is missing and leaves the drawing alone. For an attempt that ended it holds the drawing on screen for a moment (2.5 or 5 seconds), plays the chime or tune, then clears the canvas.
+4. **Chooses what the helper says.** `bubble` is the latest feedback, or else the line for the stage, and it is spoken aloud whenever it changes.
+5. **Waits for the adult.** While the adult check or the go-back card is open, `paused` is set, and the timer does nothing: the adult's time is not the child's pause.
+
+`highlight` and `undrawn` work out where the glow goes: the stretches of the figure that no drawn line comes near, laid back over the drawing where the child made it.
+
+The demo panel at the bottom reads the lesson's state straight off the `LessonControl`, which is why it can show the counters live.
+
 <a id="f-page-lesson"></a>
-**`app/lesson/[id]/page.tsx`** (S6 to S11). The child's screen. It creates one `LessonControl`, passes it strokes, ticks it twice a second and shows its reports through the helper's speech bubble. Leaving the page ends the lesson as unfinished.
 
 `src/app/lesson/[id]/page.tsx`
 
@@ -4330,8 +4258,11 @@ function Item({ label, value }: { label: string; value: string | number }) {
 }
 ```
 
+### Grown-ups (S4)
+
+Two large buttons, reached through the adult check.
+
 <a id="f-page-grownups"></a>
-**`app/grown-ups/page.tsx`** (S4)
 
 `src/app/grown-ups/page.tsx`
 
@@ -4385,8 +4316,11 @@ export default function GrownUps() {
 }
 ```
 
+### Practice history (in the place of S5)
+
+For one child, every start of a lesson and every attempt under it. `StrokePreview.tsx` redraws an attempt from its saved strokes, with the lesson's figure faintly behind.
+
 <a id="f-page-records"></a>
-**`app/records/page.tsx`**. For one child, every start of a lesson and every attempt under it, with its strokes redrawn. The child shown can be changed at the top.
 
 `src/app/records/page.tsx`
 
@@ -4576,136 +4510,51 @@ function Item({ label, value }: { label: string; value: string | number }) {
 }
 ```
 
-### 8.7 Configuration
+<a id="f-preview"></a>
 
-<a id="f-config"></a>
+`src/components/StrokePreview.tsx`
 
-`src/package.json`
+```tsx
+import type { Figure, Stroke } from "@/lib/types";
 
-```json
-{
-  "name": "squigglr",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
-  },
-  "dependencies": {
-    "@fontsource/nunito": "^5.3.0",
-    "next": "^16.4.6",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.5",
-    "@types/node": "^26.6.6",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "tailwindcss": "^4.3.5",
-    "typescript": "^7.0.2",
-    "vitest": "^5.1.0"
-  }
+const d = (points: { x: number; y: number }[]) =>
+  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+
+const SIZES = { sm: "h-24 w-24", md: "h-28 w-28", lg: "h-44 w-44" };
+
+/** A saved attempt, redrawn from its actual strokes, with the lesson's figure faintly behind it. */
+export function StrokePreview({
+  strokes,
+  figure,
+  size = "md",
+}: {
+  strokes: Stroke[];
+  figure: Figure;
+  size?: keyof typeof SIZES;
+}) {
+  return (
+    <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-edge bg-white ${SIZES[size]}`}>
+      {figure.parts.map((part, i) => (
+        <path key={`f${i}`} d={d(part)} fill="none" stroke="#dcd7f5" strokeWidth={30} strokeLinecap="round" />
+      ))}
+      {strokes.map((s, i) => (
+        <path
+          key={i}
+          d={d(s.points)}
+          fill="none"
+          stroke="#3a4fa0"
+          strokeWidth={26}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+    </svg>
+  );
 }
 ```
 
-`src/tsconfig.json`
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "strict": true,
-    "noEmit": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
-    "allowJs": true
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
-}
-```
-
-`src/next.config.ts`
-
-```ts
-import type { NextConfig } from "next";
-
-const config: NextConfig = {
-  // Strict mode mounts every screen twice in development, which would start
-  // and stop each lesson twice and leave an extra "unfinished" lesson record.
-  reactStrictMode: false,
-
-  // `npm run dev` only serves the app's scripts to the computer it runs on,
-  // unless other hosts are listed here. Without this, a tablet on the same
-  // Wi-Fi shows the page but no button responds. These are the private
-  // network address ranges, so a tablet can open http://<laptop address>:3000.
-  allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*", "*.local"],
-};
-
-export default config;
-```
-
-`src/postcss.config.mjs`
-
-```js
-export default { plugins: { "@tailwindcss/postcss": {} } };
-```
-
-`src/vitest.config.mts`
-
-```ts
-import { defineConfig } from "vitest/config";
-import { fileURLToPath } from "node:url";
-
-export default defineConfig({
-  resolve: { alias: { "@": fileURLToPath(new URL(".", import.meta.url)) } },
-  test: { include: ["lib/**/*.test.ts"] },
-});
-```
-
-`src/.gitignore`:
-
-```
-node_modules
-.next
-next-env.d.ts
-*.tsbuildinfo
-```
-
-## 9. Tests
+<a id="p-tests"></a>
+## 12. How we know it works
 
 `npm test` runs 65 tests in under a second. They follow the V&V Plan's own method: prepared drawings for the scoring, and attempts with a given result for the rules.
 
@@ -4724,8 +4573,9 @@ next-env.d.ts
 | No guide | A stray mark far away does not spoil the fit. A square a little wider than tall passes; a long thin rectangle does not. A very small drawing is incomplete and reported as too small. A rectangle or an oval is reported as stretched, not as missing parts; a rectangle with a side missing is still reported as missing a part. The wrong shape does not pass even at the lowest pass mark. A smaller circle drawn anywhere passes. |
 | Pass mark examples | For both lessons at 70, 80 and 90: the example drawing is complete, passes at its mark, and would not pass six points higher. |
 
+The tests read like the rules. `testHelpers.ts` makes prepared strokes and a record store that keeps everything in memory. In `rules.test.ts`, look at `harness` first: it replaces the scoring and the clock, so a test can say "this attempt scored 79" and "five seconds pass" directly. That is the only way to test exact boundaries, and it is how the V&V Plan says the rule tests are to be run.
+
 <a id="f-test-helpers"></a>
-**`lib/testHelpers.ts`**
 
 `src/lib/testHelpers.ts`
 
@@ -4786,7 +4636,6 @@ export function memoryRecords(): MemoryRecords {
 ```
 
 <a id="f-test-eval"></a>
-**`lib/evaluation.test.ts`**
 
 `src/lib/evaluation.test.ts`
 
@@ -4987,7 +4836,6 @@ describe("evaluate: circle", () => {
 ```
 
 <a id="f-test-rules"></a>
-**`lib/rules.test.ts`**
 
 `src/lib/rules.test.ts`
 
@@ -5419,7 +5267,6 @@ describe("settings check (BR-008)", () => {
 ```
 
 <a id="f-test-examples"></a>
-**`lib/examples.test.ts`**
 
 `src/lib/examples.test.ts`
 
@@ -5445,65 +5292,166 @@ describe("pass mark examples (BR-008)", () => {
 });
 ```
 
-## 10. Build order
+Beyond the unit tests, four scripted runs drive the real app in a browser: the whole site, the square lesson through every screen, the edge cases, and the changes from the peer session. They are not in the repository yet; adding them to CI is in [Reference F](#after).
 
-Each step ends in something that can be checked. Steps 2 to 4 need no browser and can be done by different people at the same time once step 1 is merged.
+---
 
-1. **Set up the project.** In `src/`, add the [configuration files](#f-config) and `src/.gitignore`, then run `npm install`. Check: `npm run typecheck` runs.
-2. **Types, geometry, scoring, catalogue.** Add [`types.ts`](#f-types), [`geometry.ts`](#f-geometry), [`evaluation.ts`](#f-evaluation), [`catalogue.ts`](#f-catalogue), [`testHelpers.ts`](#f-test-helpers) and [`evaluation.test.ts`](#f-test-eval). Check: the scoring tests pass.
-3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 65 tests pass.
-4. **Data.** Add [`storage.ts`](#f-storage), [`settings.ts`](#f-settings), [`profiles.ts`](#f-profiles), [`records.ts`](#f-records). (Steps 3 and 4 share `records.ts` for its `RecordStore` type.)
-5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
-6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.
-7. **Practice history.** Add [`StrokePreview.tsx`](#f-preview) and the [practice history](#f-page-records). Check: each child's records show only their own attempts.
-8. **Deploy** ([section 11](#11-deploying-and-the-domain)) and try it on the target tablet with a stylus. This is experiment 1 of the Development Plan. The team has drawn with a finger and a stylus on an iPad; the automated runs used a mouse. Record the device and browser versions, and repeat on a second device or browser.
-9. **Calibrate.** Have adults draw good and poor squares on the tablet, and decide whether `TRACE_TOL` = 5 is right ([gap 1](#13-how-the-app-compares-with-the-srs)).
-10. **Rehearse** the [demo script](#12-demo-script), and fill in `src/TraceToDesign.md` from the [file index](#7-project-layout-and-file-index).
+# Reference
 
-Commands, from `src/`:
+<a id="scope"></a>
+## A. What is in the POC and what is not
 
-```bash
-npm install
-```
+**In:**
 
-```bash
-npm run dev
-```
+- Guest mode: no sign-in. Several children, each a picture with no name. One is "practising now", and an adult can switch.
+- Two lessons, Square and Circle, stored as data.
+- The full lesson flow: demonstration, full outline, endpoints only, on my own.
+- Scoring as SRS Section 9.2 defines it, checked at every stylus lift.
+- All nine adult-set values per child, with their ranges and rules, and every one of them changes how a lesson runs.
+- Retry, the go-back suggestion, the one extension, the attempt limit, the hard cap and the two lesson idle timers.
+- Feedback from a fixed list: the effort acknowledged first, then what was seen in the drawing, with a glow where a part is missing.
+- A chance to finish: when a part is missing, the drawing stays and the child can fill it in, up to twice in an attempt.
+- Sound: the helper's lines spoken by the browser's voice, a chime when a step is done and a short tune at the end, with an on/off switch per child.
+- A practice sticker at the end of a lesson.
+- A record of every attempt (actual strokes, stage, outcome, result, difficulties, the settings in use) and of every start of a lesson, saved per child, on a Practice history screen.
+- Example drawings for each pass mark, made from the scoring itself.
+- A demo panel on the lesson screen that shows the live result and the counters, for showing the teaching team what the rules are doing.
 
-```bash
-npm test
-```
+**Out, on purpose:**
 
-```bash
-npm run build
-```
+- Accounts and sign-in, the progress summary and the creative space (the Development Plan leaves these out of the POC).
+- A database. Records stay in one browser. See [After the POC](#after).
+- Sound, the supported-device notice, and keeping unsaved records while offline. The SRS requires all three; they are not needed to show the lesson working.
+- The creative space, and with it the two refinement experiments of the Development Plan. See the scope decision below.
 
-## 11. Deploying and the domain
+**Tried and taken out again, because the SRS does not have them:** an eraser and pencil beside the drawing, a "Start again" button, a weekly "practice story" with stickers for the days practised, and a "Let's get a grown-up!" line from the helper. The last three came from the lo-fi prototype. [Reference C](#srs) gives the requirement each one ran against.
 
-1. Merge the app to the branch you deploy from (`main`).
-2. In Vercel, import the GitHub repository. Set **Root Directory** to `src`. The framework is detected as Next.js and nothing else needs setting: there are no environment variables.
-3. Every push gets a preview address, and the production branch gets a `*.vercel.app` address that can be used for the demo with no domain at all.
-4. For a domain: buy it from a registrar, add it under the Vercel project's **Settings, Domains**, and set the DNS records Vercel shows you at the registrar.
+**Put back after the peer session:** the practice sticker at the end of a lesson, and finishing a missing part on the same drawing. Both are in the prototype, both were taken out for the SRS, and both were restored on the evidence of the session. See [the peer session table](#peer-session).
 
-**Trying it on a tablet before it is deployed.** With the laptop and the tablet on the same Wi-Fi, run `npm run dev` and open the "Network" address it prints (for example `http://192.168.1.20:3000`) in the tablet's browser. `next.config.ts` allows private network addresses for this; without that, the page appears but no button responds.
+<a id="scope-decision"></a>
+### Scope decision: the creative space is left out of the POC
 
-The repository and the documents spell the name **Squigglr**, with no "e". Check which spelling you want to buy, and whether it is free, before deciding between `.com`, `.ca` and `.io`.
+The Development Plan's POC has four experiments. The team has decided to demonstrate two of them and to leave the two that belong to the creative space for after the POC.
 
-## 12. Demo script
+| Experiment in the Development Plan | In the POC? |
+| --- | --- |
+| 1. Capture drawing input on the target tablet | Yes. Drawing works with a finger and with a stylus on an iPad. |
+| 4. Run the square lesson end to end | Yes. This app. |
+| 2. Reversible geometric refinement (tidy a drawing with geometry, keep it editable, undo it exactly) | No. Deferred. |
+| 3. Model-based creative enhancement (a pretrained model returns drawing instructions for the app to apply) | No. Deferred. |
 
-About eight minutes, with no slides.
+Why:
 
-1. **Who's practising.** Add two children. Point out: a picture, no name, guest mode. Tap the first child.
-2. **Pick a lesson.** Tap the square.
-3. **Lesson ready.** Show the three settings up front, each with its line of explanation. Tap "i" beside Neatness: three example drawings, made from the scoring itself. Choose High. Open "More settings", set "Pause that ends an attempt" to 3, and show that − and + stop at the ends of each range. Tap "Start lesson" and answer the adult check.
-4. **Watch, then full outline.** The demonstration plays and the helper says "Watch me!". Practice starts by itself with "Your turn!" and a chime. Draw three sides and stop. The demo panel shows a result near 79 and "incomplete". After the pause the missing side glows, the helper says "Great try! Finish where it's glowing!", and the drawing stays.
-5. **Finish it.** Draw the missing side. It passes at the lift, with no button: a chime, a paw print steps forward, and the outline is replaced by dots.
-6. **Endpoints only, then on my own.** At the dots, point out the green start dot, the moving arrow and the picture of the shape in the corner. Pass the dots. With no guide, draw a small square in a corner of the canvas: it still passes, the tune plays and the sticker appears. In a second lesson, show the two things that do not pass with no guide: a tiny square ("Try drawing it bigger") and a rectangle ("Try making it as tall as it is wide").
-7. **Grown-ups and the records.** Tap "Grown-ups", answer the check, open "Practice history": each attempt with its strokes, step, outcome, result and the pass mark in use. Tap the second child at the top: nothing yet.
-8. **Settings change the lesson.** Start the square for the second child with Neatness Low and draw a square with a stray line across it: it passes. Do the same for the first child at High: it does not.
-9. **Stopping rules,** if there is time. Start at "Endpoints only" with "Get a grown-up after" at 3 and scribble three times: a Grown-ups button appears, the grown-up opens the card and chooses, and meanwhile the child's canvas keeps working.
+- **The two halves do not depend on each other.** The Development Plan says so itself: only experiments 2 and 3 concern creative drawing, the input experiment and the square lesson "do not depend on refinement", and a refinement risk that stays unresolved "does not hold back the other core goals". Guided practice, adult control and records (goals G.1, G.2, G.3 and G.5) can be shown working without it.
+- **The lesson is the larger part of the product, and the part the specialists can react to.** The supervisor suggested a hosted, working lesson as the form of the POC. Getting the scoring, the stopping rules and all nine settings right took the time there was.
+- **A rushed refinement experiment would prove little.** Both experiments need an agreed set of supported drawings, pass criteria written down before the run, and for the model a measured share of valid responses. Done in the days left before November 23, they would be a demo of a library call, not evidence about the risk.
+- **The creative space needs things the lesson does not.** A drawing library with editable paths (Paper.js in the Development Plan), an edit history for undo, and for experiment 3 a paid model service with a key to keep safe. None of that is in the app yet, by design.
 
-## 13. How the app compares with the SRS
+What this leaves open, and what the team owes:
+
+- **The main technical risk is still unanswered.** The Development Plan calls editable refinement "the main technical uncertainty". Nothing in this POC reduces it. It should be the first thing investigated after the POC, before Revision 0 work on the creative space starts. The plan's own fallbacks still stand: if geometric refinement fails, narrow the supported drawings; if the model fails, use geometric refinement only.
+- **Goal G.4 (editable creative drawing and refinement) has no evidence behind it yet.**
+- **The documents no longer match.** The Development Plan's POC section lists four experiments, and the SRS schedules the basic creative drawing requirements, FR-CRT-001 to FR-CRT-007, for PH-1. Both need updating, and the Development Plan says a change like this is to be agreed with the supervisor.
+
+The SRS schedules the suggestion, extension and limit rules for Revision 0 (PH-2). They are in the POC anyway, because without them most of the nine settings would change nothing, and showing that the settings drive the lesson is the point of the demo.
+
+<a id="decisions"></a>
+## B. Design decisions and the requirements behind them
+
+Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different document is named. "UC" is a product use case, "FR" a functional requirement, "NFR" a nonfunctional one, "SAF" a safety requirement from the Hazard Analysis, "BR" a business rule, "CON" a constraint.
+
+### What the app is built from
+
+| Decision | Requirements and sources | Why |
+| --- | --- | --- |
+| A website: Next.js, React, TypeScript (strict), Tailwind, Vitest, Vercel | CON-001, CON-002; Development Plan (technology table) | A website that needs no installation is a mandated constraint. The stack is the one the Development Plan chose. |
+| The rules are plain TypeScript in `lib/`, with no React in them | V&V Plan ("in Vitest against the module that applies the lesson rules"); NFR-PERF-004 | The rules can be unit tested without a browser, and the same input always gives the same result. The screens only show what the rules decide. |
+| One file per design module, same names | Module Guide; MIS; NFR-MAINT-002 | Anyone holding the MIS can find the code for a module. `src/TraceToDesign.md` lists the mapping. |
+| Lessons are data in `catalogue.ts` | NFR-MAINT-001; FR-LRN-001; LC-001 | A lesson is added, changed or removed without touching a rule. |
+| `localStorage` behind the Storage module | Development Plan (POC plan: "no adult accounts"); FR-REC-008, FR-REC-009 | No backend to build before the demo. Only `lib/storage.ts` touches it, so a database replaces one file later. A saved attempt is saved once and never changed. The Module Guide plans a hosted database; this is the POC's stand-in. |
+| Plain canvas and our own Geometry module, no drawing library | MIS M20 ("no access program depends on the drawing library"); FR-LRN-007 | A guided lesson needs to draw lines and measure them. Paper.js, named in the Development Plan, is for the creative space and comes in with it. |
+| The drawing area is always 1000 by 1000 units | SAF-AHM-002 | A point keeps its place when the canvas is resized or the tablet is turned, and a saved attempt can be redrawn at any size. The MIS says CSS pixels; units meet the same requirement with less work. |
+| Stylus, finger and mouse all draw; a stylus wins over a palm | CON-003; SAF-AHM-001 | CON-003 asks for a stylus, with finger input as a stretch goal. Accepting a mouse lets the demo run on a laptop. One contact is followed at a time, and the same position reported twice counts once. |
+| A tablet on the same Wi-Fi can open the laptop's dev server | CON-003 | `npm run dev` serves its scripts only to its own computer unless other hosts are allowed, so a tablet showed the page but no button worked. Private network addresses are allowed in `next.config.ts`. |
+
+### Who can do what
+
+| Decision | Requirements and sources | Why |
+| --- | --- | --- |
+| A child is a picture and a generated identifier, no name | BR-001 | The prototype shows first names ("Mia", "Omar"). The SRS collects no name. |
+| Guest mode, with the adult check kept | SAF-RAY-001, SAF-RAY-008; Development Plan (POC plan) | Sign-in adds nothing to what the POC must prove. The adult check stays, because choosing a lesson, switching child, changing saved values and answering a suggestion must not be possible for a child. |
+| The adult check is a sum | SAF-RAY-001 ("a check that a child cannot complete by tapping icons") | The prototype uses a two-second hold, which a child can do by resting a finger. |
+| The adult chooses the lesson and the starting step; a pass moves on by itself | CON-007; BR-002, BR-003; FR-LRN-016, FR-LRN-018, FR-LRN-023 | The child never chooses, skips or goes back. |
+| On the lesson screen the child has no control at all; Leave is for the adult | FR-LRN-024; FACT-007; NFR-UX-001, NFR-UX-002 | The team did not accept the child restarting, and child screens are to be calm with few controls. So there is no eraser, no "Start again", no submit button and no start button: the child only draws. |
+
+### How a lesson runs
+
+| Decision | Requirements and sources | Why |
+| --- | --- | --- |
+| The demonstration plays once, then practice starts by itself at the adult's chosen step | UC-003 step 1 ("shows the demonstration ... then moves to the starting stage"); FR-LRN-003, FR-LRN-025 | The app used to wait for the child to press a start button. In the peer session the tester began drawing during the demonstration; a clear "Your turn!" with a chime marks the change. Drawing during the demonstration does nothing. The MIS has `beginPractice` go from the demonstration to tracing only; UC-003 is followed. |
+| The drawing is checked at every stylus lift; a pass ends the attempt at once | FR-LRN-038, FR-LRN-039 | The child should not have to decide when a drawing is done. |
+| A stylus held down, even held still, counts as drawing | FR-LRN-024 (the pause is "with no input after the last stroke") | Otherwise a child resting the stylus mid-line would have the attempt ended under them. |
+| The lesson waits while the adult check or the go-back card is open | SAF-RAY-001; FR-LRN-024 | The adult's time at the check is not the child's pause, so no attempt ends and no idle clock runs meanwhile. The card has a "Decide later" that leaves the suggestion pending (FR-LRN-034). |
+| After the pause, a drawing with a part missing is kept and the child is shown what to finish | FR-LRN-024 (**goes against it**); SAF-MOU-001; FR-REC-003; NFR-UX-016 | The SRS ends the attempt at the first pause. The app first gives a hint: the missing part glows, the drawing stays, and the pause starts again. If the child finishes it, the attempt passes. An attempt gives at most two hints, and the second only if the child drew something after the first; then it ends as one not-passed attempt. This is the prototype's S8, which the peer tester followed without help. A drawing with nothing missing (too messy, too small, stretched) gets no hint, because drawing more cannot fix it. |
+| The pause that ends an attempt is set by the adult: 3 to 7 s, default 5 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first; tried on a tablet, ten seconds of waiting was far too long, so it was halved. |
+| The lesson idle ranges are 30 to 60 s and 90 to 180 s | SAF-RAY-009; BR-008 | Also "TBD" in the SRS. The three ranges do not overlap, so the rule that each is shorter than the next can never be broken. |
+| A go-back suggestion waits behind a quiet Grown-ups button | FR-LRN-019, FR-LRN-034; UC-005; SAF-RAY-001; NFR-UX-001 | The SRS has the suggestion shown "without blocking practice" and answered only through the adult check. The prototype covers the lesson with a card and has the helper say "Let's get a grown-up!"; neither is in the SRS, and nothing flashes while the child draws. |
+| A finished attempt stays on screen with its feedback: 5 s if it did not pass, 2.5 s if it passed or the child had already been given a hint | FR-LRN-014; NFR-UX-016; SAF-MOU-001 | The SRS does not say what happens on screen when an attempt ends. Without a pause the drawing would vanish and the feedback would refer to nothing. |
+| Feedback is a fixed list in one file, effort first, never "wrong" | BR-007; FR-LRN-014, FR-LRN-022; NFR-UX-004, NFR-UX-016 | Every message describes the drawing, not the child. |
+| A missing part is shown by a glow where it should be, not drawn in | SAF-MOU-001; NFR-UX-004 | The child is shown where, and still has to draw it. |
+
+### How a drawing is judged
+
+| Decision | Requirements and sources | Why |
+| --- | --- | --- |
+| Scoring is the SRS's: tolerance band, 90% of every part, result = the lower of two shares | SRS Section 9.2; FR-LRN-011, FR-LRN-013 | See [part 5](#scoring). |
+| With no guide, the drawing is laid over the figure by a fit that ignores stray marks | SRS Section 9.2 (stage I); FR-LRN-013 | The SRS lays it over by its bounding box. One stray dot, or a line that runs past a corner, stretches that box and fails a good drawing. The SRS's fit is still tried, and is used whenever it scores best. **Goes beyond the SRS wording.** |
+| With no guide, a drawing must be at least 40% of the figure's size | SRS Section 9.2 says size does "not affect the result"; FR-LRN-011 | Once any size is scaled up to the figure, a speck passes as a square. The team decided, after trying it on a tablet, that position and size should not matter only down to a minimum. **Contradicts the SRS sentence; the team is asked to change it** (see [Reference C](#srs)). |
+| Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the difficulties in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of difficulty; these two need adding to it. |
+| A small picture of the shape stays up at the dots and with no guide | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at both steps and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture, so it is now at the dots too. The team should confirm it with the specialists. |
+| At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot, rests, and sets off again; after eight seconds with nothing drawn it carries on round the whole shape, dot to dot. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
+
+### What the adult sees
+
+| Decision | Requirements and sources | Why |
+| --- | --- | --- |
+| All nine values are set per child, on the Lesson ready screen | BR-008; FR-LRN-017; UC-001 | Three are up front, as in the prototype, and the rest under "More settings". A value outside its range, or one that breaks a rule between values, cannot be saved. |
+| A child starts on the recommended settings, and keeps only what an adult changed | BR-008 ("a value the adult does not choose is set to the middle of its range"); SAF-RAY-008 | Only changed values are saved. A saved value that is no longer in range counts as not chosen, so a change to a range can never leave a child unable to start a lesson. |
+| "Neatness" Low, Medium, High is the pass mark at 70, 80, 90, with an example drawing for each | BR-008 ("shows example drawings of what its minimum and maximum look like") | The examples are made from the scoring itself, and a test checks each one. |
+| A save that fails never stops the lesson | SAF-RAY-003; FR-REC-008 | If the browser's storage is full, the lesson carries on and the demo panel says how many records were not saved. Keeping them for a later save is not built yet. |
+| A lesson that was cut off is closed as unfinished | FR-REC-005, FR-REC-007 | If the page is closed or reloaded mid-lesson, its record would stay "in progress" for ever. It is closed when the child's next lesson starts. |
+| Difficulties are noted as the SRS describes, with one exception | FR-REC-003 | With a guide, a line off the shape is noted at each stylus lift and marked corrected later. With no guide nothing is noted until the attempt ends, because a half-finished drawing laid over the figure always looks off it. |
+| "Practice history" shows every lesson and attempt; there is no weekly summary | FR-REC-001 to FR-REC-010; Development Plan (POC plan: "no progress summary") | The POC must show that records keep the strokes, the stage and the outcome. The SRS's progress summary is specified separately and belongs to the final phase, so the prototype's weekly "practice story" is not built. The peer tester could not tell what "Practice story" meant without its description, and suggested "history" and a history icon. |
+| The records screen says it shows practice, not an assessment | BR-006; SAF-RAY-004 | No diagnosis, judgement or comparison. |
+| A practice sticker ends the lesson | Not in the SRS; BR-006; NFR-UX-004 | The prototype ends a lesson with a sticker, given for practising whatever the result. It was taken out because the SRS has no reward, and put back after the peer session, where the tester called it right for the end of a lesson. It judges nothing, so it does not go against BR-006. The SRS should say whether a reward is wanted. |
+| The helper's lines are spoken, with a chime when a step is done | NFR-UX-010; NFR-UX-002 | A child who cannot read gets nothing from a speech bubble, and the peer session was run with the lines read aloud. The voice is the browser's own for now, and each child has an on/off switch. |
+| A demo panel shows the result and the counters | BR-006; FR-LRN-022 | It lets the teaching team see the rules working. The SRS does not want a result shown to the child, so the panel is labelled for adults and must be hidden before real use. |
+| Screen layouts follow the lo-fi prototype; colours follow the A-Sense presentation; the style is one rounded font, thin line icons and soft-edged white cards | NFR-UX-001, NFR-UX-002, NFR-UX-004 | The prototype was tried with a parent and child, so its layout is the best evidence the team has. It is black and white on purpose; the colours come from the slides. The team wanted the calm, plain feel of a note-taking app, which also suits the SRS's call for uncluttered child screens. On an iPad or a Mac the font is the system's rounded face; elsewhere Nunito, an open rounded font, is loaded in its place. |
+| Progress through the lesson is a trail of the child's animal paw prints, walking across the screen | NFR-UX-002; NFR-UX-001; G.1 | Pictures, not text, and nothing for the child to press. The peer tester saw the prototype's footprints filling in but did not read them as progress, and asked for prints that walk along a path and move when a step is done. The step just reached grows for a moment, while input is paused, so nothing moves while the child draws. |
+
+<a id="peer-session"></a>
+### After the paper-prototype session with another group
+
+The team ran the lo-fi prototype with a member of another group, who played a parent and then a five-year-old. This is what was said and what was done about it.
+
+| What the session showed | What changed |
+| --- | --- |
+| The tester started drawing during the demonstration ("I guess I wasn't supposed to draw yet"). | Drawing during the demonstration does nothing. Practice now starts by itself with "Your turn!" and a chime, with no button. |
+| "Great try! Finish where it's glowing" was followed without help. | The app now works this way: the drawing stays, the gap glows, and finishing it passes. Before, the drawing was cleared and the child started again. |
+| At the dots, a five-year-old might draw a straight line from one dot to the next. An arrow that moves a little way in a curve would show the direction, and a longer one after a while with no input. | A green start dot and a small arrow that travels slowly from it to the next dot; after eight seconds with nothing drawn it goes on round the whole shape. |
+| The last step was clearer than the dots, because of the picture in the corner. A picture at the dots would help too. | The picture of the shape is shown at the dots as well. |
+| More dots for the circle would show where a wrong shape misses. | Already the case: the circle has four dots, where the prototype had two. |
+| The footprints were noticed but not read as progress. Prints pointing along a path, moving when a step is done, with the screen paused and a sound, would draw the eye. | The trail now walks across the screen, and the step just reached grows for a moment while input is paused and a chime plays. The drawing that passed also grows slightly. |
+| Not too many of these effects. | One movement and one sound per step, and none while the child draws. |
+| The star at the end is right for the end of a lesson; between steps a word or a sound is enough. | The sticker is back at the end. Between steps: the helper's line and a chime. |
+| "Practice story" was not understood from its name and icon alone. "History" and a history icon were suggested. | Renamed "Practice history", with a clock-and-arrow icon. |
+| The "i" beside "This shows practice, not an assessment" looked like the tappable "i" beside Neatness, and was tapped. | The note has no "i". Only the tappable one keeps it. |
+| The Neatness pop-up and the settings were understood at once. "Helper talks" was read as a voice-over for a child who cannot read. | Kept. "Helper talks" is now a real switch. |
+| The child's name on the avatar was "very helpful". | Not changed: the SRS allows no name (BR-001). The team should weigh this. |
+| The weekly page with stickers for days and the drawings was liked. | Not changed: it is the progress summary, which is outside the POC. It is one screen to restore if the team wants it. |
+
+<a id="srs"></a>
+## C. How the app compares with the SRS
 
 ### Where the app goes beyond or against the SRS
 
@@ -5536,13 +5484,13 @@ The screens follow the lo-fi prototype's layout. Where the prototype and the SRS
 
 ### What the SRS requires that the POC does not have yet
 
-A recorded voice for the helper (the POC uses the browser's own; NFR-UX-010), the notice for an unsupported device (SAF-RAY-002), keeping attempts on the device while the connection is down (SAF-RAY-003), accounts and the progress summary are outside the Development Plan's POC. The creative space was in it and has been left out by the team: see the [scope decision](#scope-decision-the-creative-space-is-left-out-of-the-poc).
+A recorded voice for the helper (the POC uses the browser's own; NFR-UX-010), the notice for an unsupported device (SAF-RAY-002), keeping attempts on the device while the connection is down (SAF-RAY-003), accounts and the progress summary are outside the Development Plan's POC. The creative space was in it and has been left out by the team: see the [scope decision](#scope-decision).
 
 ### Gaps found in the SRS and MIS
 
 Building the rules turned up ten places where the documents are silent or do not match what they define. Each has the choice made here.
 
-1. **The pass mark only measures stray drawing.** A complete drawing has at least 90% of every part drawn (`PART_COVER`), so its "drawn" share is always at least 90. The pass mark ranges from 70 to 90, so it can only ever fail a complete drawing on the other share, "on figure". A wobbly or short line fails on completeness before the pass mark is looked at. In the measurements of [section 4](#4-how-a-drawing-is-scored), a wobble of 30 units scores 100 and a wobble of 40 is incomplete, with nothing in between. If the adult's pass mark is meant to grade how closely the child follows the line, the team should lower `PART_COVER`, tighten `TRACE_TOL`, or score distance from the line and not only inside or outside a band. This is the calibration of open issue OI-05, and it is the most important thing to settle before Revision 0.
+1. **The pass mark only measures stray drawing.** A complete drawing has at least 90% of every part drawn (`PART_COVER`), so its "drawn" share is always at least 90. The pass mark ranges from 70 to 90, so it can only ever fail a complete drawing on the other share, "on figure". A wobbly or short line fails on completeness before the pass mark is looked at. In the measurements of [part 5](#scoring), a wobble of 30 units scores 100 and a wobble of 40 is incomplete, with nothing in between. If the adult's pass mark is meant to grade how closely the child follows the line, the team should lower `PART_COVER`, tighten `TRACE_TOL`, or score distance from the line and not only inside or outside a band. This is the calibration of open issue OI-05, and it is the most important thing to settle before Revision 0.
 2. **"A square with one side missing scores at most 75" is not true under the SRS's own definition.** It scores about 79, because the two ends of the missing side lie within the tolerance of the neighbouring sides and count as drawn. It is still incomplete and cannot pass. The sentence in SRS Section 9.2 should be reworded.
 3. **The circle has no endpoints, so its endpoints-only stage would show nothing.** The POC uses the four points where the quarter arcs meet.
 4. **The three idle ranges are "TBD".** Proposed: 3 to 7, 30 to 60 and 90 to 180 seconds.
@@ -5551,14 +5499,257 @@ Building the rules turned up ten places where the documents are silent or do not
 7. **UC-003 and the MIS disagree on a later starting stage.** UC-003 shows the demonstration and then moves to the starting stage; the MIS has `beginPractice` go from D to T. The POC follows UC-003.
 8. **What happens on screen when an attempt ends is not specified.** The POC keeps the drawing and its feedback up for 5 seconds after an attempt that did not pass and 2.5 seconds after a pass, during which input is off and the idle clocks do not run.
 9. **The tolerance is generous for shape.** With `TRACE_TOL` = 5, a rectangle 20% wider than tall passes as a square with no guide, and an oval 20% wider than tall passes as a circle. That may be right for young children, but it is the team's call, and it is the same OI-05 calibration as gap 1.
-10. **Laying the drawing over the figure "by its bounding box" is fragile.** One stray dot changes the box and fails a good drawing. See the second row of the first table in this section.
+10. **Laying the drawing over the figure "by its bounding box" is fragile.** One stray dot changes the box and fails a good drawing. See the second row of the first table in this reference.
 
-## 14. After the POC
+<a id="file-index"></a>
+## D. Where everything is: the file index
+
+The app is the `src/` folder of this repository.
+
+```
+src/
+  package.json, tsconfig.json, next.config.ts, postcss.config.mjs, vitest.config.mts
+  lib/          the rules and the data: no React
+  components/   the canvas, the adult check, the screen frame, the pictures
+  app/          one folder per page
+  plan-img/     the screenshots in this document
+```
+
+| File | MIS module | What it does |
+| --- | --- | --- |
+| [`lib/types.ts`](#f-types) | Shared types | The data shapes every module uses. |
+| [`lib/geometry.ts`](#f-geometry) | M20 Geometry | Lengths, distances, bounding boxes, fit to a box. |
+| [`lib/evaluation.ts`](#f-evaluation) | M07 Attempt Evaluation | Scores strokes against a figure. |
+| [`lib/catalogue.ts`](#f-catalogue) | M05 Lesson Catalogue | The square and the circle, as data. |
+| [`lib/attempt.ts`](#f-attempt) | M06 Attempt | One attempt: strokes, evaluation at each lift, when it ends. |
+| [`lib/improvement.ts`](#f-improvement) | M09 Improvement Measure | The "improving" rule. |
+| [`lib/lessonControl.ts`](#f-control) | M04 Lesson Control | The lesson's state machine. |
+| [`lib/feedback.ts`](#f-feedback) | M08 Feedback | The wording and look of every message. |
+| [`lib/audio.ts`](#f-audio) | M03 Audio Output | The chime, the closing tune and the helper's spoken lines. |
+| [`lib/settings.ts`](#f-settings) | M16 Learner Settings | Ranges, defaults, checks, load and save. |
+| [`lib/profiles.ts`](#f-profiles) | M15 Learner Profile | Children and the active child. |
+| [`lib/records.ts`](#f-records) | M10 Attempt Record | Lesson records and attempt records. |
+| [`lib/storage.ts`](#f-storage) | M23 Storage | The only file that touches `localStorage`. |
+| [`lib/examples.ts`](#f-examples) | part of M16 Learner Settings | Example drawings for each pass mark. |
+| [`components/DrawingCanvas.tsx`](#f-canvas) | M01 Input Device, M02 Display | Pointer events to strokes; paints everything. |
+| [`components/AdultCheck.tsx`](#f-adultcheck) | M14 Adult Access (check only) | The sum an adult answers. |
+| [`components/Screen.tsx`](#f-screen) | part of M18 Adult View | The frame every screen sits in: Back, heading, avatar. |
+| [`components/Avatar.tsx`](#f-avatar) | part of M02 Display | A child's picture in a ring. |
+| [`components/icons.tsx`](#f-icons) | part of M02 Display | The trail of prints, the helper, stage pictures, small icons. |
+| [`components/LessonIcon.tsx`](#f-lessonicon) | part of M02 Display | A lesson's figure as a small picture. |
+| [`components/StrokePreview.tsx`](#f-preview) | part of M02 Display | Redraws a saved attempt. |
+| [`components/NeatnessInfo.tsx`](#f-neatness) | part of M18 Adult View | The pop-up that explains Neatness with examples. |
+| [`components/Squiggle.tsx`](#f-squiggle) | part of M18 Adult View | The squiggle mark. |
+| [`components/useActiveLearner.ts`](#f-useactive) | part of M18 Adult View | Reads the active child for a page. |
+| [`app/page.tsx`](#f-page-who) | part of M18 Adult View | S1 Who's practising: choose, switch, add a child. |
+| [`app/lessons/page.tsx`](#f-page-pick) | part of M18 Adult View | S2 Pick a lesson. |
+| [`app/lessons/[id]/page.tsx`](#f-page-ready) | part of M18 Adult View | S3 Lesson ready: starting step and the nine values. |
+| [`app/lesson/[id]/page.tsx`](#f-page-lesson) | M13 Child Screen | S6 to S10: the lesson itself. |
+| [`app/grown-ups/page.tsx`](#f-page-grownups) | part of M18 Adult View | S4 Grown-ups area. |
+| [`app/records/page.tsx`](#f-page-records) | part of M18 Adult View | Practice history: every lesson and attempt. |
+| [`app/layout.tsx`, `app/globals.css`](#f-layout) | | The page frame and styles. |
+| [Configuration files](#f-config) | | `package.json` and the tool settings. |
+| [`lib/evaluation.test.ts`](#f-test-eval), [`lib/rules.test.ts`](#f-test-rules), [`lib/examples.test.ts`](#f-test-examples), [`lib/testHelpers.ts`](#f-test-helpers) | | The unit tests. |
+
+Not in the POC: M11 and M12 (creative space), M17 Progress Summary, M21, M22, M24 Connection Recovery, M25 Audit Log.
+
+<a id="run"></a>
+## E. Setting up, building, deploying and demoing
+
+### The setup files
+
+<a id="f-config"></a>
+
+`src/package.json`
+
+```json
+{
+  "name": "squigglr",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource/nunito": "^5.3.0",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}
+```
+
+`src/tsconfig.json`
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "allowJs": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+```
+
+`src/next.config.ts`
+
+```ts
+import type { NextConfig } from "next";
+
+const config: NextConfig = {
+  // Strict mode mounts every screen twice in development, which would start
+  // and stop each lesson twice and leave an extra "unfinished" lesson record.
+  reactStrictMode: false,
+
+  // `npm run dev` only serves the app's scripts to the computer it runs on,
+  // unless other hosts are listed here. Without this, a tablet on the same
+  // Wi-Fi shows the page but no button responds. These are the private
+  // network address ranges, so a tablet can open http://<laptop address>:3000.
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*", "*.local"],
+};
+
+export default config;
+```
+
+`src/postcss.config.mjs`
+
+```js
+export default { plugins: { "@tailwindcss/postcss": {} } };
+```
+
+`src/vitest.config.mts`
+
+```ts
+import { defineConfig } from "vitest/config";
+import { fileURLToPath } from "node:url";
+
+export default defineConfig({
+  resolve: { alias: { "@": fileURLToPath(new URL(".", import.meta.url)) } },
+  test: { include: ["lib/**/*.test.ts"] },
+});
+```
+
+`src/.gitignore`:
+
+```
+node_modules
+.next
+next-env.d.ts
+*.tsbuildinfo
+```
+
+### Build order
+
+Each step ends in something that can be checked. Steps 2 to 4 need no browser and can be done by different people at the same time once step 1 is merged.
+
+1. **Set up the project.** In `src/`, add the [configuration files](#f-config) and `src/.gitignore`, then run `npm install`. Check: `npm run typecheck` runs.
+2. **Types, geometry, scoring, catalogue.** Add [`types.ts`](#f-types), [`geometry.ts`](#f-geometry), [`evaluation.ts`](#f-evaluation), [`catalogue.ts`](#f-catalogue), [`testHelpers.ts`](#f-test-helpers) and [`evaluation.test.ts`](#f-test-eval). Check: the scoring tests pass.
+3. **Lesson rules.** Add [`attempt.ts`](#f-attempt), [`improvement.ts`](#f-improvement), [`lessonControl.ts`](#f-control), [`feedback.ts`](#f-feedback) and [`rules.test.ts`](#f-test-rules). Check: all 65 tests pass.
+4. **Data.** Add [`storage.ts`](#f-storage), [`settings.ts`](#f-settings), [`profiles.ts`](#f-profiles), [`records.ts`](#f-records). (Steps 3 and 4 share `records.ts` for its `RecordStore` type.)
+5. **Frame and adult screens.** Add the [layout](#f-layout), [screen frame](#f-screen), [avatar](#f-avatar), [icons](#f-icons), [lesson icon](#f-lessonicon), [adult check](#f-adultcheck), [pass mark examples](#f-examples) and [neatness pop-up](#f-neatness), then [who's practising](#f-page-who), [pick a lesson](#f-page-pick), [lesson ready](#f-page-ready) and [grown-ups](#f-page-grownups). Check: add two children, give them different settings, start a lesson for each, and each child's values are still there on the Lesson ready screen.
+6. **The lesson.** Add [`DrawingCanvas.tsx`](#f-canvas) and the [lesson page](#f-page-lesson). Check: the square lesson can be completed with a mouse.
+7. **Practice history.** Add [`StrokePreview.tsx`](#f-preview) and the [practice history](#f-page-records). Check: each child's records show only their own attempts.
+8. **Deploy** ([Reference E](#run)) and try it on the target tablet with a stylus. This is experiment 1 of the Development Plan. The team has drawn with a finger and a stylus on an iPad; the automated runs used a mouse. Record the device and browser versions, and repeat on a second device or browser.
+9. **Calibrate.** Have adults draw good and poor squares on the tablet, and decide whether `TRACE_TOL` = 5 is right ([gap 1](#srs)).
+10. **Rehearse** the [demo script](#run), and fill in `src/TraceToDesign.md` from the [file index](#file-index).
+
+Commands, from `src/`:
+
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
+
+```bash
+npm test
+```
+
+```bash
+npm run build
+```
+
+### Deploying and the domain
+
+1. Merge the app to the branch you deploy from (`main`).
+2. In Vercel, import the GitHub repository. Set **Root Directory** to `src`. The framework is detected as Next.js and nothing else needs setting: there are no environment variables.
+3. Every push gets a preview address, and the production branch gets a `*.vercel.app` address that can be used for the demo with no domain at all.
+4. For a domain: buy it from a registrar, add it under the Vercel project's **Settings, Domains**, and set the DNS records Vercel shows you at the registrar.
+
+**Trying it on a tablet before it is deployed.** With the laptop and the tablet on the same Wi-Fi, run `npm run dev` and open the "Network" address it prints (for example `http://192.168.1.20:3000`) in the tablet's browser. `next.config.ts` allows private network addresses for this; without that, the page appears but no button responds.
+
+The repository and the documents spell the name **Squigglr**, with no "e". Check which spelling you want to buy, and whether it is free, before deciding between `.com`, `.ca` and `.io`.
+
+### Demo script
+
+About eight minutes, with no slides.
+
+1. **Who's practising.** Add two children. Point out: a picture, no name, guest mode. Tap the first child.
+2. **Pick a lesson.** Tap the square.
+3. **Lesson ready.** Show the three settings up front, each with its line of explanation. Tap "i" beside Neatness: three example drawings, made from the scoring itself. Choose High. Open "More settings", set "Pause that ends an attempt" to 3, and show that − and + stop at the ends of each range. Tap "Start lesson" and answer the adult check.
+4. **Watch, then full outline.** The demonstration plays and the helper says "Watch me!". Practice starts by itself with "Your turn!" and a chime. Draw three sides and stop. The demo panel shows a result near 79 and "incomplete". After the pause the missing side glows, the helper says "Great try! Finish where it's glowing!", and the drawing stays.
+5. **Finish it.** Draw the missing side. It passes at the lift, with no button: a chime, a paw print steps forward, and the outline is replaced by dots.
+6. **Endpoints only, then on my own.** At the dots, point out the green start dot, the moving arrow and the picture of the shape in the corner. Pass the dots. With no guide, draw a small square in a corner of the canvas: it still passes, the tune plays and the sticker appears. In a second lesson, show the two things that do not pass with no guide: a tiny square ("Try drawing it bigger") and a rectangle ("Try making it as tall as it is wide").
+7. **Grown-ups and the records.** Tap "Grown-ups", answer the check, open "Practice history": each attempt with its strokes, step, outcome, result and the pass mark in use. Tap the second child at the top: nothing yet.
+8. **Settings change the lesson.** Start the square for the second child with Neatness Low and draw a square with a stray line across it: it passes. Do the same for the first child at High: it does not.
+9. **Stopping rules,** if there is time. Start at "Endpoints only" with "Get a grown-up after" at 3 and scribble three times: a Grown-ups button appears, the grown-up opens the card and chooses, and meanwhile the child's canvas keeps working.
+
+<a id="after"></a>
+## F. After the POC
 
 [`KNOWN-LIMITS.md`](KNOWN-LIMITS.md) lists what the app does not do yet, with what it would take to close each one.
 
-- **Investigate editable refinement**, the experiment left out of this POC (see the [scope decision](#scope-decision-the-creative-space-is-left-out-of-the-poc)), and update the Development Plan and the SRS phases to match.
-- **Settle the three SRS changes** in [section 13](#13-how-the-app-compares-with-the-srs), the minimum size first.
+- **Investigate editable refinement**, the experiment left out of this POC (see the [scope decision](#scope-decision)), and update the Development Plan and the SRS phases to match.
+- **Settle the three SRS changes** in [Reference C](#srs), the minimum size first.
 - **Database.** Replace the inside of `lib/storage.ts` with Supabase calls, and make its four functions `async`. The callers then need `await`, which is the one change that reaches outside the file.
 - **Accounts.** Add sign-in to the adult check component and pass the adult's id to storage, as the MIS interfaces already do.
 - **The rest of the catalogue.** Lines, triangle, house and sun are new entries in `LESSONS`.

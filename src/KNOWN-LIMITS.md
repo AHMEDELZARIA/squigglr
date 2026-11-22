@@ -2,7 +2,7 @@
 
 Things the app does not do yet, or does loosely, that the team has seen and chosen to leave for now. None of them is a bug in what the POC sets out to show. Each has what it would take to close it.
 
-Found in the audit of November 15, 2026. For how the app compares with the SRS, see section 13 of [`POC-Implementation-Plan.md`](POC-Implementation-Plan.md).
+Found in the audit of November 15, 2026. For how the app compares with the SRS, see Reference C of [`POC-Implementation-Plan.md`](POC-Implementation-Plan.md).
 
 ## Left out of the POC by decision: the creative space
 
@@ -11,7 +11,7 @@ Decided by the team on November 16, 2026. The Development Plan's POC has four ex
 - **Experiment 2, reversible geometric refinement:** tidy a child's free drawing with geometry, keep the result editable, and undo it exactly.
 - **Experiment 3, model-based creative enhancement:** have a pretrained model return drawing instructions that the app applies to the child's strokes.
 
-Why: the guided lesson does not depend on either, the lesson took the time there was, and neither experiment can be run properly in the days left. The full reasoning is in section 2 of [`POC-Implementation-Plan.md`](POC-Implementation-Plan.md).
+Why: the guided lesson does not depend on either, the lesson took the time there was, and neither experiment can be run properly in the days left. The full reasoning is in Reference A of [`POC-Implementation-Plan.md`](POC-Implementation-Plan.md).
 
 What it leaves to do:
 
@@ -24,7 +24,7 @@ What it leaves to do:
 
 ## Changed on the evidence of the peer session, against the SRS
 
-Decided on November 16, 2026, after running the paper prototype with a member of another group. Each needs the SRS changed to match, or the app changed back. Section 13 of the plan has the detail.
+Decided on November 16, 2026, after running the paper prototype with a member of another group. Each needs the SRS changed to match, or the app changed back. Reference C of the plan has the detail.
 
 | In the app | SRS |
 | --- | --- |

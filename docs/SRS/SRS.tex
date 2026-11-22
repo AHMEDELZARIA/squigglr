@@ -266,6 +266,9 @@ team audit: each finalized evaluable attempt now appends its result to $H$
 extension, in Section~9.2 and UC-005 (\#282); and SAF-RAY-005, SAF-RAY-006 and
 the lesson-end summaries now end an extended lesson when the extension is used
 up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached, as FR-LRN-021 does (\#281).\\
+22 November 2026 & Ahmed Elzaria & Addressed TA feedback: the symbolic
+constants table now has separate meaning, unit, value and trace columns, and its
+rows are in alphabetical order. No value or trace changed (\#305).\\
 \end{longtable}
 
 ~\\
@@ -1319,184 +1322,174 @@ The chosen values and the drawing-to-score interpretation are checked using
 examples made by adults at the lower and upper boundaries of each configurable
 range (OI-05; CON-005--006).
 
-{\small\setlength{\tabcolsep}{5pt}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.11\textwidth}@{}}
 \caption{Central symbolic constants register}\label{tab:goalconst}\\
 \toprule
-\textbf{Constant} & \textbf{Meaning, unit, value and traceability}\\
+\textbf{Constant} & \textbf{Meaning} & \textbf{Unit} & \textbf{Value} & \textbf{Trace}\\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Constant} & \textbf{Meaning, unit, value and traceability}\\
+\textbf{Constant} & \textbf{Meaning} & \textbf{Unit} & \textbf{Value} & \textbf{Trace}\\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-\texttt{STAGE\_PASS} & Minimum stage result threshold for a complete attempt to
+\texttt{ADULT\_\allowbreak{}CHECK} & Whether a supporting adult must confirm an adult-only
+action before it can be carried out. & Boolean & Required for adult-only
+actions. & SAF-RAY-001, SAF-RAY-008\\
+\addlinespace
+\texttt{ADULT\_\allowbreak{}REVIEWERS} & Minimum number of adult reviewers for progress
+summary understandability checks. & People (count) & 5, set in the VnV Plan
+(Symbolic Parameters appendix). & G.6\\
+\addlinespace
+\texttt{AGE\_\allowbreak{}RANGE} & Intended lower and upper ages of learners served by
+Squigglr. & Years & Lower and upper bounds TBD. &
+Section \ref{sec:stakeholders}, \goalref{1}\\
+\addlinespace
+\texttt{ATTEMPT\_\allowbreak{}EXTENSION} & Additional evaluable attempts permitted when
+recent results satisfy the improvement criterion. & Attempts & Range 1--3;
+default 2. & G.3, BR-002, OI-05\\
+\addlinespace
+\texttt{ATTEMPT\_\allowbreak{}IDLE} & Time with no input after the last stroke of an attempt
+that has not passed, after which Squigglr ends the attempt. It must be longer
+than the child's usual pause between strokes, so the adult sets it for each
+child. & Seconds & Range team-defined, TBD; default the middle of the range;
+must be less than \texttt{LESSON\_IDLE\_PROMPT}. & BR-008, FR-LRN-024\\
+\addlinespace
+\texttt{ATTEMPT\_\allowbreak{}LIMIT} & Number of unsuccessful attempts that triggers the
+lesson ending or extension decision. & Failed attempts & Range 6--10; default 8;
+must exceed \texttt{DIFFICULTY\_STREAK}. With the current ranges this always
+holds; the check stays in case the ranges change. & G.3, BR-002, OI-05\\
+\addlinespace
+\texttt{ATTEMPT\_\allowbreak{}LIMIT\_\allowbreak{}MAX} & Maximum number of evaluable attempts at a stage,
+including extensions. Because a pass moves the child to the next stage, at most
+one of these is a pass and it is always the last; a maximum of 10 allows 9
+failed attempts and a pass, or 10 failed attempts. & Attempts & Range 8--12;
+default 10; must be at least \texttt{ATTEMPT\_LIMIT}. & G.3, BR-002, OI-05\\
+\addlinespace
+\texttt{CHILD\_\allowbreak{}CONTROLS\_\allowbreak{}MAX} & Maximum number of controls a child can use on
+one child-facing screen. & Controls (count) & Team-defined; TBD. & NFR-UX-001\\
+\addlinespace
+\texttt{CONCURRENT\_\allowbreak{}CAPACITY} & Maximum number of simultaneous active users the
+system shall support without degrading response times below the thresholds in
+Section~\ref{sec:speed}. & Concurrent sessions (count) & TBD; set by repeated
+measurement, as planned in the VnV Plan (Symbolic Parameters appendix). &
+NFR-PERF-008\\
+\addlinespace
+\texttt{DIFFICULTY\_\allowbreak{}STREAK} & Consecutive unsuccessful attempts before Squigglr
+may suggest returning to an earlier stage. & Failed attempts & Range 3--5;
+default 4. & G.3, BR-003, OI-05\\
+\addlinespace
+\texttt{FAILED\_\allowbreak{}SAVES} & Number of consecutive failed save attempts used in the
+fit criterion sample for save failure notification tests. & Save attempts
+(count) & Team-defined; TBD. & SAF-SHA-003\\
+\addlinespace
+\texttt{FEEDBACK\_\allowbreak{}LATENCY\_\allowbreak{}MAX} & Maximum allowed time between the completion of
+a stylus stroke and visual acknowledgement of that stroke during a lesson. &
+Milliseconds & TBD; set by repeated measurement, as planned in the VnV Plan
+(Symbolic Parameters appendix). & NFR-PERF-001\\
+\addlinespace
+\texttt{FEEDBACK\_\allowbreak{}WORDS\_\allowbreak{}MAX} & Maximum length of a message to the child when
+spoken. & Words & Team-defined; TBD. & NFR-UX-015\\
+\addlinespace
+\texttt{IDLE\_\allowbreak{}TIMEOUT} & Duration of user inactivity after which Squigglr ends
+the session and logs out the user. & Minutes & Team-defined; TBD. &
+SAF-SHA-006\\
+\addlinespace
+\texttt{IMPROVE\_\allowbreak{}MARGIN} & Minimum increase in average stage result points
+across consecutive comparison windows that qualifies as improvement. & Points
+out of 100 & 5 points (fixed by the team). & G.3, BR-002, OI-05\\
+\addlinespace
+\texttt{IMPROVE\_\allowbreak{}WINDOW} & Number of evaluable attempts in each comparison
+window used by the improvement rule. & Attempts & Range 1--3; default 2. & G.3,
+BR-002, OI-05\\
+\addlinespace
+\texttt{INTERFACE\_\allowbreak{}LANGUAGE} & Language of all text in adult views. & -- & TBD.
+& ASM-007, NFR-UX-012\\
+\addlinespace
+\texttt{LESSON\_\allowbreak{}IDLE\_\allowbreak{}END} & Time with no input during a guided lesson after
+which Squigglr ends the lesson. & Seconds & Range team-defined, TBD; default the
+middle of the range; must be less than \texttt{IDLE\_TIMEOUT}. & BR-008,
+SAF-RAY-009\\
+\addlinespace
+\texttt{LESSON\_\allowbreak{}IDLE\_\allowbreak{}PROMPT} & Time with no input during a guided lesson after
+which Squigglr shows the child a check-in. & Seconds & Range team-defined, TBD;
+default the middle of the range; must be less than \texttt{LESSON\_IDLE\_END}. &
+BR-008, SAF-RAY-009\\
+\addlinespace
+\texttt{LOCATE\_\allowbreak{}TIME\_\allowbreak{}MAX} & Maximum time a team member unfamiliar with the
+codebase should need to locate the module responsible for a given stage
+behaviour. & Minutes & TBD; set by repeated measurement, as planned in the VnV
+Plan (Symbolic Parameters appendix). & NFR-MAINT-002\\
+\addlinespace
+\texttt{PART\_\allowbreak{}COVER} & Smallest share of the length of a required part of the
+figure that must be drawn for the part to count as present. & Percent & Proposed
+90; confirmed with \texttt{TRACE\_TOL}. & G.2, FR-LRN-011\\
+\addlinespace
+\texttt{RECUR\_\allowbreak{}MIN} & Minimum number of a learner's attempts, at the same stage
+of the same lesson within a progress summary's period, in which one predefined
+difficulty must be observed for the summary to list it as recurring. & Attempts
+(integer $\geq 2$) & TBD; proposed 3, and confirmed with the specialists in
+PH-2, as planned in the VnV Plan (Symbolic Parameters appendix). & G.6,
+FR-PRG-004\\
+\addlinespace
+\texttt{REFINE\_\allowbreak{}LATENCY\_\allowbreak{}MAX} & Maximum allowed time between system's AI
+refinement request and visual acknowledgement of that request strokes (or
+falling back to unrefined strokes). & Seconds & TBD; set by repeated
+measurement, as planned in the VnV Plan (Symbolic Parameters appendix). &
+NFR-PERF-002\\
+\addlinespace
+\texttt{REFINE\_\allowbreak{}TOLERANCE} & Maximum permitted distance between refined strokes
+and the child's original strokes in the creative space. & CSS pixels on the
+drawing area used for testing & TBD; set by the team in PH-1, before the first
+refinement test, by judging adult-made drawings of the supported set (BR-009),
+then confirmed by supporting adults in the usability sessions (H-MUH-006), as
+planned in the VnV Plan (Symbolic Parameters appendix). & G.4, BR-005\\
+\addlinespace
+\texttt{REVIEW\_\allowbreak{}PASS\_\allowbreak{}RATE} & Minimum proportion of progress summary review
+tasks completed successfully by adults. & Proportion & 0.8, set in the VnV Plan
+before any review session (Symbolic Parameters appendix). & G.6\\
+\addlinespace
+\texttt{SETUP\_\allowbreak{}TIME\_\allowbreak{}MAX} & Maximum time for a first-time adult to create a
+child's profile and start a lesson. & Minutes & Team-defined; TBD. &
+NFR-UX-009\\
+\addlinespace
+\texttt{STAGE\_\allowbreak{}PASS} & Minimum stage result threshold for a complete attempt to
 pass a drawing stage. The stage result (Section~\ref{sec:fr-formal}) is the
 smaller of the share of the lesson's figure that was drawn and the share of the
 drawing that lies on the figure, so a result of 80 means at least 80\% of each.
-\emph{Unit:} points out of 100. \emph{Range:} 70--90.
-\emph{Default:} 80. \emph{Trace:} G.2, BR-002, BR-008, OI-05.\\
+& Points out of 100 & Range 70--90; default 80. & G.2, BR-002, BR-008, OI-05\\
 \addlinespace
-\texttt{TRACE\_TOL} & Largest distance at which a drawn point counts as on the
-lesson's figure, and a part of the figure counts as drawn. \emph{Unit:} percent
-of the figure's size (the diagonal of its bounding box), so it does not depend
-on the screen. \emph{Value:} proposed 5; confirmed by the team in PH-1, before
-the first evaluation test, on adult-made drawings (BR-009), as the VnV Plan
-calibrates its prepared attempts. \emph{Trace:} G.2, FR-LRN-011, FR-LRN-013.\\
+\texttt{SUMMARY\_\allowbreak{}LOAD\_\allowbreak{}MAX} & Maximum allowed time for an adult's progress
+summary page to become fully visible after request. & Seconds & TBD; set by
+repeated measurement, as planned in the VnV Plan (Symbolic Parameters appendix).
+& NFR-PERF-003\\
 \addlinespace
-\texttt{PART\_COVER} & Smallest share of the length of a required part of the
-figure that must be drawn for the part to count as present. \emph{Unit:}
-percent. \emph{Value:} proposed 90; confirmed with \texttt{TRACE\_TOL}.
-\emph{Trace:} G.2, FR-LRN-011.\\
+\texttt{SUPPORTED\_\allowbreak{}DEVICES} & Supported browser and device combinations on which
+Squigglr is expected to function properly. & Device\slash browser set & Team-defined
+list; TBD. & SAF-RAY-002, H-RAY-002\\
 \addlinespace
-\texttt{DIFFICULTY\_STREAK} & Consecutive unsuccessful attempts before Squigglr
-may suggest returning to an earlier stage. \emph{Unit:} failed attempts.
-\emph{Range:} 3--5. \emph{Default:} 4. \emph{Trace:} G.3, BR-003, OI-05.\\
+\texttt{TARGET\_\allowbreak{}SIZE\_\allowbreak{}MIN} & Minimum touch target size of a control on a
+child-facing screen. & CSS pixels & 44 by 44, from WCAG 2.2 success criterion
+2.5.5. & NFR-UX-018\\
 \addlinespace
-\texttt{ATTEMPT\_LIMIT} & Number of unsuccessful attempts that triggers the
-lesson ending or extension decision. \emph{Unit:} failed attempts. \emph{Range:}
-6--10. \emph{Default:} 8; must exceed \texttt{DIFFICULTY\_STREAK}. With the
-current ranges this always holds; the check stays in case the ranges change. \emph{Trace:}
-G.3, BR-002, OI-05.\\
+\texttt{TRACE\_\allowbreak{}TOL} & Largest distance at which a drawn point counts as on the
+lesson's figure, and a part of the figure counts as drawn. It is measured
+against the figure's size, so it does not depend on the screen. & Percent of the
+figure's size (the diagonal of its bounding box) & Proposed 5; confirmed by the
+team in PH-1, before the first evaluation test, on adult-made drawings (BR-009),
+as the VnV Plan calibrates its prepared attempts. & G.2, FR-LRN-011,
+FR-LRN-013\\
 \addlinespace
-\texttt{IMPROVE\_WINDOW} & Number of evaluable attempts in each comparison
-window used by the improvement rule. \emph{Unit:} attempts. \emph{Range:} 1--3.
-\emph{Default:} 2. \emph{Trace:} G.3, BR-002, OI-05.\\
+\texttt{UX\_\allowbreak{}PASS\_\allowbreak{}RATE} & Minimum proportion of reviewers who must complete a
+usability or learning task, or answer 4 or 5 on a five-point rating. &
+Proportion & Team-defined; TBD. & NFR-UX-006, NFR-UX-009, NFR-UX-013,
+NFR-UX-014\\
 \addlinespace
-\texttt{IMPROVE\_MARGIN} & Minimum increase in average stage result points
-across consecutive comparison windows that qualifies as improvement.
-\emph{Unit:} points out of 100. \emph{Value:} 5 points (fixed by the team).
-\emph{Trace:} G.3, BR-002, OI-05.\\
-\addlinespace
-\texttt{ATTEMPT\_EXTENSION} & Additional evaluable attempts permitted when
-recent results satisfy the improvement criterion. \emph{Unit:} attempts.
-\emph{Range:} 1--3. \emph{Default:} 2. \emph{Trace:} G.3, BR-002, OI-05.\\
-\addlinespace
-\texttt{ATTEMPT\_LIMIT\_MAX} & Maximum number of evaluable attempts at a stage,
-including extensions. Because a pass moves the child to the next stage, at most
-one of these is a pass and it is always the last; a maximum of 10 allows 9
-failed attempts and a pass, or 10 failed attempts. \emph{Unit:} attempts. \emph{Range:} 8--12.
-\emph{Default:} 10; must be at least \texttt{ATTEMPT\_LIMIT}. \emph{Trace:} G.3,
-BR-002, OI-05.\\
-\addlinespace
-\texttt{ATTEMPT\_IDLE} & Time with no input after the last stroke of an attempt
-that has not passed, after which Squigglr ends the attempt. It must be longer
-than the child's usual pause between strokes, so the adult sets it for each
-child. \emph{Unit:} seconds. \emph{Range:} team-defined; TBD. \emph{Default:}
-middle of the range; must be less than \texttt{LESSON\_IDLE\_PROMPT}.
-\emph{Trace:} BR-008, FR-LRN-024.\\
-\addlinespace
-\texttt{LESSON\_IDLE\_PROMPT} & Time with no input during a guided lesson after
-which Squigglr shows the child a check-in. \emph{Unit:} seconds. \emph{Range:}
-team-defined; TBD. \emph{Default:} middle of the range; must be less than
-\texttt{LESSON\_IDLE\_END}. \emph{Trace:} BR-008, SAF-RAY-009.\\
-\addlinespace
-\texttt{LESSON\_IDLE\_END} & Time with no input during a guided lesson after
-which Squigglr ends the lesson. \emph{Unit:} seconds. \emph{Range:}
-team-defined; TBD. \emph{Default:} middle of the range; must be less than
-\texttt{IDLE\_TIMEOUT}. \emph{Trace:} BR-008, SAF-RAY-009.\\
-\addlinespace
-\texttt{REFINE\_TOLERANCE} & Maximum permitted distance between refined strokes
-and the child's original strokes in the creative space. \emph{Unit:} CSS
-pixels on the drawing area used for testing. \emph{Value:} TBD; set by the team
-in PH-1, before the first refinement test, by judging adult-made drawings of the
-supported set (BR-009), then confirmed by supporting adults in the usability
-sessions (H-MUH-006), as planned in the VnV Plan (Symbolic Parameters
-appendix). \emph{Trace:} G.4, BR-005.\\
-\addlinespace
-\texttt{ADULT\_REVIEWERS} & Minimum number of adult reviewers for progress
-summary understandability checks. \emph{Unit:} people (count). \emph{Value:}
-5, set in the VnV Plan (Symbolic Parameters appendix). \emph{Trace:} G.6.\\
-\addlinespace
-\texttt{REVIEW\_PASS\_RATE} & Minimum proportion of progress summary review
-tasks completed successfully by adults. \emph{Unit:} proportion. \emph{Value:}
-0.8, set in the VnV Plan before any review session (Symbolic Parameters
-appendix). \emph{Trace:} G.6.\\
-\addlinespace
-\texttt{RECUR\_MIN} & Minimum number of a learner's attempts, at the same stage
-of the same lesson within a progress summary's period, in which one predefined
-difficulty must be observed for the summary to list it as recurring.
-\emph{Unit:} attempts (integer $\geq 2$). \emph{Value:} TBD; proposed 3, and
-confirmed with the specialists in PH-2, as planned in the VnV Plan (Symbolic
-Parameters appendix). \emph{Trace:} G.6, FR-PRG-004.\\
-\addlinespace
-\texttt{AGE\_RANGE} & Intended lower and upper ages of learners served by
-Squigglr. \emph{Unit:} years. \emph{Value:} lower and upper bounds TBD.
-\emph{Trace:} Section~\ref{sec:stakeholders}, \goalref{1}.\\
-\addlinespace
-\texttt{CHILD\_CONTROLS\_MAX} & Maximum number of controls a child can use on
-one child-facing screen. \emph{Unit:} controls (count). \emph{Value:}
-team-defined; TBD. \emph{Trace:} NFR-UX-001.\\
-\addlinespace
-\texttt{UX\_REVIEWERS} & Minimum number of adult reviewers in the look-and-feel
-and usability reviews. \emph{Unit:} people (count). \emph{Value:} team-defined;
-TBD. \emph{Trace:} NFR-UX-003, NFR-UX-006, NFR-UX-007, NFR-UX-009, NFR-UX-013,
-NFR-UX-014.\\
-\addlinespace
-\texttt{UX\_PASS\_RATE} & Minimum proportion of reviewers who must complete a
-usability or learning task, or answer 4 or 5 on a five-point rating.
-\emph{Unit:} proportion. \emph{Value:} team-defined; TBD. \emph{Trace:} NFR-UX-006,
-NFR-UX-009, NFR-UX-013, NFR-UX-014.\\
-\addlinespace
-\texttt{SETUP\_TIME\_MAX} & Maximum time for a first-time adult to create a
-child's profile and start a lesson. \emph{Unit:} minutes. \emph{Value:}
-team-defined; TBD. \emph{Trace:} NFR-UX-009.\\
-\addlinespace
-\texttt{FEEDBACK\_WORDS\_MAX} & Maximum length of a message to the child when
-spoken. \emph{Unit:} words. \emph{Value:} team-defined; TBD. \emph{Trace:}
-NFR-UX-015.\\
-\addlinespace
-\texttt{TARGET\_SIZE\_MIN} & Minimum touch target size of a control on a
-child-facing screen. \emph{Unit:} CSS pixels. \emph{Value:} 44 by 44, from WCAG
-2.2 success criterion 2.5.5. \emph{Trace:} NFR-UX-018.\\
-\addlinespace
-\texttt{INTERFACE\_LANGUAGE} & Language of all text in adult views.
-\emph{Value:} TBD. \emph{Trace:} ASM-007, NFR-UX-012.\\
-\addlinespace
-\texttt{IDLE\_TIMEOUT} & Duration of user inactivity after which Squigglr ends
-the session and logs out the user. \emph{Unit:} minutes. \emph{Value:}
-team-defined; TBD. \emph{Trace:} SAF-SHA-006.\\
-\addlinespace
-\texttt{ADULT\_CHECK} & Whether a supporting adult must confirm an adult-only
-action before it can be carried out. \emph{Unit:} Boolean. \emph{Value:}
-required for adult-only actions. \emph{Trace:} SAF-RAY-001, SAF-RAY-008.\\
-\addlinespace
-\texttt{SUPPORTED\_DEVICES} & Supported browser and device combinations on which
-Squigglr is expected to function properly. \emph{Unit:} device/browser set.
-\emph{Value:} team-defined list; TBD. \emph{Trace:} SAF-RAY-002, H-RAY-002.\\
-\addlinespace
-\texttt{FAILED\_SAVES} & Number of consecutive failed save attempts used in the
-fit criterion sample for save failure notification tests. \emph{Unit:} save
-attempts (count). \emph{Value:} team-defined; TBD. \emph{Trace:} SAF-SHA-003.\\
-\addlinespace
-\texttt{FEEDBACK\_LATENCY\_MAX} & Maximum allowed time between the completion of
-a stylus stroke and visual acknowledgement of that stroke during a lesson.
-\emph{Unit:} milliseconds. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
-(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-001.\\
-\addlinespace
-\texttt{REFINE\_LATENCY\_MAX} & Maximum allowed time between system's AI
-refinement request and visual acknowledgement of that request strokes (or
-falling back to unrefined strokes). \emph{Unit:} seconds. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
-(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-002.\\
-\addlinespace
-\texttt{SUMMARY\_LOAD\_MAX} & Maximum allowed time for an adult's progress
-summary page to become fully visible after request. \emph{Unit:} seconds.
-\emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
-(Symbolic Parameters appendix). \emph{Trace:}
-NFR-PERF-003.\\
-\addlinespace
-\texttt{LOCATE\_TIME\_MAX} & Maximum time a team member unfamiliar with the
-codebase should need to locate the module responsible for a given stage
-behaviour. \emph{Unit:} minutes. \emph{Value:} TBD; set by repeated measurement, as planned in the VnV Plan
-(Symbolic Parameters appendix). \emph{Trace:} NFR-MAINT-002.\\
-\addlinespace
-\texttt{CONCURRENT\_CAPACITY} & Maximum number of simultaneous active users the
-system shall support without degrading response times below the thresholds in
-Section~\ref{sec:speed}. \emph{Unit:} concurrent sessions (count). \emph{Value:}
-TBD; set by repeated measurement, as planned in the VnV Plan
-(Symbolic Parameters appendix). \emph{Trace:} NFR-PERF-008.\\
+\texttt{UX\_\allowbreak{}REVIEWERS} & Minimum number of adult reviewers in the look-and-feel
+and usability reviews. & People (count) & Team-defined; TBD. & NFR-UX-003,
+NFR-UX-006, NFR-UX-007, NFR-UX-009, NFR-UX-013, NFR-UX-014\\
 \end{longtable}}
 
 \section{Relevant Facts And Assumptions}

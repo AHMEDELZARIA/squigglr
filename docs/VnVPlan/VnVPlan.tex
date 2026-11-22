@@ -1075,11 +1075,11 @@ more items, so the inspections add these:
 \begin{itemize}
 \item[A1] (INS-LRN) Each row of the SRS Section~9.2 transition table maps
 to one identifiable code path. After a finished attempt, the rules are
-checked in the SRS order: pass, end at limit, extension, suggestion. In
-two places SRS Section~9.2 disagrees with other parts of the SRS: the counts
-when a stage is entered again, and when an extended lesson ends. The inspector records
-which reading the code follows and raises it as an SRS feedback issue, not
-as a major finding. The guided lesson tests avoid these cases.
+checked in the SRS order: pass, end at limit, extension, suggestion. A stage
+entered again in the same lesson keeps the counts and extension state it had
+(SRS BR-002), and an extended lesson ends when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes first (SRS
+FR-LRN-021, SAF-RAY-005).
 \item[A2] (INS-LRN) Apart from pass-based advancement and the step from the
 demonstration to practice, only an adult action that passed the adult check
 changes the lesson or the stage (I1, I2 and SRS CON-007).
@@ -1160,8 +1160,8 @@ line and item.
 go through the findings and mark each one major or minor. A finding is
 major if it could change a pass decision, a count, a stage, a saved record
 or what the child or adult sees, or if it breaks one of A1 to A10. A
-disagreement inside the SRS named in A1 is not major; it becomes an SRS
-feedback issue. Every other finding is minor. The author answers questions
+disagreement found inside the SRS is not major; it becomes an SRS feedback
+issue. Every other finding is minor. The author answers questions
 but does not argue findings.
 \item \emph{Rework} (author): each major finding becomes its own issue
 labelled \texttt{bug}, linked from the inspection issue and fixed by a PR.
@@ -1442,9 +1442,9 @@ learner or ends the session, the current learner's lesson stops. The lesson
 is recorded as unfinished (T-REC-007), and a later lesson for that learner
 is a new lesson record.
 \item \emph{The list of results $H$.} In SRS Section~9.2, $H$ holds the
-results of the evaluable attempts at the current stage. This is the state
-definition; the transition table does not append to $H$. The tests, and the
-model of T-LRN-021, follow the state definition.
+results of the evaluable attempts since the current stage was entered. Each
+finalized evaluable attempt appends its result, and invalid or interrupted
+input leaves $H$ unchanged.
 \end{itemize}
 
 \begin{enumerate}
@@ -2645,8 +2645,7 @@ Initial State:
 table of guided lesson state transitions and of the predicates
 $\mathrm{Pass}$, $\mathrm{Improving}$ and
 $\mathrm{SuggestBack}$, written by the Testing Lead, who does not
-write the lesson rules module. In the model, $H$ holds the results of the
-evaluable attempts at the current stage, as in the conventions;
+write the lesson rules module;
 \item the lesson rules module, which offers a read-only view of its state
 for tests;
 \item both start at the same chosen drawing stage with the same learner
@@ -2663,12 +2662,8 @@ adult decline; an adult accept to an earlier stage; a child's attempt to
 accept, skip or change lesson; and an adult selection of a new lesson.
 \item Settings: drawn from the SRS ranges, with the ends of each range
 drawn more often.
-\item A suggestion can be left unanswered while attempts continue.
-\item Until the SRS settles where it disagrees with itself, the generator
-places an accept only as the last event of a sequence, and draws only
-settings with \texttt{ATTEMPT\_LIMIT} + \texttt{ATTEMPT\_EXTENSION} $\ge$
-\texttt{ATTEMPT\_LIMIT\_MAX}. These are the places where SRS Section~9.2
-disagrees with SRS BR-002 and SAF-RAY-005.
+\item A suggestion can be left unanswered while attempts continue, and an
+accept can be followed by more attempts, so a stage can be entered again.
 \end{itemize}
 
 Output: after every event, the state of the module equals the state of the
@@ -5876,8 +5871,8 @@ attempts that improves enough to earn an extension is replayed until the
 lesson ends.
 
 Output: the lesson ends after exactly \texttt{ATTEMPT\_LIMIT} failed
-attempts at one stage, or \texttt{ATTEMPT\_LIMIT\_MAX} when extended, with no
-action from the child; failures at an earlier stage do not count at the new
+attempts at one stage, or, when extended, when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, with no action from the child; failures at an earlier stage do not count at the new
 stage; and the saved record matches the attempts made, including the
 furthest stage reached.
 

@@ -260,6 +260,12 @@ Unlikely Changes heading with its table (\#289).\\
 11 November 2026 & Muhammad Huzaifah & Brought the open issues up to date:
 closed OI-06 and OI-08 with what settled them, gave the seven open issues a
 current status and target date, and removed dates repeated elsewhere (\#288).\\
+22 November 2026 & Ahmed Elzaria & Settled three disagreements found in the
+team audit: each finalized evaluable attempt now appends its result to $H$
+(\#283); a stage entered again in the same lesson keeps its counts and
+extension, in Section~9.2 and UC-005 (\#282); and SAF-RAY-005, SAF-RAY-006 and
+the lesson-end summaries now end an extended lesson when the extension is used
+up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached, as FR-LRN-021 does (\#281).\\
 \end{longtable}
 
 ~\\
@@ -2073,8 +2079,8 @@ Product use cases: \ucref{002}, \ucref{004}.
 The child watches the demonstration and draws an attempt at each stage. The work
 checks each attempt against the stage's criteria, gives feedback, and moves the
 child on or offers a retry. The lesson ends when the child finishes it or
-reaches \texttt{ATTEMPT\_LIMIT}, or \texttt{ATTEMPT\_LIMIT\_MAX} when extended,
-and every attempt is recorded (BR-002). Product use cases: \ucref{003},
+reaches \texttt{ATTEMPT\_LIMIT}, or, when extended, uses up the extension or
+reaches \texttt{ATTEMPT\_LIMIT\_MAX}, and every attempt is recorded (BR-002). Product use cases: \ucref{003},
 \ucref{008}.
 \item[BUC-004 Respond to repeated difficulty (BE-004)] The work suggests going
 back a stage. The adult decides whether to accept; a declined or ignored
@@ -2676,7 +2682,7 @@ Suggestion to go back a stage, or an extension while the child improves &
 Supporting adult & \ucref{005} & \mbox{\reqref{FR-LRN-019}}, \mbox{\reqref{FR-LRN-020}},
 \mbox{\reqref{FR-LRN-036}} \\
 \addlinespace
-End of a lesson at \texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, with
+End of a lesson at \texttt{ATTEMPT\_LIMIT} or at the end of an extension, with
 progress saved & Child; supporting adult & \ucref{003} &
 \mbox{\reqref{FR-LRN-021}}, SAF-RAY-005, SAF-RAY-006 \\
 \addlinespace
@@ -2748,8 +2754,9 @@ for a child. & The chosen lesson is ready for the adult to start. & \goalref{1},
 UC-003 & \emph{Child:} practise a guided lesson & An adult starts a lesson for
 the child. & The child moves to the next stage after an attempt meets
 \texttt{STAGE\_PASS}, or retries; the lesson ends when the child finishes it or
-reaches \texttt{ATTEMPT\_LIMIT}, or \texttt{ATTEMPT\_LIMIT\_MAX} when extended
-(BR-002), and the furthest stage reached is saved. & \goalref{1}, \goalref{2},
+reaches \texttt{ATTEMPT\_LIMIT}, or, when extended, uses up the extension or
+reaches \texttt{ATTEMPT\_LIMIT\_MAX} (BR-002), and the furthest stage reached is
+saved. & \goalref{1}, \goalref{2},
 \goalref{3} \\
 \addlinespace
 \phantomsection\label{uc:004}%
@@ -2990,8 +2997,10 @@ without improving.} \reqfield{Trigger}{Squigglr suggests going back a stage
   \item Squigglr shows the suggestion and keeps it pending without blocking
   practice (\mbox{SAF-RAY-001}).
   \item The adult completes the adult check and accepts.
-  \item Squigglr moves the lesson back to the earlier stage the adult chose,
-  with the stage's counts at zero (Section~\ref{sec:fr-formal}).
+  \item Squigglr moves the lesson back to the earlier stage the adult chose.
+  The streak starts again, and the stage keeps the counts it already has in
+  this lesson record, so the limits of BR-002 still hold
+  (Section~\ref{sec:fr-formal}).
 \end{enumerate}
 \noindent\textit{Alternative flows:}
 \begin{description}[nosep, leftmargin=2.2em, font=\normalfont]
@@ -3880,9 +3889,12 @@ whether the single stage extension has been granted; $x\in\mathbb{N}_0$ counts
 evaluable attempts consumed \emph{after} that grant, with $0\le x\le e_p$ and
 $x=0$ when $z=0$. Finally, $f\in L$ is the furthest stage reached in the lesson.
 On a stage change (either normal pass-based progression or an authorized adult
-adjustment), the stage-specific counts, streak, history, pending suggestion and
-extension state reset to zero or empty; $f$ retains the furthest stage reached
-so far. \emph{No child ability estimate} is part of this state (BR-006).
+adjustment), the streak, history and pending suggestion reset to zero or empty.
+The counts $n_f,n_a$ and the extension state $z,x$ are kept for each drawing
+stage of the lesson record, and the symbols denote those of the active stage, so
+a stage entered again within the same lesson continues from its earlier counts
+(BR-002). $f$ retains the furthest stage reached so far. \emph{No child ability
+estimate} is part of this state (BR-006).
 
 \paragraph{Drawing input and attempt classification.}
 An attempt is a finite ordered list of stylus strokes $X=(x_1,\ldots,x_j)$,
@@ -4046,13 +4058,16 @@ authorization.\\
 Finalize evaluable attempt & $l\in A$, $q\in\{\textsf{active},
 \textsf{suggested}\}$ & Classify
 $C_{\ell,l}(X)$ and $G(l)$; report pass/fail using the stage threshold;
-increment $n_a$ and, for non-pass, $n_f,k$. If $z=1$, increment $x$ for this
-additional evaluable attempt. On pass, record the result and apply the
-prescribed forward-stage or lesson-end transition below.\\
+append $v_{\ell,l}(X)$ to $H$; increment $n_a$ and, for non-pass, $n_f,k$. If
+$z=1$, increment $x$ for this additional evaluable attempt. The limit,
+extension and suggestion rules below use the updated $H$ and counts. On pass,
+record the result and apply the prescribed forward-stage or lesson-end
+transition below.\\
 \addlinespace
 Interrupted or invalid input & Missing finalization or
 $C_{\ell,l}(X)=\textsf{invalid}$ & Do not pass or change level. Neither $n_a$
-nor $n_f$ is incremented, and no successful stage transition is permitted.\\
+nor $n_f$ is incremented, $H$ is unchanged, and no successful stage transition
+is permitted.\\
 \addlinespace
 Offer suggestion & $\operatorname{SuggestBack}(\sigma)$ & Set $s=1$,
 $q=\textsf{suggested}$; leave $\ell,l$ unchanged.\\
@@ -4067,8 +4082,9 @@ finalized and counted. If a pass, $\operatorname{AdultSelect}$ or the end of
 the lesson clears $s$, record the suggestion as ignored.\\
 \addlinespace
 Adult accepts suggestion & $s=1$ and an authorized adult chooses a preceding
-level & Activate the chosen earlier level, clear $s$, reset stage counts; retain
-the lesson's furthest stage reached.\\
+level & Activate the chosen earlier level with the counts and extension state
+kept for it in this lesson record; clear $s$, reset $k$ and $H$, and return $q$
+to $\textsf{active}$; retain the lesson's furthest stage reached.\\
 \addlinespace
 End at limit & The finalized attempt did not pass and either $z=0\land n_f\ge
 b_p\land (\neg\operatorname{Improving}(H,p)\lor n_a\ge h_p)$, or $z=1\land(x\ge
@@ -4083,9 +4099,10 @@ this extension or offer a conflicting return suggestion.\\
 \addlinespace
 Passing a nonfinal drawing stage & $\operatorname{Pass}(X,l,p)$ and
 $l\in\{T,E\}$ & Save the passed attempt at its original stage; automatically set
-$l'=\operatorname{Next}(l)$ without adult action. Reset stage-specific counters,
-clear any pending suggestion (recorded as ignored) and update $f$; leave $\ell$
-unchanged.\\
+$l'=\operatorname{Next}(l)$ without adult action, with the counts and extension
+state kept for $l'$ in this lesson record (zero on first entry). Reset $k$ and
+$H$, clear any pending suggestion (recorded as ignored) and update $f$; leave
+$\ell$ unchanged.\\
 \addlinespace
 Passing the final drawing stage & $\operatorname{Pass}(X,I,p)$ & Save the passed
 independent attempt, set $q'=\textsf{ended}$ and $f'=I$; complete the current
@@ -4699,8 +4716,8 @@ Three safety requirements in the Safety-Critical Requirements subsection already
 govern records, and the requirements below do not repeat them. SAF-RAY-003 keeps
 each completed attempt on the device until the server confirms that it is saved,
 and tells the adult which attempts were not saved. SAF-RAY-006 records each
-lesson that ends at an attempt limit, either \texttt{ATTEMPT\_LIMIT} or
-\texttt{ATTEMPT\_LIMIT\_MAX}, records each improvement extension, and keeps
+lesson that ends at one of the attempt limits of SAF-RAY-005, records each
+improvement extension, and keeps
 earlier attempts when the same lesson is started again. SAF-RAY-007 saves every attempt to
 the active learner only. The specialist interview did not cover how records are
 kept, shared or deleted (FACT-013), so the requirements below rest on the
@@ -5679,18 +5696,20 @@ describes practice only and is not an assessment or diagnosis.\\
 of the excluded content and finds the statement present.\\
 \emph{Hazards:} H-RAY-003, H-MOU-005.
 \item[SAF-RAY-005]\phantomsection\label{req:SAF-RAY-005} Squigglr shall end a
-lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX} when
-extended, without any action from the child, and shall keep the progress saved
-up to that point.\\
+lesson at \texttt{ATTEMPT\_LIMIT}, or, when the lesson is extended, when the
+extension is used up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes
+first, without any action from the child, and shall keep the progress saved up
+to that point (FR-LRN-021).\\
 \emph{Rationale:} the child is not expected to exit a lesson, and no adult may
 be watching (CA-001), so repeated failure must end on its own (G.3).\\
-\emph{Fit criterion:} in prepared sequences of failed attempts, each lesson ends
-at the limit in use with no child input, and the saved record matches the
-attempts made.\\
+\emph{Fit criterion:} in prepared sequences of failed attempts, with and without
+an improvement extension, and including settings in which the extension is used
+up before \texttt{ATTEMPT\_LIMIT\_MAX}, each lesson ends at the limit in use
+with no child input, and the saved record matches the attempts made.\\
 \emph{Hazards:} H-RAY-004.
 \item[SAF-RAY-006]\phantomsection\label{req:SAF-RAY-006} Squigglr shall record
-each lesson that ends at \texttt{ATTEMPT\_LIMIT} or
-\texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement extension, show the adult how
+each lesson that ends at one of the limits of SAF-RAY-005, and each improvement
+extension, show the adult how
 many times these happened for each lesson, and keep earlier attempts when the
 same lesson is started again.\\
 \emph{Rationale:} each run of a lesson is a new lesson record (FR-REC-006);
@@ -6943,8 +6962,8 @@ Squigglr cannot see how long a child has used the device, or whether the child
 is distressed or uncomfortable (ASM-002), so long or repeated sessions can go
 unnoticed when no adult is watching. & The adult stays responsible for the
 child's time on the device (ASM-002) and can stop a session or mute audio
-(ASM-015); a lesson ends at \texttt{ATTEMPT\_LIMIT}, or at
-\texttt{ATTEMPT\_LIMIT\_MAX} when extended (G.3). Hazards: H-RAY-004, H-RAY-005.
+(ASM-015); a lesson ends at \texttt{ATTEMPT\_LIMIT}, or, when extended, when the
+extension is used up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached (G.3). Hazards: H-RAY-004, H-RAY-005.
 \\
 \addlinespace
 Relationship with professional support & Occupational therapists and educators

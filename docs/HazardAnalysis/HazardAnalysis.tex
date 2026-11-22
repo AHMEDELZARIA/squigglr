@@ -131,6 +131,10 @@ tables and the roadmap (\#315).\\
 the H-SHA table and kept the last disclosure heading with its text (\#289).\\
 11 November 2026 & Muhammad Huzaifah & The roadmap now points to the SRS for
 the target dates of OI-05 and OI-09 (\#288).\\
+22 November 2026 & Ahmed Elzaria & H-RAY-004, SAF-RAY-005 and SAF-RAY-006 now
+end an extended lesson when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes first, as SRS
+FR-LRN-021 does (\#281).\\
 \end{longtable}
 
 ~\newpage
@@ -928,12 +932,13 @@ repeats; \texttt{ATTEMPT\_LIMIT} may be too high for a given child (CA-006); an
 improvement extension lengthens the lesson; no adult may be watching (CA-001). &
 The child becomes distressed, stops practising or refuses the activity later.
 Loss: well-being; the practice benefit. & Psychological/ well-being & Mitigate:
-end the lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX}
-when extended, and save progress (G.3); end the lesson when the child stops
+end the lesson at \texttt{ATTEMPT\_LIMIT}, or, when extended, when the
+extension is used up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached, and save
+progress (G.3); end the lesson when the child stops
 drawing, without counting the idle time as failed attempts; let audio feedback
 be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
-\texttt{ATTEMPT\_LIMIT}, that no extended lesson passes
-\texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no failed
+\texttt{ATTEMPT\_LIMIT}, that an extended lesson ends when its extension is
+used up and never passes \texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no failed
 attempt beyond the one in progress.
 & G.3, \textbf{SAF-RAY-005}, \textbf{SAF-RAY-009} \\
 \addlinespace
@@ -1748,14 +1753,15 @@ judgement of the child's abilities or a comparison with other children, and
 every summary and export shall state that it describes practice only and is not
 an assessment or diagnosis. & H-RAY-003, H-MOU-005 & Safety-Critical \\
 \addlinespace
-SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or at
-\texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from the child,
-and shall keep the progress saved up to that point. & H-RAY-004 &
+SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or, when
+the lesson is extended, when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes first, without any
+action from the child, and shall keep the progress saved up to that point
+(FR-LRN-021). & H-RAY-004 &
 Safety-Critical \\
 \addlinespace
-SAF-RAY-006 & Squigglr shall record each lesson that ends at
-\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement
-extension, show the adult how many times these happened for each lesson, and
+SAF-RAY-006 & Squigglr shall record each lesson that ends at one of the limits
+of SAF-RAY-005, and each improvement extension, show the adult how many times these happened for each lesson, and
 keep earlier attempts when the same lesson is started again. & H-RAY-005 & Safety-Critical
 \\
 \addlinespace

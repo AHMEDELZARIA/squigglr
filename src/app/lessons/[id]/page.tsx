@@ -2,28 +2,27 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAdultCheck } from "@/components/AdultCheck";
 import { PlayIcon, StageGuide } from "@/components/icons";
 import { LessonIcon } from "@/components/LessonIcon";
 import { NEATNESS, NeatnessInfo } from "@/components/NeatnessInfo";
 import { Screen } from "@/components/Screen";
-import { useActiveLearner } from "@/components/useActiveLearner";
 import * as audio from "@/lib/audio";
 import { LESSONS } from "@/lib/catalogue";
 import * as settings from "@/lib/settings";
+import * as stages from "@/lib/stages";
 import type { DrawingStage, SettingName, Settings } from "@/lib/types";
 
-// S3 "Lesson ready". The chosen lesson and this child's settings, each with
-// one line saying what it changes. The grown-up can start straight away or
-// change any of them first. The values are the nine adult-set values of
-// BR-008: three up front, as in the prototype, and the rest under "More
-// settings".
+/** The part of the web address that names the lesson, e.g. "square" in /lesson/square. */
+// A `type`, not an `interface`: Next.js needs this form for useParams.
+type RouteParams = {
+  id: string;
+};
 
-const STAGES: { stage: DrawingStage; label: string }[] = [
-  { stage: "T", label: "Full outline" },
-  { stage: "E", label: "Endpoints only" },
-  { stage: "I", label: "On my own" },
-];
+// S3 "Lesson ready". The chosen lesson and the settings, each with one line
+// saying what it changes. The grown-up can start straight away or change any
+// of them first. The values are the nine adult-set values of BR-008: three up
+// front, as in the prototype, and the rest under "More settings". The POC
+// saves nothing: the values are kept only while the app is open.
 
 const MORE: SettingName[] = [
   "stagePass",
@@ -36,9 +35,16 @@ const MORE: SettingName[] = [
   "lessonIdleEnd",
 ];
 
-const RULES: { names: [SettingName, SettingName]; text: string }[] = [
+/** A rule between two settings, and how it is explained to the adult when it is broken. */
+interface SettingRule {
+  /** The two settings the rule is about. */
+  names: SettingName[];
+  text: string;
+}
+
+const RULES: SettingRule[] = [
   {
-    names: ["attemptLimit", "difficultyStreak"],
+    names: ["attemptLimit", "failStreak"],
     text: "The failed attempts before the lesson ends must be more than the tries before a grown-up is called.",
   },
   {
@@ -47,17 +53,19 @@ const RULES: { names: [SettingName, SettingName]; text: string }[] = [
   },
 ];
 
+interface StepperProps {
+  name: SettingName;
+  values: Settings;
+  set: (name: SettingName, value: number) => void;
+  big?: boolean;
+}
+
 function Stepper({
   name,
   values,
   set,
   big = false,
-}: {
-  name: SettingName;
-  values: Settings;
-  set: (name: SettingName, value: number) => void;
-  big?: boolean;
-}) {
+}: StepperProps) {
   const r = settings.RANGES[name];
   const box = big ? "h-14 w-14 text-3xl" : "h-11 w-11 text-2xl";
   return (
@@ -88,47 +96,45 @@ function Stepper({
 }
 
 export default function LessonReady() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<RouteParams>();
   const router = useRouter();
-  const { learner, ready } = useActiveLearner();
-  const { ask, dialog } = useAdultCheck();
   const lesson = LESSONS.find((l) => l.id === id);
   const [start, setStart] = useState<DrawingStage>("T");
-  const [saved, setSaved] = useState<Settings>(settings.defaults());
   const [values, setValues] = useState<Settings>(settings.defaults());
   const [info, setInfo] = useState(false);
   const [talks, setTalks] = useState(true);
 
+  // Show the values chosen earlier in this session, if any.
   useEffect(() => {
-    if (ready && (!learner || !lesson)) router.replace("/");
-    if (learner) {
-      const loaded = settings.load(learner.id);
-      setSaved(loaded);
-      setValues(loaded);
-      setTalks(settings.audio(learner.id));
+    if (lesson === undefined) {
+      router.replace("/");
+      return;
     }
-  }, [ready, learner, lesson, router]);
+    setValues(settings.chosen());
+    setTalks(audio.isEnabled());
+  }, [lesson, router]);
 
-  if (!learner || !lesson) return null;
+  if (lesson === undefined) return null;
 
-  const set = (name: SettingName, value: number) => setValues((v) => ({ ...v, [name]: value }));
+  /** Changes one value. React needs a new object to redraw, so the values are copied first. */
+  const set = (name: SettingName, value: number) => {
+    const next = settings.copySettings(values);
+    next[name] = value;
+    setValues(next);
+  };
   const bad = settings.check(values);
   const brokenRules = RULES.filter((rule) => rule.names.every((n) => bad.includes(n)));
-  const changed = settings.SETTING_NAMES.some((n) => values[n] !== saved[n]);
 
-  const begin = async () => {
+  const begin = () => {
     if (bad.length > 0) return;
-    // Starting a lesson, and changing saved values, need the adult check (SAF-RAY-001, SAF-RAY-008).
-    if (!(await ask())) return;
-    if (changed) settings.save(learner.id, values);
-    if (talks !== settings.audio(learner.id)) settings.setAudio(learner.id, talks);
+    settings.choose(values);
     audio.setEnabled(talks);
     audio.unlock(); // sound is only allowed after a tap, and this is the last one before the lesson
     router.push(`/lesson/${lesson.id}?start=${start}`);
   };
 
   return (
-    <Screen title={<>{learner.avatar}&apos;s lesson is ready</>} back="/lessons" avatar={learner.avatar}>
+    <Screen title="The lesson is ready" back="/">
       <div className="mt-6 grid gap-8 md:grid-cols-[16rem_1fr]">
         <div>
           <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-3xl border-2 border-edge bg-white">
@@ -137,10 +143,9 @@ export default function LessonReady() {
           <p className="mt-2 text-center text-2xl font-bold">{lesson.name} lesson</p>
 
           <div className="mt-6 rounded-3xl bg-lavender p-5">
-            <h2 className="text-2xl font-bold">Hand the tablet to {learner.avatar}</h2>
+            <h2 className="text-2xl font-bold">Hand the tablet to the child</h2>
             <p className="mt-2 text-lg">
-              Tap &ldquo;Start lesson&rdquo;, then give {learner.avatar} the tablet and stylus. The helper shows what to
-              do.
+              Tap &ldquo;Start lesson&rdquo;, then give the child the tablet and stylus. The helper shows what to do.
             </p>
             <button
               onClick={begin}
@@ -150,17 +155,15 @@ export default function LessonReady() {
               <PlayIcon className="h-6 w-6" />
               Start lesson
             </button>
-            {changed && bad.length === 0 && (
-              <p className="mt-2 text-sm text-muted">Your changes are saved when the lesson starts.</p>
-            )}
           </div>
         </div>
 
         <div className="divide-y-2 divide-line">
           <section className="pb-5">
-            <h2 className="font-sans text-2xl font-bold">{learner.avatar} starts at:</h2>
+            <h2 className="font-sans text-2xl font-bold">The child starts at:</h2>
             <div className="mt-2 grid grid-cols-3 gap-3" role="radiogroup" aria-label="Starting step">
-              {STAGES.map(({ stage, label }, i) => {
+              {stages.DRAWING_STAGES.map((stage) => {
+                const step = stages.info(stage);
                 const selected = start === stage;
                 return (
                   <button
@@ -174,7 +177,7 @@ export default function LessonReady() {
                     }`}
                   >
                     <span className="absolute top-2 left-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-edge bg-white text-sm font-bold">
-                      {i + 1}
+                      {step.number}
                     </span>
                     {selected && (
                       <span className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
@@ -182,13 +185,13 @@ export default function LessonReady() {
                       </span>
                     )}
                     <StageGuide figure={lesson.figure} stage={stage} className="mx-auto h-16 w-16" />
-                    <span className="text-lg font-bold">{label}</span>
+                    <span className="text-lg font-bold">{step.name}</span>
                   </button>
                 );
               })}
             </div>
             <p className="mt-2 text-muted">
-              Where {learner.avatar} begins. After that the lesson moves on by itself: 1, 2, then 3.
+              Where the child begins. After that the lesson moves on by itself: 1, 2, then 3.
             </p>
           </section>
 
@@ -214,18 +217,18 @@ export default function LessonReady() {
               <span className="text-2xl font-bold">{talks ? "On" : "Off"}</span>
             </div>
             <p className="mt-2 text-muted">
-              The helper says each step out loud, with a sound when a step is done. {learner.avatar} may not read yet.
+              The helper says each step out loud, with a sound when a step is done. The child may not read yet.
             </p>
           </section>
 
           <section className="py-5">
             <div className="flex flex-wrap items-center gap-3 text-2xl font-bold">
               Get a grown-up after
-              <Stepper name="difficultyStreak" values={values} set={set} big />
+              <Stepper name="failStreak" values={values} set={set} big />
               tries in a row
             </div>
             <p className="mt-2 text-muted">
-              If {learner.avatar} gets stuck on step 2 or 3 this many times, the tablet calls you over.
+              If the child gets stuck on step 2 or 3 this many times, the tablet calls you over.
             </p>
           </section>
 
@@ -309,8 +312,7 @@ export default function LessonReady() {
         </div>
       </div>
 
-      {info && <NeatnessInfo figure={lesson.figure} avatar={learner.avatar} onClose={() => setInfo(false)} />}
-      {dialog}
+      {info && <NeatnessInfo figure={lesson.figure} onClose={() => setInfo(false)} />}
     </Screen>
   );
 }

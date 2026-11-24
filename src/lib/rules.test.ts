@@ -4,10 +4,8 @@ import type { Evaluate } from "./evaluation";
 import { IDENTITY } from "./geometry";
 import { improving } from "./improvement";
 import { LessonControl } from "./lessonControl";
-import { check, defaults, load, save } from "./settings";
-import * as storage from "./storage";
-import { lessonRecords, records as realRecords } from "./records";
-import { memoryRecords, stroke, strokeOf } from "./testHelpers";
+import { check, choose, chosen, defaults } from "./settings";
+import { stroke, strokeOf } from "./testHelpers";
 import type { Settings, Stage, Stroke } from "./types";
 
 // As the V&V Plan does for its rule tests, each attempt's completeness and
@@ -16,14 +14,13 @@ type Prepared = number | "inv" | { result: number; complete: false };
 
 function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
   const settings = { ...defaults(), ...overrides };
-  const records = memoryRecords();
   let now = 1_000_000;
   let next: Prepared = 0;
 
   const evaluate: Evaluate = (_x, _f, stage, _ds, stagePass) => {
     const guidance = stage === "I" ? "independent" : "assisted";
     if (next === "inv") {
-      return { class: "invalid", guidance, result: 0, passed: false, difficulties: [], drawn: 0, onFigure: 0, fit: IDENTITY };
+      return { class: "invalid", guidance, result: 0, passed: false, problems: [], drawn: 0, onFigure: 0, fit: IDENTITY };
     }
     const result = typeof next === "number" ? next : next.result;
     const complete = typeof next === "number";
@@ -32,15 +29,15 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
       guidance,
       result,
       passed: complete && result >= stagePass,
-      difficulties: [],
+      problems: [],
       drawn: result / 100,
       onFigure: result / 100,
       fit: IDENTITY,
     };
   };
 
-  const control = new LessonControl({ records, evaluate, now: () => now });
-  control.select("p1", "square", start, settings);
+  const control = new LessonControl({ evaluate, now: () => now });
+  control.select("square", start, settings);
   control.beginPractice();
 
   /** One whole attempt: draw, then (if it did not pass) wait out ATTEMPT_IDLE. */
@@ -55,7 +52,7 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
   };
   const attempts = (...list: Prepared[]) => list.map(attempt);
 
-  return { control, records, settings, attempt, attempts, wait: (s: number) => void (now += s * 1000), time: () => now };
+  return { control, settings, attempt, attempts, wait: (s: number) => void (now += s * 1000), time: () => now };
 }
 
 describe("progression (FR-LRN-023, I6 to I8)", () => {
@@ -68,13 +65,9 @@ describe("progression (FR-LRN-023, I6 to I8)", () => {
     expect(h.control.stage).toBe("I");
     expect(h.attempt(85).feedback).toEqual(["lessonComplete"]);
     expect(h.control.status).toBe("ended");
-    expect(h.records.ending).toBe("completed");
-    expect(h.records.furthest).toBe("I");
-    expect(h.records.attempts.map((a) => [a.stage, a.outcome])).toEqual([
-      ["T", "passed"],
-      ["E", "passed"],
-      ["I", "passed"],
-    ]);
+    expect(h.control.ending).toBe("completed");
+    expect(h.control.furthest).toBe("I");
+    expect(h.control.lastAttempt?.stage).toBe("I");
   });
 
   it("starts at the stage the adult chose", () => {
@@ -107,21 +100,20 @@ describe("progression (FR-LRN-023, I6 to I8)", () => {
 });
 
 describe("attempts that do not count", () => {
-  it("invalid input is neither saved nor counted", () => {
+  it("invalid input is not counted", () => {
     const h = harness();
     expect(h.attempt("inv").feedback).toEqual(["notEvaluable"]);
     expect(h.control.failed).toBe(0);
     expect(h.control.evaluable).toBe(0);
-    expect(h.records.attempts).toHaveLength(0);
   });
 
-  it("an interrupted attempt is saved as interrupted and not counted", () => {
+  it("an interrupted attempt is not counted", () => {
     const h = harness();
     h.control.addStroke(stroke({ x: 0, y: 0 }, { x: 100, y: 0 }));
     h.control.interrupt();
     expect(h.control.failed).toBe(0);
     expect(h.control.evaluable).toBe(0);
-    expect(h.records.attempts[0]).toMatchObject({ outcome: "interrupted", result: null });
+    expect(h.control.lastAttempt?.outcome).toBe("interrupted");
     expect(h.control.stage).toBe("T");
   });
 
@@ -141,15 +133,13 @@ describe("a chance to finish what is missing", () => {
 
   function lesson() {
     const settings = defaults();
-    const records = memoryRecords();
     let now = 1_000_000;
     let lastInput = now;
-    const control = new LessonControl({ records, now: () => now });
-    control.select("p1", "square", "T", settings);
+    const control = new LessonControl({ now: () => now });
+    control.select("square", "T", settings);
     control.beginPractice();
     return {
       control,
-      records,
       draw: (s: Stroke) => {
         now += 1000;
         lastInput = now;
@@ -168,11 +158,11 @@ describe("a chance to finish what is missing", () => {
     sides.slice(0, 3).forEach(l.draw);
     const report = l.pause();
     expect(report.feedback).toEqual(["fillIn"]);
-    expect(report.difficulties).toEqual([{ kind: "missedPart", index: 3 }]);
+    expect(report.problems).toEqual([{ kind: "missedPart", index: 3 }]);
     expect(l.control.attempt?.outcome).toBe("open");
     expect(l.control.attempt?.strokes).toHaveLength(3);
     expect(l.control.failed).toBe(0);
-    expect(l.records.attempts).toHaveLength(0);
+    expect(l.control.lastAttempt).toBeNull();
   });
 
   it("finishing the missing side passes, as one attempt, with the side recorded as corrected", () => {
@@ -181,11 +171,11 @@ describe("a chance to finish what is missing", () => {
     l.pause();
     expect(l.draw(sides[3]).feedback).toEqual(["stagePassed"]);
     expect(l.control.stage).toBe("E");
-    expect(l.records.attempts).toHaveLength(1);
-    expect(l.records.attempts[0]).toMatchObject({ outcome: "passed", stage: "T" });
-    expect(l.records.attempts[0].strokes).toHaveLength(4);
-    expect(l.records.attempts[0].difficulties).toEqual([
-      { difficulty: { kind: "missedPart", index: 3 }, corrected: true },
+    const passed = l.control.lastAttempt;
+    expect(passed).toMatchObject({ outcome: "passed", stage: "T" });
+    expect(passed?.strokes).toHaveLength(4);
+    expect(passed?.seen).toEqual([
+      { problem: { kind: "missedPart", index: 3 }, corrected: true },
     ]);
   });
 
@@ -196,9 +186,9 @@ describe("a chance to finish what is missing", () => {
     expect(l.pause().feedback).toEqual(["keepTrying"]);
     expect(l.control.failed).toBe(1);
     expect(l.control.attempt?.strokes).toHaveLength(0);
-    expect(l.records.attempts[0]).toMatchObject({ outcome: "notPassed" });
-    expect(l.records.attempts[0].difficulties).toEqual([
-      { difficulty: { kind: "missedPart", index: 3 }, corrected: false },
+    expect(l.control.lastAttempt?.outcome).toBe("notPassed");
+    expect(l.control.lastAttempt?.seen).toEqual([
+      { problem: { kind: "missedPart", index: 3 }, corrected: false },
     ]);
   });
 
@@ -211,7 +201,7 @@ describe("a chance to finish what is missing", () => {
     l.draw(stray);
     expect(l.pause().feedback).toEqual(["keepTrying"]); // two hints is the most
     expect(l.control.failed).toBe(1);
-    expect(l.records.attempts).toHaveLength(1);
+    expect(l.control.evaluable).toBe(1);
   });
 
   it("gives no hint when nothing is missing: a complete drawing with too many stray lines just ends", () => {
@@ -224,36 +214,15 @@ describe("a chance to finish what is missing", () => {
   });
 });
 
-describe("records are kept faithfully", () => {
-  it("a save that fails does not stop the lesson, and is counted", () => {
-    const h = harness();
-    h.records.saveAttempt = () => {
-      throw new Error("QuotaExceededError");
-    };
-    expect(h.attempt(40).feedback).toEqual(["keepTrying"]);
-    expect(h.attempt(85).feedback).toEqual(["stagePassed"]);
-    expect(h.control.stage).toBe("E");
-    expect(h.control.unsaved).toBe(2);
-  });
-
-  it("starting a lesson closes one that was cut off, as unfinished", () => {
-    const first = realRecords.startLesson("cut-off-child", "square", "T");
-    const second = realRecords.startLesson("cut-off-child", "circle", "T");
-    const all = lessonRecords("cut-off-child");
-    expect(all.find((r) => r.id === first)!.ending).toBe("unfinished");
-    expect(all.find((r) => r.id === second)!.ending).toBe("inProgress");
-  });
-});
-
 describe("stopping rules (FR-LRN-019 to FR-LRN-021)", () => {
   it("ends the lesson at ATTEMPT_LIMIT when the child is not improving", () => {
     const h = harness();
     const reports = h.attempts(40, 40, 40, 40, 40, 40, 40, 40);
     expect(reports[6].feedback).toEqual(["keepTrying"]);
     expect(reports[7].feedback).toEqual(["keepTrying", "lessonEnded"]);
-    expect(h.records.ending).toBe("endedAtLimit");
-    expect(h.records.furthest).toBe("T");
-    expect(h.records.attempts).toHaveLength(8);
+    expect(h.control.ending).toBe("endedAtLimit");
+    expect(h.control.furthest).toBe("T");
+    expect(h.control.evaluable).toBe(8);
   });
 
   it("grants one extension when improving at the limit, then ends", () => {
@@ -261,13 +230,12 @@ describe("stopping rules (FR-LRN-019 to FR-LRN-021)", () => {
     h.attempts(40, 40, 40, 40, 40, 40, 50, 50); // last two average 50, the two before 40
     expect(h.control.status).toBe("active");
     expect(h.control.extended).toBe(true);
-    expect(h.records.extensions).toBe(1);
     h.attempt(60);
     expect(h.control.status).toBe("active");
     h.attempt(60); // ATTEMPT_EXTENSION (2) used up
     expect(h.control.status).toBe("ended");
-    expect(h.records.extensions).toBe(1);
-    expect(h.records.attempts).toHaveLength(10);
+    expect(h.control.ending).toBe("endedAtMax"); // 10 attempts is also ATTEMPT_LIMIT_MAX
+    expect(h.control.evaluable).toBe(10);
   });
 
   it("a pass during the extension still moves on", () => {
@@ -282,8 +250,8 @@ describe("stopping rules (FR-LRN-019 to FR-LRN-021)", () => {
     const h = harness("T", { attemptLimit: 8, attemptLimitMax: 8 });
     h.attempts(40, 40, 40, 40, 40, 40, 50, 50); // improving, but already at the cap
     expect(h.control.status).toBe("ended");
-    expect(h.records.ending).toBe("endedAtMax");
-    expect(h.records.extensions).toBe(0);
+    expect(h.control.ending).toBe("endedAtMax");
+    expect(h.control.extended).toBe(false);
   });
 
   it("uses the adult's limit", () => {
@@ -294,23 +262,23 @@ describe("stopping rules (FR-LRN-019 to FR-LRN-021)", () => {
 });
 
 describe("go-back suggestion (FR-LRN-019, FR-LRN-033 to FR-LRN-036)", () => {
-  it("is offered after DIFFICULTY_STREAK failures in a row at E, and changes nothing by itself", () => {
+  it("is offered after FAIL_STREAK failures in a row at E, and changes nothing by itself", () => {
     const h = harness("E");
     h.attempts(40, 40, 40);
     expect(h.control.status).toBe("active");
     h.attempt(40);
     expect(h.control.status).toBe("suggested");
     expect(h.control.stage).toBe("E");
-    expect(h.records.suggestions).toMatchObject([{ from: "E", response: "pending" }]);
-    h.attempt(40); // practice continues, and no second suggestion is made
-    expect(h.records.suggestions).toHaveLength(1);
+    expect(h.control.suggestionPending).toBe(true);
+    h.attempt(40); // practice continues, and the suggestion still waits
+    expect(h.control.status).toBe("suggested");
   });
 
   it("is never offered at T, which has no earlier drawing stage", () => {
     const h = harness("T");
     h.attempts(40, 40, 40, 40, 40);
     expect(h.control.status).toBe("active");
-    expect(h.records.suggestions).toHaveLength(0);
+    expect(h.control.suggestionPending).toBe(false);
   });
 
   it("is held back while the child is improving", () => {
@@ -322,11 +290,10 @@ describe("go-back suggestion (FR-LRN-019, FR-LRN-033 to FR-LRN-036)", () => {
   it("declining keeps the stage and needs a whole new streak", () => {
     const h = harness("E");
     h.attempts(40, 40, 40, 40);
-    h.control.answerSuggestion(false);
+    h.control.answerSuggestion(false, null);
     expect(h.control.status).toBe("active");
     expect(h.control.stage).toBe("E");
     expect(h.control.failed).toBe(4); // the counts are kept
-    expect(h.records.suggestions[0].response).toBe("declined");
     h.attempts(40, 40, 40);
     expect(h.control.status).toBe("active");
   });
@@ -337,21 +304,39 @@ describe("go-back suggestion (FR-LRN-019, FR-LRN-033 to FR-LRN-036)", () => {
     expect(() => h.control.answerSuggestion(true, "I")).toThrow("notEarlierStage");
     h.control.answerSuggestion(true, "T");
     expect(h.control.stage).toBe("T");
-    expect(h.control.failed).toBe(0);
+    expect(h.control.failed).toBe(0); // T was never practised in this lesson
     expect(h.control.furthest).toBe("I");
-    expect(h.records.suggestions[0]).toMatchObject({ response: "accepted", stage: "T" });
+    expect(h.control.suggestionPending).toBe(false);
   });
 
-  it("a pass clears a pending suggestion and records it as ignored", () => {
+  it("a stage entered again keeps the counts it had (SRS BR-002, Section 9.2)", () => {
+    const h = harness("E");
+    h.attempts(40, 40, 40, 40); // 4 failed at E, suggestion offered
+    h.control.answerSuggestion(true, "T");
+    expect(h.control.failed).toBe(0);
+    h.attempt(85); // pass at T: back to E
+    expect(h.control.stage).toBe("E");
+    expect(h.control.failed).toBe(4); // E's earlier failures still count towards its limit
+    expect(h.control.evaluable).toBe(4);
+    expect(h.control.streak).toBe(0); // the streak starts again
+    expect(h.control.history).toEqual([]); // and so do the results compared for improving
+    h.attempts(40, 40, 40);
+    expect(h.control.status).not.toBe("ended");
+    h.attempt(40); // the 8th failure at E: ATTEMPT_LIMIT
+    expect(h.control.ending).toBe("endedAtLimit");
+  });
+
+  it("a pass clears a pending suggestion", () => {
     const h = harness("E");
     h.attempts(40, 40, 40, 40);
     h.attempt(85);
     expect(h.control.stage).toBe("I");
-    expect(h.records.suggestions[0].response).toBe("ignored");
+    expect(h.control.suggestionPending).toBe(false);
+    expect(h.control.status).toBe("active");
   });
 
   it("uses the adult's streak", () => {
-    const h = harness("E", { difficultyStreak: 3 });
+    const h = harness("E", { failStreak: 3 });
     h.attempts(40, 40, 40);
     expect(h.control.status).toBe("suggested");
   });
@@ -365,7 +350,7 @@ describe("lesson idle (SAF-RAY-009)", () => {
     expect(h.control.tick(null).feedback).toEqual([]); // shown once
     h.wait(h.settings.lessonIdleEnd);
     expect(h.control.tick(null).feedback).toEqual(["lessonEnded"]);
-    expect(h.records.ending).toBe("endedIdle");
+    expect(h.control.ending).toBe("endedIdle");
   });
 });
 
@@ -383,36 +368,20 @@ describe("improving", () => {
 describe("settings check (BR-008)", () => {
   it("accepts the defaults, which are the middle of each range", () => {
     expect(check(defaults())).toEqual([]);
-    expect(defaults()).toMatchObject({ stagePass: 80, difficultyStreak: 4, attemptLimit: 8, attemptLimitMax: 10 });
+    expect(defaults()).toMatchObject({ stagePass: 80, failStreak: 4, attemptLimit: 8, attemptLimitMax: 10 });
   });
   it("rejects a value outside its range", () => {
     expect(check({ ...defaults(), stagePass: 69 })).toEqual(["stagePass"]);
     expect(check({ ...defaults(), stagePass: 91 })).toEqual(["stagePass"]);
     expect(check({ ...defaults(), improveWindow: 1.5 })).toEqual(["improveWindow"]);
   });
-  it("a value saved under an older, wider range counts as not chosen and takes the default", () => {
-    // The pause that ends an attempt used to default to 10 seconds; today it goes from 3 to 7.
-    storage.put("settings", "old-child", { ...defaults(), attemptIdle: 10, stagePass: 70 }, "old-child");
-    const loaded = load("old-child");
-    expect(loaded.attemptIdle).toBe(defaults().attemptIdle);
-    expect(loaded.stagePass).toBe(70);
-    expect(check(loaded)).toEqual([]);
-  });
-
-  it("saved values that cannot be used at all fall back to the defaults", () => {
-    storage.put("settings", "odd-child", { attemptLimit: 6, attemptLimitMax: 8, stagePass: "high" }, "odd-child");
-    expect(load("odd-child")).toEqual({ ...defaults(), attemptLimit: 6, attemptLimitMax: 8 });
-    // 6 failed attempts with a cap of 8 is fine. A limit of 10 with a cap of 8 is not, so nothing saved is used.
-    storage.put("settings", "odd-child", { attemptLimit: 10, attemptLimitMax: 8 }, "odd-child");
-    expect(load("odd-child")).toEqual(defaults());
-  });
-
-  it("a child whose values were never changed is saved with nothing chosen", () => {
-    save("new-child", defaults());
-    expect(storage.get("settings", "new-child")).toEqual({});
-    save("new-child", { ...defaults(), stagePass: 90 });
-    expect(storage.get("settings", "new-child")).toEqual({ stagePass: 90 });
-    expect(load("new-child")).toEqual({ ...defaults(), stagePass: 90 });
+  it("keeps the adult's values for the next lesson, as a copy", () => {
+    const values = { ...defaults(), stagePass: 90 };
+    choose(values);
+    values.stagePass = 70; // a later change on screen does not reach what was chosen
+    expect(chosen().stagePass).toBe(90);
+    expect(() => choose({ ...defaults(), stagePass: 95 })).toThrow("invalidSettings");
+    choose(defaults());
   });
 
   it("gives both values of a broken rule", () => {

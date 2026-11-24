@@ -6,7 +6,12 @@
 let context: AudioContext | null = null;
 let on = true;
 
-/** Turns sound on or off, from the learner's audio setting (NFR-UX-010). */
+/** Whether sound is on. */
+export function isEnabled(): boolean {
+  return on;
+}
+
+/** Turns sound on or off, from the adult's "Helper talks" switch (NFR-UX-010). */
 export function setEnabled(enabled: boolean): void {
   on = enabled;
   if (!enabled && typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
@@ -18,10 +23,12 @@ export function setEnabled(enabled: boolean): void {
  */
 export function unlock(): void {
   try {
-    const Ctx =
-      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!context && Ctx) context = new Ctx();
-    void context?.resume();
+    if (context === null && typeof window.AudioContext !== "undefined") {
+      context = new window.AudioContext();
+    }
+    if (context !== null) {
+      void context.resume();
+    }
     // An empty line wakes the browser's voice, which also needs a tap first.
     if (typeof speechSynthesis !== "undefined") speechSynthesis.speak(new SpeechSynthesisUtterance(""));
   } catch {
@@ -45,31 +52,45 @@ function note(frequency: number, at: number, length: number): void {
   oscillator.stop(start + length);
 }
 
-function play(notes: [frequency: number, at: number, length: number][]): void {
-  if (!on) return;
+/** One note of a tune. */
+interface Note {
+  /** In hertz. */
+  frequency: number;
+  /** Seconds from now. */
+  at: number;
+  /** Seconds. */
+  length: number;
+}
+
+function play(notes: Note[]): void {
+  if (!on || context === null) return;
   try {
-    void context?.resume();
-    notes.forEach((n) => note(...n));
+    void context.resume();
+    for (const n of notes) {
+      note(n.frequency, n.at, n.length);
+    }
   } catch {
     // Sound is a help, never a need.
   }
 }
 
 /** A step is done. */
-export const chime = () =>
+export function chime(): void {
   play([
-    [784, 0, 0.35],
-    [1047, 0.12, 0.5],
+    { frequency: 784, at: 0, length: 0.35 },
+    { frequency: 1047, at: 0.12, length: 0.5 },
   ]);
+}
 
 /** The lesson is over. */
-export const tune = () =>
+export function tune(): void {
   play([
-    [523, 0, 0.3],
-    [659, 0.15, 0.3],
-    [784, 0.3, 0.3],
-    [1047, 0.45, 0.7],
+    { frequency: 523, at: 0, length: 0.3 },
+    { frequency: 659, at: 0.15, length: 0.3 },
+    { frequency: 784, at: 0.3, length: 0.3 },
+    { frequency: 1047, at: 0.45, length: 0.7 },
   ]);
+}
 
 /** Says one of the helper's lines, in place of whatever it was saying. */
 export function say(text: string): void {

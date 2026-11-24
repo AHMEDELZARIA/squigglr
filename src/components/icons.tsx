@@ -2,12 +2,14 @@
 // prototype (the trail of prints, the helper, the sticker, the grown-ups lock) and
 // are drawn here so they take the app's colours.
 
-import type { DrawingStage, Figure } from "@/lib/types";
+import type { DrawingStage, Figure, Point } from "@/lib/types";
 
 const INK = "#23304a";
 const BRAND = "#5e51b8";
 
-type IconProps = { className?: string };
+interface IconProps {
+  className?: string;
+}
 
 const line = {
   fill: "none",
@@ -16,13 +18,6 @@ const line = {
   strokeLinecap: "round",
   strokeLinejoin: "round",
 } as const;
-
-export const LockIcon = ({ className }: IconProps) => (
-  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
-    <rect x="5" y="11" width="14" height="9" rx="2" />
-    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-  </svg>
-);
 
 export const BackIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
@@ -33,15 +28,6 @@ export const BackIcon = ({ className }: IconProps) => (
 export const PlayIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
     <path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z" fill="currentColor" />
-  </svg>
-);
-
-/** History: a clock with an arrow running backwards. */
-export const HistoryIcon = ({ className }: IconProps) => (
-  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" {...line}>
-    <path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" />
-    <path d="M3.5 4.5v4.6h4.6" />
-    <path d="M12 7.5V12l3 2" />
   </svg>
 );
 
@@ -66,93 +52,32 @@ export const Helper = ({ className }: IconProps) => (
   </svg>
 );
 
-// One print for each animal a child can have as their picture. Each is drawn
-// in a 20 x 26 box, toes at the top.
-const PRINTS: Record<string, React.ReactNode> = {
-  // Fox: a narrow dog-like paw with four toes and small claw marks.
-  "🦊": (
-    <>
-      <path d="M10 13c3.4 0 6 2.6 6 5.6 0 2.6-2.4 4.4-6 4.4s-6-1.8-6-4.400c0-3 2.6-5.6 6-5.600z" />
-      <ellipse cx="3.6" cy="11" rx="2" ry="2.8" transform="rotate(-18 3.6 11)" />
-      <ellipse cx="7.6" cy="7.4" rx="2" ry="3" />
-      <ellipse cx="12.4" cy="7.4" rx="2" ry="3" />
-      <ellipse cx="16.4" cy="11" rx="2" ry="2.8" transform="rotate(18 16.4 11)" />
-      <path d="M7.6 2.800v-2M12.4 2.800v-2M2.6 6.800l-.8-1.800M17.4 6.800l.8-1.8" fill="none" strokeLinecap="round" />
-    </>
-  ),
-  // Panda: a wide bear paw with five round toes.
-  "🐼": (
-    <>
-      <ellipse cx="10" cy="17.5" rx="7.5" ry="6" />
-      <circle cx="2.8" cy="10" r="2" />
-      <circle cx="6.2" cy="6.6" r="2.2" />
-      <circle cx="10" cy="5.4" r="2.3" />
-      <circle cx="13.8" cy="6.6" r="2.2" />
-      <circle cx="17.2" cy="10" r="2" />
-    </>
-  ),
-  // Frog: a small heel with three long toes that end in round pads.
-  "🐸": (
-    <>
-      <path d="M10 23L3.5 8M10 23V5M10 23l6.5-15" fill="none" strokeWidth={2.6} strokeLinecap="round" />
-      <circle cx="3.5" cy="7" r="2.6" />
-      <circle cx="10" cy="4" r="2.6" />
-      <circle cx="16.5" cy="7" r="2.6" />
-      <circle cx="10" cy="22" r="3.2" />
-    </>
-  ),
-  // Lion: a big round cat paw, four toes, no claws showing.
-  "🦁": (
-    <>
-      <path d="M10 12.500c4 0 7.5 2.7 7.5 6.2 0 2.9-3 4.8-7.5 4.800s-7.5-1.9-7.5-4.800c0-3.5 3.5-6.2 7.5-6.200z" />
-      <circle cx="3.2" cy="10" r="2.5" />
-      <circle cx="7.6" cy="6" r="2.7" />
-      <circle cx="12.4" cy="6" r="2.7" />
-      <circle cx="16.8" cy="10" r="2.5" />
-    </>
-  ),
-  // Octopus: the round marks of three suckers.
-  "🐙": (
-    <>
-      <circle cx="10" cy="6.5" r="4.5" />
-      <circle cx="5" cy="17" r="4" />
-      <circle cx="15" cy="18.5" r="3.4" />
-    </>
-  ),
-  // Unicorn: a hoof print, shaped like a horseshoe.
-  "🦄": <path d="M3.5 23C1 16 3 4.5 10 4.500S19 16 16.5 23h-3.600c1.8-5.5 1-12.5-2.9-12.500S5.3 17.5 7.1 23z" />,
-  // Turtle: a broad foot with short claws along the front.
-  "🐢": (
-    <>
-      <path d="M10 8.500c4.4 0 7.5 3.3 7.5 7.500s-3.1 7.5-7.5 7.5-7.5-3.3-7.5-7.5 3.1-7.5 7.5-7.500z" />
-      <path
-        d="M3.6 8.600L2.4 5.200M7.4 6.200L6.8 2.600M12.6 6.200l.6-3.600M16.4 8.600l1.2-3.4"
-        fill="none"
-        strokeWidth={2.2}
-        strokeLinecap="round"
-      />
-    </>
-  ),
-  // Bee: six tiny feet, three on each side.
-  "🐝": (
-    <>
-      <circle cx="5.5" cy="5" r="2.2" />
-      <circle cx="14.5" cy="5" r="2.2" />
-      <circle cx="4" cy="13" r="2.2" />
-      <circle cx="16" cy="13" r="2.2" />
-      <circle cx="5.5" cy="21" r="2.2" />
-      <circle cx="14.5" cy="21" r="2.2" />
-    </>
-  ),
-};
+/** A paw print: a round pad and four toes. */
+const PRINT = (
+  <>
+    <ellipse cx="10" cy="18" rx="6" ry="5.5" />
+    <circle cx="3.6" cy="10.5" r="2.3" />
+    <circle cx="7.8" cy="6.5" r="2.3" />
+    <circle cx="12.2" cy="6.5" r="2.3" />
+    <circle cx="16.4" cy="10.5" r="2.3" />
+  </>
+);
+
+interface StepProps {
+  /** Whether this step has been reached (coloured) or not yet (grey). */
+  done: boolean;
+}
 
 /**
  * One step of the trail: a left and a right print, toes pointing the way the
  * trail goes, the second a pace ahead of the first.
  */
-function Step({ avatar, done }: { avatar: string; done: boolean }) {
-  const print = PRINTS[avatar] ?? PRINTS["🦊"];
-  const colour = done ? BRAND : "#c9cddb";
+function Step(props: StepProps) {
+  const print = PRINT;
+  let colour = "#c9cddb"; // grey: not reached yet
+  if (props.done) {
+    colour = BRAND;
+  }
   // A print is drawn toes-up in a 20 x 26 box. Turned a quarter turn, its toes point right.
   const walking = (x: number, y: number) => `translate(${x + 26} ${y}) rotate(90)`;
   return (
@@ -172,11 +97,16 @@ function Step({ avatar, done }: { avatar: string; done: boolean }) {
 
 /**
  * Progress through the lesson as a trail of prints walking across the
- * screen: watch, then the three drawing steps. The prints are those of the
- * animal in the child's picture. The step just reached grows for a moment,
+ * screen: watch, then the three drawing steps. The step just reached grows for a moment,
  * so the child sees the trail move on.
  */
-export function Footprints({ reached, labels, avatar }: { reached: number; labels: string[]; avatar: string }) {
+interface FootprintsProps {
+  /** The index of the step the child has reached: 0 watch, 1 trace, 2 dots, 3 on their own. */
+  reached: number;
+  labels: string[];
+}
+
+export function Footprints({ reached, labels }: FootprintsProps) {
   return (
     <ol className="flex" aria-label="Steps of the lesson">
       {labels.map((label, i) => (
@@ -186,7 +116,7 @@ export function Footprints({ reached, labels, avatar }: { reached: number; label
           aria-current={i === reached ? "step" : undefined}
           className={i === reached && reached > 0 ? "pop" : undefined}
         >
-          <Step avatar={avatar} done={i <= reached} />
+          <Step done={i <= reached} />
         </li>
       ))}
     </ol>
@@ -210,11 +140,20 @@ export const Sticker = ({ className }: IconProps) => (
   </svg>
 );
 
-const d = (points: { x: number; y: number }[]) =>
-  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+/** Turns a list of points into SVG path text: "M x y" for the first point, then "L x y" for each next one. */
+function d(points: Point[]): string {
+  const parts = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+  return parts.join(" ");
+}
 
 /** What the child sees at a drawing stage, as a small picture: the dotted outline, the dots, or a blank page. */
-export function StageGuide({ figure, stage, className }: { figure: Figure; stage: DrawingStage; className?: string }) {
+interface StageGuideProps {
+  figure: Figure;
+  stage: DrawingStage;
+  className?: string;
+}
+
+export function StageGuide({ figure, stage, className }: StageGuideProps) {
   return (
     <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
       {stage === "I" && (

@@ -16,7 +16,7 @@
   --color-ink: #23304a;
   --color-muted: #5b6478;
   --color-brand: #5e51b8;
-  --color-stroke: #3a4fa0;
+  --color-stroke: #23304a; /* same as --color-ink: dark enough to stand out over the lavender guide (4:1, WCAG 2.2 1.4.11) */
   --color-panel: #f4f5f8;
   --color-line: #e1e4ec;
   /* The edge of a card or a button: light, but clear against white. */

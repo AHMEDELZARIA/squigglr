@@ -1,5 +1,10 @@
 /** The wavy line from the presentation: the mark beside the name. */
-export function Squiggle({ className = "", colour = "#5e51b8" }: { className?: string; colour?: string }) {
+interface SquiggleProps {
+  className?: string;
+  colour?: string;
+}
+
+export function Squiggle({ className = "", colour = "#5e51b8" }: SquiggleProps) {
   return (
     <svg viewBox="0 0 64 20" className={className} aria-hidden="true" fill="none">
       <path

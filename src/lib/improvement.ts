@@ -1,8 +1,7 @@
 // M09 Improvement Measure. The measure is this module's secret, so a different
 // way of deciding "improving" changes only this file.
 
-/** Smallest rise in the average stage result that counts as improvement. */
-export const IMPROVE_MARGIN = 5;
+import { IMPROVE_MARGIN } from "./constants";
 
 /**
  * True when the average of the last `window` results is at least

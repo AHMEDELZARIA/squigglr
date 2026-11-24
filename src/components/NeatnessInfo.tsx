@@ -14,13 +14,19 @@ export const NEATNESS = [
   { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
 ];
 
-export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avatar: string; onClose: () => void }) {
+interface NeatnessInfoProps {
+  figure: Figure;
+  /** Called when the adult closes the pop-up. */
+  onClose: () => void;
+}
+
+export function NeatnessInfo({ figure, onClose }: NeatnessInfoProps) {
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Neatness">
       <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">
         <h2 className="text-3xl font-bold">Neatness</h2>
         <p className="mt-2 text-lg">
-          How neat {avatar}&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
+          How neat the child&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
           shape always has to be drawn. Neatness sets how many lines may lie away from the shape.
         </p>
         <p className="mt-4 font-bold text-muted">The messiest drawing that still moves on:</p>

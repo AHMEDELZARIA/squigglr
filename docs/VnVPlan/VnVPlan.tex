@@ -575,6 +575,30 @@ turn each actionable omission, ambiguity, conflict or failed checklist item into
 a GitHub issue labelled \texttt{SRS Verification}, with the affected requirement
 ID, one assignee and an expected resolution.
 
+\paragraph{Check of the formal specification against the use cases.} The
+supervisor review reads one requirement at a time, so it cannot find two
+parts of the SRS that disagree. The conflicts in the lesson rules were found
+only while the tests were written (Table~\ref{tab:srs-conflicts}). The
+Testing Lead (Huzaifah) therefore runs this check:
+\begin{itemize}
+\item \emph{What is compared.} Every step of SRS UC-002 to UC-005, with its
+alternative and failure flows, against the rows of the transition table in
+SRS Section~9.2. The same rows are compared with SRS BR-002 and BR-003,
+FR-LRN-015 to FR-LRN-021, FR-LRN-033 to FR-LRN-037, SAF-RAY-005 and
+SAF-RAY-006.
+\item \emph{Pass.} Each step and each requirement maps to a row that gives
+the same stage, counts and lesson ending, and each row is reached by at
+least one step.
+\item \emph{When.} Once on the SRS change that settles the conflicts (issue
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/391}{\#391}), by
+10~January 2027, and again in the review of every PR that changes SRS
+Section~9.2 or one of the items above.
+\item \emph{Result.} Each disagreement becomes a GitHub issue labelled
+\texttt{SRS Verification}, with one assignee and a date, and a row of
+Table~\ref{tab:srs-conflicts}. No test leaves a case out because of a
+conflict that has no row.
+\end{itemize}
+
 \subsection{Design Verification}
 \label{sec:design-verification}
 
@@ -1075,11 +1099,12 @@ more items, so the inspections add these:
 \begin{itemize}
 \item[A1] (INS-LRN) Each row of the SRS Section~9.2 transition table maps
 to one identifiable code path. After a finished attempt, the rules are
-checked in the SRS order: pass, end at limit, extension, suggestion. In
-two places SRS Section~9.2 disagrees with other parts of the SRS: the counts
-when a stage is entered again, and when an extended lesson ends. The inspector records
-which reading the code follows and raises it as an SRS feedback issue, not
-as a major finding. The guided lesson tests avoid these cases.
+checked in the SRS order: pass, end at limit, extension, suggestion. Where
+the SRS disagrees with itself, the code follows the rule in
+Table~\ref{tab:srs-conflicts}, as the guided lesson tests do. A stage
+entered again in the same lesson keeps its counts and extension state, and
+an extended lesson ends when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes first.
 \item[A2] (INS-LRN) Apart from pass-based advancement and the step from the
 demonstration to practice, only an adult action that passed the adult check
 changes the lesson or the stage (I1, I2 and SRS CON-007).
@@ -1160,8 +1185,9 @@ line and item.
 go through the findings and mark each one major or minor. A finding is
 major if it could change a pass decision, a count, a stage, a saved record
 or what the child or adult sees, or if it breaks one of A1 to A10. A
-disagreement inside the SRS named in A1 is not major; it becomes an SRS
-feedback issue. Every other finding is minor. The author answers questions
+disagreement newly found inside the SRS is not major; it becomes an SRS
+feedback issue and a row of Table~\ref{tab:srs-conflicts}. Every other
+finding is minor. The author answers questions
 but does not argue findings.
 \item \emph{Rework} (author): each major finding becomes its own issue
 labelled \texttt{bug}, linked from the inspection issue and fixed by a PR.
@@ -1437,15 +1463,85 @@ The replayed files do not score the written numbers: their results lie in
 the bands of the \texttt{CAL\_*} constants in Table~\ref{tab:symb-fr} (at
 most 60, 70 to 79 and at least 90). These bands, not the written numbers,
 give the needed pass, fail and improvement results end to end.
+\item \emph{Start of a lesson.} Every lesson opens at its demonstration,
+also when the adult chooses a later starting stage
+(Table~\ref{tab:srs-conflicts}, SC4). When a test starts at T, E or I, the
+demonstration has been watched and the child has continued, unless a row
+says otherwise.
 \item \emph{Switching learner ends the lesson.} When the adult switches
 learner or ends the session, the current learner's lesson stops. The lesson
 is recorded as unfinished (T-REC-007), and a later lesson for that learner
 is a new lesson record.
-\item \emph{The list of results $H$.} In SRS Section~9.2, $H$ holds the
-results of the evaluable attempts at the current stage. This is the state
-definition; the transition table does not append to $H$. The tests, and the
-model of T-LRN-021, follow the state definition.
+\item \emph{The list of results $H$.} $H$ holds the results of the
+evaluable attempts since the current stage was entered. Each finalized
+evaluable attempt appends its result, and invalid or interrupted input
+leaves $H$ unchanged (Table~\ref{tab:srs-conflicts}, SC3).
 \end{itemize}
+
+\paragraph{Conflicts in the SRS.} In the places in
+Table~\ref{tab:srs-conflicts}, two parts of the SRS give different lesson
+behaviour. The tests do not leave these cases out. Each row gives the rule
+that the tests, the model of T-LRN-021 and inspection item A1 follow, the
+cases that test it, and the issue that changes the SRS, with its owner and
+date. When that change is merged, the row is removed and the tests cite the
+SRS alone. A conflict found later gets a row in the same way
+(Section~\ref{sec:srs-verification}).
+
+{\small
+\begin{longtable}{@{}l
+  >{\raggedright\arraybackslash}p{0.25\textwidth}
+  >{\raggedright\arraybackslash}p{0.25\textwidth}
+  >{\raggedright\arraybackslash}p{0.17\textwidth}
+  >{\raggedright\arraybackslash}p{0.15\textwidth}@{}}
+\caption{Conflicts in the SRS that affect the guided lesson tests}
+\label{tab:srs-conflicts}\\
+\toprule
+\textbf{ID} & \textbf{What disagrees} & \textbf{Rule the tests follow} &
+\textbf{Cases} & \textbf{SRS issue, owner, date}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{What disagrees} & \textbf{Rule the tests follow} &
+\textbf{Cases} & \textbf{SRS issue, owner, date}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+SC1 & The counts of a stage entered again in the same lesson. SRS
+Section~9.2 and UC-005 step~3 reset them. SRS BR-002, the data constraint
+in Section~7.1 and FR-LRN-020 count for the whole lesson record. & The
+failed and evaluable attempt counts and the extension state are kept for
+each stage of a lesson record. The streak and $H$ start again. &
+T-LRN-016~(s), T-LRN-017~(p), T-LRN-018~(h), T-LRN-020~(i), T-LRN-021 &
+\href{https://github.com/AHMEDELZARIA/squigglr/issues/391}{\#391}, Ahmed,
+10~January 2027\\
+\addlinespace
+SC2 & When an extended lesson ends. SRS SAF-RAY-005 ends it at
+\texttt{ATTEMPT\_LIMIT\_MAX}. SRS FR-LRN-021, UC-003 step~6d and
+Section~9.2 end it when the extension is used up, if that comes first. &
+The lesson ends when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes first. &
+T-LRN-017~(n), (o), T-LRN-021 & \#391, Ahmed, 10~January 2027\\
+\addlinespace
+SC3 & The results in $H$. The state definition in SRS Section~9.2 says $H$
+holds the stage results, but no row of the transition table adds a result
+to it. & Each finalized evaluable attempt adds its result to $H$. Invalid
+or interrupted input leaves $H$ unchanged. & T-LRN-016~(f) to (j),
+T-LRN-017, T-LRN-021 & \#391, Ahmed, 10~January 2027\\
+\addlinespace
+SC4 & The demonstration at a later start. SRS UC-003 step~1 shows it before
+the starting stage. The ``Adult selects lesson'' row of SRS Section~9.2
+starts at the chosen stage with no demonstration. & The demonstration is
+shown first, then practice starts at the stage the adult chose. &
+T-LRN-002~(b), (c) & \#391, Ahmed, 10~January 2027\\
+\end{longtable}
+}
+
+One point is still open in \#391 and has no rule yet: what happens when a
+stage with no attempts left is entered again. A stage has no attempts left
+when its evaluable attempts equal \texttt{ATTEMPT\_LIMIT\_MAX} or its
+extension is used up. Until \#391 settles it, T-LRN-021 draws no accept to
+such a stage.
 
 \begin{enumerate}
 
@@ -1509,10 +1605,11 @@ the lesson. The cases are in Table~\ref{tab:t-lrn-002}.
 \midrule
 a & Default start & Watch the demonstration, then continue & D is shown
 first, then T with the full outline\\
-b & Start at E, with the adult check & Practice begins & E is the first
-drawing stage shown, with its counts at zero\\
-c & Start at I, with the adult check & Practice begins & I is the first
-drawing stage shown\\
+b & Start at E, with the adult check & Watch the demonstration, then
+continue & D is shown first, then E, with its counts at zero; T is not
+shown\\
+c & Start at I, with the adult check & Watch the demonstration, then
+continue & D is shown first, then I; T and E are not shown\\
 d & Default start & Good drawing, three times & The stages appear as D, T,
 E, I, then the lesson is completed\\
 e & Start at E & The child makes a failing drawing, finishes it, retries,
@@ -1536,9 +1633,9 @@ Table~\ref{tab:t-lrn-002}; the test passes when every case gives it.
 
 Test Case Derivation: (a) and (d) follow the order D, T, E, I of FR-LRN-002
 and SRS UC-003. (b) and (c) follow FR-LRN-016 and SRS UC-004, with the
-counts at zero (SRS UC-004 step~4). Whether the demonstration comes first
-at a later start is not checked, because SRS Section~9.2 and SRS UC-003
-disagree on it. (e) is the fit criterion's child-only practice action, which must not change
+counts at zero (SRS UC-004 step~4). The demonstration comes first at a
+later start too (SRS UC-003 step~1; Table~\ref{tab:srs-conflicts}, SC4).
+(e) is the fit criterion's child-only practice action, which must not change
 the configured lesson or starting stage. (f) is H-AHM-007, the
 wrong learner's setting. (g) is the fit criterion's attempt to choose a
 lesson or starting stage without passing the adult check of SAF-RAY-001.
@@ -2332,6 +2429,8 @@ q & E & 3, 2, 8 & $3 \times 40$, no answer, 85 & Stage I; suggestion
 ignored\\
 r & E & 3, 2, 8 & $8 \times 40$, no answer & Suggestion after the 3rd
 only; lesson ends; suggestion ignored\\
+s & E & 3, 2, 8 & $3 \times 40$ [A$\to$T], 85, then at E 40, 40, 40 [D] &
+At E again: none after the 2nd; suggestion after the 3rd\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2367,6 +2466,9 @@ limit'' takes priority.
 attempts are counted and no second suggestion is offered (the fit criteria of
 FR-LRN-034 and FR-LRN-035, and SRS UC-005 step~2b). A pass in (q) and the end of the lesson in (r) clear
 it, and it is recorded as ignored (FR-REC-010).
+\item (s): E is entered again with three failed attempts already counted.
+The streak starts again, so the suggestion needs three new failures in a
+row (Table~\ref{tab:srs-conflicts}, SC1).
 \end{itemize}
 In every case except (m) and (p) to (r), the adult answers a suggestion
 before the next attempt.
@@ -2387,14 +2489,12 @@ tries, once, and never more than the maximum.
 
 Type: Dynamic, automatic. Covers FR-LRN-020 and FR-LRN-037.
 
-Initial State: the circle lesson at T, where no suggestion can appear.
+Initial State: the circle lesson at T, where no suggestion can appear. Only
+case (p) leaves T.
 
 Input: the cases vary four settings, given in the second column in the
 order of its header, and the sequence of results; \texttt{STAGE\_PASS}
-stays at 80 and \texttt{DIFFICULTY\_STREAK} at 4. Every case satisfies
-\texttt{ATTEMPT\_LIMIT} + \texttt{ATTEMPT\_EXTENSION} $\ge$
-\texttt{ATTEMPT\_LIMIT\_MAX}, because SRS SAF-RAY-005 and SRS Section~9.2
-give different endings otherwise. The cases are in
+stays at 80 and \texttt{DIFFICULTY\_STREAK} at 4. The cases are in
 Table~\ref{tab:t-lrn-017}.
 
 \begin{table}[htbp]
@@ -2437,6 +2537,14 @@ l & 8, 2, 10, 1 & $7 \times 40$, $3 \times 45$ & Extension after the 8th;
 ends after the 10th\\
 m & 8, 1, 9, 2 & $6 \times 40$, 50, 50, 50 & Extension after the 8th;
 ends after the 9th\\
+n & 6, 1, 12, 2 & $4 \times 40$, $3 \times 50$ & Extension after the 6th;
+ends after the 7th, not the 12th\\
+o & 8, 2, 12, 2 & $6 \times 40$, $4 \times 50$ & Extension after the 8th;
+ends after the 10th, not the 12th\\
+p & 8, 2, 10, 2 & $6 \times 40$, 50, 50, 85, then at E $4 \times 40$
+[A$\to$T], then at T 40 & Extension after the 8th; the 9th passes; at T
+again, the first failure ends the lesson (the 10th evaluable attempt at
+T); extension count 1\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2467,6 +2575,14 @@ the maximum).
 \texttt{ATTEMPT\_LIMIT\_MAX}, (m) the minimum \texttt{ATTEMPT\_EXTENSION},
 and (f) the maximum of all three, for the fit criterion's margin boundary,
 limit and no regrant.
+\item (n) and (o): the extension runs out before
+\texttt{ATTEMPT\_LIMIT\_MAX}, at $6 + 1 = 7$ of 12 and at $8 + 2 = 10$ of
+12, and the lesson ends there (Table~\ref{tab:srs-conflicts}, SC2). (n)
+uses the minimum \texttt{ATTEMPT\_LIMIT} and \texttt{ATTEMPT\_EXTENSION}
+with the maximum \texttt{ATTEMPT\_LIMIT\_MAX}.
+\item (p): T is entered again with its extension granted and one extra
+attempt left, so one more failure ends the lesson and no second extension
+is granted (FR-LRN-037; Table~\ref{tab:srs-conflicts}, SC1).
 \end{itemize}
 
 How test will be performed: Vitest runs every case. Playwright repeats (a)
@@ -2514,6 +2630,9 @@ f & 6 & T & 40, \texttt{inv}, 40, \texttt{int}, 40, 40, 40, 40 & Ends
 after the 8th input (the 6th evaluable attempt)\\
 g & 6 & T & $5 \times 40$, 85 & The 6th passes; stage E; the lesson
 continues\\
+h & 8 & T & 85, then at E $3 \times 40$, 85, then at I $4 \times 40$
+[A$\to$E], then at E $4 \times 40$ [D], 40 & Ends after the 5th failure of
+the second visit to E (the 8th failure at E); furthest stage I\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2525,9 +2644,10 @@ Test Case Derivation: ``End at limit'' in SRS Section~9.2, at the minimum
 and maximum \texttt{ATTEMPT\_LIMIT} in (a) and (b), at a later stage in
 (c) and from a later start in (d). In (e), the furthest stage is kept when
 the adult moves the child back (``retain the lesson's furthest stage
-reached''). E starts with no failures in (e), so SRS Section~9.2 and SRS
-BR-002 give the same ending, although they count failures at a re-entered
-stage differently. In (f), only evaluable attempts count. In (g), a pass
+reached''). In (h), E is entered again with three failures already
+counted, so the lesson ends at the eighth failure at E in the lesson
+record (Table~\ref{tab:srs-conflicts}, SC1). In (f), only evaluable
+attempts count. In (g), a pass
 takes priority over the limit. The extension cases are in T-LRN-017.
 
 How test will be performed: Vitest runs every case. Playwright runs (a)
@@ -2612,6 +2732,10 @@ g & T & 40, 40, 40, 85, then at E $4 \times 40$ [D], $3 \times 40$, then
 40 & Still running after seven failures at E; ends after the 8th at E\\
 h & Default start & Watch the demonstration; the child continues & Stage
 T; no adult check shown\\
+i & T & 85, 85, then at I $4 \times 40$ [A$\to$E], then at E 85, then at I
+$3 \times 40$, then 40 & Stage I again after the pass at E; still running
+after three more failures at I; ends after the 4th (the 8th failure at
+I)\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -2622,8 +2746,10 @@ Table~\ref{tab:t-lrn-020}; the test passes when every case gives it.
 Test Case Derivation: invariants I6 to I8 and the rows ``Passing a
 nonfinal drawing stage'' and ``Passing the final drawing stage'' in SRS
 Section~9.2 give (a) to (c). (d) to (f) check that a non-passing attempt
-stays and that no stage is skipped. In (g), the stage counts start again
-at a new stage, so the three T failures do not count at E. In (h), the
+stays and that no stage is skipped. In (g), the stage counts start at zero
+at a stage entered for the first time, so the three T failures do not
+count at E. In (i), a pass moves the child to a stage entered before, which
+keeps its counts (Table~\ref{tab:srs-conflicts}, SC1). In (h), the
 ``Begin practice after demonstration'' transition needs no adult.
 
 How test will be performed: Vitest runs every case. Playwright runs (a) to
@@ -2645,8 +2771,8 @@ Initial State:
 table of guided lesson state transitions and of the predicates
 $\mathrm{Pass}$, $\mathrm{Improving}$ and
 $\mathrm{SuggestBack}$, written by the Testing Lead, who does not
-write the lesson rules module. In the model, $H$ holds the results of the
-evaluable attempts at the current stage, as in the conventions;
+write the lesson rules module. Where the SRS disagrees with itself, the
+model follows the rules in Table~\ref{tab:srs-conflicts};
 \item the lesson rules module, which offers a read-only view of its state
 for tests;
 \item both start at the same chosen drawing stage with the same learner
@@ -2663,12 +2789,10 @@ adult decline; an adult accept to an earlier stage; a child's attempt to
 accept, skip or change lesson; and an adult selection of a new lesson.
 \item Settings: drawn from the SRS ranges, with the ends of each range
 drawn more often.
-\item A suggestion can be left unanswered while attempts continue.
-\item Until the SRS settles where it disagrees with itself, the generator
-places an accept only as the last event of a sequence, and draws only
-settings with \texttt{ATTEMPT\_LIMIT} + \texttt{ATTEMPT\_EXTENSION} $\ge$
-\texttt{ATTEMPT\_LIMIT\_MAX}. These are the places where SRS Section~9.2
-disagrees with SRS BR-002 and SAF-RAY-005.
+\item A suggestion can be left unanswered while attempts continue, and an
+accept can be followed by more attempts, so a stage can be entered again.
+\item The generator draws no accept to a stage that has no attempts left,
+the one point still open under Table~\ref{tab:srs-conflicts}.
 \end{itemize}
 
 Output: after every event, the state of the module equals the state of the
@@ -4146,8 +4270,9 @@ of the circle lesson.
 
 Input: the cases vary the start stage and the sequence, written as results;
 learner A, the circle lesson and the defaults stay fixed. A start at T is
-the default start: the demonstration is watched, and then the attempts
-follow. As in the guided lesson tests, a written 40, 50 or 85 stands for a
+the default start. At every start, the demonstration is watched first, and
+then the attempts follow. As in the guided lesson tests, a written 40, 50
+or 85 stands for a
 failing, a higher failing or a passing attempt and is replayed as F, N or P,
 whose results lie in the \texttt{CAL\_*} bands, not at the written numbers.
 The cases are in Table~\ref{tab:t-rec-006}.
@@ -5706,8 +5831,9 @@ demonstration and works through three stages in order: tracing a full
 outline, drawing between endpoints, and drawing with no guide. An attempt
 that meets \texttt{STAGE\_PASS} moves the child to the next stage
 automatically, and a pass at the last stage completes the lesson. Failed
-attempts are counted \emph{per stage}, and the count starts again whenever
-the stage changes:
+attempts are counted \emph{per stage}. The count starts at zero at a stage
+entered for the first time, and a stage entered again in the same lesson
+keeps its count (Table~\ref{tab:srs-conflicts}, SC1):
 \begin{itemize}
 \item at the endpoints or no-guide stage, after \texttt{DIFFICULTY\_STREAK}
 failed attempts in a row, and unless the child is improving, Squigglr suggests
@@ -5876,8 +6002,9 @@ attempts that improves enough to earn an extension is replayed until the
 lesson ends.
 
 Output: the lesson ends after exactly \texttt{ATTEMPT\_LIMIT} failed
-attempts at one stage, or \texttt{ATTEMPT\_LIMIT\_MAX} when extended, with no
-action from the child; failures at an earlier stage do not count at the new
+attempts at one stage, or, when extended, when the extension is used up or
+\texttt{ATTEMPT\_LIMIT\_MAX} is reached, with no action from the child;
+failures at an earlier stage do not count at the new
 stage; and the saved record matches the attempts made, including the
 furthest stage reached.
 
@@ -7641,6 +7768,9 @@ tests in Section~\ref{sec:fr-tests}, the functional traceability table in Sectio
 functional symbolic parameters and test data in Section~\ref{sec:symbolic-parameters}, and my
 reflection answers. I reviewed every AI-assisted passage before including it.
 All decisions in my sections are my own.
+For the peer review issue \#291, Claude Opus 5.5 through the omp coding
+agent made the edits from a plan I approved, and I checked each change
+against the issue before asking for review.
 
 \textbf{Ahmed:} I used Anthropic's Claude Opus 5.5, accessed through Claude
 Code, while preparing my sections of this document: the creative drawing and

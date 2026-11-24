@@ -78,6 +78,11 @@ a new subsection says what each failed experiment would mean (\#319). \\
 Workflow Plan after TA feedback: the chain from issue to submission tag, how to
 follow it both ways, commits without an issue number, and the reviewer and QA
 coordinator checks (\#318). \\
+2026-11-24 & Ahmed Elzaria & Addressed peer review: each POC experiment now
+has a pass criterion that can be checked (the model experiment needs at least
+70\% valid responses), and the plan records that the two
+refinement experiments were deferred until after the POC, with the
+supervisor's agreement (\#71). \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -993,6 +998,16 @@ accounts and no creative space. The line and circle lessons, which the SRS
 also plans for PH-1, follow the same rules and are stored as data, so they are
 added once the square lesson works.
 
+\paragraph{Scope at the demonstration.} The team built the app
+(experiments 1 and 4 below) and deferred the two refinement experiments
+(2 and 3) until after the POC. They need a drawing library with editable paths,
+an edit history and, for experiment 3, a paid model service, none of which the
+guided lesson uses, and they could not be run properly in the time left. The
+supervisor agreed that this scope is enough for the POC on November 18, 2026
+(\#370). Editable refinement therefore remains the main technical uncertainty,
+goal G.4 has no POC evidence yet, and experiment 2 is the first investigation
+after the demonstration.
+
 \subsection{Main Implementation Risks}
 
 \begin{itemize}
@@ -1059,6 +1074,12 @@ observed results, and remaining limitations.
     responsiveness and record any delays or input failures.
     Opening the page without testing drawing interactions will not
     count as evidence of input compatibility.
+    \emph{Pass criterion:} on each device and browser combination, 20
+    strokes of each kind (a straight line, a curve and a corner) are each
+    captured as one stroke, with none broken or missing; no resting palm
+    makes a mark while the stylus is in use; and every stroke appears under
+    the stylus with no delay an observer can see. A single failure fails the
+    combination and is recorded with its device and browser.
 
     \item \textbf{Apply reversible geometric refinement.}
     Draw examples from the agreed supported set and apply a
@@ -1067,16 +1088,20 @@ observed results, and remaining limitations.
     the refinement and compare the restored drawing with the saved
     original. This experiment will assess path manipulation and
     recovery independently of a model.
+    \emph{Pass criterion:} for every example in the agreed set, the refined
+    result is made of paths that can be selected and changed, and undo
+    restores the saved original point for point.
 
     \item \textbf{Investigate model-based enhancement.}
     Evaluate one candidate pretrained model on the agreed supported
-    drawings, with a limited set of structured drawing instructions. Before
-    the run, the team records in the POC issue the share of responses that
-    must be valid operations the application can apply, for the experiment
-    to pass. Demonstrate that an invalid instruction is rejected and leaves
+    drawings, with a limited set of structured drawing instructions.
+    Demonstrate that an invalid instruction is rejected and leaves
     the drawing unchanged. Record successful and unsuccessful examples,
     response times, and estimated request costs. Report this evidence
     separately from the geometric refinement results.
+    \emph{Pass criterion:} at least 70\% of the model's responses are valid
+    operations the application can apply, and every invalid response is
+    rejected with the drawing left unchanged.
 
     \item \textbf{Run the square lesson end to end.}
     On the hosted app and the target tablet, run the square lesson through
@@ -1086,6 +1111,13 @@ observed results, and remaining limitations.
     the next stage, and that the attempt records keep the strokes, the
     stage and the outcome. Then share the app with the specialists, and
     record their feedback for the demonstration.
+    \emph{Pass criterion:} every prepared attempt gets its expected
+    outcome: each passing attempt passes, each failing or incomplete attempt
+    does not, and invalid or interrupted attempts are not counted. The
+    criterion is all of them, not a share, because the rules are fixed: one
+    wrong outcome means a criterion is reworked (see below). Every saved
+    attempt record holds its strokes, stage and outcome. The specialists'
+    feedback is recorded, not scored.
 \end{enumerate}
 
 Before running the experiments, the team will record the supported

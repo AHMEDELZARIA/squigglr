@@ -11,14 +11,20 @@ import { Frame, buttonClass } from "@/components/Screen";
 import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
-import { difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
+import { problemFeedback, feedback, stageLine } from "@/lib/feedback";
 import { apply, applyAll, distance, inverse, length, toPath } from "@/lib/geometry";
-import { MAX_HINTS } from "@/lib/attempt";
+import { DEMO_MS, FULL_ARROW_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
 import { records } from "@/lib/records";
 import * as settings from "@/lib/settings";
-import type { Difficulty, DrawingStage, Figure, Fit, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
+import type { DrawingProblem, DrawingStage, Figure, Fit, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
+
+/** The part of the web address that names the lesson, e.g. "square" in /lesson/square. */
+// A `type`, not an `interface`: Next.js needs this form for useParams.
+type RouteParams = {
+  id: string;
+};
 
 // M13 Child Screen (prototype S6 to S11, without its Start again button and
 // sticker, which the SRS does not have). It shows the lesson and relays
@@ -35,13 +41,6 @@ const STEP: Record<DrawingStage, { number: number; name: string }> = {
 };
 const NO_GUIDE: Guide = { outline: [], endpoints: [] };
 const NO_FIT: Fit = { scale: 1, dx: 0, dy: 0 };
-/** How long a finished attempt stays on screen with its feedback: longer when there is something to look at. */
-const SHOW_PASSED_MS = 2500;
-const SHOW_NOT_PASSED_MS = 5000;
-/** How long the demonstration plays before practice starts by itself. */
-const DEMO_MS = 5500;
-/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
-const FULL_ARROW_MS = 8000;
 
 /** The stretches of a part of the figure that no drawn line comes near. */
 function undrawn(part: Path, drawn: Path[], tol: number): Path[] {
@@ -65,7 +64,7 @@ function undrawn(part: Path, drawn: Path[], tol: number): Path[] {
 }
 
 export default function LessonPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<RouteParams>();
   const router = useRouter();
   const { ask, dialog } = useAdultCheck();
   const control = useRef<LessonControl | null>(null);
@@ -124,20 +123,20 @@ export default function LessonPage() {
    * on the figure, then laid back over the drawing where the child made it.
    * (With a guide the two are the same place.)
    */
-  const highlight = useCallback((difficulties: Difficulty[], fit: Fit) => {
+  const highlight = useCallback((problems: DrawingProblem[], fit: Fit) => {
     const figure: Figure = catalogue.lesson(control.current!.lessonId).figure;
     const back = inverse(fit);
     const drawn = applyAll(fit, strokesRef.current.map(toPath));
     setGlow(
       applyAll(
         back,
-        difficulties
+        problems
           .filter((d) => d.kind === "missedPart")
           .flatMap((d) => undrawn(figure.parts[d.index], drawn, tolerance(figure))),
       ),
     );
     setMarks(
-      difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
+      problems.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
     );
   }, []);
 
@@ -153,7 +152,7 @@ export default function LessonPage() {
         // A hint: the drawing stays and the child can go on drawing. What is
         // missing glows until they finish it or the attempt ends.
         hinted.current = true;
-        highlight(r.difficulties, c.attempt?.last?.fit ?? NO_FIT);
+        highlight(r.problems, c.attempt?.last?.fit ?? NO_FIT);
         return;
       }
 
@@ -164,7 +163,7 @@ export default function LessonPage() {
         setMarks([]);
         audio.chime();
       } else {
-        highlight(r.difficulties, c.lastFinal?.fit ?? NO_FIT);
+        highlight(r.problems, c.lastFinal?.fit ?? NO_FIT);
       }
       if (r.feedback.includes("lessonComplete") || r.feedback.includes("lessonEnded")) audio.tune();
       // A child who has already been shown the glow does not need it held up as long again.
@@ -210,7 +209,7 @@ export default function LessonPage() {
       }
       show(c.tick(lastInput.current), stage);
       refresh();
-    }, 500);
+    }, TICK_MS);
     return () => clearInterval(timer);
   }, [show, showing]);
 
@@ -244,7 +243,7 @@ export default function LessonPage() {
   line.current = bubble;
   // Under the bubble: what was seen in the drawing. Not after a hint, where the bubble already says it.
   const hints =
-    report && running && report.feedback[0] !== "fillIn" ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
+    report && running && report.feedback[0] !== "fillIn" ? [...new Set(report.problems.map((d) => d.kind))] : [];
   // With a guide: a green dot where the drawing starts, as in the demonstration.
   const drawing = running && !showing && c.stage !== "D";
   const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
@@ -322,7 +321,11 @@ export default function LessonPage() {
           {avatar && <Avatar avatar={avatar} />}
         </div>
 
-        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100vh-20rem)))]">
+        {/* The drawing area: as big as the screen allows while staying square. Its width is the
+            smallest of the full width and the screen height minus about 14rem, which is the room
+            the progress trail above and the helper below need. dvh is the visible height, so the
+            browser's own toolbar on a tablet is not counted. Never smaller than 22rem. */}
+        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100dvh-14rem)))]">
           <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}
@@ -370,7 +373,7 @@ export default function LessonPage() {
                 <p className="mt-1 pl-6 text-lg font-bold text-butter-ink">
                   {hints
                     .slice(0, 2)
-                    .map((kind) => difficultyFeedback(kind).message)
+                    .map((kind) => problemFeedback(kind).message)
                     .join(" ")}
                 </p>
               )}
@@ -479,7 +482,7 @@ export default function LessonPage() {
             <Item label="Class" value={live?.class ?? "none"} />
             <Item label="Failed at this stage" value={`${c.failed} of ${c.settings.attemptLimit}`} />
             <Item label="Attempts at this stage" value={`${c.evaluable} of ${c.settings.attemptLimitMax}`} />
-            <Item label="Failed in a row" value={`${c.streak} (suggest at ${c.settings.difficultyStreak})`} />
+            <Item label="Failed in a row" value={`${c.streak} (suggest at ${c.settings.failStreak})`} />
             <Item
               label="Extension"
               value={c.extended ? `${c.sinceExtension} of ${c.settings.attemptExtension} used` : "not given"}
@@ -497,17 +500,19 @@ export default function LessonPage() {
   );
 }
 
+interface StepTileProps {
+  figure: Figure;
+  stage: DrawingStage;
+  caption: string;
+  strong?: boolean;
+}
+
 function StepTile({
   figure,
   stage,
   caption,
   strong = false,
-}: {
-  figure: Figure;
-  stage: DrawingStage;
-  caption: string;
-  strong?: boolean;
-}) {
+}: StepTileProps) {
   return (
     <div className="text-center">
       <div
@@ -525,7 +530,12 @@ function StepTile({
   );
 }
 
-function Item({ label, value }: { label: string; value: string | number }) {
+interface ItemProps {
+  label: string;
+  value: string | number;
+}
+
+function Item({ label, value }: ItemProps) {
   return (
     <div>
       <dt className="text-xs font-bold tracking-wide text-muted uppercase">{label}</dt>

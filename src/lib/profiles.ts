@@ -5,7 +5,18 @@ import * as settings from "./settings";
 import * as storage from "./storage";
 import type { Learner } from "./types";
 
-export const AVATARS = ["🦊", "🐼", "🐸", "🦁", "🐙", "🦄", "🐢", "🐝"];
+/**
+ * The pictures a child can have. All animals, so none is a person, a flag or
+ * a gesture. The first eight have their own paw print on the progress trail
+ * (components/icons.tsx); the others use a plain round print.
+ */
+export const AVATARS = [
+  "🦊", "🐼", "🐸", "🦁", "🐙", "🦄", "🐢", "🐝",
+  "🐶", "🐱", "🐭", "🐹", "🐰", "🐻", "🐨", "🐯",
+  "🐮", "🐷", "🐵", "🐔", "🐧", "🐦", "🦉", "🦋",
+  "🐞", "🐌", "🐬", "🐳", "🦈", "🦀", "🦒", "🦓",
+  "🐘", "🦔", "🐿️", "🦥",
+];
 
 /** Creates a profile and saves the default settings for it. */
 export function create(avatar: string): Learner {

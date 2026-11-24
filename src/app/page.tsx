@@ -75,7 +75,7 @@ export default function WhoIsPractising() {
       {adding && (
         <div className="mx-auto mt-8 max-w-xl rounded-3xl bg-mint p-5 text-center">
           <h2 className="font-sans text-xl font-bold text-green">Choose a picture</h2>
-          <div className="mt-3 flex flex-wrap justify-center gap-3">
+          <div className="mt-3 flex max-h-[22rem] flex-wrap justify-center gap-3 overflow-y-auto p-1">
             {profiles.AVATARS.map((avatar) => (
               <button
                 key={avatar}

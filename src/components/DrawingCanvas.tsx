@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { ARROW_REST_MS, ARROW_SPEED, CANVAS_UNITS, DEMO_DRAW_MS, PALM_MS } from "@/lib/constants";
 import type { Guide, Path, Point, Stroke } from "@/lib/types";
 
 // M01 Input Device and M02 Display in one component. It turns the browser's
@@ -8,11 +9,22 @@ import type { Guide, Path, Point, Stroke } from "@/lib/types";
 // 1000 x 1000, whatever the screen), and paints the guide, the strokes, the
 // demonstration and the "look here" marks.
 
-const SIZE = 1000;
 /** Positions closer together than this, in drawing units, are thinned out. */
 const MIN_STEP = 2;
-/** For this long after a stylus touches, finger and palm touches do not draw. */
-const PALM_MS = 1000;
+
+/** The arrow that shows the child where to start and which way to go. */
+interface Arrow {
+  /** The path the arrow moves along. */
+  path: Path;
+  /** How far along the path it goes before resting, in drawing units. */
+  reach: number;
+}
+
+/** A point on a path, and the direction of travel there (an angle in radians). */
+interface PointOnPath {
+  at: Point;
+  angle: number;
+}
 
 interface Props {
   guide: Guide;
@@ -25,7 +37,7 @@ interface Props {
   /** Called with the time of every accepted input, for the idle rules. */
   onInput: (time: number) => void;
   disabled?: boolean;
-  /** When set, the paths are drawn one after another, on a loop. */
+  /** When set, the paths are drawn one after another, once, and then stay on screen. */
   demonstration?: Path[];
   /** Places to point the child to, without drawing the missing line for them. */
   marks?: Point[];
@@ -39,7 +51,7 @@ interface Props {
    * and sets off again. It moves along the shape; it does not draw it. It is
    * only shown while the child is not drawing.
    */
-  arrow?: { path: Path; reach: number };
+  arrow?: Arrow;
 }
 
 function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
@@ -59,7 +71,7 @@ function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
 }
 
 /** The point a distance `d` along the path, and the direction of travel there. */
-function along(path: Point[], d: number): { at: Point; angle: number } {
+function along(path: Point[], d: number): PointOnPath {
   let left = d;
   for (let i = 1; i < path.length; i++) {
     const a = path[i - 1];
@@ -74,10 +86,6 @@ function along(path: Point[], d: number): { at: Point; angle: number } {
   return { at: path[0], angle: 0 };
 }
 
-/** How fast the arrow travels, in drawing units a second: slow enough for a young child to follow. */
-const ARROW_SPEED = 150;
-/** How long the arrow rests at the end of its trip before setting off again. */
-const ARROW_REST_MS = 900;
 /** The length of the arrow's tail. */
 const ARROW_TAIL = 70;
 
@@ -98,9 +106,9 @@ export function DrawingCanvas(props: Props) {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
     const { guide, strokes, demonstration, marks, glow, startDot, arrow } = latest.current;
-    const scale = canvas.width / SIZE;
+    const scale = canvas.width / CANVAS_UNITS;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
-    ctx.clearRect(0, 0, SIZE, SIZE);
+    ctx.clearRect(0, 0, CANVAS_UNITS, CANVAS_UNITS);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
@@ -176,7 +184,7 @@ export function DrawingCanvas(props: Props) {
     if (demonstration && demoProgress !== undefined) {
       const total = demonstration.reduce((sum, p) => sum + pathLength(p), 0);
       let budget = demoProgress * total;
-      ctx.strokeStyle = "#3a4fa0";
+      ctx.strokeStyle = "#23304a";
       ctx.lineWidth = 14;
       for (const part of demonstration) {
         if (budget <= 0) break;
@@ -193,8 +201,10 @@ export function DrawingCanvas(props: Props) {
       }
     }
 
-    // The child's strokes, exactly as drawn.
-    ctx.strokeStyle = "#3a4fa0";
+    // The child's strokes, exactly as drawn. Dark ink, so the child's line stands
+    // out over the lavender guide: 4:1 contrast, above the 3:1 that WCAG 2.2
+    // (1.4.11 Non-text Contrast) asks for. The old blue (#3a4fa0) gave only 2.3:1.
+    ctx.strokeStyle = "#23304a";
     ctx.lineWidth = 12;
     strokes.forEach((s) => trace(ctx, s.points));
     if (current.current) trace(ctx, current.current.points);
@@ -230,8 +240,11 @@ export function DrawingCanvas(props: Props) {
     const start = performance.now();
     const loop = (now: number) => {
       if (props.demonstration) {
-        const cycle = ((now - start) % 5000) / 4000; // 4 s of drawing, 1 s of rest
-        paint(Math.min(1, cycle));
+        // The demonstration draws the shape once over DEMO_DRAW_MS, then keeps the
+        // finished shape on screen until practice starts. It does not loop, so it
+        // never starts drawing again just before the stage changes.
+        const progress = (now - start) / DEMO_DRAW_MS;
+        paint(Math.min(1, progress));
       } else if (arrowReach !== undefined) {
         const trip = (arrowReach / ARROW_SPEED) * 1000;
         const elapsed = (now - arrowSince.current) % (trip + ARROW_REST_MS);
@@ -247,7 +260,7 @@ export function DrawingCanvas(props: Props) {
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   const toPoint = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const unit = (v: number) => Math.round(v * SIZE * 10) / 10; // a tenth of a unit is finer than any screen
+    const unit = (v: number) => Math.round(v * CANVAS_UNITS * 10) / 10; // a tenth of a unit is finer than any screen
     return {
       x: unit((e.clientX - rect.left) / rect.width),
       y: unit((e.clientY - rect.top) / rect.height),
@@ -262,7 +275,7 @@ export function DrawingCanvas(props: Props) {
     const p = toPoint(e);
     latest.current.onInput(p.t);
     // A position that is not on the drawing area cannot be mapped to it, and is left out (SAF-AHM-002).
-    if (p.x < 0 || p.x > SIZE || p.y < 0 || p.y > SIZE) return;
+    if (p.x < 0 || p.x > CANVAS_UNITS || p.y < 0 || p.y > CANVAS_UNITS) return;
     const before = stroke.points[stroke.points.length - 1];
     // The same position reported twice counts once (SAF-AHM-001). Positions
     // closer together than the eye can tell are thinned out, which keeps a

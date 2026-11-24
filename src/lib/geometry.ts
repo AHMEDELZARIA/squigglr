@@ -220,3 +220,80 @@ export function refineFit(
   }
   return fit;
 }
+
+/** The smallest distance between any point of path a and any line of path b. */
+function pathGap(a: Path, b: Path): number {
+  let best = Infinity;
+  for (const p of a) {
+    const d = distance(p, [b]);
+    if (d < best) {
+      best = d;
+    }
+  }
+  return best;
+}
+
+/**
+ * Splits the strokes into groups of strokes that touch or nearly touch.
+ * Two strokes are in the same group when they come within `gap` units of
+ * each other, directly or through other strokes of the group. For example a
+ * square drawn as four separate sides is one group, and a line drawn far away
+ * from it is a second group.
+ *
+ * Returns the groups, each a list of paths.
+ */
+export function strokeGroups(paths: Path[], gap: number): Path[][] {
+  // groupOf[i] is the group number of stroke i. Every stroke starts alone.
+  const groupOf: number[] = [];
+  for (let i = 0; i < paths.length; i++) {
+    groupOf.push(i);
+  }
+
+  // Join two groups: every stroke of group `from` moves to group `to`.
+  const join = (from: number, to: number) => {
+    for (let i = 0; i < groupOf.length; i++) {
+      if (groupOf[i] === from) {
+        groupOf[i] = to;
+      }
+    }
+  };
+
+  for (let i = 0; i < paths.length; i++) {
+    for (let j = i + 1; j < paths.length; j++) {
+      const close = pathGap(paths[i], paths[j]) <= gap || pathGap(paths[j], paths[i]) <= gap;
+      if (close && groupOf[i] !== groupOf[j]) {
+        join(groupOf[j], groupOf[i]);
+      }
+    }
+  }
+
+  // Collect the strokes of each group number into a list.
+  const byNumber = new Map<number, Path[]>();
+  for (let i = 0; i < paths.length; i++) {
+    const number = groupOf[i];
+    let group = byNumber.get(number);
+    if (group === undefined) {
+      group = [];
+      byNumber.set(number, group);
+    }
+    group.push(paths[i]);
+  }
+  return Array.from(byNumber.values());
+}
+
+/** The group with the most line in it (the longest total length). */
+export function biggestGroup(groups: Path[][]): Path[] {
+  let best: Path[] = [];
+  let bestLength = -1;
+  for (const group of groups) {
+    let total = 0;
+    for (const path of group) {
+      total += length(path);
+    }
+    if (total > bestLength) {
+      best = group;
+      bestLength = total;
+    }
+  }
+  return best;
+}

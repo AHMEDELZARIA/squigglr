@@ -14,7 +14,14 @@ export const NEATNESS = [
   { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
 ];
 
-export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avatar: string; onClose: () => void }) {
+interface NeatnessInfoProps {
+  figure: Figure;
+  avatar: string;
+  /** Called when the adult closes the pop-up. */
+  onClose: () => void;
+}
+
+export function NeatnessInfo({ figure, avatar, onClose }: NeatnessInfoProps) {
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Neatness">
       <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">

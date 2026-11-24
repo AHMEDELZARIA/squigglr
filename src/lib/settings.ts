@@ -29,7 +29,7 @@ const range = (min: number, max: number, label: string, unit: string, help: stri
  */
 export const RANGES: Record<SettingName, Range> = {
   stagePass: range(70, 90, "Pass mark", "points", "How accurate a complete drawing must be to pass a stage."),
-  difficultyStreak: range(3, 5, "Failed attempts before a suggestion", "attempts", "Failed attempts in a row before Squigglr suggests going back a stage."),
+  failStreak: range(3, 5, "Failed attempts before a suggestion", "attempts", "Failed attempts in a row before Squigglr suggests going back a stage."),
   attemptLimit: range(6, 10, "Failed attempts before the lesson ends", "attempts", "Failed attempts at one stage before the lesson ends or is extended."),
   improveWindow: range(1, 3, "Improvement window", "attempts", "How many recent attempts are compared with the ones before them."),
   attemptExtension: range(1, 3, "Extra attempts when improving", "attempts", "Extra attempts given once if the child is improving at the limit."),
@@ -65,7 +65,7 @@ export function check(s: Settings): SettingName[] {
       bad.add(b);
     }
   };
-  rule(s.attemptLimit > s.difficultyStreak, "attemptLimit", "difficultyStreak");
+  rule(s.attemptLimit > s.failStreak, "attemptLimit", "failStreak");
   rule(s.attemptLimitMax >= s.attemptLimit, "attemptLimitMax", "attemptLimit");
   rule(s.attemptIdle < s.lessonIdlePrompt, "attemptIdle", "lessonIdlePrompt");
   rule(s.lessonIdlePrompt < s.lessonIdleEnd, "lessonIdlePrompt", "lessonIdleEnd");
@@ -83,7 +83,10 @@ export function check(s: Settings): SettingName[] {
  * are used for all.
  */
 export function load(learnerId: string): Settings {
-  const saved = storage.get<Partial<Settings>>("settings", learnerId) ?? {};
+  let saved = storage.get<Partial<Settings>>("settings", learnerId);
+  if (saved === null) {
+    saved = {}; // nothing saved yet: every value takes its default
+  }
   const s = defaults();
   for (const name of SETTING_NAMES) {
     const value = saved[name];
@@ -109,10 +112,20 @@ export function save(learnerId: string, s: Settings): void {
 }
 
 /** Whether the helper talks and plays sounds for this learner (the audio setting, NFR-UX-010). On unless turned off. */
+/** The per-child options that are not lesson settings. */
+interface Options {
+  audio: boolean;
+}
+
 export function audio(learnerId: string): boolean {
-  return storage.get<{ audio: boolean }>("options", learnerId)?.audio ?? true;
+  const options = storage.get<Options>("options", learnerId);
+  if (options === null) {
+    return true; // nothing saved yet: audio is on
+  }
+  return options.audio;
 }
 
 export function setAudio(learnerId: string, on: boolean): void {
-  storage.put("options", learnerId, { audio: on }, learnerId);
+  const options: Options = { audio: on };
+  storage.put("options", learnerId, options, learnerId);
 }

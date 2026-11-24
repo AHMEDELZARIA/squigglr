@@ -2,7 +2,7 @@
 // entry to LESSONS, with no change to the rules (NFR-MAINT-001).
 // The drawing area is 1000 x 1000 units, whatever the size of the screen.
 
-import type { Difficulty, DrawingStage, Figure, Guide, Path, Point } from "./types";
+import type { DrawingProblem, DrawingStage, Figure, Guide, Path, Point } from "./types";
 
 export interface Lesson {
   id: string;
@@ -22,12 +22,19 @@ function arc(cx: number, cy: number, r: number, from: number, to: number, pieces
   return path;
 }
 
-const corners: Point[] = [
-  { x: 250, y: 250 },
-  { x: 750, y: 250 },
-  { x: 750, y: 750 },
-  { x: 250, y: 750 },
-];
+/**
+ * A closed shape with straight sides, such as a square or a triangle. Each
+ * side runs from one corner to the next, and the last corner joins back to
+ * the first. The corners are also the dots shown at the endpoints-only stage.
+ */
+function polygon(corners: Point[]): Figure {
+  const parts: Path[] = [];
+  for (let i = 0; i < corners.length; i++) {
+    const next = corners[(i + 1) % corners.length]; // after the last corner comes the first
+    parts.push([corners[i], next]);
+  }
+  return { parts: parts, endpoints: corners };
+}
 
 export const LESSONS: Lesson[] = [
   {
@@ -35,10 +42,13 @@ export const LESSONS: Lesson[] = [
     name: "Square",
     category: "shape",
     // Four sides; four corners (SRS Table "Initial lesson catalogue").
-    figure: {
-      parts: corners.map((c, i) => [c, corners[(i + 1) % 4]]),
-      endpoints: corners,
-    },
+    // Clockwise from the top left corner.
+    figure: polygon([
+      { x: 250, y: 250 },
+      { x: 750, y: 250 },
+      { x: 750, y: 750 },
+      { x: 250, y: 750 },
+    ]),
   },
   {
     id: "circle",
@@ -69,15 +79,15 @@ export function guide(id: string, stage: DrawingStage): Guide {
 }
 
 /**
- * The predefined difficulties of a stage: any missed part, any missed
+ * The predefined problems of a stage: any missed part, any missed
  * endpoint, or drawing off the figure. With no guide, a drawing can also be
  * too small, or stretched (the right shape, but too wide or too tall).
  */
-export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
+export function problems(id: string, stage: DrawingStage): DrawingProblem[] {
   const { figure } = lesson(id);
-  const all: Difficulty[] = [
-    ...figure.parts.map((_, index): Difficulty => ({ kind: "missedPart", index })),
-    ...figure.endpoints.map((_, index): Difficulty => ({ kind: "missedEndpoint", index })),
+  const all: DrawingProblem[] = [
+    ...figure.parts.map((_, index): DrawingProblem => ({ kind: "missedPart", index })),
+    ...figure.endpoints.map((_, index): DrawingProblem => ({ kind: "missedEndpoint", index })),
     { kind: "offFigure", index: 0 },
   ];
   if (stage === "I") all.push({ kind: "tooSmall", index: 0 }, { kind: "stretched", index: 0 });

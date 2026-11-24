@@ -23,7 +23,7 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
   const evaluate: Evaluate = (_x, _f, stage, _ds, stagePass) => {
     const guidance = stage === "I" ? "independent" : "assisted";
     if (next === "inv") {
-      return { class: "invalid", guidance, result: 0, passed: false, difficulties: [], drawn: 0, onFigure: 0, fit: IDENTITY };
+      return { class: "invalid", guidance, result: 0, passed: false, problems: [], drawn: 0, onFigure: 0, fit: IDENTITY };
     }
     const result = typeof next === "number" ? next : next.result;
     const complete = typeof next === "number";
@@ -32,7 +32,7 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
       guidance,
       result,
       passed: complete && result >= stagePass,
-      difficulties: [],
+      problems: [],
       drawn: result / 100,
       onFigure: result / 100,
       fit: IDENTITY,
@@ -168,7 +168,7 @@ describe("a chance to finish what is missing", () => {
     sides.slice(0, 3).forEach(l.draw);
     const report = l.pause();
     expect(report.feedback).toEqual(["fillIn"]);
-    expect(report.difficulties).toEqual([{ kind: "missedPart", index: 3 }]);
+    expect(report.problems).toEqual([{ kind: "missedPart", index: 3 }]);
     expect(l.control.attempt?.outcome).toBe("open");
     expect(l.control.attempt?.strokes).toHaveLength(3);
     expect(l.control.failed).toBe(0);
@@ -184,8 +184,8 @@ describe("a chance to finish what is missing", () => {
     expect(l.records.attempts).toHaveLength(1);
     expect(l.records.attempts[0]).toMatchObject({ outcome: "passed", stage: "T" });
     expect(l.records.attempts[0].strokes).toHaveLength(4);
-    expect(l.records.attempts[0].difficulties).toEqual([
-      { difficulty: { kind: "missedPart", index: 3 }, corrected: true },
+    expect(l.records.attempts[0].problems).toEqual([
+      { problem: { kind: "missedPart", index: 3 }, corrected: true },
     ]);
   });
 
@@ -197,8 +197,8 @@ describe("a chance to finish what is missing", () => {
     expect(l.control.failed).toBe(1);
     expect(l.control.attempt?.strokes).toHaveLength(0);
     expect(l.records.attempts[0]).toMatchObject({ outcome: "notPassed" });
-    expect(l.records.attempts[0].difficulties).toEqual([
-      { difficulty: { kind: "missedPart", index: 3 }, corrected: false },
+    expect(l.records.attempts[0].problems).toEqual([
+      { problem: { kind: "missedPart", index: 3 }, corrected: false },
     ]);
   });
 
@@ -294,7 +294,7 @@ describe("stopping rules (FR-LRN-019 to FR-LRN-021)", () => {
 });
 
 describe("go-back suggestion (FR-LRN-019, FR-LRN-033 to FR-LRN-036)", () => {
-  it("is offered after DIFFICULTY_STREAK failures in a row at E, and changes nothing by itself", () => {
+  it("is offered after FAIL_STREAK failures in a row at E, and changes nothing by itself", () => {
     const h = harness("E");
     h.attempts(40, 40, 40);
     expect(h.control.status).toBe("active");
@@ -351,7 +351,7 @@ describe("go-back suggestion (FR-LRN-019, FR-LRN-033 to FR-LRN-036)", () => {
   });
 
   it("uses the adult's streak", () => {
-    const h = harness("E", { difficultyStreak: 3 });
+    const h = harness("E", { failStreak: 3 });
     h.attempts(40, 40, 40);
     expect(h.control.status).toBe("suggested");
   });
@@ -383,7 +383,7 @@ describe("improving", () => {
 describe("settings check (BR-008)", () => {
   it("accepts the defaults, which are the middle of each range", () => {
     expect(check(defaults())).toEqual([]);
-    expect(defaults()).toMatchObject({ stagePass: 80, difficultyStreak: 4, attemptLimit: 8, attemptLimitMax: 10 });
+    expect(defaults()).toMatchObject({ stagePass: 80, failStreak: 4, attemptLimit: 8, attemptLimitMax: 10 });
   });
   it("rejects a value outside its range", () => {
     expect(check({ ...defaults(), stagePass: 69 })).toEqual(["stagePass"]);

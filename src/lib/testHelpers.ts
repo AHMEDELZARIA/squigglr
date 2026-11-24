@@ -1,13 +1,16 @@
 // Helpers for the unit tests: prepared strokes and an in-memory record store.
 
 import type { RecordStore } from "./records";
-import type { AttemptRecord, Ending, Path, Point, Stage, Stroke, Suggestion } from "./types";
+import type { AttemptRecord, Ending, Path, Point, Stage, Stroke, Suggestion, TimedPoint } from "./types";
 
 /** A stroke through the given points, with extra points every 10 units, like real input. */
 export function stroke(...points: Point[]): Stroke {
-  const out: Stroke["points"] = [];
+  const out: TimedPoint[] = [];
   points.forEach((p, i) => {
-    if (i === 0) return void out.push({ ...p, t: 0 });
+    if (i === 0) {
+      out.push({ x: p.x, y: p.y, t: 0 });
+      return;
+    }
     const a = points[i - 1];
     const n = Math.max(1, Math.ceil(Math.hypot(p.x - a.x, p.y - a.y) / 10));
     for (let j = 1; j <= n; j++) {

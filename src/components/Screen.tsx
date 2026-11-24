@@ -10,16 +10,18 @@ import { Squiggle } from "./Squiggle";
 export const buttonClass =
   "inline-flex items-center gap-2 rounded-2xl border-2 border-edge bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
 
-export function Frame({
-  children,
-  className = "",
-  brand = true,
-}: {
+interface FrameProps {
   children: React.ReactNode;
   className?: string;
   /** The name above the frame. Left off the lesson, where the height is needed for drawing. */
   brand?: boolean;
-}) {
+}
+
+export function Frame({
+  children,
+  className = "",
+  brand = true,
+}: FrameProps) {
   return (
     <div className="mx-auto max-w-5xl">
       {brand && (
@@ -33,14 +35,7 @@ export function Frame({
   );
 }
 
-export function Screen({
-  title,
-  subtitle,
-  back,
-  avatar,
-  right,
-  children,
-}: {
+interface ScreenProps {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   /** Where Back goes; no Back button when left out. */
@@ -50,7 +45,16 @@ export function Screen({
   /** Shown in the corner in place of the avatar. */
   right?: React.ReactNode;
   children: React.ReactNode;
-}) {
+}
+
+export function Screen({
+  title,
+  subtitle,
+  back,
+  avatar,
+  right,
+  children,
+}: ScreenProps) {
   return (
     <Frame className="min-h-[38rem]">
       <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">

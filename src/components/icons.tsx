@@ -2,12 +2,14 @@
 // prototype (the trail of prints, the helper, the sticker, the grown-ups lock) and
 // are drawn here so they take the app's colours.
 
-import type { DrawingStage, Figure } from "@/lib/types";
+import type { DrawingStage, Figure, Point } from "@/lib/types";
 
 const INK = "#23304a";
 const BRAND = "#5e51b8";
 
-type IconProps = { className?: string };
+interface IconProps {
+  className?: string;
+}
 
 const line = {
   fill: "none",
@@ -150,8 +152,29 @@ const PRINTS: Record<string, React.ReactNode> = {
  * One step of the trail: a left and a right print, toes pointing the way the
  * trail goes, the second a pace ahead of the first.
  */
-function Step({ avatar, done }: { avatar: string; done: boolean }) {
-  const print = PRINTS[avatar] ?? PRINTS["🦊"];
+/** The print for the animals that have no print of their own: a round pad and four toes. */
+const PLAIN_PRINT = (
+  <>
+    <ellipse cx="10" cy="18" rx="6" ry="5.5" />
+    <circle cx="3.6" cy="10.5" r="2.3" />
+    <circle cx="7.8" cy="6.5" r="2.3" />
+    <circle cx="12.2" cy="6.5" r="2.3" />
+    <circle cx="16.4" cy="10.5" r="2.3" />
+  </>
+);
+
+interface StepProps {
+  /** The child's picture, which chooses the paw print. */
+  avatar: string;
+  /** Whether this step has been reached (coloured) or not yet (grey). */
+  done: boolean;
+}
+
+function Step({ avatar, done }: StepProps) {
+  let print = PRINTS[avatar];
+  if (print === undefined) {
+    print = PLAIN_PRINT;
+  }
   const colour = done ? BRAND : "#c9cddb";
   // A print is drawn toes-up in a 20 x 26 box. Turned a quarter turn, its toes point right.
   const walking = (x: number, y: number) => `translate(${x + 26} ${y}) rotate(90)`;
@@ -176,7 +199,14 @@ function Step({ avatar, done }: { avatar: string; done: boolean }) {
  * animal in the child's picture. The step just reached grows for a moment,
  * so the child sees the trail move on.
  */
-export function Footprints({ reached, labels, avatar }: { reached: number; labels: string[]; avatar: string }) {
+interface FootprintsProps {
+  /** The index of the step the child has reached: 0 watch, 1 trace, 2 dots, 3 on their own. */
+  reached: number;
+  labels: string[];
+  avatar: string;
+}
+
+export function Footprints({ reached, labels, avatar }: FootprintsProps) {
   return (
     <ol className="flex" aria-label="Steps of the lesson">
       {labels.map((label, i) => (
@@ -210,11 +240,20 @@ export const Sticker = ({ className }: IconProps) => (
   </svg>
 );
 
-const d = (points: { x: number; y: number }[]) =>
-  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+/** Turns a list of points into SVG path text: "M x y" for the first point, then "L x y" for each next one. */
+function d(points: Point[]): string {
+  const parts = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+  return parts.join(" ");
+}
 
 /** What the child sees at a drawing stage, as a small picture: the dotted outline, the dots, or a blank page. */
-export function StageGuide({ figure, stage, className }: { figure: Figure; stage: DrawingStage; className?: string }) {
+interface StageGuideProps {
+  figure: Figure;
+  stage: DrawingStage;
+  className?: string;
+}
+
+export function StageGuide({ figure, stage, className }: StageGuideProps) {
   return (
     <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
       {stage === "I" && (

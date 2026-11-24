@@ -10,7 +10,9 @@ interface Item<T> {
   value: T;
 }
 
-const PREFIX = "squigglr:v1";
+// v2: "difficulty" was renamed "drawing problem" (and difficultyStreak became failStreak),
+// so data saved by v1 is no longer read. The POC keeps nothing that matters.
+const PREFIX = "squigglr:v2";
 const key = (kind: Kind, id: string) => `${PREFIX}:${kind}:${id}`;
 
 // On the server (and in unit tests) there is no localStorage; use memory.

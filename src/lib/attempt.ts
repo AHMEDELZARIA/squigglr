@@ -1,21 +1,20 @@
 // M06 Attempt. One attempt at one drawing stage: it collects strokes, has
 // them evaluated at every stylus lift, and decides when it has ended.
 
+import { MAX_HINTS } from "./constants";
 import type { Evaluate } from "./evaluation";
-import type { Difficulty, DrawingStage, Evaluation, Figure, Observed, Stroke } from "./types";
+import type { DrawingProblem, DrawingStage, Evaluation, Figure, Observed, Stroke } from "./types";
 
 export type Outcome = "open" | "passed" | "notPassed" | "invalid" | "interrupted";
 
-/** The most hints one attempt gives before it ends. */
-export const MAX_HINTS = 2;
 
-const same = (a: Difficulty, b: Difficulty) => a.kind === b.kind && a.index === b.index;
+const same = (a: DrawingProblem, b: DrawingProblem) => a.kind === b.kind && a.index === b.index;
 
 export class Attempt {
   strokes: Stroke[] = [];
   /** The evaluation after the most recent stylus lift. */
   last: Evaluation | null = null;
-  /** Every difficulty seen so far. A correction marks it; it is never removed. */
+  /** Every problem seen so far. A correction marks it; it is never removed. */
   seen: Observed[] = [];
   outcome: Outcome = "open";
   endedAt: number | null = null;
@@ -28,7 +27,7 @@ export class Attempt {
     readonly lesson: string,
     readonly stage: DrawingStage,
     private figure: Figure,
-    private allowed: Difficulty[],
+    private allowed: DrawingProblem[],
     private stagePass: number,
     /** Seconds. */
     private attemptIdle: number,
@@ -48,7 +47,7 @@ export class Attempt {
     // is noted until the attempt ends.
     if (this.stage !== "I") {
       this.note(
-        this.last.difficulties.filter((d) => d.kind === "offFigure"),
+        this.last.problems.filter((d) => d.kind === "offFigure"),
         ["offFigure"],
       );
     }
@@ -58,7 +57,7 @@ export class Attempt {
   }
 
   /**
-   * Called about once a second. Once attemptIdle has passed with no input,
+   * Called twice a second (every TICK_MS = 500 ms). Once attemptIdle has passed with no input,
    * an attempt that has not passed either gets a hint or ends.
    *
    * A hint: if a part or an endpoint is missing, the child is shown where,
@@ -84,17 +83,20 @@ export class Attempt {
       this.note(this.missing(), ["missedPart", "missedEndpoint"]);
       return true;
     }
-    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
+    this.note(this.last.problems, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
     this.end("notPassed", now);
     return false;
   }
 
   /** The parts and endpoints the drawing still lacks: what the child could finish. */
-  missing(): Difficulty[] {
-    return (this.last?.difficulties ?? []).filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
+  missing(): DrawingProblem[] {
+    if (this.last === null) {
+      return []; // nothing drawn yet
+    }
+    return this.last.problems.filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
   }
 
-  /** Ends the attempt with no result, keeping its strokes and difficulties. */
+  /** Ends the attempt with no result, keeping its strokes and problems. */
   interrupt(now: number): void {
     if (this.outcome !== "open") throw new Error("attemptEnded");
     this.last = null;
@@ -106,15 +108,15 @@ export class Attempt {
     this.endedAt = now;
   }
 
-  private note(observedNow: Difficulty[], kinds: Difficulty["kind"][]): void {
+  private note(observedNow: DrawingProblem[], kinds: DrawingProblem["kind"][]): void {
     for (const entry of this.seen) {
-      if (kinds.includes(entry.difficulty.kind)) {
-        entry.corrected = !observedNow.some((d) => same(d, entry.difficulty));
+      if (kinds.includes(entry.problem.kind)) {
+        entry.corrected = !observedNow.some((d) => same(d, entry.problem));
       }
     }
     for (const d of observedNow) {
-      if (!this.seen.some((entry) => same(entry.difficulty, d))) {
-        this.seen.push({ difficulty: d, corrected: false });
+      if (!this.seen.some((entry) => same(entry.problem, d))) {
+        this.seen.push({ problem: d, corrected: false });
       }
     }
   }

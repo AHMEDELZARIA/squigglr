@@ -1,7 +1,12 @@
 import type { Figure } from "@/lib/types";
 
 /** A lesson's figure as a small drawing, in the pen colour. */
-export function LessonIcon({ figure, className = "" }: { figure: Figure; className?: string }) {
+interface LessonIconProps {
+  figure: Figure;
+  className?: string;
+}
+
+export function LessonIcon({ figure, className = "" }: LessonIconProps) {
   return (
     <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
       {figure.parts.map((part, i) => (

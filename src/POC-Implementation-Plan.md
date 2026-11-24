@@ -52,8 +52,12 @@ Five ideas explain how the whole app is put together. Everything later is one of
 1. **Everything runs in the browser.** There is no server code and no database. Vercel only serves the pages, and the data lives in the browser's `localStorage`.
 2. **The rules and the screens are kept apart.** Everything that decides something (is this drawing a square, does the lesson move on, is this setting allowed) is plain TypeScript in `lib/`, with no React in it. The screens in `app/` and `components/` only show what the rules decide. That is why the rules can be tested without a browser.
 3. **One file per design module.** Each file in `lib/` is one module of the Module Guide and the MIS, with the same name. If you know the design, you know where the code is.
-4. **The drawing area is always 1000 by 1000 units**, whatever the size of the screen. A stroke means the same thing on a phone, a tablet and a laptop.
-5. **A lesson is a small machine that is fed two things:** a stroke each time the child lifts the stylus, and a "tick" twice a second so it can notice a pause. It answers with a report of what to tell the child.
+4. **The drawing area is always 1000 by 1000 units**, whatever the size of the screen. A unit is not a pixel: it is a fraction of the canvas, like a percentage out of 1000 instead of 100. The canvas is always square, and each touch is converted to this grid. For example, the square's top-left corner is at (250, 250): a quarter of the way across, which is 125 pixels on a 500-pixel canvas and 250 pixels on a 1000-pixel one. Lessons, tolerances and saved strokes all use these units, so a drawing is judged the same way on a phone, a tablet and a laptop, and each lesson is defined once.
+5. **The lesson logic only acts when the screen calls it, in two ways.** The lesson logic is one object (`LessonControl` in `lib/lessonControl.ts`) that does not watch the screen or keep a clock of its own. The lesson screen calls it:
+   - `addStroke(stroke)` each time the child lifts the stylus, with the line just drawn, so it can check the drawing;
+   - `tick()` every half second, from a timer on the screen, so it can notice that the child has stopped drawing (for example, to end an attempt or ask "Still drawing?").
+
+   Both calls return a **report**: what the screen should show next, such as a feedback message, a glow or the next stage. The screen only displays the report; it decides nothing itself (see point 2).
 
 The boxes below are the modules of the Module Guide, with their numbers. An arrow means "uses". The tour goes through them roughly from the bottom of the middle box upwards, then the data, then the screens.
 
@@ -123,11 +127,15 @@ A few words are used everywhere in the code, with the meanings the SRS gives the
 | Figure | What a lesson teaches: its required parts (lines) and required endpoints (dots). | `Figure` |
 | Stroke | One contact of the stylus, from touching down to lifting: a list of points, each with its time. | `Stroke` |
 | Attempt | One try at one stage. It can be many strokes. | `Attempt` (part 6) |
-| Evaluation | What the scoring says about a drawing: complete or not, a result from 0 to 100, passed or not, and what was seen in it. | `Evaluation` |
-| Difficulty | One thing seen in a drawing, from a fixed list: a missed part, a missed endpoint, lines off the figure, too small, stretched. | `Difficulty` |
-| Settings | The nine values an adult sets for one child. | `Settings` |
-| Report | What the lesson says after an event: which feedback to give, in order, and which difficulties. | `Report` |
-| Record | What is saved: one lesson record for each start of a lesson, and one attempt record for each attempt that ended. | `LessonRecord`, `AttemptRecord` |
+| Evaluation | The scoring's verdict on one attempt: whether it is **complete** (every part and dot was drawn), **incomplete** or **invalid** (a tap or nothing, not counted); a **result** from 0 to 100; whether it **passed** (complete and at least the child's pass mark); and its list of drawing problems.<br><br>**How the result is worked out.** Two shares are measured: **drawn**, how much of the shape's outline has the child's line on it inside the tolerance band (catches parts left out), and **on figure**, how much of everything the child drew is inside the band (catches lines drawn away from the shape). Result = 100 × the **lower** of the two. Example: the square's outline is 2,000 units; the child covered 1,800 (drawn = 90%) and drew 2,500 units of line, 2,000 inside the band (on figure = 80%), so the result is 80. The lower one is used because each share alone can be fooled: a scribble over the whole canvas covers the whole square (drawn 100%) but is mostly off it; one perfect side is all on the shape (on figure 100%) but only a quarter of it is drawn. A high result needs both. A line outside the band does not fail the drawing by itself: it lowers on figure, and the stretch of shape it skipped may leave a part under 90% covered, which counts as missing and glows as a hint the child can fill in during the same attempt.| `Evaluation` |
+| Drawing problem | One specific problem the scoring found in a drawing, which tells the child what to fix. It is not a level of difficulty; the SRS calls it a "difficulty", and the code calls it a drawing problem to avoid that confusion. There are five kinds, a fixed list (BR-007):<br>• **missed part**: a line of the shape was not drawn, e.g. the square's left side;<br>• **missed endpoint**: no stroke reached one of the dots, e.g. a corner;<br>• **off figure**: some lines went away from the shape;<br>• **too small** (no-guide stage only): the drawing is under 40% of the shape's size;<br>• **stretched** (no-guide stage only): the right shape, out of proportion, e.g. a rectangle for a square.<br>A missed part or endpoint also says which one (`index`), so the screen can make that exact part glow. One attempt can have several drawing problems, and each one picks the feedback message the child sees (`lib/feedback.ts`). | `DrawingProblem` |
+| Settings | The nine values an adult sets for one child, such as the pass mark and how many attempts are allowed (all nine are listed in part 9). | `Settings` |
+| Report | What the lesson logic hands back to the screen after each stroke or tick: which feedback messages to show, in order, and which drawing problems to make glow. The screen shows it and decides nothing. | `Report` |
+| Record | What is saved for the adult to look back on: one lesson record each time a lesson is started, and one attempt record for each attempt that ended (its strokes, evaluation and drawing problems). | `LessonRecord`, `AttemptRecord` |
+| Tolerance | How far the child's line may be from the shape's line and still count as on it. Picture a band around every line of the shape: inside the band counts, outside does not.<br><br>**How it is worked out:** tolerance = `TRACE_TOL` (5%) × the diagonal of the box around the shape (`lib/evaluation.ts:40`). For the square (corners at 250 and 750, side 500): diagonal = √(500² + 500²) ≈ 707 units, so tolerance = 5% × 707 ≈ **35 units** on each side of every line, about 7% of a side. A bigger shape gets a wider band.<br><br>![Tolerance band around the square, with the diagonal and the calculation](plan-img/tolerance.png) | `TRACE_TOL`, `tolerance()` |
+| Fit | Used only at the no-guide stage, where the child may draw the shape anywhere and at any size. Before scoring, the drawing is moved and resized to sit on top of the lesson's shape, so only the shape is judged, not where or how big it was drawn. A fit is that move: every point is multiplied by `scale`, then shifted by `dx` across and `dy` down (`apply()` in `lib/geometry.ts`).<br><br>**How it is worked out** (`boxFit()` in `lib/geometry.ts:90`): take the box around the child's drawing and the box around the shape.<br>**What "the box" is** (`boundingBox()`, `lib/geometry.ts:72`): the code looks at every point of every stroke and finds the smallest x, the largest x, the smallest y and the largest y. It then makes a rectangle from them: its width runs from the smallest x to the largest x, and its height from the smallest y to the largest y. Example: if the child's points run from x = 100 to 300 and y = 150 to 350, the box is 200 wide and 200 tall, with its top-left corner at (100, 150) and its centre at (200, 250). It is a rectangle, not always a square: a drawing wider than it is tall gets a wide box. The shape's box is made the same way from the lesson's own lines; for the square it is (250, 250) to (750, 750).<br><br>![How the boxes are made: the bounding box from the smallest and largest x and y of every point, stretched by a stray mark; the trimmed box leaving the stray mark out](plan-img/boxes.png)<br><br>1. **Scale** = the shape box's longer side ÷ the drawing box's longer side. The same scale is used across and down, so a drawing is never squashed into shape.<br>2. **Shift** (`dx`, `dy`) = whatever moves the centre of the scaled drawing onto the centre of the shape.<br><br>**Example:** the child draws a square in the top-left, from (100, 150) to (300, 350): side 200, centre (200, 250). The lesson's square is 250 to 750: side 500, centre (500, 500). Scale = 500 ÷ 200 = 2.5. The scaled centre is (500, 625), so dx = 500 − 500 = 0 and dy = 500 − 625 = −125. Check: the corner (100, 150) becomes (100 × 2.5 + 0, 150 × 2.5 − 125) = (250, 250), the lesson's corner.<br><br>![Fit in three steps: the child's small square in the top-left, scaled by 2.5, then shifted up 125 onto the lesson square](plan-img/fit.png)<br><br>**The four fits, and how the box for each is worked out.** All four use the same scale-and-shift step above; they differ in which box of the child's drawing goes into it. Each is scored, and the best one is kept (fewest missing parts, then the highest result).<br>1. **Full box** (`boundingBox()`): the smallest and largest x and y of every point of every stroke. Width = smallest x to largest x, height = smallest y to largest y. This is the SRS's wording. Weakness: one stray mark stretches it.<br>2. **Trimmed box** (`trimmedBox()`, 8%): the strokes are first turned into points every 12 units along the line. All x values are put in order from smallest to largest, and so are all y values. Instead of the very first and last value, the left edge is the value 8% of the way into the x list and the right edge the value 8% from the end; the same for top and bottom with the y list. Example: with 72 points, 8% of the way is position 6 (counting from 0), so the 6 smallest and 6 largest x values are skipped. A short stray mark only adds a few points at one end of the list, so they are skipped and the box fits the square.<br>**Why this removes the stray mark, in simple terms.** Think of the x values as a line of people standing in order of height, and the box edges as "the shortest person" and "the tallest person". One very tall visitor makes the tallest person a lot taller. If you instead skip the few tallest people and take the next one, the visitor is skipped and the answer is the tallest *regular* person.<br>Small example, 13 points. The square's points have x values: 100, 100, 100, 100, 150, 200, 200, 250, 300, 300, 300, 300; the stray mark adds one point at x = 395. Sorted: **100**, 100, 100, 100, 150, 200, 200, 250, 300, 300, 300, 300, **395**.<br>• Full box: left = first value = 100, right = last value = **395**. The stray point stretches the box almost 100 units to the right.<br>• Trimmed box: 8% of 13 points rounds to 1, so skip 1 value at each end. Left = 2nd value = 100, right = 2nd-last value = **300**. The stray point was the one skipped, so the box is the square again.<br>**There is no loop.** The number of values to skip is worked out once: 8% of the number of points, rounded (13 points gives 1; 72 points gives 6). Then the code reads the value at that position from each end of the sorted list, and that is the edge. Nothing is checked again.<br>**Where 8% comes from:** it is the team's own choice, `TRIM_SHARE` in `lib/constants.ts`, not from the SRS or a source. A bigger value ignores longer stray marks but starts cutting into real corners; a smaller one ignores less. Change it there and every use follows.<br>Two things make this work: (1) a square has **many** points at its left and right sides (a whole side each), so skipping a few of them does not move the edge; (2) a stray mark has only **a few** points, all at the extreme end, so they are the ones skipped. The same is done separately with the y values for the top and bottom.<br>3. **Trimmed box, nudged** (`refineFit()`): starts from fit 2 and improves it in up to 10 rounds. Each round: every drawn point is paired with the nearest point on the shape, and every shape point with the nearest drawn point, leaving out pairs more than 3 tolerances apart (about 105 units for the square); then the scale and shift that bring the pairs closest together on average are worked out. The nudge is capped: the scale may differ from fit 2's by at most 5%, and the drawing's centre may move at most one tolerance (about 35 units). The cap stops it, for example, from shrinking a square until it sat inside a circle's band and passed the circle lesson.<br>4. **Biggest group only** (`strokeGroups()` and `biggestGroup()` in `lib/geometry.ts`): the strokes are split into groups of strokes that touch or nearly touch (within `GROUP_GAP` = 10% of the whole drawing's longer side). A square drawn as four separate sides is one group; a line drawn far away is a second group. The box of the group with the most line in it is used for the fit, so a long line or a second shape far away cannot stretch it. Only tried when there is more than one group.<br><br>**What stops a far-off mark from ruining the fit.** If the child draws a square and then a mark far away, the plain bounding box stretches to include the mark, and the square would be resized wrongly. Two of the fits prevent this. The trimmed box handles short marks:<br>1. The strokes are turned into points **every 12 units along the line**, so a long line gets many points and a short mark gets few.<br>2. All the x values are sorted, and all the y values are sorted. The box edges are taken **8% in** from each end of those lists, not at the very smallest and largest values.<br>3. A short far-off mark has only a few points, all at the extreme end of the list, so they fall in the 8% that is cut off. The box then fits just the square.<br>4. All four fits are scored and the **best-scoring** one is kept, so the stretched full box loses.<br><br>**Example:** a square with 200-unit sides is 800 units of line, about 67 points. 8% of the points is about 5 points, or roughly 64 units of line. A far-off mark shorter than that is left out by the trimmed box.<br><br>**A longer mark, or a second shape,** is too much for the trimmed box. The biggest-group fit handles it: the far line is its own group, so the box is taken from the square's group alone. Example: a square on the left and a long line on the right; the square is found whole, with nothing missing. This fit only wins when it finds fewer missing parts (or as many, with a higher result), so drawings it does not help behave exactly as before: for example, if only the left and right sides are drawn, the top and bottom are still reported missing and glow.<br><br>**The mark still counts against the drawing.** Even when the fit ignores the mark, the mark is still outside the tolerance band, so it lowers "on figure" and so the result. Drawing a lot away from the shape gives a lower result and the message "Some lines went away from the shape": small slips are forgiven, drawing something else is not. | `Fit`, `boxFit()` |
+
+**Why a stroke keeps the time of each point.** No rule in the POC reads the times: evaluation only uses where the points are. They are saved so that each attempt keeps a full record of how the child drew, not only the final shape, in line with the decision to record every value and let the adult choose what to view. With the times, a later version can show how long a stroke took, how fast the child drew, where they hesitated, and a replay at the real speed. None of that can be worked out afterwards if the times are not saved.
 
 `lib/types.ts` declares these shapes and nothing else. They are plain data, with no functions, so a stroke or a record can be saved as it is. Read it once now; every later file uses these names.
 
@@ -148,9 +156,21 @@ export interface Point {
 /** A line through the points, in order. The parts of a figure are paths. */
 export type Path = Point[];
 
-/** One stylus contact: its points in the order drawn, each with its time (ms). */
+/**
+ * A position on the drawing area together with when it was drawn.
+ * `t` is the time in milliseconds (from Date.now()). No rule reads it yet;
+ * it is saved so an attempt keeps a full record of how the child drew
+ * (speed, pauses, a replay), not only the final shape.
+ */
+export interface TimedPoint {
+  x: number;
+  y: number;
+  t: number;
+}
+
+/** One stylus contact, from touching down to lifting: its points in the order drawn. */
 export interface Stroke {
-  points: (Point & { t: number })[];
+  points: TimedPoint[];
 }
 
 /** D = demonstration, T = trace the outline, E = endpoints only, I = independent. */
@@ -168,17 +188,23 @@ export interface Guide {
   endpoints: Point[];
 }
 
-export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall" | "stretched";
+export type DrawingProblemKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall" | "stretched";
 
-/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for the kinds that are about the whole drawing. */
-export interface Difficulty {
-  kind: DifficultyKind;
+/**
+ * One drawing problem: a specific thing the scoring found wrong in a drawing,
+ * which tells the child what to fix. It is not a level of difficulty.
+ * The SRS calls this a "difficulty" (BR-007, the predefined list).
+ * `index` says which part or endpoint, so the screen can make that exact part
+ * glow; it is 0 for the kinds that are about the whole drawing.
+ */
+export interface DrawingProblem {
+  kind: DrawingProblemKind;
   index: number;
 }
 
-/** A difficulty seen during an attempt, and whether the child fixed it later. */
+/** A problem seen during an attempt, and whether the child fixed it later. */
 export interface Observed {
-  difficulty: Difficulty;
+  problem: DrawingProblem;
   corrected: boolean;
 }
 
@@ -191,7 +217,7 @@ export interface Evaluation {
   /** Stage result, 0 to 100. */
   result: number;
   passed: boolean;
-  difficulties: Difficulty[];
+  problems: DrawingProblem[];
   /** The two shares behind the result, kept for the demo panel. */
   drawn: number;
   onFigure: number;
@@ -209,7 +235,7 @@ export interface Fit {
 /** The nine adult-set values of one learner (BR-008). Times are in seconds. */
 export interface Settings {
   stagePass: number;
-  difficultyStreak: number;
+  failStreak: number;
   attemptLimit: number;
   improveWindow: number;
   attemptExtension: number;
@@ -233,7 +259,7 @@ export type FeedbackKind =
 /** What the child is told after an event, in the order it is given. */
 export interface Report {
   feedback: FeedbackKind[];
-  difficulties: Difficulty[];
+  problems: DrawingProblem[];
 }
 
 export interface Learner {
@@ -252,7 +278,7 @@ export interface AttemptRecord {
   outcome: RecordOutcome;
   /** Absent for an interrupted attempt. */
   result: number | null;
-  difficulties: Observed[];
+  problems: Observed[];
   settings: Settings;
   strokes: Stroke[];
   endedAt: number;
@@ -290,18 +316,177 @@ export interface LessonRecord {
 }
 ```
 
+<a id="f-constants"></a>
+**The team-fixed values.** `lib/constants.ts` holds every value the team chose and the app uses: the tolerance, how much of a part must be drawn, the trim, the timings, and so on. They are in one file so they are easy to find, to check against the SRS, and to change: change a value here and every use follows. The values an adult sets for each child (pass mark, attempt limits, pauses) are not here; they are in `lib/settings.ts` (part 9), because they differ per child.
+
+`src/lib/constants.ts`
+
+```ts
+// The team-fixed values of the app, in one place so they are easy to find,
+// to check against the SRS, and to change. Changing a value here changes it
+// everywhere it is used.
+//
+// Not here:
+// - the values an adult sets for each child (pass mark, attempt limits,
+//   pauses): those are in lib/settings.ts, because they differ per child;
+// - colours and sizes that only affect the look of a screen: those stay in
+//   their component.
+
+// ---------------------------------------------------------------------------
+// The drawing area
+// ---------------------------------------------------------------------------
+
+/**
+ * The drawing area is always this many units wide and tall, whatever the size
+ * of the screen. A unit is a fraction of the canvas, not a pixel: 250 is a
+ * quarter of the way across on any screen. Lessons, tolerances and saved
+ * strokes all use these units.
+ */
+export const CANVAS_UNITS = 1000;
+
+// ---------------------------------------------------------------------------
+// Scoring a drawing (lib/evaluation.ts)
+// ---------------------------------------------------------------------------
+
+/**
+ * How far a stroke may be from the shape's line and still count as on it,
+ * in percent of the diagonal of the box around the shape.
+ * For the square (side 500, diagonal about 707) this is about 35 units.
+ */
+export const TRACE_TOL = 5;
+
+/** How much of one part of the shape (for example one side) must be drawn for it to count, in percent. */
+export const PART_COVER = 90;
+
+/**
+ * With no guide, the smallest a drawing may be: its longer side, in percent of
+ * the shape's longer side. Smaller than this and the attempt is not complete,
+ * however neat.
+ */
+export const MIN_DRAW_SCALE = 40;
+
+/**
+ * With no guide, how much is left out at each end when finding the trimmed
+ * box, in percent of the drawing's points. The x values are sorted and the
+ * left and right edges are taken this far in from each end; the same for y.
+ * A short stray mark only adds a few points at one end, so it is left out.
+ * This value is the team's own choice, not taken from a source.
+ */
+export const TRIM_SHARE = 8;
+
+/**
+ * With no guide, the drawing is turned into points this many units apart
+ * along each line before the boxes are found. Spacing them evenly means a
+ * long line has more points than a short mark, whatever the drawing speed.
+ */
+export const SAMPLE_STEP = 12;
+
+/**
+ * The nudged fit may change the size of the drawing by at most this factor
+ * compared with the trimmed-box fit: 1.05 is 5% bigger or smaller.
+ * Without a limit, a square could be shrunk until it sat inside a circle's
+ * tolerance band and passed the circle lesson.
+ */
+export const NUDGE_MAX_SCALE = 1.05;
+
+/**
+ * When nudging, a drawn point and a point of the shape are only paired up if
+ * they are at most this many tolerances apart.
+ */
+export const NUDGE_REACH = 3;
+
+/**
+ * With no guide, two strokes belong to the same group when they come this
+ * close, in percent of the longer side of the whole drawing's box. Used to
+ * find the main drawing and ignore a separate mark far away when fitting.
+ */
+export const GROUP_GAP = 10;
+
+// ---------------------------------------------------------------------------
+// The lesson rules
+// ---------------------------------------------------------------------------
+
+/** The most hints (a missing part glowing) one attempt gives before it ends. */
+export const MAX_HINTS = 2;
+
+/** Smallest rise in the average stage result, in points, that counts as improving. */
+export const IMPROVE_MARGIN = 5;
+
+// ---------------------------------------------------------------------------
+// Timings (all in milliseconds)
+// ---------------------------------------------------------------------------
+
+/** How long the demonstration takes to draw the whole shape once. */
+export const DEMO_DRAW_MS = 4000;
+
+/** How long the finished shape stays on screen after the demonstration, before practice starts. */
+export const DEMO_HOLD_MS = 1000;
+
+/** How long the demonstration stage lasts in total, before practice starts by itself. */
+export const DEMO_MS = DEMO_DRAW_MS + DEMO_HOLD_MS;
+
+/** How long a passed attempt stays on screen with its feedback. */
+export const SHOW_PASSED_MS = 2500;
+
+/** How long an attempt that did not pass stays on screen with its feedback (there is more to look at). */
+export const SHOW_NOT_PASSED_MS = 5000;
+
+/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
+export const FULL_ARROW_MS = 8000;
+
+/** For this long after a stylus touches the screen, finger and palm touches do not draw. */
+export const PALM_MS = 1000;
+
+/** How fast the arrow at the dots travels, in drawing units a second: slow enough for a young child to follow. */
+export const ARROW_SPEED = 150;
+
+/** How long the arrow rests at the end of its trip before setting off again. */
+export const ARROW_REST_MS = 900;
+
+/** How often the lesson screen asks the lesson logic whether the child has paused (calls `tick`). */
+export const TICK_MS = 500;
+```
+
 <a id="p-lesson-data"></a>
 ## 3. A lesson is data
 
 **The problem.** The app must teach a square and a circle now and six more shapes later, without a rule being rewritten each time.
 
-**How.** A lesson is an entry in a list: a name, and a figure made of parts and endpoints in drawing units. The square is four sides and four corners. The circle is four quarter arcs and the four points where they meet. Everything else is worked out from the figure: the demonstration draws its parts in order, the guide at each stage is the outline, the dots or nothing, and the scoring compares the drawing with the same figure. A lesson therefore cannot show one shape and score another.
+**How.** A lesson is an entry in a list (`LESSONS` in `catalogue.ts`), not code. Each entry has a name and a **figure**: the shape, in drawing units, given as two lists.
+
+- **Parts:** the pieces the child must draw, each a `Path` (a line through points, in order). For the square these are its four sides; for the circle, its four quarter arcs.
+- **Endpoints:** the dots shown at the endpoints-only stage. For the square, its four corners.
+
+Nothing else about a lesson is written by hand. The app works everything out from the figure: the demonstration draws the parts in order; the guide at each stage is the outline, the dots or nothing; and the scoring measures the drawing against the same parts. So a lesson cannot show one shape and score another, and no rule changes when a lesson is added.
+
+**Helpers that build a figure.** Writing every part out by hand would be long and easy to get wrong, so a figure is built by a small helper function from a few numbers:
+
+- `polygon(corners)` is for any closed shape with straight sides. It is given the corners in drawing order and makes one side from each corner to the next, with the last corner joining back to the first. The corners are also the dots. For example, the square is `polygon` with its four corners (250, 250), (750, 250), (750, 750) and (250, 750), which gives four sides: top, right, bottom and left.
+- `arc(...)` makes a quarter of a circle as 16 short straight pieces. The circle is four of them.
+
+**Why this is cleaner.** Before, the square's corners were a separate list above the catalogue, and the sides were made from it with one hard-to-read line (`corners.map((c, i) => [c, corners[(i + 1) % 4]])`). A reader had to look in two places and work out that line to see the shape. Now:
+
+- each lesson holds its own corners, so everything about a shape is in its entry and nothing sits outside the list;
+- the rule "a side runs from one corner to the next, and the last joins the first" is written once, in `polygon`, with a comment, instead of once per shape;
+- a lesson entry reads as a description of the shape (here are the corners), not as code that builds it;
+- a mistake in that rule is fixed in one place, for every straight-sided shape at once.
+
+**Adding a shape later.** A shape with straight sides needs no new code, only a new entry with its corners:
+
+| Shape | Entry |
+| --- | --- |
+| Triangle | `polygon` with 3 corners |
+| Rectangle | `polygon` with 4 corners, wider than tall |
+| Hexagon | `polygon` with 6 corners |
+
+A shape with curves uses `arc`, or a new helper written once for that kind of curve. Even then only the catalogue changes: the scoring, the stages and the screens do not, because they only ever read a figure's parts and endpoints. This is why lessons are data: a new lesson is one more entry, whatever the shape, and the rules are tested once for all of them.
 
 **What to look for.**
 
+- `polygon()` and `arc()`: the helpers that build a figure.
 - `LESSONS`: the whole catalogue. Adding the triangle is one more entry.
 - `guide()`: what the child is shown at each stage.
-- `difficulties()`: what may be said about a drawing at each stage. "Too small" and "stretched" exist only where there is no guide.
+- `problems()`: what may be said about a drawing at each stage. "Too small" and "stretched" exist only where there is no guide.
 
 <a id="f-catalogue"></a>
 
@@ -312,7 +497,7 @@ export interface LessonRecord {
 // entry to LESSONS, with no change to the rules (NFR-MAINT-001).
 // The drawing area is 1000 x 1000 units, whatever the size of the screen.
 
-import type { Difficulty, DrawingStage, Figure, Guide, Path, Point } from "./types";
+import type { DrawingProblem, DrawingStage, Figure, Guide, Path, Point } from "./types";
 
 export interface Lesson {
   id: string;
@@ -332,12 +517,19 @@ function arc(cx: number, cy: number, r: number, from: number, to: number, pieces
   return path;
 }
 
-const corners: Point[] = [
-  { x: 250, y: 250 },
-  { x: 750, y: 250 },
-  { x: 750, y: 750 },
-  { x: 250, y: 750 },
-];
+/**
+ * A closed shape with straight sides, such as a square or a triangle. Each
+ * side runs from one corner to the next, and the last corner joins back to
+ * the first. The corners are also the dots shown at the endpoints-only stage.
+ */
+function polygon(corners: Point[]): Figure {
+  const parts: Path[] = [];
+  for (let i = 0; i < corners.length; i++) {
+    const next = corners[(i + 1) % corners.length]; // after the last corner comes the first
+    parts.push([corners[i], next]);
+  }
+  return { parts: parts, endpoints: corners };
+}
 
 export const LESSONS: Lesson[] = [
   {
@@ -345,10 +537,13 @@ export const LESSONS: Lesson[] = [
     name: "Square",
     category: "shape",
     // Four sides; four corners (SRS Table "Initial lesson catalogue").
-    figure: {
-      parts: corners.map((c, i) => [c, corners[(i + 1) % 4]]),
-      endpoints: corners,
-    },
+    // Clockwise from the top left corner.
+    figure: polygon([
+      { x: 250, y: 250 },
+      { x: 750, y: 250 },
+      { x: 750, y: 750 },
+      { x: 250, y: 750 },
+    ]),
   },
   {
     id: "circle",
@@ -379,15 +574,15 @@ export function guide(id: string, stage: DrawingStage): Guide {
 }
 
 /**
- * The predefined difficulties of a stage: any missed part, any missed
+ * The predefined problems of a stage: any missed part, any missed
  * endpoint, or drawing off the figure. With no guide, a drawing can also be
  * too small, or stretched (the right shape, but too wide or too tall).
  */
-export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
+export function problems(id: string, stage: DrawingStage): DrawingProblem[] {
   const { figure } = lesson(id);
-  const all: Difficulty[] = [
-    ...figure.parts.map((_, index): Difficulty => ({ kind: "missedPart", index })),
-    ...figure.endpoints.map((_, index): Difficulty => ({ kind: "missedEndpoint", index })),
+  const all: DrawingProblem[] = [
+    ...figure.parts.map((_, index): DrawingProblem => ({ kind: "missedPart", index })),
+    ...figure.endpoints.map((_, index): DrawingProblem => ({ kind: "missedEndpoint", index })),
     { kind: "offFigure", index: 0 },
   ];
   if (stage === "I") all.push({ kind: "tooSmall", index: 0 }, { kind: "stretched", index: 0 });
@@ -422,6 +617,7 @@ export function difficulties(id: string, stage: DrawingStage): Difficulty[] {
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { ARROW_REST_MS, ARROW_SPEED, CANVAS_UNITS, DEMO_DRAW_MS, PALM_MS } from "@/lib/constants";
 import type { Guide, Path, Point, Stroke } from "@/lib/types";
 
 // M01 Input Device and M02 Display in one component. It turns the browser's
@@ -429,11 +625,22 @@ import type { Guide, Path, Point, Stroke } from "@/lib/types";
 // 1000 x 1000, whatever the screen), and paints the guide, the strokes, the
 // demonstration and the "look here" marks.
 
-const SIZE = 1000;
 /** Positions closer together than this, in drawing units, are thinned out. */
 const MIN_STEP = 2;
-/** For this long after a stylus touches, finger and palm touches do not draw. */
-const PALM_MS = 1000;
+
+/** The arrow that shows the child where to start and which way to go. */
+interface Arrow {
+  /** The path the arrow moves along. */
+  path: Path;
+  /** How far along the path it goes before resting, in drawing units. */
+  reach: number;
+}
+
+/** A point on a path, and the direction of travel there (an angle in radians). */
+interface PointOnPath {
+  at: Point;
+  angle: number;
+}
 
 interface Props {
   guide: Guide;
@@ -446,7 +653,7 @@ interface Props {
   /** Called with the time of every accepted input, for the idle rules. */
   onInput: (time: number) => void;
   disabled?: boolean;
-  /** When set, the paths are drawn one after another, on a loop. */
+  /** When set, the paths are drawn one after another, once, and then stay on screen. */
   demonstration?: Path[];
   /** Places to point the child to, without drawing the missing line for them. */
   marks?: Point[];
@@ -460,7 +667,7 @@ interface Props {
    * and sets off again. It moves along the shape; it does not draw it. It is
    * only shown while the child is not drawing.
    */
-  arrow?: { path: Path; reach: number };
+  arrow?: Arrow;
 }
 
 function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
@@ -480,7 +687,7 @@ function trace(ctx: CanvasRenderingContext2D, path: Point[], upTo = Infinity) {
 }
 
 /** The point a distance `d` along the path, and the direction of travel there. */
-function along(path: Point[], d: number): { at: Point; angle: number } {
+function along(path: Point[], d: number): PointOnPath {
   let left = d;
   for (let i = 1; i < path.length; i++) {
     const a = path[i - 1];
@@ -495,10 +702,6 @@ function along(path: Point[], d: number): { at: Point; angle: number } {
   return { at: path[0], angle: 0 };
 }
 
-/** How fast the arrow travels, in drawing units a second: slow enough for a young child to follow. */
-const ARROW_SPEED = 150;
-/** How long the arrow rests at the end of its trip before setting off again. */
-const ARROW_REST_MS = 900;
 /** The length of the arrow's tail. */
 const ARROW_TAIL = 70;
 
@@ -519,9 +722,9 @@ export function DrawingCanvas(props: Props) {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
     const { guide, strokes, demonstration, marks, glow, startDot, arrow } = latest.current;
-    const scale = canvas.width / SIZE;
+    const scale = canvas.width / CANVAS_UNITS;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
-    ctx.clearRect(0, 0, SIZE, SIZE);
+    ctx.clearRect(0, 0, CANVAS_UNITS, CANVAS_UNITS);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
@@ -597,7 +800,7 @@ export function DrawingCanvas(props: Props) {
     if (demonstration && demoProgress !== undefined) {
       const total = demonstration.reduce((sum, p) => sum + pathLength(p), 0);
       let budget = demoProgress * total;
-      ctx.strokeStyle = "#3a4fa0";
+      ctx.strokeStyle = "#23304a";
       ctx.lineWidth = 14;
       for (const part of demonstration) {
         if (budget <= 0) break;
@@ -614,8 +817,10 @@ export function DrawingCanvas(props: Props) {
       }
     }
 
-    // The child's strokes, exactly as drawn.
-    ctx.strokeStyle = "#3a4fa0";
+    // The child's strokes, exactly as drawn. Dark ink, so the child's line stands
+    // out over the lavender guide: 4:1 contrast, above the 3:1 that WCAG 2.2
+    // (1.4.11 Non-text Contrast) asks for. The old blue (#3a4fa0) gave only 2.3:1.
+    ctx.strokeStyle = "#23304a";
     ctx.lineWidth = 12;
     strokes.forEach((s) => trace(ctx, s.points));
     if (current.current) trace(ctx, current.current.points);
@@ -651,8 +856,11 @@ export function DrawingCanvas(props: Props) {
     const start = performance.now();
     const loop = (now: number) => {
       if (props.demonstration) {
-        const cycle = ((now - start) % 5000) / 4000; // 4 s of drawing, 1 s of rest
-        paint(Math.min(1, cycle));
+        // The demonstration draws the shape once over DEMO_DRAW_MS, then keeps the
+        // finished shape on screen until practice starts. It does not loop, so it
+        // never starts drawing again just before the stage changes.
+        const progress = (now - start) / DEMO_DRAW_MS;
+        paint(Math.min(1, progress));
       } else if (arrowReach !== undefined) {
         const trip = (arrowReach / ARROW_SPEED) * 1000;
         const elapsed = (now - arrowSince.current) % (trip + ARROW_REST_MS);
@@ -668,7 +876,7 @@ export function DrawingCanvas(props: Props) {
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   const toPoint = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const unit = (v: number) => Math.round(v * SIZE * 10) / 10; // a tenth of a unit is finer than any screen
+    const unit = (v: number) => Math.round(v * CANVAS_UNITS * 10) / 10; // a tenth of a unit is finer than any screen
     return {
       x: unit((e.clientX - rect.left) / rect.width),
       y: unit((e.clientY - rect.top) / rect.height),
@@ -683,7 +891,7 @@ export function DrawingCanvas(props: Props) {
     const p = toPoint(e);
     latest.current.onInput(p.t);
     // A position that is not on the drawing area cannot be mapped to it, and is left out (SAF-AHM-002).
-    if (p.x < 0 || p.x > SIZE || p.y < 0 || p.y > SIZE) return;
+    if (p.x < 0 || p.x > CANVAS_UNITS || p.y < 0 || p.y > CANVAS_UNITS) return;
     const before = stroke.points[stroke.points.length - 1];
     // The same position reported twice counts once (SAF-AHM-001). Positions
     // closer together than the eye can tell are thinned out, which keeps a
@@ -774,15 +982,32 @@ export function DrawingCanvas(props: Props) {
 Each lesson has a **figure**: its required parts and required endpoints. The square has four sides and four corners.
 
 - **Tolerance.** A point is "on" a line when it is within `TRACE_TOL` = 5% of the figure's diagonal. For the square that is about 35 units, 7% of a side.
-- **Drawn.** The share of the figure's length that has a stroke within the tolerance.
-- **On figure.** The share of the child's drawn length that is within the tolerance of the figure.
-- **Result.** `100 × min(drawn, on figure)`.
+
+  ![The tolerance band around the square: a wobbly top stroke inside the band counts; the middle of the right stroke leaves the band and is off figure](plan-img/tolerance.png)
+
+  Picture it as a band around every line of the shape, 35 units wide on each side (the green band). Any part of the child's stroke inside the band counts as drawn on that line, however much it wobbles. Any part outside the band does not count, and lowers the "on figure" share below. A bigger tolerance makes a wider band, so messier drawings pass.
+
+- **Drawn.** The share of the shape's outline that has the child's line on it, inside the band. It catches parts left out. Example: the square's outline is 2,000 units long (4 sides of 500); if 1,800 units of it are covered, drawn = 90%.
+- **On figure.** The share of everything the child drew that is inside the band. It catches lines drawn away from the shape. Example: the child drew 2,500 units of line in total and 2,000 of them are inside the band, so on figure = 80%.
+- **Result.** `100 × min(drawn, on figure)`: the lower of the two shares, as a number from 0 to 100. In the example, min(90%, 80%) gives a result of 80.
+
+  **Why the lower of the two.** Each share on its own can be fooled. A scribble over the whole canvas covers the entire square (drawn = 100%), but most of it is outside the band (on figure is low). One perfect side and nothing else is all on the shape (on figure = 100%), but only a quarter of the shape is drawn (drawn = 25%). Taking the lower share means a high result needs the whole shape drawn **and** the drawing kept on it.
 - **Complete.** Every part has at least `PART_COVER` = 90% of its length drawn, and every endpoint has a stroke within the tolerance.
 - **Pass.** Complete, and the result is at least the child's pass mark.
-- **No guide.** At the last stage the whole drawing is first moved and uniformly scaled onto the figure, so where and how big the child drew does not matter. Three ways of laying it over are tried and the best-scoring one is kept: by its bounding box (the SRS's wording); by the box of the bulk of the drawing, leaving out the outermost 8% on each side, so a stray mark or an overshoot does not throw it off; and that second fit nudged by at most 5% in size and one tolerance in position. The nudge is kept small on purpose: with a free fit, a square could be shrunk until it sat inside a circle's tolerance and passed the circle lesson.
+- **No guide.** At the last stage there is nothing on screen to trace, so the child may draw the shape anywhere and at any size. Before scoring, the drawing is moved and resized (by the same amount across and down) to sit on top of the lesson's shape; this is the **fit**. So where and how big the child drew does not matter, only the shape. Four ways of fitting it are tried and the best-scoring one is kept: by its bounding box (the SRS's wording); by the box of the bulk of the drawing, leaving out the outermost 8% on each side, so a short stray mark or an overshoot does not throw it off; that second fit nudged by at most 5% in size and one tolerance in position; and by the box of the biggest group of strokes only, so a long line or a second shape drawn away from the main drawing does not stretch the box. The nudge is kept small on purpose: with a free fit, a square could be shrunk until it sat inside a circle's tolerance and passed the circle lesson.
+
+  ![Fit in three steps: the child's small square in the top-left, scaled by 2.5, then shifted up 125 onto the lesson square](plan-img/fit.png)
+
 - **Stretched.** With no guide, if parts seem to be missing, the drawing is also laid over the figure by width and height separately. If every part is then there, nothing is missing: the drawing is the right shape out of proportion, such as a rectangle for a square. It still does not pass, but the child is told "Try making it as tall as it is wide" and no glow is shown beside lines they did draw.
 - **Minimum size.** With no guide, the drawing's longer side must be at least `MIN_DRAW_SCALE` = 40% of the figure's. Smaller is incomplete, and reported as too small.
 - **Invalid.** No strokes, a missing coordinate, or less drawn than the tolerance (a tap). An invalid attempt is not saved and not counted.
+
+**What happens when a line goes outside the band.** A line outside the band does not fail the drawing on its own. Two things follow from the rules above:
+
+1. **The result goes down.** The stray length lowers "on figure". If a tenth of the drawing is outside the band, on figure is 90%, and the drawing can still pass at a pass mark of 80, as long as it is complete.
+2. **The part it skipped may count as missing.** Where the line left the band, that stretch of the shape is not covered. If less than 90% of a part is covered (`PART_COVER`), the part is missing and the drawing is incomplete.
+
+The child can fix a missing part in the same attempt, with no wait. When the child pauses and a part is missing, the lesson gives a hint: that part glows and the drawing stays on screen (part 7, at most two hints in an attempt). Drawing over the glowing part inside the band covers it. The glow shows what is still missing, not the line that went outside; that line cannot be erased, so it still lowers the result a little. The message "Some lines went away from the shape" is the only feedback about the stray line itself.
 
 Measured on prepared squares:
 
@@ -816,7 +1041,7 @@ The measuring is our own code (`lib/geometry.ts`), not a drawing library. A libr
 
 Two files. `geometry.ts` is the measuring kit: lengths, distances, boxes, and the fits used when there is no guide. `evaluation.ts` uses it to apply the rule above.
 
-**What to look for in `geometry.ts`.** `lengthWithin` is the function the scoring leans on. It cuts a path into short pieces and adds up the pieces that lie near another set of paths. It is used both ways round: how much of the figure has drawing near it, and how much of the drawing is near the figure. `boxFit`, `trimmedBox` and `refineFit` are the three ways of laying a drawing over the figure.
+**What to look for in `geometry.ts`.** `lengthWithin` is the function the scoring leans on. It cuts a path into short pieces and adds up the pieces that lie near another set of paths. It is used both ways round: how much of the figure has drawing near it, and how much of the drawing is near the figure. `boxFit`, `trimmedBox`, `refineFit` and `strokeGroups` are what the four ways of laying a drawing over the figure are built from.
 
 <a id="f-geometry"></a>
 
@@ -1045,14 +1270,91 @@ export function refineFit(
   }
   return fit;
 }
+
+/** The smallest distance between any point of path a and any line of path b. */
+function pathGap(a: Path, b: Path): number {
+  let best = Infinity;
+  for (const p of a) {
+    const d = distance(p, [b]);
+    if (d < best) {
+      best = d;
+    }
+  }
+  return best;
+}
+
+/**
+ * Splits the strokes into groups of strokes that touch or nearly touch.
+ * Two strokes are in the same group when they come within `gap` units of
+ * each other, directly or through other strokes of the group. For example a
+ * square drawn as four separate sides is one group, and a line drawn far away
+ * from it is a second group.
+ *
+ * Returns the groups, each a list of paths.
+ */
+export function strokeGroups(paths: Path[], gap: number): Path[][] {
+  // groupOf[i] is the group number of stroke i. Every stroke starts alone.
+  const groupOf: number[] = [];
+  for (let i = 0; i < paths.length; i++) {
+    groupOf.push(i);
+  }
+
+  // Join two groups: every stroke of group `from` moves to group `to`.
+  const join = (from: number, to: number) => {
+    for (let i = 0; i < groupOf.length; i++) {
+      if (groupOf[i] === from) {
+        groupOf[i] = to;
+      }
+    }
+  };
+
+  for (let i = 0; i < paths.length; i++) {
+    for (let j = i + 1; j < paths.length; j++) {
+      const close = pathGap(paths[i], paths[j]) <= gap || pathGap(paths[j], paths[i]) <= gap;
+      if (close && groupOf[i] !== groupOf[j]) {
+        join(groupOf[j], groupOf[i]);
+      }
+    }
+  }
+
+  // Collect the strokes of each group number into a list.
+  const byNumber = new Map<number, Path[]>();
+  for (let i = 0; i < paths.length; i++) {
+    const number = groupOf[i];
+    let group = byNumber.get(number);
+    if (group === undefined) {
+      group = [];
+      byNumber.set(number, group);
+    }
+    group.push(paths[i]);
+  }
+  return Array.from(byNumber.values());
+}
+
+/** The group with the most line in it (the longest total length). */
+export function biggestGroup(groups: Path[][]): Path[] {
+  let best: Path[] = [];
+  let bestLength = -1;
+  for (const group of groups) {
+    let total = 0;
+    for (const path of group) {
+      total += length(path);
+    }
+    if (total > bestLength) {
+      best = group;
+      bestLength = total;
+    }
+  }
+  return best;
+}
 ```
 
 **What to look for in `evaluation.ts`.** One function, `evaluate`, with no memory: the same strokes always give the same answer. Read it in this order:
 
 1. `isValid`: is there anything to judge?
 2. `score`: the two shares and the list of missing parts and endpoints, for paths that already lie where they should be compared.
-3. In `evaluate`, the block for stage I: the three fits, the check for a stretched drawing, and the minimum size.
-4. The last lines: complete, passed, and the difficulties that are allowed at this stage.
+3. In `evaluate`, the block for stage I: the four fits, the check for a stretched drawing, and the minimum size.
+4. The last lines: complete, passed, and the drawing problems that are allowed at this stage.
 
 The three numbers the team will calibrate, `TRACE_TOL`, `PART_COVER` and `MIN_DRAW_SCALE`, are at the top and nowhere else.
 
@@ -1067,6 +1369,7 @@ The three numbers the team will calibrate, `TRACE_TOL`, `PART_COVER` and `MIN_DR
 import {
   IDENTITY,
   applyAll,
+  biggestGroup,
   boundingBox,
   boxFit,
   diagonal,
@@ -1075,27 +1378,27 @@ import {
   lengthWithin,
   refineFit,
   sample,
+  strokeGroups,
   toPath,
   trimmedBox,
 } from "./geometry";
-import type { Difficulty, DrawingStage, Evaluation, Figure, Fit, Path, Stroke } from "./types";
-
-/** Largest distance that counts as "on the figure", in percent of the figure's diagonal. */
-export const TRACE_TOL = 5;
-/** Share of a required part that must be drawn for the part to count, in percent. */
-export const PART_COVER = 90;
-/**
- * With no guide, the smallest a drawing may be: its longer side, in percent
- * of the figure's longer side. Smaller than this and it is not a complete
- * attempt, however neat.
- */
-export const MIN_DRAW_SCALE = 40;
+import {
+  GROUP_GAP,
+  MIN_DRAW_SCALE,
+  NUDGE_MAX_SCALE,
+  NUDGE_REACH,
+  PART_COVER,
+  SAMPLE_STEP,
+  TRACE_TOL,
+  TRIM_SHARE,
+} from "./constants";
+import type { DrawingProblem, DrawingStage, Evaluation, Figure, Fit, Path, Stroke } from "./types";
 
 export type Evaluate = (
   strokes: Stroke[],
   figure: Figure,
   stage: DrawingStage,
-  allowed: Difficulty[],
+  allowed: DrawingProblem[],
   stagePass: number,
 ) => Evaluation;
 
@@ -1117,7 +1420,7 @@ function isValid(strokes: Stroke[], tol: number): boolean {
 }
 
 interface Score {
-  found: Difficulty[];
+  found: DrawingProblem[];
   drawn: number;
   onFigure: number;
   result: number;
@@ -1125,7 +1428,7 @@ interface Score {
 
 /** Scores paths that already lie where they are to be compared with the figure. */
 function score(paths: Path[], figure: Figure, tol: number): Score {
-  const found: Difficulty[] = [];
+  const found: DrawingProblem[] = [];
 
   // Share of the figure that was drawn, and which required parts are missing.
   let figureLength = 0;
@@ -1162,7 +1465,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
       guidance,
       result: 0,
       passed: false,
-      difficulties: [],
+      problems: [],
       drawn: 0,
       onFigure: 0,
       fit: IDENTITY,
@@ -1178,21 +1481,32 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   if (stage === "I") {
     // With no guide, where and how big the child drew does not matter: the
     // whole drawing is moved and uniformly scaled onto the figure before it
-    // is scored. Three ways of laying it over the figure are tried, and the
+    // is scored. Four ways of laying it over the figure are tried, and the
     // one that scores best is kept:
     //  1. by its bounding box, exactly as the SRS states it;
     //  2. by the box of the bulk of the drawing, so that a short stray mark or
     //     a line that runs on past a corner does not throw everything off;
     //  3. the second, nudged a little (at most 5% in size and one tolerance
     //     in position) towards the closest fit.
+    //  4. by the box of the biggest group of strokes only, so that a long line
+    //     or a second shape drawn away from the main drawing does not stretch
+    //     the box. The other strokes are still scored, so they still count as
+    //     off the shape. This fit only wins when it finds fewer missing parts
+    //     (or as many, with a higher result), so it changes nothing else.
     const figureBox = boundingBox(figure.parts);
-    const points = sample(original, 12);
-    const byBulk = boxFit(trimmedBox(points, 0.08), figureBox);
+    const points = sample(original, SAMPLE_STEP);
+    const byBulk = boxFit(trimmedBox(points, TRIM_SHARE / 100), figureBox);
     const candidates = [
       boxFit(boundingBox(original), figureBox),
       byBulk,
-      refineFit(points, sample(figure.parts, 12), byBulk, 3 * tol, 1.05, tol),
+      refineFit(points, sample(figure.parts, SAMPLE_STEP), byBulk, NUDGE_REACH * tol, NUDGE_MAX_SCALE, tol),
     ];
+    const wholeBox = boundingBox(original);
+    const wholeLonger = Math.max(wholeBox.maxX - wholeBox.minX, wholeBox.maxY - wholeBox.minY);
+    const groups = strokeGroups(original, (GROUP_GAP / 100) * wholeLonger);
+    if (groups.length > 1) {
+      candidates.push(boxFit(boundingBox(biggestGroup(groups)), figureBox));
+    }
     const better = (a: Score, b: Score) =>
       a.found.length !== b.found.length ? a.found.length < b.found.length : a.result > b.result;
 
@@ -1212,7 +1526,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
     // every part. Then nothing is missing: the drawing is stretched, and the
     // child is told that, not shown a glow beside lines they did draw.
     if (best.found.length > 0) {
-      for (const box of [trimmedBox(points, 0.08), boundingBox(original)]) {
+      for (const box of [trimmedBox(points, TRIM_SHARE / 100), boundingBox(original)]) {
         const w = box.maxX - box.minX;
         const h = box.maxY - box.minY;
         if (w === 0 || h === 0) continue;
@@ -1251,8 +1565,8 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
     guidance,
     result: best.result,
     passed: complete && best.result >= stagePass,
-    // Only the difficulties the team predefined for this stage are reported.
-    difficulties: found.filter((d) => allowed.some((a) => a.kind === d.kind && a.index === d.index)),
+    // Only the problems the team predefined for this stage are reported.
+    problems: found.filter((d) => allowed.some((a) => a.kind === d.kind && a.index === d.index)),
     drawn: best.drawn,
     onFigure: best.onFigure,
     fit,
@@ -1268,12 +1582,12 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
 **How.** `attempt.ts` holds one try at one stage. It is given two things.
 
 - **A stroke, at each stylus lift** (`addStroke`). It scores all the strokes so far. If they pass, the attempt ends at once as passed. If not, it stays open: the child may simply not have finished.
-- **The time, about once a second** (`checkIdle`). Nothing happens until the child has paused for the adult's "pause that ends an attempt". Then one of three things:
+- **The time, twice a second** (`checkIdle`). Nothing happens until the child has paused for the adult's "pause that ends an attempt". Then one of three things:
   - the drawing cannot be judged (a tap): the attempt ends as invalid, and is not counted;
   - a part or an endpoint is missing, and there are hints left: the attempt stays open, and `checkIdle` answers "give a hint". The pause starts again. There are at most two hints, and the second only if the child drew something after the first;
   - otherwise the attempt ends as not passed.
 
-It also keeps `seen`, the list of difficulties noticed along the way. A difficulty that the child later fixes is marked corrected, never removed, which is what the SRS asks of the record.
+It also keeps `seen`, the list of drawing problems noticed along the way. A drawing problem that the child later fixes is marked corrected, never removed, which is what the SRS asks of the record.
 
 **What to look for.** `MAX_HINTS`, `addStroke`, `checkIdle` and `note`.
 
@@ -1285,21 +1599,20 @@ It also keeps `seen`, the list of difficulties noticed along the way. A difficul
 // M06 Attempt. One attempt at one drawing stage: it collects strokes, has
 // them evaluated at every stylus lift, and decides when it has ended.
 
+import { MAX_HINTS } from "./constants";
 import type { Evaluate } from "./evaluation";
-import type { Difficulty, DrawingStage, Evaluation, Figure, Observed, Stroke } from "./types";
+import type { DrawingProblem, DrawingStage, Evaluation, Figure, Observed, Stroke } from "./types";
 
 export type Outcome = "open" | "passed" | "notPassed" | "invalid" | "interrupted";
 
-/** The most hints one attempt gives before it ends. */
-export const MAX_HINTS = 2;
 
-const same = (a: Difficulty, b: Difficulty) => a.kind === b.kind && a.index === b.index;
+const same = (a: DrawingProblem, b: DrawingProblem) => a.kind === b.kind && a.index === b.index;
 
 export class Attempt {
   strokes: Stroke[] = [];
   /** The evaluation after the most recent stylus lift. */
   last: Evaluation | null = null;
-  /** Every difficulty seen so far. A correction marks it; it is never removed. */
+  /** Every problem seen so far. A correction marks it; it is never removed. */
   seen: Observed[] = [];
   outcome: Outcome = "open";
   endedAt: number | null = null;
@@ -1312,7 +1625,7 @@ export class Attempt {
     readonly lesson: string,
     readonly stage: DrawingStage,
     private figure: Figure,
-    private allowed: Difficulty[],
+    private allowed: DrawingProblem[],
     private stagePass: number,
     /** Seconds. */
     private attemptIdle: number,
@@ -1332,7 +1645,7 @@ export class Attempt {
     // is noted until the attempt ends.
     if (this.stage !== "I") {
       this.note(
-        this.last.difficulties.filter((d) => d.kind === "offFigure"),
+        this.last.problems.filter((d) => d.kind === "offFigure"),
         ["offFigure"],
       );
     }
@@ -1342,7 +1655,7 @@ export class Attempt {
   }
 
   /**
-   * Called about once a second. Once attemptIdle has passed with no input,
+   * Called twice a second (every TICK_MS = 500 ms). Once attemptIdle has passed with no input,
    * an attempt that has not passed either gets a hint or ends.
    *
    * A hint: if a part or an endpoint is missing, the child is shown where,
@@ -1368,17 +1681,20 @@ export class Attempt {
       this.note(this.missing(), ["missedPart", "missedEndpoint"]);
       return true;
     }
-    this.note(this.last.difficulties, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
+    this.note(this.last.problems, ["missedPart", "missedEndpoint", "offFigure", "tooSmall", "stretched"]);
     this.end("notPassed", now);
     return false;
   }
 
   /** The parts and endpoints the drawing still lacks: what the child could finish. */
-  missing(): Difficulty[] {
-    return (this.last?.difficulties ?? []).filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
+  missing(): DrawingProblem[] {
+    if (this.last === null) {
+      return []; // nothing drawn yet
+    }
+    return this.last.problems.filter((d) => d.kind === "missedPart" || d.kind === "missedEndpoint");
   }
 
-  /** Ends the attempt with no result, keeping its strokes and difficulties. */
+  /** Ends the attempt with no result, keeping its strokes and problems. */
   interrupt(now: number): void {
     if (this.outcome !== "open") throw new Error("attemptEnded");
     this.last = null;
@@ -1390,15 +1706,15 @@ export class Attempt {
     this.endedAt = now;
   }
 
-  private note(observedNow: Difficulty[], kinds: Difficulty["kind"][]): void {
+  private note(observedNow: DrawingProblem[], kinds: DrawingProblem["kind"][]): void {
     for (const entry of this.seen) {
-      if (kinds.includes(entry.difficulty.kind)) {
-        entry.corrected = !observedNow.some((d) => same(d, entry.difficulty));
+      if (kinds.includes(entry.problem.kind)) {
+        entry.corrected = !observedNow.some((d) => same(d, entry.problem));
       }
     }
     for (const d of observedNow) {
-      if (!this.seen.some((entry) => same(entry.difficulty, d))) {
-        this.seen.push({ difficulty: d, corrected: false });
+      if (!this.seen.some((entry) => same(entry.problem, d))) {
+        this.seen.push({ problem: d, corrected: false });
       }
     }
   }
@@ -1476,8 +1792,7 @@ sequenceDiagram
 // M09 Improvement Measure. The measure is this module's secret, so a different
 // way of deciding "improving" changes only this file.
 
-/** Smallest rise in the average stage result that counts as improvement. */
-export const IMPROVE_MARGIN = 5;
+import { IMPROVE_MARGIN } from "./constants";
 
 /**
  * True when the average of the last `window` results is at least
@@ -1516,7 +1831,7 @@ Every one of these returns a `Report`, or changes the state the screen reads. Th
 // the child is at, when an attempt counts, and when the lesson moves on,
 // offers a go-back suggestion, grants its one extension or ends.
 // It has no UI and no timers of its own: the screen calls addStroke at each
-// stylus lift and tick about once a second.
+// stylus lift and tick twice a second (every TICK_MS = 500 ms).
 
 import { Attempt } from "./attempt";
 import * as catalogue from "./catalogue";
@@ -1529,7 +1844,7 @@ export type Status = "noLesson" | "active" | "suggested" | "ended";
 
 const ORDER: Stage[] = ["D", "T", "E", "I"];
 const later = (a: Stage, b: Stage): Stage => (ORDER.indexOf(a) >= ORDER.indexOf(b) ? a : b);
-const NOTHING: Report = { feedback: [], difficulties: [] };
+const NOTHING: Report = { feedback: [], problems: [] };
 
 export interface Deps {
   records: RecordStore;
@@ -1571,8 +1886,17 @@ export class LessonControl {
 
   constructor(deps: Deps) {
     this.records = deps.records;
-    this.evaluate = deps.evaluate ?? realEvaluate;
-    this.now = deps.now ?? Date.now;
+    // Tests can pass their own scoring and clock; the app uses the real ones.
+    if (deps.evaluate !== undefined) {
+      this.evaluate = deps.evaluate;
+    } else {
+      this.evaluate = realEvaluate;
+    }
+    if (deps.now !== undefined) {
+      this.now = deps.now;
+    } else {
+      this.now = Date.now;
+    }
   }
 
   /**
@@ -1594,7 +1918,12 @@ export class LessonControl {
     this.lastFinal = null;
     this.attempt = null;
     this.resetStage();
-    this.recordId = this.keep(() => this.records.startLesson(learner, lessonId, start)) ?? "";
+    const recordId = this.keep(() => this.records.startLesson(learner, lessonId, start));
+    if (recordId === undefined || recordId === null) {
+      this.recordId = ""; // saving failed; the lesson still runs
+    } else {
+      this.recordId = recordId;
+    }
   }
 
   /** The child continues after the demonstration. */
@@ -1619,38 +1948,42 @@ export class LessonControl {
 
     if (stage === "I") {
       this.finish("completed");
-      return { feedback: ["lessonComplete"], difficulties: [] };
+      return { feedback: ["lessonComplete"], problems: [] };
     }
     this.enterStage(stage === "T" ? "E" : "I");
-    return { feedback: ["stagePassed"], difficulties: [] };
+    return { feedback: ["stagePassed"], problems: [] };
   }
 
   /**
-   * Called about once a second with the time of the child's last input.
+   * Called twice a second (every TICK_MS = 500 ms) with the time of the child's last input.
    * Ends an idle attempt, applies the stopping rules, and handles the
    * lesson's own idle check-in and idle end.
    */
   tick(lastInputAt: number | null): Report {
     if (!this.isRunning()) return NOTHING;
     const now = this.now();
-    const lastActivity = Math.max(lastInputAt ?? 0, this.activityBase);
+    let lastInput = 0;
+    if (lastInputAt !== null) {
+      lastInput = lastInputAt;
+    }
+    const lastActivity = Math.max(lastInput, this.activityBase);
     const idleSeconds = (now - lastActivity) / 1000;
 
     if (idleSeconds >= this.settings.lessonIdleEnd) {
       this.finish("endedIdle");
-      return { feedback: ["lessonEnded"], difficulties: [] };
+      return { feedback: ["lessonEnded"], problems: [] };
     }
 
     const attempt = this.attempt;
     if (attempt !== null) {
       if (attempt.checkIdle(now, lastActivity)) {
         // The drawing stays, and the child is shown what to finish.
-        return { feedback: ["fillIn"], difficulties: attempt.missing() };
+        return { feedback: ["fillIn"], problems: attempt.missing() };
       }
       if (attempt.outcome === "invalid") {
         // Not saved and not counted (FR-LRN-010, FR-LRN-032).
         this.newAttempt();
-        return { feedback: ["notEvaluable"], difficulties: [] };
+        return { feedback: ["notEvaluable"], problems: [] };
       }
       if (attempt.outcome === "notPassed") return this.afterFailedAttempt(attempt);
     }
@@ -1658,7 +1991,7 @@ export class LessonControl {
     if (idleSeconds >= this.settings.lessonIdlePrompt) {
       if (!this.prompted) {
         this.prompted = true;
-        return { feedback: ["checkIn"], difficulties: [] };
+        return { feedback: ["checkIn"], problems: [] };
       }
     } else {
       this.prompted = false;
@@ -1713,7 +2046,7 @@ export class LessonControl {
 
     const report: Report = {
       feedback: ["keepTrying"], // the effort is acknowledged first (NFR-UX-016)
-      difficulties: attempt.seen.filter((o) => !o.corrected).map((o) => o.difficulty),
+      problems: attempt.seen.filter((o) => !o.corrected).map((o) => o.problem),
     };
     const isImproving = improving(this.history, s.improveWindow);
     const atCap = this.evaluable >= s.attemptLimitMax;
@@ -1736,14 +2069,18 @@ export class LessonControl {
       this.status === "active" &&
       !this.suggestionPending &&
       (this.stage === "E" || this.stage === "I") &&
-      this.streak >= s.difficultyStreak &&
+      this.streak >= s.failStreak &&
       !isImproving
     ) {
       // The stage does not change; the child keeps practising while it is pending.
       this.suggestionPending = true;
       this.status = "suggested";
-      this.suggestionIndex =
-        this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now())) ?? 0;
+      const index = this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now()));
+      if (index === undefined || index === null) {
+        this.suggestionIndex = 0; // saving failed; the suggestion still shows
+      } else {
+        this.suggestionIndex = index;
+      }
     }
     this.newAttempt();
     return report;
@@ -1794,7 +2131,7 @@ export class LessonControl {
       this.lessonId,
       stage,
       catalogue.lesson(this.lessonId).figure,
-      catalogue.difficulties(this.lessonId, stage),
+      catalogue.problems(this.lessonId, stage),
       this.settings.stagePass,
       this.settings.attemptIdle,
       this.evaluate,
@@ -1822,7 +2159,7 @@ export class LessonControl {
       stage: attempt.stage,
       outcome,
       result: outcome === "interrupted" ? null : attempt.last!.result,
-      difficulties: attempt.seen,
+      problems: attempt.seen,
       settings: this.settings,
       strokes: attempt.strokes, // the actual strokes, never a corrected shape (BR-004)
       endedAt: attempt.endedAt!,
@@ -1857,7 +2194,7 @@ export class LessonControl {
 // either can change without the other. Every message describes the drawing,
 // never the child, and nothing marks a drawing as "wrong".
 
-import type { DifficultyKind, FeedbackKind, Stage } from "./types";
+import type { DrawingProblemKind, FeedbackKind, Stage } from "./types";
 
 export interface Feedback {
   message: string;
@@ -1875,7 +2212,7 @@ const KINDS: Record<FeedbackKind, Feedback> = {
   lessonEnded: { message: "Great practising! Here's your sticker!", image: "🌈", colour: "#5e51b8" },
 };
 
-const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
+const PROBLEMS: Record<DrawingProblemKind, Feedback> = {
   missedPart: { message: "Look where it's glowing.", image: "🧩", colour: "#b84a30" },
   missedEndpoint: { message: "The line missed a dot.", image: "📍", colour: "#b84a30" },
   offFigure: { message: "Some lines went away from the shape.", image: "↗️", colour: "#b84a30" },
@@ -1893,11 +2230,11 @@ const STAGE_LINES: Record<Stage, string> = {
 
 export const stageLine = (stage: Stage): string => STAGE_LINES[stage];
 export const feedback = (kind: FeedbackKind): Feedback => KINDS[kind];
-export const difficultyFeedback = (kind: DifficultyKind): Feedback => DIFFICULTIES[kind];
+export const problemFeedback = (kind: DrawingProblemKind): Feedback => PROBLEMS[kind];
 /** Every approved message, so the wording can be reviewed in one place. */
 export const allFeedback = (): string[] => [
   ...Object.values(KINDS).map((f) => f.message),
-  ...Object.values(DIFFICULTIES).map((f) => f.message),
+  ...Object.values(PROBLEMS).map((f) => f.message),
   ...Object.values(STAGE_LINES),
 ];
 ```
@@ -2012,7 +2349,7 @@ export function hush(): void {
 | Setting | Range | Default | What it changes |
 | --- | --- | --- | --- |
 | Pass mark (`STAGE_PASS`) | 70 to 90 | 80 | How accurate a complete drawing must be. |
-| Failed attempts before a suggestion (`DIFFICULTY_STREAK`) | 3 to 5 | 4 | When a go-back suggestion is offered. |
+| Failed attempts before a suggestion (`FAIL_STREAK`) | 3 to 5 | 4 | When a go-back suggestion is offered. |
 | Failed attempts before the lesson ends (`ATTEMPT_LIMIT`) | 6 to 10 | 8 | When the lesson ends or is extended. |
 | Improvement window (`IMPROVE_WINDOW`) | 1 to 3 | 2 | How many attempts are compared to decide "improving". |
 | Extra attempts when improving (`ATTEMPT_EXTENSION`) | 1 to 3 | 2 | The size of the one extension. |
@@ -2070,7 +2407,7 @@ const range = (min: number, max: number, label: string, unit: string, help: stri
  */
 export const RANGES: Record<SettingName, Range> = {
   stagePass: range(70, 90, "Pass mark", "points", "How accurate a complete drawing must be to pass a stage."),
-  difficultyStreak: range(3, 5, "Failed attempts before a suggestion", "attempts", "Failed attempts in a row before Squigglr suggests going back a stage."),
+  failStreak: range(3, 5, "Failed attempts before a suggestion", "attempts", "Failed attempts in a row before Squigglr suggests going back a stage."),
   attemptLimit: range(6, 10, "Failed attempts before the lesson ends", "attempts", "Failed attempts at one stage before the lesson ends or is extended."),
   improveWindow: range(1, 3, "Improvement window", "attempts", "How many recent attempts are compared with the ones before them."),
   attemptExtension: range(1, 3, "Extra attempts when improving", "attempts", "Extra attempts given once if the child is improving at the limit."),
@@ -2106,7 +2443,7 @@ export function check(s: Settings): SettingName[] {
       bad.add(b);
     }
   };
-  rule(s.attemptLimit > s.difficultyStreak, "attemptLimit", "difficultyStreak");
+  rule(s.attemptLimit > s.failStreak, "attemptLimit", "failStreak");
   rule(s.attemptLimitMax >= s.attemptLimit, "attemptLimitMax", "attemptLimit");
   rule(s.attemptIdle < s.lessonIdlePrompt, "attemptIdle", "lessonIdlePrompt");
   rule(s.lessonIdlePrompt < s.lessonIdleEnd, "lessonIdlePrompt", "lessonIdleEnd");
@@ -2124,7 +2461,10 @@ export function check(s: Settings): SettingName[] {
  * are used for all.
  */
 export function load(learnerId: string): Settings {
-  const saved = storage.get<Partial<Settings>>("settings", learnerId) ?? {};
+  let saved = storage.get<Partial<Settings>>("settings", learnerId);
+  if (saved === null) {
+    saved = {}; // nothing saved yet: every value takes its default
+  }
   const s = defaults();
   for (const name of SETTING_NAMES) {
     const value = saved[name];
@@ -2150,12 +2490,22 @@ export function save(learnerId: string, s: Settings): void {
 }
 
 /** Whether the helper talks and plays sounds for this learner (the audio setting, NFR-UX-010). On unless turned off. */
+/** The per-child options that are not lesson settings. */
+interface Options {
+  audio: boolean;
+}
+
 export function audio(learnerId: string): boolean {
-  return storage.get<{ audio: boolean }>("options", learnerId)?.audio ?? true;
+  const options = storage.get<Options>("options", learnerId);
+  if (options === null) {
+    return true; // nothing saved yet: audio is on
+  }
+  return options.audio;
 }
 
 export function setAudio(learnerId: string, on: boolean): void {
-  storage.put("options", learnerId, { audio: on }, learnerId);
+  const options: Options = { audio: on };
+  storage.put("options", learnerId, options, learnerId);
 }
 ```
 
@@ -2172,11 +2522,13 @@ export function setAudio(learnerId: string, on: boolean): void {
 // scoring in evaluation.ts.
 
 import { boundingBox, length } from "./geometry";
-import type { Figure, Stroke } from "./types";
+import type { Figure, Point, Stroke, TimedPoint } from "./types";
 
-const toStroke = (points: { x: number; y: number }[]): Stroke => ({
-  points: points.map((p, i) => ({ ...p, t: i })),
-});
+/** Turns a list of points into a stroke, giving each point a made-up time (its position in the list). */
+function toStroke(points: Point[]): Stroke {
+  const timed: TimedPoint[] = points.map((p, i) => ({ x: p.x, y: p.y, t: i }));
+  return { points: timed };
+}
 
 /**
  * The figure drawn exactly, plus a zigzag in the middle of it that lies off
@@ -2240,7 +2592,9 @@ interface Item<T> {
   value: T;
 }
 
-const PREFIX = "squigglr:v1";
+// v2: "difficulty" was renamed "drawing problem" (and difficultyStreak became failStreak),
+// so data saved by v1 is no longer read. The POC keeps nothing that matters.
+const PREFIX = "squigglr:v2";
 const key = (kind: Kind, id: string) => `${PREFIX}:${kind}:${id}`;
 
 // On the server (and in unit tests) there is no localStorage; use memory.
@@ -2313,7 +2667,18 @@ import * as settings from "./settings";
 import * as storage from "./storage";
 import type { Learner } from "./types";
 
-export const AVATARS = ["🦊", "🐼", "🐸", "🦁", "🐙", "🦄", "🐢", "🐝"];
+/**
+ * The pictures a child can have. All animals, so none is a person, a flag or
+ * a gesture. The first eight have their own paw print on the progress trail
+ * (components/icons.tsx); the others use a plain round print.
+ */
+export const AVATARS = [
+  "🦊", "🐼", "🐸", "🦁", "🐙", "🦄", "🐢", "🐝",
+  "🐶", "🐱", "🐭", "🐹", "🐰", "🐻", "🐨", "🐯",
+  "🐮", "🐷", "🐵", "🐔", "🐧", "🐦", "🦉", "🦋",
+  "🐞", "🐌", "🐬", "🐳", "🦈", "🦀", "🦒", "🦓",
+  "🐘", "🦔", "🐿️", "🦥",
+];
 
 /** Creates a profile and saves the default settings for it. */
 export function create(avatar: string): Learner {
@@ -2488,7 +2853,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 1 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className="min-h-screen font-sans antialiased">
@@ -2520,7 +2889,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   --color-ink: #23304a;
   --color-muted: #5b6478;
   --color-brand: #5e51b8;
-  --color-stroke: #3a4fa0;
+  --color-stroke: #23304a; /* same as --color-ink: dark enough to stand out over the lavender guide (4:1, WCAG 2.2 1.4.11) */
   --color-panel: #f4f5f8;
   --color-line: #e1e4ec;
   /* The edge of a card or a button: light, but clear against white. */
@@ -2626,16 +2995,18 @@ import { Squiggle } from "./Squiggle";
 export const buttonClass =
   "inline-flex items-center gap-2 rounded-2xl border-2 border-edge bg-white px-4 py-2 text-lg font-bold text-ink hover:bg-lavender";
 
-export function Frame({
-  children,
-  className = "",
-  brand = true,
-}: {
+interface FrameProps {
   children: React.ReactNode;
   className?: string;
   /** The name above the frame. Left off the lesson, where the height is needed for drawing. */
   brand?: boolean;
-}) {
+}
+
+export function Frame({
+  children,
+  className = "",
+  brand = true,
+}: FrameProps) {
   return (
     <div className="mx-auto max-w-5xl">
       {brand && (
@@ -2649,14 +3020,7 @@ export function Frame({
   );
 }
 
-export function Screen({
-  title,
-  subtitle,
-  back,
-  avatar,
-  right,
-  children,
-}: {
+interface ScreenProps {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   /** Where Back goes; no Back button when left out. */
@@ -2666,7 +3030,16 @@ export function Screen({
   /** Shown in the corner in place of the avatar. */
   right?: React.ReactNode;
   children: React.ReactNode;
-}) {
+}
+
+export function Screen({
+  title,
+  subtitle,
+  back,
+  avatar,
+  right,
+  children,
+}: ScreenProps) {
   return (
     <Frame className="min-h-[38rem]">
       <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3">
@@ -2690,7 +3063,7 @@ export function Screen({
 }
 ```
 
-`Avatar.tsx`, `icons.tsx`, `LessonIcon.tsx` and `Squiggle.tsx`: the pictures. `icons.tsx` has the trail of paw prints that shows progress (one print for each animal a child can be), the helper, the sticker, and the small picture of what each stage shows. `LessonIcon` and the stage pictures are drawn from the lesson's own figure, so a new lesson gets its pictures with no extra work.
+`Avatar.tsx`, `icons.tsx`, `LessonIcon.tsx` and `Squiggle.tsx`: the pictures. `icons.tsx` has the trail of paw prints that shows progress (the first eight animals have their own print; the others use a plain round print), the helper, the sticker, and the small picture of what each stage shows. `LessonIcon` and the stage pictures are drawn from the lesson's own figure, so a new lesson gets its pictures with no extra work.
 
 <a id="f-avatar"></a>
 
@@ -2703,16 +3076,19 @@ const SIZES = {
   lg: "h-36 w-36 text-7xl",
 };
 
+interface AvatarProps {
+  avatar: string;
+  /** "sm", "md" or "lg". */
+  size?: keyof typeof SIZES;
+  selected?: boolean;
+}
+
 /** A child's picture in a ring. A child has a picture and no name (BR-001). */
 export function Avatar({
   avatar,
   size = "md",
   selected = false,
-}: {
-  avatar: string;
-  size?: keyof typeof SIZES;
-  selected?: boolean;
-}) {
+}: AvatarProps) {
   return (
     <span
       className={`flex shrink-0 items-center justify-center rounded-full border-[3px] leading-none ${SIZES[size]} ${
@@ -2734,12 +3110,14 @@ export function Avatar({
 // prototype (the trail of prints, the helper, the sticker, the grown-ups lock) and
 // are drawn here so they take the app's colours.
 
-import type { DrawingStage, Figure } from "@/lib/types";
+import type { DrawingStage, Figure, Point } from "@/lib/types";
 
 const INK = "#23304a";
 const BRAND = "#5e51b8";
 
-type IconProps = { className?: string };
+interface IconProps {
+  className?: string;
+}
 
 const line = {
   fill: "none",
@@ -2882,8 +3260,29 @@ const PRINTS: Record<string, React.ReactNode> = {
  * One step of the trail: a left and a right print, toes pointing the way the
  * trail goes, the second a pace ahead of the first.
  */
-function Step({ avatar, done }: { avatar: string; done: boolean }) {
-  const print = PRINTS[avatar] ?? PRINTS["🦊"];
+/** The print for the animals that have no print of their own: a round pad and four toes. */
+const PLAIN_PRINT = (
+  <>
+    <ellipse cx="10" cy="18" rx="6" ry="5.5" />
+    <circle cx="3.6" cy="10.5" r="2.3" />
+    <circle cx="7.8" cy="6.5" r="2.3" />
+    <circle cx="12.2" cy="6.5" r="2.3" />
+    <circle cx="16.4" cy="10.5" r="2.3" />
+  </>
+);
+
+interface StepProps {
+  /** The child's picture, which chooses the paw print. */
+  avatar: string;
+  /** Whether this step has been reached (coloured) or not yet (grey). */
+  done: boolean;
+}
+
+function Step({ avatar, done }: StepProps) {
+  let print = PRINTS[avatar];
+  if (print === undefined) {
+    print = PLAIN_PRINT;
+  }
   const colour = done ? BRAND : "#c9cddb";
   // A print is drawn toes-up in a 20 x 26 box. Turned a quarter turn, its toes point right.
   const walking = (x: number, y: number) => `translate(${x + 26} ${y}) rotate(90)`;
@@ -2908,7 +3307,14 @@ function Step({ avatar, done }: { avatar: string; done: boolean }) {
  * animal in the child's picture. The step just reached grows for a moment,
  * so the child sees the trail move on.
  */
-export function Footprints({ reached, labels, avatar }: { reached: number; labels: string[]; avatar: string }) {
+interface FootprintsProps {
+  /** The index of the step the child has reached: 0 watch, 1 trace, 2 dots, 3 on their own. */
+  reached: number;
+  labels: string[];
+  avatar: string;
+}
+
+export function Footprints({ reached, labels, avatar }: FootprintsProps) {
   return (
     <ol className="flex" aria-label="Steps of the lesson">
       {labels.map((label, i) => (
@@ -2942,11 +3348,20 @@ export const Sticker = ({ className }: IconProps) => (
   </svg>
 );
 
-const d = (points: { x: number; y: number }[]) =>
-  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+/** Turns a list of points into SVG path text: "M x y" for the first point, then "L x y" for each next one. */
+function d(points: Point[]): string {
+  const parts = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+  return parts.join(" ");
+}
 
 /** What the child sees at a drawing stage, as a small picture: the dotted outline, the dots, or a blank page. */
-export function StageGuide({ figure, stage, className }: { figure: Figure; stage: DrawingStage; className?: string }) {
+interface StageGuideProps {
+  figure: Figure;
+  stage: DrawingStage;
+  className?: string;
+}
+
+export function StageGuide({ figure, stage, className }: StageGuideProps) {
   return (
     <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
       {stage === "I" && (
@@ -2978,7 +3393,12 @@ export function StageGuide({ figure, stage, className }: { figure: Figure; stage
 import type { Figure } from "@/lib/types";
 
 /** A lesson's figure as a small drawing, in the pen colour. */
-export function LessonIcon({ figure, className = "" }: { figure: Figure; className?: string }) {
+interface LessonIconProps {
+  figure: Figure;
+  className?: string;
+}
+
+export function LessonIcon({ figure, className = "" }: LessonIconProps) {
   return (
     <svg viewBox="0 0 1000 1000" className={className} aria-hidden="true">
       {figure.parts.map((part, i) => (
@@ -3003,7 +3423,12 @@ export function LessonIcon({ figure, className = "" }: { figure: Figure; classNa
 
 ```tsx
 /** The wavy line from the presentation: the mark beside the name. */
-export function Squiggle({ className = "", colour = "#5e51b8" }: { className?: string; colour?: string }) {
+interface SquiggleProps {
+  className?: string;
+  colour?: string;
+}
+
+export function Squiggle({ className = "", colour = "#5e51b8" }: SquiggleProps) {
   return (
     <svg viewBox="0 0 64 20" className={className} aria-hidden="true" fill="none">
       <path
@@ -3230,7 +3655,7 @@ export default function WhoIsPractising() {
       {adding && (
         <div className="mx-auto mt-8 max-w-xl rounded-3xl bg-mint p-5 text-center">
           <h2 className="font-sans text-xl font-bold text-green">Choose a picture</h2>
-          <div className="mt-3 flex flex-wrap justify-center gap-3">
+          <div className="mt-3 flex max-h-[22rem] flex-wrap justify-center gap-3 overflow-y-auto p-1">
             {profiles.AVATARS.map((avatar) => (
               <button
                 key={avatar}
@@ -3340,13 +3765,25 @@ import { LESSONS } from "@/lib/catalogue";
 import * as settings from "@/lib/settings";
 import type { DrawingStage, SettingName, Settings } from "@/lib/types";
 
+/** The part of the web address that names the lesson, e.g. "square" in /lesson/square. */
+// A `type`, not an `interface`: Next.js needs this form for useParams.
+type RouteParams = {
+  id: string;
+};
+
 // S3 "Lesson ready". The chosen lesson and this child's settings, each with
 // one line saying what it changes. The grown-up can start straight away or
 // change any of them first. The values are the nine adult-set values of
 // BR-008: three up front, as in the prototype, and the rest under "More
 // settings".
 
-const STAGES: { stage: DrawingStage; label: string }[] = [
+/** A stage the adult can choose to start at, with its name on screen. */
+interface StageOption {
+  stage: DrawingStage;
+  label: string;
+}
+
+const STAGES: StageOption[] = [
   { stage: "T", label: "Full outline" },
   { stage: "E", label: "Endpoints only" },
   { stage: "I", label: "On my own" },
@@ -3363,9 +3800,16 @@ const MORE: SettingName[] = [
   "lessonIdleEnd",
 ];
 
-const RULES: { names: [SettingName, SettingName]; text: string }[] = [
+/** A rule between two settings, and how it is explained to the adult when it is broken. */
+interface SettingRule {
+  /** The two settings the rule is about. */
+  names: SettingName[];
+  text: string;
+}
+
+const RULES: SettingRule[] = [
   {
-    names: ["attemptLimit", "difficultyStreak"],
+    names: ["attemptLimit", "failStreak"],
     text: "The failed attempts before the lesson ends must be more than the tries before a grown-up is called.",
   },
   {
@@ -3374,17 +3818,19 @@ const RULES: { names: [SettingName, SettingName]; text: string }[] = [
   },
 ];
 
+interface StepperProps {
+  name: SettingName;
+  values: Settings;
+  set: (name: SettingName, value: number) => void;
+  big?: boolean;
+}
+
 function Stepper({
   name,
   values,
   set,
   big = false,
-}: {
-  name: SettingName;
-  values: Settings;
-  set: (name: SettingName, value: number) => void;
-  big?: boolean;
-}) {
+}: StepperProps) {
   const r = settings.RANGES[name];
   const box = big ? "h-14 w-14 text-3xl" : "h-11 w-11 text-2xl";
   return (
@@ -3415,7 +3861,7 @@ function Stepper({
 }
 
 export default function LessonReady() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<RouteParams>();
   const router = useRouter();
   const { learner, ready } = useActiveLearner();
   const { ask, dialog } = useAdultCheck();
@@ -3548,7 +3994,7 @@ export default function LessonReady() {
           <section className="py-5">
             <div className="flex flex-wrap items-center gap-3 text-2xl font-bold">
               Get a grown-up after
-              <Stepper name="difficultyStreak" values={values} set={set} big />
+              <Stepper name="failStreak" values={values} set={set} big />
               tries in a row
             </div>
             <p className="mt-2 text-muted">
@@ -3664,7 +4110,14 @@ export const NEATNESS = [
   { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
 ];
 
-export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avatar: string; onClose: () => void }) {
+interface NeatnessInfoProps {
+  figure: Figure;
+  avatar: string;
+  /** Called when the adult closes the pop-up. */
+  onClose: () => void;
+}
+
+export function NeatnessInfo({ figure, avatar, onClose }: NeatnessInfoProps) {
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-label="Neatness">
       <div className="max-h-full w-full max-w-3xl overflow-auto rounded-3xl border border-edge shadow-card bg-white p-6 sm:p-8">
@@ -3707,7 +4160,7 @@ export function NeatnessInfo({ figure, avatar, onClose }: { figure: Figure; avat
 This is the one screen where everything from parts 3 to 8 meets. It is long, but it only does five things.
 
 1. **Starts the lesson.** When the screen opens, it creates one `LessonControl`, calls `select` with the active child and their settings, and keeps it for as long as the screen is open. Leaving the screen calls `stop`.
-2. **Feeds it.** `onStroke` passes each finished stroke to `addStroke`. A timer calls `tick` twice a second. The same timer starts practice when the demonstration has played, and makes the arrow at the dots go all the way round after eight seconds with nothing drawn.
+2. **Sends it the child's input.** `onStroke` passes each finished stroke to `addStroke`. A timer calls `tick` twice a second (every 500 ms). The same timer starts practice when the demonstration has played (it draws the shape once over `DEMO_DRAW_MS`, 4 s, then holds the finished shape for `DEMO_HOLD_MS`, 1 s), and makes the arrow at the dots go all the way round after eight seconds with nothing drawn.
 3. **Shows what comes back.** `show` takes each report. For a hint it lights up what is missing and leaves the drawing alone. For an attempt that ended it holds the drawing on screen for a moment (2.5 or 5 seconds), plays the chime or tune, then clears the canvas.
 4. **Chooses what the helper says.** `bubble` is the latest feedback, or else the line for the stage, and it is spoken aloud whenever it changes.
 5. **Waits for the adult.** While the adult check or the go-back card is open, `paused` is set, and the timer does nothing: the adult's time is not the child's pause.
@@ -3734,14 +4187,20 @@ import { Frame, buttonClass } from "@/components/Screen";
 import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
-import { difficultyFeedback, feedback, stageLine } from "@/lib/feedback";
+import { problemFeedback, feedback, stageLine } from "@/lib/feedback";
 import { apply, applyAll, distance, inverse, length, toPath } from "@/lib/geometry";
-import { MAX_HINTS } from "@/lib/attempt";
+import { DEMO_MS, FULL_ARROW_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
 import { LessonControl } from "@/lib/lessonControl";
 import * as profiles from "@/lib/profiles";
 import { records } from "@/lib/records";
 import * as settings from "@/lib/settings";
-import type { Difficulty, DrawingStage, Figure, Fit, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
+import type { DrawingProblem, DrawingStage, Figure, Fit, Guide, Path, Point, Report, Stage, Stroke } from "@/lib/types";
+
+/** The part of the web address that names the lesson, e.g. "square" in /lesson/square. */
+// A `type`, not an `interface`: Next.js needs this form for useParams.
+type RouteParams = {
+  id: string;
+};
 
 // M13 Child Screen (prototype S6 to S11, without its Start again button and
 // sticker, which the SRS does not have). It shows the lesson and relays
@@ -3758,13 +4217,6 @@ const STEP: Record<DrawingStage, { number: number; name: string }> = {
 };
 const NO_GUIDE: Guide = { outline: [], endpoints: [] };
 const NO_FIT: Fit = { scale: 1, dx: 0, dy: 0 };
-/** How long a finished attempt stays on screen with its feedback: longer when there is something to look at. */
-const SHOW_PASSED_MS = 2500;
-const SHOW_NOT_PASSED_MS = 5000;
-/** How long the demonstration plays before practice starts by itself. */
-const DEMO_MS = 5500;
-/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
-const FULL_ARROW_MS = 8000;
 
 /** The stretches of a part of the figure that no drawn line comes near. */
 function undrawn(part: Path, drawn: Path[], tol: number): Path[] {
@@ -3788,7 +4240,7 @@ function undrawn(part: Path, drawn: Path[], tol: number): Path[] {
 }
 
 export default function LessonPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<RouteParams>();
   const router = useRouter();
   const { ask, dialog } = useAdultCheck();
   const control = useRef<LessonControl | null>(null);
@@ -3847,20 +4299,20 @@ export default function LessonPage() {
    * on the figure, then laid back over the drawing where the child made it.
    * (With a guide the two are the same place.)
    */
-  const highlight = useCallback((difficulties: Difficulty[], fit: Fit) => {
+  const highlight = useCallback((problems: DrawingProblem[], fit: Fit) => {
     const figure: Figure = catalogue.lesson(control.current!.lessonId).figure;
     const back = inverse(fit);
     const drawn = applyAll(fit, strokesRef.current.map(toPath));
     setGlow(
       applyAll(
         back,
-        difficulties
+        problems
           .filter((d) => d.kind === "missedPart")
           .flatMap((d) => undrawn(figure.parts[d.index], drawn, tolerance(figure))),
       ),
     );
     setMarks(
-      difficulties.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
+      problems.filter((d) => d.kind === "missedEndpoint").map((d) => apply(back, figure.endpoints[d.index])),
     );
   }, []);
 
@@ -3876,7 +4328,7 @@ export default function LessonPage() {
         // A hint: the drawing stays and the child can go on drawing. What is
         // missing glows until they finish it or the attempt ends.
         hinted.current = true;
-        highlight(r.difficulties, c.attempt?.last?.fit ?? NO_FIT);
+        highlight(r.problems, c.attempt?.last?.fit ?? NO_FIT);
         return;
       }
 
@@ -3887,7 +4339,7 @@ export default function LessonPage() {
         setMarks([]);
         audio.chime();
       } else {
-        highlight(r.difficulties, c.lastFinal?.fit ?? NO_FIT);
+        highlight(r.problems, c.lastFinal?.fit ?? NO_FIT);
       }
       if (r.feedback.includes("lessonComplete") || r.feedback.includes("lessonEnded")) audio.tune();
       // A child who has already been shown the glow does not need it held up as long again.
@@ -3933,7 +4385,7 @@ export default function LessonPage() {
       }
       show(c.tick(lastInput.current), stage);
       refresh();
-    }, 500);
+    }, TICK_MS);
     return () => clearInterval(timer);
   }, [show, showing]);
 
@@ -3967,7 +4419,7 @@ export default function LessonPage() {
   line.current = bubble;
   // Under the bubble: what was seen in the drawing. Not after a hint, where the bubble already says it.
   const hints =
-    report && running && report.feedback[0] !== "fillIn" ? [...new Set(report.difficulties.map((d) => d.kind))] : [];
+    report && running && report.feedback[0] !== "fillIn" ? [...new Set(report.problems.map((d) => d.kind))] : [];
   // With a guide: a green dot where the drawing starts, as in the demonstration.
   const drawing = running && !showing && c.stage !== "D";
   const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
@@ -4045,7 +4497,11 @@ export default function LessonPage() {
           {avatar && <Avatar avatar={avatar} />}
         </div>
 
-        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100vh-20rem)))]">
+        {/* The drawing area: as big as the screen allows while staying square. Its width is the
+            smallest of the full width and the screen height minus about 14rem, which is the room
+            the progress trail above and the helper below need. dvh is the visible height, so the
+            browser's own toolbar on a tablet is not counted. Never smaller than 22rem. */}
+        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100dvh-14rem)))]">
           <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}
@@ -4093,7 +4549,7 @@ export default function LessonPage() {
                 <p className="mt-1 pl-6 text-lg font-bold text-butter-ink">
                   {hints
                     .slice(0, 2)
-                    .map((kind) => difficultyFeedback(kind).message)
+                    .map((kind) => problemFeedback(kind).message)
                     .join(" ")}
                 </p>
               )}
@@ -4202,7 +4658,7 @@ export default function LessonPage() {
             <Item label="Class" value={live?.class ?? "none"} />
             <Item label="Failed at this stage" value={`${c.failed} of ${c.settings.attemptLimit}`} />
             <Item label="Attempts at this stage" value={`${c.evaluable} of ${c.settings.attemptLimitMax}`} />
-            <Item label="Failed in a row" value={`${c.streak} (suggest at ${c.settings.difficultyStreak})`} />
+            <Item label="Failed in a row" value={`${c.streak} (suggest at ${c.settings.failStreak})`} />
             <Item
               label="Extension"
               value={c.extended ? `${c.sinceExtension} of ${c.settings.attemptExtension} used` : "not given"}
@@ -4220,17 +4676,19 @@ export default function LessonPage() {
   );
 }
 
+interface StepTileProps {
+  figure: Figure;
+  stage: DrawingStage;
+  caption: string;
+  strong?: boolean;
+}
+
 function StepTile({
   figure,
   stage,
   caption,
   strong = false,
-}: {
-  figure: Figure;
-  stage: DrawingStage;
-  caption: string;
-  strong?: boolean;
-}) {
+}: StepTileProps) {
   return (
     <div className="text-center">
       <div
@@ -4248,7 +4706,12 @@ function StepTile({
   );
 }
 
-function Item({ label, value }: { label: string; value: string | number }) {
+interface ItemProps {
+  label: string;
+  value: string | number;
+}
+
+function Item({ label, value }: ItemProps) {
   return (
     <div>
       <dt className="text-xs font-bold tracking-wide text-muted uppercase">{label}</dt>
@@ -4333,14 +4796,14 @@ import { Screen } from "@/components/Screen";
 import { StrokePreview } from "@/components/StrokePreview";
 import { useActiveLearner } from "@/components/useActiveLearner";
 import * as catalogue from "@/lib/catalogue";
-import { difficultyFeedback } from "@/lib/feedback";
+import { problemFeedback } from "@/lib/feedback";
 import * as profiles from "@/lib/profiles";
 import * as records from "@/lib/records";
 import type { AttemptRecord, Ending, Learner, LessonRecord, Stage } from "@/lib/types";
 
 // "Practice history" (in the place of the prototype's S5). For one child:
 // every start of a lesson, and under it every attempt with its actual
-// strokes, step, outcome, result and the difficulties seen (FR-REC-001 to
+// strokes, step, outcome, result and the problems seen (FR-REC-001 to
 // FR-REC-010). The SRS's progress summary is a later phase and is not here.
 
 const STAGE: Record<Stage, string> = {
@@ -4468,11 +4931,11 @@ export default function PracticeRecords() {
                         {attempt.strokes.length} {attempt.strokes.length === 1 ? "stroke" : "strokes"},{" "}
                         {new Date(attempt.endedAt).toLocaleTimeString()}
                       </p>
-                      {attempt.difficulties.length > 0 && (
+                      {attempt.problems.length > 0 && (
                         <ul className="mt-1 list-disc pl-5 text-muted">
-                          {attempt.difficulties.map((o, j) => (
+                          {attempt.problems.map((o, j) => (
                             <li key={j}>
-                              {DIFFICULTY[o.difficulty.kind]}
+                              {PROBLEM_TEXT[o.problem.kind]}
                               {o.corrected && " (corrected later in the attempt)"}
                             </li>
                           ))}
@@ -4491,16 +4954,21 @@ export default function PracticeRecords() {
   );
 }
 
-/** How a difficulty reads to an adult. The child's wording is in lib/feedback.ts. */
-const DIFFICULTY = {
+/** How a problem reads to an adult. The child's wording is in lib/feedback.ts. */
+const PROBLEM_TEXT = {
   missedPart: "A part of the shape was not drawn.",
   missedEndpoint: "The line did not reach an endpoint.",
-  offFigure: difficultyFeedback("offFigure").message,
+  offFigure: problemFeedback("offFigure").message,
   tooSmall: "The drawing was very small.",
   stretched: "The drawing was the right shape, but too wide or too tall.",
 } as const;
 
-function Item({ label, value }: { label: string; value: string | number }) {
+interface ItemProps {
+  label: string;
+  value: string | number;
+}
+
+function Item({ label, value }: ItemProps) {
   return (
     <div>
       <dt className="text-xs font-bold tracking-wide text-muted uppercase">{label}</dt>
@@ -4515,23 +4983,28 @@ function Item({ label, value }: { label: string; value: string | number }) {
 `src/components/StrokePreview.tsx`
 
 ```tsx
-import type { Figure, Stroke } from "@/lib/types";
+import type { Figure, Point, Stroke } from "@/lib/types";
 
-const d = (points: { x: number; y: number }[]) =>
-  points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+/** Turns a list of points into SVG path text: "M x y" for the first point, then "L x y" for each next one. */
+function d(points: Point[]): string {
+  const parts = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+  return parts.join(" ");
+}
 
 const SIZES = { sm: "h-24 w-24", md: "h-28 w-28", lg: "h-44 w-44" };
+
+interface StrokePreviewProps {
+  strokes: Stroke[];
+  figure: Figure;
+  size?: keyof typeof SIZES;
+}
 
 /** A saved attempt, redrawn from its actual strokes, with the lesson's figure faintly behind it. */
 export function StrokePreview({
   strokes,
   figure,
   size = "md",
-}: {
-  strokes: Stroke[];
-  figure: Figure;
-  size?: keyof typeof SIZES;
-}) {
+}: StrokePreviewProps) {
   return (
     <svg viewBox="0 0 1000 1000" className={`shrink-0 rounded-2xl border-2 border-edge bg-white ${SIZES[size]}`}>
       {figure.parts.map((part, i) => (
@@ -4542,7 +5015,7 @@ export function StrokePreview({
           key={i}
           d={d(s.points)}
           fill="none"
-          stroke="#3a4fa0"
+          stroke="#23304a"
           strokeWidth={26}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -4583,13 +5056,16 @@ The tests read like the rules. `testHelpers.ts` makes prepared strokes and a rec
 // Helpers for the unit tests: prepared strokes and an in-memory record store.
 
 import type { RecordStore } from "./records";
-import type { AttemptRecord, Ending, Path, Point, Stage, Stroke, Suggestion } from "./types";
+import type { AttemptRecord, Ending, Path, Point, Stage, Stroke, Suggestion, TimedPoint } from "./types";
 
 /** A stroke through the given points, with extra points every 10 units, like real input. */
 export function stroke(...points: Point[]): Stroke {
-  const out: Stroke["points"] = [];
+  const out: TimedPoint[] = [];
   points.forEach((p, i) => {
-    if (i === 0) return void out.push({ ...p, t: 0 });
+    if (i === 0) {
+      out.push({ x: p.x, y: p.y, t: 0 });
+      return;
+    }
     const a = points[i - 1];
     const n = Math.max(1, Math.ceil(Math.hypot(p.x - a.x, p.y - a.y) / 10));
     for (let j = 1; j <= n; j++) {
@@ -4648,7 +5124,7 @@ import { squareStroke, stroke, strokeOf } from "./testHelpers";
 import type { DrawingStage, Stroke } from "./types";
 
 const run = (id: string, strokes: Stroke[], stage: DrawingStage = "T", stagePass = 80) =>
-  evaluate(strokes, catalogue.lesson(id).figure, stage, catalogue.difficulties(id, stage), stagePass);
+  evaluate(strokes, catalogue.lesson(id).figure, stage, catalogue.problems(id, stage), stagePass);
 
 describe("evaluate: square", () => {
   it("passes an exact square with a result of 100", () => {
@@ -4672,7 +5148,7 @@ describe("evaluate: square", () => {
     // sides next to it, so they count as drawn. See "Findings" in the plan.
     expect(e.result).toBeCloseTo(78.6, 0);
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "missedPart", index: 3 });
+    expect(e.problems).toContainEqual({ kind: "missedPart", index: 3 });
   });
 
   it("reports a missed corner", () => {
@@ -4682,7 +5158,7 @@ describe("evaluate: square", () => {
       stroke({ x: 750, y: 300 }, { x: 750, y: 750 }, { x: 250, y: 750 }, { x: 250, y: 250 }),
     ]);
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "missedEndpoint", index: 1 });
+    expect(e.problems).toContainEqual({ kind: "missedEndpoint", index: 1 });
   });
 
   it("accepts a square drawn within the tolerance and rejects one drawn outside it", () => {
@@ -4696,7 +5172,7 @@ describe("evaluate: square", () => {
     expect(e.class).toBe("complete");
     expect(e.result).toBeLessThan(70);
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "offFigure", index: 0 });
+    expect(e.problems).toContainEqual({ kind: "offFigure", index: 0 });
   });
 
   it("uses the adult's pass mark: the same drawing passes at 70 and fails at 90", () => {
@@ -4724,6 +5200,38 @@ describe("evaluate: square", () => {
     expect(e.passed).toBe(true);
   });
 
+  it("at the independent stage, a long line far from the square does not stretch the fit, but still counts as off the shape", () => {
+    // A small square on the left, and a long line on the right: far more than the 8% trim can leave out.
+    const square = squareStroke(-200, 0, 0.5);
+    const farLine = stroke({ x: 700, y: 200 }, { x: 950, y: 800 });
+    const e = run("square", [square, farLine], "I");
+    const kinds = e.problems.map((d) => d.kind);
+    // The square is found whole: no side or corner is missing.
+    expect(kinds).not.toContain("missedPart");
+    expect(kinds).not.toContain("missedEndpoint");
+    // The line is still part of the drawing, so it lowers the result and is reported.
+    expect(kinds).toContain("offFigure");
+    expect(e.passed).toBe(false);
+  });
+
+  it("at the independent stage, two squares side by side do not pass", () => {
+    const left = squareStroke(-250, 0, 0.4);
+    const right = squareStroke(250, 0, 0.4);
+    const e = run("square", [left, right], "I");
+    expect(e.passed).toBe(false);
+    expect(e.problems.map((d) => d.kind)).toContain("offFigure");
+  });
+
+  it("at the independent stage, only the left and right sides: the top and bottom are reported as missing", () => {
+    const leftSide = stroke({ x: 250, y: 250 }, { x: 250, y: 750 });
+    const rightSide = stroke({ x: 750, y: 250 }, { x: 750, y: 750 });
+    const missing = run("square", [leftSide, rightSide], "I")
+      .problems.filter((d) => d.kind === "missedPart")
+      .map((d) => d.index);
+    // The square's parts are, in order: 0 top, 1 right, 2 bottom, 3 left.
+    expect(missing).toEqual([0, 2]);
+  });
+
   it("at the independent stage, a square drawn a little wider than tall still passes", () => {
     const p = (x: number, y: number) => ({ x: 500 + (x - 500) * 1.14, y });
     const wide = stroke(p(250, 250), p(750, 250), p(750, 750), p(250, 750), p(250, 250));
@@ -4738,7 +5246,7 @@ describe("evaluate: square", () => {
       const e = run("square", [drawing], "I", 70);
       expect(e.passed).toBe(false);
       expect(e.class).toBe("incomplete");
-      expect(e.difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+      expect(e.problems).toEqual([{ kind: "stretched", index: 0 }]);
     }
   });
 
@@ -4746,12 +5254,12 @@ describe("evaluate: square", () => {
     const oval = catalogue
       .lesson("circle")
       .figure.parts.map((part) => strokeOf(part.map((p) => ({ x: 500 + (p.x - 500) * 1.5, y: p.y }))));
-    expect(run("circle", oval, "I", 70).difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+    expect(run("circle", oval, "I", 70).problems).toEqual([{ kind: "stretched", index: 0 }]);
   });
 
   it("at the independent stage, a rectangle with a side missing is still reported as missing a part", () => {
     const open = stroke({ x: 290, y: 240 }, { x: 725, y: 240 }, { x: 725, y: 556 }, { x: 290, y: 556 });
-    const kinds = run("square", [open], "I", 70).difficulties.map((d) => d.kind);
+    const kinds = run("square", [open], "I", 70).problems.map((d) => d.kind);
     expect(kinds).toContain("missedPart");
     expect(kinds).not.toContain("stretched");
   });
@@ -4760,9 +5268,9 @@ describe("evaluate: square", () => {
     const e = run("square", [squareStroke(0, 0, 0.2)], "I");
     expect(e.class).toBe("incomplete");
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "tooSmall", index: 0 });
+    expect(e.problems).toContainEqual({ kind: "tooSmall", index: 0 });
     // With a guide, size is set by the guide, so "too small" is never reported there.
-    expect(run("square", [squareStroke(0, 0, 0.2)], "T").difficulties).not.toContainEqual({ kind: "tooSmall", index: 0 });
+    expect(run("square", [squareStroke(0, 0, 0.2)], "T").problems).not.toContainEqual({ kind: "tooSmall", index: 0 });
   });
 
   it("is invalid for no strokes, a tap, or a missing coordinate, and never passes", () => {
@@ -4784,7 +5292,7 @@ describe("evaluate: square", () => {
 describe("what an attempt notes about the drawing (FR-REC-003)", () => {
   const sides = catalogue.lesson("square").figure.parts.map(strokeOf);
   const attemptAt = (stage: DrawingStage) =>
-    new Attempt("square", stage, catalogue.lesson("square").figure, catalogue.difficulties("square", stage), 80, 5, evaluate);
+    new Attempt("square", stage, catalogue.lesson("square").figure, catalogue.problems("square", stage), 80, 5, evaluate);
 
   it("with no guide, a square drawn one side at a time is not noted as off the shape along the way", () => {
     const attempt = attemptAt("I");
@@ -4796,10 +5304,10 @@ describe("what an attempt notes about the drawing (FR-REC-003)", () => {
   it("with a guide, a line off the shape is noted, and marked corrected once the drawing is mostly on it", () => {
     const attempt = attemptAt("T");
     attempt.addStroke(stroke({ x: 300, y: 500 }, { x: 700, y: 500 }), 0);
-    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: false }]);
+    expect(attempt.seen).toEqual([{ problem: { kind: "offFigure", index: 0 }, corrected: false }]);
     sides.forEach((side, i) => attempt.addStroke(side, i + 1));
     expect(attempt.outcome).toBe("passed");
-    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: true }]);
+    expect(attempt.seen).toEqual([{ problem: { kind: "offFigure", index: 0 }, corrected: true }]);
   });
 });
 
@@ -4865,7 +5373,7 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
   const evaluate: Evaluate = (_x, _f, stage, _ds, stagePass) => {
     const guidance = stage === "I" ? "independent" : "assisted";
     if (next === "inv") {
-      return { class: "invalid", guidance, result: 0, passed: false, difficulties: [], drawn: 0, onFigure: 0, fit: IDENTITY };
+      return { class: "invalid", guidance, result: 0, passed: false, problems: [], drawn: 0, onFigure: 0, fit: IDENTITY };
     }
     const result = typeof next === "number" ? next : next.result;
     const complete = typeof next === "number";
@@ -4874,7 +5382,7 @@ function harness(start: Stage = "T", overrides: Partial<Settings> = {}) {
       guidance,
       result,
       passed: complete && result >= stagePass,
-      difficulties: [],
+      problems: [],
       drawn: result / 100,
       onFigure: result / 100,
       fit: IDENTITY,
@@ -5010,7 +5518,7 @@ describe("a chance to finish what is missing", () => {
     sides.slice(0, 3).forEach(l.draw);
     const report = l.pause();
     expect(report.feedback).toEqual(["fillIn"]);
-    expect(report.difficulties).toEqual([{ kind: "missedPart", index: 3 }]);
+    expect(report.problems).toEqual([{ kind: "missedPart", index: 3 }]);
     expect(l.control.attempt?.outcome).toBe("open");
     expect(l.control.attempt?.strokes).toHaveLength(3);
     expect(l.control.failed).toBe(0);
@@ -5026,8 +5534,8 @@ describe("a chance to finish what is missing", () => {
     expect(l.records.attempts).toHaveLength(1);
     expect(l.records.attempts[0]).toMatchObject({ outcome: "passed", stage: "T" });
     expect(l.records.attempts[0].strokes).toHaveLength(4);
-    expect(l.records.attempts[0].difficulties).toEqual([
-      { difficulty: { kind: "missedPart", index: 3 }, corrected: true },
+    expect(l.records.attempts[0].problems).toEqual([
+      { problem: { kind: "missedPart", index: 3 }, corrected: true },
     ]);
   });
 
@@ -5039,8 +5547,8 @@ describe("a chance to finish what is missing", () => {
     expect(l.control.failed).toBe(1);
     expect(l.control.attempt?.strokes).toHaveLength(0);
     expect(l.records.attempts[0]).toMatchObject({ outcome: "notPassed" });
-    expect(l.records.attempts[0].difficulties).toEqual([
-      { difficulty: { kind: "missedPart", index: 3 }, corrected: false },
+    expect(l.records.attempts[0].problems).toEqual([
+      { problem: { kind: "missedPart", index: 3 }, corrected: false },
     ]);
   });
 
@@ -5136,7 +5644,7 @@ describe("stopping rules (FR-LRN-019 to FR-LRN-021)", () => {
 });
 
 describe("go-back suggestion (FR-LRN-019, FR-LRN-033 to FR-LRN-036)", () => {
-  it("is offered after DIFFICULTY_STREAK failures in a row at E, and changes nothing by itself", () => {
+  it("is offered after FAIL_STREAK failures in a row at E, and changes nothing by itself", () => {
     const h = harness("E");
     h.attempts(40, 40, 40);
     expect(h.control.status).toBe("active");
@@ -5193,7 +5701,7 @@ describe("go-back suggestion (FR-LRN-019, FR-LRN-033 to FR-LRN-036)", () => {
   });
 
   it("uses the adult's streak", () => {
-    const h = harness("E", { difficultyStreak: 3 });
+    const h = harness("E", { failStreak: 3 });
     h.attempts(40, 40, 40);
     expect(h.control.status).toBe("suggested");
   });
@@ -5225,7 +5733,7 @@ describe("improving", () => {
 describe("settings check (BR-008)", () => {
   it("accepts the defaults, which are the middle of each range", () => {
     expect(check(defaults())).toEqual([]);
-    expect(defaults()).toMatchObject({ stagePass: 80, difficultyStreak: 4, attemptLimit: 8, attemptLimitMax: 10 });
+    expect(defaults()).toMatchObject({ stagePass: 80, failStreak: 4, attemptLimit: 8, attemptLimitMax: 10 });
   });
   it("rejects a value outside its range", () => {
     expect(check({ ...defaults(), stagePass: 69 })).toEqual(["stagePass"]);
@@ -5282,7 +5790,7 @@ describe("pass mark examples (BR-008)", () => {
       it(`${id} at ${mark}: the example just passes, and would not pass 6 points higher`, () => {
         const figure = catalogue.lesson(id).figure;
         const strokes = passingExample(figure, mark);
-        const at = evaluate(strokes, figure, "T", catalogue.difficulties(id, "T"), mark);
+        const at = evaluate(strokes, figure, "T", catalogue.problems(id, "T"), mark);
         expect(at.class).toBe("complete");
         expect(at.passed).toBe(true);
         expect(at.result).toBeLessThan(mark + 6);
@@ -5313,7 +5821,7 @@ Beyond the unit tests, four scripted runs drive the real app in a browser: the w
 - A chance to finish: when a part is missing, the drawing stays and the child can fill it in, up to twice in an attempt.
 - Sound: the helper's lines spoken by the browser's voice, a chime when a step is done and a short tune at the end, with an on/off switch per child.
 - A practice sticker at the end of a lesson.
-- A record of every attempt (actual strokes, stage, outcome, result, difficulties, the settings in use) and of every start of a lesson, saved per child, on a Practice history screen.
+- A record of every attempt (actual strokes, stage, outcome, result, drawing problems, the settings in use) and of every start of a lesson, saved per child, on a Practice history screen.
 - Example drawings for each pass mark, made from the scoring itself.
 - A demo panel on the lesson screen that shows the live result and the counters, for showing the teaching team what the rules are doing.
 
@@ -5374,6 +5882,20 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | Stylus, finger and mouse all draw; a stylus wins over a palm | CON-003; SAF-AHM-001 | CON-003 asks for a stylus, with finger input as a stretch goal. Accepting a mouse lets the demo run on a laptop. One contact is followed at a time, and the same position reported twice counts once. |
 | A tablet on the same Wi-Fi can open the laptop's dev server | CON-003 | `npm run dev` serves its scripts only to its own computer unless other hosts are allowed, so a tablet showed the page but no button worked. Private network addresses are allowed in `next.config.ts`. |
 
+### How the code is organized
+
+The code follows one rule: **a class only for something that changes over time and has rules about how it may change; everything else is plain data, described by an interface, and handled by functions.**
+
+| Decision | Requirements and sources | Why |
+| --- | --- | --- |
+| `Attempt` and `LessonControl` are classes | FR-LRN-024, FR-LRN-038, FR-LRN-039; MIS M04 and M06 (their state variables) | Both live for a while and change step by step: an attempt gets strokes one at a time, gives hints and ends once; the lesson moves stage, counts failed attempts and ends. A class keeps that state together with the methods that are allowed to change it, and the methods refuse a change the rules do not allow (for example, `addStroke` throws once the attempt has ended, `attempt.ts:39`). Their starting values are written in the class, as in Java: a new `Attempt` starts with `endedAt = null`. |
+| Everything else (`Point`, `Stroke`, `Lesson`, `Evaluation`, `Settings`, the saved records) is an interface in `types.ts` | NFR-MAINT-001, NFR-MAINT-002; FR-REC-009 | This data is made once and then only read, so it has no rules to protect and needs no methods. All the shapes are in one file, so a reader finds every one in the same place (`types.ts` is to the data what `constants.ts` is to the numbers). |
+| Records are plain objects, not class instances | FR-REC-008, FR-REC-009 | Records are saved as JSON. JSON gives back plain objects with no methods, so a saved record read back would not be an instance of a class anyway. An interface describes exactly what comes back. |
+| The scoring and geometry are functions that take data and return new data | V&V Plan (unit tests on the rules); NFR-PERF-004 | `evaluate(strokes, figure, stage, ...)` changes nothing and always gives the same answer for the same input. A test passes an object in and checks what comes out, with no set-up. |
+| Data objects have no default values; a missing field does not compile | NFR-MAINT-002 | A forgotten field is caught by the compiler instead of silently taking a default. Where a field may really be absent it is marked optional (`?`) and is `undefined`, the closest thing to Java's `null`. |
+| `Settings` is an interface, with its defaults made by `defaults()` in `settings.ts` | BR-008 ("set to the middle of its range"); SAF-RAY-008 | The defaults are not typed in. Each one is worked out from its range (`RANGES`, the SRS's min and max): the middle of 70 to 90 is 80. So a range changes in one place and its default follows. `load()` starts from `defaults()` and keeps only the values the adult chose. `Settings` is also stored inside every saved attempt (`AttemptRecord.settings`, so the values used are kept with each attempt), and the settings screen holds a changed copy in React state while the adult edits; both need plain data, not a class. A `Settings` class with the defaults written as fields would repeat the numbers that `RANGES` already holds. |
+| The screens get plain objects in their props | React | React redraws a screen when it is given a new object. Changing a field of a class instance in place is not noticed, so the screen would not update. |
+
 ### Who can do what
 
 | Decision | Requirements and sources | Why |
@@ -5407,7 +5929,7 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | Scoring is the SRS's: tolerance band, 90% of every part, result = the lower of two shares | SRS Section 9.2; FR-LRN-011, FR-LRN-013 | See [part 5](#scoring). |
 | With no guide, the drawing is laid over the figure by a fit that ignores stray marks | SRS Section 9.2 (stage I); FR-LRN-013 | The SRS lays it over by its bounding box. One stray dot, or a line that runs past a corner, stretches that box and fails a good drawing. The SRS's fit is still tried, and is used whenever it scores best. **Goes beyond the SRS wording.** |
 | With no guide, a drawing must be at least 40% of the figure's size | SRS Section 9.2 says size does "not affect the result"; FR-LRN-011 | Once any size is scaled up to the figure, a speck passes as a square. The team decided, after trying it on a tablet, that position and size should not matter only down to a minimum. **Contradicts the SRS sentence; the team is asked to change it** (see [Reference C](#srs)). |
-| Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the difficulties in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of difficulty; these two need adding to it. |
+| Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the drawing problems in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of drawing problem; these two need adding to it. |
 | A small picture of the shape stays up at the dots and with no guide | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at both steps and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture, so it is now at the dots too. The team should confirm it with the specialists. |
 | At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot, rests, and sets off again; after eight seconds with nothing drawn it carries on round the whole shape, dot to dot. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
 
@@ -5420,7 +5942,7 @@ Identifiers are those of the SRS (`docs/SRS/SRS.tex`) unless a different documen
 | "Neatness" Low, Medium, High is the pass mark at 70, 80, 90, with an example drawing for each | BR-008 ("shows example drawings of what its minimum and maximum look like") | The examples are made from the scoring itself, and a test checks each one. |
 | A save that fails never stops the lesson | SAF-RAY-003; FR-REC-008 | If the browser's storage is full, the lesson carries on and the demo panel says how many records were not saved. Keeping them for a later save is not built yet. |
 | A lesson that was cut off is closed as unfinished | FR-REC-005, FR-REC-007 | If the page is closed or reloaded mid-lesson, its record would stay "in progress" for ever. It is closed when the child's next lesson starts. |
-| Difficulties are noted as the SRS describes, with one exception | FR-REC-003 | With a guide, a line off the shape is noted at each stylus lift and marked corrected later. With no guide nothing is noted until the attempt ends, because a half-finished drawing laid over the figure always looks off it. |
+| Drawing problems are noted as the SRS describes, with one exception | FR-REC-003 | With a guide, a line off the shape is noted at each stylus lift and marked corrected later. With no guide nothing is noted until the attempt ends, because a half-finished drawing laid over the figure always looks off it. |
 | "Practice history" shows every lesson and attempt; there is no weekly summary | FR-REC-001 to FR-REC-010; Development Plan (POC plan: "no progress summary") | The POC must show that records keep the strokes, the stage and the outcome. The SRS's progress summary is specified separately and belongs to the final phase, so the prototype's weekly "practice story" is not built. The peer tester could not tell what "Practice story" meant without its description, and suggested "history" and a history icon. |
 | The records screen says it shows practice, not an assessment | BR-006; SAF-RAY-004 | No diagnosis, judgement or comparison. |
 | A practice sticker ends the lesson | Not in the SRS; BR-006; NFR-UX-004 | The prototype ends a lesson with a sticker, given for practising whatever the result. It was taken out because the SRS has no reward, and put back after the peer session, where the tester called it right for the end of a lesson. It judges nothing, so it does not go against BR-006. The SRS should say whether a reward is wanted. |
@@ -5460,10 +5982,10 @@ Five things in the app are not what the SRS says. Each is a change the team aske
 | In the app | What the SRS says | What to change |
 | --- | --- | --- |
 | With no guide, a drawing smaller than 40% of the figure does not pass, and the child is told "Try drawing it bigger" (`MIN_DRAW_SCALE` in `lib/evaluation.ts`). | Section 9.2: at the independent stage "position and size on the screen therefore do not affect the result". | **Change the requirement.** Reword it so that position does not affect the result, and size does not above a minimum, and add `MIN_DRAW_SCALE` to the symbolic constants. Without a minimum, a speck passes as a square. |
-| With no guide, the drawing is laid over the figure in three ways and the best is kept. | Section 9.2: the attempt is "moved and uniformly scaled so that its bounding box is centred on the figure's and its longer side matches". | Loosen the wording to "moved and uniformly scaled onto the figure", leaving the method to the design. The SRS's own fit is one of the three. |
+| With no guide, the drawing is laid over the figure in four ways and the best is kept. | Section 9.2: the attempt is "moved and uniformly scaled so that its bounding box is centred on the figure's and its longer side matches". | Loosen the wording to "moved and uniformly scaled onto the figure", leaving the method to the design. The SRS's own fit is one of the four. |
 | After the pause, a drawing with a part missing is not ended. The child is shown what to finish, up to twice. | FR-LRN-024: an attempt that has not passed ends "after `ATTEMPT_IDLE` with no input, and by no other event except an interruption". | **Change the requirement** to allow a hint before the attempt ends, and say how many. Add a feedback kind for it to `FeedbackKindT` in the MIS. |
 | A practice sticker at the end of a lesson. | No reward is specified. | Say whether a reward is wanted. |
-| Two more predefined difficulties, with no guide only: "too small" and "stretched". | BR-007 lets the team define difficulties; the MIS type `DifficultyT` lists three kinds. | Add the two kinds to `DifficultyT` in the MIS. |
+| Two more predefined drawing problems, with no guide only: "too small" and "stretched". | BR-007 lets the team define drawing problems; the MIS type `DifficultyT` lists three kinds. | Add the two kinds to `DifficultyT` in the MIS. |
 
 ### Where the prototype and the SRS differ
 
@@ -5518,6 +6040,7 @@ src/
 | File | MIS module | What it does |
 | --- | --- | --- |
 | [`lib/types.ts`](#f-types) | Shared types | The data shapes every module uses. |
+| [`lib/constants.ts`](#f-constants) | Shared constants | Every team-fixed value (tolerances, limits, timings) in one place. |
 | [`lib/geometry.ts`](#f-geometry) | M20 Geometry | Lengths, distances, bounding boxes, fit to a box. |
 | [`lib/evaluation.ts`](#f-evaluation) | M07 Attempt Evaluation | Scores strokes against a figure. |
 | [`lib/catalogue.ts`](#f-catalogue) | M05 Lesson Catalogue | The square and the circle, as data. |

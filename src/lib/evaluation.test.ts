@@ -6,7 +6,7 @@ import { squareStroke, stroke, strokeOf } from "./testHelpers";
 import type { DrawingStage, Stroke } from "./types";
 
 const run = (id: string, strokes: Stroke[], stage: DrawingStage = "T", stagePass = 80) =>
-  evaluate(strokes, catalogue.lesson(id).figure, stage, catalogue.difficulties(id, stage), stagePass);
+  evaluate(strokes, catalogue.lesson(id).figure, stage, catalogue.problems(id, stage), stagePass);
 
 describe("evaluate: square", () => {
   it("passes an exact square with a result of 100", () => {
@@ -30,7 +30,7 @@ describe("evaluate: square", () => {
     // sides next to it, so they count as drawn. See "Findings" in the plan.
     expect(e.result).toBeCloseTo(78.6, 0);
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "missedPart", index: 3 });
+    expect(e.problems).toContainEqual({ kind: "missedPart", index: 3 });
   });
 
   it("reports a missed corner", () => {
@@ -40,7 +40,7 @@ describe("evaluate: square", () => {
       stroke({ x: 750, y: 300 }, { x: 750, y: 750 }, { x: 250, y: 750 }, { x: 250, y: 250 }),
     ]);
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "missedEndpoint", index: 1 });
+    expect(e.problems).toContainEqual({ kind: "missedEndpoint", index: 1 });
   });
 
   it("accepts a square drawn within the tolerance and rejects one drawn outside it", () => {
@@ -54,7 +54,7 @@ describe("evaluate: square", () => {
     expect(e.class).toBe("complete");
     expect(e.result).toBeLessThan(70);
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "offFigure", index: 0 });
+    expect(e.problems).toContainEqual({ kind: "offFigure", index: 0 });
   });
 
   it("uses the adult's pass mark: the same drawing passes at 70 and fails at 90", () => {
@@ -82,6 +82,38 @@ describe("evaluate: square", () => {
     expect(e.passed).toBe(true);
   });
 
+  it("at the independent stage, a long line far from the square does not stretch the fit, but still counts as off the shape", () => {
+    // A small square on the left, and a long line on the right: far more than the 8% trim can leave out.
+    const square = squareStroke(-200, 0, 0.5);
+    const farLine = stroke({ x: 700, y: 200 }, { x: 950, y: 800 });
+    const e = run("square", [square, farLine], "I");
+    const kinds = e.problems.map((d) => d.kind);
+    // The square is found whole: no side or corner is missing.
+    expect(kinds).not.toContain("missedPart");
+    expect(kinds).not.toContain("missedEndpoint");
+    // The line is still part of the drawing, so it lowers the result and is reported.
+    expect(kinds).toContain("offFigure");
+    expect(e.passed).toBe(false);
+  });
+
+  it("at the independent stage, two squares side by side do not pass", () => {
+    const left = squareStroke(-250, 0, 0.4);
+    const right = squareStroke(250, 0, 0.4);
+    const e = run("square", [left, right], "I");
+    expect(e.passed).toBe(false);
+    expect(e.problems.map((d) => d.kind)).toContain("offFigure");
+  });
+
+  it("at the independent stage, only the left and right sides: the top and bottom are reported as missing", () => {
+    const leftSide = stroke({ x: 250, y: 250 }, { x: 250, y: 750 });
+    const rightSide = stroke({ x: 750, y: 250 }, { x: 750, y: 750 });
+    const missing = run("square", [leftSide, rightSide], "I")
+      .problems.filter((d) => d.kind === "missedPart")
+      .map((d) => d.index);
+    // The square's parts are, in order: 0 top, 1 right, 2 bottom, 3 left.
+    expect(missing).toEqual([0, 2]);
+  });
+
   it("at the independent stage, a square drawn a little wider than tall still passes", () => {
     const p = (x: number, y: number) => ({ x: 500 + (x - 500) * 1.14, y });
     const wide = stroke(p(250, 250), p(750, 250), p(750, 750), p(250, 750), p(250, 250));
@@ -96,7 +128,7 @@ describe("evaluate: square", () => {
       const e = run("square", [drawing], "I", 70);
       expect(e.passed).toBe(false);
       expect(e.class).toBe("incomplete");
-      expect(e.difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+      expect(e.problems).toEqual([{ kind: "stretched", index: 0 }]);
     }
   });
 
@@ -104,12 +136,12 @@ describe("evaluate: square", () => {
     const oval = catalogue
       .lesson("circle")
       .figure.parts.map((part) => strokeOf(part.map((p) => ({ x: 500 + (p.x - 500) * 1.5, y: p.y }))));
-    expect(run("circle", oval, "I", 70).difficulties).toEqual([{ kind: "stretched", index: 0 }]);
+    expect(run("circle", oval, "I", 70).problems).toEqual([{ kind: "stretched", index: 0 }]);
   });
 
   it("at the independent stage, a rectangle with a side missing is still reported as missing a part", () => {
     const open = stroke({ x: 290, y: 240 }, { x: 725, y: 240 }, { x: 725, y: 556 }, { x: 290, y: 556 });
-    const kinds = run("square", [open], "I", 70).difficulties.map((d) => d.kind);
+    const kinds = run("square", [open], "I", 70).problems.map((d) => d.kind);
     expect(kinds).toContain("missedPart");
     expect(kinds).not.toContain("stretched");
   });
@@ -118,9 +150,9 @@ describe("evaluate: square", () => {
     const e = run("square", [squareStroke(0, 0, 0.2)], "I");
     expect(e.class).toBe("incomplete");
     expect(e.passed).toBe(false);
-    expect(e.difficulties).toContainEqual({ kind: "tooSmall", index: 0 });
+    expect(e.problems).toContainEqual({ kind: "tooSmall", index: 0 });
     // With a guide, size is set by the guide, so "too small" is never reported there.
-    expect(run("square", [squareStroke(0, 0, 0.2)], "T").difficulties).not.toContainEqual({ kind: "tooSmall", index: 0 });
+    expect(run("square", [squareStroke(0, 0, 0.2)], "T").problems).not.toContainEqual({ kind: "tooSmall", index: 0 });
   });
 
   it("is invalid for no strokes, a tap, or a missing coordinate, and never passes", () => {
@@ -142,7 +174,7 @@ describe("evaluate: square", () => {
 describe("what an attempt notes about the drawing (FR-REC-003)", () => {
   const sides = catalogue.lesson("square").figure.parts.map(strokeOf);
   const attemptAt = (stage: DrawingStage) =>
-    new Attempt("square", stage, catalogue.lesson("square").figure, catalogue.difficulties("square", stage), 80, 5, evaluate);
+    new Attempt("square", stage, catalogue.lesson("square").figure, catalogue.problems("square", stage), 80, 5, evaluate);
 
   it("with no guide, a square drawn one side at a time is not noted as off the shape along the way", () => {
     const attempt = attemptAt("I");
@@ -154,10 +186,10 @@ describe("what an attempt notes about the drawing (FR-REC-003)", () => {
   it("with a guide, a line off the shape is noted, and marked corrected once the drawing is mostly on it", () => {
     const attempt = attemptAt("T");
     attempt.addStroke(stroke({ x: 300, y: 500 }, { x: 700, y: 500 }), 0);
-    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: false }]);
+    expect(attempt.seen).toEqual([{ problem: { kind: "offFigure", index: 0 }, corrected: false }]);
     sides.forEach((side, i) => attempt.addStroke(side, i + 1));
     expect(attempt.outcome).toBe("passed");
-    expect(attempt.seen).toEqual([{ difficulty: { kind: "offFigure", index: 0 }, corrected: true }]);
+    expect(attempt.seen).toEqual([{ problem: { kind: "offFigure", index: 0 }, corrected: true }]);
   });
 });
 

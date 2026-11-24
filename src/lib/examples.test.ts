@@ -9,7 +9,7 @@ describe("pass mark examples (BR-008)", () => {
       it(`${id} at ${mark}: the example just passes, and would not pass 6 points higher`, () => {
         const figure = catalogue.lesson(id).figure;
         const strokes = passingExample(figure, mark);
-        const at = evaluate(strokes, figure, "T", catalogue.difficulties(id, "T"), mark);
+        const at = evaluate(strokes, figure, "T", catalogue.problems(id, "T"), mark);
         expect(at.class).toBe("complete");
         expect(at.passed).toBe(true);
         expect(at.result).toBeLessThan(mark + 6);

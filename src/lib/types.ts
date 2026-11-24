@@ -10,9 +10,21 @@ export interface Point {
 /** A line through the points, in order. The parts of a figure are paths. */
 export type Path = Point[];
 
-/** One stylus contact: its points in the order drawn, each with its time (ms). */
+/**
+ * A position on the drawing area together with when it was drawn.
+ * `t` is the time in milliseconds (from Date.now()). No rule reads it yet;
+ * it is saved so an attempt keeps a full record of how the child drew
+ * (speed, pauses, a replay), not only the final shape.
+ */
+export interface TimedPoint {
+  x: number;
+  y: number;
+  t: number;
+}
+
+/** One stylus contact, from touching down to lifting: its points in the order drawn. */
 export interface Stroke {
-  points: (Point & { t: number })[];
+  points: TimedPoint[];
 }
 
 /** D = demonstration, T = trace the outline, E = endpoints only, I = independent. */
@@ -30,17 +42,23 @@ export interface Guide {
   endpoints: Point[];
 }
 
-export type DifficultyKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall" | "stretched";
+export type DrawingProblemKind = "missedPart" | "missedEndpoint" | "offFigure" | "tooSmall" | "stretched";
 
-/** One predefined difficulty (BR-007). `index` is the part or endpoint; 0 for the kinds that are about the whole drawing. */
-export interface Difficulty {
-  kind: DifficultyKind;
+/**
+ * One drawing problem: a specific thing the scoring found wrong in a drawing,
+ * which tells the child what to fix. It is not a level of difficulty.
+ * The SRS calls this a "difficulty" (BR-007, the predefined list).
+ * `index` says which part or endpoint, so the screen can make that exact part
+ * glow; it is 0 for the kinds that are about the whole drawing.
+ */
+export interface DrawingProblem {
+  kind: DrawingProblemKind;
   index: number;
 }
 
-/** A difficulty seen during an attempt, and whether the child fixed it later. */
+/** A problem seen during an attempt, and whether the child fixed it later. */
 export interface Observed {
-  difficulty: Difficulty;
+  problem: DrawingProblem;
   corrected: boolean;
 }
 
@@ -53,7 +71,7 @@ export interface Evaluation {
   /** Stage result, 0 to 100. */
   result: number;
   passed: boolean;
-  difficulties: Difficulty[];
+  problems: DrawingProblem[];
   /** The two shares behind the result, kept for the demo panel. */
   drawn: number;
   onFigure: number;
@@ -71,7 +89,7 @@ export interface Fit {
 /** The nine adult-set values of one learner (BR-008). Times are in seconds. */
 export interface Settings {
   stagePass: number;
-  difficultyStreak: number;
+  failStreak: number;
   attemptLimit: number;
   improveWindow: number;
   attemptExtension: number;
@@ -95,7 +113,7 @@ export type FeedbackKind =
 /** What the child is told after an event, in the order it is given. */
 export interface Report {
   feedback: FeedbackKind[];
-  difficulties: Difficulty[];
+  problems: DrawingProblem[];
 }
 
 export interface Learner {
@@ -114,7 +132,7 @@ export interface AttemptRecord {
   outcome: RecordOutcome;
   /** Absent for an interrupted attempt. */
   result: number | null;
-  difficulties: Observed[];
+  problems: Observed[];
   settings: Settings;
   strokes: Stroke[];
   endedAt: number;

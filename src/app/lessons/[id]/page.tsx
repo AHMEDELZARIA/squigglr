@@ -13,13 +13,25 @@ import { LESSONS } from "@/lib/catalogue";
 import * as settings from "@/lib/settings";
 import type { DrawingStage, SettingName, Settings } from "@/lib/types";
 
+/** The part of the web address that names the lesson, e.g. "square" in /lesson/square. */
+// A `type`, not an `interface`: Next.js needs this form for useParams.
+type RouteParams = {
+  id: string;
+};
+
 // S3 "Lesson ready". The chosen lesson and this child's settings, each with
 // one line saying what it changes. The grown-up can start straight away or
 // change any of them first. The values are the nine adult-set values of
 // BR-008: three up front, as in the prototype, and the rest under "More
 // settings".
 
-const STAGES: { stage: DrawingStage; label: string }[] = [
+/** A stage the adult can choose to start at, with its name on screen. */
+interface StageOption {
+  stage: DrawingStage;
+  label: string;
+}
+
+const STAGES: StageOption[] = [
   { stage: "T", label: "Full outline" },
   { stage: "E", label: "Endpoints only" },
   { stage: "I", label: "On my own" },
@@ -36,9 +48,16 @@ const MORE: SettingName[] = [
   "lessonIdleEnd",
 ];
 
-const RULES: { names: [SettingName, SettingName]; text: string }[] = [
+/** A rule between two settings, and how it is explained to the adult when it is broken. */
+interface SettingRule {
+  /** The two settings the rule is about. */
+  names: SettingName[];
+  text: string;
+}
+
+const RULES: SettingRule[] = [
   {
-    names: ["attemptLimit", "difficultyStreak"],
+    names: ["attemptLimit", "failStreak"],
     text: "The failed attempts before the lesson ends must be more than the tries before a grown-up is called.",
   },
   {
@@ -47,17 +66,19 @@ const RULES: { names: [SettingName, SettingName]; text: string }[] = [
   },
 ];
 
+interface StepperProps {
+  name: SettingName;
+  values: Settings;
+  set: (name: SettingName, value: number) => void;
+  big?: boolean;
+}
+
 function Stepper({
   name,
   values,
   set,
   big = false,
-}: {
-  name: SettingName;
-  values: Settings;
-  set: (name: SettingName, value: number) => void;
-  big?: boolean;
-}) {
+}: StepperProps) {
   const r = settings.RANGES[name];
   const box = big ? "h-14 w-14 text-3xl" : "h-11 w-11 text-2xl";
   return (
@@ -88,7 +109,7 @@ function Stepper({
 }
 
 export default function LessonReady() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<RouteParams>();
   const router = useRouter();
   const { learner, ready } = useActiveLearner();
   const { ask, dialog } = useAdultCheck();
@@ -221,7 +242,7 @@ export default function LessonReady() {
           <section className="py-5">
             <div className="flex flex-wrap items-center gap-3 text-2xl font-bold">
               Get a grown-up after
-              <Stepper name="difficultyStreak" values={values} set={set} big />
+              <Stepper name="failStreak" values={values} set={set} big />
               tries in a row
             </div>
             <p className="mt-2 text-muted">

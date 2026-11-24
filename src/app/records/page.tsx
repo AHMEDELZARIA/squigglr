@@ -6,14 +6,14 @@ import { Screen } from "@/components/Screen";
 import { StrokePreview } from "@/components/StrokePreview";
 import { useActiveLearner } from "@/components/useActiveLearner";
 import * as catalogue from "@/lib/catalogue";
-import { difficultyFeedback } from "@/lib/feedback";
+import { problemFeedback } from "@/lib/feedback";
 import * as profiles from "@/lib/profiles";
 import * as records from "@/lib/records";
 import type { AttemptRecord, Ending, Learner, LessonRecord, Stage } from "@/lib/types";
 
 // "Practice history" (in the place of the prototype's S5). For one child:
 // every start of a lesson, and under it every attempt with its actual
-// strokes, step, outcome, result and the difficulties seen (FR-REC-001 to
+// strokes, step, outcome, result and the problems seen (FR-REC-001 to
 // FR-REC-010). The SRS's progress summary is a later phase and is not here.
 
 const STAGE: Record<Stage, string> = {
@@ -141,11 +141,11 @@ export default function PracticeRecords() {
                         {attempt.strokes.length} {attempt.strokes.length === 1 ? "stroke" : "strokes"},{" "}
                         {new Date(attempt.endedAt).toLocaleTimeString()}
                       </p>
-                      {attempt.difficulties.length > 0 && (
+                      {attempt.problems.length > 0 && (
                         <ul className="mt-1 list-disc pl-5 text-muted">
-                          {attempt.difficulties.map((o, j) => (
+                          {attempt.problems.map((o, j) => (
                             <li key={j}>
-                              {DIFFICULTY[o.difficulty.kind]}
+                              {PROBLEM_TEXT[o.problem.kind]}
                               {o.corrected && " (corrected later in the attempt)"}
                             </li>
                           ))}
@@ -164,16 +164,21 @@ export default function PracticeRecords() {
   );
 }
 
-/** How a difficulty reads to an adult. The child's wording is in lib/feedback.ts. */
-const DIFFICULTY = {
+/** How a problem reads to an adult. The child's wording is in lib/feedback.ts. */
+const PROBLEM_TEXT = {
   missedPart: "A part of the shape was not drawn.",
   missedEndpoint: "The line did not reach an endpoint.",
-  offFigure: difficultyFeedback("offFigure").message,
+  offFigure: problemFeedback("offFigure").message,
   tooSmall: "The drawing was very small.",
   stretched: "The drawing was the right shape, but too wide or too tall.",
 } as const;
 
-function Item({ label, value }: { label: string; value: string | number }) {
+interface ItemProps {
+  label: string;
+  value: string | number;
+}
+
+function Item({ label, value }: ItemProps) {
   return (
     <div>
       <dt className="text-xs font-bold tracking-wide text-muted uppercase">{label}</dt>

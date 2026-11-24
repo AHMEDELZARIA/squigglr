@@ -4,11 +4,13 @@
 // scoring in evaluation.ts.
 
 import { boundingBox, length } from "./geometry";
-import type { Figure, Stroke } from "./types";
+import type { Figure, Point, Stroke, TimedPoint } from "./types";
 
-const toStroke = (points: { x: number; y: number }[]): Stroke => ({
-  points: points.map((p, i) => ({ ...p, t: i })),
-});
+/** Turns a list of points into a stroke, giving each point a made-up time (its position in the list). */
+function toStroke(points: Point[]): Stroke {
+  const timed: TimedPoint[] = points.map((p, i) => ({ x: p.x, y: p.y, t: i }));
+  return { points: timed };
+}
 
 /**
  * The figure drawn exactly, plus a zigzag in the middle of it that lies off

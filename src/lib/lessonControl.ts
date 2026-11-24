@@ -2,7 +2,7 @@
 // the child is at, when an attempt counts, and when the lesson moves on,
 // offers a go-back suggestion, grants its one extension or ends.
 // It has no UI and no timers of its own: the screen calls addStroke at each
-// stylus lift and tick about once a second.
+// stylus lift and tick twice a second (every TICK_MS = 500 ms).
 
 import { Attempt } from "./attempt";
 import * as catalogue from "./catalogue";
@@ -15,7 +15,7 @@ export type Status = "noLesson" | "active" | "suggested" | "ended";
 
 const ORDER: Stage[] = ["D", "T", "E", "I"];
 const later = (a: Stage, b: Stage): Stage => (ORDER.indexOf(a) >= ORDER.indexOf(b) ? a : b);
-const NOTHING: Report = { feedback: [], difficulties: [] };
+const NOTHING: Report = { feedback: [], problems: [] };
 
 export interface Deps {
   records: RecordStore;
@@ -57,8 +57,17 @@ export class LessonControl {
 
   constructor(deps: Deps) {
     this.records = deps.records;
-    this.evaluate = deps.evaluate ?? realEvaluate;
-    this.now = deps.now ?? Date.now;
+    // Tests can pass their own scoring and clock; the app uses the real ones.
+    if (deps.evaluate !== undefined) {
+      this.evaluate = deps.evaluate;
+    } else {
+      this.evaluate = realEvaluate;
+    }
+    if (deps.now !== undefined) {
+      this.now = deps.now;
+    } else {
+      this.now = Date.now;
+    }
   }
 
   /**
@@ -80,7 +89,12 @@ export class LessonControl {
     this.lastFinal = null;
     this.attempt = null;
     this.resetStage();
-    this.recordId = this.keep(() => this.records.startLesson(learner, lessonId, start)) ?? "";
+    const recordId = this.keep(() => this.records.startLesson(learner, lessonId, start));
+    if (recordId === undefined || recordId === null) {
+      this.recordId = ""; // saving failed; the lesson still runs
+    } else {
+      this.recordId = recordId;
+    }
   }
 
   /** The child continues after the demonstration. */
@@ -105,38 +119,42 @@ export class LessonControl {
 
     if (stage === "I") {
       this.finish("completed");
-      return { feedback: ["lessonComplete"], difficulties: [] };
+      return { feedback: ["lessonComplete"], problems: [] };
     }
     this.enterStage(stage === "T" ? "E" : "I");
-    return { feedback: ["stagePassed"], difficulties: [] };
+    return { feedback: ["stagePassed"], problems: [] };
   }
 
   /**
-   * Called about once a second with the time of the child's last input.
+   * Called twice a second (every TICK_MS = 500 ms) with the time of the child's last input.
    * Ends an idle attempt, applies the stopping rules, and handles the
    * lesson's own idle check-in and idle end.
    */
   tick(lastInputAt: number | null): Report {
     if (!this.isRunning()) return NOTHING;
     const now = this.now();
-    const lastActivity = Math.max(lastInputAt ?? 0, this.activityBase);
+    let lastInput = 0;
+    if (lastInputAt !== null) {
+      lastInput = lastInputAt;
+    }
+    const lastActivity = Math.max(lastInput, this.activityBase);
     const idleSeconds = (now - lastActivity) / 1000;
 
     if (idleSeconds >= this.settings.lessonIdleEnd) {
       this.finish("endedIdle");
-      return { feedback: ["lessonEnded"], difficulties: [] };
+      return { feedback: ["lessonEnded"], problems: [] };
     }
 
     const attempt = this.attempt;
     if (attempt !== null) {
       if (attempt.checkIdle(now, lastActivity)) {
         // The drawing stays, and the child is shown what to finish.
-        return { feedback: ["fillIn"], difficulties: attempt.missing() };
+        return { feedback: ["fillIn"], problems: attempt.missing() };
       }
       if (attempt.outcome === "invalid") {
         // Not saved and not counted (FR-LRN-010, FR-LRN-032).
         this.newAttempt();
-        return { feedback: ["notEvaluable"], difficulties: [] };
+        return { feedback: ["notEvaluable"], problems: [] };
       }
       if (attempt.outcome === "notPassed") return this.afterFailedAttempt(attempt);
     }
@@ -144,7 +162,7 @@ export class LessonControl {
     if (idleSeconds >= this.settings.lessonIdlePrompt) {
       if (!this.prompted) {
         this.prompted = true;
-        return { feedback: ["checkIn"], difficulties: [] };
+        return { feedback: ["checkIn"], problems: [] };
       }
     } else {
       this.prompted = false;
@@ -199,7 +217,7 @@ export class LessonControl {
 
     const report: Report = {
       feedback: ["keepTrying"], // the effort is acknowledged first (NFR-UX-016)
-      difficulties: attempt.seen.filter((o) => !o.corrected).map((o) => o.difficulty),
+      problems: attempt.seen.filter((o) => !o.corrected).map((o) => o.problem),
     };
     const isImproving = improving(this.history, s.improveWindow);
     const atCap = this.evaluable >= s.attemptLimitMax;
@@ -222,14 +240,18 @@ export class LessonControl {
       this.status === "active" &&
       !this.suggestionPending &&
       (this.stage === "E" || this.stage === "I") &&
-      this.streak >= s.difficultyStreak &&
+      this.streak >= s.failStreak &&
       !isImproving
     ) {
       // The stage does not change; the child keeps practising while it is pending.
       this.suggestionPending = true;
       this.status = "suggested";
-      this.suggestionIndex =
-        this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now())) ?? 0;
+      const index = this.keep(() => this.records.offerSuggestion(this.recordId, this.stage as DrawingStage, this.now()));
+      if (index === undefined || index === null) {
+        this.suggestionIndex = 0; // saving failed; the suggestion still shows
+      } else {
+        this.suggestionIndex = index;
+      }
     }
     this.newAttempt();
     return report;
@@ -280,7 +302,7 @@ export class LessonControl {
       this.lessonId,
       stage,
       catalogue.lesson(this.lessonId).figure,
-      catalogue.difficulties(this.lessonId, stage),
+      catalogue.problems(this.lessonId, stage),
       this.settings.stagePass,
       this.settings.attemptIdle,
       this.evaluate,
@@ -308,7 +330,7 @@ export class LessonControl {
       stage: attempt.stage,
       outcome,
       result: outcome === "interrupted" ? null : attempt.last!.result,
-      difficulties: attempt.seen,
+      problems: attempt.seen,
       settings: this.settings,
       strokes: attempt.strokes, // the actual strokes, never a corrected shape (BR-004)
       endedAt: attempt.endedAt!,

@@ -4,6 +4,7 @@
 import {
   IDENTITY,
   applyAll,
+  biggestGroup,
   boundingBox,
   boxFit,
   diagonal,
@@ -12,27 +13,27 @@ import {
   lengthWithin,
   refineFit,
   sample,
+  strokeGroups,
   toPath,
   trimmedBox,
 } from "./geometry";
-import type { Difficulty, DrawingStage, Evaluation, Figure, Fit, Path, Stroke } from "./types";
-
-/** Largest distance that counts as "on the figure", in percent of the figure's diagonal. */
-export const TRACE_TOL = 5;
-/** Share of a required part that must be drawn for the part to count, in percent. */
-export const PART_COVER = 90;
-/**
- * With no guide, the smallest a drawing may be: its longer side, in percent
- * of the figure's longer side. Smaller than this and it is not a complete
- * attempt, however neat.
- */
-export const MIN_DRAW_SCALE = 40;
+import {
+  GROUP_GAP,
+  MIN_DRAW_SCALE,
+  NUDGE_MAX_SCALE,
+  NUDGE_REACH,
+  PART_COVER,
+  SAMPLE_STEP,
+  TRACE_TOL,
+  TRIM_SHARE,
+} from "./constants";
+import type { DrawingProblem, DrawingStage, Evaluation, Figure, Fit, Path, Stroke } from "./types";
 
 export type Evaluate = (
   strokes: Stroke[],
   figure: Figure,
   stage: DrawingStage,
-  allowed: Difficulty[],
+  allowed: DrawingProblem[],
   stagePass: number,
 ) => Evaluation;
 
@@ -54,7 +55,7 @@ function isValid(strokes: Stroke[], tol: number): boolean {
 }
 
 interface Score {
-  found: Difficulty[];
+  found: DrawingProblem[];
   drawn: number;
   onFigure: number;
   result: number;
@@ -62,7 +63,7 @@ interface Score {
 
 /** Scores paths that already lie where they are to be compared with the figure. */
 function score(paths: Path[], figure: Figure, tol: number): Score {
-  const found: Difficulty[] = [];
+  const found: DrawingProblem[] = [];
 
   // Share of the figure that was drawn, and which required parts are missing.
   let figureLength = 0;
@@ -99,7 +100,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
       guidance,
       result: 0,
       passed: false,
-      difficulties: [],
+      problems: [],
       drawn: 0,
       onFigure: 0,
       fit: IDENTITY,
@@ -115,21 +116,32 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   if (stage === "I") {
     // With no guide, where and how big the child drew does not matter: the
     // whole drawing is moved and uniformly scaled onto the figure before it
-    // is scored. Three ways of laying it over the figure are tried, and the
+    // is scored. Four ways of laying it over the figure are tried, and the
     // one that scores best is kept:
     //  1. by its bounding box, exactly as the SRS states it;
     //  2. by the box of the bulk of the drawing, so that a short stray mark or
     //     a line that runs on past a corner does not throw everything off;
     //  3. the second, nudged a little (at most 5% in size and one tolerance
     //     in position) towards the closest fit.
+    //  4. by the box of the biggest group of strokes only, so that a long line
+    //     or a second shape drawn away from the main drawing does not stretch
+    //     the box. The other strokes are still scored, so they still count as
+    //     off the shape. This fit only wins when it finds fewer missing parts
+    //     (or as many, with a higher result), so it changes nothing else.
     const figureBox = boundingBox(figure.parts);
-    const points = sample(original, 12);
-    const byBulk = boxFit(trimmedBox(points, 0.08), figureBox);
+    const points = sample(original, SAMPLE_STEP);
+    const byBulk = boxFit(trimmedBox(points, TRIM_SHARE / 100), figureBox);
     const candidates = [
       boxFit(boundingBox(original), figureBox),
       byBulk,
-      refineFit(points, sample(figure.parts, 12), byBulk, 3 * tol, 1.05, tol),
+      refineFit(points, sample(figure.parts, SAMPLE_STEP), byBulk, NUDGE_REACH * tol, NUDGE_MAX_SCALE, tol),
     ];
+    const wholeBox = boundingBox(original);
+    const wholeLonger = Math.max(wholeBox.maxX - wholeBox.minX, wholeBox.maxY - wholeBox.minY);
+    const groups = strokeGroups(original, (GROUP_GAP / 100) * wholeLonger);
+    if (groups.length > 1) {
+      candidates.push(boxFit(boundingBox(biggestGroup(groups)), figureBox));
+    }
     const better = (a: Score, b: Score) =>
       a.found.length !== b.found.length ? a.found.length < b.found.length : a.result > b.result;
 
@@ -149,7 +161,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
     // every part. Then nothing is missing: the drawing is stretched, and the
     // child is told that, not shown a glow beside lines they did draw.
     if (best.found.length > 0) {
-      for (const box of [trimmedBox(points, 0.08), boundingBox(original)]) {
+      for (const box of [trimmedBox(points, TRIM_SHARE / 100), boundingBox(original)]) {
         const w = box.maxX - box.minX;
         const h = box.maxY - box.minY;
         if (w === 0 || h === 0) continue;
@@ -188,8 +200,8 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
     guidance,
     result: best.result,
     passed: complete && best.result >= stagePass,
-    // Only the difficulties the team predefined for this stage are reported.
-    difficulties: found.filter((d) => allowed.some((a) => a.kind === d.kind && a.index === d.index)),
+    // Only the problems the team predefined for this stage are reported.
+    problems: found.filter((d) => allowed.some((a) => a.kind === d.kind && a.index === d.index)),
     drawn: best.drawn,
     onFigure: best.onFigure,
     fit,

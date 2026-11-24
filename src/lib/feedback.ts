@@ -3,7 +3,7 @@
 // either can change without the other. Every message describes the drawing,
 // never the child, and nothing marks a drawing as "wrong".
 
-import type { DifficultyKind, FeedbackKind, Stage } from "./types";
+import type { DrawingProblemKind, FeedbackKind, Stage } from "./types";
 
 export interface Feedback {
   message: string;
@@ -21,7 +21,7 @@ const KINDS: Record<FeedbackKind, Feedback> = {
   lessonEnded: { message: "Great practising! Here's your sticker!", image: "🌈", colour: "#5e51b8" },
 };
 
-const DIFFICULTIES: Record<DifficultyKind, Feedback> = {
+const PROBLEMS: Record<DrawingProblemKind, Feedback> = {
   missedPart: { message: "Look where it's glowing.", image: "🧩", colour: "#b84a30" },
   missedEndpoint: { message: "The line missed a dot.", image: "📍", colour: "#b84a30" },
   offFigure: { message: "Some lines went away from the shape.", image: "↗️", colour: "#b84a30" },
@@ -39,10 +39,10 @@ const STAGE_LINES: Record<Stage, string> = {
 
 export const stageLine = (stage: Stage): string => STAGE_LINES[stage];
 export const feedback = (kind: FeedbackKind): Feedback => KINDS[kind];
-export const difficultyFeedback = (kind: DifficultyKind): Feedback => DIFFICULTIES[kind];
+export const problemFeedback = (kind: DrawingProblemKind): Feedback => PROBLEMS[kind];
 /** Every approved message, so the wording can be reviewed in one place. */
 export const allFeedback = (): string[] => [
   ...Object.values(KINDS).map((f) => f.message),
-  ...Object.values(DIFFICULTIES).map((f) => f.message),
+  ...Object.values(PROBLEMS).map((f) => f.message),
   ...Object.values(STAGE_LINES),
 ];

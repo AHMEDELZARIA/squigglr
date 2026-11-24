@@ -37,54 +37,50 @@ exclude the issue and the pull request that deliver this report.
 
 The Proof of Concept Demonstration Plan in the
 \href{https://github.com/AHMEDELZARIA/squigglr/blob/main/pdfs/DevelopmentPlan/DevelopmentPlan.pdf}
-{Development Plan} names five implementation risks. The demo addresses three
+{Development Plan} names four implementation risks. The demo addresses two
 of them:
 
 \begin{itemize}
-    \item \textbf{Drawing evaluation.} The fixed criteria must tell a
-    complete square from an incomplete or inaccurate one at every drawing
-    stage, and the attempt records must keep what happened. If they cannot,
-    no lesson can advance a child correctly.
+    \item \textbf{Drawing evaluation.} One scoring method, read from each
+    lesson's figure, must tell a complete drawing that meets the pass mark
+    from an incomplete or inaccurate one, for every supported shape and at
+    every drawing stage. If it cannot, no lesson can advance a child
+    correctly.
     \item \textbf{Touchscreen and stylus interaction.} Input coordinates,
     stroke continuity and responsiveness may differ between devices and
     browsers.
-    \item \textbf{Fit with practice.} The domain specialists may find that
-    the lesson flow does not suit the children they work with.
 \end{itemize}
 
 The other two risks, editable drawing refinement and model-based creative
-enhancement, belong to the creative space. On November 16 the team deferred
-both until after the POC, because the guided lesson does not depend on them
-and neither experiment could be run properly in the time left. The decision
-is recorded in \texttt{src/KNOWN-LIMITS.md} on the \texttt{POC} branch (pull
-request \#366). The supervisor agreed on November 18 that this scope is
-enough for a proof of concept (issue \#370). The Development Plan calls
-editable refinement the main technical uncertainty, so that risk stays open
-after the demo. The Development Plan still lists four experiments. Updating
-it is an open task in the same file.
+enhancement, belong to the creative space. The team deferred both until
+after the POC, because the guided lessons do not depend on them and neither
+experiment could be run properly in the time left. The supervisor agreed on
+November 18 that this scope is enough for a proof of concept (issue \#370).
+Editable refinement stays the main technical uncertainty after the demo.
 
 \subsection*{What the team will demonstrate}
 
-The demo shows the guided lesson running in a web browser on a tablet. It
-covers experiments 1 (drawing input) and 4 (square lesson end to end) of the
-Development Plan:
+The demo, on November 25, shows the guided lessons running on an iPad, served
+from a laptop on the same Wi-Fi. It covers experiments 1 (drawing input) and 4
+(the square and circle lessons end to end) of the Development Plan:
 
 \begin{itemize}
-    \item An adult adds a child, sets that child's nine practice values and
-    starts the Square or Circle lesson.
+    \item An adult picks the Square or Circle lesson, sets the nine practice
+    values and starts it.
     \item The child watches a demonstration, then draws through three stages
     with less guidance at each stage: trace the outline, endpoints only and
     no guide.
     \item Passing, failing and incomplete attempts show that each attempt is
     scored against the adult's values and that a pass moves the child to the
-    next stage.
-    \item The practice history shows the saved attempts for each child, with
-    the strokes redrawn.
-    \item Drawing works with a finger and with a stylus.
+    next stage. A demo panel shows the result, the stage and the counters
+    after each attempt.
+    \item Drawing works with a stylus.
 \end{itemize}
 
-The POC has no accounts, no progress summary and no creative space. It
-stores its data in the browser.
+The square has only straight sides and the circle only curves, so the two
+lessons together show that the scoring does not depend on the shape. The POC
+has no accounts, child profiles, saved records, progress summary or creative
+space, and is not hosted.
 
 \section{Team Meeting Attendance}
 

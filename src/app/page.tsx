@@ -1,0 +1,30 @@
+"use client";
+
+import Link from "next/link";
+import { LessonIcon } from "@/components/LessonIcon";
+import { Screen } from "@/components/Screen";
+import { LESSONS } from "@/lib/catalogue";
+
+// S2 "Pick a lesson", the first screen. Each card is a picture of the shape.
+// Only the grown-up uses this screen, so the child never has to choose
+// anything. The POC has no profiles: there is no "Who's practising?" screen.
+
+export default function PickALesson() {
+  return (
+    <Screen title="Pick a lesson" subtitle="Grown-ups: tap a picture to choose the lesson.">
+      <div className="mt-12 flex flex-wrap justify-center gap-8">
+        {LESSONS.map((lesson) => (
+          <Link
+            key={lesson.id}
+            href={`/lessons/${lesson.id}`}
+            aria-label={`${lesson.name} lesson`}
+            className="flex h-60 w-60 flex-col items-center justify-center rounded-3xl border-2 border-edge bg-white hover:bg-lavender"
+          >
+            <LessonIcon figure={lesson.figure} className="h-40 w-40" />
+            <span className="mt-2 text-lg font-bold text-muted">{lesson.name}</span>
+          </Link>
+        ))}
+      </div>
+    </Screen>
+  );
+}

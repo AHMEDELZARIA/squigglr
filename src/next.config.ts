@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   // Strict mode mounts every screen twice in development, which would start
-  // and stop each lesson twice and leave an extra "unfinished" lesson record.
+  // and stop each lesson twice.
   reactStrictMode: false,
 
   // `npm run dev` only serves the app's scripts to the computer it runs on,

@@ -1,6 +1,7 @@
 // M20 Geometry. Pure functions on points and paths. Nothing here knows about
 // the canvas, the browser or a drawing library.
 
+import { MEASURE_STEP } from "./constants";
 import type { Fit, Path, Point, Stroke } from "./types";
 
 export interface Box {
@@ -11,7 +12,7 @@ export interface Box {
 }
 
 export function toPath(stroke: Stroke): Path {
-  return stroke.points.map(({ x, y }) => ({ x, y }));
+  return stroke.points.map((p) => ({ x: p.x, y: p.y })); // the same points without their times
 }
 
 function dist(a: Point, b: Point): number {
@@ -48,10 +49,11 @@ export function distance(p: Point, paths: Path[]): number {
 
 /**
  * Length of the parts of `path` that are within distance d of a path in
- * `others`. The path is cut into pieces no longer than `step`; a piece counts
+ * `others`. The path is cut into pieces no longer than MEASURE_STEP units; a piece counts
  * when its midpoint is within d.
  */
-export function lengthWithin(path: Path, others: Path[], d: number, step = 4): number {
+export function lengthWithin(path: Path, others: Path[], d: number): number {
+  const step = MEASURE_STEP;
   let total = 0;
   for (let i = 1; i < path.length; i++) {
     const a = path[i - 1];
@@ -82,17 +84,41 @@ export function boundingBox(paths: Path[]): Box {
   return box;
 }
 
+/** The longer of the box's width and height. */
+export function longerSide(box: Box): number {
+  return Math.max(box.maxX - box.minX, box.maxY - box.minY);
+}
+
+/**
+ * Lays paths over a target box by width and height separately: the left edge
+ * of `box` goes to the target's left edge, its right edge to the target's
+ * right edge, and the same for top and bottom. Unlike boxFit, this can
+ * stretch a drawing, for example a rectangle into a square.
+ */
+export function stretchOnto(paths: Path[], box: Box, target: Box): Path[] {
+  const sx = (target.maxX - target.minX) / (box.maxX - box.minX);
+  const sy = (target.maxY - target.minY) / (box.maxY - box.minY);
+  return paths.map((path) =>
+    path.map((p) => ({
+      x: target.minX + (p.x - box.minX) * sx,
+      y: target.minY + (p.y - box.minY) * sy,
+    })),
+  );
+}
+
 export function diagonal(box: Box): number {
   return Math.hypot(box.maxX - box.minX, box.maxY - box.minY);
 }
 
 /** The move and uniform scale that lay `box` over `target`: centres together, longer sides equal. */
 export function boxFit(box: Box, target: Box): Fit {
-  const longer = Math.max(box.maxX - box.minX, box.maxY - box.minY);
-  const targetLonger = Math.max(target.maxX - target.minX, target.maxY - target.minY);
-  const scale = longer > 0 ? targetLonger / longer : 1;
+  const longer = longerSide(box);
+  let scale = 1; // a single point cannot be scaled; it is only moved
+  if (longer > 0) {
+    scale = longerSide(target) / longer;
+  }
   return {
-    scale,
+    scale: scale,
     dx: (target.minX + target.maxX) / 2 - ((box.minX + box.maxX) / 2) * scale,
     dy: (target.minY + target.maxY) / 2 - ((box.minY + box.maxY) / 2) * scale,
   };
@@ -112,10 +138,16 @@ export function trimmedBox(points: Point[], trim: number): Box {
 
 export const IDENTITY: Fit = { scale: 1, dx: 0, dy: 0 };
 
-export const apply = (fit: Fit, p: Point): Point => ({ x: p.x * fit.scale + fit.dx, y: p.y * fit.scale + fit.dy });
-export const applyAll = (fit: Fit, paths: Path[]): Path[] => paths.map((path) => path.map((p) => apply(fit, p)));
+export function apply(fit: Fit, p: Point): Point {
+  return { x: p.x * fit.scale + fit.dx, y: p.y * fit.scale + fit.dy };
+}
+export function applyAll(fit: Fit, paths: Path[]): Path[] {
+  return paths.map((path) => path.map((p) => apply(fit, p)));
+}
 /** The Fit that undoes `fit`. */
-export const inverse = (fit: Fit): Fit => ({ scale: 1 / fit.scale, dx: -fit.dx / fit.scale, dy: -fit.dy / fit.scale });
+export function inverse(fit: Fit): Fit {
+  return { scale: 1 / fit.scale, dx: -fit.dx / fit.scale, dy: -fit.dy / fit.scale };
+}
 
 /** Points along the paths, no more than `step` apart. */
 export function sample(paths: Path[], step: number): Point[] {
@@ -219,4 +251,81 @@ export function refineFit(
     fit = next;
   }
   return fit;
+}
+
+/** The smallest distance between any point of path a and any line of path b. */
+function pathGap(a: Path, b: Path): number {
+  let best = Infinity;
+  for (const p of a) {
+    const d = distance(p, [b]);
+    if (d < best) {
+      best = d;
+    }
+  }
+  return best;
+}
+
+/**
+ * Splits the strokes into groups of strokes that touch or nearly touch.
+ * Two strokes are in the same group when they come within `gap` units of
+ * each other, directly or through other strokes of the group. For example a
+ * square drawn as four separate sides is one group, and a line drawn far away
+ * from it is a second group.
+ *
+ * Returns the groups, each a list of paths.
+ */
+export function strokeGroups(paths: Path[], gap: number): Path[][] {
+  // groupOf[i] is the group number of stroke i. Every stroke starts alone.
+  const groupOf: number[] = [];
+  for (let i = 0; i < paths.length; i++) {
+    groupOf.push(i);
+  }
+
+  // Join two groups: every stroke of group `from` moves to group `to`.
+  const join = (from: number, to: number) => {
+    for (let i = 0; i < groupOf.length; i++) {
+      if (groupOf[i] === from) {
+        groupOf[i] = to;
+      }
+    }
+  };
+
+  for (let i = 0; i < paths.length; i++) {
+    for (let j = i + 1; j < paths.length; j++) {
+      const close = pathGap(paths[i], paths[j]) <= gap || pathGap(paths[j], paths[i]) <= gap;
+      if (close && groupOf[i] !== groupOf[j]) {
+        join(groupOf[j], groupOf[i]);
+      }
+    }
+  }
+
+  // Collect the strokes of each group number into a list.
+  const byNumber = new Map<number, Path[]>();
+  for (let i = 0; i < paths.length; i++) {
+    const number = groupOf[i];
+    let group = byNumber.get(number);
+    if (group === undefined) {
+      group = [];
+      byNumber.set(number, group);
+    }
+    group.push(paths[i]);
+  }
+  return Array.from(byNumber.values());
+}
+
+/** The group with the most line in it (the longest total length). */
+export function biggestGroup(groups: Path[][]): Path[] {
+  let best: Path[] = [];
+  let bestLength = -1;
+  for (const group of groups) {
+    let total = 0;
+    for (const path of group) {
+      total += length(path);
+    }
+    if (total > bestLength) {
+      best = group;
+      bestLength = total;
+    }
+  }
+  return best;
 }

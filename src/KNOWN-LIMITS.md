@@ -32,23 +32,29 @@ Decided on November 16, 2026, after running the paper prototype with a member of
 | A practice sticker ends the lesson. | No reward is specified. |
 | A moving arrow and a picture of the shape at the dots. | FR-LRN-005 and FR-LRN-027 show only the endpoints. |
 
-Liked in the session but not changed, because the SRS or the POC plan says otherwise: the child's first name on the avatar (BR-001), and the weekly page with stickers for the days practised (the progress summary is outside the POC).
+Liked in the session but not changed, because the SRS or the POC plan says otherwise: the child's first name on the avatar (BR-001; the POC now has no avatars at all), and the weekly page with stickers for the days practised (the progress summary is outside the POC).
+
+## Left out of the POC on purpose
+
+The POC shows that the lessons can be judged and run. Everything else waits until after it. The full version, with these parts built, is kept on the `POC-extra` branch.
+
+| Left out | Requirement | Where it comes back |
+| --- | --- | --- |
+| Child profiles and avatars | BR-001, M15 | PH-1, with adult accounts |
+| The adult check (the sum) | SAF-RAY-001, SAF-RAY-008, M14 | PH-1. Until then anyone holding the tablet can leave a lesson, answer the go-back card or change the settings. |
+| Saved attempt and lesson records, and the practice history screen | FR-REC-001 to FR-REC-010, M10, M23 | PH-1, with the hosted database |
+| Saved settings | BR-008, SAF-RAY-008 | PH-1. In the POC the adult's values last until the page is reloaded. |
 
 ## To close before a child uses the app
 
 | Limit | What happens | Requirement | What it would take |
 | --- | --- | --- | --- |
-| The browser's back button leaves a lesson | A child can swipe or tap back out of a lesson with no adult check. The lesson is saved as unfinished. | SAF-RAY-001, CON-007 | Catch the back navigation on the lesson screen and ask for the adult check first. |
-| Direct links skip the adult check | Typing `/grown-ups`, `/records` or `/lessons/square` into the address bar opens the screen with no check. | SAF-RAY-001, SAF-RAY-008 | Remember, for the session, that the adult check was passed, and send anyone without it back to "Who's practising?". Becomes moot once there are accounts. |
 | The demo panel shows a result | The live result and counters are on the lesson screen. | BR-006, FR-LRN-022 | Hide it by default, or remove it. |
 
 ## To close before Revision 0
 
 | Limit | What happens | Requirement | What it would take |
 | --- | --- | --- | --- |
-| Nothing can be deleted | A child, or a child's records, cannot be removed except by clearing the browser's site data. | Open issue OI-02 (who may delete records) | Decide OI-02, then add delete to the Storage module and the grown-ups area. |
-| Everything is saved in one browser | A child's settings and records exist only on the device and browser they were made in. | Module Guide (hosted database) | Replace the inside of `lib/storage.ts` with the database. |
-| A record that cannot be saved is lost | If the browser's storage is full, the lesson carries on and the demo panel counts the records not saved, but they are not kept for later. | SAF-RAY-003 | Build the Connection Recovery module (M24). |
 | Switching apps ends the lesson | If the tablet goes to another app for longer than the lesson's idle end, the lesson ends for inactivity on return. | SAF-RAY-009 | Decide whether time in the background counts. If not, pause the idle clocks while the page is hidden. |
 | The helper's voice is the browser's own | The lines are spoken by whatever voice the device has, which differs between devices and can sound flat. The chime and the tune are made by the browser too. | NFR-UX-010, NFR-UX-002 | Record or generate one clip per line. Try it on the target tablet: sound has only been checked in an automated run, by counting what the page asked to play. |
 | No notice for an unsupported device | Any device and browser can start a lesson. | SAF-RAY-002 | Decide `SUPPORTED_DEVICES`, then check it on the Lesson ready screen. |

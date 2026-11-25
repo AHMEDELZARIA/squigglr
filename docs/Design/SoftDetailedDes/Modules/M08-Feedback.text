@@ -40,6 +40,9 @@ None.
 kind of feedback is given after an attempt. This module decides only what that
 feedback says, shows and plays, so the wording, images, colours and sounds can
 change without a change to the rules that pick them (LC-005).
+\item When an attempt gets a hint (FR-LRN-024), the caller gives the
+$\mathit{fillIn}$ feedback, which praises the try and asks the child to finish
+where the drawing is missing.
 \item On an attempt that does not pass, the caller gives the
 $\mathit{keepTrying}$ feedback, which acknowledges the child's effort, before
 the feedback on any difficulty (NFR-UX-016).

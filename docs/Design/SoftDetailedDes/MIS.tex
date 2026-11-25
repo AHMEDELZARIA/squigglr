@@ -112,6 +112,11 @@ and added his AI disclosure (\#265)\\
 14 November 2026 & Rayan Nasrallah & Final QA: removed the reflection
 template, defined PixelT, wrote the team AI disclosure, and fixed consistency
 and formatting across the creative drawing modules (\#355)\\
+25 November 2026 & Rayan Nasrallah & Brought the MIS in line with the POC:
+the hint in the Attempt Module, the start at the adult's chosen stage after the
+demonstration, how a drawing with no guide is placed and judged, the new
+Geometry access programs, and the difficulties \emph{tooSmall} and
+\emph{stretched} and the feedback \emph{fillIn} (\#406)\\
 \bottomrule
 \end{tabularx}
 }
@@ -261,10 +266,12 @@ DrawingStageT & $\{T, E, I\}$, the stages at which the child draws (the set
 $A$ of SRS Section~9.2) & \mref{mCatalogue}\\
 LessonIdT & Identifies one lesson in the catalogue & \mref{mCatalogue}\\
 DifficultyT & tuple of $(\mathit{kind}: \{\mathit{missedPart},
-\mathit{missedEndpoint}, \mathit{offFigure}\}, \mathit{index}: \mathbb{N}_0)$,
-one predefined difficulty (BR-007): a required part or endpoint of the figure
-that was not drawn, given by its index in the figure, or strokes drawn away
-from the figure (index 0) & \mref{mCatalogue}\\
+\mathit{missedEndpoint}, \mathit{offFigure}, \mathit{tooSmall},
+\mathit{stretched}\}, \mathit{index}: \mathbb{N}_0)$, one predefined difficulty
+(BR-007): a required part or endpoint of the figure that was not drawn, given
+by its index in the figure; or, with index 0, strokes drawn away from the
+figure, a drawing too small to be the figure, or a drawing that has every part
+only when stretched (SRS Section~9.2, stage $I$) & \mref{mCatalogue}\\
 FigureT & tuple of $(\mathit{parts}: \text{seq of PathT},
 \mathit{endpoints}: \text{seq of PointT})$, the required parts and endpoints of
 a lesson's figure (SRS Table~\ref{tab:lesson-catalogue}) & \mref{mCatalogue}\\
@@ -285,8 +292,8 @@ ObservedT & tuple of $(\mathit{difficulty}: \text{DifficultyT},
 attempt and whether the child corrected it later in the same attempt
 (FR-REC-003) & \mref{mAttempt}\\
 FeedbackKindT & $\{\mathit{stagePassed},$ $\mathit{lessonComplete},$
-$\mathit{keepTrying},$ $\mathit{notEvaluable},$ $\mathit{checkIn},$
-$\mathit{lessonEnded}\}$, the kinds of message the child can be given during a
+$\mathit{keepTrying},$ $\mathit{fillIn},$ $\mathit{notEvaluable},$
+$\mathit{checkIn},$ $\mathit{lessonEnded}\}$, the kinds of message the child can be given during a
 guided lesson, other than the feedback on a predefined difficulty &
 \mref{mFeedback}\\
 FeedbackT & tuple of $(\mathit{message}: \text{string}, \mathit{image}:

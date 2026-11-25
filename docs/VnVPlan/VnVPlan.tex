@@ -174,6 +174,11 @@ through an attempt; the SRS verification counts 143 requirements (\#290).\\
 10 November 2026 & Moustafa Moustafa & Set the year of the MG and MIS
 references to 2026, since both are first submitted in November 2026
 (\#302).\\
+25 November 2026 & Rayan Nasrallah & Brought the tests in line with the POC:
+the hint in T-LRN-006, the tap in T-LRN-008, the drawings with no guide in
+T-LRN-009, the picture and the arrow in T-LRN-004, the practice reward
+(FR-LRN-040) in T-LRN-019, the phases of the records and the creative space,
+and the POC date (\#406).\\
 \end{longtable}
 }
 \addtocounter{table}{-1}
@@ -224,7 +229,7 @@ Parameterized test & One test with a table of cases, where each case has a
 label and its own expected output, so it can be cited on its own, for
 example \texttt{T-LRN-005 (c)}. \\
 PH-1, PH-2, PH-3 & The SRS delivery phases: the proof-of-concept demo
-(23 November 2026), Rev~0 (1 February 2027) and the final demo
+(25 November 2026), Rev~0 (1 February 2027) and the final demo
 (15 March 2027). \\
 PR & Pull request: a proposed change to the repository, reviewed before it
 merges. \\
@@ -1134,12 +1139,9 @@ and FR-REC-003 to FR-REC-010).
 history with undo, redo and restore (FR-CRT-007, FR-CRT-008, FR-CRT-011,
 FR-CRT-012, FR-CRT-014, FR-CRT-017 to FR-CRT-021 and FR-CRT-024).
 \end{itemize}
-PH-1 inspects INS-EVAL and INS-LRN for the PH-1 code. INS-REC starts in
-PH-2, when FR-REC-004 to FR-REC-010 are built; in PH-1, FR-REC-001 and
-FR-REC-003 rely on PR review and on T-REC-001 and T-REC-003. INS-CRT
-also starts in PH-2, when FR-CRT-014, FR-CRT-019, FR-CRT-021 and
-FR-CRT-024 complete refinement and restore; in PH-1, the creative
-drawing code relies on PR review and on the T-CRT tests.
+PH-1 inspects INS-EVAL and INS-LRN for the PH-1 code. The POC leaves out
+the attempt records and the creative space, so INS-REC and INS-CRT start in
+PH-2, when these are first built.
 PH-2 inspects all four in full, with items 11 and 12, because the MG and
 MIS are done on 18 January 2027. PH-3 inspects only the code changed since
 the commit of the PH-2 inspection.
@@ -1378,7 +1380,7 @@ SRS UC-005 and Section~9.2, where the child keeps practising while a
 suggestion waits. Unless a case says otherwise, an adult answers every
 suggestion before the next attempt (T-LRN-016). FR-LRN-001 to FR-LRN-007, FR-LRN-010, FR-LRN-011,
 FR-LRN-013, FR-LRN-015, FR-LRN-016, FR-LRN-022 to FR-LRN-029, FR-LRN-032,
-FR-LRN-038 and FR-LRN-039 are due in PH-1, and the rest in PH-2. Each test first runs in the phase of the
+FR-LRN-038 to FR-LRN-040 are due in PH-1, and the rest in PH-2. Each test first runs in the phase of the
 requirements it covers. After that, its automatic parts run in CI on every
 PR, unless the test names a narrower trigger, and its manual parts run at
 the milestones the test names. The tests try to cause the failures in Hazard
@@ -1623,9 +1625,14 @@ cases are in Table~\ref{tab:t-lrn-004}.
 \midrule
 a & T & The complete outline is visible & The lesson's good drawing is
 accepted and evaluated\\
-b & E & The lesson's start and end points are visible; the outline is not &
+b & E & The lesson's start and end points are visible; the outline is not
+on the drawing area; before the first stroke, an arrow goes along one part of
+the figure per trip, a different part on each trip & The same as (a); the
+arrow is gone after the first stroke\\
+c & I & Neither the outline nor the points are visible on the drawing area &
 The same as (a)\\
-c & I & Neither the outline nor the points are visible & The same as (a)\\
+d & T, E, I & A small picture of the figure is shown beside the drawing area,
+outside it & The same as (a)\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1636,7 +1643,8 @@ Table~\ref{tab:t-lrn-004}; the test passes when every case gives it.
 Test Case Derivation: (a), (b) and (c) are the fit criteria of each stage's
 requirements: FR-LRN-004 and FR-LRN-026 at T, FR-LRN-005, FR-LRN-027 and
 FR-LRN-028 at E, and FR-LRN-006 and FR-LRN-029 at I, each with a stylus attempt
-that is accepted.
+that is accepted. (d) is the picture of FR-LRN-006, which must not lie on the
+drawing area, where it could be traced.
 
 How test will be performed: before drawing, Playwright compares a
 screenshot of the empty drawing area with a reference screenshot for each
@@ -1739,8 +1747,17 @@ d & \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, then no input
 & The attempt ends as passed at the lift of the fourth stroke, with no
 wait; stage E\\
 e & \texttt{square-\allowbreak{}missing-\allowbreak{}side.json}, then no
-input & No outcome before \texttt{ATTEMPT\_IDLE}; at \texttt{ATTEMPT\_IDLE}
-after the last stroke, one incomplete attempt, not passed\\
+input & No outcome before \texttt{ATTEMPT\_IDLE}. At \texttt{ATTEMPT\_IDLE}
+after the last stroke, a hint: the missing side is shown, the strokes stay and
+there is still no outcome. At \texttt{ATTEMPT\_IDLE} after the hint, with no
+new stroke, one incomplete attempt, not passed\\
+f & The input of (e) up to the hint, then the missing side & The attempt
+ends as passed at the lift of the new stroke, and the missed part is recorded
+as corrected\\
+g & The input of (e) up to the hint, then each time a short stroke away from
+the missing side and no input & One more hint after each new stroke, up to
+\texttt{MAX\_HINTS} in all; at the next \texttt{ATTEMPT\_IDLE}, one incomplete
+attempt, not passed\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1753,8 +1770,9 @@ the complete figure, not two''). In SRS Section~9.2, a lift closes a
 stroke, not the attempt. (c) is the H-AHM-001 cause in which ``a stylus
 lift is mistaken for the end of an attempt''. (c) also checks that the
 strokes are evaluated at the first lift (the fit criterion of FR-LRN-038). (d) is the fit criterion of FR-LRN-039, a
-passing figure ends at its last lift, and (e) that of FR-LRN-024, a
-non-passing one ends at \texttt{ATTEMPT\_IDLE}.
+passing figure ends at its last lift. (e) to (g) are that of FR-LRN-024: a
+missing part gets a hint before the attempt ends, a second hint needs a new
+stroke, and no attempt gets more than \texttt{MAX\_HINTS}.
 
 How test will be performed: Playwright counts the attempt records and the
 evaluation results.
@@ -1847,6 +1865,8 @@ and (c), then 40 & The lesson continues through (a) to (c) and ends only
 after the final 40, the sixth evaluable attempt\\
 e & 8 & The input of (b), then \texttt{circle.json} &
 \texttt{circle.json} is the first evaluable attempt (count 1) and passes\\
+f & 8 & \texttt{tap.json} (one tap, shorter in total than
+\texttt{MIN\_DRAWN}) & As (a)\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1855,7 +1875,8 @@ Output: the expected output of each case is in its row of
 Table~\ref{tab:t-lrn-008}; the test passes when every case gives it.
 
 Test Case Derivation: (a) to (c) are the three inputs the fit criterion
-names. (d) tries to make invalid input count toward the limit (H-AHM-006).
+names. (f) is the shortest input of SRS Section~9.2, which is invalid and not a
+failed attempt. (d) tries to make invalid input count toward the limit (H-AHM-006).
 (e) checks that invalid input leaves no trace. Input that cannot be mapped
 to the drawing area is covered by T-SAF-010.
 
@@ -1899,6 +1920,13 @@ e & Line & \texttt{line-\allowbreak{}wrong-\allowbreak{}end.json} (ends
 well away from the end point) & Incomplete\\
 f & Each & One complete and one missing-part drawing made by hand on the
 test iPad by each of two team members & The class the drawer intended\\
+g & Square, at I only & \texttt{square-\allowbreak{}small.json} (a neat
+square whose side is less than \texttt{MIN\_DRAW\_SCALE} of the figure's) &
+Incomplete, with the difficulty \emph{tooSmall}\\
+h & Square, at I only & \texttt{rectangle.json} (a neat rectangle twice as
+wide as it is tall) & Incomplete, with the difficulty \emph{stretched}\\
+i & Square, at I only & \texttt{square-\allowbreak{}stray-\allowbreak{}dot.json}
+(the good drawing with one dot away from it) & Complete\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1911,7 +1939,9 @@ examples with a missing side, segment or required endpoint. (b) is the
 high-scoring incomplete example of H-AHM-004: its three accurate sides
 score at least \texttt{CAL\_INCOMPLETE\_MIN}, so its result is recorded
 and must not change the class. (f) is the fit criterion's ``adult-made''
-examples.
+examples. (g) to (i) run only at I, where the drawing is first placed onto the
+figure (SRS Section~9.2): a speck and a stretched shape are incomplete however
+neat they are, and a stray dot does not move the drawing off the figure.
 
 How test will be performed: Vitest calls the evaluation function for each
 file, lesson and stage. Playwright replays (a) to (e) at each stage. (f) is
@@ -2539,7 +2569,8 @@ and (c) with \texttt{circle-\allowbreak{}fail.json} and
 Purpose: Squigglr is a practice tool, so its lesson messages must talk
 about the drawing and never label, diagnose or compare the child.
 
-Type: Static (inspection) and dynamic, automatic. Covers FR-LRN-022.
+Type: Static (inspection) and dynamic, automatic. Covers FR-LRN-022 and
+FR-LRN-040.
 
 Initial State: the catalogue feedback text at the revision, plus every
 lesson-end message: ``every stage passed'', ``ended at
@@ -2554,13 +2585,15 @@ using \texttt{forbidden-\allowbreak{}terms.txt} and three questions: does
 the message refer to the task, stage or strokes? Does it label or diagnose
 the child? Does it compare the child with others? (b) Playwright collects
 every text shown during the runs of T-LRN-011 to T-LRN-020 and searches it
-for the terms.
+for the terms. (c) Playwright ends one lesson at each lesson ending listed
+above and takes the reward shown at the end.
 
 Output: (a) every message refers to the task, stage or strokes (for
 example ``the top side is missing''), and none uses a listed term, an
 ability label, a diagnosis or a comparison with other children. (b) No
 match. A sentence that says a view is not an assessment or diagnosis, as
-SAF-RAY-004 requires for summaries, is not a finding.
+SAF-RAY-004 requires for summaries, is not a finding. (c) The same reward is
+shown at every ending, with no result in it (FR-LRN-040).
 
 Test Case Derivation: the fit criterion (inspect all feedback and
 completion outcomes using prepared attempts). The terms come from:
@@ -3801,8 +3834,7 @@ the shift stub, then reopens each in a new browser context.
 \label{sec:rec-tests}
 
 These tests cover the ten attempt record requirements in SRS Section~9.4
-(FR-REC-001 to FR-REC-010). FR-REC-001 and FR-REC-003 are due in PH-1, and
-the rest in PH-2. Each test runs end to end in Playwright. The attempt and
+(FR-REC-001 to FR-REC-010). All ten are due in PH-2. Each test runs end to end in Playwright. The attempt and
 lesson records are read from the test database after each run, as in
 T-PERF-005. The tests try to cause the failures in Hazard Analysis rows
 H-MUH-003, H-MUH-004 and H-MUH-007: a record that hides guidance or
@@ -5592,7 +5624,7 @@ any change to our code, so this checks every feature at each milestone.
 Type: Dynamic, manual. Covers NFR-PERF-009.
 
 Initial State: the release build at each milestone: the proof-of-concept
-demo (PH-1, 23 November 2026), Rev~0 (PH-2, 1 February 2027) and the final
+demo (PH-1, 25 November 2026), Rev~0 (PH-2, 1 February 2027) and the final
 demo (PH-3, 15 March 2027).
 
 Input: on the iPad and on each other combination in
@@ -6779,7 +6811,7 @@ FR-LRN-002 & T-LRN-001, T-LRN-002, T-LRN-020\\
 FR-LRN-003 & T-LRN-003, T-REC-006 (a)\\
 FR-LRN-004 & T-LRN-004 (a), T-LRN-010 (a)\\
 FR-LRN-005 & T-LRN-004 (b), T-LRN-010 (b)\\
-FR-LRN-006 & T-LRN-004 (c), T-LRN-010 (c)\\
+FR-LRN-006 & T-LRN-004 (c), (d), T-LRN-010 (c)\\
 FR-LRN-007 & T-LRN-005, T-REC-002, T-SAF-009, T-SAF-010, INS-EVAL\\
 FR-LRN-008 & T-LRN-006, T-SAF-009, INS-EVAL\\
 FR-LRN-009 & T-LRN-007, T-LRN-021, T-REC-005, INS-EVAL, INS-LRN\\
@@ -6796,6 +6828,7 @@ FR-LRN-019 & T-LRN-016, T-LRN-021, INS-LRN\\
 FR-LRN-020 & T-LRN-017, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-021 & T-LRN-018, T-LRN-021, T-SAF-005, INS-LRN\\
 FR-LRN-022 & T-LRN-019 (inspection and automatic), T-UX-004, INS-EVAL\\
+FR-LRN-040 & T-LRN-019 (c)\\
 FR-LRN-023 & T-LRN-020, T-LRN-021, INS-LRN\\
 FR-LRN-024 & T-LRN-006, INS-LRN\\
 FR-LRN-025 & T-LRN-003, T-REC-006 (a)\\
@@ -7039,7 +7072,7 @@ only has to change in one place.
 The constants in Table~\ref{tab:symb-nfr} are used by the nonfunctional tests. The SRS leaves the
 timing thresholds to this plan; their values are set by measurement rather
 than chosen in advance, so each entry says how and when its value is set. Milestones use the SRS
-phase names: PH-1 is the proof-of-concept demo (23 November 2026), PH-2 is
+phase names: PH-1 is the proof-of-concept demo (25 November 2026), PH-2 is
 Rev~0 (1 February 2027) and PH-3 is the final demo (15 March 2027). Each
 constant includes its unit, so the tests name the constant alone (for
 example, ``within \texttt{FEEDBACK\_LATENCY\_MAX}'').
@@ -7170,6 +7203,9 @@ in PH-1, and stored in the repository under \texttt{tests/fixtures/}: \texttt{li
 \texttt{square-\allowbreak{}4-\allowbreak{}strokes.json}, \texttt{circle-\allowbreak{}near-\allowbreak{}miss.json},
 \texttt{circle-\allowbreak{}fail.json}, \texttt{square-\allowbreak{}missing-\allowbreak{}side.json},
 \texttt{overlap-\allowbreak{}2-\allowbreak{}strokes.json}, \texttt{house.json} and \texttt{sun.json},
+the stage~I drawings \texttt{square-\allowbreak{}small.json},
+\texttt{rectangle.json} and \texttt{square-\allowbreak{}stray-\allowbreak{}dot.json},
+and \texttt{tap.json},
 plus the probe list \texttt{injection-\allowbreak{}probes.txt}. Each file holds the
 pointer events (position, pressure, time) for one attempt.
 
@@ -7257,7 +7293,7 @@ so a visibly distorted shape still fails.\\
 \texttt{REFINE\_TOLERANCE} & The SRS constant (TBD in SRS Section~4.2): the
 largest distance, both ways, between a refined stroke and its original.
 \emph{Unit:} CSS pixels on \texttt{TEST\_CANVAS}. \emph{How and when it is
-set:} by the team in PH-1, before the first run of T-CRT-014, from adult-made
+set:} by the team in PH-2, before the first run of T-CRT-014, from adult-made
 drawings only (SRS BR-009). A script makes copies of each drawing of the
 supported set in which every point is moved by a smooth random displacement
 of at most $d$, for $d$ = 2, 4, 6, 8, 12 and 16 CSS pixels; the copies do not

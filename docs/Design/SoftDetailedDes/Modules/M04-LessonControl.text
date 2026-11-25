@@ -61,6 +61,8 @@ The state follows the state $\sigma$ of SRS Section~9.2:
 the Attempt Record Module (\mref{mRecord}).
 \item $\ell$: LessonIdT, $p$: LearnerIdT and $l$: StageT, the lesson, the
 learner and the current stage.
+\item $l_0$: DrawingStageT, the starting stage the adult chose, where practice
+begins after the demonstration (UC-003, UC-004).
 \item $q$: StatusT, initially $\mathit{noLesson}$.
 \item $n_f$, $n_a$, $k$: $\mathbb{N}_0$, the failed attempts, the evaluable
 attempts and the current failure streak at this stage.
@@ -110,19 +112,23 @@ In brief:
 Input Device Module (SAF-RAY-002).
 \item \texttt{select} runs the adult check of the Adult Access Module for
 $\mathit{lessonChoice}$, ends any lesson in progress as unfinished, reads the
-learner's settings, starts a new lesson record, and sets $a$, $p$ and
-$(\ell, l)$ with all stage counts, the history, the suggestion and the
+learner's settings, starts a new lesson record, sets $a$, $p$, $\ell$ and
+$l_0$, and sets $l$ to $D$, with all stage counts, the history, the suggestion and the
 extension reset (AdultSelect; FR-LRN-016, FR-LRN-018, SAF-RAY-001). It raises \texttt{notOwner} if $p$ is not one of $a$'s
 learners, and \texttt{unavailable} if the learner's settings cannot be read.
-\item \texttt{beginPractice} moves from stage $D$ to stage $T$ and starts the
-first attempt.
+\item \texttt{beginPractice} moves from stage $D$ to the starting stage $l_0$
+and starts the first attempt. The demonstration is shown first at every start,
+also when the adult chose a later stage (SRS UC-003 step~1).
 \item \texttt{addStroke} gives the stroke to the current attempt. An attempt
 ends at a stylus lift only when it passes (FR-LRN-039). Then
 \texttt{addStroke} saves the attempt record, updates the counts, and moves to
 the next stage or completes the lesson (FR-LRN-023). The report gives the
 feedback for what happened.
-\item \texttt{tick} lets an open attempt end as not passed or invalid after
-\texttt{ATTEMPT\_IDLE} (FR-LRN-024). It then saves the attempt record and updates
+\item \texttt{tick} calls \texttt{checkIdle} of the current attempt. When it
+gives a hint, the report gives $\mathit{fillIn}$ and the missing parts and
+endpoints, and the attempt stays open (FR-LRN-024, SAF-MOU-001). Otherwise an
+open attempt can end as not passed or invalid after \texttt{ATTEMPT\_IDLE}
+(FR-LRN-024). It then saves the attempt record and updates
 the counts, except for an attempt that ends as invalid, which is neither saved
 nor counted (FR-LRN-010, FR-LRN-032). After a counted attempt, it applies the
 first of these that holds, in this order: the end-at-limit rule ends the lesson (FR-LRN-021, SAF-RAY-005); the extension rule
@@ -168,7 +174,7 @@ transition of the SRS table, so that no transition is left without one.
 Adult selects lesson / starting level & \texttt{select}\\
 Begin practice after demonstration & \texttt{beginPractice}\\
 Finalize evaluable attempt & \texttt{addStroke} (a pass at a stylus lift) or
-\texttt{tick} (after \texttt{ATTEMPT\_IDLE})\\
+\texttt{tick} (after \texttt{ATTEMPT\_IDLE}, when no hint is given)\\
 Interrupted or invalid input & \texttt{tick} (an invalid attempt) or
 \texttt{stop} (an interruption)\\
 Offer suggestion & \texttt{tick}, after the attempt ends at

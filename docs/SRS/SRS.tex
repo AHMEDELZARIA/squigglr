@@ -260,6 +260,13 @@ Unlikely Changes heading with its table (\#289).\\
 11 November 2026 & Muhammad Huzaifah & Brought the open issues up to date:
 closed OI-06 and OI-08 with what settled them, gave the seven open issues a
 current status and target date, and removed dates repeated elsewhere (\#288).\\
+25 November 2026 & Rayan Nasrallah & Brought the SRS in line with the POC:
+the hint before an attempt ends (FR-LRN-024, new constant \texttt{MAX\_HINTS}),
+the picture of the figure at every stage and the arrow at the endpoints
+(FR-LRN-005, 006, 027), the new practice reward FR-LRN-040, what makes an
+attempt valid (\texttt{MIN\_DRAWN}) and how a drawing with no guide is placed
+(\texttt{MIN\_DRAW\_SCALE}), the POC lessons and date, and the phases of the
+creative space, records, the adult check and SAF-MOU-001 (\#406).\\
 \end{longtable}
 
 ~\\
@@ -321,7 +328,7 @@ renumbered. Each requirement contains a short title, one testable ``shall''
 statement, rationale where needed, a fit criterion, a priority, a phase,
 evidence sources and links to related use cases, requirements or hazards.
 \emph{Must}, \emph{Should} and \emph{Could} identify delivery priority. Delivery
-phases are \emph{PH-1} (POC demo: Nov.~23, 2026), \emph{PH-2} (Rev~0: Feb.~1,
+phases are \emph{PH-1} (POC demo: Nov.~25, 2026), \emph{PH-2} (Rev~0: Feb.~1,
 2027), \emph{PH-3} (final demo: Mar.~15, 2027), and \emph{Future}. These phase
 identifiers are distinct from the interview participant codes; the
 requirement-by-phase plan belongs in Section~\ref{sec:tasks}. Symbolic constants
@@ -1344,6 +1351,21 @@ calibrates its prepared attempts. \emph{Trace:} G.2, FR-LRN-011, FR-LRN-013.\\
 figure that must be drawn for the part to count as present. \emph{Unit:}
 percent. \emph{Value:} proposed 90; confirmed with \texttt{TRACE\_TOL}.
 \emph{Trace:} G.2, FR-LRN-011.\\
+\addlinespace
+\texttt{MIN\_DRAWN} & Smallest total length of an attempt's strokes for the
+attempt to be valid; a shorter attempt, such as a tap, is not evaluated.
+\emph{Unit:} percent of the figure's size (the diagonal of its bounding box).
+\emph{Value:} TBD; confirmed with \texttt{TRACE\_TOL}. \emph{Trace:}
+FR-LRN-010, FR-LRN-032, Section~\ref{sec:fr-formal}.\\
+\addlinespace
+\texttt{MIN\_DRAW\_SCALE} & At the independent stage, the smallest a drawing may
+be and still be complete: its longer side as a share of the figure's longer
+side. \emph{Unit:} percent. \emph{Value:} TBD; confirmed with
+\texttt{TRACE\_TOL}. \emph{Trace:} FR-LRN-011, Section~\ref{sec:fr-formal}.\\
+\addlinespace
+\texttt{MAX\_HINTS} & Most hints one attempt gives before it ends as not
+passed. \emph{Unit:} hints. \emph{Value:} TBD; fixed by the team.
+\emph{Trace:} FR-LRN-024, SAF-MOU-001.\\
 \addlinespace
 \texttt{DIFFICULTY\_STREAK} & Consecutive unsuccessful attempts before Squigglr
 may suggest returning to an earlier stage. \emph{Unit:} failed attempts.
@@ -2891,13 +2913,17 @@ BR-008.} \reqfield{Sources}{\goalref{3}; \mbox{SRC-008}.}
   \item Squigglr shows the demonstration, which is not an attempt
   (\mbox{\reqref{FR-LRN-003}}, \mbox{\reqref{FR-LRN-025}}), then moves to the starting stage.
   \item Squigglr shows the stage's guidance: the full outline, the endpoints
-  only, or no guide (\mbox{\reqref{FR-LRN-004}}, \mbox{\reqref{FR-LRN-005}}, \mbox{\reqref{FR-LRN-006}}, \mbox{\reqref{FR-LRN-027}}).
+  only, or no guide, and beside the drawing area a small picture of the
+  figure (\mbox{\reqref{FR-LRN-004}}, \mbox{\reqref{FR-LRN-005}}, \mbox{\reqref{FR-LRN-006}}, \mbox{\reqref{FR-LRN-027}}).
   \item The child draws one or more strokes. Each time the child lifts the
   stylus, Squigglr checks the strokes so far; lifting the stylus alone does not
   end the attempt (\mbox{\reqref{FR-LRN-007}}, \mbox{\reqref{FR-LRN-008}}, \mbox{\reqref{FR-LRN-038}}).
   \item The attempt ends when the strokes so far are complete and meet
   \texttt{STAGE\_PASS}, or, if they do not, after \texttt{ATTEMPT\_IDLE} with
-  no input (\mbox{\reqref{FR-LRN-039}}, \mbox{\reqref{FR-LRN-024}}). Squigglr classifies it as complete or
+  no input. If a required part or endpoint is missing at that pause, Squigglr
+  first shows where, keeps the drawing and lets the child finish it, at most
+  \texttt{MAX\_HINTS} times in one attempt
+  (\mbox{\reqref{FR-LRN-039}}, \mbox{\reqref{FR-LRN-024}}). Squigglr classifies it as complete or
   incomplete and as assisted or independent, and passes it only if it is
   complete and meets \texttt{STAGE\_PASS}
   (\mbox{\reqref{FR-LRN-011}}--\mbox{\reqref{FR-LRN-013}}).
@@ -3257,16 +3283,26 @@ further input.}
 \end{srsrequirement}
 
 \begin{srsrequirement}{FR-LRN-024}{End an attempt that does not pass}
-  \reqshall{Squigglr shall end an attempt that has not passed as not passed
-after \texttt{ATTEMPT\_IDLE} with no input, and by no other event except an
-interruption (FR-LRN-009).} \reqrationale{Lines and shapes can take several
-strokes (FR-LRN-008), so a non-passing attempt waits for a pause longer than the
-child's usual pause between strokes. Children draw at different speeds, so the
-adult sets \texttt{ATTEMPT\_IDLE} for each child (BR-008).} \reqfit{For
-prepared attempts, verify that a two-stroke figure is not ended after its first
-stroke while the pause is shorter than \texttt{ATTEMPT\_IDLE}, and that a
-non-passing attempt ends as not passed at \texttt{ATTEMPT\_IDLE} after its last
-stroke.}
+  \reqshall{After \texttt{ATTEMPT\_IDLE} with no input on an attempt that has
+not passed, Squigglr shall either give a hint or end the attempt as not passed,
+and shall end it by no other event except an interruption (FR-LRN-009). A hint
+is given when a required part or endpoint is missing, the attempt has had fewer
+than \texttt{MAX\_HINTS} hints, and, after the first hint, the child has drawn
+since the last one. A hint shows where the drawing is missing (SAF-MOU-001),
+keeps the strokes already drawn and starts the pause again.}
+\reqrationale{Lines and shapes can take several strokes (FR-LRN-008), so a
+non-passing attempt waits for a pause longer than the child's usual pause
+between strokes. Children draw at different speeds, so the adult sets
+\texttt{ATTEMPT\_IDLE} for each child (BR-008). A child who stopped with one
+part missing can finish the same drawing instead of starting again, and the
+limit on hints keeps every attempt finite.} \reqfit{For prepared attempts,
+verify that a two-stroke figure is not ended after its first stroke while the
+pause is shorter than \texttt{ATTEMPT\_IDLE}; that an attempt with a part
+missing gets a hint at \texttt{ATTEMPT\_IDLE} and keeps its strokes; that no
+second hint is given when the child drew nothing after the first; that no more
+than \texttt{MAX\_HINTS} hints are given; and that a non-passing attempt with
+nothing missing, or with no hints left, ends as not passed at
+\texttt{ATTEMPT\_IDLE} after its last stroke or hint.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{2}; ASM-004; BR-008; \srcref{001}}
@@ -3404,9 +3440,15 @@ strokes are accepted into the attempt.}
 
 \begin{srsrequirement}{FR-LRN-005}{Endpoint-only stage: show the endpoints}
   \reqshall{In the endpoint-only stage, Squigglr shall show the lesson's
-specified start and end points.} \reqrationale{The middle drawing stage keeps
-the destination cues while it removes the outline.} \reqfit{For each lesson,
-enter the endpoint-only stage and verify that the relevant endpoints are shown.}
+specified start and end points and, until the child starts drawing, an arrow
+that moves along one required part at a time, from its start point to its end
+point, taking the next part on each trip.} \reqrationale{The middle drawing
+stage keeps the destination cues while it removes the outline. With dots alone,
+the child may not know which dot to go to next; one part per trip shows the
+order without showing the whole outline.} \reqfit{For each lesson, enter the
+endpoint-only stage and verify that the relevant endpoints are shown, that the
+arrow follows each required part in turn, and that it is gone once the child
+starts drawing.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
@@ -3415,9 +3457,11 @@ enter the endpoint-only stage and verify that the relevant endpoints are shown.}
 
 \begin{srsrequirement}{FR-LRN-027}{Endpoint-only stage: hide the outline}
   \reqshall{In the endpoint-only stage, Squigglr shall not display the lesson's
-reference outline.} \reqrationale{Removing the outline reduces visual
-assistance (G.2).} \reqfit{For each lesson, enter the endpoint-only stage and
-verify that no part of the reference outline is shown.}
+reference outline on the drawing area.} \reqrationale{Removing the outline
+reduces visual assistance (G.2). The small picture of the figure beside the
+drawing area (FR-LRN-006) reminds the child what to draw but does not show
+where.} \reqfit{For each lesson, enter the endpoint-only stage and verify that
+no part of the reference outline is shown on the drawing area.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{1}--\goalref{2}; \srcref{001}; \srcref{005}}
@@ -3438,10 +3482,14 @@ the strokes are accepted into the attempt.}
 
 \begin{srsrequirement}{FR-LRN-006}{Independent stage: no guides}
   \reqshall{In the independent stage, Squigglr shall display neither a tracing
-outline nor endpoint guides.} \reqrationale{The final stage needs to be
-distinguishable from assisted practice (G.2, G.6).} \reqfit{Enter the
-independent stage for each lesson; verify that neither an outline nor endpoint
-guides appear.}
+outline nor endpoint guides on the drawing area. At every drawing stage,
+Squigglr shall show a small picture of the figure beside the drawing area.}
+\reqrationale{The final stage needs to be distinguishable from assisted practice
+(G.2, G.6). The picture tells the child what to draw, not where: it is outside
+the drawing area and at a different size, so it cannot be traced.} \reqfit{Enter
+the independent stage for each lesson; verify that neither an outline nor
+endpoint guides appear on the drawing area. At each drawing stage, verify that
+the picture is shown and lies outside the drawing area.}
   \reqpriority{Must}
   \reqphase{PH-1}
   \reqsources{\goalref{2}; \srcref{001}} \reqtraces{BR-004; \ucref{003};
@@ -3551,7 +3599,7 @@ verify that no letter activity is required to complete the core catalogue.}
 
 Table~\ref{tab:lesson-catalogue} lists the initial catalogue. The team chose it
 from the agreed categories; it can change (LC-001), and each lesson is stored
-as data (NFR-MAINT-001). The POC (PH-1) offers the line, circle and square
+as data (NFR-MAINT-001). The POC (PH-1) offers the square and circle
 lessons, and the full catalogue is offered from PH-2. The required parts and
 endpoints define a complete attempt (Section~\ref{sec:fr-formal}).
 
@@ -3779,6 +3827,21 @@ ranking.}
   H-MOU-002}
 \end{srsrequirement}
 
+\begin{srsrequirement}{FR-LRN-040}{Practice reward at the end of a lesson}
+  \reqshall{When a guided lesson ends, Squigglr shall show the child the same
+practice reward however the lesson ended.} \reqrationale{The reward recognizes
+that the child practised, not how well they drew (\srcref{009.02}). Showing the
+same reward for every ending keeps it from becoming a score or a judgement of
+the child (BR-006, FR-LRN-022).} \reqfit{End a lesson by completing it, by
+reaching the attempt limit and by inactivity; verify that the same reward is
+shown each time and that it names no result.}
+  \reqpriority{Should}
+  \reqphase{PH-1}
+  \reqsources{\goalref{1}; BR-006; \srcref{009.02}}
+  \reqtraces{\reqref{FR-LRN-021}; \reqref{FR-LRN-022}; \reqref{FR-LRN-023};
+  \ucref{003}}
+\end{srsrequirement}
+
 \begin{srsrequirement}{FR-LRN-023}{Automatic within-lesson advancement}
   \reqshall{Squigglr shall automatically advance from full-outline tracing to
 endpoint-only guidance, and from endpoint-only guidance to independent drawing,
@@ -3831,7 +3894,7 @@ BR-008, \srcref{008} & \reqref{FR-LRN-013}, \reqref{FR-LRN-017},
 \reqref{FR-LRN-019}, \reqref{FR-LRN-020}, \reqref{FR-LRN-024}, \reqref{FR-LRN-036}, \reqref{FR-LRN-037}\\
 ASM-004, BR-004 & \reqref{FR-LRN-007}, \reqref{FR-LRN-008}, \reqref{FR-LRN-009},
 \reqref{FR-LRN-010}, \reqref{FR-LRN-024}, \reqref{FR-LRN-025}, \reqref{FR-LRN-030}, \reqref{FR-LRN-031}, \reqref{FR-LRN-032}, \reqref{FR-LRN-038}, \reqref{FR-LRN-039}\\
-BR-006--007 & \reqref{FR-LRN-014}, \reqref{FR-LRN-022}\\
+BR-006--007 & \reqref{FR-LRN-014}, \reqref{FR-LRN-022}, \reqref{FR-LRN-040}\\
 \hyperref[src:005.01]{SRC-005.01}, \hyperref[src:005.05]{SRC-005.05} &
 \reqref{FR-LRN-016}, \reqref{FR-LRN-018}, \reqref{FR-LRN-019}, \reqref{FR-LRN-033}, \reqref{FR-LRN-034}, \reqref{FR-LRN-035}\\
 \hyperref[src:009.02]{SRC-009.02}, \hyperref[src:009.04]{SRC-009.04} &
@@ -3890,7 +3953,9 @@ where every $x_i$ is an ordered list of reported points. Lifting the stylus
 closes one $x_i$, not the attempt. The terminal event
 $\operatorname{Finalize}(X)$ denotes the end of input collection for an attempt.
 It occurs at a stylus lift after which the strokes so far pass, or after
-\texttt{ATTEMPT\_IDLE} with no input (FR-LRN-039, FR-LRN-024); the child uses no control. A
+\texttt{ATTEMPT\_IDLE} with no input when no hint is given (FR-LRN-039,
+FR-LRN-024); the child uses no control. A hint does not finalize the attempt:
+the strokes are kept and the pause starts again. A
 stylus lift alone does not finalize the attempt; interruption before
 finalization cannot produce a passed result (FR-LRN-008--010, FR-LRN-030).
 
@@ -3899,13 +3964,21 @@ stage $T$, made of the \emph{required parts} and \emph{required endpoints}
 listed for the lesson in Table~\ref{tab:lesson-catalogue}. Distances are
 measured on the drawing area and compared with \texttt{TRACE\_\allowbreak TOL}.
 At stage $I$, where no guide shows where to draw, the attempt is first moved and
-uniformly scaled so that its bounding box is centred on the figure's and its
-longer side matches the figure's; position and size on the screen therefore do
-not affect the result. At $T$ and $E$ the attempt is compared where it was
-drawn.
+uniformly scaled onto the figure, so its position on the screen does not affect
+the result, and small marks away from the rest of the drawing do not move it.
+How it is placed is a design decision (MIS, Attempt Evaluation Module). Its size
+does not affect the result either, unless its longer side is less than
+\texttt{MIN\_DRAW\_SCALE} of the figure's longer side; such an attempt is
+incomplete (too small). An attempt that has every required part only when its
+width and height are scaled differently is also incomplete (stretched), for
+example a rectangle drawn at the square lesson. At $T$ and $E$ the attempt is
+compared where it was drawn.
 
 Let $\operatorname{Valid}_{\ell,l}(X)$ mean that all input required to interpret
-the strokes is available, and let $\operatorname{Complete}_{\ell,l}(X)$ mean
+the strokes is available: $X$ has at least one stroke, every reported point has
+numeric coordinates, and the total length of the strokes is at least
+\texttt{MIN\_DRAWN}. A shorter attempt, such as a tap, is invalid, so it is not
+a failed attempt. Let $\operatorname{Complete}_{\ell,l}(X)$ mean
 that every required part has at least \texttt{PART\_\allowbreak COVER} of its
 length within \texttt{TRACE\_\allowbreak TOL} of a drawn stroke, and every
 required endpoint has a drawn point within \texttt{TRACE\_\allowbreak TOL} of
@@ -3921,7 +3994,8 @@ where $\mathit{drawn}$ is the share of the figure's length within
 the share of the drawn length within \texttt{TRACE\_\allowbreak TOL} of the
 figure. It measures the drawing against the figure, not the learner. A result
 of 80 means that at least 80\% of the figure was drawn and at least 80\% of what
-was drawn lies on the figure; a square with one side missing scores at most 75.
+was drawn lies on the figure. A square with one side missing is incomplete,
+whatever its result, so it does not pass.
 Stage result values use the normalized 0--100 scale specified in
 Table~\ref{tab:goalconst}. Define
 \[
@@ -4172,7 +4246,7 @@ tester draws a prepared sequence of strokes, the drawing holds one new stroke
 for each stroke drawn, in the order drawn; each follows the points the browser
 reported for it (ASM-004) and can be selected (\reqref{FR-CRT-002}).}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; CON-003; \srcref{001}} \reqtraces{\ucref{006};
   \reqref{FR-CRT-002}}
 \end{srsrequirement}
@@ -4187,7 +4261,7 @@ drawing of at least two strokes, the tester selects one stroke and then a group
 of strokes; each time, the selected strokes are visibly marked, and the next
 editing action changes exactly the selected strokes.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; \srcref{001}} \reqtraces{\ucref{006};
   \reqref{FR-CRT-003} to \reqref{FR-CRT-006}}
 \end{srsrequirement}
@@ -4200,7 +4274,7 @@ moves a selected part of a prepared drawing, every point of the part has moved
 by the same offset, in the direction of the movement, and no other stroke has
 changed.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; \srcref{001}} \reqtraces{\ucref{006};
   \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
 \end{srsrequirement}
@@ -4215,7 +4289,7 @@ its points from the centre of the part's bounding box is multiplied by the same
 factor, greater than one when enlarged and less than one when shrunk, and no
 other stroke has changed.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; \srcref{001}} \reqtraces{\ucref{006};
   \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
 \end{srsrequirement}
@@ -4228,7 +4302,7 @@ editing actions of G.4 measurement (b) and the Problem Statement (SRC-001).}
 selected stroke has the chosen colour, its points are unchanged, and no other
 stroke has changed.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; \srcref{001}} \reqtraces{\ucref{006};
   \reqref{FR-CRT-002}, \reqref{FR-CRT-013}}
 \end{srsrequirement}
@@ -4241,7 +4315,7 @@ part of a prepared drawing, the selected strokes are no longer in the drawing
 and no other stroke has changed; undoing the erase (\reqref{FR-CRT-007}) brings
 them back exactly.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; \srcref{001}} \reqtraces{\ucref{006};
   \reqref{FR-CRT-002}, \reqref{FR-CRT-007}}
 \end{srsrequirement}
@@ -4262,7 +4336,7 @@ and one restore; after each undo the drawing is exactly as it was before the
 corresponding change, and after the last undo it is exactly as it was when
 opened.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{005},
   \intref{P1}{34:13}} \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-008},
   \reqref{FR-CRT-017}; H-MUH-001}
@@ -4311,7 +4385,7 @@ respondents suggested that refinement be optional or adjustable (SRC-009.01), so
 finishing each prepared drawing starts exactly one refinement; drawing, editing,
 undoing, restoring and leaving the creative space without finishing start none.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{005},
 \intref{Moustafa}{6:03} (as presented by the team)} \reqtraces{\ucref{007};
 \reqref{FR-CRT-011}, \reqref{FR-CRT-012}, \reqref{FR-CRT-014},
@@ -4332,7 +4406,7 @@ their colours or widths, would make the drawing less the child's own.}
 strokes as its original, in the same order, and each refined stroke has the
 colour and width of the corresponding original stroke.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; \srcref{005}, \intref{Moustafa}{6:03} (as
 presented by the team); \hyperref[src:009.01]{SRC-009.01}}
 \reqtraces{\ucref{007}; \reqref{FR-CRT-012}, \reqref{FR-CRT-020}; H-MUH-002}
@@ -4351,7 +4425,7 @@ within \texttt{REFINE\_\allowbreak TOLERANCE} of the corresponding original
 stroke, and every point of each original stroke lies within
 \texttt{REFINE\_\allowbreak TOLERANCE} of the corresponding refined stroke.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; BR-009; ASM-014} \reqtraces{\ucref{007};
   \reqref{FR-CRT-011}, \reqref{FR-CRT-020}; H-MUH-002, H-MUH-006}
 \end{srsrequirement}
@@ -4367,7 +4441,7 @@ picture could not be edited, which the Development Plan already rules out
 \reqref{FR-CRT-002} to \reqref{FR-CRT-007} applied to refined strokes meets its
 own fit criterion.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{002}}
   \reqtraces{\ucref{006}, \ucref{007}; \reqref{FR-CRT-002} to
   \reqref{FR-CRT-007}; H-MUH-001}
@@ -4446,7 +4520,7 @@ first restore and the original of the first refinement after the second; (d) no
 restore is offered when no refinement remains that has not been undone or
 restored.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; \srcref{001}} \reqtraces{\ucref{007};
   \reqref{FR-CRT-007}, \reqref{FR-CRT-018}, \reqref{FR-CRT-019}; H-MUH-001,
   H-MUH-003}
@@ -4462,7 +4536,7 @@ control, which is a usability matter.} \reqfit{From the child's view of each
 prepared refined drawing, the tester restores the original with one action, and
 the result meets \reqref{FR-CRT-017}.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; \srcref{001}; \srcref{005},
 \intref{Moustafa}{6:03} (as presented by the team)} \reqtraces{\ucref{007};
 \reqref{FR-CRT-017}; H-MUH-001, H-MUH-006}
@@ -4509,7 +4583,7 @@ afterwards equals the drawing as finished, can be edited (\reqref{FR-CRT-002} to
 \reqref{FR-CRT-007}) and, from PH-2, when \reqref{FR-CRT-016} applies, is shown
 as not refined.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{4}; BR-005; ASM-005; \srcref{002}}
   \reqtraces{\ucref{007}; \reqref{FR-CRT-011}, \reqref{FR-CRT-012}; H-MUH-002}
 \end{srsrequirement}
@@ -4727,7 +4801,7 @@ and one failing attempt at each drawing stage, every saved attempt record shows
 exactly the known lesson, stage, result and outcome, and the records are in the
 order the attempts ended.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{2}, \goalref{5}; BR-002; \srcref{001}; \srcref{002} (POC
 plan, adaptive guidance experiment)} \reqtraces{\ucref{003}, \ucref{008};
 \reqref{SAF-RAY-007}, \reqref{FR-LRN-013}, \reqref{FR-LRN-020},
@@ -4768,7 +4842,7 @@ difficulties, some corrected within the attempt and some not, every saved
 attempt record lists every known difficulty once, with the correct mark, and
 lists no other difficulty.}
   \reqpriority{Must}
-  \reqphase{PH-1}
+  \reqphase{PH-2}
   \reqsources{\goalref{5}; BR-007; \srcref{001}; \srcref{002} (POC plan,
 adaptive guidance experiment); \srcref{005}, \intref{Moustafa}{6:03}}
 \reqtraces{\ucref{003}, \ucref{008}; \reqref{FR-PRG-004}, \reqref{FR-PRG-006};
@@ -7271,7 +7345,7 @@ delivery phases; the course deadlines also appear under CON-004
 
 The delivery plan distinguishes the following requirement targets:
 \begin{description}[style=nextline]
-  \item[PH-1 --- Proof of Concept (POC), November 23, 2026.]
+  \item[PH-1 --- Proof of Concept (POC), November 25, 2026.]
   A demonstration of the core guided lesson flow, input capture, stage
   classification and pass-based progression using prepared examples.
   \item[PH-2 --- Revision 0, February 1, 2027.]
@@ -7297,7 +7371,7 @@ requirement, including the safety requirements derived from the Hazard Analysis.
 The functional requirement priorities and phases agree with
 Section~\ref{sec:fr-learning}; the Hazard Analysis-derived requirements are
 classified here as \emph{Must} and assigned to the phase containing the
-behaviour they protect. The 158 identified requirements in this SRS are
+behaviour they protect. The 159 identified requirements in this SRS are
 scheduled in PH-1 through PH-3. Candidate enhancements are assigned to Future in
 Section~\ref{sec:waiting-room}.
 
@@ -7401,33 +7475,35 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \reqref{FR-LRN-023} & Automatic within-lesson advancement & Must & PH-1 \\
 \addlinespace
+\reqref{FR-LRN-040} & Practice reward at the end of a lesson & Should & PH-1 \\
+\addlinespace
 \multicolumn{4}{@{}l}{\textbf{Creative Drawing Requirements (Section 9.3)}}\\
 \addlinespace
-\reqref{FR-CRT-001} & Draw strokes & Must & PH-1 \\
+\reqref{FR-CRT-001} & Draw strokes & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-002} & Select a part & Must & PH-1 \\
+\reqref{FR-CRT-002} & Select a part & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-003} & Move a part & Must & PH-1 \\
+\reqref{FR-CRT-003} & Move a part & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-004} & Resize a part & Must & PH-1 \\
+\reqref{FR-CRT-004} & Resize a part & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-005} & Recolour a part & Must & PH-1 \\
+\reqref{FR-CRT-005} & Recolour a part & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-006} & Erase a part & Must & PH-1 \\
+\reqref{FR-CRT-006} & Erase a part & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-007} & Undo a change & Must & PH-1 \\
+\reqref{FR-CRT-007} & Undo a change & Must & PH-2 \\
 \addlinespace
 \reqref{FR-CRT-008} & Redo an undone change & Could & PH-3 \\
 \addlinespace
 \reqref{FR-CRT-009} & Start a new drawing & Should & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-010} & Refine a finished drawing & Must & PH-1 \\
+\reqref{FR-CRT-010} & Refine a finished drawing & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-011} & Change only stroke paths & Must & PH-1 \\
+\reqref{FR-CRT-011} & Change only stroke paths & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-012} & Stay within the refinement tolerance & Must & PH-1 \\
+\reqref{FR-CRT-012} & Stay within the refinement tolerance & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-013} & Keep the refined drawing editable & Must & PH-1 \\
+\reqref{FR-CRT-013} & Keep the refined drawing editable & Must & PH-2 \\
 \addlinespace
 \reqref{FR-CRT-014} & Do not refine a stroke twice & Must & PH-2 \\
 \addlinespace
@@ -7435,14 +7511,14 @@ Section~\ref{sec:waiting-room}.
 \addlinespace
 \reqref{FR-CRT-016} & Show whether a drawing is refined & Should & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-017} & Restore the exact original & Must & PH-1 \\
+\reqref{FR-CRT-017} & Restore the exact original & Must & PH-2 \\
 \addlinespace
-\reqref{FR-CRT-018} & Child restores the original & Must & PH-1 \\
+\reqref{FR-CRT-018} & Child restores the original & Must & PH-2 \\
 \addlinespace
 \reqref{FR-CRT-019} & Adult restores the original & Must & PH-2 \\
 \addlinespace
 \reqref{FR-CRT-020} & Leave the drawing unchanged when refinement fails & Must &
-PH-1 \\
+PH-2 \\
 \addlinespace
 \reqref{FR-CRT-021} & Discard an out-of-date result & Must & PH-2 \\
 \addlinespace
@@ -7466,11 +7542,11 @@ PH-1 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Attempt Record Requirements (Section 9.4)}}\\
 \addlinespace
-\reqref{FR-REC-001} & Attempt record & Must & PH-1 \\
+\reqref{FR-REC-001} & Attempt record & Must & PH-2 \\
 \addlinespace
 \reqref{FR-REC-002} & Actual strokes & Must & PH-2 \\
 \addlinespace
-\reqref{FR-REC-003} & Difficulties and corrections & Must & PH-1 \\
+\reqref{FR-REC-003} & Difficulties and corrections & Must & PH-2 \\
 \addlinespace
 \reqref{FR-REC-004} & Adult-set values in use & Must & PH-2 \\
 \addlinespace
@@ -7589,7 +7665,7 @@ PH-2 \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textbf{Safety-Critical Requirements (Section 12.2)}}\\
 \addlinespace
-\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-1 \\
+\texttt{SAF-RAY-001} & Adult-only action verification & Must & PH-2 \\
 \addlinespace
 \texttt{SAF-RAY-002} & Unsupported-device notice & Must & PH-2 \\
 \addlinespace
@@ -7621,7 +7697,7 @@ PH-2 \\
 \addlinespace
 \texttt{SAF-SHA-006} & Session timeout & Must & PH-2 \\
 \addlinespace
-\texttt{SAF-MOU-001} & Show missed parts without drawing them & Must & PH-2 \\
+\texttt{SAF-MOU-001} & Show missed parts without drawing them & Must & PH-1 \\
 \addlinespace
 \texttt{SAF-MOU-002} & Keep assisted and independent records separate & Must &
 PH-2 \\
@@ -8286,7 +8362,7 @@ G.1, G.3; SRC-005.01 & \ucref{002} & \reqref{FR-LRN-001}; \reqref{FR-LRN-016};
 \reqref{NFR-UX-003}; \reqref{NFR-UX-009}; \reqref{NFR-UX-014} \\
 \addlinespace
 G.1--G.3; SRC-005.01 & \ucref{003} & \reqref{FR-LRN-002}--\reqref{FR-LRN-015};
-\reqref{FR-LRN-020}--\reqref{FR-LRN-032}; \reqref{FR-LRN-036}--\reqref{FR-LRN-039}; \reqref{NFR-UX-001};
+\reqref{FR-LRN-020}--\reqref{FR-LRN-032}; \reqref{FR-LRN-036}--\reqref{FR-LRN-040}; \reqref{NFR-UX-001};
 \reqref{NFR-UX-002}; \reqref{NFR-UX-004}; \reqref{NFR-UX-008};
 \reqref{NFR-UX-013}; \reqref{NFR-UX-015}; \reqref{NFR-PERF-001} \\
 \addlinespace

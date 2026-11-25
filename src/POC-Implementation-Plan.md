@@ -300,6 +300,17 @@ export const TRACE_TOL = 5;
 export const PART_COVER = 90;
 
 /**
+ * The least an attempt must have drawn, in total, to be judged at all: the
+ * length of all its lines added up, in percent of the diagonal of the box
+ * around the shape. Less than this (a tap or a tiny mark) is "too little to
+ * judge": the attempt is not counted, and the child is asked to try again.
+ * For the square (diagonal about 707) this is about 35 units.
+ * The team's own choice, not taken from a source. It has the same value as
+ * TRACE_TOL, but means something different, so the two can be changed apart.
+ */
+export const MIN_DRAWN = 5;
+
+/**
  * With no guide, the smallest a drawing may be: its longer side, in percent of
  * the shape's longer side. Smaller than this and the attempt is not complete,
  * however neat.
@@ -1395,7 +1406,7 @@ export function biggestGroup(groups: Path[][]): Path[] {
 4. `stretchedScore` and `isTooSmall`, at stage I only: the check for a stretched drawing, and the minimum size.
 5. The last lines of `evaluate`: complete, passed, and the drawing problems that are allowed at this stage.
 
-The three numbers the team will calibrate, `TRACE_TOL`, `PART_COVER` and `MIN_DRAW_SCALE`, are at the top and nowhere else.
+The numbers the team will calibrate, `TRACE_TOL`, `PART_COVER`, `MIN_DRAWN` and `MIN_DRAW_SCALE`, are in `lib/constants.ts` and nowhere else.
 
 <a id="f-evaluation"></a>
 
@@ -1427,6 +1438,7 @@ import {
 import {
   GROUP_GAP,
   MIN_DRAW_SCALE,
+  MIN_DRAWN,
   NUDGE_MAX_SCALE,
   NUDGE_REACH,
   PART_COVER,
@@ -1448,7 +1460,12 @@ export function tolerance(figure: Figure): number {
   return (TRACE_TOL / 100) * diagonal(boundingBox(figure.parts));
 }
 
-function isValid(strokes: Stroke[], tol: number): boolean {
+/** The least total length of line an attempt needs to be judged: MIN_DRAWN percent of the figure's diagonal. */
+function minDrawn(figure: Figure): number {
+  return (MIN_DRAWN / 100) * diagonal(boundingBox(figure.parts));
+}
+
+function isValid(strokes: Stroke[], least: number): boolean {
   if (strokes.length === 0) return false;
   for (const s of strokes) {
     if (s.points.length === 0) return false;
@@ -1456,9 +1473,9 @@ function isValid(strokes: Stroke[], tol: number): boolean {
       if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return false;
     }
   }
-  // A tap or a mark shorter than the tolerance is too little to judge.
+  // A tap or a mark shorter than `least` in total is too little to judge.
   const total = strokes.reduce((sum, s) => sum + length(toPath(s)), 0);
-  return total >= tol;
+  return total >= least;
 }
 
 interface Score {
@@ -1604,7 +1621,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   const tol = tolerance(figure);
 
   // 1. Something to judge?
-  if (!isValid(strokes, tol)) {
+  if (!isValid(strokes, minDrawn(figure))) {
     return invalidEvaluation(guidance);
   }
 
@@ -2585,7 +2602,7 @@ export function hush(): void {
 | Improvement window (`IMPROVE_WINDOW`) | 1 to 3 | 2 | How many attempts are compared to decide "improving". |
 | Extra attempts when improving (`ATTEMPT_EXTENSION`) | 1 to 3 | 2 | The size of the one extension. |
 | Most attempts at one stage (`ATTEMPT_LIMIT_MAX`) | 8 to 12 | 10 | The hard cap. |
-| Pause that ends an attempt (`ATTEMPT_IDLE`) | 3 to 7 s | 5 s | How long the app waits after the last stroke before ending an attempt that has not passed. |
+| Pause that ends an attempt (`ATTEMPT_IDLE`) | 5 to 15 s | 10 s | How long the app waits after the last stroke before ending an attempt that has not passed. |
 | Pause before a check-in (`LESSON_IDLE_PROMPT`) | 30 to 60 s | 45 s | When "Still drawing?" appears. |
 | Pause that ends the lesson (`LESSON_IDLE_END`) | 90 to 180 s | 135 s | When an abandoned lesson ends. |
 
@@ -2638,7 +2655,7 @@ export const RANGES: Record<SettingName, Range> = {
   improveWindow: range(1, 3, "Improvement window", "attempts", "How many recent attempts are compared with the ones before them."),
   attemptExtension: range(1, 3, "Extra attempts when improving", "attempts", "Extra attempts given once if the child is improving at the limit."),
   attemptLimitMax: range(8, 12, "Most attempts at one stage", "attempts", "The hard cap on attempts at one stage, extension included."),
-  attemptIdle: range(3, 7, "Pause that ends an attempt", "seconds", "Time with no drawing after which an attempt that has not passed ends."),
+  attemptIdle: range(5, 15, "Pause that ends an attempt", "seconds", "Time with no drawing after which an attempt that has not passed ends."),
   lessonIdlePrompt: range(30, 60, "Pause before a check-in", "seconds", "Time with no drawing before the child sees a check-in."),
   lessonIdleEnd: range(90, 180, "Pause that ends the lesson", "seconds", "Time with no drawing after which the lesson ends."),
 };
@@ -5200,7 +5217,7 @@ The code follows one rule: **a class only for something that changes over time a
 | A stylus held down, even held still, counts as drawing | FR-LRN-024 (the pause is "with no input after the last stroke") | Otherwise a child resting the stylus mid-line would have the attempt ended under them. |
 | The lesson waits while the go-back card is open | FR-LRN-024 | The adult's time at the card is not the child's pause, so no attempt ends and no idle clock runs meanwhile. The card has a "Decide later" that leaves the suggestion pending (FR-LRN-034). |
 | After the pause, a drawing with a part missing is kept and the child is shown what to finish | FR-LRN-024 (**goes against it**); SAF-MOU-001; FR-REC-003; NFR-UX-016 | The SRS ends the attempt at the first pause. The app first gives a hint: the missing part glows, the drawing stays, and the pause starts again. If the child finishes it, the attempt passes. An attempt gives at most two hints, and the second only if the child drew something after the first; then it ends as one not-passed attempt. This is the prototype's S8, which the peer tester followed without help. A drawing with nothing missing (too messy, too small, stretched) gets no hint, because drawing more cannot fix it. |
-| The pause that ends an attempt is set by the adult: 3 to 7 s, default 5 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first; tried on a tablet, ten seconds of waiting was far too long, so it was halved. |
+| The pause that ends an attempt is set by the adult: 5 to 15 s, default 10 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first, then 3 to 7 s after ten seconds felt too long on a tablet. On Nov. 25 the team set it back to 5 to 15 s, because 3 to 7 s could end an attempt while a young child was still pausing between strokes. The adult can pick a shorter pause for a child who does not need one. The range still needs to be confirmed. |
 | The lesson idle ranges are 30 to 60 s and 90 to 180 s | SAF-RAY-009; BR-008 | Also "TBD" in the SRS. The three ranges do not overlap, so the rule that each is shorter than the next can never be broken. |
 | A go-back suggestion waits behind a quiet Grown-ups button | FR-LRN-019, FR-LRN-034; UC-005; SAF-RAY-001; NFR-UX-001 | The SRS has the suggestion shown "without blocking practice" and answered by the adult. The card has one button for each earlier drawing stage, from `stages.earlier`. The prototype covers the lesson with a card and has the helper say "Let's get a grown-up!"; neither is in the SRS, and nothing flashes while the child draws. |
 | A finished attempt stays on screen with its feedback: 5 s if it did not pass, 2.5 s if it passed or the child had already been given a hint | FR-LRN-014; NFR-UX-016; SAF-MOU-001 | The SRS does not say what happens on screen when an attempt ends. Without a pause the drawing would vanish and the feedback would refer to nothing. |
@@ -5296,8 +5313,8 @@ Building the rules turned up ten places where the documents are silent or do not
 1. **The pass mark only measures stray drawing.** A complete drawing has at least 90% of every part drawn (`PART_COVER`), so its "drawn" share is always at least 90. The pass mark ranges from 70 to 90, so it can only ever fail a complete drawing on the other share, "on figure". A wobbly or short line fails on completeness before the pass mark is looked at. In the measurements of [part 5](#scoring), a wobble of 30 units scores 100 and a wobble of 40 is incomplete, with nothing in between. If the adult's pass mark is meant to grade how closely the child follows the line, the team should lower `PART_COVER`, tighten `TRACE_TOL`, or score distance from the line and not only inside or outside a band. This is the calibration of open issue OI-05, and it is the most important thing to settle before Revision 0.
 2. **"A square with one side missing scores at most 75" is not true under the SRS's own definition.** It scores about 79, because the two ends of the missing side lie within the tolerance of the neighbouring sides and count as drawn. It is still incomplete and cannot pass. The sentence in SRS Section 9.2 should be reworded.
 3. **The circle has no endpoints, so its endpoints-only stage would show nothing.** The POC uses the four points where the quarter arcs meet.
-4. **The three idle ranges are "TBD".** Proposed: 3 to 7, 30 to 60 and 90 to 180 seconds.
-5. **"Valid" has no concrete definition.** Here: at least one stroke, every coordinate a number, and at least a tolerance's length drawn, so that a tap or a brush of the palm is not counted as a failed attempt.
+4. **The three idle ranges are "TBD".** Proposed: 5 to 15, 30 to 60 and 90 to 180 seconds.
+5. **"Valid" has no concrete definition.** Here: at least one stroke, every coordinate a number, and at least `MIN_DRAWN` (5% of the shape's diagonal, about 35 units for the square) of line drawn in total, so that a tap or a brush of the palm is not counted as a failed attempt. The value is the team's own choice.
 6. **When "drawn off the figure" is observed is not defined.** Here: when the on-figure share is below the pass mark.
 7. **UC-003 and the MIS disagree on a later starting stage.** UC-003 shows the demonstration and then moves to the starting stage; the MIS has `beginPractice` go from D to T. The POC follows UC-003.
 8. **What happens on screen when an attempt ends is not specified.** The POC keeps the drawing and its feedback up for 5 seconds after an attempt that did not pass and 2.5 seconds after a pass, during which input is off and the idle clocks do not run.

@@ -23,6 +23,7 @@ import {
 import {
   GROUP_GAP,
   MIN_DRAW_SCALE,
+  MIN_DRAWN,
   NUDGE_MAX_SCALE,
   NUDGE_REACH,
   PART_COVER,
@@ -44,7 +45,12 @@ export function tolerance(figure: Figure): number {
   return (TRACE_TOL / 100) * diagonal(boundingBox(figure.parts));
 }
 
-function isValid(strokes: Stroke[], tol: number): boolean {
+/** The least total length of line an attempt needs to be judged: MIN_DRAWN percent of the figure's diagonal. */
+function minDrawn(figure: Figure): number {
+  return (MIN_DRAWN / 100) * diagonal(boundingBox(figure.parts));
+}
+
+function isValid(strokes: Stroke[], least: number): boolean {
   if (strokes.length === 0) return false;
   for (const s of strokes) {
     if (s.points.length === 0) return false;
@@ -52,9 +58,9 @@ function isValid(strokes: Stroke[], tol: number): boolean {
       if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return false;
     }
   }
-  // A tap or a mark shorter than the tolerance is too little to judge.
+  // A tap or a mark shorter than `least` in total is too little to judge.
   const total = strokes.reduce((sum, s) => sum + length(toPath(s)), 0);
-  return total >= tol;
+  return total >= least;
 }
 
 interface Score {
@@ -200,7 +206,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   const tol = tolerance(figure);
 
   // 1. Something to judge?
-  if (!isValid(strokes, tol)) {
+  if (!isValid(strokes, minDrawn(figure))) {
     return invalidEvaluation(guidance);
   }
 

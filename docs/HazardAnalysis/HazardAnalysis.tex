@@ -131,15 +131,16 @@ tables and the roadmap (\#315).\\
 the H-SHA table and kept the last disclosure heading with its text (\#289).\\
 11 November 2026 & Muhammad Huzaifah & The roadmap now points to the SRS for
 the target dates of OI-05 and OI-09 (\#288).\\
+24 November 2026 & Muhammad Huzaifah & TA feedback, first part: stated that a
+row needs a real-world trigger and reworked the rows that had none, retired
+H-AHM-005, added the random failures H-MUH-009 to H-MUH-014, listed what the
+team builds and what it relies on, and cut Sections 1, 3, 5.1, 6 and 7 and the
+AI disclosure (\#392).\\
 \end{longtable}
 
 ~\newpage
 
 \tableofcontents
-
-\listoffigures
-
-\listoftables
 
 ~\newpage
 
@@ -148,59 +149,35 @@ the target dates of OI-05 and OI-09 (\#288).\\
 \section{Introduction}\label{sec:intro}
 
 This document is the Hazard Analysis (HA) of \progname{}, a website that
-children use on a touchscreen device with a stylus to practise drawing, and that
-supporting adults use to choose that practice and follow its records. The HA
-asks how \progname{} could contribute to harm, and turns the answers into safety
-requirements recorded in the Software Requirements Specification (SRS). Items
-from the SRS are cited by their identifiers (IDs) as plain text: goals G.1 to
-G.6, constraints CON-\#\#\#, facts FACT-\#\#\#, business rules BR-\#\#\#,
-assumptions ASM-\#\#\#, requirement sources SRC-\#\#\#, personas PER-1 to PER-3,
-open issues OI-\#\#, likely changes LC-\#\#\# and use cases UC-\#\#\#. The
-subsections below give the background, the purpose and scope of this document,
-the definition of hazard it uses, the changes made to the course template, and a
-roadmap of the document.
+children use on a touchscreen device with a stylus to practise drawing, and
+that supporting adults use to choose that practice and read its records. The
+HA asks how \progname{} could contribute to harm, and turns the answers into
+safety requirements in the Software Requirements Specification (SRS). SRS
+items are cited by their identifiers (IDs).
 
 \subsection{Background}
 
-\progname{} supports the visual-motor practice of kindergarten and primary
-school learners, and of older children who need continued support, including
-some children with autism or attention-deficit/hyperactivity disorder (ADHD)
-(SRC-001). Its core, set by goals G.1 to G.6, has four parts: guided drawing
-lessons whose stages give gradually less help, from a demonstration through
-tracing a full outline and drawing between endpoints to drawing with no guide; a
-creative space where \progname{} refines a drawing a little, keeps it editable
-and lets the child restore the original or, if the child cannot, an adult
-(BR-005); a record of every attempt; and progress summaries for supporting
-adults. Supporting adults are parents, guardians, caregivers, educators and
-learning-support staff. They hold the accounts, choose lessons and starting
-stages, and decide when a child moves on (BR-001, BR-003, CON-007). \progname{}
-gives no diagnosis, no judgement of a child's abilities and no comparison with
-other children (BR-006).
+\progname{} has guided drawing lessons whose stages give less help each time,
+a creative space that refines a drawing a little and can restore the original
+(BR-005), a record of every attempt, and progress summaries for supporting
+adults (G.1 to G.6). Supporting adults hold the accounts, choose lessons and
+starting stages, and decide whether a child goes back a stage (BR-001, BR-003,
+CON-007). A passing attempt moves the child to the next stage of the same
+lesson without an adult (FR-LRN-023). \progname{} gives no diagnosis, no
+judgement of a child's abilities and no comparison with other children
+(BR-006).
 
-Several conditions of use shape \progname{}'s hazards. Children may practise
-without an adult watching (ASM-002), may not be able to read (FACT-007), and may
-share one device with other children (ASM-008). Adults decide on a child's
-practice from the records (ASM-006), so a record that misstates what the child
-did can mislead them (BR-004). Creative drawings may be refined with an existing
-pretrained model that the team does not train or run (Development Plan, SRC-002;
-LC-004). The website also depends on hosting, sign-in and network services
-outside the team's control and, at school, on information technology (IT) staff
-who manage the devices and networks (PER-3, ASM-013).
-
-\subsection{Purpose and Scope of this Document}
-
-This document records the hazards the team has identified, the failure modes
-behind them, and the action recommended for each. Its outputs are safety
-requirements: every recommended action traces to a requirement in the SRS, and
-the requirements that mitigate its hazards are listed again in
-Section~\ref{sec:safety-reqs}, and which of them this analysis created is shown.
-The team uses the analysis to decide what the SRS
-must require and what later verification must test; reviewers use it to check
-that the requirements address the ways \progname{} can fail. The analysis covers
-\progname{} as the SRS specifies it, used at home, at school and in other places
-where children practise. Section~\ref{sec:scope} states the losses considered
-and what lies outside the scope, and Section~\ref{sec:boundary} draws the system
-boundary.
+These conditions of use shape the hazards:
+\begin{itemize}
+  \item Children may practise with no adult watching (ASM-002), may not be
+  able to read (FACT-007) and may share one device (ASM-008).
+  \item Adults decide on a child's practice from the records (ASM-006), so a
+  record that misstates what the child did can mislead them (BR-004).
+  \item Creative drawings may be refined with a pretrained model that the team
+  does not train (SRC-002; LC-004).
+  \item The website depends on hosting, sign-in and network services outside
+  the team's control (ASM-013).
+\end{itemize}
 
 \subsection{Definition of Hazard}
 
@@ -228,63 +205,21 @@ the analysis looks at conditions of use as well as defects.
 
 \subsection{Changes to the Template}
 
-The course template has been changed as follows. Every template section is kept,
-in its original order.
+Every template section is kept, in its original order. The changes are:
 \begin{itemize}
-  \item \emph{Front matter:} a List of Figures and a List of Tables follow the
-  Table of Contents, and the template's guidance notes are removed.
-  \item \emph{Introduction:} divided into background, purpose and scope, the
-  definition of hazard, these changes and a document roadmap.
-  \item \emph{Scope and purpose (Section~\ref{sec:scope}):} the losses are
-  listed with IDs L1 to L5, and each item left out of scope is given a reason
-  and a stance on its hazards.
-  \item \emph{System boundaries and components (Section~\ref{sec:boundary}):}
-  the components have IDs C1 to C8 and fixed names, which the Component column
-  of the H-MUH table and the coverage table of the Failure Mode and Effect
-  Analysis (FMEA) repeat exactly. A figure shows the boundary, and a table
-  states how failures outside it enter the analysis. C8 is added to the seven
-  components first planned, for the reason given in Section~\ref{sec:boundary}.
-  \item \emph{FMEA (Section~\ref{sec:fmea}):} each table has the columns Hazard
-  ID, Component, Failure mode, Cause(s), Effect and loss, Category, Recommended
-  action and Mitigating requirement IDs. The Category column is added; it
-  classes each row as Physical, Psychological/well-being, Privacy/security, Data
-  integrity or Availability. Each team member's rows form a subsection with a
-  table of their own, so each hazard ID carries its writer's prefix:
-  Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM),
-  Table~\ref{tab:fmea-sha} (H-SHA), Table~\ref{tab:fmea-mou} (H-MOU) and the
-  Table~\ref{tab:fmea-mou} (H-MUH) table. True duplicates are combined by
-  reference to one row. A coverage table then checks every component of
-  Table~\ref{tab:components} against every category, across all the tables. Each
-  recommended action begins with Eliminate, Mitigate or Document/Test. Rows are
-  not ranked or filtered by a risk priority number, following the course's
-  advice against prioritising hazards by probability \citep{Smith2026L08}.
-  \item \emph{Safety and security requirements (Section~\ref{sec:safety-reqs}):}
-  as the teaching assistant (TA) advised (SRC-006), each safety requirement is
-  written once, in the SRS, and the FMEA refers to it by ID. This section
-  repeats the statement of every requirement that mitigates a hazard exactly as
-  the SRS states it, with the hazards it mitigates, and which of them this
-  analysis created.
-  \item \emph{Roadmap (Section~\ref{sec:roadmap}):} each requirement that
-  mitigates a hazard is assigned to a project phase, PH-1 (proof of concept), PH-2
-  (Revision~0) or PH-3 (final), or to Future, with the phase dates set in the
-  SRS Introduction.
+  \item The losses have IDs L1 to L5, and the components have IDs C1 to C8.
+  \item The Failure Mode and Effect Analysis (FMEA) tables have a Category
+  column. Each team member's rows form one table: Table~\ref{tab:fmea-ray}
+  (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM), Table~\ref{tab:fmea-sha} (H-SHA),
+  Table~\ref{tab:fmea-mou} (H-MOU) and Table~\ref{tab:fmea-muh} (H-MUH).
+  Table~\ref{tab:fmea-random} holds the random failures of the network, the
+  device and outside services.
+  \item Rows are not ranked by a risk priority number, as the course advises
+  \citep{Smith2026L08}.
+  \item Each safety requirement is written once, in the SRS, as the teaching
+  assistant (TA) advised (SRC-006). Section~\ref{sec:safety-reqs} lists the
+  IDs only.
 \end{itemize}
-
-\subsection{Document Roadmap}
-
-Section~\ref{sec:scope} states the purpose of the analysis, the losses it
-considers and what is out of scope. Section~\ref{sec:boundary} divides
-\progname{} into components and draws the boundary between them and the people,
-equipment and services around them. Section~\ref{sec:assumptions} lists the
-critical assumptions, kept few so that they do not assume hazards away.
-Section~\ref{sec:fmea} states the method, gives the FMEA tables, one for each
-author's rows, and checks their coverage. Section~\ref{sec:safety-reqs} lists
-the requirements that mitigate its hazards and shows which of them this
-analysis created, and
-Section~\ref{sec:roadmap} gives the phase in which each is planned. The
-references follow, then two appendices: the disclosure of generative artificial
-intelligence (AI) use and the team's reflection. Table~\ref{TblRevisionHistory}
-records the changes made to this document.
 
 \section{Scope and Purpose of Hazard Analysis}\label{sec:scope}
 
@@ -512,14 +447,8 @@ information exchanged.}
 
 \subsection{Components Inside the Boundary}
 
-Table~\ref{tab:components} gives each component's ID and name, its role, what it
-holds or decides, and the SRS items it relates to. The names are fixed: the
-Component column of the H-MUH table of the FMEA and its coverage table repeat
-them exactly; the H-RAY and H-AHM tables name functions in their authors' words,
-and the coverage table assigns each of their rows to one of these components.
-The components follow the order in which a child's work passes through
-\progname{}, from drawing to records and adult review, with C8 last because it
-was added later.
+Table~\ref{tab:components} describes each component. The FMEA tables and the
+coverage table cite the components by ID.
 
 {\footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -601,17 +530,6 @@ values in use. & BR-001, BR-008, BR-009; ASM-008, ASM-016; UC-001, UC-010 \\
 \end{longtable}
 }
 
-Two components need a note. C7, and C4 when refinement uses an external model,
-cover \progname{}'s \emph{use} of outside services: what it sends, what it
-accepts back and how it behaves when a service fails. The services themselves
-lie outside the boundary. C8 was added to the
-seven components first planned because learner profiles and adult-set values
-follow rules of their own (BR-001, BR-008) and are used by several components:
-C2 applies the values, C5 files records under the active learner, and C6 lets an
-adult change them. Failures in choosing the active learner on a shared device,
-or in storing and checking an adult-set value, would otherwise be split among
-those components; C8 gives them one component in the FMEA coverage table.
-
 \subsection{Outside the Boundary}
 
 The items in Table~\ref{tab:outside} lie outside the boundary because the team
@@ -671,7 +589,7 @@ may not be able to install software (CON-002); a school may block the site
 (ASM-013). & \progname{} unavailable or partly blocked at school (C7, C1). \\
 \addlinespace
 External refinement model and its provider & An existing pretrained model, if
-the team uses one for refinement, that the team does not train or run, from a
+the team uses one for refinement, that the team does not train, from a
 provider that may change (SRC-002; LC-004). & The service unavailable or slow,
 changes that are invalid or too large, or drawings sent to it kept by the
 provider (C4). \\
@@ -688,12 +606,6 @@ A wrong lesson, range or fixed value (C2, C8). \\
 \end{longtable}
 }
 
-The SRS describes the context of the work, in its Scope of the Work section,
-through the actors that exchange business information with it: the child, the
-supporting adult and the Squigglr team. This analysis also shows the equipment,
-network and outside services, because they carry or process the child's data and
-their failures can cause the losses of Table~\ref{tab:losses}.
-
 \section{Critical Assumptions}\label{sec:assumptions}
 
 The assumptions below are kept few and are written so that they do not remove
@@ -703,7 +615,7 @@ Squigglr's requirements; those conditions are treated as failure modes in the
 Failure Mode and Effect Analysis (FMEA). Sources are cited by their identifiers
 in the Software Requirements Specification (SRS), Appendix A, and interview
 turns by speaker and timestamp, for example (SRC-005, P1, 34:13). Each
-assumption lists the H-RAY hazards it affects.
+assumption lists the hazards it affects.
 
 \begin{description}
 \item[CA-001] An adult sets up Squigglr for a child, chooses and starts the
@@ -724,14 +636,14 @@ finger but not as intended (ASM-003).\\
 installation (CON-001, CON-002), so the team does not control the device. The
 supported combinations are not yet defined (CON-003), and the team did not
 promise that Squigglr works on every device (SRC-005, Moustafa, 6:03).\\
-\emph{Hazards affected:} H-RAY-002.
+\emph{Hazards affected:} H-RAY-002, H-MUH-014.
 
 \item[CA-003] The network connection may be slow or lost at any time, including
 during an attempt.\\
 \emph{Rationale:} attempts are saved to an account and reviewed later from
 another device, and offline access was not promised (SRC-005, Moustafa, 6:03).
 Home and school networks are outside the team's control.\\
-\emph{Hazards affected:} H-RAY-002, H-RAY-006.
+\emph{Hazards affected:} H-RAY-006, H-SHA-003, H-MUH-009 to H-MUH-011.
 
 \item[CA-004] One device may be used by several children, at school or at
 home.\\
@@ -761,131 +673,138 @@ children is run (CON-005, CON-006), so the ranges cannot be tuned on children
 \emph{Hazards affected:} H-RAY-004, H-RAY-005, H-RAY-007.
 \end{description}
 
+\subsection{What the Team Builds and What It Relies On}
+\label{sec:handles}
+
+The team builds the eight components of Table~\ref{tab:components} (C1 to C8)
+and is responsible for their behaviour. \progname{} also relies on the items in
+Table~\ref{tab:relied}, which the team does not build or control. Each is
+assumed to work only as the table states, and the rows named cover its
+failure.
+
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{0.22\textwidth}
+  >{\raggedright\arraybackslash}p{0.42\textwidth}
+  >{\raggedright\arraybackslash}p{0.28\textwidth}@{}}
+\caption{Items \progname{} relies on but the team does not control}
+\label{tab:relied}\\
+\toprule
+\textbf{Relied-on item} & \textbf{Assumption} & \textbf{Rows that cover its
+failure} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Relied-on item} & \textbf{Assumption} & \textbf{Rows that cover its
+failure} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Device, browser and stylus & May not be a supported combination, and may stop
+or close at any time (CA-002). & H-RAY-002, H-AHM-001 to H-AHM-003, H-MUH-014
+\\
+\addlinespace
+Home or school network & May be slow or lost at any time (CA-003). &
+H-SHA-003, H-MUH-005, H-MUH-009 to H-MUH-011 \\
+\addlinespace
+Hosting service & Keeps what it confirms as saved. May be unreachable at any
+time. & H-SHA-003, H-MUH-012 \\
+\addlinespace
+Authentication service & Signs in only the holder of the credentials. May be
+unreachable at any time. & H-SHA-001, H-MUH-013 \\
+\addlinespace
+External refinement model, if one is used & May return no result, a late
+result or a wrong result, and its provider may keep what it is sent. &
+H-SHA-002, H-MUH-002, H-MUH-010 \\
+\addlinespace
+School IT administration & May block the site or part of it (ASM-013). &
+H-MUH-012 \\
+\end{longtable}
+}
+
 \section{Failure Mode and Effect Analysis}\label{sec:fmea}
 
 This section applies Failure Mode and Effect Analysis (FMEA) to the components
-of \progname{}. Subsection~\ref{sec:fmea-method} states how the analysis was
-carried out. Each team member's rows are in a table of their own:
-Table~\ref{tab:fmea-ray} (H-RAY), Table~\ref{tab:fmea-ahm} (H-AHM),
-Table~\ref{tab:fmea-sha}, Table~\ref{tab:fmea-mou} (H-MOU) and
-Table~\ref{tab:fmea-muh} (H-MUH). Table~\ref{tab:fmea-coverage} places every row
-of the five tables under a component and checks that every component has been
-examined for every category of harm. Each row ends with the requirements of the
-Software Requirements Specification (SRS) that mitigate it; the Safety and
-Security Requirements section lists the requirements that mitigate its hazards
-again, and which of them this analysis created.
+of Table~\ref{tab:components}. Each team member's rows are in one table
+(Tables~\ref{tab:fmea-ray} to~\ref{tab:fmea-muh}), random failures are in
+Table~\ref{tab:fmea-random}, and Table~\ref{tab:fmea-coverage} checks every
+component against every category of harm.
 
 \subsection{Method}\label{sec:fmea-method}
 
-FMEA is a bottom-up method: it starts from the functions of each component and
-asks how each can fail \citep{Smith2026L08}. The components are the functional
-components named in the System Boundaries and Components section, not modules of
-a design. The analysis uses the course's definitions \citep{Smith2026L08}:
-\begin{itemize}
-  \item a \emph{failure} is a departure of a component from its required or
-  intended function;
-  \item a \emph{failure mode} is the manner in which the failure is observed by
-  a child, an adult or a tester;
-  \item an \emph{effect} is the consequence of a failure mode; each row names
-  the losses it leads to, and the H-MUH rows use the IDs L1 to L5 of the Scope
-  and Purpose section;
-  \item a \emph{cause} is a reason the failure mode occurs, including conditions
-  outside the boundary, such as a lost connection (CA-003) or a device shared by
-  several children (CA-004);
-  \item a \emph{recommended action} says what is done to eliminate or mitigate
-  the hazard, and becomes a safety requirement.
-\end{itemize}
+FMEA starts from the functions of each component and asks how each can fail
+\citep{Smith2026L08}. The steps were:
+\begin{enumerate}
+  \item Take each component's functions from Table~\ref{tab:components} and
+  apply four guide words: not performed, performed wrongly or in part,
+  performed at the wrong time, and performed when it should not be.
+  \item Check every component against the five categories of harm (Physical,
+  Psychological/well-being, Privacy/security, Data integrity and
+  Availability), so that a component that works as specified but still harms a
+  child is recorded. For creative refinement, this check also covered the
+  risks of artificial intelligence (AI) \citep{SlatteryEtAl2024}.
+  \item Each member writes the rows for the parts of the SRS they own, so each
+  hazard ID has its writer's prefix.
+\end{enumerate}
 
-Failure modes were found in three steps. First, the functions of each component
-were taken from its role in the System Boundaries and Components section, and
-four guide words were applied to each function: it is not performed; it is
-performed wrongly or only in part; it is performed at the wrong time or out of
-order; and it is performed when it should not be. Second, every component was
-checked against the five categories of harm (Physical, Psychological/well-being,
-Privacy/security, Data integrity and Availability), so that a component that
-works as specified but still harms a child is also recorded; safety is not the
-same as correctness \citep{Smith2026L08}. For the creative refinement component,
-which may use an external model, this check also covered the risks of artificial
-intelligence (AI) that would arise from how \progname{} uses such a model:
-compromise of privacy, over-reliance, loss of human agency, lack of capability
-or robustness, and lack of transparency \citep{SlatteryEtAl2024}. Third, each
-team member
-writes the rows for the parts of the SRS they own, so each hazard ID carries its
-writer's prefix (H-RAY, H-MOU, H-AHM, H-MUH or H-SHA), and each member's rows
-form a table of their own. The coverage check of
-Subsection~\ref{sec:fmea-coverage} then places every row of every table under
-one of the components, so that the rows of all members are checked against the
-same components and categories.
+\paragraph{A row needs a real trigger.} Every cause is one of two kinds. A
+\emph{real-world trigger} comes from outside \progname{}: the child, the
+adult, the device, the network or an outside service. A \emph{defect} is only
+\progname{} failing to meet a stated requirement. A row is kept only if at
+least one of its causes is a real-world trigger. A failure that needs a defect
+and nothing else is not a hazard here: the Verification and Validation (VnV)
+Plan tests that requirement.
 
-Every row has a recommended action. Each action begins with \emph{Eliminate}
-(remove the failure mode, for example by not offering a function where it can
-cause the harm), \emph{Mitigate} (reduce its effect, or make it visible and
-recoverable) or \emph{Document/Test} (a statement to users or a verification
-activity that limits or checks what remains); one cell may hold several. Actions
-state what \progname{} must do, not how. The last column of each row names, by
-ID, the SRS requirements, goals or constraints that carry out its action. In
-that column, an ID in bold is a requirement that this analysis created: it was
-added to the SRS because the hazard showed that no requirement covered it. An ID
-in plain type is a requirement that the SRS already had from its own sources and
-that also mitigates the hazard. For
-the H-MUH rows, each cited requirement lists the hazard among its own traces, so
-the trace runs in both directions. An action that needs a requirement not yet in
-the SRS is added to the owner's section of the SRS, or to its Safety-Critical
-Requirements subsection, before its ID appears in the table.
+\paragraph{Columns.} The Comp.\ column gives the ID of the row's main
+component (C1 to C8). Each recommended action begins with \emph{Eliminate},
+\emph{Mitigate} or \emph{Document/Test}. The last column names the SRS
+requirements that carry out the action. An ID in bold is a requirement this
+analysis created, because the hazard showed that no requirement covered it. An
+ID in plain type is a requirement the SRS already had. In a row with several
+causes, the labels (a), (b) and so on link each cause to its action and its
+requirements.
 
-Rows are not ranked, and no row is left out because its failure seems unlikely.
-Many FMEAs rank rows by a risk priority number, the product of ratings for
-severity, probability of occurrence and detection, and mitigate only the rows
-above a threshold. The course advises against this, because accidents have
-followed from judging that a failure is not likely to happen, and there is
-seldom a good basis for the probabilities \citep{Smith2026L08}. \progname{} has
-no usage data from children on which to base them (CON-005, CON-006), so every
-row is mitigated.
+\paragraph{No ranking.} Rows are not ranked, and no row is left out because
+its failure seems unlikely. The course advises against risk priority numbers
+\citep{Smith2026L08}, and \progname{} has no usage data from children to base
+them on (CON-005, CON-006).
 
-Rows from different owners can describe the same failure. When two rows share a
-failure mode and a cause, they are combined by reference: one row keeps the
-shared causes and their mitigations, and the other states that it is combined
-with that row, keeps only the causes that are its own, and keeps its ID, so that
-no requirement's trace is broken. In Table~\ref{tab:fmea-muh}, rows are grouped
-by component in the order of the components table of the System Boundaries and
-Components section, and by ID within a group. Where a row's causes also lie in
-another component, the coverage check of Table~\ref{tab:fmea-coverage} records
-it under that component too.
+\paragraph{Duplicates.} When two rows share a failure mode and a cause, one
+row keeps the shared cause, and the other refers to it and keeps its own ID.
 
 \subsection{Supervision, Context of Use and Use of Records (H-RAY)}
 
-Table~\ref{tab:fmea-ray} covers hazards from how Squigglr is supervised, where
-and on what it is used, and how its records are read. Each recommended action
-starts with Eliminate, Mitigate or Document/Test. Mitigating requirements trace
-to the goals (G.\#) and constraints (CON-\#\#\#) in the SRS, or to safety
-requirements SAF-RAY-\#\#\# in the SRS, Safety-Critical Requirements.
+Table~\ref{tab:fmea-ray} covers hazards from how \progname{} is supervised,
+where and on what it is used, and how its records are read.
 
 \begin{fmealandscape}
-{\footnotesize
+{\scriptsize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}p{1.0cm}
   >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{2.3cm}
   >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{1.9cm}
-  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{4.2cm}
   >{\raggedright\arraybackslash}p{2.0cm}@{}}
 \caption{FMEA: supervision, context of use and use of records}
 \label{tab:fmea-ray}\\
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-H-RAY-001 & Lesson flow; adult controls & A child practises with no adult
+H-RAY-001 & C6 & A child practises with no adult
 watching, or the adult is inattentive, and the child reaches an adult-only
 action. & Children are meant to practise without constant adult help (CA-001);
 adult controls use the same touch interface as the child. & The child accepts a
@@ -897,20 +816,16 @@ adult check that a child cannot pass by tapping icons; keep a pending suggestion
 waiting, without blocking practice, until an adult reviews it. & CON-007, G.3,
 \textbf{SAF-RAY-001} \\
 \addlinespace
-H-RAY-002 & Browser front end; saving of attempts & Squigglr is used on an
-unsupported device or browser, without a stylus, or loses its connection during
-an attempt, at home, at school or on a shared device. & Device not controlled by
-the team (CA-002); no offline access (CA-003). & Strokes are not captured
-correctly, the child's attempt is lost, or a lesson cannot be completed; the
-child is frustrated and the record is incomplete. Loss: lost practice data;
-availability. & Data integrity or Availability & Mitigate: before a lesson
-starts, check the device and browser against \texttt{SUPPORTED\_DEVICES} and
-show the adult a notice when they do not match; keep each attempt until the
-server confirms it is saved, and tell the adult when an attempt could not be
-saved. & CON-001, CON-002, CON-003, G.5, \textbf{SAF-RAY-002}, \textbf{SAF-RAY-003}, FR-REC-008,
-FR-PRG-011 \\
+H-RAY-002 & C1 & Squigglr is used on an unsupported device or browser, or
+without a stylus. & Device not controlled by the team (CA-002). & Strokes are
+not captured correctly or a lesson cannot be completed; the child is frustrated
+and the record is incomplete. Loss: lost practice data; availability. & Data
+integrity or Availability & Mitigate: before a lesson starts, check the device
+and browser against \texttt{SUPPORTED\_DEVICES} and show the adult a notice
+when they do not match. A lost connection is analysed in H-MUH-009 and
+H-SHA-003. & CON-001, CON-002, CON-003, \textbf{SAF-RAY-002} \\
 \addlinespace
-H-RAY-003 & Attempt records; progress summaries & Practice records are used as
+H-RAY-003 & C6 & Practice records are used as
 clinical or diagnostic evidence, or as a measure of the child's ability. &
 Adults reading records lack specialist training, and records may be passed to
 others (CA-005); fewer attempts may be read as better skill (SRC-005, Moustafa,
@@ -922,34 +837,34 @@ children in any record or summary. Mitigate: state on every summary and export
 that the records describe practice only and are not an assessment. & G.5, G.6,
 \textbf{SAF-RAY-004}, FR-PRG-008, FR-PRG-012 \\
 \addlinespace
-H-RAY-004 & Lesson flow; feedback & Repeated failed attempts at one stage
+H-RAY-004 & C2 & Repeated failed attempts at one stage
 continue until the child becomes frustrated or agitated. & Failure feedback
 repeats; \texttt{ATTEMPT\_LIMIT} may be too high for a given child (CA-006); an
 improvement extension lengthens the lesson; no adult may be watching (CA-001). &
 The child becomes distressed, stops practising or refuses the activity later.
 Loss: well-being; the practice benefit. & Psychological/ well-being & Mitigate:
-end the lesson at \texttt{ATTEMPT\_LIMIT}, or at \texttt{ATTEMPT\_LIMIT\_MAX}
-when extended, and save progress (G.3); end the lesson when the child stops
-drawing, without counting the idle time as failed attempts; let audio feedback
-be muted (SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
-\texttt{ATTEMPT\_LIMIT}, that no extended lesson passes
-\texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with no failed
-attempt beyond the one in progress.
+end the lesson at \texttt{ATTEMPT\_LIMIT} or, when extended, when the extension
+is used up or \texttt{ATTEMPT\_LIMIT\_MAX} is reached, whichever comes first,
+and save progress (G.3); end the lesson when the child stops drawing, without
+counting the idle time as failed attempts; let audio feedback be muted
+(SRC-005, P2, 37:39). Document/Test: test that each lesson ends at
+\texttt{ATTEMPT\_LIMIT} or when its extension is used up, that no extended
+lesson passes \texttt{ATTEMPT\_LIMIT\_MAX}, and that an idle lesson ends with
+no failed attempt beyond the one in progress.
 & G.3, \textbf{SAF-RAY-005}, \textbf{SAF-RAY-009} \\
 \addlinespace
-H-RAY-005 & Lesson flow; attempt records & After a lesson ends at
-\texttt{ATTEMPT\_LIMIT}, the same lesson is started again at once and the repetition continues. &
-The adult starts the same lesson again, which only the adult can do after
-the adult check (CA-001, SAF-RAY-001); no adult may be watching (CA-001);
-starting the lesson again begins a new count of attempts. &
+H-RAY-005 & C2 & An adult starts the same lesson again right after it ended at
+its attempt limit, so the child repeats past the limit. & The adult does not
+know that the lesson has already ended at its limit, or how often (CA-001); a
+lesson started again has a new count of attempts, by design (FR-REC-006). &
 The limit does not stop the repetition, and the adult cannot see how often it
 happened. Loss: well-being; misleading records. & Psychological/ well-being &
-Mitigate: record each lesson that ended at \texttt{ATTEMPT\_LIMIT} and show the
+Mitigate: record each lesson that ended at a limit and show the
 adult how many times this happened per lesson; keep earlier attempts when the
 same lesson is started again. Document/Test: test that starting the lesson
 again after the limit keeps the earlier record. & G.3, G.5, \textbf{SAF-RAY-006} \\
 \addlinespace
-H-RAY-006 & Learner selection; attempt records & On a shared device, attempts or
+H-RAY-006 & C8 & On a shared device, attempts or
 a pending suggestion are saved to, or shown for, the wrong child. & Several
 children use one device (CA-004); the active child is not changed between
 sessions; a lost connection leaves a session open (CA-003). & One child's
@@ -962,13 +877,13 @@ suggestion when the adult reviews it; end a lesson after a set time with no
 input. & G.5, \textbf{SAF-RAY-001}, \textbf{SAF-RAY-007}, \textbf{SAF-RAY-009},
 FR-REC-008, FR-PRG-001 \\
 \addlinespace
-H-RAY-007 & Child profile settings; lesson flow & A stage check or lesson limit
+H-RAY-007 & C8 & A stage check or lesson limit
 uses a value that does not suit the child: \texttt{STAGE\_PASS} too strict or
 too lenient, or \texttt{ATTEMPT\_LIMIT} not larger than
 \texttt{DIFFICULTY\_STREAK}, or \texttt{ATTEMPT\_LIMIT\_MAX} below
 \texttt{ATTEMPT\_LIMIT}. & The adult misjudges the example drawings or leaves a
-default that does not suit the child (CA-006); a value is saved outside its
-range; a child changes a setting. & A child cannot pass a stage they can draw,
+default that does not suit the child (CA-006); a child changes a setting. & A
+child cannot pass a stage they can draw,
 or passes one they cannot, and the records mislead the adult. Loss: well-being;
 misleading records. & Psychological/ well-being & Mitigate: accept only values
 within the team-set range, only an \texttt{ATTEMPT\_LIMIT} larger than
@@ -987,41 +902,34 @@ drawing gets the result it shows when the check scores it. & G.2, G.3,
 
 \subsection{Drawing Input and Guided Lesson Decisions (H-AHM)}
 \label{sec:fmea-ahm}
-Table~\ref{tab:fmea-ahm} examines failures in the capture and interpretation of
-stylus input and in the decisions that use it. These failures can occur even on
-an otherwise supported device with a working network, so they are distinct from
-the environmental failure in H-RAY-002. Effects are assessed against drawing
-accuracy, record integrity and the child's well-being; Squigglr does not make
-clinical assessments (BR-006). Recommended actions are traced to the
-learning-activity requirements in the SRS. Two additional safeguards,
-SAF-AHM-001 and SAF-AHM-002, are specified in the SRS Safety-Critical
-Requirements section.
+Table~\ref{tab:fmea-ahm} covers failures in capturing stylus input and in the
+lesson decisions that use it.
 \begin{fmealandscape}
-{\footnotesize
+{\scriptsize
 \setlength{\tabcolsep}{2pt}
 \begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{1.85cm} >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{1.85cm} >{\raggedright\arraybackslash}p{1.0cm}
   >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{2.3cm}
   >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{1.9cm}
-  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{4.2cm}
   >{\raggedright\arraybackslash}p{2.1cm}@{}}
 \caption{FMEA: drawing input and guided lesson decisions}
 \label{tab:fmea-ahm}\\
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-\mbox{H-AHM-001} & Stylus input capture; attempt state & A stroke or part of one
+\mbox{H-AHM-001} & C1 & A stroke or part of one
 stroke disappears during a multi-stroke attempt, but the attempt is still
 finalized and evaluated. & Missed pointer samples, a brief input interruption or
 premature finalization (ASM-004); a stylus lift is mistaken for the end of an
@@ -1036,7 +944,7 @@ before and during a stroke, and pauses between strokes shorter than
 \texttt{ATTEMPT\_IDLE}. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010,
 FR-LRN-024, FR-LRN-030, FR-LRN-031, FR-LRN-032, FR-LRN-038, FR-LRN-039 \\
 \addlinespace
-\mbox{H-AHM-002} & Stylus event capture; attempt evaluation & One drawn stroke
+\mbox{H-AHM-002} & C1 & One drawn stroke
 is captured or evaluated twice, inflating coverage or producing a spurious extra
 line. & Duplicate input events, accidental replay after reconnection, or
 combining the same stroke twice. & A poor attempt may pass, or a correct one may
@@ -1047,7 +955,7 @@ separate strokes. Document/Test: replay duplicate events and distinct repeated
 strokes; verify that each is handled appropriately. & FR-LRN-007, FR-LRN-008;
 \textbf{SAF-AHM-001} \\
 \addlinespace
-\mbox{H-AHM-003} & Input coordinates; reference-shape alignment & Valid stylus
+\mbox{H-AHM-003} & C1 & Valid stylus
 points are mapped to the wrong position or order and used to score the drawing.
 & Wrong canvas scale, coordinate offset or incorrect ordering after a resize or
 orientation change (ASM-004). & An accurate attempt fails, an inaccurate attempt
@@ -1058,10 +966,11 @@ input that cannot be mapped reliably. Document/Test: repeat known stroke traces
 before and after resizing or rotating the device. & FR-LRN-007, FR-LRN-010,
 FR-LRN-032; \textbf{SAF-AHM-002} \\
 \addlinespace
-\mbox{H-AHM-004} & Completeness and pass classifier; lesson flow & An incomplete
+\mbox{H-AHM-004} & C2 & An incomplete
 drawing (for example, a square missing a side) is reported as passing and
-advances the child. & The geometric result is high even though a required
-segment is missing, or completeness is not checked before threshold comparison.
+advances the child. & A child leaves out a part of the shape, for example one
+side of a square, but draws the rest closely, so a result based on closeness
+alone is above \texttt{STAGE\_PASS}.
 & The system advances despite an unfinished task and records a misleading
 success. Loss: record integrity and appropriate guidance. & Data integrity &
 Eliminate: require completeness and the adult-selected passing threshold to both
@@ -1070,38 +979,23 @@ complete and missing-part drawings immediately above and below the threshold,
 including a high-scoring incomplete example. & FR-LRN-011, FR-LRN-013,
 FR-LRN-023 \\
 \addlinespace
-\mbox{H-AHM-005} & Feedback-selection logic; stage-result mapping & A detected
-attempt result or drawing difficulty is associated with the wrong pre-approved
-feedback observation (for example, a missed endpoint is reported as a missing
-segment). & A classification identifier is mapped to the wrong feedback entry,
-or the feedback lookup uses the wrong lesson or guidance stage. & The child is
-directed to correct a part of the drawing that was not identified as incorrect;
-the reported observation does not match the evaluated attempt. Loss: accurate
-guidance and feedback integrity. & Data integrity & Mitigate: select feedback
-from the approved catalogue using the evaluated result and correct lesson and
-stage identifiers; when no matching observation exists, do not present an
-unrelated correction. Document/Test: check the mapped message for every
-predefined classification and each drawing stage; test missing and mismatched
-identifiers. & FR-LRN-011, FR-LRN-013, FR-LRN-014, NFR-UX-004, NFR-UX-015 \\
-\addlinespace
-\mbox{H-AHM-006} & Failure-streak and suggestion logic; adult decision &
-Squigglr recommends moving backward at the wrong time, or changes the stage
-without the adult accepting the suggestion. & Invalid input is counted as
-failure, the streak is not reset, or the improvement suppression rule is omitted
-(BR-003). & The child receives unsuitable support or a needless interruption;
-adult control is bypassed. Loss: well-being and authorized lesson progression. &
-Psychological/ well-being & Mitigate: base the suggestion only on counted
-non-passing attempts and the defined improvement predicate; leave the current
-stage unchanged until an authorized adult accepts. Document/Test: replay
+\mbox{H-AHM-006} & C3 & Squigglr suggests going back a stage when the child
+does not need it. & The child's input is interrupted or cannot be evaluated
+several times in a row (ASM-004), or the child is failing but improving
+(BR-003). & The child receives unsuitable support or a needless interruption.
+Loss: well-being. & Psychological/ well-being & Mitigate: base the suggestion
+only on counted non-passing attempts and the defined improvement predicate;
+leave the current stage unchanged until an adult accepts (H-RAY-001).
+Document/Test: replay
 improving, non-improving, invalid and threshold-boundary sequences; decline or
 ignore a suggestion. & FR-LRN-009, FR-LRN-018, FR-LRN-019, FR-LRN-020,
 FR-LRN-030 to FR-LRN-037 \\
 \addlinespace
-\mbox{H-AHM-007} & Learner settings; attempt and lesson evaluation & The active
+\mbox{H-AHM-007} & C8 & The active
 attempt is evaluated using another learner's threshold, a stale value or a
-setting different from the adult's saved selection. & Wrong profile linkage,
-settings not refreshed after an adult change, or defaults applied over saved
-choices (BR-008; CA-006). & A drawing passes or fails incorrectly, a lesson ends
+setting different from the adult's saved selection. & An adult changes a value,
+or switches the active learner, during a lesson or between lessons (BR-008;
+CA-006). & A drawing passes or fails incorrectly, a lesson ends
 too early or continues too long, and the adult receives misleading records.
 Loss: well-being and record integrity. & Data integrity & Mitigate: use the
 active learner's validated saved settings for passing, suggestions and limits;
@@ -1116,33 +1010,29 @@ FR-LRN-021 \\
 \subsection{Security, Saving and AI-Assisted Refinement (H-SHA)}
 \label{sec:fmea-sha}
 
-Table~\ref{tab:fmea-sha} covers hazards regarding account and data security,
-practice records, and the external AI refinement provider, if one is used.
-Geometric refinement runs on the device and sends no drawing to an outside
-service, so the refinement service named in H-SHA-002 applies only when an
-external model refines drawings; failures of either approach in changing a
-drawing are analysed in H-MUH-002. Effects are assessed based on privacy, data
-integrity, and the trustworthiness of content shown to children and adults.
+Table~\ref{tab:fmea-sha} covers account and data security, saving, and an
+external refinement model, if one is used. Geometric refinement runs on the
+device and sends no drawing to an outside service.
 
 \begin{fmealandscape}
-{\footnotesize
+{\scriptsize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}p{1.0cm}
   >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{2.3cm}
   >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{1.9cm}
-  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{4.2cm}
   >{\raggedright\arraybackslash}p{2.0cm}@{}}
 \caption{FMEA: security and AI-assisted refinement}
 \label{tab:fmea-sha}\\
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
@@ -1150,9 +1040,9 @@ integrity, and the trustworthiness of content shown to children and adults.
 \bottomrule
 \endlastfoot
 
-H-SHA-001 & Authenti\-cation; account management & An unauthorized user gains
+H-SHA-001 & C7 & An unauthorized user gains
 access to a learners account data or the entire account. & Weak or reused
-credentials; missing server-side authorization checks & The child's privacy is
+credentials; a shared device left signed in (CA-004). & The child's privacy is
 violated as the unauthorized user can read or write over personal data. Loss:
 privacy and trust in the system. & Privacy/ security & Mitigate: implement
 authentication at every endpoint the data is accessed at; end session and logout
@@ -1160,7 +1050,7 @@ after an extended inactivity; Document/Test: test that attempts to access other
 accounts' data under the hood is rejected by the server & \textbf{SAF-SHA-001},
 \textbf{SAF-SHA-006} \\
 \addlinespace
-H-SHA-002 & Data transmission; third-party integrations & Private learner data
+H-SHA-002 & C7 & Private learner data
 is sent to a third-party service (other than ones approved for functionality) &
 Error reporting or refinement service receive raw request payloads of private
 learner data; developers use uninspected external SDK & Privacy policy violated
@@ -1171,53 +1061,47 @@ services. Document/Test: run grey-box (white-box if open source) integration
 tests in contained environments inspecting whether third-party services transmit
 PII. & \textbf{SAF-SHA-002} \\
 \addlinespace
-H-SHA-003 & Attempt persistence; save confirmation & A practice attempt is lost
-without the user being informed, or the system reports a false successful save.
-& Combined with H-RAY-002: a lost connection loses the attempt without notice;
-that cause and its mitigations are analysed in H-RAY-002. Own cause: a success
-message is shown before the server confirms the save. & Adult believes child's
-progress is being tracked with complete
-records when records are missing in reality. Loss: misleading progress
-reporting; adult trust in the application. & Data integrity & Mitigate: report
-a save as successful only after the server confirms it, and tell the adult when
-a save fails. Document/Test: run integration tests in which saves fail after the
-request is sent, and verify that no success is shown and the adult is told. &
-G.5,
-\textbf{SAF-SHA-003} \\
+H-SHA-003 & C7 & The connection is lost or slow during a save, and a practice
+attempt is lost without the adult being told, or is shown as saved when it is
+not. & The connection drops after the save is sent and before the server
+confirms it (CA-003). & Adult believes child's progress is being tracked with
+complete records when records are missing in reality. Loss: misleading
+progress reporting; adult trust in the application. & Data integrity &
+Mitigate: keep each attempt on the device until the server confirms it is
+saved, send it again when the connection returns, report a save as successful
+only after the server confirms it, and tell the adult when a save fails.
+Document/Test: run integration tests in which saves fail after the request is
+sent, and verify that no success is shown and the adult is told. & G.5,
+\textbf{SAF-SHA-003}, \textbf{SAF-RAY-003}, FR-REC-008, NFR-PERF-005,
+FR-PRG-011 \\
 \end{longtable}
 }
 \end{fmealandscape}
 
 \subsection{Sensory Load, Feedback, Progress Views and Refinement (H-MOU)}
 \label{sec:fmea-mou}
-Table~\ref{tab:fmea-mou} covers hazards from how Squigglr looks, sounds and
-speaks to the child, how its progress views describe the child to adults, and
-how it changes the child's creative drawings. These hazards arise even when
-input, saving and lesson logic work correctly. H-AHM-005 covers feedback mapped
-to the wrong observation, H-RAY-003 records read as a diagnosis, and H-RAY-004
-frustration from repeated failure; the rows below do not repeat them. Mitigating
-requirements trace to the usability requirements (NFR-UX-\#\#\#) and to safety
-requirements SAF-MOU-001 to SAF-MOU-003 in the SRS, Safety-Critical
-Requirements.
+Table~\ref{tab:fmea-mou} covers hazards from how \progname{} looks, sounds and
+speaks to the child, how its progress views describe the child, and how it
+changes creative drawings.
 \begin{fmealandscape}
-{\footnotesize
+{\scriptsize
 \setlength{\tabcolsep}{2pt}
 \begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{1.85cm} >{\raggedright\arraybackslash}p{1.8cm}
+  >{\raggedright\arraybackslash}p{1.85cm} >{\raggedright\arraybackslash}p{1.0cm}
   >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{2.3cm}
   >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{1.9cm}
-  >{\raggedright\arraybackslash}p{3.4cm}
+  >{\raggedright\arraybackslash}p{4.2cm}
   >{\raggedright\arraybackslash}p{2.0cm}@{}}
 \caption{FMEA: sensory load, feedback, progress views and refinement}
 \label{tab:fmea-mou}\\
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
@@ -1225,7 +1109,7 @@ Requirements.
 \bottomrule
 \endlastfoot
 
-\mbox{H-MOU-001} & Child-facing screens; audio feedback & Screens or feedback
+\mbox{H-MOU-001} & C1 & Screens or feedback
 present more sound, colour, movement or flashing than the child can manage. &
 Decorative animation, repeated or loud sounds, bright colours or many controls;
 children react differently to sensory input (SRC-009.05; FACT-003); no adult may
@@ -1240,7 +1124,7 @@ educator or occupational therapist. Document/Test: inspect every child-facing
 screen against the calm-screen checklist. & \textbf{SAF-MOU-003}, NFR-UX-001, NFR-UX-006,
 NFR-UX-007, NFR-UX-010, NFR-UX-022 \\
 \addlinespace
-\mbox{H-MOU-002} & Feedback wording and style & Feedback tells the child that
+\mbox{H-MOU-002} & C2 & Feedback tells the child that
 the drawing is wrong or bad, or uses error styling, after a missed part or a
 non-passing attempt. & Messages written around errors; warning colours, crosses
 or alarm sounds; wording not yet reviewed with educators or therapists
@@ -1253,7 +1137,7 @@ educator or occupational therapist. Document/Test: check every approved message
 against the word list. & NFR-UX-004, NFR-UX-007, NFR-UX-015, NFR-UX-016,
 FR-LRN-022 \\
 \addlinespace
-\mbox{H-MOU-003} & Feedback presentation & The child cannot tell what the
+\mbox{H-MOU-003} & C1 & The child cannot tell what the
 feedback means or what to do next. & Feedback that needs reading, long messages,
 sound-only cues while audio is off, or a missed part shown only by colour to a
 child who does not see that colour. & The child repeats the same difficulty,
@@ -1264,7 +1148,7 @@ instead of text; mark missed parts by more than colour. Document/Test: review
 all feedback with audio off and with colour hidden. & NFR-UX-002, NFR-UX-004,
 NFR-UX-015, NFR-UX-021 \\
 \addlinespace
-\mbox{H-MOU-004} & Feedback; guidance stages & The child comes to rely on
+\mbox{H-MOU-004} & C2 & The child comes to rely on
 Squigglr's help and does not practise drawing on their own. & Feedback completes
 the missed part for the child instead of pointing to it; prompts at every
 attempt; guidance that never fades. & The child does not move towards
@@ -1275,11 +1159,11 @@ child draw it; fade guidance automatically on a pass; keep the child's actual
 strokes. Document/Test: check that no feedback adds strokes to an attempt. &
 \textbf{SAF-MOU-001}, FR-LRN-014, FR-LRN-023, BR-004 \\
 \addlinespace
-\mbox{H-MOU-005} & Progress summaries; attempt records & A progress view makes
+\mbox{H-MOU-005} & C6 & A progress view makes
 the child look more or less independent than they were. & Combined with
-H-MUH-003: assisted attempts shown as independent, and creative drawings counted
-with lesson records; those causes and their mitigations are analysed in
-H-MUH-003. Own cause: fewer attempts presented as better skill (SRC-005,
+H-MUH-003: assisted attempts shown as independent; that cause and its
+mitigations are analysed in H-MUH-003. Own cause: fewer attempts presented as
+better skill (SRC-005,
 Moustafa, 6:03). & An adult moves
 the child on too early or holds them back, or overrates their progress. Loss:
 suitable support decisions; the child's well-being. & Data integrity;
@@ -1289,7 +1173,7 @@ no summary of a prepared history ranks or rates the child by the number of
 attempts. & \textbf{SAF-MOU-002}, G.6,
 FR-LRN-012, BR-005, \textbf{SAF-RAY-004}, NFR-UX-017 \\
 \addlinespace
-\mbox{H-MOU-006} & Creative space refinement & Refinement changes the drawing
+\mbox{H-MOU-006} & C4 & Refinement changes the drawing
 too much: points move further than intended, or parts are added or removed. &
 Combined with H-MUH-002: \texttt{REFINE\_\allowbreak TOLERANCE} not enforced, or
 the refinement service returns a different drawing; those causes and their
@@ -1310,37 +1194,29 @@ G.4, BR-005, NFR-UX-011 \\
 \subsection{Creative Drawing, Attempt Records and Summaries
 (H-MUH)}\label{sec:fmea-muh}
 
-Table~\ref{tab:fmea-muh} covers hazards from creative drawing and its
-refinement, attempt records and progress summaries. Each group of rows starts
-with the ID and name of its component, and the Component cell repeats the name
-exactly. The last column cites SRS requirements by ID: creative drawing
-(FR-CRT), attempt record (FR-REC) and progress summary (FR-PRG) requirements.
-Where a row has several causes, each cause is labelled (a), (b) and so on, and
-the recommended action and mitigating requirements for that cause carry the same
-label, so that every cause traces to the requirements that mitigate it.
-Table~\ref{tab:fmea-coverage} places the rows of all five tables under the
-components.
+Table~\ref{tab:fmea-muh} covers creative drawing and its refinement, the
+attempt records and the progress summaries.
 
 \begin{fmealandscape}
 {\scriptsize
 \setlength{\tabcolsep}{3pt}
 \exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
 \begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{1.75cm}
+  >{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{1.0cm}
   >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{2.25cm}
   >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{1.5cm}
-  >{\raggedright\arraybackslash}p{2.9cm}
+  >{\raggedright\arraybackslash}p{3.65cm}
   >{\raggedright\arraybackslash}p{2.3cm}@{}}
 \caption{FMEA: creative drawing, attempt records and progress summaries}
 \label{tab:fmea-muh}\\
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Hazard ID} & \textbf{Component} & \textbf{Failure mode} &
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
 \textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
 \textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
 \midrule
@@ -1350,11 +1226,7 @@ components.
 \endfoot
 \bottomrule
 \endlastfoot
-%
-\multicolumn{8}{@{}l}{\textbf{C4 Creative refinement}}
-\\*
-\addlinespace
-H-MUH-001 & Creative refinement & A creative change
+H-MUH-001 & C4 & A creative change
 cannot be reversed: undo does not step back an edit, a refinement or a restore;
 restoring the original is not available to the child or to the adult; or a
 restore does not return the original strokes exactly. & (a)~The original strokes
@@ -1379,7 +1251,7 @@ by point with the original. & (a)~FR-CRT-017, FR-CRT-024\newline
 (c)~FR-CRT-017\newline
 (d)~FR-CRT-018, FR-CRT-019 \\
 \addlinespace
-H-MUH-002 & Creative refinement & A refinement changes
+H-MUH-002 & C4 & A refinement changes
 the drawing wrongly: a point moves further than \texttt{REFINE\_TOLERANCE}; a
 stroke is added, removed or recoloured; only part of a result is applied; or a
 refinement reaches a drawing outside the supported set, an older version of the
@@ -1409,7 +1281,7 @@ with drawings outside the supported set, and with guided lesson strokes. &
 (d)~FR-CRT-015\newline
 (e)~FR-CRT-027 \\
 \addlinespace
-H-MUH-006 & Creative refinement & A refinement that meets
+H-MUH-006 & C4 & A refinement that meets
 every rule is still not accepted by the child as their own drawing: the child
 erases or redraws the refined parts, stops drawing, or is upset after the
 refinement. & (a)~Refinement happens with no action from the child (BR-005), and
@@ -1430,39 +1302,30 @@ drawing. (b)~Mitigate: show whether the open drawing holds a refinement.
 (a)~FR-CRT-012, FR-CRT-015, \textbf{FR-CRT-030}\newline
 (b)~FR-CRT-016\newline
 (c)~FR-CRT-018 \\
-\midrule
-%
-\multicolumn{8}{@{}l}{\textbf{C5 Attempt storage and history}} \\*
 \addlinespace
-H-MUH-003 & Attempt storage and history & Records no longer show which work was
-the child's own and which was assisted: an attempt's stage is missing or wrong,
-a guided attempt keeps a corrected shape instead of the child's strokes, a
-creative drawing appears as an attempt, or a refined drawing cannot be told from
-the child's original. & (a)~The stage is not saved with the attempt, or is taken
-from the lesson's stage when the save completes rather than when the child drew.
-(b)~Strokes are smoothed or corrected before they are saved (BR-004).
-(c)~Creative drawings and attempts are stored or counted together. (d)~The
-originals or the refined state of a creative drawing are not saved with it.
-(e)~A summary merges attempts made with and without a guide, or shows stages
-before an adult-chosen starting stage (UC-004) as failed. & A summary counts
+H-MUH-003 & C5 & Records no longer show which work was the child's own and
+which was assisted: an attempt's stage is missing or wrong, or a refined
+drawing cannot be told from the child's original. & (a)~The stage is taken
+from the lesson's stage when the save completes rather than when the child
+drew. (b)~The originals or the refined state of a creative drawing are not
+saved with it. (c)~A summary merges attempts made with and without a guide, or
+shows stages before an adult-chosen starting stage (UC-004) as failed. & A
+summary counts
 attempts made with a guide as made without one, or the reverse, so the adult
 moves the child on too early or holds the child back; an adult takes refined
 work for the child's unaided drawing. Loss: L5 (misleading information). & Data
 integrity & (a)~Mitigate: keep the stage in every attempt record, and never
-change a saved record. (b)~Mitigate: keep the strokes as captured, in the order
-drawn. (c)~Eliminate: never count a creative drawing as an attempt.
-(d)~Mitigate: save the originals of every refinement with the drawing, show
-whether an open drawing is refined, and restore the exact original.
-(e)~Mitigate: keep attempts made with and without a guide apart in every
-summary, and mark stages not attempted. Document/Test: test summaries on
-prepared histories that mix both kinds of attempt, start at a later stage, and
-include refined creative drawings. & (a)~FR-REC-001, FR-REC-009\newline
-(b)~FR-REC-002\newline
-(c)~FR-CRT-028\newline
-(d)~FR-CRT-016, FR-CRT-017, FR-CRT-023\newline
-(e)~FR-PRG-003, FR-PRG-010 \\
+change a saved record. (b)~Mitigate: save the originals of every refinement
+with the drawing, show whether an open drawing is refined, and restore the
+exact original. (c)~Mitigate: keep attempts made with and without a guide
+apart in every summary, and mark stages not attempted. Document/Test: test
+summaries on prepared histories that mix both kinds of attempt, start at a
+later stage, and include refined creative drawings. & (a)~FR-REC-001,
+FR-REC-009\newline
+(b)~FR-CRT-016, FR-CRT-017, FR-CRT-023\newline
+(c)~FR-PRG-003, FR-PRG-010 \\
 \addlinespace
-H-MUH-004 & Attempt storage and history & An attempt record, part of one, or a
+H-MUH-004 & C5 & An attempt record, part of one, or a
 creative drawing is saved to, merged with or shown under the wrong attempt,
 lesson record or learner profile. & (a)~A save retried after a lost connection
 (CA-003) is stored twice or under another lesson record, or the same learner has
@@ -1487,7 +1350,7 @@ for one learner at once, and a learner switch during an attempt. &
 (c)~FR-CRT-023, FR-CRT-026\newline
 (d)~FR-PRG-001 \\
 \addlinespace
-H-MUH-005 & Attempt storage and history & A creative drawing, or the latest
+H-MUH-005 & C5 & A creative drawing, or the latest
 changes to it, is not saved, so it is missing, or older than the child left it,
 when it is reopened. & (a)~The child leaves the creative space, or an adult ends
 the session, before the drawing is saved. (b)~The connection is lost while the
@@ -1505,7 +1368,7 @@ each reopened drawing keeps. & (a)~FR-CRT-023, FR-CRT-024\newline
 (b)~FR-CRT-025\newline
 (c)~FR-CRT-023, FR-CRT-025, \textbf{FR-CRT-029} \\
 \addlinespace
-H-MUH-007 & Attempt storage and history & An attempt record or lesson record
+H-MUH-007 & C5 & An attempt record or lesson record
 does not hold what happened: a predefined difficulty is missing because the
 child later corrected it, the adult-set values shown are not those in use at the
 time, a lesson stopped early has no lesson record, or a saved record is later
@@ -1528,11 +1391,8 @@ attempt (G.5). & (a)~FR-REC-003\newline
 (b)~FR-REC-004\newline
 (c)~FR-REC-006, FR-REC-007\newline
 (d)~FR-REC-009 \\
-\midrule
-%
-\multicolumn{8}{@{}l}{\textbf{C6 Adult access and summaries}} \\*
 \addlinespace
-H-MUH-008 & Adult access and summaries & A progress summary does not agree with
+H-MUH-008 & C6 & A progress summary does not agree with
 the saved records behind it: a count, a stage or a recurring difficulty is wrong
 or missing; the latest attempts are left out without notice; interrupted
 attempts or stages not attempted are counted as unsuccessful; an empty history
@@ -1561,19 +1421,103 @@ starting stage histories. & (a)~FR-PRG-002, FR-PRG-011\newline
 }
 \end{fmealandscape}
 
+\subsection{Random Failures of the Network, the Device and Outside Services}
+\label{sec:fmea-random}
+
+Table~\ref{tab:fmea-random} covers failures that happen at random outside
+\progname{}: a lost or slow connection, an outage of an outside service, and a
+device or browser that stops. A lost connection during a save is H-SHA-003,
+and during creative drawing H-MUH-005.
+
+\begin{fmealandscape}
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\exhyphenpenalty=10000 % keep IDs on one line
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{1.0cm}
+  >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{2.25cm}
+  >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{1.5cm}
+  >{\raggedright\arraybackslash}p{3.65cm}
+  >{\raggedright\arraybackslash}p{2.3cm}@{}}
+\caption{FMEA: random failures of the network, the device and outside
+services}
+\label{tab:fmea-random}\\
+\toprule
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hazard ID} & \textbf{Comp.} & \textbf{Failure mode} &
+\textbf{Cause(s)} & \textbf{Effect and loss} & \textbf{Category} &
+\textbf{Recommended action} & \textbf{Mitigating requirement IDs} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+H-MUH-009 & C2 & The connection is lost or slow while a child draws a guided
+attempt. & The home or school network drops or slows (CA-003). & The lesson
+stops on a screen the child cannot leave, or the attempt and the ones after it
+are not saved. Loss: L2 (well-being); L4 (data). & Availability; Data
+integrity & Mitigate: let a lesson that has started continue with no
+connection; keep each completed attempt on the device and send it when the
+connection returns. & \textbf{SAF-RAY-003}, NFR-PERF-005 \\
+\addlinespace
+H-MUH-010 & C4 & A refinement gets no result, or gets it late. & (a)~The
+connection is lost or slow (CA-003). (b)~The external refinement model, if one
+is used, is unavailable or slow (LC-004). & The child waits for a change that
+does not come, or the drawing changes after the child has moved on
+(H-MUH-002). Loss: L2 (well-being). & Availability;
+Psycho\-logical/\allowbreak{}well-being & Mitigate: keep the canvas open for
+drawing while a refinement runs; leave the drawing unchanged when the
+refinement fails; discard a result that arrives after the drawing has changed
+or closed. & NFR-PERF-002, FR-CRT-020, FR-CRT-021 \\
+\addlinespace
+H-MUH-011 & C6 & A progress summary does not load, or loads without the latest
+attempts. & The connection is lost or slow (CA-003); attempts are still kept
+on the device and not yet saved. & The adult cannot review before choosing the
+next lesson, or decides from an incomplete summary. Loss: L5 (misleading
+information). & Availability; Data integrity & Mitigate: state on each summary
+the latest attempt it includes, and tell the adult which attempts are not yet
+saved. & FR-PRG-011, \textbf{SAF-SHA-003} \\
+\addlinespace
+H-MUH-012 & C7 & The hosting service cannot be reached. & An outage of the
+hosting service, or a school network that blocks the site (ASM-013). & The
+site does not open and no practice can start, or a lesson in progress cannot
+save. Loss: L4 (data); L2 (well-being). & Availability & Mitigate: treat a
+lesson in progress as a lost connection (H-MUH-009, H-SHA-003).
+Document/Test: tell adults that \progname{} needs a connection to start
+(ASM-005). & \textbf{SAF-RAY-003}, NFR-PERF-005 \\
+\addlinespace
+H-MUH-013 & C7 & The authentication service is unavailable, so an adult cannot
+sign in, or the session ends during a child's lesson. & An outage of the
+authentication service. & No lesson can be chosen, or the lesson in progress
+stops and its attempts cannot be saved. Loss: L4 (data); L2 (well-being). &
+Availability & Mitigate: do not end a lesson in progress because sign-in is
+unavailable, and keep its attempts on the device until they can be saved. &
+\textbf{SAF-RAY-003} \\
+\addlinespace
+H-MUH-014 & C1 & The browser closes or the device stops during an attempt. &
+The battery runs out, the browser or device crashes, or the child or an adult
+closes the page (CA-002). & The attempt in progress is lost, and the lesson has
+no ending in the records, so it can look as if it did not happen or as a
+failure. Loss: L4 (data); L5 (misleading information). & Data integrity &
+Mitigate: keep completed attempts on the device so they are saved at the next
+visit; keep a lesson record for the lesson, marked as unfinished; do not count
+the unfinished attempt as failed. & \textbf{SAF-RAY-003}, NFR-PERF-005,
+FR-REC-006, FR-REC-007, FR-LRN-032 \\
+\end{longtable}
+}
+\end{fmealandscape}
+
 \subsection{Coverage of Components and Categories}
 \label{sec:fmea-coverage}
 
-Table~\ref{tab:fmea-coverage} checks the FMEA against every pair of a component
-and a category of harm. A hazard ID in plain type is a row of
-Table~\ref{tab:fmea-ray}, Table~\ref{tab:fmea-ahm}, Table~\ref{tab:fmea-mou} or
-Table~\ref{tab:fmea-muh} placed under that component; an ID in parentheses is a
-row placed under another component whose causes lie partly in this one. The
-Component cell of an H-RAY, H-AHM or H-MOU row names the functions it concerns
-in its author's words, so this table assigns each of those rows to a component
-of the System Boundaries and Components section. Each ID appears in the column
-of its row's category; a row whose Category cell names two categories appears in
-both. A dash marks a pair for which no row records a failure mode.
+Table~\ref{tab:fmea-coverage} checks the FMEA against every pair of a
+component and a category of harm. An ID in parentheses is a row placed under
+another component whose causes lie partly in this one. A dash marks a pair
+with no failure mode.
 
 \begin{table}[htbp]
 \centering
@@ -1593,28 +1537,29 @@ both. A dash marks a pair for which no row records a failure mode.
 \textbf{Avail\-ability} \\
 \midrule
 C1 Touch and stylus canvas & H-MOU-001 & H-MOU-001, H-MOU-003, (H-MOU-002),
-(H-MUH-001) & --- & H-RAY-002, H-AHM-001, H-AHM-002, H-AHM-003, (H-MUH-001) &
-H-RAY-002 \\
+(H-MUH-001) & --- & H-RAY-002, H-AHM-001, H-AHM-002, H-AHM-003, H-MUH-014,
+(H-MUH-001) & H-RAY-002 \\
 \addlinespace
 C2 Lesson and stage-check logic & --- & H-RAY-004, H-RAY-005, H-MOU-002,
-H-MOU-004, (H-RAY-001), (H-RAY-007) & --- & H-AHM-004, H-AHM-005, (H-AHM-001),
-(H-AHM-002), (H-AHM-003), (H-AHM-007) & --- \\
+H-MOU-004, (H-RAY-001), (H-RAY-007) & --- & H-AHM-004, H-MUH-009, (H-AHM-001),
+(H-AHM-002), (H-AHM-003), (H-AHM-007) & H-MUH-009 \\
 \addlinespace
 C3 Guidance-\allowbreak{}suggestion logic & --- & H-AHM-006 & (H-RAY-006) & ---
 & --- \\
 \addlinespace
-C4 Creative refinement & --- & H-MOU-006, H-MUH-001, H-MUH-002, H-MUH-006 &
-(H-SHA-002) & H-MUH-001, H-MUH-002, (H-MUH-003) & --- \\
+C4 Creative refinement & --- & H-MOU-006, H-MUH-001, H-MUH-002, H-MUH-006,
+H-MUH-010 & (H-SHA-002) & H-MUH-001, H-MUH-002, (H-MUH-003) & H-MUH-010 \\
 \addlinespace
 C5 Attempt storage and history & --- & H-MUH-005, (H-RAY-003), (H-RAY-005),
 (H-MOU-005) & H-MUH-004, (H-RAY-006) & H-MUH-003, H-MUH-004, H-MUH-005,
-H-MUH-007, (H-RAY-002), (H-MOU-005) & (H-RAY-002) \\
+H-MUH-007, (H-SHA-003), (H-MUH-014), (H-MOU-005) & (H-MUH-012) \\
 \addlinespace
 C6 Adult access and summaries & --- & H-RAY-001, H-RAY-003, H-MOU-005 &
-(H-MUH-004) & H-MOU-005, H-MUH-008, (H-MUH-003), (H-MUH-004) & --- \\
+(H-MUH-004) & H-MOU-005, H-MUH-008, H-MUH-011, (H-MUH-003), (H-MUH-004) &
+H-MUH-011 \\
 \addlinespace
-C7 Hosting and authentication & --- & --- & H-SHA-001, H-SHA-002 & H-SHA-003,
-(H-RAY-002) & (H-RAY-002) \\
+C7 Hosting and authentication & --- & --- & H-SHA-001, H-SHA-002 & H-SHA-003 &
+H-MUH-012, H-MUH-013 \\
 \addlinespace
 C8 Learner profiles and adult-set values & --- & H-RAY-007 & H-RAY-006,
 (H-MUH-004) & H-AHM-007, (H-MUH-004) & --- \\
@@ -1641,858 +1586,139 @@ Several pairs were examined and no credible failure mode was found in them:
   drawing, and the lesson and stage-check logic (C2) holds only the current
   attempt; showing them for the wrong learner is analysed under learner profiles
   (H-RAY-006) and storage (H-MUH-004).
-  \item \emph{Availability:} when summaries (C6) or learner profiles (C8) cannot
-  be used, the cause is the device (H-RAY-002) or hosting and authentication
-  (C7), so the failure is analysed there; H-RAY-002 is also listed under the
-  canvas (C1) and storage (C5). A go-back suggestion that is not made (C3)
-  changes nothing, and practice continues (G.3).
+  \item \emph{Availability:} when the guidance-suggestion logic (C3) or
+  learner profiles (C8) cannot be used, the cause is the device, the network,
+  hosting or sign-in, and the failure is analysed in H-RAY-002 and H-MUH-009
+  to H-MUH-014.
 \end{itemize}
 
 \section{Safety and Security Requirements}\label{sec:safety-reqs}
 
-This section lists the requirements that mitigate the hazards of this analysis:
-every requirement whose ID appears in the Mitigating requirement IDs column of
-one of the five FMEA tables (H-RAY, H-AHM, H-MOU, H-SHA and H-MUH). They form
-two groups. A requirement was \emph{created by this analysis} when it was added
-to the SRS because a hazard showed that no requirement covered it. These are the
-safety-critical requirements (SAF) and two Creative Drawing requirements,
-FR-CRT-029 and FR-CRT-030, which were added when H-MUH-005 and H-MUH-006 showed
-a gap. A requirement is an \emph{existing requirement that mitigates a hazard}
-when it was written from the SRS's own sources, such as a goal, a business rule
-or a use case, and an FMEA row also names it. The split follows each author's
-account in the Reflection appendix and the pull requests that added the
-requirements. As the teaching assistant (TA) advised (SRC-006), each
-requirement is written once, in the SRS, together with its rationale, fit
-criterion, priority, phase and sources. This section therefore adds no
-requirement of its own: Tables~\ref{tab:safety-reqs} and~\ref{tab:existing-reqs}
-repeat the statement of each of these requirements exactly as the SRS states it.
-
-The first table holds the requirements created by this analysis: the two
-Creative Drawing requirements first, then the safety-critical requirements
-(SAF-RAY, SAF-AHM, SAF-SHA and SAF-MOU), which the SRS keeps in its
-Safety-Critical Requirements subsection because they do not fit another section.
-The second table holds the existing requirements. Its functional requirements
-come first, in the order of the SRS subsections that hold them: the Learning
-Activity, Creative Drawing, Attempt Record and Progress Summary requirements.
-The look and feel and usability requirements (NFR-UX) follow, in ID order. For
-each requirement, a table gives its ID, with the short title the SRS gives it
-where there is one, its statement, the hazards whose FMEA rows cite it, and the
-SRS subsection that holds it. The subsection is named in words, because the SRS
-is a separate document; for the same reason, a statement that refers to an SRS
-table names the table by its caption. Names in monospaced capitals, such as
-\texttt{STAGE\_PASS}, are symbolic constants that the SRS defines in its table
-``Central symbolic constants register''.
-
-Some rows of the H-RAY and H-MOU tables also cite goals (G.2 to G.6), business
-rules (BR-004 and BR-005) or constraints (CON-001, CON-002, CON-003 and CON-007)
-among their mitigations. A goal states what \progname{} is for, a business rule
-governs who may do what with \progname{} whatever its design, and a constraint
-is imposed on the project from outside, so none of them is a requirement and
-none is repeated here. Every row that cites a goal, a business rule or a
-constraint also cites at least one requirement of these two tables.
+The SRS states each requirement once, with its rationale and fit criterion
+(SRC-006). This section lists, by ID, the requirements that the FMEA rows
+cite. Table~\ref{tab:safety-reqs} holds the requirements this analysis
+created, because a hazard showed that no requirement covered it.
+Table~\ref{tab:existing-reqs} holds the requirements the SRS already had from
+its own sources. Goals, business rules and constraints cited in the FMEA are
+not requirements and are not listed. In total, 99 requirements mitigate at
+least one hazard, and this analysis created 20 of them.
 
 {\footnotesize
-\setlength{\tabcolsep}{4pt}
-\exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
-\begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{2.1cm}
-  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.75cm-6\tabcolsep\relax}
-  >{\raggedright\arraybackslash}p{1.75cm}
-  >{\raggedright\arraybackslash}p{1.9cm}@{}}
-\caption{Requirements created by this analysis, as stated in the SRS}
+\exhyphenpenalty=10000 % keep IDs on one line
+\begin{longtable}{@{}p{2.4cm}>{\raggedright\arraybackslash}p{6cm}@{}}
+\caption{Requirements created by this analysis}
 \label{tab:safety-reqs}\\
 \toprule
-\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} & \textbf{SRS section} \\
+\textbf{ID} & \textbf{Hazards} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} & \textbf{SRS section} \\
+\textbf{ID} & \textbf{Hazards} \\
 \midrule
 \endhead
-\midrule
-\multicolumn{4}{@{}r@{}}{\emph{Continued on the next page}} \\
-\endfoot
 \bottomrule
 \endlastfoot
-\multicolumn{4}{@{}l}{\textbf{Creative Drawing requirements}} \\*
-\addlinespace
-FR-CRT-029\newline\emph{Show unsaved changes} & Squigglr shall show, while a
-creative drawing is open, whether every change to it has been saved. & H-MUH-005
-& Creative Drawing \\
-\addlinespace
-FR-CRT-030\newline\emph{Turn refinement off} & Squigglr shall let the child, and
-the supporting adult, turn automatic refinement off and on for a learner
-profile. & H-MUH-006 & Creative Drawing \\
-\addlinespace
-\midrule
-\multicolumn{4}{@{}l}{\textbf{Safety-critical requirements}} \\*
-\addlinespace
-SAF-RAY-001 & Squigglr shall allow lesson choice, starting stage choice, learner
-switching and acceptance of a go-back suggestion only after an adult check that
-a child cannot complete by tapping icons, and shall keep a pending suggestion,
-without blocking practice, until an adult accepts or declines it, or a pass or
-the end of the lesson clears it. & H-RAY-001,
-H-RAY-006 & Safety-Critical \\
-\addlinespace
-SAF-RAY-002 & Before a lesson starts, Squigglr shall check the device and
-browser against \texttt{SUPPORTED\_DEVICES} (TBD) and, if they do not match,
-show an adult-readable notice that results may be unreliable. & H-RAY-002 &
-Safety-Critical \\
-\addlinespace
-SAF-RAY-003 & Squigglr shall keep each completed attempt on the device until the
-server confirms it is saved, and shall tell the adult which attempts could not
-be saved. & H-RAY-002 & Safety-Critical \\
-\addlinespace
-SAF-RAY-004 & No record, summary or export shall show a diagnostic label, a
-judgement of the child's abilities or a comparison with other children, and
-every summary and export shall state that it describes practice only and is not
-an assessment or diagnosis. & H-RAY-003, H-MOU-005 & Safety-Critical \\
-\addlinespace
-SAF-RAY-005 & Squigglr shall end a lesson at \texttt{ATTEMPT\_LIMIT}, or at
-\texttt{ATTEMPT\_LIMIT\_MAX} when extended, without any action from the child,
-and shall keep the progress saved up to that point. & H-RAY-004 &
-Safety-Critical \\
-\addlinespace
-SAF-RAY-006 & Squigglr shall record each lesson that ends at
-\texttt{ATTEMPT\_LIMIT} or \texttt{ATTEMPT\_LIMIT\_MAX}, and each improvement
-extension, show the adult how many times these happened for each lesson, and
-keep earlier attempts when the same lesson is started again. & H-RAY-005 & Safety-Critical
-\\
-\addlinespace
-SAF-RAY-007 & Squigglr shall identify the active learner on every practice
-screen in a form a child who cannot read can recognize, and shall save every
-attempt and suggestion to that learner only. & H-RAY-006 & Safety-Critical \\
-\addlinespace
-SAF-RAY-008 & Squigglr shall save a child's adult-set values (the SRS table
-``Central symbolic constants register'') only within their team-set ranges, with
-\texttt{ATTEMPT\_LIMIT} larger than \texttt{DIFFICULTY\_STREAK} and
-\texttt{ATTEMPT\_LIMIT\_MAX} at least \texttt{ATTEMPT\_LIMIT}; shall use the
-middle of each range when the adult does not choose; shall allow changes only
-after the adult check; and shall show the values in use alongside the child's
-records. & H-RAY-007 & Safety-Critical \\
-\addlinespace
-SAF-RAY-009 & During a guided lesson, Squigglr shall show a check-in a child
-who cannot read can understand after \texttt{LESSON\_IDLE\_PROMPT} with no
-input, end the lesson after \texttt{LESSON\_IDLE\_END} with no input, keep the
-progress saved and record that it ended for inactivity, without counting the
-idle time as an attempt. & H-RAY-004, H-RAY-006 & Safety-Critical \\
-\addlinespace
-SAF-AHM-001 & Squigglr shall prevent duplicate reports of the same stylus input
-event from being counted more than once during evaluation or recording of an
-attempt, while preserving legitimate separately drawn strokes, including
-overlapping strokes. & H-AHM-002 & Safety-Critical \\
-\addlinespace
-SAF-AHM-002 & Squigglr shall preserve the relative positions and order of stylus
-points within the active drawing surface when the canvas size or supported
-device orientation changes, and shall reject input whose coordinates cannot be
-mapped reliably to that surface. & H-AHM-003 & Safety-Critical \\
-\addlinespace
-SAF-SHA-001 & Squigglr shall authenticate data at every endpoint where it is
-accessed. & H-SHA-001 & Safety-Critical \\
-\addlinespace
-SAF-SHA-002 & Squigglr shall confirm that all essential third-party services do
-not transmit PII through their public interface. & H-SHA-002 & Safety-Critical
-\\
-\addlinespace
-SAF-SHA-003 & Squigglr shall report a save as successful only after the server
-confirms it, and shall inform the
-adult when a save fails. & H-SHA-003 & Safety-Critical \\
-\addlinespace
-SAF-SHA-006 & Squigglr shall log out the user after \texttt{IDLE\_TIMEOUT}
-(TBD) of inactivity. & H-SHA-001 & Safety-Critical \\
-\addlinespace
-SAF-MOU-001 & In guided lessons, feedback on a missed part shall show the child
-where the part is missing without drawing it for them. & H-MOU-004 &
-Safety-Critical \\
-\addlinespace
-SAF-MOU-002 & Records and progress summaries shall keep attempts made with a
-guide separate from attempts made without one, shall not include creative space
-drawings, and shall not present the number of attempts as a measure of the
-child's skill. & H-MOU-005 & Safety-Critical \\
-\addlinespace
-SAF-MOU-003 & No content on any child-facing screen shall flash more than three
-times in any one-second period. & H-MOU-001 & Safety-Critical \\
+\textbf{SAF-RAY-001} & H-RAY-001, H-RAY-006 \\
+\textbf{SAF-RAY-002} & H-RAY-002 \\
+\textbf{SAF-RAY-003} & H-SHA-003, H-MUH-009, H-MUH-012, H-MUH-013, H-MUH-014 \\
+\textbf{SAF-RAY-004} & H-RAY-003, H-MOU-005 \\
+\textbf{SAF-RAY-005} & H-RAY-004 \\
+\textbf{SAF-RAY-006} & H-RAY-005 \\
+\textbf{SAF-RAY-007} & H-RAY-006 \\
+\textbf{SAF-RAY-008} & H-RAY-007 \\
+\textbf{SAF-RAY-009} & H-RAY-004, H-RAY-006 \\
+\textbf{SAF-AHM-001} & H-AHM-002 \\
+\textbf{SAF-AHM-002} & H-AHM-003 \\
+\textbf{SAF-SHA-001} & H-SHA-001 \\
+\textbf{SAF-SHA-002} & H-SHA-002 \\
+\textbf{SAF-SHA-003} & H-SHA-003, H-MUH-011 \\
+\textbf{SAF-SHA-006} & H-SHA-001 \\
+\textbf{SAF-MOU-001} & H-MOU-004 \\
+\textbf{SAF-MOU-002} & H-MOU-005 \\
+\textbf{SAF-MOU-003} & H-MOU-001 \\
+\textbf{FR-CRT-029} & H-MUH-005 \\
+\textbf{FR-CRT-030} & H-MUH-006 \\
 \end{longtable}
 }
 
 {\footnotesize
-\setlength{\tabcolsep}{4pt}
-\exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
-\begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{2.1cm}
-  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.75cm-6\tabcolsep\relax}
-  >{\raggedright\arraybackslash}p{1.75cm}
-  >{\raggedright\arraybackslash}p{1.9cm}@{}}
-\caption{Existing requirements that mitigate a hazard, as stated in the SRS}
+\begin{longtable}{@{}p{3cm}
+  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-3cm-2\tabcolsep\relax}@{}}
+\caption{Existing requirements that mitigate a hazard}
 \label{tab:existing-reqs}\\
 \toprule
-\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} & \textbf{SRS section} \\
+\textbf{SRS subsection} & \textbf{Requirement IDs} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{Requirement} & \textbf{Hazards} & \textbf{SRS section} \\
+\textbf{SRS subsection} & \textbf{Requirement IDs} \\
 \midrule
 \endhead
-\midrule
-\multicolumn{4}{@{}r@{}}{\emph{Continued on the next page}} \\
-\endfoot
 \bottomrule
 \endlastfoot
-\multicolumn{4}{@{}l}{\textbf{Functional requirements}} \\*
+Learning Activity & FR-LRN-007 to FR-LRN-014, FR-LRN-016 to FR-LRN-024,
+FR-LRN-030 to FR-LRN-039 \\
 \addlinespace
-FR-LRN-007\newline\emph{Stylus stroke acquisition} & Squigglr shall accept
-stylus-drawn strokes as ordered sequences of input points for the active lesson
-attempt and preserve their order and stroke boundaries for subsequent
-classification. & H-AHM-001, H-AHM-002, H-AHM-003 & Learning Activity \\
+Creative Drawing & FR-CRT-007, FR-CRT-008, FR-CRT-010 to FR-CRT-021, FR-CRT-023
+to FR-CRT-027 \\
 \addlinespace
-FR-LRN-008\newline\emph{Multi-stroke attempts} & Squigglr shall evaluate the
-collected strokes of a single attempt together rather than classify each stylus
-lift as a completed attempt. & H-AHM-001, H-AHM-002 & Learning Activity \\
+Attempt Record & FR-REC-001, FR-REC-003 to FR-REC-009 \\
 \addlinespace
-FR-LRN-009\newline\emph{Interrupted attempt kept apart} & Squigglr shall
-distinguish an interrupted or unfinished drawing attempt from a completed
-drawing attempt. & H-AHM-001, H-AHM-006 & Learning Activity \\
+Progress Summary & FR-PRG-001 to FR-PRG-006, FR-PRG-008 to FR-PRG-012 \\
 \addlinespace
-FR-LRN-010\newline\emph{Invalid input not passed} & Squigglr shall withhold
-passing status from an attempt whose required stylus input is missing, invalid
-or too ambiguous to evaluate against the stage criteria. & H-AHM-001, H-AHM-003
-& Learning Activity \\
-\addlinespace
-FR-LRN-011\newline\emph{Completeness classification} & Squigglr shall classify
-every evaluable drawing attempt as complete or incomplete relative to the
-selected lesson and guidance stage. & H-AHM-004, H-AHM-005 & Learning Activity
-\\
-\addlinespace
-FR-LRN-012\newline\emph{Guidance classification} & Squigglr shall classify each
-evaluated attempt as assisted when performed with outline or endpoint guidance
-and independent when performed without those guides. & H-MOU-005 & Learning
-Activity \\
-\addlinespace
-FR-LRN-013\newline\emph{Pass classification} & Squigglr shall report an
-evaluable attempt as passing its stage only when the drawing is classified as
-complete and its result meets the current learner's \texttt{STAGE\_\allowbreak
-PASS} criterion. & H-AHM-004, H-AHM-005 & Learning Activity \\
-\addlinespace
-FR-LRN-014\newline\emph{Predefined difficulty feedback} & Squigglr shall present
-only pre-approved, stage-relevant feedback observations for evaluated attempts,
-including applicable missed tracing portions, incomplete lines or shapes and
-incorrect endpoints. & H-AHM-005, H-MOU-004 & Learning Activity \\
-\addlinespace
-FR-LRN-016\newline\emph{Adult lesson and starting stage selection} & Squigglr
-shall use the lesson and starting guidance stage selected by the supporting
-adult for the learner's session, including an adult-selected later starting
-stage. & H-AHM-007 & Learning Activity \\
-\addlinespace
-FR-LRN-017\newline\emph{Adult-selected practice parameters} & Squigglr shall
-apply the learner's adult-selected values for \texttt{STAGE\_\allowbreak PASS},
-\texttt{DIFFICULTY\_\allowbreak STREAK}, \texttt{ATTEMPT\_\allowbreak LIMIT},
-\texttt{IMPROVE\_\allowbreak WINDOW}, \texttt{ATTEMPT\_\allowbreak EXTENSION}
-and \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, using the documented
-midpoint default for any unset value and rejecting out-of-range or inconsistent
-selections. & H-AHM-007 & Learning Activity \\
-\addlinespace
-FR-LRN-018\newline\emph{Adult authorization for discretionary changes} &
-Squigglr shall require explicit authorization from the supporting adult before
-changing to another lesson, skipping a guidance stage or moving backward to an
-earlier stage; routine pass-based advancement to the next stage of the current
-lesson requires no additional adult action. & H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-019\newline\emph{Difficulty suggestion} & Squigglr shall offer, without
-applying, an optional suggestion to return to an earlier drawing stage when the
-learner reaches \texttt{DIFFICULTY\_\allowbreak STREAK} consecutive non-passing
-evaluable attempts at an eligible stage and the improvement rule does not
-suppress suggestions (FR-LRN-036). & H-AHM-006, H-AHM-007 & Learning Activity \\
-\addlinespace
-FR-LRN-020\newline\emph{Improvement-\allowbreak{}based extension} & When the
-unsuccessful-attempt count first reaches \texttt{ATTEMPT\_\allowbreak LIMIT} and
-the learner qualifies as improving (FR-LRN-036), Squigglr shall grant up to
-\texttt{ATTEMPT\_\allowbreak EXTENSION} additional evaluable stage attempts,
-subject to \texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}. & H-AHM-006 &
-Learning Activity \\
-\addlinespace
-FR-LRN-021\newline\emph{Stage attempt limit and lesson end} & Squigglr shall end
-the active lesson when its unsuccessful-attempt count reaches
-\texttt{ATTEMPT\_\allowbreak LIMIT} without a qualifying extension, or a granted
-extension is exhausted, or the allowed total-attempt count reaches
-\texttt{ATTEMPT\_\allowbreak LIMIT\_\allowbreak MAX}, and make the furthest
-stage reached available for the lesson record. & H-AHM-007 & Learning Activity
-\\
-\addlinespace
-FR-LRN-022\newline\emph{No learner evaluation or diagnosis} & Squigglr shall
-express lesson feedback and completion results as properties of the drawing
-attempt rather than as assessments, diagnoses or comparisons of children. &
-H-MOU-002 & Learning Activity \\
-\addlinespace
-FR-LRN-023\newline\emph{Automatic within-lesson advancement} & Squigglr shall
-automatically advance from full-outline tracing to endpoint-only guidance, and
-from endpoint-only guidance to independent drawing, upon a passing attempt at
-the active stage; a passing independent drawing attempt completes the current
-lesson without starting a different lesson. & H-AHM-004, H-MOU-004 & Learning
-Activity \\
-\addlinespace
-FR-LRN-024\newline\emph{End an attempt that does not pass} & Squigglr shall end
-an attempt that has not passed as not passed after \texttt{ATTEMPT\_IDLE} with
-no input, and by no other event except an interruption (FR-LRN-009). & H-AHM-001
-& Learning Activity \\
-\addlinespace
-FR-LRN-030\newline\emph{Interrupted attempt not passed} & Squigglr shall not
-record an interrupted or unfinished drawing attempt as passed. & H-AHM-001,
-H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-031\newline\emph{Interrupted attempt not counted} & Squigglr shall not
-count an interrupted or unfinished drawing attempt toward the stage's attempt
-limits. & H-AHM-001, H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-032\newline\emph{Invalid input not counted} & Squigglr shall not count
-input that is missing, invalid or too ambiguous to evaluate toward the stage's
-evaluable attempt or unsuccessful attempt limits. & H-AHM-001, H-AHM-003,
-H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-033\newline\emph{Declined suggestion needs a new streak} & After an adult
-declines a difficulty suggestion, Squigglr shall offer another only after a new
-full streak of \texttt{DIFFICULTY\_\allowbreak STREAK} non-passing evaluable
-attempts. & H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-034\newline\emph{Unanswered suggestion stays pending} & Squigglr shall
-keep a difficulty suggestion that no adult answers pending, without blocking
-practice. & H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-035\newline\emph{One pending suggestion at a time} & Squigglr shall not
-offer a second difficulty suggestion while one is pending. & H-AHM-006 &
-Learning Activity \\
-\addlinespace
-FR-LRN-036\newline\emph{Improvement suppresses suggestions} & Squigglr shall not
-offer a difficulty suggestion while the learner qualifies as improving, that is,
-while the average result of the most recent \texttt{IMPROVE\_\allowbreak WINDOW}
-evaluable attempts at the stage exceeds the average of the
-\texttt{IMPROVE\_\allowbreak WINDOW} attempts before them by at least
-\texttt{IMPROVE\_\allowbreak MARGIN}. & H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-037\newline\emph{One extension per stage} & Squigglr shall grant the
-improvement-based extension at most once per stage, even if results continue to
-improve after its attempts are used. & H-AHM-006 & Learning Activity \\
-\addlinespace
-FR-LRN-038\newline\emph{Evaluate at each stylus lift} & Each time the child
-lifts the stylus in a guided lesson, Squigglr shall evaluate the strokes of the
-attempt so far. & H-AHM-001 & Learning Activity \\
-\addlinespace
-FR-LRN-039\newline\emph{End a passing attempt at once} & Squigglr shall end an
-attempt as passed at the stylus lift after which its strokes are complete and
-meet \texttt{STAGE\_PASS}. & H-AHM-001 & Learning Activity \\
-\addlinespace
-FR-CRT-007\newline\emph{Undo a change} & Squigglr shall let the child undo the
-changes to the open creative drawing one at a time, most recent first, back to
-the drawing as it was when the child opened it. & H-MUH-001 & Creative Drawing
-\\
-\addlinespace
-FR-CRT-008\newline\emph{Redo an undone change} & Squigglr shall let the child
-redo undone changes one at a time until the child makes a new change. &
-H-MUH-001 & Creative Drawing \\
-\addlinespace
-FR-CRT-010\newline\emph{Refine a finished drawing} & Squigglr shall refine the
-open creative drawing automatically each time the child finishes it while
-refinement is turned on, and at no other time. & H-MUH-002 & Creative Drawing \\
-\addlinespace
-FR-CRT-011\newline\emph{Change only stroke paths} & Squigglr shall change only
-the path of each existing stroke when it refines a creative drawing. & H-MUH-002
-& Creative Drawing \\
-\addlinespace
-FR-CRT-012\newline\emph{Stay within the refinement tolerance} & Squigglr shall
-keep every refined stroke within \texttt{REFINE\_\allowbreak TOLERANCE} of the
-corresponding original stroke. & H-MUH-002, H-MUH-006 & Creative Drawing \\
-\addlinespace
-FR-CRT-013\newline\emph{Keep the refined drawing editable} & Squigglr shall let
-the child edit each stroke of a refined drawing with the same actions, and with
-the same results, as a stroke the child drew. & H-MUH-001 & Creative Drawing \\
-\addlinespace
-FR-CRT-014\newline\emph{Do not refine a stroke twice} & Squigglr shall not
-refine again a stroke that an earlier refinement changed, unless the child has
-edited that stroke since. & H-MUH-002 & Creative Drawing \\
-\addlinespace
-FR-CRT-015\newline\emph{Leave unsupported drawings unchanged} & Squigglr shall
-leave a finished creative drawing unchanged if it has no strokes or is not a
-drawing of an item in the supported set. & H-MUH-002, H-MUH-006 & Creative
-Drawing \\
-\addlinespace
-FR-CRT-016\newline\emph{Show whether a drawing is refined} & Squigglr shall
-show, while a creative drawing is open, whether it holds a refinement that has
-not been undone or restored. & H-MUH-003, H-MUH-006 & Creative Drawing \\
-\addlinespace
-FR-CRT-017\newline\emph{Restore the exact original} & Squigglr shall return a
-creative drawing, on restore, exactly to the original of its most recent
-refinement that has not been undone or restored. & H-MUH-001, H-MUH-003 &
-Creative Drawing \\
-\addlinespace
-FR-CRT-018\newline\emph{Child restores the original} & Squigglr shall let the
-child restore the original of the open creative drawing. & H-MUH-001, H-MUH-006
-& Creative Drawing \\
-\addlinespace
-FR-CRT-019\newline\emph{Adult restores the original} & Squigglr shall let the
-supporting adult, after passing the adult check of SAF-RAY-001, restore the
-original of any creative drawing saved under a learner profile in that adult's
-account. & H-MUH-001 & Creative Drawing \\
-\addlinespace
-FR-CRT-020\newline\emph{Leave the drawing unchanged when refinement fails} &
-Squigglr shall make no change to a creative drawing when its refinement fails or
-the refinement result violates FR-CRT-011 or FR-CRT-012. & H-MUH-002 & Creative
-Drawing \\
-\addlinespace
-FR-CRT-021\newline\emph{Discard an out-of-date result} & Squigglr shall discard
-a refinement result if the drawing has been changed or closed since that
-refinement started. & H-MUH-002 & Creative Drawing \\
-\addlinespace
-FR-CRT-023\newline\emph{Save to the active learner} & Squigglr shall save each
-creative drawing, with the originals of its refinements, to the learner profile
-that was active when the child drew it, without any action from the child. &
-H-MUH-003, H-MUH-004, H-MUH-005 & Creative Drawing \\
-\addlinespace
-FR-CRT-024\newline\emph{Reopen a drawing as it was left} & Squigglr shall reopen
-a saved creative drawing exactly as it was last saved, with every stroke
-editable and every refinement that has not been undone or restored still
-restorable. & H-MUH-001, H-MUH-005 & Creative Drawing \\
-\addlinespace
-FR-CRT-025\newline\emph{Keep changes through a lost connection} & Squigglr shall
-save, once the connection returns, every change the child made to an open
-creative drawing while the connection was lost. & H-MUH-005 & Creative Drawing
-\\
-\addlinespace
-FR-CRT-026\newline\emph{Show only the active learner's drawings} & Squigglr
-shall show in the creative space only the creative drawings saved under the
-active learner profile. & H-MUH-004 & Creative Drawing \\
-\addlinespace
-FR-CRT-027\newline\emph{No refinement in guided lessons} & Squigglr shall not
-refine any stroke drawn in a guided lesson. & H-MUH-002 & Creative Drawing \\
-\addlinespace
-FR-CRT-028\newline\emph{Creative drawings are not attempts} & Squigglr shall not
-count a creative drawing as an attempt. & H-MUH-003 & Creative Drawing \\
-\addlinespace
-FR-REC-001\newline\emph{Attempt record} & Squigglr shall keep, for each attempt
-that ends with an outcome, an attempt record holding the lesson, the stage, the
-attempt's result, the outcome (whether the attempt passed its stage, FR-LRN-013)
-and the date and time the attempt ended. & H-MUH-003 & Attempt Record \\
-\addlinespace
-FR-REC-002\newline\emph{Actual strokes} & Squigglr shall keep in each attempt
-record the strokes the child drew in the attempt, in the order drawn, as they
-were captured. & H-MUH-003 & Attempt Record \\
-\addlinespace
-FR-REC-003\newline\emph{Difficulties and corrections} & Squigglr shall keep in
-each attempt record every predefined difficulty observed during the attempt,
-each marked as corrected or not corrected within that attempt. & H-MUH-007 &
-Attempt Record \\
-\addlinespace
-FR-REC-004\newline\emph{Adult-set values in use} & Squigglr shall keep in each
-attempt record the value of each adult-set value that was in use for the learner
-when the attempt was made. & H-MUH-007 & Attempt Record \\
-\addlinespace
-FR-REC-005\newline\emph{Interrupted attempt} & Squigglr shall keep an attempt
-that an adult stops in Squigglr, by ending the session or switching learner,
-after at least one stroke but before its outcome is decided, as an attempt
-record marked as interrupted, holding the strokes and predefined difficulties up
-to that point and no outcome. & H-MUH-004 & Attempt Record \\
-\addlinespace
-FR-REC-006\newline\emph{Lesson record} & Squigglr shall keep, each time a
-learner starts a lesson, a lesson record holding the lesson, the starting stage,
-the furthest stage reached, the number of successful attempts at each stage and
-how the lesson ended. & H-MUH-007 & Attempt Record \\
-\addlinespace
-FR-REC-007\newline\emph{Unfinished lesson} & Squigglr shall keep the lesson
-record of a lesson that stops before its last stage is passed and before it
-reaches an attempt limit, marked as unfinished, with the furthest stage reached
-and the successful attempts at each stage up to that point. & H-MUH-007 &
-Attempt Record \\
-\addlinespace
-FR-REC-008\newline\emph{Each attempt saved once} & Squigglr shall save each
-attempt record exactly once, under the lesson record of the lesson in which the
-attempt was made. & H-MUH-004, H-RAY-002, H-RAY-006 & Attempt Record \\
-\addlinespace
-FR-REC-009\newline\emph{Saved records unchanged} & Squigglr shall keep the
-contents of every saved attempt record, and of every lesson record whose lesson
-has ended, unchanged except by deletion. & H-MUH-003, H-MUH-004, H-MUH-007 &
-Attempt Record \\
-\addlinespace
-FR-PRG-001\newline\emph{One learner per summary} & Squigglr shall show in each
-progress summary only the records of the one learner profile that the summary
-names. & H-MUH-004, H-RAY-006 & Progress Summary \\
-\addlinespace
-FR-PRG-002\newline\emph{Progress over time by lesson} & Squigglr shall show, for
-each lesson in a progress summary, the learner's lesson records in the order
-they were started, each with its starting stage, furthest stage reached,
-successful attempts at each stage and how the lesson ended. & H-MUH-008 &
-Progress Summary \\
-\addlinespace
-FR-PRG-003\newline\emph{With and without a guide kept apart} & Squigglr shall
-show attempts made without a guide separately from attempts made with a guide in
-every part of a progress summary that counts or lists attempts. & H-MUH-003 &
-Progress Summary \\
-\addlinespace
-FR-PRG-004\newline\emph{Recurring difficulties} & Squigglr shall list in each
-progress summary every predefined difficulty observed in at least
-\texttt{RECUR\_\allowbreak MIN} of the learner's attempts at the same stage of
-the same lesson, with the number of those attempts and the number in which the
-child corrected it. & H-MUH-008 & Progress Summary \\
-\addlinespace
-FR-PRG-005\newline\emph{Open the attempts behind the summary} & Squigglr shall
-let the adult open, from each figure or item in a progress summary, the attempt
-records from which it was computed. & H-MUH-008 & Progress Summary \\
-\addlinespace
-FR-PRG-006\newline\emph{Attempt record view} & Squigglr shall show, for each
-attempt record the adult opens, every value kept in it under FR-REC-001 to
-FR-REC-005, with the strokes drawn as recorded. & H-MUH-008 & Progress Summary
-\\
-\addlinespace
-FR-PRG-008\newline\emph{Empty history} & Squigglr shall show, when the learner
-has no saved attempt record in the chosen lessons and dates, a progress summary
-that states that no practice is recorded and shows no stage, count or
-difficulty. & H-MUH-008, H-RAY-003 & Progress Summary \\
-\addlinespace
-FR-PRG-009\newline\emph{Interrupted attempts shown apart} & Squigglr shall show
-interrupted attempts in a progress summary separately from successful and
-unsuccessful attempts. & H-MUH-008 & Progress Summary \\
-\addlinespace
-FR-PRG-010\newline\emph{Stages not attempted} & Squigglr shall mark each stage
-of a lesson that the learner has not attempted, including a stage before an
-adult-chosen starting stage, as not attempted, distinct from a stage attempted
-without success. & H-MUH-003, H-MUH-008 & Progress Summary \\
-\addlinespace
-FR-PRG-011\newline\emph{Latest attempt included} & Squigglr shall state on each
-progress summary the date and time of the most recent attempt it includes. &
-H-MUH-008, H-RAY-002 & Progress Summary \\
-\addlinespace
-FR-PRG-012\newline\emph{No overall score} & Squigglr shall show no figure in a
-progress summary that combines the results of more than one stage into a single
-score, grade or rating. & H-RAY-003 & Progress Summary \\
-\addlinespace
-\midrule
-\multicolumn{4}{@{}l}{\textbf{Look and feel and usability requirements}} \\*
-\addlinespace
-NFR-UX-001\newline\emph{Calm, uncluttered child screens} & Each child-facing
-screen shall offer the child no more than \texttt{CHILD\_\allowbreak
-CONTROLS\_\allowbreak MAX} controls and shall show no decorative animation or
-flashing while the child is drawing. & H-MOU-001 & Appearance \\
-\addlinespace
-NFR-UX-002\newline\emph{Images and icons instead of text} & Every control on a
-child-facing screen shall be identified by an image or icon, and no task on a
-child-facing screen shall require the child to read. & H-MOU-003 & Appearance \\
-\addlinespace
-NFR-UX-004\newline\emph{Feedback that never marks the drawing as wrong} &
-Feedback on an attempt, including a missed part or a non-passing attempt, shall
-use encouraging styling, shall not use error styling such as warning colours,
-crosses, alarm sounds or ``wrong'' symbols, and shall not show a missed part by
-colour alone. & H-AHM-005, H-MOU-002, H-MOU-003 & Style \\
-\addlinespace
-NFR-UX-006\newline\emph{Appealing but calm style} & Child-facing screens shall
-have a style that adult reviewers judge both appealing to children and calm. &
-H-MOU-001 & Style \\
-\addlinespace
-NFR-UX-007\newline\emph{Style reviewed with educators or therapists} & The
-colours, images and feedback style of child-facing screens shall be reviewed by
-at least \texttt{UX\_\allowbreak REVIEWERS} adults, including at least one
-educator or occupational therapist, and each change they request shall be made
-or recorded with a reason. & H-MOU-001, H-MOU-002 & Style \\
-\addlinespace
-NFR-UX-010\newline\emph{Audio setting for each child} & The supporting adult
-shall be able to turn audio feedback on or off for each child, and the choice
-shall apply to every child-facing screen for that child. & H-MOU-001 &
-Person\-alization and Inter\-nation\-alization \\
-\addlinespace
-NFR-UX-011\newline\emph{Refinement setting for each child} & The supporting
-adult shall be able to turn creative space refinement on or off for each child;
-while it is off, the child's strokes shall be kept exactly as drawn. & H-MOU-006
-& Person\-alization and Inter\-nation\-alization \\
-\addlinespace
-NFR-UX-015\newline\emph{Short, encouraging messages to the child} & Every
-message to the child, including feedback on an attempt and the end of a lesson,
-shall be encouraging, shall describe the drawing rather than the child, and
-shall be at most \texttt{FEEDBACK\_\allowbreak WORDS\_\allowbreak MAX} words
-when spoken. & H-AHM-005, H-MOU-002, H-MOU-003 & Under\-stand\-ability and
-Politeness \\
-\addlinespace
-NFR-UX-016\newline\emph{Effort acknowledged} & The feedback on every evaluable
-attempt, including one that does not pass, shall acknowledge the child's effort
-before it shows what to change. & H-MOU-002 & Under\-stand\-ability and
-Politeness \\
-\addlinespace
-NFR-UX-017\newline\emph{Plain wording in adult views} & Adult views shall use
-plain language, shall explain each glossary term where it first appears in a
-view, and shall not describe the child in diagnostic, clinical or ranking
-terms. & H-MOU-005 &
-Under\-stand\-ability and Politeness \\
-\addlinespace
-NFR-UX-021\newline\emph{Feedback not by sound alone} & Every message to the
-child shall be shown on screen and, unless audio is turned off, also played as
-sound; no message shall rely on sound alone. & H-MOU-003 & Accessibility \\
-\addlinespace
-NFR-UX-022\newline\emph{Control of audio} & Any sound that plays automatically
-for more than 3 seconds shall have a control to pause or stop it. & H-MOU-001 &
-Accessibility \\
+Non-functional & NFR-PERF-002, NFR-PERF-005, NFR-UX-001, NFR-UX-002, NFR-UX-004,
+NFR-UX-006, NFR-UX-007, NFR-UX-010, NFR-UX-011, NFR-UX-015 to NFR-UX-017,
+NFR-UX-021, NFR-UX-022 \\
 \end{longtable}
 }
-
-In total, 99 requirements mitigate at least one hazard. This analysis created 20
-of them: the 18 safety-critical requirements and two Creative Drawing
-requirements. The other 79 already existed: 27 Learning Activity, 20 Creative
-Drawing, nine Attempt Record and 11 Progress Summary requirements, five Look and
-Feel and seven Usability and Humanity requirements. Every row of the five FMEA
-tables cites at least one of them. The
-Roadmap section that follows states the phase in which each is planned.
 
 \section{Roadmap}\label{sec:roadmap}
 
-This section states when each requirement of Tables~\ref{tab:safety-reqs}
-and~\ref{tab:existing-reqs} is planned to be met; as in the FMEA tables, an ID
-in bold is a requirement this analysis created. The capstone timeline has
-three phases, each named after the course deliverable that ends it: PH-1, the
-proof-of-concept (PoC) demonstration, from Nov.~23, 2026; PH-2, Revision~0
-(Rev~0), from Feb.~1, 2027; and PH-3, the final demonstration, from Mar.~15,
-2027. These identifiers are those of the SRS Introduction and are distinct from
-the interview participant codes. Each date is the start of the course window for
-that deliverable in the Development Plan (SRC-002). Work planned after the
-capstone has the phase Future. A phase states when a requirement is planned to
-be met; no requirement is claimed here to be implemented. The PoC experiments
-use team-created drawings and prepared attempts (SRC-002), and the PoC does not
-need a complete application, so the requirements planned for PH-2 protect the
-people who use the product as a whole.
-
-The phase of a functional, look and feel or usability requirement is the one in
-its Phase field in the SRS. The safety-critical requirements have no Phase
-field, so for each of them Table~\ref{tab:roadmap} gives the phase of the
-functions it protects and the reason. The table gives one reason for each group
-of requirements that share a purpose, and names the hazards each group
-mitigates.
+Table~\ref{tab:roadmap} gives the phase in which each requirement of
+Section~\ref{sec:safety-reqs} is planned. An ID in bold is a requirement this
+analysis created. The phases and their dates are those of the SRS
+Introduction: PH-1 is the proof of concept, PH-2 is Revision~0 and PH-3 is the
+final demonstration. The phase of each requirement is the one the SRS gives
+it. No requirement that mitigates a hazard is left for after the capstone. The
+features left out of scope (Section~\ref{sec:scope}) need hazards and
+requirements of their own before they are built.
 
 {\footnotesize
-\setlength{\tabcolsep}{4pt}
-\exhyphenpenalty=10000 % keep IDs such as FR-CRT-017 on one line
-\begin{longtable}{@{}
-  >{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{2.4cm}
-  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-4.1cm-4\tabcolsep\relax}
-  @{}}
+\exhyphenpenalty=10000 % keep IDs on one line
+\begin{longtable}{@{}p{1.2cm}
+  >{\raggedright\arraybackslash}%
+  p{\dimexpr\linewidth-1.2cm-2\tabcolsep\relax}@{}}
 \caption{Phase of each requirement that mitigates a hazard}
 \label{tab:roadmap}\\
 \toprule
-\textbf{Phase (date)} & \textbf{Requirement IDs} & \textbf{Rationale} \\
+\textbf{Phase} & \textbf{Requirement IDs} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Phase (date)} & \textbf{Requirement IDs} & \textbf{Rationale} \\
+\textbf{Phase} & \textbf{Requirement IDs} \\
 \midrule
 \endhead
-\midrule
-\multicolumn{3}{@{}r@{}}{\emph{Continued on the next page}} \\
-\endfoot
 \bottomrule
 \endlastfoot
-PH-1 (Nov.~23, 2026) & FR-CRT-007, FR-CRT-010, FR-CRT-011, FR-CRT-012,
-FR-CRT-013, FR-CRT-017, FR-CRT-018 & Editable refinement that can be undone is
-the main technical uncertainty of the PoC. Its second experiment refines
-drawings of the agreed supported set into editable paths, modifies the result,
-undoes the refinement and compares the restored drawing with the saved original
-(SRC-002). These requirements state what that experiment must show, so the
-controls on a creative change that cannot be undone or is applied wrongly are
-planned from the first phase (H-MUH-001, H-MUH-002, H-MUH-003, H-MUH-006). \\
+PH-1 & \textbf{SAF-RAY-001}, \textbf{SAF-AHM-001}, \textbf{SAF-AHM-002},
+FR-LRN-007, FR-LRN-010, FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-022 to
+FR-LRN-024, FR-LRN-032, FR-LRN-038, FR-LRN-039, FR-CRT-007, FR-CRT-010 to
+FR-CRT-013, FR-CRT-017, FR-CRT-018, FR-CRT-020, FR-REC-001, FR-REC-003,
+NFR-UX-004, NFR-UX-015 \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & FR-CRT-020 & The third PoC experiment must show that an
-invalid instruction from a candidate model is rejected and leaves the drawing
-unchanged (SRC-002). This requirement states that behaviour. If the model
-investigation is deferred, as the Development Plan allows, the requirement still
-applies to a failed geometric refinement (H-MUH-002). \\
+PH-2 & \textbf{SAF-RAY-002} to \textbf{SAF-RAY-009}, \textbf{SAF-SHA-001} to
+\textbf{SAF-SHA-003}, \textbf{SAF-SHA-006}, \textbf{SAF-MOU-001} to
+\textbf{SAF-MOU-003}, FR-LRN-008, FR-LRN-009, FR-LRN-012, FR-LRN-014, FR-LRN-017
+to FR-LRN-021, FR-LRN-030, FR-LRN-031, FR-LRN-033 to FR-LRN-037, FR-CRT-014 to
+FR-CRT-016, FR-CRT-019, FR-CRT-021, FR-CRT-023, FR-CRT-024, FR-CRT-026,
+FR-CRT-027, \textbf{FR-CRT-030}, FR-REC-004 to FR-REC-009,
+FR-PRG-001 to FR-PRG-006, FR-PRG-008 to FR-PRG-012, NFR-PERF-002, NFR-PERF-005,
+NFR-UX-001, NFR-UX-002, NFR-UX-010, NFR-UX-011, NFR-UX-016, NFR-UX-017,
+NFR-UX-021, NFR-UX-022 \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & FR-REC-001, FR-REC-003 & The fourth PoC experiment
-inspects the attempt records to confirm that the observations and the assistance
-used remain available (SRC-002). These two requirements define that record: each
-attempt's lesson, stage and outcome, and every predefined difficulty observed,
-marked as corrected or not (H-MUH-003, H-MUH-007). \\
-\addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-007, FR-LRN-010, FR-LRN-032, \textbf{SAF-AHM-001},
-\textbf{SAF-AHM-002} & The
-first PoC experiment draws with touch and a compatible stylus on the target
-tablet, repeats the interactions on an additional device and browser, and checks
-that strokes follow the input position and remain continuous (SRC-002). These
-requirements state what the capture must keep: the order and boundaries of
-strokes (FR-LRN-007), no passing status for missing or ambiguous input
-(FR-LRN-010) and no attempt counted for it (FR-LRN-032), no repeated count of one input event (SAF-AHM-001) and no
-distortion of stroke positions when the canvas size or device orientation
-changes (SAF-AHM-002) (H-AHM-001, H-AHM-002, H-AHM-003). \\
-\addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023,
-FR-LRN-024, FR-LRN-038, FR-LRN-039 & The
-fourth PoC experiment uses prepared sequences of successful and unsuccessful
-attempts and demonstrates reduced assistance following success (SRC-002). These
-requirements state when an attempt is complete and passes (FR-LRN-011,
-FR-LRN-013), when it is checked and ends (FR-LRN-038, FR-LRN-039, FR-LRN-024),
-that the lesson and starting stage the adult chose are used
-(FR-LRN-016) and that a passing attempt advances within the lesson without a
-further adult action (FR-LRN-023) (H-AHM-001, H-AHM-004, H-AHM-005, H-AHM-007,
-H-MOU-004).
-\\
-\addlinespace
-PH-1 (Nov.~23, 2026) & \textbf{SAF-RAY-001} & The PoC lets an adult choose the lesson and
-starting stage (FR-LRN-016), so the adult check that keeps a child from making
-that choice is planned with it: a phase demonstration may not rely on a
-safeguard that is not built (SRS Section~21.2). The check needs no adult
-account. Learner switching and accepting a go-back suggestion are built in PH-2
-(FR-LRN-018, FR-LRN-019, SAF-RAY-007), and SAF-RAY-001 applies to each of them
-from then (H-RAY-001, H-RAY-006, H-AHM-007). \\
-\addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-022, NFR-UX-004, NFR-UX-015 & These requirements
-set the wording and styling of every message to the child: it describes the
-drawing rather than the child, never marks the drawing as wrong and stays short.
-Their phase is the one in their Phase field in the SRS (H-MOU-002, H-MOU-003).
-\\
-\midrule
-PH-2 (Feb.~1, 2027) & FR-CRT-014, FR-CRT-015, FR-CRT-016, FR-CRT-019, FR-CRT-021
-& Rev~0 demonstrates the product as a whole, after the focused PoC experiments.
-These requirements bound refinement in the cases the PoC experiments do not
-cover: a stroke that would be refined twice, a drawing outside the supported
-set, a result that arrives after the drawing has changed, a refinement that
-cannot be seen, and a restore by the adult after the adult check of SAF-RAY-001
-(H-MUH-001, H-MUH-002, H-MUH-003, H-MUH-006). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & FR-CRT-023, FR-CRT-024, FR-CRT-026, FR-CRT-027, FR-CRT-028
-& Saving creative drawings to learner profiles, and keeping them apart from
-guided lessons and attempts, needs adult accounts, learner profiles and stored
-records. The PoC does not need a complete application (SRC-002), so these
-requirements are planned for Rev~0 (H-MUH-001, H-MUH-002, H-MUH-003, H-MUH-004,
-H-MUH-005). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{FR-CRT-030}, NFR-UX-011 & Refinement is turned off for a
-learner profile, so these requirements need the learner profiles and settings
-planned for Rev~0, like the requirements that keep creative drawings to one
-learner. Until then, every refinement stays within \texttt{REFINE\_TOLERANCE}
-and can be undone or restored (FR-CRT-007, FR-CRT-012, FR-CRT-017, FR-CRT-018,
-PH-1) (H-MUH-006, H-MOU-006). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & FR-REC-002, FR-REC-004 to FR-REC-009 & Complete attempt
-and lesson records, each saved once and unchanged after saving, are needed as
-soon as adults rely on the records (G.5). The values kept by FR-REC-004 have
-ranges that the SRS table ``Central symbolic constants register'' defines; their
-verification is by its target date in the SRS (OI-05) (H-MUH-003, H-MUH-004, H-MUH-007). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & FR-PRG-001 to FR-PRG-006, FR-PRG-008 to FR-PRG-011 &
-Progress summaries are built from the complete records, so they are planned with
-them (G.6). These requirements keep each summary to one learner and consistent
-with the records behind it (H-MUH-003, H-MUH-004, H-MUH-008). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-007}, \textbf{SAF-SHA-001}, \textbf{SAF-SHA-006} & Learner switching
-and an active learner exist only once the product has adult accounts and
-several learner profiles, which the PoC does not need; SAF-SHA-001 and
-SAF-SHA-006 protect those accounts (H-SHA-001). All three are planned with the
-requirements that keep drawings and summaries to one learner (FR-CRT-023,
-FR-CRT-026, FR-PRG-001) (H-RAY-006). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-002}, \textbf{SAF-SHA-002}, \textbf{SAF-SHA-003} & The device check
-needs the list of supported devices and browsers (\texttt{SUPPORTED\_DEVICES}),
-which the team sets by its target date in the SRS (OI-09). The first PoC experiment records
-the hardware and browser versions tested (SRC-002), which informs that list
-(H-RAY-002). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-003} & Keeping each completed attempt on the device
-until the server confirms the save protects the stored records, which are
-planned for Rev~0. The requirement is planned with FR-REC-008 and FR-PRG-011
-(H-RAY-002). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-004}, \textbf{SAF-MOU-002}, FR-LRN-012, NFR-UX-017 & These
-requirements apply to every record view and progress summary, which are planned
-for Rev~0 with the Progress Summary requirements. SAF-MOU-002 keeps apart the
-assisted and independent attempts that FR-LRN-012 classifies; FR-LRN-012 and
-NFR-UX-017 have this phase in their Phase field in the SRS (H-RAY-003,
-H-MOU-005). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-005}, \textbf{SAF-RAY-006}, \textbf{SAF-RAY-009} & Ending a lesson
-at its limit or after inactivity, and recording lessons that reach the limit
-and are started again, belong to the
-complete lesson flow and the lesson record. The fourth PoC experiment, as the
-Development Plan describes it, demonstrates changes in assistance rather than
-lesson ends (SRC-002). Both are planned with FR-REC-006 and FR-REC-007, and
-SAF-RAY-005 with FR-LRN-021, which ends the lesson at its attempt limit
-(H-RAY-004, H-RAY-005). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-008} & Checking adult-set values uses their
-team-set ranges, which the SRS table ``Central symbolic constants register''
-defines and whose verification is by its target date in the SRS (OI-05). Applying the adult's
-values is planned with FR-LRN-017, and showing the values in use with the
-records with FR-REC-004 (H-RAY-007). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & FR-LRN-008, FR-LRN-009, FR-LRN-030, FR-LRN-031 &
-Attempts of several strokes, and
-attempts that are interrupted or unfinished, extend the stroke capture planned
-for PH-1 (FR-LRN-007). Their phase is the one in their Phase field in the SRS
-(H-AHM-001, H-AHM-002, H-AHM-006). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & FR-LRN-014, FR-LRN-017 to FR-LRN-021, FR-LRN-033 to
-FR-LRN-037 & Feedback
-observations, the adult's chosen values, adult authorization of discretionary
-changes, the difficulty suggestion, the improvement extension and the end of a
-lesson at its attempt limit belong to the complete lesson flow. Their phase is
-the one in their Phase field in the SRS, and it matches that of SAF-RAY-005,
-SAF-RAY-006 and SAF-RAY-008, which protect the same functions (H-AHM-005,
-H-AHM-006, H-AHM-007, H-MOU-004). \\
-\addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-MOU-001}, NFR-UX-016 & Feedback on a missed part, and
-feedback that acknowledges the child's effort, are part of the feedback
-observations of FR-LRN-014. SAF-MOU-001 is planned with FR-LRN-014, and
-NFR-UX-016 has this phase in its Phase field in the SRS (H-MOU-002, H-MOU-004).
-\\
-\addlinespace
-PH-2 (Feb.~1, 2027) & NFR-UX-001, NFR-UX-002, NFR-UX-010, NFR-UX-021,
-NFR-UX-022, \textbf{SAF-MOU-003} & Child-facing screens and audio feedback are complete
-only in the product as a whole, which Rev~0 demonstrates; the PoC experiments
-use team-created drawings and prepared attempts (SRC-002). The phase of each
-NFR-UX requirement is the one in its Phase field in the SRS. SAF-MOU-003 is
-planned with NFR-UX-001, which bans flashing while the child draws (H-MOU-001,
-H-MOU-003). \\
-\midrule
-PH-3 (Mar.~15, 2027) & FR-CRT-008 & Redo (priority Could) only recovers a change
-undone by mistake. Until PH-3, every change can still be undone (FR-CRT-007,
-PH-1), and the original of a refinement can be restored (FR-CRT-017, FR-CRT-018,
-PH-1) (H-MUH-001). \\
-\addlinespace
-PH-3 (Mar.~15, 2027) & FR-CRT-025 & Keeping the changes made while the
-connection is lost (priority Should) is the only requirement that saves them
-(H-MUH-005). Until PH-3, every creative drawing is saved without any action from
-the child and reopens as it was left (FR-CRT-023, FR-CRT-024, PH-2), so only the
-changes made while the connection is lost are at risk. Offline use is out of
-scope (ASM-005), and the FMEA's test of closing the page during a lost
-connection records which changes are kept (H-MUH-005). \\
-\addlinespace
-PH-3 (Mar.~15, 2027) & \textbf{FR-CRT-029} & Showing whether every change has been saved
-(priority Should) lets an adult keep the page open until a change made while the
-connection was lost has been saved, because offline use is out of scope
-(ASM-005) and such changes are kept only while the page stays open (FR-CRT-025)
-(H-MUH-005). \\
-\addlinespace
-PH-3 (Mar.~15, 2027) & NFR-UX-006, NFR-UX-007 & Review of the style by adults,
-including an educator or occupational therapist (priority Should), needs the
-finished child-facing screens. Their phase is the one in their Phase field in
-the SRS. Until PH-3, child-facing screens offer few controls and show no
-flashing or animation while the child draws (NFR-UX-001, SAF-MOU-003, PH-2), and
-feedback never marks a drawing as wrong (NFR-UX-004, PH-1) (H-MOU-001,
-H-MOU-002). \\
+PH-3 & FR-CRT-008, FR-CRT-025, \textbf{FR-CRT-029}, NFR-UX-006, NFR-UX-007 \\
 \end{longtable}
 }
-
-No requirement that mitigates a hazard is planned for Future: every row of the five FMEA
-tables has its mitigating requirements planned within the capstone. Four of the
-items left outside the scope of this analysis, as the Scope and Purpose of
-Hazard Analysis section explains, are features that may be added later. Each
-would need hazards and safety requirements of its own before it is built, so
-those safety requirements are Future work:
-\begin{itemize}
-  \item \emph{Camera-based finger tracing}, a stretch goal (SRC-001): a camera
-  would capture images of the child, while a learner profile holds only an
-  identifier and an avatar (BR-001), so its privacy hazards must be
-  analysed first.
-  \item \emph{Letter tracing and drawing}, a stretch goal (SRC-001): the
-  existing requirements apply to letter lessons, and letter-specific hazards,
-  such as an adult reading letter attempts as an assessment (BR-006), need
-  requirements when letters are specified.
-  \item \emph{Finger input as a supported input} (CON-003, LC-006): stage checks
-  and value ranges are set for stylus input, so the canvas and lesson hazards
-  must be reviewed before finger input is supported.
-  \item \emph{An offline mode} (ASM-005): changes and attempts kept without a
-  connection would extend FR-CRT-025 and SAF-RAY-003, whose hazards are
-  H-MUH-005 and H-RAY-002.
-\end{itemize}
 
 \bibliographystyle{plainnat}
 \bibliography{../../refs/References}
@@ -2522,46 +1748,20 @@ under Individual Disclosures.
 
 \subsection{How and Where Used}
 
-Members came up with the ideas and made the decisions in their own sections,
-then used AI to help put them into words. Rayan used it to turn his notes
-into draft wording, and both Rayan and Ahmed used it to improve grammar,
-sentence structure and clarity. Moustafa gave it his ideas, sometimes after
-brainstorming with it, and refined its first drafts until they said exactly
-what he meant. Shamil used it to generate a skeleton of his FMEA table with
-starting text for brainstorming; he wrote most of the content in his own
-words, kept short column entries that were only simple classifiers, and
-reworded or rewrote any other generated text he kept. AI also helped
-with the \LaTeX{} formatting, including the FMEA tables. In this document,
-this covered the critical assumptions in Section~\ref{sec:assumptions} and
-the H-RAY, H-AHM, H-SHA and H-MOU rows of Section~\ref{sec:fmea}, with their
-links to the SRS.
-
-Rayan also used AI to sort through the interview transcript, questionnaire
-answers and meeting notes, and to pull out the statements, with their
-timestamps, that support the document. Given how long this material is,
-this would have been very hard to do by hand.
-
-For planning, the team used AI to help divide the workload evenly among
-members, based on the scope and difficulty of each task. Moustafa and
-Huzaifah used it to split their assignments into smaller sub-issues, ten and
-eight respectively, and Moustafa used it to check which tasks he still had
-left. Huzaifah also used it to build notes and a guide for each sub-issue
-from the course lectures, rubrics, checklists and example documents.
-
-For review, Moustafa and Huzaifah had AI check that their sections stayed
-consistent with the rest of the document as teammates merged their work.
-Huzaifah followed the method from the September 23 guest lecture, with
-three passes: one as a critic, one looking for missing cases and one
-checking the course rules. Rayan and Moustafa also used it to help review
-teammates' pull requests by checking the changes against the team's
-decisions and the rest of the document, and Rayan decided which of the
-resulting comments to post. GitHub Copilot gave extra automated reviews on
-a subset of the team's pull requests.
-
-For repository work, Claude Code and the omp coding agent managed branches,
-commits, merges and pull requests for Rayan, Moustafa and Huzaifah,
-including fixing merge conflicts. Ahmed and Huzaifah also used AI to write
-their pull request descriptions.
+Members made the decisions in their own sections. AI was used for:
+\begin{itemize}
+  \item \textbf{Wording and \LaTeX{}.} Turning notes into draft wording,
+  improving grammar and clarity, and formatting the FMEA tables.
+  \item \textbf{Sources.} Finding the statements in the interview transcript,
+  questionnaire answers and meeting notes that support the document (Rayan).
+  \item \textbf{Planning.} Dividing the work and splitting assignments into
+  sub-issues.
+  \item \textbf{Review.} Checking sections against the rest of the document
+  and reviewing teammates' pull requests. GitHub Copilot reviewed some pull
+  requests.
+  \item \textbf{Repository work.} Managing branches, commits, merges and pull
+  requests.
+\end{itemize}
 
 \subsection{Verification of AI-Generated Content}
 
@@ -2667,7 +1867,9 @@ in Section 5, and Sections 6 and 7. All decisions in my sections are my own.
 For the revisions made after the TA feedback and the team audit (\#288, \#289,
 \#315), I gave Claude Sonnet 5.5 agents written instructions through the omp
 coding agent; they made the edits, and I checked each change against its issue
-before asking for review.
+before asking for review. For the TA feedback round (\#392), Anthropic's Claude
+Opus 5.5 through the omp coding agent made the edits from a plan I approved,
+and I checked each change against the issue.
 
 \newpage{}
 

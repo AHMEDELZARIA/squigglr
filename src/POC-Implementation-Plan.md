@@ -4084,23 +4084,23 @@ export default function LessonPage() {
   return (
     <>
       <Frame brand={false} className="!p-4 sm:!p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
-            {/* Without the outline, a small picture reminds the child what to draw. */}
-            {running && (c.stage === "E" || c.stage === "I") && (
-              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
-                <LessonIcon figure={lesson.figure} className="h-14 w-14" />
-              </div>
-            )}
-          </div>
+        {/* The progress trail, with a small picture beside it at every stage that reminds the child
+            what to draw. The row keeps its height when the picture is gone, so nothing moves. */}
+        <div className="flex min-h-16 items-center gap-6">
+          <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
+          {running && (
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-edge bg-white">
+              <LessonIcon figure={lesson.figure} className="h-11 w-11" />
+            </div>
+          )}
         </div>
 
         {/* The drawing area: as big as the screen allows while staying square. Its width is the
-            smallest of the full width and the screen height minus about 14rem, which is the room
-            the progress trail above and the helper below need. dvh is the visible height, so the
-            browser's own toolbar on a tablet is not counted. Never smaller than 22rem. */}
-        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100dvh-14rem)))]">
+            smallest of the full width and the screen height minus about 16rem, which is the room
+            the progress trail above and the helper below need. dvh is the visible height,
+            so the browser's own toolbar on a tablet is not counted. Never smaller than 22rem. The
+            area starts below the trail, so it never covers the footsteps. */}
+        <div className="relative mx-auto mt-3 w-full max-w-[min(100%,max(22rem,calc(100dvh-16rem)))]">
           <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}
@@ -5215,7 +5215,7 @@ The code follows one rule: **a class only for something that changes over time a
 | With no guide, the drawing is laid over the figure by a fit that ignores stray marks | SRS Section 9.2 (stage I); FR-LRN-013 | The SRS lays it over by its bounding box. One stray dot, or a line that runs past a corner, stretches that box and fails a good drawing. The SRS's fit is still tried, and is used whenever it scores best. **Goes beyond the SRS wording.** |
 | With no guide, a drawing must be at least 40% of the figure's size | SRS Section 9.2 says size does "not affect the result"; FR-LRN-011 | Once any size is scaled up to the figure, a speck passes as a square. The team decided, after trying it on a tablet, that position and size should not matter only down to a minimum. **Contradicts the SRS sentence; the team is asked to change it** (see [Reference C](#srs)). |
 | Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the drawing problems in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of drawing problem; these two need adding to it. |
-| A small picture of the shape stays up at the dots and with no guide | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at both steps and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture, so it is now at the dots too. The team should confirm it with the specialists. |
+| A small picture of the shape stays up at every stage | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at the dots and with no guide, and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture. It is shown at every stage so the child can always look back at the shape and the screen keeps the same layout from stage to stage. The team should confirm it with the specialists. |
 | At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot, rests, and sets off again; after eight seconds with nothing drawn it carries on round the whole shape, dot to dot. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
 
 ### What the adult sees
@@ -5282,7 +5282,7 @@ The screens follow the lo-fi prototype's layout. Where the prototype and the SRS
 | A practice sticker ends the lesson (S11). | No reward is specified. | Kept, since the peer session. See the first table. |
 | A weekly "practice story" with a sticker for each day practised (S5). | The progress summary is specified separately, for the final phase; the POC plan has none. | Not built. |
 | Three settings, plus the helper's voice. | Nine adult-set values (BR-008), and an audio setting (NFR-UX-010). | The prototype's three and the voice switch up front, the other values under "More settings". |
-| A small picture of the shape stays up at "On my own" (S10). | No outline at the endpoint stage (FR-LRN-027), no outline or endpoint guides at the independent stage (FR-LRN-006). | Kept, and shown at the dots too, to be confirmed with the specialists after the POC. |
+| A small picture of the shape stays up at "On my own" (S10). | No outline at the endpoint stage (FR-LRN-027), no outline or endpoint guides at the independent stage (FR-LRN-006). | Kept, and shown at every stage, to be confirmed with the specialists after the POC. |
 | The demonstration moves on by itself (S6). | The child "continues after viewing the example" (Section 9.2); UC-003 has Squigglr move on. | By itself, after one play. |
 
 ### What the SRS requires that the POC does not have yet

@@ -306,23 +306,23 @@ export default function LessonPage() {
   return (
     <>
       <Frame brand={false} className="!p-4 sm:!p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
-            {/* Without the outline, a small picture reminds the child what to draw. */}
-            {running && (c.stage === "E" || c.stage === "I") && (
-              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
-                <LessonIcon figure={lesson.figure} className="h-14 w-14" />
-              </div>
-            )}
-          </div>
+        {/* The progress trail, with a small picture beside it at every stage that reminds the child
+            what to draw. The row keeps its height when the picture is gone, so nothing moves. */}
+        <div className="flex min-h-16 items-center gap-6">
+          <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
+          {running && (
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-edge bg-white">
+              <LessonIcon figure={lesson.figure} className="h-11 w-11" />
+            </div>
+          )}
         </div>
 
         {/* The drawing area: as big as the screen allows while staying square. Its width is the
-            smallest of the full width and the screen height minus about 14rem, which is the room
-            the progress trail above and the helper below need. dvh is the visible height, so the
-            browser's own toolbar on a tablet is not counted. Never smaller than 22rem. */}
-        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100dvh-14rem)))]">
+            smallest of the full width and the screen height minus about 16rem, which is the room
+            the progress trail above and the helper below need. dvh is the visible height,
+            so the browser's own toolbar on a tablet is not counted. Never smaller than 22rem. The
+            area starts below the trail, so it never covers the footsteps. */}
+        <div className="relative mx-auto mt-3 w-full max-w-[min(100%,max(22rem,calc(100dvh-16rem)))]">
           <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}

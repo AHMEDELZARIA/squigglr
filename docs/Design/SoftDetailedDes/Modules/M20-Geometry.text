@@ -21,6 +21,10 @@ None.
 \item BoxT = tuple of $(\mathit{minX}: \mathbb{R}, \mathit{minY}: \mathbb{R},
 \mathit{maxX}: \mathbb{R}, \mathit{maxY}: \mathbb{R})$, the smallest rectangle,
 with sides parallel to the drawing area, that holds a set of paths.
+\item FitT = tuple of $(\mathit{scale}: \mathbb{R}, \mathit{dx}: \mathbb{R},
+\mathit{dy}: \mathbb{R})$, a move and uniform scale: the point $(x, y)$ goes to
+$(\mathit{scale} \cdot x + \mathit{dx},\ \mathit{scale} \cdot y +
+\mathit{dy})$.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}
@@ -34,6 +38,17 @@ $\mathbb{R}$ & emptyPath, negativeDistance \\
 boundingBox & $Q$: seq of PathT & BoxT & emptyPath \\
 diagonal & $b$: BoxT & $\mathbb{R}$ & -- \\
 fitToBox & $Q$: seq of PathT, $b$: BoxT & seq of PathT & emptyPath \\
+sample & $Q$: seq of PathT, $d$: $\mathbb{R}$ & seq of PointT &
+nonPositiveDistance \\
+trimmedBox & $S$: seq of PointT, $t$: $\mathbb{R}$ & BoxT & emptyPath,
+badShare \\
+refineFit & $S$: seq of PointT, $F$: seq of PointT, $g$: FitT, $r$:
+$\mathbb{R}$, $m$: $\mathbb{R}$, $d$: $\mathbb{R}$ & FitT & negativeDistance \\
+applyFit & $g$: FitT, $Q$: seq of PathT & seq of PathT & -- \\
+strokeGroups & $Q$: seq of PathT, $d$: $\mathbb{R}$ & seq of (seq of PathT) &
+negativeDistance \\
+stretchOnto & $Q$: seq of PathT, $b$: BoxT, $c$: BoxT & seq of PathT &
+flatBox \\
 smooth & $P$: PathT & PathT & -- \\
 simplify & $P$: PathT, $d$: $\mathbb{R}$ & PathT & negativeDistance \\
 \end{accessprograms}
@@ -73,12 +88,30 @@ and the length of its diagonal, which sets the size of a figure for
 \item \texttt{fitToBox} moves and uniformly scales $Q$ so that its bounding box
 is centred on $b$ and its longer side matches $b$'s (SRS Section~9.2, stage
 $I$).
+\item \texttt{sample} gives points along the paths of $Q$, no more than $d$
+apart, so that a long stroke has more points than a short mark.
+\item \texttt{trimmedBox} gives the bounding box of the bulk of $S$: on each
+side, the outermost share $t$ of the points is left out, so a short stray mark
+does not stretch the box. It raises \texttt{badShare} unless $0 \leq t < 0.5$.
+\item \texttt{refineFit} starts from $g$ and nudges it so that the points $S$,
+moved by the fit, lie closer to the points $F$: it pairs each point with its
+nearest point of the other set, leaves out pairs more than $r$ apart, and takes
+the scale and move that bring the pairs closest together (least squares). The
+scale stays within a factor $m$ of $g$'s, and the centre of $S$ moves at most
+$d$ from where $g$ puts it.
+\item \texttt{applyFit} moves and scales every point of $Q$ by $g$.
+\item \texttt{strokeGroups} splits $Q$ into groups of paths that come within
+$d$ of each other, directly or through other paths of the group.
+\item \texttt{stretchOnto} scales the width and height of $Q$ separately so
+that box $b$ fills box $c$. It raises \texttt{flatBox} when $b$ has no width or
+no height.
 \item \texttt{smooth} and \texttt{simplify} give a smoother path and a path
 with fewer points that stays within $d$ of $P$, for the Refinement Control
 Module (\mref{mRefineControl}).
 \end{itemize}
-Each raises \texttt{emptyPath} when $Q$ has no point, and
-\texttt{negativeDistance} when $d < 0$.
+Each raises \texttt{emptyPath} when $Q$ or $S$ has no point,
+\texttt{negativeDistance} when $d < 0$ or $r < 0$, and
+\texttt{nonPositiveDistance} when $d \leq 0$.
 
 \subsubsection{Local Functions}
 

@@ -9,9 +9,9 @@ import { StrokePreview } from "./StrokePreview";
 // examples are made from the scoring itself, so they are always true to it.
 
 export const NEATNESS = [
-  { mark: 70, name: "Low", text: "Moves on even with a lot of extra lines. Good when just starting." },
-  { mark: 80, name: "Medium", text: "Moves on when most of the lines are on the shape." },
-  { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
+  { mark: 70, name: "Low", text: "Moves on even when many lines wander away from the shape. Good when just starting." },
+  { mark: 80, name: "Medium", text: "Moves on when most of the lines stay close to the shape." },
+  { mark: 90, name: "High", text: "Moves on only when nearly every line stays close to the shape. Can feel hard." },
 ];
 
 interface NeatnessInfoProps {
@@ -27,7 +27,8 @@ export function NeatnessInfo({ figure, onClose }: NeatnessInfoProps) {
         <h2 className="text-3xl font-bold">Neatness</h2>
         <p className="mt-2 text-lg">
           How neat the child&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
-          shape always has to be drawn. Neatness sets how many lines may lie away from the shape.
+          shape always has to be drawn, and lines close to the shape always count. Neatness sets how much of the
+          drawing may wander further away: a wobble that goes past the shape, or an extra line.
         </p>
         <p className="mt-4 font-bold text-muted">The messiest drawing that still moves on:</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">

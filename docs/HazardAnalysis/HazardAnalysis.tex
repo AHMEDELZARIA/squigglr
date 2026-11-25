@@ -131,6 +131,11 @@ tables and the roadmap (\#315).\\
 the H-SHA table and kept the last disclosure heading with its text (\#289).\\
 11 November 2026 & Muhammad Huzaifah & The roadmap now points to the SRS for
 the target dates of OI-05 and OI-09 (\#288).\\
+25 November 2026 & Rayan Nasrallah & Brought the analysis in line with the
+POC: an attempt with a missing part gets a hint before it ends (H-AHM-001,
+FR-LRN-024), SAF-MOU-001 moves to PH-1 with that hint, and the creative space,
+the attempt records and SAF-RAY-001 move to PH-2 with the narrower POC
+(\#406).\\
 \end{longtable}
 
 ~\newpage
@@ -1030,7 +1035,8 @@ receives undeserved failure feedback or loses a practice attempt. Loss: accurate
 feedback and record integrity. & Data integrity & Mitigate: retain ordered
 points and stroke boundaries; distinguish stylus lifts from finalization; end
 a non-passing attempt only after \texttt{ATTEMPT\_IDLE}, which the adult sets
-for each child; treat interrupted or unevaluable input as non-passing without
+for each child, and when a part is missing, first show where and keep the
+drawing so the child can finish it (at most \texttt{MAX\_HINTS} times); treat interrupted or unevaluable input as non-passing without
 consuming an attempt. Document/Test: replay partial strokes and interruptions
 before and during a stroke, and pauses between strokes shorter than
 \texttt{ATTEMPT\_IDLE}. & FR-LRN-007, FR-LRN-008, FR-LRN-009, FR-LRN-010,
@@ -1930,9 +1936,13 @@ the active stage; a passing independent drawing attempt completes the current
 lesson without starting a different lesson. & H-AHM-004, H-MOU-004 & Learning
 Activity \\
 \addlinespace
-FR-LRN-024\newline\emph{End an attempt that does not pass} & Squigglr shall end
-an attempt that has not passed as not passed after \texttt{ATTEMPT\_IDLE} with
-no input, and by no other event except an interruption (FR-LRN-009). & H-AHM-001
+FR-LRN-024\newline\emph{End an attempt that does not pass} & After
+\texttt{ATTEMPT\_IDLE} with no input on an attempt that has not passed,
+Squigglr shall either give a hint or end the attempt as not passed, and shall
+end it by no other event except an interruption (FR-LRN-009). A hint is given
+when a required part or endpoint is missing, the attempt has had fewer than
+\texttt{MAX\_HINTS} hints, and, after the first hint, the child has drawn since
+the last one. & H-AHM-001
 & Learning Activity \\
 \addlinespace
 FR-LRN-030\newline\emph{Interrupted attempt not passed} & Squigglr shall not
@@ -2242,7 +2252,7 @@ This section states when each requirement of Tables~\ref{tab:safety-reqs}
 and~\ref{tab:existing-reqs} is planned to be met; as in the FMEA tables, an ID
 in bold is a requirement this analysis created. The capstone timeline has
 three phases, each named after the course deliverable that ends it: PH-1, the
-proof-of-concept (PoC) demonstration, from Nov.~23, 2026; PH-2, Revision~0
+proof-of-concept (PoC) demonstration, from Nov.~25, 2026; PH-2, Revision~0
 (Rev~0), from Feb.~1, 2027; and PH-3, the final demonstration, from Mar.~15,
 2027. These identifiers are those of the SRS Introduction and are distinct from
 the interview participant codes. Each date is the start of the course window for
@@ -2282,28 +2292,7 @@ mitigates.
 \endfoot
 \bottomrule
 \endlastfoot
-PH-1 (Nov.~23, 2026) & FR-CRT-007, FR-CRT-010, FR-CRT-011, FR-CRT-012,
-FR-CRT-013, FR-CRT-017, FR-CRT-018 & Editable refinement that can be undone is
-the main technical uncertainty of the PoC. Its second experiment refines
-drawings of the agreed supported set into editable paths, modifies the result,
-undoes the refinement and compares the restored drawing with the saved original
-(SRC-002). These requirements state what that experiment must show, so the
-controls on a creative change that cannot be undone or is applied wrongly are
-planned from the first phase (H-MUH-001, H-MUH-002, H-MUH-003, H-MUH-006). \\
-\addlinespace
-PH-1 (Nov.~23, 2026) & FR-CRT-020 & The third PoC experiment must show that an
-invalid instruction from a candidate model is rejected and leaves the drawing
-unchanged (SRC-002). This requirement states that behaviour. If the model
-investigation is deferred, as the Development Plan allows, the requirement still
-applies to a failed geometric refinement (H-MUH-002). \\
-\addlinespace
-PH-1 (Nov.~23, 2026) & FR-REC-001, FR-REC-003 & The fourth PoC experiment
-inspects the attempt records to confirm that the observations and the assistance
-used remain available (SRC-002). These two requirements define that record: each
-attempt's lesson, stage and outcome, and every predefined difficulty observed,
-marked as corrected or not (H-MUH-003, H-MUH-007). \\
-\addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-007, FR-LRN-010, FR-LRN-032, \textbf{SAF-AHM-001},
+PH-1 (Nov.~25, 2026) & FR-LRN-007, FR-LRN-010, FR-LRN-032, \textbf{SAF-AHM-001},
 \textbf{SAF-AHM-002} & The
 first PoC experiment draws with touch and a compatible stylus on the target
 tablet, repeats the interactions on an additional device and browser, and checks
@@ -2314,7 +2303,7 @@ strokes (FR-LRN-007), no passing status for missing or ambiguous input
 distortion of stroke positions when the canvas size or device orientation
 changes (SAF-AHM-002) (H-AHM-001, H-AHM-002, H-AHM-003). \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023,
+PH-1 (Nov.~25, 2026) & FR-LRN-011, FR-LRN-013, FR-LRN-016, FR-LRN-023,
 FR-LRN-024, FR-LRN-038, FR-LRN-039 & The
 fourth PoC experiment uses prepared sequences of successful and unsuccessful
 attempts and demonstrates reduced assistance following success (SRC-002). These
@@ -2326,20 +2315,37 @@ further adult action (FR-LRN-023) (H-AHM-001, H-AHM-004, H-AHM-005, H-AHM-007,
 H-MOU-004).
 \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & \textbf{SAF-RAY-001} & The PoC lets an adult choose the lesson and
-starting stage (FR-LRN-016), so the adult check that keeps a child from making
-that choice is planned with it: a phase demonstration may not rely on a
-safeguard that is not built (SRS Section~21.2). The check needs no adult
-account. Learner switching and accepting a go-back suggestion are built in PH-2
-(FR-LRN-018, FR-LRN-019, SAF-RAY-007), and SAF-RAY-001 applies to each of them
-from then (H-RAY-001, H-RAY-006, H-AHM-007). \\
+PH-1 (Nov.~25, 2026) & \textbf{SAF-MOU-001} & When an attempt stops with a
+part missing, the PoC gives a hint (FR-LRN-024): the missing part is shown and
+nothing is drawn for the child. The safeguard is therefore built with the hint
+(H-MOU-004). \\
 \addlinespace
-PH-1 (Nov.~23, 2026) & FR-LRN-022, NFR-UX-004, NFR-UX-015 & These requirements
+PH-1 (Nov.~25, 2026) & FR-LRN-022, NFR-UX-004, NFR-UX-015 & These requirements
 set the wording and styling of every message to the child: it describes the
 drawing rather than the child, never marks the drawing as wrong and stays short.
 Their phase is the one in their Phase field in the SRS (H-MOU-002, H-MOU-003).
 \\
 \midrule
+PH-2 (Feb.~1, 2027) & FR-CRT-007, FR-CRT-010, FR-CRT-011, FR-CRT-012,
+FR-CRT-013, FR-CRT-017, FR-CRT-018, FR-CRT-020 & The PoC was narrowed to the
+guided lessons (Development Plan), so editable refinement, undo and restore are
+first built for Rev~0. These requirements still state what refinement must
+show: an editable result that can be undone and restored exactly, and a drawing
+left unchanged when refinement fails (H-MUH-001, H-MUH-002, H-MUH-003,
+H-MUH-006). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & FR-REC-001, FR-REC-003 & The PoC keeps no records, so the
+attempt record is first built for Rev~0: each attempt's lesson, stage and
+outcome, and every predefined difficulty observed, marked as corrected or not
+(H-MUH-003, H-MUH-007). \\
+\addlinespace
+PH-2 (Feb.~1, 2027) & \textbf{SAF-RAY-001} & The PoC lets an adult choose the
+lesson and starting stage (FR-LRN-016) with no adult check, because it is shown
+only by the team and no child uses it (CON-006), so it is not real learner use
+(SRS Section~21.2). The check is built in Rev~0 with learner switching and
+accepting a go-back suggestion (FR-LRN-018, FR-LRN-019, SAF-RAY-007), and
+applies to all of them from then (H-RAY-001, H-RAY-006, H-AHM-007). \\
+\addlinespace
 PH-2 (Feb.~1, 2027) & FR-CRT-014, FR-CRT-015, FR-CRT-016, FR-CRT-019, FR-CRT-021
 & Rev~0 demonstrates the product as a whole, after the focused PoC experiments.
 These requirements bound refinement in the cases the PoC experiments do not
@@ -2428,10 +2434,9 @@ the one in their Phase field in the SRS, and it matches that of SAF-RAY-005,
 SAF-RAY-006 and SAF-RAY-008, which protect the same functions (H-AHM-005,
 H-AHM-006, H-AHM-007, H-MOU-004). \\
 \addlinespace
-PH-2 (Feb.~1, 2027) & \textbf{SAF-MOU-001}, NFR-UX-016 & Feedback on a missed part, and
-feedback that acknowledges the child's effort, are part of the feedback
-observations of FR-LRN-014. SAF-MOU-001 is planned with FR-LRN-014, and
-NFR-UX-016 has this phase in its Phase field in the SRS (H-MOU-002, H-MOU-004).
+PH-2 (Feb.~1, 2027) & NFR-UX-016 & Feedback that acknowledges the child's
+effort is part of the feedback observations of FR-LRN-014, and NFR-UX-016 has
+this phase in its Phase field in the SRS (H-MOU-002).
 \\
 \addlinespace
 PH-2 (Feb.~1, 2027) & NFR-UX-001, NFR-UX-002, NFR-UX-010, NFR-UX-021,

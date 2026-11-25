@@ -10,8 +10,8 @@ import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { problemFeedback, feedback, stageLine } from "@/lib/feedback";
-import { apply, applyAll, distance, inverse, length, toPath } from "@/lib/geometry";
-import { DEMO_MS, FULL_ARROW_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
+import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
+import { DEMO_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
 import { LessonControl } from "@/lib/lessonControl";
 import * as settings from "@/lib/settings";
 import * as stages from "@/lib/stages";
@@ -77,7 +77,6 @@ export default function LessonPage() {
   const hinted = useRef(false);
   /** When the current stage came up, for the demonstration and the arrow. */
   const stageSince = useRef(Date.now());
-  const [arrowFull, setArrowFull] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
   const setStrokes = (next: Stroke[]) => {
@@ -172,7 +171,6 @@ export default function LessonPage() {
         setShowing(false);
         setShownStage(null);
         setCelebrate(false);
-        setArrowFull(false);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
         stageSince.current = Date.now();
@@ -195,14 +193,6 @@ export default function LessonPage() {
         stageSince.current = Date.now();
         refresh();
         return;
-      }
-      // With only the dots to go by and nothing drawn for a while, the arrow goes all the way round.
-      if (running && stage === "E" && strokesRef.current.length === 0) {
-        let last = stageSince.current;
-        if (lastInput.current !== null && lastInput.current > last) {
-          last = lastInput.current;
-        }
-        setArrowFull(Date.now() - last >= FULL_ARROW_MS);
       }
       show(c.tick(lastInput.current), stage);
       refresh();
@@ -259,9 +249,8 @@ export default function LessonPage() {
   // With a guide: a green dot where the drawing starts, as in the demonstration.
   const drawing = running && !showing && c.stage !== "D";
   const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
-  // With only the dots to go by, an arrow travels from the start dot to the next dot, to show which
-  // way to go. If nothing is drawn for a while, it goes on round the whole shape, dot to dot.
-  const outline = lesson.figure.parts.flat();
+  // With only the dots to go by, an arrow travels from the start dot to the next dot, rests, then
+  // goes from that dot to the next, and so on round the shape, to show which way to go.
   const arrowOn = drawing && c.stage === "E" && strokes.length === 0;
 
   const onStroke = (stroke: Stroke) => {
@@ -306,30 +295,30 @@ export default function LessonPage() {
   return (
     <>
       <Frame brand={false} className="!p-4 sm:!p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
-            {/* Without the outline, a small picture reminds the child what to draw. */}
-            {running && (c.stage === "E" || c.stage === "I") && (
-              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
-                <LessonIcon figure={lesson.figure} className="h-14 w-14" />
-              </div>
-            )}
-          </div>
+        {/* The progress trail, with a small picture beside it at every stage that reminds the child
+            what to draw. The row keeps its height when the picture is gone, so nothing moves. */}
+        <div className="flex min-h-16 items-center gap-6">
+          <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
+          {running && (
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-edge bg-white">
+              <LessonIcon figure={lesson.figure} className="h-11 w-11" />
+            </div>
+          )}
         </div>
 
         {/* The drawing area: as big as the screen allows while staying square. Its width is the
-            smallest of the full width and the screen height minus about 14rem, which is the room
-            the progress trail above and the helper below need. dvh is the visible height, so the
-            browser's own toolbar on a tablet is not counted. Never smaller than 22rem. */}
-        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100dvh-14rem)))]">
+            smallest of the full width and the screen height minus about 16rem, which is the room
+            the progress trail above and the helper below need. dvh is the visible height,
+            so the browser's own toolbar on a tablet is not counted. Never smaller than 22rem. The
+            area starts below the trail, so it never covers the footsteps. */}
+        <div className="relative mx-auto mt-3 w-full max-w-[min(100%,max(22rem,calc(100dvh-16rem)))]">
           <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}
               startDot={startDot}
               arrow={
                 arrowOn
-                  ? { path: outline, reach: arrowFull ? length(outline) : length(lesson.figure.parts[0]) }
+                  ? { legs: lesson.figure.parts }
                   : undefined
               }
               strokes={strokes}

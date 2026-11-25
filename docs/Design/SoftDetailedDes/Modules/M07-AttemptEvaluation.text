@@ -19,6 +19,8 @@ of its bounding box). This is the value proposed in the SRS; the team confirms
 it in PH-1, before the first evaluation test.
 \item $\texttt{PART\_COVER} = 90$, in percent. Proposed in the SRS and
 confirmed with \texttt{TRACE\_TOL}.
+\item \texttt{MIN\_DRAWN} and \texttt{MIN\_DRAW\_SCALE}, in percent, as
+defined in the SRS. Values TBD; confirmed with \texttt{TRACE\_TOL}.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}
@@ -57,17 +59,34 @@ full semantics are given in Revision~0, following SRS Section~9.2. In brief:
 \begin{itemize}
 \item output: $\mathit{out} := (C, G(l), v, C = \mathit{complete} \land v \geq
 \mathit{stagePass}, \mathit{obs})$, where $C$ is the class of $X$ against $f$
-($\mathit{invalid}$ if $X$ cannot be interpreted, $\mathit{complete}$ if every
+($\mathit{invalid}$ if $X$ cannot be interpreted or its strokes are shorter
+in total than \texttt{MIN\_DRAWN}, $\mathit{complete}$ if every
 required part has at least \texttt{PART\_COVER} of its length within
 \texttt{TRACE\_TOL} of a stroke and every required endpoint has a drawn point
 within \texttt{TRACE\_TOL} of it, and $\mathit{incomplete}$ otherwise), $G(l)$
 is $\mathit{assisted}$ at $T$ and $E$ and $\mathit{independent}$ at $I$
 (FR-LRN-012), $v$ is the stage result $100 \cdot \min(\mathit{drawn},
 \mathit{onFigure})$, and $\mathit{obs}$ is the set of difficulties in
-$\mathit{ds}$ that the strokes show (FR-LRN-014). At stage $I$, the strokes are
-first fitted to the figure's bounding box with \texttt{fitToBox} of the Geometry
-Module (\mref{mGeometry}): moved and uniformly scaled, as in SRS Section~9.2.
-The result is the same
+$\mathit{ds}$ that the strokes show (FR-LRN-014). $\mathit{offFigure}$ is
+shown when $100 \cdot \mathit{onFigure} < \mathit{stagePass}$.
+\item At stage $I$, the strokes are first moved and uniformly scaled onto the
+figure, as in SRS Section~9.2. Four placements are tried with the Geometry
+Module (\mref{mGeometry}), and the one with the fewest missing parts, then the
+highest result, is kept: (1) the bounding box of the strokes fitted to the
+figure's with \texttt{fitToBox}; (2) the trimmed box of the strokes
+(\texttt{trimmedBox}), so that a short stray mark does not move the drawing;
+(3) placement (2) nudged towards the closest fit with \texttt{refineFit}; and
+(4) when the strokes form more than one group (\texttt{strokeGroups}), the box
+of the biggest group. Every stroke is still scored in each placement, so a
+stray mark still counts as off the figure. If parts are still missing, the
+strokes are also laid over the figure with \texttt{stretchOnto}; if they then
+have every part, the attempt is incomplete with the difficulty
+$\mathit{stretched}$. An attempt whose longer side is less than
+\texttt{MIN\_DRAW\_SCALE} of the figure's is incomplete with the difficulty
+$\mathit{tooSmall}$. The design constants of these steps (how much is
+trimmed, how far a nudge may go, and how close two strokes must be to form a
+group) are TBD and set with \texttt{TRACE\_TOL}.
+\item The result is the same
 every time for the same inputs (NFR-PERF-004) and matches the definition in SRS
 Section~9.2 (NFR-PERF-010).
 \item exception: $\mathit{exc} := (f.\mathit{parts} = \langle\rangle

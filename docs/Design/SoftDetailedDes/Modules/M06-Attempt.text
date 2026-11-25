@@ -32,7 +32,8 @@ new AttemptT & $\ell$: LessonIdT, $l$: DrawingStageT, $f$: FigureT,
 $\mathit{ds}$: set of DifficultyT, $\mathit{stagePass}$: $\mathbb{R}$,
 $\mathit{attemptIdle}$: $\mathbb{R}$ & AttemptT & -- \\
 addStroke & $s$: StrokeT & -- & attemptEnded \\
-checkIdle & -- & -- & -- \\
+checkIdle & -- & $\mathbb{B}$ & -- \\
+hints & -- & $\mathbb{N}_0$ & -- \\
 interrupt & -- & -- & attemptEnded \\
 outcome & -- & OutcomeT & -- \\
 evaluation & -- & EvaluationT & notEvaluated \\
@@ -59,6 +60,9 @@ when the attempt started.
 \item $\mathit{last}$: EvaluationT, the evaluation after the most recent
 stylus lift.
 \item $\mathit{seen}$: set of ObservedT, every difficulty seen so far.
+\item $h$: $\mathbb{N}_0$, the hints given so far, initially 0, and
+$t_h$: DateTimeT and $n_h$: $\mathbb{N}_0$, when the last hint was given and
+how many strokes $X$ had then.
 \item $\mathit{out}$: OutcomeT.
 \item $t_{\mathit{end}}$: DateTimeT, when the attempt ended.
 \end{itemize}
@@ -98,17 +102,23 @@ figure, is noted at every stylus lift. A missed part or missed endpoint is
 noted only from the evaluation with which the attempt ends, because at an early
 stylus lift the child may simply not have drawn it yet (FR-REC-003). If the
 evaluation passes, the attempt ends as $\mathit{passed}$ (FR-LRN-039).
-\item \texttt{checkIdle} ends an open attempt that has at least one stroke when
-\texttt{ATTEMPT\_IDLE} has passed between the last input and
-$\mathit{clock}$: as $\mathit{invalid}$
-if the last evaluation is invalid (FR-LRN-010), and otherwise as
-$\mathit{notPassed}$. An attempt with no strokes is left open.
+\item \texttt{checkIdle} acts on an open attempt that has at least one stroke
+when \texttt{ATTEMPT\_IDLE} has passed since the later of the last input and
+$t_h$. If the last evaluation is invalid, the attempt ends as
+$\mathit{invalid}$ (FR-LRN-010). Otherwise, if a required part or endpoint is
+missing, $h < \texttt{MAX\_HINTS}$, and $h = 0$ or $|X| > n_h$, it gives a
+hint: $h$ goes up by one, $t_h := \mathit{clock}$ and $n_h := |X|$, the
+missing parts and endpoints are added to $\mathit{seen}$, the strokes stay, and
+the output is true (FR-LRN-024). A missing part the child then draws is marked
+corrected (FR-REC-003). In every other case the attempt ends as
+$\mathit{notPassed}$. The output is false unless a hint was given. An attempt
+with no strokes is left open.
 \item \texttt{interrupt} ends the attempt as $\mathit{interrupted}$, keeping
 its strokes and difficulties and no evaluation result (FR-LRN-009,
 FR-REC-005).
 \item When the attempt ends, $t_{\mathit{end}}$ is set from
 $\mathit{clock}$.
-\item The other programs give the state. \texttt{evaluation} raises
+\item \texttt{hints} gives $h$. The other programs give the state. \texttt{evaluation} raises
 \texttt{notEvaluated} before the first stroke and after the attempt ends as
 $\mathit{interrupted}$, and \texttt{endedAt} raises \texttt{attemptOpen}
 while the attempt is open. \texttt{addStroke} and \texttt{interrupt} raise

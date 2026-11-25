@@ -10,8 +10,8 @@ import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { problemFeedback, feedback, stageLine } from "@/lib/feedback";
-import { apply, applyAll, distance, inverse, length, toPath } from "@/lib/geometry";
-import { DEMO_MS, FULL_ARROW_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
+import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
+import { DEMO_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
 import { LessonControl } from "@/lib/lessonControl";
 import * as settings from "@/lib/settings";
 import * as stages from "@/lib/stages";
@@ -77,7 +77,6 @@ export default function LessonPage() {
   const hinted = useRef(false);
   /** When the current stage came up, for the demonstration and the arrow. */
   const stageSince = useRef(Date.now());
-  const [arrowFull, setArrowFull] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
   const setStrokes = (next: Stroke[]) => {
@@ -172,7 +171,6 @@ export default function LessonPage() {
         setShowing(false);
         setShownStage(null);
         setCelebrate(false);
-        setArrowFull(false);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
         stageSince.current = Date.now();
@@ -195,14 +193,6 @@ export default function LessonPage() {
         stageSince.current = Date.now();
         refresh();
         return;
-      }
-      // With only the dots to go by and nothing drawn for a while, the arrow goes all the way round.
-      if (running && stage === "E" && strokesRef.current.length === 0) {
-        let last = stageSince.current;
-        if (lastInput.current !== null && lastInput.current > last) {
-          last = lastInput.current;
-        }
-        setArrowFull(Date.now() - last >= FULL_ARROW_MS);
       }
       show(c.tick(lastInput.current), stage);
       refresh();
@@ -259,9 +249,8 @@ export default function LessonPage() {
   // With a guide: a green dot where the drawing starts, as in the demonstration.
   const drawing = running && !showing && c.stage !== "D";
   const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
-  // With only the dots to go by, an arrow travels from the start dot to the next dot, to show which
-  // way to go. If nothing is drawn for a while, it goes on round the whole shape, dot to dot.
-  const outline = lesson.figure.parts.flat();
+  // With only the dots to go by, an arrow travels from the start dot to the next dot, rests, then
+  // goes from that dot to the next, and so on round the shape, to show which way to go.
   const arrowOn = drawing && c.stage === "E" && strokes.length === 0;
 
   const onStroke = (stroke: Stroke) => {
@@ -329,7 +318,7 @@ export default function LessonPage() {
               startDot={startDot}
               arrow={
                 arrowOn
-                  ? { path: outline, reach: arrowFull ? length(outline) : length(lesson.figure.parts[0]) }
+                  ? { legs: lesson.figure.parts }
                   : undefined
               }
               strokes={strokes}

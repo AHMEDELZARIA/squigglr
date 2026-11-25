@@ -389,9 +389,6 @@ export const SHOW_PASSED_MS = 2500;
 /** How long an attempt that did not pass stays on screen with its feedback (there is more to look at). */
 export const SHOW_NOT_PASSED_MS = 5000;
 
-/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
-export const FULL_ARROW_MS = 8000;
-
 /** For this long after a stylus touches the screen, finger and palm touches do not draw. */
 export const PALM_MS = 1000;
 
@@ -619,12 +616,14 @@ import type { Guide, Path, Point, Stroke } from "@/lib/types";
 /** Positions closer together than this, in drawing units, are thinned out. */
 const MIN_STEP = 2;
 
-/** The arrow that shows the child where to start and which way to go. */
+/**
+ * The arrow that shows the child which way to go, from one dot to the next.
+ * Each trip covers one leg, then the arrow rests; the next trip starts where
+ * the last one ended. After the last leg it starts again at the first.
+ */
 interface Arrow {
-  /** The path the arrow moves along. */
-  path: Path;
-  /** How far along the path it goes before resting, in drawing units. */
-  reach: number;
+  /** The legs, in order: for a lesson, its parts (the square's sides, the circle's quarters). */
+  legs: Path[];
 }
 
 /** A point on a path, and the direction of travel there (an angle in radians). */
@@ -660,10 +659,10 @@ interface Props {
   /** Where the drawing starts, shown as a green dot, as in the demonstration. */
   startDot?: Point;
   /**
-   * A small arrow that travels along the path from its start, to show which
-   * way to go. It goes as far as `reach` (a distance along the path), rests,
-   * and sets off again. It moves along the shape; it does not draw it. It is
-   * only shown while the child is not drawing.
+   * A small arrow that travels from one dot to the next, to show which way to
+   * go: one leg per trip, a rest, then the next leg, and round again. It moves
+   * along the shape; it does not draw it. It is only shown while the child is
+   * not drawing.
    */
   arrow?: Arrow;
 }
@@ -715,7 +714,7 @@ export function DrawingCanvas(props: Props) {
   const latest = useRef(props);
   latest.current = props;
 
-  const paint = useCallback((demoProgress?: number, arrowAt?: number) => {
+  const paint = useCallback((demoProgress?: number, arrowLeg?: number, arrowAt?: number) => {
     const canvas = canvasRef.current;
     if (canvas === null) return;
     const ctx = canvas.getContext("2d");
@@ -785,15 +784,16 @@ export function DrawingCanvas(props: Props) {
       ctx.arc(startDot.x, startDot.y, 24, 0, Math.PI * 2);
       ctx.fill();
     }
-    if (arrow && arrowAt !== undefined && current.current === null) {
-      // The arrow: a head with a short tail behind it, at `arrowAt` along the path.
-      const head = along(arrow.path, arrowAt);
+    if (arrow && arrowLeg !== undefined && arrowAt !== undefined && current.current === null) {
+      // The arrow: a head with a short tail behind it, `arrowAt` along leg number `arrowLeg`.
+      const leg = arrow.legs[arrowLeg];
+      const head = along(leg, arrowAt);
       ctx.strokeStyle = "#2e8b6e";
       ctx.fillStyle = "#2e8b6e";
       ctx.lineWidth = 10;
       ctx.beginPath();
       for (let d = Math.max(0, arrowAt - ARROW_TAIL); d <= arrowAt; d += 8) {
-        const p = along(arrow.path, d).at;
+        const p = along(leg, d).at;
         if (d === Math.max(0, arrowAt - ARROW_TAIL)) ctx.moveTo(p.x, p.y);
         else ctx.lineTo(p.x, p.y);
       }
@@ -855,20 +855,17 @@ export function DrawingCanvas(props: Props) {
     return () => observer.disconnect();
   }, [paint]);
 
-  // The arrow's trip is timed from when it first appears, or its reach
-  // changes, and not from each repaint of the screen around it.
-  let arrowReach: number | undefined = undefined;
-  if (props.arrow !== undefined) {
-    arrowReach = props.arrow.reach;
-  }
+  // The arrow's trips are timed from when it appears, and not from each
+  // repaint of the screen around it. Each time it appears it starts at the first leg.
+  const arrowShown = props.arrow !== undefined;
   const arrowSince = useRef(0);
   useEffect(() => {
     arrowSince.current = performance.now();
-  }, [arrowReach]);
+  }, [arrowShown]);
 
   // Repaint when what should be shown changes, and run the demonstration or the arrow.
   useEffect(() => {
-    if (!props.demonstration && arrowReach === undefined) return void paint();
+    if (!props.demonstration && !arrowShown) return void paint();
     let frame = 0;
     const start = performance.now();
     const loop = (now: number) => {
@@ -878,16 +875,31 @@ export function DrawingCanvas(props: Props) {
         // never starts drawing again just before the stage changes.
         const progress = (now - start) / DEMO_DRAW_MS;
         paint(Math.min(1, progress));
-      } else if (arrowReach !== undefined) {
-        const trip = (arrowReach / ARROW_SPEED) * 1000;
-        const elapsed = (now - arrowSince.current) % (trip + ARROW_REST_MS);
-        paint(undefined, Math.min(arrowReach, (elapsed / 1000) * ARROW_SPEED));
+      } else if (latest.current.arrow !== undefined) {
+        // Which leg the arrow is on, and how far along it: each leg takes its length at
+        // ARROW_SPEED, then a rest of ARROW_REST_MS, and after the last leg it goes round again.
+        const legs = latest.current.arrow.legs;
+        const tripMs: number[] = [];
+        let roundMs = 0;
+        for (const leg of legs) {
+          const ms = (pathLength(leg) / ARROW_SPEED) * 1000 + ARROW_REST_MS;
+          tripMs.push(ms);
+          roundMs += ms;
+        }
+        let elapsed = (now - arrowSince.current) % roundMs;
+        let legIndex = 0;
+        while (elapsed >= tripMs[legIndex]) {
+          elapsed -= tripMs[legIndex];
+          legIndex += 1;
+        }
+        const legLength = pathLength(legs[legIndex]);
+        paint(undefined, legIndex, Math.min(legLength, (elapsed / 1000) * ARROW_SPEED));
       }
       frame = requestAnimationFrame(loop);
     };
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, [props.demonstration, arrowReach, props.startDot, props.guide, props.strokes, props.marks, props.glow, paint]);
+  }, [props.demonstration, arrowShown, props.startDot, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
@@ -3675,9 +3687,9 @@ import { StrokePreview } from "./StrokePreview";
 // examples are made from the scoring itself, so they are always true to it.
 
 export const NEATNESS = [
-  { mark: 70, name: "Low", text: "Moves on even with a lot of extra lines. Good when just starting." },
-  { mark: 80, name: "Medium", text: "Moves on when most of the lines are on the shape." },
-  { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
+  { mark: 70, name: "Low", text: "Moves on even when many lines wander away from the shape. Good when just starting." },
+  { mark: 80, name: "Medium", text: "Moves on when most of the lines stay close to the shape." },
+  { mark: 90, name: "High", text: "Moves on only when nearly every line stays close to the shape. Can feel hard." },
 ];
 
 interface NeatnessInfoProps {
@@ -3693,7 +3705,8 @@ export function NeatnessInfo({ figure, onClose }: NeatnessInfoProps) {
         <h2 className="text-3xl font-bold">Neatness</h2>
         <p className="mt-2 text-lg">
           How neat the child&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
-          shape always has to be drawn. Neatness sets how many lines may lie away from the shape.
+          shape always has to be drawn, and lines close to the shape always count. Neatness sets how much of the
+          drawing may wander further away: a wobble that goes past the shape, or an extra line.
         </p>
         <p className="mt-4 font-bold text-muted">The messiest drawing that still moves on:</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
@@ -3779,7 +3792,7 @@ export function StrokePreview({
 This is the one screen where everything from parts 3 to 8 meets. It is long, but it only does five things.
 
 1. **Starts the lesson.** When the screen opens, it creates one `LessonControl`, calls `select` with the lesson, the starting stage and `settings.chosen()`, and keeps it for as long as the screen is open. Leaving the screen calls `stop`.
-2. **Sends it the child's input.** `onStroke` passes each finished stroke to `addStroke`. A timer calls `tick` twice a second (every 500 ms). The same timer starts practice when the demonstration has played (it draws the shape once over `DEMO_DRAW_MS`, 4 s, then holds the finished shape for `DEMO_HOLD_MS`, 1 s), and makes the arrow at the dots go all the way round after eight seconds with nothing drawn.
+2. **Sends it the child's input.** `onStroke` passes each finished stroke to `addStroke`. A timer calls `tick` twice a second (every 500 ms). The same timer starts practice when the demonstration has played (it draws the shape once over `DEMO_DRAW_MS`, 4 s, then holds the finished shape for `DEMO_HOLD_MS`, 1 s).
 3. **Shows what comes back.** `show` takes each report. For a hint it lights up what is missing and leaves the drawing alone. For an attempt that ended it holds the drawing on screen for a moment (2.5 or 5 seconds), plays the chime or tune, then clears the canvas.
 4. **Chooses what the helper says.** `bubble` is the latest feedback, or else the line for the stage, and it is spoken aloud whenever it changes.
 5. **Waits for the adult.** While the go-back card is open, `paused` is set, and the timer does nothing: the adult's time is not the child's pause.
@@ -3805,8 +3818,8 @@ import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { problemFeedback, feedback, stageLine } from "@/lib/feedback";
-import { apply, applyAll, distance, inverse, length, toPath } from "@/lib/geometry";
-import { DEMO_MS, FULL_ARROW_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
+import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
+import { DEMO_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
 import { LessonControl } from "@/lib/lessonControl";
 import * as settings from "@/lib/settings";
 import * as stages from "@/lib/stages";
@@ -3872,7 +3885,6 @@ export default function LessonPage() {
   const hinted = useRef(false);
   /** When the current stage came up, for the demonstration and the arrow. */
   const stageSince = useRef(Date.now());
-  const [arrowFull, setArrowFull] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
   const setStrokes = (next: Stroke[]) => {
@@ -3967,7 +3979,6 @@ export default function LessonPage() {
         setShowing(false);
         setShownStage(null);
         setCelebrate(false);
-        setArrowFull(false);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
         stageSince.current = Date.now();
@@ -3990,14 +4001,6 @@ export default function LessonPage() {
         stageSince.current = Date.now();
         refresh();
         return;
-      }
-      // With only the dots to go by and nothing drawn for a while, the arrow goes all the way round.
-      if (running && stage === "E" && strokesRef.current.length === 0) {
-        let last = stageSince.current;
-        if (lastInput.current !== null && lastInput.current > last) {
-          last = lastInput.current;
-        }
-        setArrowFull(Date.now() - last >= FULL_ARROW_MS);
       }
       show(c.tick(lastInput.current), stage);
       refresh();
@@ -4054,9 +4057,8 @@ export default function LessonPage() {
   // With a guide: a green dot where the drawing starts, as in the demonstration.
   const drawing = running && !showing && c.stage !== "D";
   const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
-  // With only the dots to go by, an arrow travels from the start dot to the next dot, to show which
-  // way to go. If nothing is drawn for a while, it goes on round the whole shape, dot to dot.
-  const outline = lesson.figure.parts.flat();
+  // With only the dots to go by, an arrow travels from the start dot to the next dot, rests, then
+  // goes from that dot to the next, and so on round the shape, to show which way to go.
   const arrowOn = drawing && c.stage === "E" && strokes.length === 0;
 
   const onStroke = (stroke: Stroke) => {
@@ -4124,7 +4126,7 @@ export default function LessonPage() {
               startDot={startDot}
               arrow={
                 arrowOn
-                  ? { path: outline, reach: arrowFull ? length(outline) : length(lesson.figure.parts[0]) }
+                  ? { legs: lesson.figure.parts }
                   : undefined
               }
               strokes={strokes}
@@ -5233,7 +5235,7 @@ The code follows one rule: **a class only for something that changes over time a
 | With no guide, a drawing must be at least 40% of the figure's size | SRS Section 9.2 says size does "not affect the result"; FR-LRN-011 | Once any size is scaled up to the figure, a speck passes as a square. The team decided, after trying it on a tablet, that position and size should not matter only down to a minimum. **Contradicts the SRS sentence; the team is asked to change it** (see [Reference C](#srs)). |
 | Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the drawing problems in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of drawing problem; these two need adding to it. |
 | A small picture of the shape stays up at every stage | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at the dots and with no guide, and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture. It is shown at every stage so the child can always look back at the shape and the screen keeps the same layout from stage to stage. The team should confirm it with the specialists. |
-| At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot, rests, and sets off again; after eight seconds with nothing drawn it carries on round the whole shape, dot to dot. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
+| At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot and rests, then from that dot to the next, and so on round the shape, one side per trip. On Nov. 25 the team changed it from repeating the first side, so the child sees the whole way round without waiting. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
 
 ### What the adult sees
 
@@ -5258,7 +5260,7 @@ The team ran the lo-fi prototype with a member of another group, who played a pa
 | --- | --- |
 | The tester started drawing during the demonstration ("I guess I wasn't supposed to draw yet"). | Drawing during the demonstration does nothing. Practice now starts by itself with "Your turn!" and a chime, with no button. |
 | "Great try! Finish where it's glowing" was followed without help. | The app now works this way: the drawing stays, the gap glows, and finishing it passes. Before, the drawing was cleared and the child started again. |
-| At the dots, a five-year-old might draw a straight line from one dot to the next. An arrow that moves a little way in a curve would show the direction, and a longer one after a while with no input. | A green start dot and a small arrow that travels slowly from it to the next dot; after eight seconds with nothing drawn it goes on round the whole shape. |
+| At the dots, a five-year-old might draw a straight line from one dot to the next. An arrow that moves a little way in a curve would show the direction, and a longer one after a while with no input. | A green start dot and a small arrow that travels slowly from it to the next dot, rests, then on to the next, one side per trip, round the shape. |
 | The last step was clearer than the dots, because of the picture in the corner. A picture at the dots would help too. | The picture of the shape is shown at the dots as well. |
 | More dots for the circle would show where a wrong shape misses. | Already the case: the circle has four dots, where the prototype had two. |
 | The footprints were noticed but not read as progress. Prints pointing along a path, moving when a step is done, with the screen paused and a sound, would draw the eye. | The trail now walks across the screen, and the step just reached grows for a moment while input is paused and a chime plays. The drawing that passed also grows slightly. |

@@ -300,6 +300,17 @@ export const TRACE_TOL = 5;
 export const PART_COVER = 90;
 
 /**
+ * The least an attempt must have drawn, in total, to be judged at all: the
+ * length of all its lines added up, in percent of the diagonal of the box
+ * around the shape. Less than this (a tap or a tiny mark) is "too little to
+ * judge": the attempt is not counted, and the child is asked to try again.
+ * For the square (diagonal about 707) this is about 35 units.
+ * The team's own choice, not taken from a source. It has the same value as
+ * TRACE_TOL, but means something different, so the two can be changed apart.
+ */
+export const MIN_DRAWN = 5;
+
+/**
  * With no guide, the smallest a drawing may be: its longer side, in percent of
  * the shape's longer side. Smaller than this and the attempt is not complete,
  * however neat.
@@ -377,9 +388,6 @@ export const SHOW_PASSED_MS = 2500;
 
 /** How long an attempt that did not pass stays on screen with its feedback (there is more to look at). */
 export const SHOW_NOT_PASSED_MS = 5000;
-
-/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
-export const FULL_ARROW_MS = 8000;
 
 /** For this long after a stylus touches the screen, finger and palm touches do not draw. */
 export const PALM_MS = 1000;
@@ -608,12 +616,14 @@ import type { Guide, Path, Point, Stroke } from "@/lib/types";
 /** Positions closer together than this, in drawing units, are thinned out. */
 const MIN_STEP = 2;
 
-/** The arrow that shows the child where to start and which way to go. */
+/**
+ * The arrow that shows the child which way to go, from one dot to the next.
+ * Each trip covers one leg, then the arrow rests; the next trip starts where
+ * the last one ended. After the last leg it starts again at the first.
+ */
 interface Arrow {
-  /** The path the arrow moves along. */
-  path: Path;
-  /** How far along the path it goes before resting, in drawing units. */
-  reach: number;
+  /** The legs, in order: for a lesson, its parts (the square's sides, the circle's quarters). */
+  legs: Path[];
 }
 
 /** A point on a path, and the direction of travel there (an angle in radians). */
@@ -649,10 +659,10 @@ interface Props {
   /** Where the drawing starts, shown as a green dot, as in the demonstration. */
   startDot?: Point;
   /**
-   * A small arrow that travels along the path from its start, to show which
-   * way to go. It goes as far as `reach` (a distance along the path), rests,
-   * and sets off again. It moves along the shape; it does not draw it. It is
-   * only shown while the child is not drawing.
+   * A small arrow that travels from one dot to the next, to show which way to
+   * go: one leg per trip, a rest, then the next leg, and round again. It moves
+   * along the shape; it does not draw it. It is only shown while the child is
+   * not drawing.
    */
   arrow?: Arrow;
 }
@@ -704,7 +714,7 @@ export function DrawingCanvas(props: Props) {
   const latest = useRef(props);
   latest.current = props;
 
-  const paint = useCallback((demoProgress?: number, arrowAt?: number) => {
+  const paint = useCallback((demoProgress?: number, arrowLeg?: number, arrowAt?: number) => {
     const canvas = canvasRef.current;
     if (canvas === null) return;
     const ctx = canvas.getContext("2d");
@@ -774,15 +784,16 @@ export function DrawingCanvas(props: Props) {
       ctx.arc(startDot.x, startDot.y, 24, 0, Math.PI * 2);
       ctx.fill();
     }
-    if (arrow && arrowAt !== undefined && current.current === null) {
-      // The arrow: a head with a short tail behind it, at `arrowAt` along the path.
-      const head = along(arrow.path, arrowAt);
+    if (arrow && arrowLeg !== undefined && arrowAt !== undefined && current.current === null) {
+      // The arrow: a head with a short tail behind it, `arrowAt` along leg number `arrowLeg`.
+      const leg = arrow.legs[arrowLeg];
+      const head = along(leg, arrowAt);
       ctx.strokeStyle = "#2e8b6e";
       ctx.fillStyle = "#2e8b6e";
       ctx.lineWidth = 10;
       ctx.beginPath();
       for (let d = Math.max(0, arrowAt - ARROW_TAIL); d <= arrowAt; d += 8) {
-        const p = along(arrow.path, d).at;
+        const p = along(leg, d).at;
         if (d === Math.max(0, arrowAt - ARROW_TAIL)) ctx.moveTo(p.x, p.y);
         else ctx.lineTo(p.x, p.y);
       }
@@ -844,20 +855,17 @@ export function DrawingCanvas(props: Props) {
     return () => observer.disconnect();
   }, [paint]);
 
-  // The arrow's trip is timed from when it first appears, or its reach
-  // changes, and not from each repaint of the screen around it.
-  let arrowReach: number | undefined = undefined;
-  if (props.arrow !== undefined) {
-    arrowReach = props.arrow.reach;
-  }
+  // The arrow's trips are timed from when it appears, and not from each
+  // repaint of the screen around it. Each time it appears it starts at the first leg.
+  const arrowShown = props.arrow !== undefined;
   const arrowSince = useRef(0);
   useEffect(() => {
     arrowSince.current = performance.now();
-  }, [arrowReach]);
+  }, [arrowShown]);
 
   // Repaint when what should be shown changes, and run the demonstration or the arrow.
   useEffect(() => {
-    if (!props.demonstration && arrowReach === undefined) return void paint();
+    if (!props.demonstration && !arrowShown) return void paint();
     let frame = 0;
     const start = performance.now();
     const loop = (now: number) => {
@@ -867,16 +875,31 @@ export function DrawingCanvas(props: Props) {
         // never starts drawing again just before the stage changes.
         const progress = (now - start) / DEMO_DRAW_MS;
         paint(Math.min(1, progress));
-      } else if (arrowReach !== undefined) {
-        const trip = (arrowReach / ARROW_SPEED) * 1000;
-        const elapsed = (now - arrowSince.current) % (trip + ARROW_REST_MS);
-        paint(undefined, Math.min(arrowReach, (elapsed / 1000) * ARROW_SPEED));
+      } else if (latest.current.arrow !== undefined) {
+        // Which leg the arrow is on, and how far along it: each leg takes its length at
+        // ARROW_SPEED, then a rest of ARROW_REST_MS, and after the last leg it goes round again.
+        const legs = latest.current.arrow.legs;
+        const tripMs: number[] = [];
+        let roundMs = 0;
+        for (const leg of legs) {
+          const ms = (pathLength(leg) / ARROW_SPEED) * 1000 + ARROW_REST_MS;
+          tripMs.push(ms);
+          roundMs += ms;
+        }
+        let elapsed = (now - arrowSince.current) % roundMs;
+        let legIndex = 0;
+        while (elapsed >= tripMs[legIndex]) {
+          elapsed -= tripMs[legIndex];
+          legIndex += 1;
+        }
+        const legLength = pathLength(legs[legIndex]);
+        paint(undefined, legIndex, Math.min(legLength, (elapsed / 1000) * ARROW_SPEED));
       }
       frame = requestAnimationFrame(loop);
     };
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, [props.demonstration, arrowReach, props.startDot, props.guide, props.strokes, props.marks, props.glow, paint]);
+  }, [props.demonstration, arrowShown, props.startDot, props.guide, props.strokes, props.marks, props.glow, paint]);
 
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
   /** Maps a pointer position to drawing units, so a point keeps its place if the canvas is resized. */
@@ -1395,7 +1418,7 @@ export function biggestGroup(groups: Path[][]): Path[] {
 4. `stretchedScore` and `isTooSmall`, at stage I only: the check for a stretched drawing, and the minimum size.
 5. The last lines of `evaluate`: complete, passed, and the drawing problems that are allowed at this stage.
 
-The three numbers the team will calibrate, `TRACE_TOL`, `PART_COVER` and `MIN_DRAW_SCALE`, are at the top and nowhere else.
+The numbers the team will calibrate, `TRACE_TOL`, `PART_COVER`, `MIN_DRAWN` and `MIN_DRAW_SCALE`, are in `lib/constants.ts` and nowhere else.
 
 <a id="f-evaluation"></a>
 
@@ -1427,6 +1450,7 @@ import {
 import {
   GROUP_GAP,
   MIN_DRAW_SCALE,
+  MIN_DRAWN,
   NUDGE_MAX_SCALE,
   NUDGE_REACH,
   PART_COVER,
@@ -1448,7 +1472,12 @@ export function tolerance(figure: Figure): number {
   return (TRACE_TOL / 100) * diagonal(boundingBox(figure.parts));
 }
 
-function isValid(strokes: Stroke[], tol: number): boolean {
+/** The least total length of line an attempt needs to be judged: MIN_DRAWN percent of the figure's diagonal. */
+function minDrawn(figure: Figure): number {
+  return (MIN_DRAWN / 100) * diagonal(boundingBox(figure.parts));
+}
+
+function isValid(strokes: Stroke[], least: number): boolean {
   if (strokes.length === 0) return false;
   for (const s of strokes) {
     if (s.points.length === 0) return false;
@@ -1456,9 +1485,9 @@ function isValid(strokes: Stroke[], tol: number): boolean {
       if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return false;
     }
   }
-  // A tap or a mark shorter than the tolerance is too little to judge.
+  // A tap or a mark shorter than `least` in total is too little to judge.
   const total = strokes.reduce((sum, s) => sum + length(toPath(s)), 0);
-  return total >= tol;
+  return total >= least;
 }
 
 interface Score {
@@ -1604,7 +1633,7 @@ export const evaluate: Evaluate = (strokes, figure, stage, allowed, stagePass) =
   const tol = tolerance(figure);
 
   // 1. Something to judge?
-  if (!isValid(strokes, tol)) {
+  if (!isValid(strokes, minDrawn(figure))) {
     return invalidEvaluation(guidance);
   }
 
@@ -2585,7 +2614,7 @@ export function hush(): void {
 | Improvement window (`IMPROVE_WINDOW`) | 1 to 3 | 2 | How many attempts are compared to decide "improving". |
 | Extra attempts when improving (`ATTEMPT_EXTENSION`) | 1 to 3 | 2 | The size of the one extension. |
 | Most attempts at one stage (`ATTEMPT_LIMIT_MAX`) | 8 to 12 | 10 | The hard cap. |
-| Pause that ends an attempt (`ATTEMPT_IDLE`) | 3 to 7 s | 5 s | How long the app waits after the last stroke before ending an attempt that has not passed. |
+| Pause that ends an attempt (`ATTEMPT_IDLE`) | 5 to 15 s | 10 s | How long the app waits after the last stroke before ending an attempt that has not passed. |
 | Pause before a check-in (`LESSON_IDLE_PROMPT`) | 30 to 60 s | 45 s | When "Still drawing?" appears. |
 | Pause that ends the lesson (`LESSON_IDLE_END`) | 90 to 180 s | 135 s | When an abandoned lesson ends. |
 
@@ -2638,7 +2667,7 @@ export const RANGES: Record<SettingName, Range> = {
   improveWindow: range(1, 3, "Improvement window", "attempts", "How many recent attempts are compared with the ones before them."),
   attemptExtension: range(1, 3, "Extra attempts when improving", "attempts", "Extra attempts given once if the child is improving at the limit."),
   attemptLimitMax: range(8, 12, "Most attempts at one stage", "attempts", "The hard cap on attempts at one stage, extension included."),
-  attemptIdle: range(3, 7, "Pause that ends an attempt", "seconds", "Time with no drawing after which an attempt that has not passed ends."),
+  attemptIdle: range(5, 15, "Pause that ends an attempt", "seconds", "Time with no drawing after which an attempt that has not passed ends."),
   lessonIdlePrompt: range(30, 60, "Pause before a check-in", "seconds", "Time with no drawing before the child sees a check-in."),
   lessonIdleEnd: range(90, 180, "Pause that ends the lesson", "seconds", "Time with no drawing after which the lesson ends."),
 };
@@ -3658,9 +3687,9 @@ import { StrokePreview } from "./StrokePreview";
 // examples are made from the scoring itself, so they are always true to it.
 
 export const NEATNESS = [
-  { mark: 70, name: "Low", text: "Moves on even with a lot of extra lines. Good when just starting." },
-  { mark: 80, name: "Medium", text: "Moves on when most of the lines are on the shape." },
-  { mark: 90, name: "High", text: "Moves on only when nearly every line is on the shape. Can feel hard." },
+  { mark: 70, name: "Low", text: "Moves on even when many lines wander away from the shape. Good when just starting." },
+  { mark: 80, name: "Medium", text: "Moves on when most of the lines stay close to the shape." },
+  { mark: 90, name: "High", text: "Moves on only when nearly every line stays close to the shape. Can feel hard." },
 ];
 
 interface NeatnessInfoProps {
@@ -3676,7 +3705,8 @@ export function NeatnessInfo({ figure, onClose }: NeatnessInfoProps) {
         <h2 className="text-3xl font-bold">Neatness</h2>
         <p className="mt-2 text-lg">
           How neat the child&apos;s drawing has to be before the lesson moves on to the next step. Every part of the
-          shape always has to be drawn. Neatness sets how many lines may lie away from the shape.
+          shape always has to be drawn, and lines close to the shape always count. Neatness sets how much of the
+          drawing may wander further away: a wobble that goes past the shape, or an extra line.
         </p>
         <p className="mt-4 font-bold text-muted">The messiest drawing that still moves on:</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
@@ -3762,7 +3792,7 @@ export function StrokePreview({
 This is the one screen where everything from parts 3 to 8 meets. It is long, but it only does five things.
 
 1. **Starts the lesson.** When the screen opens, it creates one `LessonControl`, calls `select` with the lesson, the starting stage and `settings.chosen()`, and keeps it for as long as the screen is open. Leaving the screen calls `stop`.
-2. **Sends it the child's input.** `onStroke` passes each finished stroke to `addStroke`. A timer calls `tick` twice a second (every 500 ms). The same timer starts practice when the demonstration has played (it draws the shape once over `DEMO_DRAW_MS`, 4 s, then holds the finished shape for `DEMO_HOLD_MS`, 1 s), and makes the arrow at the dots go all the way round after eight seconds with nothing drawn.
+2. **Sends it the child's input.** `onStroke` passes each finished stroke to `addStroke`. A timer calls `tick` twice a second (every 500 ms). The same timer starts practice when the demonstration has played (it draws the shape once over `DEMO_DRAW_MS`, 4 s, then holds the finished shape for `DEMO_HOLD_MS`, 1 s).
 3. **Shows what comes back.** `show` takes each report. For a hint it lights up what is missing and leaves the drawing alone. For an attempt that ended it holds the drawing on screen for a moment (2.5 or 5 seconds), plays the chime or tune, then clears the canvas.
 4. **Chooses what the helper says.** `bubble` is the latest feedback, or else the line for the stage, and it is spoken aloud whenever it changes.
 5. **Waits for the adult.** While the go-back card is open, `paused` is set, and the timer does nothing: the adult's time is not the child's pause.
@@ -3788,8 +3818,8 @@ import * as audio from "@/lib/audio";
 import * as catalogue from "@/lib/catalogue";
 import { tolerance } from "@/lib/evaluation";
 import { problemFeedback, feedback, stageLine } from "@/lib/feedback";
-import { apply, applyAll, distance, inverse, length, toPath } from "@/lib/geometry";
-import { DEMO_MS, FULL_ARROW_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
+import { apply, applyAll, distance, inverse, toPath } from "@/lib/geometry";
+import { DEMO_MS, MAX_HINTS, SHOW_NOT_PASSED_MS, SHOW_PASSED_MS, TICK_MS } from "@/lib/constants";
 import { LessonControl } from "@/lib/lessonControl";
 import * as settings from "@/lib/settings";
 import * as stages from "@/lib/stages";
@@ -3855,7 +3885,6 @@ export default function LessonPage() {
   const hinted = useRef(false);
   /** When the current stage came up, for the demonstration and the arrow. */
   const stageSince = useRef(Date.now());
-  const [arrowFull, setArrowFull] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
   const setStrokes = (next: Stroke[]) => {
@@ -3950,7 +3979,6 @@ export default function LessonPage() {
         setShowing(false);
         setShownStage(null);
         setCelebrate(false);
-        setArrowFull(false);
         setReport((current) => (current === r ? null : current));
         lastInput.current = Date.now(); // the idle clocks start again once the child can draw
         stageSince.current = Date.now();
@@ -3973,14 +4001,6 @@ export default function LessonPage() {
         stageSince.current = Date.now();
         refresh();
         return;
-      }
-      // With only the dots to go by and nothing drawn for a while, the arrow goes all the way round.
-      if (running && stage === "E" && strokesRef.current.length === 0) {
-        let last = stageSince.current;
-        if (lastInput.current !== null && lastInput.current > last) {
-          last = lastInput.current;
-        }
-        setArrowFull(Date.now() - last >= FULL_ARROW_MS);
       }
       show(c.tick(lastInput.current), stage);
       refresh();
@@ -4037,9 +4057,8 @@ export default function LessonPage() {
   // With a guide: a green dot where the drawing starts, as in the demonstration.
   const drawing = running && !showing && c.stage !== "D";
   const startDot = drawing && (c.stage === "T" || c.stage === "E") ? lesson.figure.parts[0][0] : undefined;
-  // With only the dots to go by, an arrow travels from the start dot to the next dot, to show which
-  // way to go. If nothing is drawn for a while, it goes on round the whole shape, dot to dot.
-  const outline = lesson.figure.parts.flat();
+  // With only the dots to go by, an arrow travels from the start dot to the next dot, rests, then
+  // goes from that dot to the next, and so on round the shape, to show which way to go.
   const arrowOn = drawing && c.stage === "E" && strokes.length === 0;
 
   const onStroke = (stroke: Stroke) => {
@@ -4084,30 +4103,30 @@ export default function LessonPage() {
   return (
     <>
       <Frame brand={false} className="!p-4 sm:!p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
-            {/* Without the outline, a small picture reminds the child what to draw. */}
-            {running && (c.stage === "E" || c.stage === "I") && (
-              <div className="mt-3 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-edge bg-white">
-                <LessonIcon figure={lesson.figure} className="h-14 w-14" />
-              </div>
-            )}
-          </div>
+        {/* The progress trail, with a small picture beside it at every stage that reminds the child
+            what to draw. The row keeps its height when the picture is gone, so nothing moves. */}
+        <div className="flex min-h-16 items-center gap-6">
+          <Footprints reached={reachedStep(c)} labels={STEP_LABELS} />
+          {running && (
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-edge bg-white">
+              <LessonIcon figure={lesson.figure} className="h-11 w-11" />
+            </div>
+          )}
         </div>
 
         {/* The drawing area: as big as the screen allows while staying square. Its width is the
-            smallest of the full width and the screen height minus about 14rem, which is the room
-            the progress trail above and the helper below need. dvh is the visible height, so the
-            browser's own toolbar on a tablet is not counted. Never smaller than 22rem. */}
-        <div className="relative mx-auto -mt-4 w-full max-w-[min(100%,max(22rem,calc(100dvh-14rem)))]">
+            smallest of the full width and the screen height minus about 16rem, which is the room
+            the progress trail above and the helper below need. dvh is the visible height,
+            so the browser's own toolbar on a tablet is not counted. Never smaller than 22rem. The
+            area starts below the trail, so it never covers the footsteps. */}
+        <div className="relative mx-auto mt-3 w-full max-w-[min(100%,max(22rem,calc(100dvh-16rem)))]">
           <div className={`relative min-w-0 flex-1 ${celebrate ? "pop-gently" : ""}`}>
             <DrawingCanvas
               guide={guide}
               startDot={startDot}
               arrow={
                 arrowOn
-                  ? { path: outline, reach: arrowFull ? length(outline) : length(lesson.figure.parts[0]) }
+                  ? { legs: lesson.figure.parts }
                   : undefined
               }
               strokes={strokes}
@@ -5200,7 +5219,7 @@ The code follows one rule: **a class only for something that changes over time a
 | A stylus held down, even held still, counts as drawing | FR-LRN-024 (the pause is "with no input after the last stroke") | Otherwise a child resting the stylus mid-line would have the attempt ended under them. |
 | The lesson waits while the go-back card is open | FR-LRN-024 | The adult's time at the card is not the child's pause, so no attempt ends and no idle clock runs meanwhile. The card has a "Decide later" that leaves the suggestion pending (FR-LRN-034). |
 | After the pause, a drawing with a part missing is kept and the child is shown what to finish | FR-LRN-024 (**goes against it**); SAF-MOU-001; FR-REC-003; NFR-UX-016 | The SRS ends the attempt at the first pause. The app first gives a hint: the missing part glows, the drawing stays, and the pause starts again. If the child finishes it, the attempt passes. An attempt gives at most two hints, and the second only if the child drew something after the first; then it ends as one not-passed attempt. This is the prototype's S8, which the peer tester followed without help. A drawing with nothing missing (too messy, too small, stretched) gets no hint, because drawing more cannot fix it. |
-| The pause that ends an attempt is set by the adult: 3 to 7 s, default 5 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first; tried on a tablet, ten seconds of waiting was far too long, so it was halved. |
+| The pause that ends an attempt is set by the adult: 5 to 15 s, default 10 | FR-LRN-024; BR-008 | The SRS leaves the range "TBD". It was 5 to 15 s at first, then 3 to 7 s after ten seconds felt too long on a tablet. On Nov. 25 the team set it back to 5 to 15 s, because 3 to 7 s could end an attempt while a young child was still pausing between strokes. The adult can pick a shorter pause for a child who does not need one. The range still needs to be confirmed. |
 | The lesson idle ranges are 30 to 60 s and 90 to 180 s | SAF-RAY-009; BR-008 | Also "TBD" in the SRS. The three ranges do not overlap, so the rule that each is shorter than the next can never be broken. |
 | A go-back suggestion waits behind a quiet Grown-ups button | FR-LRN-019, FR-LRN-034; UC-005; SAF-RAY-001; NFR-UX-001 | The SRS has the suggestion shown "without blocking practice" and answered by the adult. The card has one button for each earlier drawing stage, from `stages.earlier`. The prototype covers the lesson with a card and has the helper say "Let's get a grown-up!"; neither is in the SRS, and nothing flashes while the child draws. |
 | A finished attempt stays on screen with its feedback: 5 s if it did not pass, 2.5 s if it passed or the child had already been given a hint | FR-LRN-014; NFR-UX-016; SAF-MOU-001 | The SRS does not say what happens on screen when an attempt ends. Without a pause the drawing would vanish and the feedback would refer to nothing. |
@@ -5215,8 +5234,8 @@ The code follows one rule: **a class only for something that changes over time a
 | With no guide, the drawing is laid over the figure by a fit that ignores stray marks | SRS Section 9.2 (stage I); FR-LRN-013 | The SRS lays it over by its bounding box. One stray dot, or a line that runs past a corner, stretches that box and fails a good drawing. The SRS's fit is still tried, and is used whenever it scores best. **Goes beyond the SRS wording.** |
 | With no guide, a drawing must be at least 40% of the figure's size | SRS Section 9.2 says size does "not affect the result"; FR-LRN-011 | Once any size is scaled up to the figure, a speck passes as a square. The team decided, after trying it on a tablet, that position and size should not matter only down to a minimum. **Contradicts the SRS sentence; the team is asked to change it** (see [Reference C](#srs)). |
 | Two more things can be said about a drawing made with no guide: "too small" and "stretched" | BR-007; FR-LRN-014; NFR-UX-004 | The SRS lets the team define the drawing problems in advance. A rectangle drawn for a square used to be shown a glow where a square's sides would be, right beside lines the child had drawn. It is now told "Try making it as tall as it is wide". The MIS lists three kinds of drawing problem; these two need adding to it. |
-| A small picture of the shape stays up at the dots and with no guide | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at both steps and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture, so it is now at the dots too. The team should confirm it with the specialists. |
-| At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot, rests, and sets off again; after eight seconds with nothing drawn it carries on round the whole shape, dot to dot. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
+| A small picture of the shape stays up at every stage | FR-LRN-006, FR-LRN-027 | The SRS forbids a tracing outline at the dots and with no guide, and endpoint guides at the last. The picture is neither, and sits beside the drawing area, but a strict reading could object. The peer tester found the last step clearer than the dots because of the picture. It is shown at every stage so the child can always look back at the shape and the screen keeps the same layout from stage to stage. The team should confirm it with the specialists. |
+| At the dots, a green dot marks the start and a moving arrow shows which way to go | FR-LRN-005, FR-LRN-027; NFR-UX-001 | The peer tester expected a five-year-old to join two dots with a straight line. A small arrow now travels slowly from the start dot to the next dot and rests, then from that dot to the next, and so on round the shape, one side per trip. On Nov. 25 the team changed it from repeating the first side, so the child sees the whole way round without waiting. It is a moving arrow, not a line that grows, so it shows the way without drawing the shape for the child (SAF-MOU-001). It stops as soon as the child draws, so nothing moves while they draw. The SRS shows only the endpoints at this step; whether an arrow is a guide is for the team to decide. |
 
 ### What the adult sees
 
@@ -5241,7 +5260,7 @@ The team ran the lo-fi prototype with a member of another group, who played a pa
 | --- | --- |
 | The tester started drawing during the demonstration ("I guess I wasn't supposed to draw yet"). | Drawing during the demonstration does nothing. Practice now starts by itself with "Your turn!" and a chime, with no button. |
 | "Great try! Finish where it's glowing" was followed without help. | The app now works this way: the drawing stays, the gap glows, and finishing it passes. Before, the drawing was cleared and the child started again. |
-| At the dots, a five-year-old might draw a straight line from one dot to the next. An arrow that moves a little way in a curve would show the direction, and a longer one after a while with no input. | A green start dot and a small arrow that travels slowly from it to the next dot; after eight seconds with nothing drawn it goes on round the whole shape. |
+| At the dots, a five-year-old might draw a straight line from one dot to the next. An arrow that moves a little way in a curve would show the direction, and a longer one after a while with no input. | A green start dot and a small arrow that travels slowly from it to the next dot, rests, then on to the next, one side per trip, round the shape. |
 | The last step was clearer than the dots, because of the picture in the corner. A picture at the dots would help too. | The picture of the shape is shown at the dots as well. |
 | More dots for the circle would show where a wrong shape misses. | Already the case: the circle has four dots, where the prototype had two. |
 | The footprints were noticed but not read as progress. Prints pointing along a path, moving when a step is done, with the screen paused and a sound, would draw the eye. | The trail now walks across the screen, and the step just reached grows for a moment while input is paused and a chime plays. The drawing that passed also grows slightly. |
@@ -5282,7 +5301,7 @@ The screens follow the lo-fi prototype's layout. Where the prototype and the SRS
 | A practice sticker ends the lesson (S11). | No reward is specified. | Kept, since the peer session. See the first table. |
 | A weekly "practice story" with a sticker for each day practised (S5). | The progress summary is specified separately, for the final phase; the POC plan has none. | Not built. |
 | Three settings, plus the helper's voice. | Nine adult-set values (BR-008), and an audio setting (NFR-UX-010). | The prototype's three and the voice switch up front, the other values under "More settings". |
-| A small picture of the shape stays up at "On my own" (S10). | No outline at the endpoint stage (FR-LRN-027), no outline or endpoint guides at the independent stage (FR-LRN-006). | Kept, and shown at the dots too, to be confirmed with the specialists after the POC. |
+| A small picture of the shape stays up at "On my own" (S10). | No outline at the endpoint stage (FR-LRN-027), no outline or endpoint guides at the independent stage (FR-LRN-006). | Kept, and shown at every stage, to be confirmed with the specialists after the POC. |
 | The demonstration moves on by itself (S6). | The child "continues after viewing the example" (Section 9.2); UC-003 has Squigglr move on. | By itself, after one play. |
 
 ### What the SRS requires that the POC does not have yet
@@ -5296,8 +5315,8 @@ Building the rules turned up ten places where the documents are silent or do not
 1. **The pass mark only measures stray drawing.** A complete drawing has at least 90% of every part drawn (`PART_COVER`), so its "drawn" share is always at least 90. The pass mark ranges from 70 to 90, so it can only ever fail a complete drawing on the other share, "on figure". A wobbly or short line fails on completeness before the pass mark is looked at. In the measurements of [part 5](#scoring), a wobble of 30 units scores 100 and a wobble of 40 is incomplete, with nothing in between. If the adult's pass mark is meant to grade how closely the child follows the line, the team should lower `PART_COVER`, tighten `TRACE_TOL`, or score distance from the line and not only inside or outside a band. This is the calibration of open issue OI-05, and it is the most important thing to settle before Revision 0.
 2. **"A square with one side missing scores at most 75" is not true under the SRS's own definition.** It scores about 79, because the two ends of the missing side lie within the tolerance of the neighbouring sides and count as drawn. It is still incomplete and cannot pass. The sentence in SRS Section 9.2 should be reworded.
 3. **The circle has no endpoints, so its endpoints-only stage would show nothing.** The POC uses the four points where the quarter arcs meet.
-4. **The three idle ranges are "TBD".** Proposed: 3 to 7, 30 to 60 and 90 to 180 seconds.
-5. **"Valid" has no concrete definition.** Here: at least one stroke, every coordinate a number, and at least a tolerance's length drawn, so that a tap or a brush of the palm is not counted as a failed attempt.
+4. **The three idle ranges are "TBD".** Proposed: 5 to 15, 30 to 60 and 90 to 180 seconds.
+5. **"Valid" has no concrete definition.** Here: at least one stroke, every coordinate a number, and at least `MIN_DRAWN` (5% of the shape's diagonal, about 35 units for the square) of line drawn in total, so that a tap or a brush of the palm is not counted as a failed attempt. The value is the team's own choice.
 6. **When "drawn off the figure" is observed is not defined.** Here: when the on-figure share is below the pass mark.
 7. **UC-003 and the MIS disagree on a later starting stage.** UC-003 shows the demonstration and then moves to the starting stage; the MIS has `beginPractice` go from D to T. The POC follows UC-003.
 8. **What happens on screen when an attempt ends is not specified.** The POC keeps the drawing and its feedback up for 5 seconds after an attempt that did not pass and 2.5 seconds after a pass, during which input is off and the idle clocks do not run.

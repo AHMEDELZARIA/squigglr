@@ -38,6 +38,17 @@ export const TRACE_TOL = 5;
 export const PART_COVER = 90;
 
 /**
+ * The least an attempt must have drawn, in total, to be judged at all: the
+ * length of all its lines added up, in percent of the diagonal of the box
+ * around the shape. Less than this (a tap or a tiny mark) is "too little to
+ * judge": the attempt is not counted, and the child is asked to try again.
+ * For the square (diagonal about 707) this is about 35 units.
+ * The team's own choice, not taken from a source. It has the same value as
+ * TRACE_TOL, but means something different, so the two can be changed apart.
+ */
+export const MIN_DRAWN = 5;
+
+/**
  * With no guide, the smallest a drawing may be: its longer side, in percent of
  * the shape's longer side. Smaller than this and the attempt is not complete,
  * however neat.
@@ -115,9 +126,6 @@ export const SHOW_PASSED_MS = 2500;
 
 /** How long an attempt that did not pass stays on screen with its feedback (there is more to look at). */
 export const SHOW_NOT_PASSED_MS = 5000;
-
-/** With only the dots to go by: how long with nothing drawn before the arrow goes all the way round. */
-export const FULL_ARROW_MS = 8000;
 
 /** For this long after a stylus touches the screen, finger and palm touches do not draw. */
 export const PALM_MS = 1000;

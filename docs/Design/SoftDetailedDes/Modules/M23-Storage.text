@@ -31,6 +31,8 @@ identifier.
 whose fields are numbers, Booleans, strings, date-times, or sequences and
 tuples of these. This module does not look inside an item, except to check its
 text before saving (NFR-SEC-006).
+\item WriteT $= \{\mathit{replace}, \mathit{once}\}$, whether a later save may
+replace the item. The module that owns the item chooses it.
 \item EntryT = tuple of $(\mathit{id}: \text{ItemIdT},$ $\mathit{learner}:
 \text{LearnerIdT} \cup \{\bot\},$ $\mathit{item}: \text{ItemT})$, one saved
 item with the learner it belongs to.
@@ -42,8 +44,8 @@ item with the learner it belongs to.
 \begin{accessprograms}
 newId & -- & ItemIdT & -- \\
 put & $a$: AdultIdT, $k$: KindT, $p$: LearnerIdT $\cup$ $\{\bot\}$,
-$\mathit{id}$: ItemIdT, $x$: ItemT & -- & notOwner, unchangeable, invalidInput,
-unavailable \\
+$\mathit{id}$: ItemIdT, $x$: ItemT, $w$: WriteT & -- & notOwner, unchangeable,
+invalidInput, unavailable \\
 get & $a$: AdultIdT $\cup$ $\{\bot\}$, $k$: KindT, $\mathit{id}$: ItemIdT &
 ItemT & notOwner, unknownItem, unavailable \\
 list & $a$: AdultIdT $\cup$ $\{\bot\}$, $k$: KindT, $p$: LearnerIdT $\cup$
@@ -64,18 +66,20 @@ None.
 \item $\mathit{db}$: set of tuple of $(\mathit{kind}: \text{KindT},$
 $\mathit{adult}: \text{AdultIdT} \cup \{\bot\},$ $\mathit{learner}:
 \text{LearnerIdT} \cup \{\bot\},$ $\mathit{id}: \text{ItemIdT},$
-$\mathit{item}: \text{ItemT})$, the saved items in the hosted database. The
-database's access rules let an adult reach only their own items (NFR-SEC-001,
-SAF-SHA-001).
+$\mathit{item}: \text{ItemT},$ $\mathit{once}: \mathbb{B})$, the saved items in
+the hosted database. Each item is kept under the adult its caller names, and
+$\mathit{once}$ is true for an item that can no longer be replaced.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
 \item $a$ is the adult that the Adult Access Module (\mref{mAccess}) gives as
-signed in.
-\item The Attempt Record Module replaces a lesson record only until it ends
-that record's lesson (FR-REC-009).
+signed in. That module owns the access rule (NFR-SEC-001, SAF-SHA-001). This
+module applies it to the adult it is given.
+\item The module that owns an item decides whether it can be replaced, and
+says so with $w$. This module does not know which kinds of item are
+unchangeable.
 \item Lessons are stored by the team, outside \progname{}.
 \end{itemize}
 
@@ -90,10 +94,13 @@ belongs to the adult rather than to one learner, such as a learner profile.
 \texttt{put} returns only after the server confirms the save (SAF-SHA-003).
 Repeating a \texttt{put} with the same $\mathit{id}$ and $x$ changes nothing,
 so an attempt that is sent again is still saved once (FR-REC-008).
-\item A saved attempt record is never replaced: \texttt{put} with a different
-$x$ raises \texttt{unchangeable} and logs the refused change with the Audit Log
-Module, without the record's contents (FR-REC-009, NFR-SEC-003).
-\item \texttt{get} and \texttt{list} give only $a$'s items (NFR-SEC-001).
+\item An item saved with $w = \mathit{once}$ is never replaced: a later
+\texttt{put} with a different $x$ raises \texttt{unchangeable} and logs the
+refused change with the Audit Log Module, without the item's contents
+(NFR-SEC-003). The module that owns the item decides which items are saved
+this way.
+\item \texttt{get} and \texttt{list} give only the items kept under $a$, which
+applies the access rule of the Adult Access Module (NFR-SEC-001).
 \texttt{list} gives the items of learner $p$, or every item of kind $k$ that
 belongs to $a$ when $p = \bot$. Lessons belong to no adult, so they are read
 with $a = \bot$.

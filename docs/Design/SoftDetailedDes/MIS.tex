@@ -112,6 +112,10 @@ and added his AI disclosure (\#265)\\
 14 November 2026 & Rayan Nasrallah & Final QA: removed the reflection
 template, defined PixelT, wrote the team AI disclosure, and fixed consistency
 and formatting across the creative drawing modules (\#355)\\
+24 November 2026 & Muhammad Huzaifah & Addressed peer review: \texttt{put} of
+the Storage Module takes the caller's choice of whether an item can be
+replaced, the Attempt Record Module makes that choice for its records, and the
+Adult Access Module states the access rule (\#373).\\
 \bottomrule
 \end{tabularx}
 }
@@ -570,7 +574,10 @@ have no errors or undefined references. For the table of data constraints moved
 from the SRS (\#303), I gave a Claude Sonnet 5.5 agent written instructions
 through the omp coding agent. It copied the constraints from the SRS data
 dictionary and matched them to the types already in this document, and I
-checked each row against the SRS before asking for review.
+checked each row against the SRS before asking for review. For the change after
+peer review (\#373), Anthropic's Claude Opus 5.5 through the omp coding agent
+made the edits from a plan I approved, and I checked each change against the
+issue.
 
 \textbf{Shamil:} For Rev~$-1$, I used VS Code Copilot which uses ChatGPT 6 Luna. 
 I used the chatbot to generate skeletons of my sections with starting text 

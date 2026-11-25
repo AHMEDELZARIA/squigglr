@@ -80,6 +80,10 @@ strokes in the attempt view, and the Lesson Catalogue Module, which gives the
 list of lessons for the lesson choice view (\#263).\\
 14 November 2026 & Moustafa Moustafa & Added the generative AI use
 disclosure (\#301).\\
+24 November 2026 & Muhammad Huzaifah & Addressed peer review: the Attempt Record
+Module now decides when a saved record can no longer change, the Adult Access
+Module names the adult whose data is reached, and the Storage Module only
+applies both rules (\#373).\\
 \bottomrule
 \end{tabularx}
 
@@ -233,7 +237,9 @@ a child's adult-set values.
 \item[\refstepcounter{acnum} \actheacnum \label{acImprovement}:] How
   improvement is measured from past attempts (LC-008).
 \item[\refstepcounter{acnum} \actheacnum \label{acRecord}:] What an attempt or
-  lesson record holds, for example a new value the adults want recorded.
+  lesson record holds and when a saved record can no longer change, for example
+  a new value the adults want recorded, or the privacy rules still to be
+  decided (OI-02).
 \item[\refstepcounter{acnum} \actheacnum \label{acTools}:] The editing tools in
   the creative space, for example adding a fill tool.
 \item[\refstepcounter{acnum} \actheacnum \label{acRefineRules}:] When a drawing
@@ -446,22 +452,25 @@ themselves.
   FR-CRT-021). The refinement service can then be swapped without touching the
   creative space (LC-004).
 \item \textbf{Records are written once.} The Attempt Record Module
-  (\mref{mRecord}) saves each attempt once and never changes a saved record
-  (FR-REC-008, FR-REC-009). The Storage Module (\mref{mStorage}) refuses changes
-  to saved records other than deletion, which follows the privacy rules still
-  to be decided (OI-02), and the Audit Log Module (\mref{mLog}) logs any
-  attempt to change one (NFR-SEC-003).
+  (\mref{mRecord}) saves each attempt once and decides when a saved record can
+  no longer change (FR-REC-008, FR-REC-009). It marks such a record when it
+  saves it. The Storage Module (\mref{mStorage}) refuses to replace a marked
+  item, whatever kind it is, and the Audit Log Module (\mref{mLog}) logs each
+  refused change (NFR-SEC-003). Deletion follows the privacy rules still to be
+  decided (OI-02).
 \item \textbf{A save counts only when the server confirms it.} The Storage
   Module reports a save as done only after the server confirms it (SAF-SHA-003).
   Until then, the Connection Recovery Module (\mref{mRecovery}) keeps the
   attempt or drawing on the device and sends it again when the connection comes
   back (SAF-RAY-003, NFR-PERF-005, FR-CRT-025).
 \item \textbf{Every request is from a signed-in adult.} The Adult Access Module
-  (\mref{mAccess}) signs adults in through an authentication service, and the
-  Storage Module, given the signed-in adult by its caller, serves data only to
-  the adult who owns it (SAF-SHA-001, NFR-SEC-001). An action a child must not
-  do alone, such as choosing a lesson, goes through an adult check in
-  \mref{mAccess} (SAF-RAY-001).
+  (\mref{mAccess}) signs adults in through an authentication service and sets
+  the access rule: data is reached only for the signed-in adult, who reaches
+  only their own learners' data (SAF-SHA-001, NFR-SEC-001). Each caller gives
+  the Storage Module that adult, and the Storage Module keeps and returns each
+  item under the adult it is given. An action a child must not do alone, such
+  as choosing a lesson, goes through an adult check in \mref{mAccess}
+  (SAF-RAY-001).
 \item \textbf{Learner settings are checked in one place.} The Learner Settings
   Module (\mref{mSettings}) checks every value against its range and the other
   values before saving it (SAF-RAY-008), and the other modules only read the
@@ -492,7 +501,9 @@ software, and a library in brackets is one the module is expected to use.
 Where a secret lists several items, such as the wording, images, colours and
 sounds of feedback, they are parts of one design decision. Only the Input Device
 Module (\mref{mInputDevice}) and the Guided Lesson Control Module
-(\mref{mLessonControl}) hide two decisions, and their entries say why.
+(\mref{mLessonControl}) hide two decisions, and their entries say why. The
+Storage Module (\mref{mStorage}) applies two rules that other modules own, and
+its entry names those modules.
 
 Only the leaf modules in the hierarchy have to be implemented. If a dash
 (\emph{--}) is shown, this means that the module is not a leaf and will not have
@@ -632,10 +643,12 @@ to be implemented.
 \subsubsection{Attempt Record Module (\mref{mRecord})}
 
 \begin{description}
-\item[Secrets:] The contents of attempt and lesson records.
+\item[Secrets:] The contents and lifetime of attempt and lesson records: what
+  each holds and when a saved record can no longer change.
 \item[Services:] Saves each attempt once, with its actual strokes, result,
   difficulties and the adult-set values in use, saves each lesson record and
-  suggestion response, and reads back a learner's records.
+  suggestion response, marks a saved attempt record and an ended lesson record
+  as unchangeable (FR-REC-009), and reads back a learner's records.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -682,8 +695,9 @@ to be implemented.
 \item[Secrets:] How adults sign up, sign in and out, and confirm actions a
   child must not do alone.
 \item[Services:] Signs an adult up, in and out, signs them out after
-  \texttt{IDLE\_TIMEOUT}, logs sign-in events, and runs the adult check before
-  an action a child must not do alone.
+  \texttt{IDLE\_TIMEOUT}, logs sign-in events, runs the adult check before
+  an action a child must not do alone, and names the signed-in adult, the only
+  adult whose data a request may reach (NFR-SEC-001, SAF-SHA-001).
 \item[Implemented By:] \progname{} (Supabase Auth)
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -794,10 +808,14 @@ to be implemented.
 
 \begin{description}
 \item[Secrets:] The database and hosting service.
-\item[Services:] Saves and reads the data each owner module gives it, for the
-  signed-in adult its caller names, checks input
-  before saving it, refuses changes to saved records other than deletion
-  (FR-REC-009, OI-02), and confirms each save.
+\item[Services:] Saves and reads the data each owner module gives it, keeps
+  each item under the adult its caller names and returns it only under that
+  adult, refuses to replace an item its owner module marked as unchangeable,
+  makes text safe for the database before saving it (NFR-SEC-006), and
+  confirms each save. The two rules it applies are not its own: the Adult
+  Access Module (\mref{mAccess}) names the adult, and the Attempt Record
+  Module (\mref{mRecord}) decides which records are unchangeable. Text is
+  checked here because how text is made safe depends on the database.
 \item[Implemented By:] \progname{} (Supabase PostgreSQL)
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -1266,7 +1284,8 @@ records.\\
 \label{TblDB}
 \end{table}
 
-Access rules in the database let an adult read and write only their own
+The Storage Module keeps each item under the adult that the Adult Access
+Module (\mref{mAccess}) names, so an adult reads and writes only their own
 learners' data (NFR-SEC-001). Progress summaries are not stored, as
 Section~\ref{SecConnection} explains.
 
@@ -1357,7 +1376,8 @@ content of the final document.
 
 \begin{itemize}
   \item \textbf{Anthropic's Claude Opus 5.5}, accessed through Claude Code at
-  medium and high effort (Moustafa);
+  medium and high effort (Moustafa), and through the omp coding agent
+  (Huzaifah);
   \item \textbf{GitHub Copilot code review}, which the team uses to provide
   automated reviews on pull requests to the project repository.
 \end{itemize}
@@ -1421,6 +1441,11 @@ a few of my pull requests.
 All ideas in my sections are my own. I reviewed every AI-drafted passage against
 my intended meaning before including it, and I decided which flagged
 inconsistencies and review comments were valid and how to resolve them.
+
+\textbf{Huzaifah:} For the change to the Storage, Attempt Record and Adult
+Access Modules after peer review (\#373), Anthropic's Claude Opus 5.5 through
+the omp coding agent made the edits from a plan I approved, and I checked each
+change against the issue before asking for review.
 
 \newpage{}
 

@@ -111,17 +111,21 @@ not one of $a$'s learners.
 \item \texttt{saveAttempt} saves $x$ under the lesson record $r$, and so to the
 learner of $r$ only (SAF-RAY-007, FR-REC-008). Each attempt is saved exactly
 once, even when the Connection Recovery Module sends it again after the
-connection is lost. The output is $\mathit{pending}$ while the record is kept on
-the device (SAF-RAY-003).
+connection is lost. The attempt record is saved with $w = \mathit{once}$, so the
+Storage Module never replaces it (FR-REC-009). The output is $\mathit{pending}$
+while the record is kept on the device (SAF-RAY-003).
 \item \texttt{recordExtension}, \texttt{offerSuggestion} and
 \texttt{answerSuggestion} add an extension, a suggestion and the adult's
 response to the lesson record (SAF-RAY-006, FR-REC-010).
 \texttt{offerSuggestion} gives the index of the new suggestion, offered at
 stage $l$. \texttt{answerSuggestion} keeps $l$ as the chosen stage when
 $\mathit{resp} = \mathit{accepted}$, and $\bot$ otherwise.
-\item \texttt{endLesson} sets the ending and the furthest stage. After it, the
-lesson record and its attempts never change (FR-REC-009), so every program that
-writes to the record raises \texttt{lessonEnded}.
+\item \texttt{endLesson} sets the ending and the furthest stage, and saves the
+lesson record with $w = \mathit{once}$. Until then, the lesson record is saved
+with $w = \mathit{replace}$. After \texttt{endLesson}, the lesson record and
+its attempts never change (FR-REC-009), so every program that writes to the
+record raises \texttt{lessonEnded}. This module decides when a saved record can
+no longer change, and the Storage Module only applies that choice.
 \item \texttt{lessonRecords} and \texttt{attempts} read back a learner's
 records, oldest first.
 \end{itemize}

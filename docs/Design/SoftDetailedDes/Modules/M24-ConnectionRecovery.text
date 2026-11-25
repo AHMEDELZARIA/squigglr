@@ -21,9 +21,10 @@ None.
 \begin{itemize}
 \item UnsavedT = tuple of $(\mathit{kind}: \text{KindT},$ $\mathit{learner}:
 \text{LearnerIdT} \cup \{\bot\},$ $\mathit{id}: \text{ItemIdT},$
-$\mathit{item}: \text{ItemT},$ $\mathit{kept}: \text{DateTimeT})$, an item kept
-on the device that the server has not yet confirmed, and when it was kept.
-KindT, ItemIdT and ItemT are those of the Storage Module (\mref{mStorage}).
+$\mathit{item}: \text{ItemT},$ $\mathit{write}: \text{WriteT},$ $\mathit{kept}:
+\text{DateTimeT})$, an item kept on the device that the server has not yet
+confirmed, and when it was kept. KindT, ItemIdT, ItemT and WriteT are those of
+the Storage Module (\mref{mStorage}).
 \end{itemize}
 }
 
@@ -32,8 +33,8 @@ KindT, ItemIdT and ItemT are those of the Storage Module (\mref{mStorage}).
 \begin{accessprograms}
 init & -- & -- & -- \\
 save & $a$: AdultIdT, $k$: KindT, $p$: LearnerIdT $\cup$ $\{\bot\}$,
-$\mathit{id}$: ItemIdT, $x$: ItemT & $\mathbb{B}$ & notOwner, unchangeable,
-invalidInput \\
+$\mathit{id}$: ItemIdT, $x$: ItemT, $w$: WriteT & $\mathbb{B}$ & notOwner,
+unchangeable, invalidInput \\
 unsaved & $a$: AdultIdT & seq of UnsavedT & -- \\
 \end{accessprograms}
 
